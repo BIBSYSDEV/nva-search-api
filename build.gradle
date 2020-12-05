@@ -31,6 +31,7 @@ allprojects {
         awsSdkVersion = '1.11.911'
         nvaCommonsVersion = '0.7.2'
         elasticSearchVersion = '7.9.1'
+        slf4jVersion = '1.8.0-beta4'
     }
 }
 
