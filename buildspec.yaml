@@ -11,6 +11,8 @@ phases:
 
   build:
     commands:
+      # Force build of publication-commons to produce zip for Lambda Layer
+      - ./gradlew :search-commons:clean :search-commons:build
       - sam build
       - sam package --s3-bucket $S3_BUCKET --output-template-file packaged.yaml
 
