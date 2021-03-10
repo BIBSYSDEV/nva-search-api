@@ -110,7 +110,7 @@ Resources:
         paths:
           /resources:
             get:
-              description: "Search for public available publications by given criteria"
+              description: "Search for public available publications by given criteria (optional)"
               consumes:
                 - application/json
               produces:
