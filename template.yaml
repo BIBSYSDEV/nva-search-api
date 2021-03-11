@@ -97,9 +97,6 @@ Resources:
   NvaSearchApi:
     Type: AWS::Serverless::Api
     Properties:
-      Tags:
-        UpdateExternalEndpoint: "yes"
-        ExternalName: "NVA Search API"
       AccessLogSetting:
         DestinationArn: !GetAtt ApiAccessLogGroup.Arn
         Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
@@ -109,7 +106,7 @@ Resources:
         openapi: 3.0.3
         info:
           title: NVA Very Public Search API
-          version: '0.0.1'
+          version: '0.0.2'
         paths:
           /resources:
             get:
