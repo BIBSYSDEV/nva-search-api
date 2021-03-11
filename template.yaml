@@ -106,7 +106,7 @@ Resources:
         openapi: 3.0.3
         info:
           title: NVA Very Public Search API
-          version: '0.0.5'
+          version: '0.0.0.1'
         paths:
           /resources:
             get:
