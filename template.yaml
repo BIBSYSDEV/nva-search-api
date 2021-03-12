@@ -88,7 +88,7 @@ Resources:
       ElasticsearchVersion: '7.9'
       EBSOptions:
         EBSEnabled: true
-        VolumeSize: 5
+        VolumeSize: 10
         VolumeType: gp2
       CognitoOptions:
         Enabled: false
