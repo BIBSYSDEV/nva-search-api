@@ -61,38 +61,45 @@ Resources:
                   - logs:PutLogEvents
                 Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*'
 
+  NVAElasticSearch:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      AccessPolicies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt TriggerExecutionRole.Arn
+            Action: 'es:*'
+            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
+            Action:
+              - es:ESHttpPost
+              - es:ESHttpGet
+              - es:ESHttpHead
+            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: false
+        InstanceCount: 1
+        ZoneAwarenessEnabled: false
+        InstanceType: t2.medium.elasticsearch
+      ElasticsearchVersion: '7.9'
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 5
+        VolumeType: gp2
+      CognitoOptions:
+        Enabled: false
 
-#  NVAElasticSearch:
-#    Type: AWS::Elasticsearch::Domain
-#    Properties:
-#      AccessPolicies:
-#        Version: 2012-10-17
-#        Statement:
-#          - Effect: Allow
-#            Principal:
-#              AWS: !GetAtt TriggerExecutionRole.Arn
-#            Action: 'es:*'
-#            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
-#          - Effect: Allow
-#            Principal:
-#              AWS: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
-#            Action:
-#              - es:ESHttpPost
-#              - es:ESHttpGet
-#              - es:ESHttpHead
-#            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
-#      ElasticsearchClusterConfig:
-#        DedicatedMasterEnabled: false
-#        InstanceCount: 1
-#        ZoneAwarenessEnabled: false
-#        InstanceType: t2.small.elasticsearch
-#      ElasticsearchVersion: '7.9'
-#      EBSOptions:
-#        EBSEnabled: true
-#        VolumeSize: 10
-#        VolumeType: gp2
-#      CognitoOptions:
-#        Enabled: false
+  ElasticSearchDomainEndpointParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: URL to NVA elasticsearch
+      Value: !GetAtt NVAElasticSearch.DomainEndpoint
+      Name: ElasticsearchDomainEndpoint
+      Type: String
 
   NvaSearchApi:
     Type: AWS::Serverless::Api
@@ -213,8 +220,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-#          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_ENDPOINT_ADDRESS: localhost:1234
+          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
           ELASTICSEARCH_ENDPOINT_INDEX: resources
           ELASTICSEARCH_REGION: !Ref "AWS::Region"
       Events:
@@ -263,39 +269,39 @@ Resources:
 #  Setup for DynamoDB trigger
 # ------------------------------------------------------
 
-#  TriggerExecutionRole:
-#    Type: AWS::IAM::Role
-#    Properties:
-#      AssumeRolePolicyDocument:
-#        Version: 2012-10-17
-#        Statement:
-#          - Effect: Allow
-#            Principal:
-#              Service: [lambda.amazonaws.com]
-#            Action: ['sts:AssumeRole']
-#      Path: /
-#      Policies:
-#        - PolicyName: writeLog
-#          PolicyDocument:
-#            Version: 2012-10-17
-#            Statement:
-#              - Effect: Allow
-#                Action:
-#                  - logs:CreateLogGroup
-#                  - logs:CreateLogStream
-#                  - logs:PutLogEvents
-#                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*"
-#        - PolicyName: ReadDynamoDBStreams
-#          PolicyDocument:
-#            Version: '2012-10-17'
-#            Statement:
-#              - Effect: Allow
-#                Action:
-#                  - dynamodb:GetShardIterator
-#                  - dynamodb:DescribeStream
-#                  - dynamodb:GetRecords
-#                  - dynamodb:ListStreams
-#                Resource: !Sub "arn:aws:dynamodb:*:${AWS::AccountId}:table/*/stream/*"
+  TriggerExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+        - PolicyName: writeLog
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*"
+        - PolicyName: ReadDynamoDBStreams
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetShardIterator
+                  - dynamodb:DescribeStream
+                  - dynamodb:GetRecords
+                  - dynamodb:ListStreams
+                Resource: !Sub "arn:aws:dynamodb:*:${AWS::AccountId}:table/*/stream/*"
 
 #  ReadDynamoDBStreamsTrigger:
 #    Type: AWS::Serverless::Function
