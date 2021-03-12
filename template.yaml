@@ -17,15 +17,18 @@ Globals:
     Timeout: 20
 
 Parameters:
-  CustomDomain:
-    Type: String
-    Description: Custom API to connect this lambda to
+
+  ApiDomainName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Key to get the custom-domain
+    Default: ApiDomainName
+  PublicationsTableStreamArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Key to get ARN of DynamoDB stream events for publications
+    Default: PublicationsTableStreamArn
   CustomDomainBasePath:
     Type: String
     Description: Base path mapping in CustomDomain
-  ResourcesTableStreamArn:
-    Type: String
-    Description: ARN of the stream containg dynamodb events
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
@@ -260,7 +263,7 @@ Resources:
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
       BasePath: !Ref CustomDomainBasePath
-      DomainName: !Ref CustomDomain
+      DomainName: !Ref ApiDomainName
       RestApiId: !Ref NvaSearchApi
       Stage: !Ref NvaSearchApi.Stage
     DependsOn: NvaSearchResourcesApiFunctionAliaslive
@@ -303,26 +306,26 @@ Resources:
                   - dynamodb:ListStreams
                 Resource: !Sub "arn:aws:dynamodb:*:${AWS::AccountId}:table/*/stream/*"
 
-#  ReadDynamoDBStreamsTrigger:
-#    Type: AWS::Serverless::Function
-#    Properties:
-#      CodeUri: search-resources-dynamodb-trigger
-#      Handler: no.unit.nva.publication.DynamoDBStreamHandler::handleRequest
-#      Layers:
-#        - !Ref NvaSearchLayer
-#      Runtime: java11
-#      Role: !GetAtt TriggerExecutionRole.Arn
-#      MemorySize: 1408
-#      Environment:
-#        Variables:
-#          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-#          ELASTICSEARCH_ENDPOINT_INDEX: resources
-#          ELASTICSEARCH_REGION: !Ref "AWS::Region"
-#
-#  TriggerLambdaMapping:
-#    Type: AWS::Lambda::EventSourceMapping
-#    Properties:
-#      Enabled: true
-#      EventSourceArn: !Ref ResourcesTableStreamArn
-#      FunctionName: !Ref ReadDynamoDBStreamsTrigger
-#      StartingPosition: LATEST
+  ReadDynamoDBStreamsTrigger:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: search-resources-dynamodb-trigger
+      Handler: no.unit.nva.publication.DynamoDBStreamHandler::handleRequest
+      Layers:
+        - !Ref NvaSearchLayer
+      Runtime: java11
+      Role: !GetAtt TriggerExecutionRole.Arn
+      MemorySize: 1408
+      Environment:
+        Variables:
+          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
+          ELASTICSEARCH_ENDPOINT_INDEX: resources
+          ELASTICSEARCH_REGION: !Ref "AWS::Region"
+
+  TriggerLambdaMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      Enabled: true
+      EventSourceArn: !Ref PublicationsTableStreamArn
+      FunctionName: !Ref ReadDynamoDBStreamsTrigger
+      StartingPosition: LATEST
