@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    Automatic Publish an public API
+
+Globals:
+  Function:
+    Timeout: 20
+
+Parameters:
+
+  ApiId:
+    Type: String
+    Description: ID from API-Gateway
+  TargetBucket:
+    Type: String
+    Description: Name of S3 Bucket containing API description
+
+Resources:
+
+  ExportFunctionPermissions:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: ['logs:*']
+                Resource: 'arn:aws:logs:*:*:*'
+
+
+  EventListenerRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Updates external description of a API
+#      EventBusName: String
+      EventPattern: '{ "source": [ "aws.apigateway" ], "detail": { "eventName": [ "UpdateRestApi" ] } }'
+      Name: updatePublicAPI
+#      RoleArn: String
+#      ScheduleExpression: String
+#      State: String
+      Targets:
+        - Arn: !GetAtt ExportApiFunction.Arn
+          Id: "ExportApiFunction"
+
+  ExportApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python3.8
+      Role: !GetAtt ExportFunctionPermissions.Arn
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+
+          def handler(event, context):
+            print(json.dumps(event, default=str))
+
+            parsed_json = (json.loads(event))
+
+            apiId = parsed_json['apiId']
+            print("apiId=", apiId)
+
+            client = boto3.client('apigateway')
+            response = client.get_rest_api(restApiId=apiId)
+            print(json.dumps(response, default=str))
+
+            return {
+              'statusCode': 200,
+              'body': json.dumps(event)
+            }
