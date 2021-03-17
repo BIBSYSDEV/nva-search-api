@@ -37,6 +37,13 @@ Resources:
               - Effect: Allow
                 Action: ['logs:*']
                 Resource: 'arn:aws:logs:*:*:*'
+        - PolicyName: readApigateWay
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: ['apigateway:GET']
+                Resource: '*'
 
 
   EventListenerRule:
@@ -67,16 +74,27 @@ Resources:
           def handler(event, context):
             print(json.dumps(event, default=str))
 
-            parsed_json = (json.loads(event))
+            # parsed_json = (json.loads(event))
 
-            apiId = parsed_json['apiId']
-            print("apiId=", apiId)
+            restApiId = event['detail']['responseElements']['restapiUpdate']['restApiId']
+            print("restApiId=", restApiId)
 
             client = boto3.client('apigateway')
-            response = client.get_rest_api(restApiId=apiId)
+            stageName = 'Prod'
+            exportType = 'swagger'
+            accepts='application/json'
+
+            #  response = client.get_rest_api(restApiId=restApiId)
+            response = client.get_export(
+                restApiId=restApiId,
+                stageName=stageName,
+                exportType=exportType,
+                accepts=accepts
+            )
+
             print(json.dumps(response, default=str))
 
             return {
               'statusCode': 200,
-              'body': json.dumps(event)
+              'body': json.dumps(response, default=str)
             }
