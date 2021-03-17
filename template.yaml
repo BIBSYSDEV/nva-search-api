@@ -126,7 +126,7 @@ Resources:
         openapi: 3.0.3
         info:
           title: NVA Very Public Search API
-          version: '0.0.1-snappy'
+          version: '0.0.3-snappy'
         paths:
           /resources:
             get:
