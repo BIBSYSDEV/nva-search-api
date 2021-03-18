@@ -135,9 +135,10 @@ Resources:
         paths:
           /resources:
             description: "Description in root of the /resources path"
-            summary: "asdadas asdasda"
+            summary: "summary - asdadas asdasda"
             get:
-              summary: "Search for public available publications by given criteria (optional)"
+              summary: "summary - Search for public available publications by given criteria (optional)"
+              description: "description - Search for public available publications by given criteria (optional)"
               consumes:
                 - application/json
               produces:
