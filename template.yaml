@@ -123,7 +123,7 @@ Resources:
       StageName: Prod
       EndpointConfiguration: REGIONAL
       DefinitionBody:
-        swagger: '2.0'
+        openapi: 3.0.3
         info:
           title: NVA Very Public Search API
           version: '0.0.4-SNAPSHOT'
@@ -135,6 +135,7 @@ Resources:
         paths:
           /resources:
             description: "Description in root of the /resources path"
+            summary: "asdadas asdasda"
             get:
               summary: "Search for public available publications by given criteria (optional)"
               consumes:
@@ -191,13 +192,12 @@ Resources:
                     application/json:
                       schema:
                         $ref: '#/definitions/Problem'
-
         definitions:
           Publication:
             type: object
           Problem:
             type: object
-            description: Internal Server Error is logged
+            description: Internal Server Error
             properties:
               title:
                 type: string
