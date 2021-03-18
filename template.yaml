@@ -186,17 +186,26 @@ Resources:
                 type: AWS_PROXY
               responses:
                 '200':
-                  description: "OK"
+                  description: OK
                   content:
                     application/json:
                       schema:
                         $ref: '#/definitions/Publication'
+                '400':
+                  description: Bad Request
+                  schema:
+                    $ref: '#/definitions/Problem'
+                '404':
+                  description: Not Found
+                  schema:
+                    $ref: '#/definitions/Problem'
                 '500':
-                  description: "Internal Server Error"
+                  description: Internal Server Error
                   content:
                     application/json:
                       schema:
                         $ref: '#/definitions/Problem'
+
         definitions:
           Publication:
             type: object
