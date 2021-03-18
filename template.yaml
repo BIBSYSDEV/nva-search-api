@@ -136,7 +136,7 @@ Resources:
           /resources:
             description: "Description in root of the /resources path"
             get:
-              description: "Search for public available publications by given criteria (optional)"
+              summary: "Search for public available publications by given criteria (optional)"
               consumes:
                 - application/json
               produces:
