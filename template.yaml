@@ -127,6 +127,11 @@ Resources:
         info:
           title: NVA Very Public Search API
           version: '0.0.4-magic'
+          description: "A short description of the API. CommonMark syntax MAY be used for rich text representation."
+          termsOfService: "termsOfService"
+          license:
+            name: Apache 2.0
+            url: https://www.apache.org/licenses/LICENSE-2.0.html
         paths:
           /resources:
             get:
