@@ -127,7 +127,7 @@ Resources:
         info:
           title: NVA Very Public Search API
           version: '0.0.4-SNAPSHOT'
-          description: "A short description of the API. CommonMark syntax MAY be used for rich text representation."
+          description: "A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation."
           termsOfService: "termsOfService"
           license:
             name: Apache 2.0
