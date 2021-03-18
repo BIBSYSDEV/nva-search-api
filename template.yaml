@@ -134,6 +134,7 @@ Resources:
             url: https://www.apache.org/licenses/LICENSE-2.0.html
         paths:
           /resources:
+            description: "Description in root of the /resources path"
             get:
               description: "Search for public available publications by given criteria (optional)"
               consumes:
