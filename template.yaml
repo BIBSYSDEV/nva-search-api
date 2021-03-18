@@ -180,7 +180,7 @@ Resources:
                     type: string
               x-amazon-apigateway-integration:
                 uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchResourcesApiFunction.Arn}:live/invocations
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchResourcesApiFunction.Arn}/invocations
                 responses: {}
                 httpMethod: POST
                 type: AWS_PROXY
@@ -204,48 +204,20 @@ Resources:
                   content:
                     application/json:
                       schema:
-                        $ref: '#/definitions/Problem'
-            post:
-              summary: "summary - Search for public available publications by given criteria (optional)"
-              description: "description - Search for public available publications by given criteria (optional)"
-              title: "title - Search for public available publications by given criteria (optional)"
-              info: "info - on get"
-              consumes:
-                - application/json
-              produces:
-                - application/json
-              parameters:
-                - in: body
-                  description: "Some body."
-                  schema:
-                    $ref: '#/definitions/Problem'
-              x-amazon-apigateway-integration:
-                uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchResourcesApiFunction.Arn}:live/invocations
-                responses: {}
-                httpMethod: POST
-                type: AWS_PROXY
-              responses:
-                '201':
-                  description: Created
-                  content:
-                    application/json:
-                      schema:
-                        $ref: '#/definitions/Publication'
-                '400':
-                  description: Bad Request
-                  schema:
-                    $ref: '#/definitions/Problem'
-                '404':
-                  description: Not Found
-                  schema:
-                    $ref: '#/definitions/Problem'
-                '500':
-                  description: Internal Server Error
-                  content:
-                    application/json:
-                      schema:
-                        $ref: '#/definitions/Problem'
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            description: "Title"
+                          status:
+                            type: integer
+                            description: "Kind of problem"
+                          detail:
+                            type: string
+                            description: "details of problem"
+                          requestId:
+                            type: string
+                            description: "Identifier of the request causing the problem"
         definitions:
           Publication:
             type: object
