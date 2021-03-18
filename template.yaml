@@ -125,20 +125,20 @@ Resources:
       DefinitionBody:
         openapi: 3.0.3
         info:
-          title: NVA Very Public Search API
+          Title: NVA Very Public Search API
           version: '0.0.4-SNAPSHOT'
-          description: "A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation."
+          Description: "A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation."
           termsOfService: "termsOfService"
           license:
             name: Apache 2.0
             url: https://www.apache.org/licenses/LICENSE-2.0.html
         paths:
           /resources:
-            description: "Description in root of the /resources path"
-            summary: "summary - asdadas asdasda"
+            Description: "Description in root of the /resources path"
+            Summary: "summary - asdadas asdasda"
             get:
-              summary: "summary - Search for public available publications by given criteria (optional)"
-              description: "description - Search for public available publications by given criteria (optional)"
+              Summary: "summary - Search for public available publications by given criteria (optional)"
+              Description: "description - Search for public available publications by given criteria (optional)"
               consumes:
                 - application/json
               produces:
