@@ -123,10 +123,10 @@ Resources:
       StageName: Prod
       EndpointConfiguration: REGIONAL
       DefinitionBody:
-        openapi: 3.0.3
+        swagger: '2.0'
         info:
           title: NVA Very Public Search API
-          version: '0.0.4-magic'
+          version: '0.0.4-SNAPSHOT'
           description: "A short description of the API. CommonMark syntax MAY be used for rich text representation."
           termsOfService: "termsOfService"
           license:
