@@ -205,12 +205,16 @@ Resources:
             properties:
               title:
                 type: string
+                description: "Title"
               status:
                 type: integer
+                description: "Kind of problem"
               detail:
                 type: string
+                description: "details of problem"
               requestId:
                 type: string
+                description: "Identifier of the request causing the problem"
 
   NvaSearchLayer:
     Type: AWS::Serverless::LayerVersion
