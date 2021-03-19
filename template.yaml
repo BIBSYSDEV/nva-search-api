@@ -210,6 +210,7 @@ Resources:
                   description: Internal Server Error
                   title: "Errror 500"
                   content:
+                    description: "Error 500 content description"
                     application/json:
                       schema:
                         type: object
@@ -228,22 +229,22 @@ Resources:
                             description: "Identifier of the request causing the problem"
         definitions:
           Publication:
-            type: object
+            type: "object"
           Problem:
-            type: object
+            type: "object"
             description: "Problem object model"
             properties:
               title:
-                type: string
+                type: "string"
                 description: "Title"
               status:
-                type: integer
+                type: "integer"
                 description: "Kind of problem"
               detail:
-                type: string
+                type: "string"
                 description: "details of problem"
               requestId:
-                type: string
+                type: "string"
                 description: "Identifier of the request causing the problem"
 
   NvaSearchLayer:
