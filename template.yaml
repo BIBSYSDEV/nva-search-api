@@ -223,7 +223,7 @@ Resources:
                             type: string
                             description: "Identifier of the request causing the problem"
         definitions:
-          'Publication':
+          "Publication":
             type: "object"
 #            Properties:
 #              abstract:
@@ -233,7 +233,7 @@ Resources:
 #                Properties:
 #                  name:
 #                    type: String
-          'Problem':
+          "Problem":
             type: "object"
             description: "Problem object model"
             properties:
