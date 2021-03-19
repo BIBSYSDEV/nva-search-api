@@ -146,7 +146,7 @@ Resources:
             dummary: "summary - asdadas asdasda"
             title: "title on resources"
             get:
-              description: "Search for public available publications optionally by given criteria"
+              description: 'Search for public available publications optionally by given criteria'
               consumes:
                 - application/json
               produces:
@@ -154,8 +154,7 @@ Resources:
               parameters:
                 - in: query
                   name: query
-                  description: "Term to search for in resource."
-                  summary: "Term to search for in resource."
+                  description: 'Term to search for in resource.'
                   required: false
                   content:
                     application/json:
@@ -228,17 +227,17 @@ Resources:
                             type: string
                             description: "Identifier of the request causing the problem"
         definitions:
-          Publication:
+          'Publication':
             type: "object"
             Properties:
               abstract:
                 type: "string"
               contributors:
                 type: "object"
-                properties:
+                Properties:
                   name:
                     type: String
-          "Problem":
+          'Problem':
             type: "object"
             description: "Problem object model"
             properties:
