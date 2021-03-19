@@ -117,7 +117,7 @@ Resources:
   NvaSearchApi:
     Type: AWS::Serverless::Api
     Properties:
-      Description: "root /  - Search for public available publications by given criteria **CommonMark**"
+#      Description: "root /  - Search for public available publications by given criteria **CommonMark**"
       AccessLogSetting:
         DestinationArn: !GetAtt ApiAccessLogGroup.Arn
         Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
@@ -195,23 +195,22 @@ Resources:
                 httpMethod: POST
                 type: AWS_PROXY
               responses:
-                '200':
-                  description: OK
+                "200":
+                  description: "OK"
                   content:
                     application/json:
                       schema:
                         $ref: /definitions/Publication
-                '400':
-                  description: Bad Request
+                "400":
+                  description: "Bad Request"
                   schema:
                     $ref: "#/definitions/Problem"
-                '404':
+                "404":
                   description: Not Found
                   schema:
                     $ref: "#/definitions/Problem"
-                '500':
+                "500":
                   description: Internal Server Error
-                  name: Problem500
                   content:
                     application/json:
                       schema:
