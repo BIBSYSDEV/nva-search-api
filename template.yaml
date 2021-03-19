@@ -206,7 +206,7 @@ Resources:
                   schema:
                     $ref: "#/definitions/Problem"
                 "500":
-                  description: Internal Server Error
+                  description: 'Internal Server Error'
                   title: "Errror 500"
                   content:
                     description: "Error 500 content description"
@@ -229,14 +229,14 @@ Resources:
         definitions:
           'Publication':
             type: "object"
-            Properties:
-              abstract:
-                type: "string"
-              contributors:
-                type: "object"
-                Properties:
-                  name:
-                    type: String
+#            Properties:
+#              abstract:
+#                type: "string"
+#              contributors:
+#                type: "object"
+#                Properties:
+#                  name:
+#                    type: String
           'Problem':
             type: "object"
             description: "Problem object model"
@@ -295,7 +295,6 @@ Resources:
             Path: /resources
             Method: get
             RestApiId: !Ref NvaSearchApi
-
 
   SearchResourcesApiFunctionScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
