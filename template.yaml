@@ -197,9 +197,11 @@ Resources:
                       example:
                         abstract: abstract stuff
                 "400":
-                  description: "Bad Request"
-                  schema:
-                    $ref: '#/definitions/Problem'
+                  description: Bad Request
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Problem"
                 "404":
                   description: Not Found
                   schema:
@@ -228,15 +230,31 @@ Resources:
         components:
           schemas:
             Publication:
-              type: "object"
+              type: object
               Properties:
                 abstract:
-                  type: "string"
+                  type: string
                 contributors:
-                  type: "object"
+                  type: object
                   Properties:
                     name:
                       type: String
+            Problem:
+              type: object
+              description: Problem object model
+              properties:
+                title:
+                  type: string
+                  description: Title
+                status:
+                  type: integer
+                  description: Kind of problem
+                detail:
+                  type: string
+                  description: details of problem
+                requestId:
+                  type: string
+                  description: Identifier of the request causing the problem
         definitions:
           "Publication":
             type: "object"
