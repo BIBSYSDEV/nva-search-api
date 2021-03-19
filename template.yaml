@@ -128,9 +128,9 @@ Resources:
         info:
           title: NVA Very Public Search API
           version: '0.0.5-SNAPSHOT'
-          description: >
+          description: |
             A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation.
-            ========= Path Parameters
+            # Path Parameters
             * query
             * orderBy
             * sortOrder
