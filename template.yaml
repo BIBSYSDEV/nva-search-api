@@ -117,6 +117,7 @@ Resources:
   NvaSearchApi:
     Type: AWS::Serverless::Api
     Properties:
+      Description: "description - Search for public available publications by given criteria (optional)"
       AccessLogSetting:
         DestinationArn: !GetAtt ApiAccessLogGroup.Arn
         Format: '{ "apiId": "$context.apiId", "requestId": "$context.requestId", "requestTime": "$context.requestTime", "requestTimeEpoch": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "path": "$context.path", "status": "$context.status",  "error.message": "$context.error.message" }'
@@ -126,8 +127,15 @@ Resources:
         openapi: 3.0.3
         info:
           title: NVA Very Public Search API
-          version: '0.0.4-SNAPSHOT'
-          description: "A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation."
+          version: '0.0.5-SNAPSHOT'
+          description: >
+            A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation.
+            # Path Parameters
+            - query
+            - orderBy
+            - sortOrder
+            - from
+            - results
           termsOfService: "termsOfService"
           license:
             name: Apache 2.0
