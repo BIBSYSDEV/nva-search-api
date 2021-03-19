@@ -130,12 +130,12 @@ Resources:
           version: '0.0.5-SNAPSHOT'
           description: >
             A short description of the API. _CommonMark_ syntax **MAY** be used for rich text representation.
-            # Path Parameters
-            - query
-            - orderBy
-            - sortOrder
-            - from
-            - results
+            #Path Parameters
+            -query
+            -orderBy
+            -sortOrder
+            -from
+            -results
           termsOfService: "termsOfService"
           license:
             name: Apache 2.0
