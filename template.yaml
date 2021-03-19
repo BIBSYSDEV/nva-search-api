@@ -146,10 +146,7 @@ Resources:
             dummary: "summary - asdadas asdasda"
             title: "title on resources"
             get:
-              summary: "summary - Search for public available publications by given criteria (optional)"
-              description: "description - Search for public available publications by given criteria (optional)"
-              title: "title - Search for public available publications by given criteria (optional)"
-              info: "info - on get"
+              description: "Search for public available publications optionally by given criteria"
               consumes:
                 - application/json
               produces:
@@ -204,13 +201,14 @@ Resources:
                 "400":
                   description: "Bad Request"
                   schema:
-                    $ref: "#/definitions/Problem"
+                    $ref: definitions/Problem
                 "404":
                   description: Not Found
                   schema:
                     $ref: "#/definitions/Problem"
                 "500":
                   description: Internal Server Error
+                  title: "Errror 500"
                   content:
                     application/json:
                       schema:
@@ -233,6 +231,7 @@ Resources:
             type: object
           Problem:
             type: object
+            description: "Problem object model"
             properties:
               title:
                 type: string
