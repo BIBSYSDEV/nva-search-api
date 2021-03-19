@@ -197,7 +197,7 @@ Resources:
                   content:
                     application/json:
                       schema:
-                        $ref: /definitions/Publication
+                        $ref: "definitions/Publication"
                 "400":
                   description: "Bad Request"
                   schema:
@@ -230,7 +230,15 @@ Resources:
         definitions:
           Publication:
             type: "object"
-          Problem:
+            Properties:
+              abstract:
+                type: "string"
+              contributors:
+                type: "object"
+                properties:
+                  name:
+                    type: String
+          "Problem":
             type: "object"
             description: "Problem object model"
             properties:
