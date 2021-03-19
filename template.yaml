@@ -156,10 +156,8 @@ Resources:
                   name: query
                   description: 'Term to search for in resource.'
                   required: false
-                  content:
-                    application/json:
-                      schema:
-                        type: string
+                  schema:
+                    type: string
                 - in: query
                   name: orderBy
                   description: "Field to order result by."
@@ -196,20 +194,18 @@ Resources:
                   content:
                     application/json:
                       schema:
-                        $ref: "definitions/Publication"
+                        $ref: "#/definitions/Publication"
                 "400":
                   description: "Bad Request"
                   schema:
-                    $ref: definitions/Problem
+                    $ref: '#/definitions/Problem'
                 "404":
                   description: Not Found
                   schema:
                     $ref: "#/definitions/Problem"
                 "500":
                   description: 'Internal Server Error'
-                  title: "Errror 500"
                   content:
-                    description: "Error 500 content description"
                     application/json:
                       schema:
                         type: object
