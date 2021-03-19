@@ -159,19 +159,19 @@ Resources:
                     type: string
                 - name: orderBy
                   in: query
-                  description: "Field to order result by."
+                  description: Field to order result by.
                   required: false
                   schema:
                     type: string
                 - name: sortOrder
                   in: query
-                  description: "Order of search results (asc or desc)."
+                  description: Order of search results (asc or desc).
                   required: false
                   schema:
                     type: string
                 - name: from
                   in: query
-                  description: "Start posision from results, 0-based."
+                  description: Start posision from results, 0-based.
                   required: false
                   schema:
                     type: string
@@ -221,11 +221,15 @@ Resources:
               Properties:
                 abstract:
                   type: string
+                  description: short abstract of content
+                  required: false
                 contributors:
                   type: object
+                  description: List of contributing people
                   Properties:
                     name:
                       type: String
+                      description: Name of person contributing
             Problem:
               type: object
               description: Problem object model
