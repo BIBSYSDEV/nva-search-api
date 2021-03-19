@@ -230,6 +230,9 @@ Resources:
                     name:
                       type: String
                       description: Name of person contributing
+                    role:
+                      type: String
+                      description: Persons contribution type
             Problem:
               type: object
               description: Problem object model
