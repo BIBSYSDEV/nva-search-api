@@ -157,26 +157,26 @@ Resources:
                   required: false
                   schema:
                     type: string
-                - in: query
-                  name: orderBy
+                - name: orderBy
+                  in: query
                   description: "Field to order result by."
                   required: false
                   schema:
                     type: string
-                - in: query
-                  name: sortOrder
+                - name: sortOrder
+                  in: query
                   description: "Order of search results (asc or desc)."
                   required: false
                   schema:
                     type: string
-                - in: query
-                  name: from
+                - name: from
+                  in: query
                   description: "Start posision from results, 0-based."
                   required: false
                   schema:
                     type: string
-                - in: query
-                  name: results
+                - name: results
+                  in: query
                   description: "Maximum number of publications in response."
                   required: false
                   schema:
@@ -194,8 +194,6 @@ Resources:
                     application/json:
                       schema:
                         $ref: "#/components/schemas/Publication"
-                      example:
-                        abstract: abstract stuff
                 "400":
                   description: Bad Request
                   content:
@@ -204,33 +202,22 @@ Resources:
                         $ref: "#/components/schemas/Problem"
                 "404":
                   description: Not Found
-                  schema:
-                    $ref: "#/definitions/Problem"
-                "500":
-                  info:
-                    description: "500 info description"
-                  description: 'Internal Server Error'
                   content:
                     application/json:
                       schema:
-                        type: object
-                        properties:
-                          title:
-                            type: string
-                            description: "Title"
-                          status:
-                            type: integer
-                            description: "Kind of problem"
-                          detail:
-                            type: string
-                            description: "details of problem"
-                          requestId:
-                            type: string
-                            description: "Identifier of the request causing the problem"
+                        $ref: "#/components/schemas/Problem"
+                "500":
+                  info:
+                    description: "500 info description"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Problem"
         components:
           schemas:
             Publication:
               type: object
+              description: Structure returned from successful seach
               Properties:
                 abstract:
                   type: string
@@ -255,34 +242,6 @@ Resources:
                 requestId:
                   type: string
                   description: Identifier of the request causing the problem
-        definitions:
-          "Publication":
-            type: "object"
-            Properties:
-              abstract:
-                type: "string"
-              contributors:
-                type: "object"
-                Properties:
-                  name:
-                    type: String
-          "Problem":
-            type: "object"
-            description: "Problem object model"
-            properties:
-              title:
-                type: "string"
-                description: "Title"
-              status:
-                type: "integer"
-                description: "Kind of problem"
-              detail:
-                type: "string"
-                description: "details of problem"
-              requestId:
-                type: "string"
-                description: "Identifier of the request causing the problem"
-
   NvaSearchLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
