@@ -142,9 +142,8 @@ Resources:
             url: https://www.apache.org/licenses/LICENSE-2.0.html
         paths:
           /resources:
-            description: "Description in root of the /resources path"
-            dummary: "summary - asdadas asdasda"
-            title: "title on resources"
+            info:
+              description: "Description in root of the /resources path"
             get:
               description: 'Search for public available publications optionally by given criteria'
               consumes:
@@ -204,6 +203,8 @@ Resources:
                   schema:
                     $ref: "#/definitions/Problem"
                 "500":
+                  info:
+                    description: "500 info description"
                   description: 'Internal Server Error'
                   content:
                     application/json:
@@ -225,14 +226,14 @@ Resources:
         definitions:
           "Publication":
             type: "object"
-#            Properties:
-#              abstract:
-#                type: "string"
-#              contributors:
-#                type: "object"
-#                Properties:
-#                  name:
-#                    type: String
+            Properties:
+              abstract:
+                type: "string"
+              contributors:
+                type: "object"
+                Properties:
+                  name:
+                    type: String
           "Problem":
             type: "object"
             description: "Problem object model"
