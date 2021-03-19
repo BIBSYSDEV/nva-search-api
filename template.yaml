@@ -196,8 +196,6 @@ Resources:
                         $ref: "#/components/schemas/Publication"
                       example:
                         abstract: abstract stuff
-                          contributors:
-                            name: John Doe
                 "400":
                   description: "Bad Request"
                   schema:
