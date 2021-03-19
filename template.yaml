@@ -190,7 +190,7 @@ Resources:
                   content:
                     application/json:
                       schema:
-                        $ref: '#/definitions/Publication'
+                        $ref: /definitions/Publication
                 '400':
                   description: Bad Request
                   schema:
