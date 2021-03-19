@@ -193,7 +193,9 @@ Resources:
                   content:
                     application/json:
                       schema:
-                        $ref: "#/definitions/Publication"
+                        $ref: "#/components/Publication"
+                      example:
+                        john: Doe
                 "400":
                   description: "Bad Request"
                   schema:
@@ -223,6 +225,17 @@ Resources:
                           requestId:
                             type: string
                             description: "Identifier of the request causing the problem"
+        components:
+          "Publication":
+            type: "object"
+            Properties:
+              abstract:
+                type: "string"
+              contributors:
+                type: "object"
+                Properties:
+                  name:
+                    type: String
         definitions:
           "Publication":
             type: "object"
