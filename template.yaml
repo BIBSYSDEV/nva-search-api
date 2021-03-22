@@ -232,7 +232,7 @@ Resources:
                   description: List of contributing people
                   items:
                     type: object
-                    properties
+                    properties:
                       name:
                         type: string
                         description: Name of contributor
