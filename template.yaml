@@ -237,8 +237,8 @@ Resources:
                         type: string
                       name:
                         type: string
-#                description:
-#                  type: string
+                description:
+                  type: string
 #                doi:
 #                  type: string
 #                id:
