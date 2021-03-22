@@ -153,7 +153,7 @@ Resources:
               parameters:
                 - name: query
                   in: query
-                  Description: Term to search for in resource.
+                  description: Term to search for in resource.
                   required: false
                   schema:
                     type: string
