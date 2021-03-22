@@ -223,8 +223,15 @@ Resources:
                   type: string
                   description: short abstract of content
                 contributors:
-                  type: string
+                  type: object
                   description: List of contributing people
+                  properties:
+                    name:
+                      type: string
+                      description: Name of contributor
+                    role:
+                      type: integer
+                      description: contributors role in publication
             Problem:
               type: object
               description: Problem object model
