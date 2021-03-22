@@ -218,7 +218,7 @@ Resources:
             Publication:
               type: object
               description: Structure returned from successful seach
-              Properties:
+              properties:
                 abstract:
                   type: string
                   description: short abstract of content
