@@ -244,7 +244,8 @@ Resources:
                 id:
                   type: string
                 modifiedDate:
-                  type: date
+                  type: string
+                  format: date
 #                owner:
 #                  type: string
 #                publicationDate:
