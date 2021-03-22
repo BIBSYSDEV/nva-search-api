@@ -239,12 +239,12 @@ Resources:
                         type: string
                 description:
                   type: string
-#                doi:
-#                  type: string
-#                id:
-#                  type: string
-#                modifiedDate:
-#                  type: date
+                doi:
+                  type: string
+                id:
+                  type: string
+                modifiedDate:
+                  type: date
 #                owner:
 #                  type: string
 #                publicationDate:
