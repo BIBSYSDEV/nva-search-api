@@ -222,16 +222,23 @@ Resources:
                 abstract:
                   type: string
                   description: short abstract of content
+                alternativeTitles:
+                  type: array
+                  description: short abstract of content
+                  items:
+                    type: string
                 contributors:
-                  type: object
+                  type: array
                   description: List of contributing people
-                  properties:
-                    name:
-                      type: string
-                      description: Name of contributor
-                    role:
-                      type: integer
-                      description: contributors role in publication
+                  items:
+                    type: object
+                    properties
+                      name:
+                        type: string
+                        description: Name of contributor
+                      role:
+                        type: integer
+                        description: contributors role in publication
             Problem:
               type: object
               description: Problem object model
