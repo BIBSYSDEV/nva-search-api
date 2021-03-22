@@ -44,6 +44,13 @@ Resources:
               - Effect: Allow
                 Action: ['apigateway:GET']
                 Resource: '*'
+        - PolicyName: writeTos3
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: ['s3:*Object']
+                Resource: 'arn:aws:s3:::nva-dev-public-api/*'
 
 
   EventListenerRule:
@@ -74,18 +81,18 @@ Resources:
           def handler(event, context):
             print(json.dumps(event, default=str))
 
-            # parsed_json = (json.loads(event))
-
             restApiId = event['detail']['responseElements']['restapiUpdate']['restApiId']
             print("restApiId=", restApiId)
 
-            client = boto3.client('apigateway')
+            apiDefinitionBucketName =  'nva-dev-public-api'
+            apiDefinitionBucketKey = 'searchapi.json'
+
+            apigatewayClient = boto3.client('apigateway')
             stageName = 'Prod'
             exportType = 'swagger'
             accepts='application/json'
 
-            #  response = client.get_rest_api(restApiId=restApiId)
-            response = client.get_export(
+            response = apigatewayClient.get_export(
                 restApiId=restApiId,
                 stageName=stageName,
                 exportType=exportType,
@@ -93,8 +100,14 @@ Resources:
             )
 
             print(json.dumps(response, default=str))
+            swaggerdef = response['body'].read()
+            print(swaggerdef)
+
+            s3client = boto3.client('s3')
+            s3response = s3client.put_object(Body=swaggerdef, Bucket=apiDefinitionBucketName, Key=apiDefinitionBucketKey)
+            print(s3response)
 
             return {
               'statusCode': 200,
-              'body': json.dumps(response, default=str)
+              'body': json.dumps(swaggerdef, default=str)
             }
