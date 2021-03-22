@@ -224,15 +224,8 @@ Resources:
                   description: short abstract of content
                   required: false
                 contributors:
-                  type: object
+                  type: string
                   description: List of contributing people
-                  Properties:
-                    name:
-                      type: String
-                      description: Name of person contributing
-                    role:
-                      type: String
-                      description: Persons contribution type
             Problem:
               type: object
               description: Problem object model
