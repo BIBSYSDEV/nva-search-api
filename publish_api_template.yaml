@@ -57,12 +57,8 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Description: Updates external description of a API
-#      EventBusName: String
       EventPattern: '{ "source": [ "aws.apigateway" ], "detail": { "eventName": [ "UpdateRestApi" ] } }'
       Name: updatePublicAPI
-#      RoleArn: String
-#      ScheduleExpression: String
-#      State: String
       Targets:
         - Arn: !GetAtt ExportApiFunction.Arn
           Id: "ExportApiFunction"
@@ -73,10 +69,14 @@ Resources:
       Handler: index.handler
       Runtime: python3.8
       Role: !GetAtt ExportFunctionPermissions.Arn
+      Environment:
+        Variables:
+          TARGET_APIID: !Ref ApiId
       Code:
         ZipFile: |
           import json
           import boto3
+          import os
 
           def handler(event, context):
             print(json.dumps(event, default=str))
@@ -84,30 +84,36 @@ Resources:
             restApiId = event['detail']['responseElements']['restapiUpdate']['restApiId']
             print("restApiId=", restApiId)
 
-            apiDefinitionBucketName =  'nva-dev-public-api'
-            apiDefinitionBucketKey = 'searchapi.json'
+            if restApiId == os.environ['TARGET_APIID']:
+              apiDefinitionBucketName =  'nva-dev-public-api'
+              apiDefinitionBucketKey = 'searchapi.json'
 
-            apigatewayClient = boto3.client('apigateway')
-            stageName = 'Prod'
-            exportType = 'swagger'
-            accepts='application/json'
+              apigatewayClient = boto3.client('apigateway')
+              stageName = 'Prod'
+              exportType = 'swagger'
+              accepts='application/json'
 
-            response = apigatewayClient.get_export(
-                restApiId=restApiId,
-                stageName=stageName,
-                exportType=exportType,
-                accepts=accepts
-            )
+              response = apigatewayClient.get_export(
+                  restApiId=restApiId,
+                  stageName=stageName,
+                  exportType=exportType,
+                  accepts=accepts
+              )
 
-            print(json.dumps(response, default=str))
-            swaggerdef = response['body'].read()
-            print(swaggerdef)
+              print(json.dumps(response, default=str))
+              swaggerdef = response['body'].read()
+              print(swaggerdef)
 
-            s3client = boto3.client('s3')
-            s3response = s3client.put_object(Body=swaggerdef, Bucket=apiDefinitionBucketName, Key=apiDefinitionBucketKey)
-            print(s3response)
+              s3client = boto3.client('s3')
+              s3response = s3client.put_object(Body=swaggerdef, Bucket=apiDefinitionBucketName, Key=apiDefinitionBucketKey)
+              print(s3response)
 
-            return {
-              'statusCode': 200,
-              'body': json.dumps(swaggerdef, default=str)
-            }
+              return {
+                'statusCode': 200,
+                'body': json.dumps(swaggerdef, default=str)
+              }
+            else:
+              return {
+                'statusCode': 304,
+                'body': 'Not changed!'
+              }

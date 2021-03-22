@@ -222,7 +222,6 @@ Resources:
                 abstract:
                   type: string
                   description: short abstract of content
-                  required: false
                 contributors:
                   type: string
                   description: List of contributing people
