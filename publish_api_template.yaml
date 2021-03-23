@@ -86,7 +86,7 @@ Resources:
 
             if restApiId == os.environ['TARGET_APIID']:
               apiDefinitionBucketName =  'nva-dev-public-api'
-              apiDefinitionBucketKey = 'searchapi.json'
+              apiDefinitionBucketKey = restApiId + '.json'
 
               apigatewayClient = boto3.client('apigateway')
               stageName = 'Prod'
