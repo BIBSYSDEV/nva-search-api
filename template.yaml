@@ -116,6 +116,7 @@ Resources:
 
   NvaSearchApi:
     Type: AWS::Serverless::Api
+    Description: Public available search API for resources in NVA.
     Properties:
       AccessLogSetting:
         DestinationArn: !GetAtt ApiAccessLogGroup.Arn
