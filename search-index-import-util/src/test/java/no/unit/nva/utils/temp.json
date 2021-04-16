@@ -1,0 +1,2719 @@
+[ {
+  "identifier" : "875b9cec-8738-46a8-a7cf-fbb31db4d3db",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-21T09:24:22.926950Z",
+  "modifiedDate" : "2021-01-26T07:54:41.164158Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : "https://doi.org/10.16903/0va6-xx92",
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : null,
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : null,
+      "month" : null,
+      "day" : null
+    },
+    "contributors" : null,
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Degree",
+        "seriesTitle" : null,
+        "seriesNumber" : null,
+        "publisher" : null,
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "url" : null,
+        "isbnList" : null
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "DegreePhd",
+        "submittedDate" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "MonographPages",
+          "introduction" : null,
+          "pages" : null,
+          "illustrated" : false
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "13bb7b7b-3b17-41e6-851f-d050998eca96",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "01781b5e170a-2c2a0d44-3a4b-44bc-8474-90c2fd8cefdb",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-10T09:00:54.419696Z",
+  "modifiedDate" : "2021-03-18T10:53:15.307856Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "RapIoT toolkit: Rapid prototyping of collaborative Internet of Things applications",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2019",
+      "month" : "6",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Gianni, Francesco",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Mora, Simone",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Divitini, Monica",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 3,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Future Generation Computer Systems",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0167-739X",
+        "onlineIssn" : null,
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1016/j.future.2018.02.030",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "95",
+        "issue" : null,
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "867",
+          "end" : "879"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "017863839a29-3b8d4841-565a-4df1-9040-1e359fa8a9ea",
+  "status" : "PUBLISHED",
+  "owner" : "hj@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/ec20779c-870c-46a2-904b-ade8ba7e1f5e",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-24T09:14:32.361245Z",
+  "modifiedDate" : "2021-03-24T09:29:00.398387Z",
+  "publishedDate" : "2021-03-24T09:29:00.398387Z",
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Heges antologi",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/nob",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2020",
+      "month" : null,
+      "day" : null
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/90208281",
+        "name" : "Johannesen, Hege",
+        "nameType" : null,
+        "orcId" : "0000-0003-0314-1872",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/7548.70.0.0",
+        "labels" : null
+      } ],
+      "role" : "Editor",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1600776277420",
+        "name" : "Hellesvik, Terje",
+        "nameType" : null,
+        "orcId" : "0000-0002-8617-3281",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/194.60.0.0",
+        "labels" : null
+      } ],
+      "role" : "Editor",
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : "1006",
+    "tags" : null,
+    "description" : "Beskrivelse av innhold i publikasjon.",
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Book",
+        "seriesTitle" : null,
+        "seriesNumber" : null,
+        "publisher" : "Gyldendal Norsk Forlag A/S",
+        "level" : "LEVEL_1",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "url" : "http://www.gyldendal.no/",
+        "isbnList" : null
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "BookAnthology",
+        "textbookContent" : false,
+        "peerReviewed" : true,
+        "pages" : {
+          "type" : "MonographPages",
+          "introduction" : null,
+          "pages" : "999",
+          "illustrated" : false
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : "Sammendrag av publikasjon."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "a06016e1-c87b-4513-8bc3-49c335aca3c4",
+      "name" : "publikasjonen.pdf",
+      "mimeType" : "application/pdf",
+      "size" : 84038,
+      "license" : {
+        "type" : "License",
+        "identifier" : "Utgivers betingelser",
+        "labels" : {
+          "nb" : "Utgivers betingelser"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "https://api.dev.nva.aws.unit.no/project/415590",
+    "name" : "Testing av jordblandinger for grøntanlegg",
+    "grants" : null,
+    "approvals" : null
+  }, {
+    "type" : "ResearchProject",
+    "id" : "https://api.dev.nva.aws.unit.no/project/403669",
+    "name" : "test-retest av test batteri til måling av smerte og funksjon hos personer med\r\nkne artrose: reliabilitet, validitet, sensivitet og spesifisitet",
+    "grants" : null,
+    "approvals" : null
+  } ]
+}, {
+  "identifier" : "8517647d-2407-4594-86a5-593663399f02",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-08T10:06:33.711813Z",
+  "modifiedDate" : "2021-03-08T10:06:33.711813Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "f734db8f-793b-4917-b7f6-6a162407a6a6",
+      "name" : "image (6).png",
+      "mimeType" : "image/png",
+      "size" : 6506,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "c23c4522-33d3-4f10-a417-476cdb7448a2",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-28T10:59:28.695425Z",
+  "modifiedDate" : "2021-03-18T09:23:25.636493Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Revision of the instructions to authors to require a structured abstract, digital object identifier of each reference, and author’s voice recording may increase journal access",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2013",
+      "month" : "4",
+      "day" : "30"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1600776277408",
+        "name" : "Serussi, Sarah",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/203.11.1.0",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/260",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 1,
+      "correspondingAuthor" : true,
+      "email" : "NO_EMAIL"
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/12026359",
+        "name" : "Iversen, Lars Laird",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/2010529",
+        "name" : "Haugen-Flermoe, Ole",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 3,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/10073960",
+        "name" : "Garnæs, Ole Pedersen",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 4,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Keats-Shelley Journal",
+        "level" : "NO_LEVEL",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : null,
+        "onlineIssn" : "0453-4387",
+        "url" : "http://k-saa.org/keats-shelley-journal/"
+      },
+      "doi" : "https://doi.org/10.3352/jeehp.2013.10.3",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : null,
+        "issue" : null,
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : null,
+          "end" : null
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "8d32f22c-f6d4-416d-979d-d5b64ffd32a4",
+      "name" : "my profile.pdf",
+      "mimeType" : "application/pdf",
+      "size" : 273374,
+      "license" : {
+        "type" : "License",
+        "identifier" : "Publisher's conditions",
+        "labels" : {
+          "nb" : "Publisher's conditions"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "8143d049-8a86-4ba0-b74e-85171a466f61",
+  "status" : "DRAFT",
+  "owner" : "jeg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-15T09:33:21.717623Z",
+  "modifiedDate" : "2021-02-15T10:08:35.238544Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "COVID-19 and its implications for thrombosis and anticoagulation",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2020",
+      "month" : "6",
+      "day" : "4"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Connors, Jean M.",
+        "nameType" : null,
+        "orcId" : "http://orcid.org/0000-0001-6445-582X",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Hematology Division, Department of Medicine, Brigham and Women’s Hospital, Harvard Medical School, Boston, MA; and"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Levy, Jerrold H.",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Department of Anesthesiology,"
+        }
+      }, {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Division of Critical Care Medicine, and"
+        }
+      }, {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Department of Surgery, Division of Cardiothoracic Surgery, Duke University School of Medicine, Durham, NC"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : [ "Immunology", "Cell Biology", "Biochemistry", "Hematology" ],
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Blood",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0006-4971",
+        "onlineIssn" : "1528-0020",
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1182/blood.2020006000",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "135",
+        "issue" : "23",
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "2033",
+          "end" : "2040"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : "Abstract Severe acute respiratory syndrome coronavirus 2, coronavirus disease 2019 (COVID-19)-induced infection can be associated with a coagulopathy, findings consistent with infection-induced inflammatory changes as observed in patients with disseminated intravascular coagulopathy (DIC). The lack of prior immunity to COVID-19 has resulted in large numbers of infected patients across the globe and uncertainty regarding management of the complications that arise in the course of this viral illness. The lungs are the target organ for COVID-19; patients develop acute lung injury that can progress to respiratory failure, although multiorgan failure can also occur. The initial coagulopathy of COVID-19 presents with prominent elevation of D-dimer and fibrin/fibrinogen-degradation products, whereas abnormalities in prothrombin time, partial thromboplastin time, and platelet counts are relatively uncommon in initial presentations. Coagulation test screening, including the measurement of D-dimer and fibrinogen levels, is suggested. COVID-19–associated coagulopathy should be managed as it would be for any critically ill patient, following the established practice of using thromboembolic prophylaxis for critically ill hospitalized patients, and standard supportive care measures for those with sepsis-induced coagulopathy or DIC. Although D-dimer, sepsis physiology, and consumptive coagulopathy are indicators of mortality, current data do not suggest the use of full-intensity anticoagulation doses unless otherwise clinically indicated. Even though there is an associated coagulopathy with COVID-19, bleeding manifestations, even in those with DIC, have not been reported. If bleeding does occur, standard guidelines for the management of DIC and bleeding should be followed."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "8bb47817-0f2d-4afa-a611-264aade7aed3",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-06T10:05:23.120862Z",
+  "modifiedDate" : "2021-01-06T10:05:23.120862Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "62db9e55-a13b-4cb2-9ac8-7c7dd86e17fb",
+      "name" : "Skjermbilde 2021-01-06 kl. 10.17.34.png",
+      "mimeType" : "image/png",
+      "size" : 236646,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "0c82acb1-01b2-4ced-8b61-70ab5feba53a",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-27T07:22:36.212392Z",
+  "modifiedDate" : "2021-03-18T10:49:56.149957Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "RapIoT toolkit: Rapid prototyping of collaborative Internet of Things applications",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2019",
+      "month" : "6",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Gianni, Francesco",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Mora, Simone",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : null,
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Divitini, Monica",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : null,
+      "sequence" : 3,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Future Generation Computer Systems",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0167-739X",
+        "onlineIssn" : null,
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1016/j.future.2018.02.030",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "95",
+        "issue" : null,
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "867",
+          "end" : "879"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "370d7e6b-f4ab-4a73-924d-e21c31b9b9e4",
+      "name" : "Skjermbilde 2021-01-27 kl. 08.21.26.png",
+      "mimeType" : "image/png",
+      "size" : 61600,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC BY-SA",
+        "labels" : {
+          "nb" : "CC BY-SA"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "9765bb7f-7296-426d-84e4-47909c6076ce",
+  "status" : "DRAFT",
+  "owner" : "jeg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-27T15:14:21.629952Z",
+  "modifiedDate" : "2021-01-27T15:14:21.629952Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Audit exemptions and compliance with tax and accounting regulations",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2018",
+      "month" : "5",
+      "day" : "8"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Downing, Jeff",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Department of Finance, National Research University Higher School of Economics (St. Petersburg), St. Petersburg, Russian Federation"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Langli, John Christian",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Department of Accounting, Auditing, and Business Analytics, BI Norwegian Business School, Oslo, Norway"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Accounting and Business Research",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0001-4788",
+        "onlineIssn" : "2159-4260",
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1080/00014788.2018.1442707",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "49",
+        "issue" : "1",
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "28",
+          "end" : "67"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : null,
+  "projects" : null
+}, {
+  "identifier" : "01785f6b8e79-a8375519-1430-431a-9e73-947ae30c60cd",
+  "status" : "DRAFT",
+  "owner" : "toratorg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-23T14:09:47.652655Z",
+  "modifiedDate" : "2021-03-23T14:09:47.640054Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "85245de4-0a0b-43f2-982d-64cf7dd99419",
+      "name" : "useravatar.png",
+      "mimeType" : "image/png",
+      "size" : 8837,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "29eb5a27-625f-4dd1-a45e-78448671ebe9",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-03T09:40:39.996063Z",
+  "modifiedDate" : "2021-02-22T10:08:37.582819Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "RapIoT toolkit: Rapid prototyping of collaborative Internet of Things applications",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2019",
+      "month" : "6",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1600776277408",
+        "name" : "Serussi, Sarah",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/203.11.1.0",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/260",
+        "labels" : null
+      } ],
+      "role" : "Editor",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Book",
+        "seriesTitle" : null,
+        "seriesNumber" : null,
+        "publisher" : null,
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "url" : null,
+        "isbnList" : null
+      },
+      "doi" : "https://doi.org/10.1016/j.future.2018.02.030",
+      "publicationInstance" : {
+        "type" : "BookAnthology",
+        "textbookContent" : false,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "MonographPages",
+          "introduction" : null,
+          "pages" : null,
+          "illustrated" : false
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "01781b5e4d88-f3bd8740-164b-46b5-8584-bc8451fe875b",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-10T09:01:08.361172Z",
+  "modifiedDate" : "2021-03-10T09:01:08.360926Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Toward unique identifiers",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "1999",
+      "month" : "7",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Paskin, N.",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Proceedings of the IEEE",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0018-9219",
+        "onlineIssn" : null,
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1109/5.771073",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "87",
+        "issue" : "7",
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "1208",
+          "end" : "1227"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : null,
+  "projects" : null
+}, {
+  "identifier" : "01785de49330-685439c3-e0f2-409e-8f32-8b6598c3d915",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-23T07:02:44.273098Z",
+  "modifiedDate" : "2021-03-23T07:02:44.270767Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "5558aa7d-3e58-4bc9-9946-9dfe7dbfb032",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "0178350a08f5-8594ef07-aad2-4342-8680-d4fab508f7c0",
+  "status" : "PUBLISHED",
+  "owner" : "hj@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/ec20779c-870c-46a2-904b-ade8ba7e1f5e",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-15T08:39:13.398278Z",
+  "modifiedDate" : "2021-03-24T09:51:00.793640Z",
+  "publishedDate" : "2021-03-24T09:51:00.793640Z",
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Heges kapittel",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2021",
+      "month" : null,
+      "day" : null
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/90208281",
+        "name" : "Johannesen, Hege",
+        "nameType" : null,
+        "orcId" : "0000-0003-0314-1872",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/7548.70.0.0",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1600776277420",
+        "name" : "Hellesvik, Terje",
+        "nameType" : null,
+        "orcId" : "0000-0002-8617-3281",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/194.60.0.0",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : [ "ola", "per", "nils", "kari", "berit" ],
+    "description" : "Beskrivelse av kapittel",
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Chapter",
+        "linkedContext" : "https://api.dev.nva.aws.unit.no/registration/017863839a29-3b8d4841-565a-4df1-9040-1e359fa8a9ea"
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "ChapterArticle",
+        "peerReviewed" : true,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "9",
+          "end" : "19"
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : "Sammendrag av kapittel."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "0e883dcd-f722-4945-b465-5f4c4bab6dac",
+      "name" : "publikasjonen.pdf",
+      "mimeType" : "application/pdf",
+      "size" : 84038,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC BY-NC-ND",
+        "labels" : {
+          "nb" : "CC BY-NC-ND"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : true,
+      "embargoDate" : "2021-04-01T08:49:00Z"
+    } ]
+  },
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "https://api.dev.nva.aws.unit.no/project/403669",
+    "name" : "test-retest av test batteri til måling av smerte og funksjon hos personer med\r\nkne artrose: reliabilitet, validitet, sensivitet og spesifisitet",
+    "grants" : null,
+    "approvals" : null
+  } ]
+}, {
+  "identifier" : "fda2cb3e-eff7-4822-ad93-e48aa5447f3e",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-28T07:37:47.969974Z",
+  "modifiedDate" : "2021-02-01T07:31:03.769565Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : "https://doi.org/10.16903/xkgw-ea25",
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Title",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2021",
+      "month" : "2",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3055930",
+        "name" : "Nilsen, Eirik",
+        "nameType" : null,
+        "orcId" : "0000-0002-2764-1727",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Degree",
+        "seriesTitle" : null,
+        "seriesNumber" : null,
+        "publisher" : "Food and Agriculture Organization of the United Nations (FAO)",
+        "level" : "NO_LEVEL",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "url" : null,
+        "isbnList" : null
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "DegreeMaster",
+        "submittedDate" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "MonographPages",
+          "introduction" : null,
+          "pages" : null,
+          "illustrated" : false
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "60b7758a-cc69-40d2-a838-439db4049f3c",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC0",
+        "labels" : {
+          "nb" : "CC0"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    }, {
+      "type" : "File",
+      "identifier" : "40f80214-83b7-4967-a081-e1521cff13ce",
+      "name" : "example.json",
+      "mimeType" : "application/json",
+      "size" : 154,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "56664019-a17d-436a-a06f-a352a9beac2c",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2020-11-26T12:07:27.998742Z",
+  "modifiedDate" : "2021-01-25T12:53:52.151464Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : "https://doi.org/10.16903/xjxg-3f44",
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Title",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2020",
+      "month" : "11",
+      "day" : "26"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1581504410717",
+        "name" : "Nilsen,Eirik",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Canadian Journal of Fisheries and Aquatic Sciences",
+        "level" : "LEVEL_1",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : null,
+        "onlineIssn" : "0706-652X",
+        "url" : "http://www.nrcresearchpress.com/journal/cjfas"
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : null,
+        "issue" : null,
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : null
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "863ea274-5bc0-4588-b87c-62a28c0ea795",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : {
+        "type" : "License",
+        "identifier" : "Publisher's conditions",
+        "labels" : {
+          "nb" : "Publisher's conditions"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "87507933-6990-439d-854b-985f034c0d4e",
+  "status" : "PUBLISHED",
+  "owner" : "jeg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-27T15:15:10.129524Z",
+  "modifiedDate" : "2021-02-23T13:46:09.238266Z",
+  "publishedDate" : "2021-02-23T13:46:09.238239Z",
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : "https://doi.org/10.16903/gt9e-1y86",
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "COVID-19 and its implications for thrombosis and anticoagulation",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2020",
+      "month" : "6",
+      "day" : "4"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3089669",
+        "name" : "Garshol, Jan Erik",
+        "nameType" : null,
+        "orcId" : "0000-0002-4488-9118",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : "1003",
+    "tags" : [ "Immunology", "Cell Biology", "Biochemistry", "Hematology" ],
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Blood",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0006-4971",
+        "onlineIssn" : "1528-0020",
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1182/blood.2020006000",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "135",
+        "issue" : "23",
+        "articleNumber" : null,
+        "peerReviewed" : true,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "2033",
+          "end" : "2040"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : "Abstract Severe acute respiratory syndrome coronavirus 2, coronavirus disease 2019 (COVID-19)-induced infection can be associated with a coagulopathy, findings consistent with infection-induced inflammatory changes as observed in patients with disseminated intravascular coagulopathy (DIC). The lack of prior immunity to COVID-19 has resulted in large numbers of infected patients across the globe and uncertainty regarding management of the complications that arise in the course of this viral illness. The lungs are the target organ for COVID-19; patients develop acute lung injury that can progress to respiratory failure, although multiorgan failure can also occur. The initial coagulopathy of COVID-19 presents with prominent elevation of D-dimer and fibrin/fibrinogen-degradation products, whereas abnormalities in prothrombin time, partial thromboplastin time, and platelet counts are relatively uncommon in initial presentations. Coagulation test screening, including the measurement of D-dimer and fibrinogen levels, is suggested. COVID-19–associated coagulopathy should be managed as it would be for any critically ill patient, following the established practice of using thromboembolic prophylaxis for critically ill hospitalized patients, and standard supportive care measures for those with sepsis-induced coagulopathy or DIC. Although D-dimer, sepsis physiology, and consumptive coagulopathy are indicators of mortality, current data do not suggest the use of full-intensity anticoagulation doses unless otherwise clinically indicated. Even though there is an associated coagulopathy with COVID-19, bleeding manifestations, even in those with DIC, have not been reported. If bleeding does occur, standard guidelines for the management of DIC and bleeding should be followed."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "9c3313f7-6947-46cf-82ad-e4030e709f15",
+      "name" : "Me icon.gif",
+      "mimeType" : "image/gif",
+      "size" : 5923,
+      "license" : null,
+      "administrativeAgreement" : true,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    }, {
+      "type" : "File",
+      "identifier" : "33844920-9c45-4e66-8c88-fc3af1af178a",
+      "name" : "data set.docx",
+      "mimeType" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size" : 11853,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC0",
+        "labels" : {
+          "nb" : "CC0"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "535956",
+    "name" : "Framstillingar av norrøn og samisk religion i KRLE-, norsk- og historielærebøkene i norsk skule",
+    "grants" : null,
+    "approvals" : null
+  }, {
+    "type" : "ResearchProject",
+    "id" : "575913",
+    "name" : "Cochrane Norway",
+    "grants" : null,
+    "approvals" : null
+  } ]
+}, {
+  "identifier" : "01785e80f1f7-bdef7391-aeb6-4374-8864-29e008c03bea",
+  "status" : "DRAFT",
+  "owner" : "toratorg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-23T09:53:32.152075Z",
+  "modifiedDate" : "2021-03-23T09:53:32.141470Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "9caca588-8ebd-442a-868b-886dea5b4c27",
+      "name" : "useravatar.png",
+      "mimeType" : "image/png",
+      "size" : 8837,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "0dd24411-3ea5-4b30-a09f-441c5492a077",
+  "status" : "PUBLISHED",
+  "owner" : "hj@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/ec20779c-870c-46a2-904b-ade8ba7e1f5e",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-24T13:21:51.785953Z",
+  "modifiedDate" : "2021-02-25T10:38:49.058549Z",
+  "publishedDate" : "2021-02-25T10:38:49.058527Z",
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "En fin dag i februar",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/smi",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2021",
+      "month" : null,
+      "day" : null
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/90208281",
+        "name" : "Johannesen, Hege",
+        "nameType" : null,
+        "orcId" : "0000-0003-0314-1872",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/194.66.10.0",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3080730",
+        "name" : "Bjermeland, Monica",
+        "nameType" : null,
+        "orcId" : "0000-0001-5435-0573",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/7537",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1605776531190",
+        "name" : "Kotar, Martina",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/1990",
+        "labels" : null
+      } ],
+      "role" : "Creator",
+      "sequence" : 3,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/10050130",
+        "name" : "Andersen, Nina Merete",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : null,
+      "role" : "Creator",
+      "sequence" : 4,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : [ "en", "to", "tre" ],
+    "description" : "Dette er en beskrivelse.",
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "European Respiratory Journal",
+        "level" : "NO_LEVEL",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : null,
+        "onlineIssn" : "0903-1936",
+        "url" : "http://maney.co.uk/index.php/journals/erj/"
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "99",
+        "issue" : "9",
+        "articleNumber" : null,
+        "peerReviewed" : true,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "1",
+          "end" : "9"
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : "Dette er et sammendrag."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "45f88980-1209-420a-b509-e912071daaee",
+      "name" : "avhandlinger_i_oria.pptx",
+      "mimeType" : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "size" : 43405,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC BY",
+        "labels" : {
+          "nb" : "CC BY"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : true,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "660215",
+    "name" : "Physical Ability Tests for Firefighters and Volunteers",
+    "grants" : [ {
+      "type" : "Grant",
+      "source" : "HVE",
+      "id" : null
+    } ],
+    "approvals" : null
+  } ]
+}, {
+  "identifier" : "bfa1b1a3-c325-46c8-a343-1d7c739b7c00",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-09T07:50:10.447504Z",
+  "modifiedDate" : "2021-02-09T07:51:42.961593Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Title",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2021",
+      "month" : "2",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3055930",
+        "name" : "Nilsen, Eirik",
+        "nameType" : null,
+        "orcId" : "0000-0002-2764-1727",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Canadian Journal of Fisheries and Aquatic Sciences",
+        "level" : "NO_LEVEL",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : null,
+        "onlineIssn" : "0706-652X",
+        "url" : "http://www.nrcresearchpress.com/journal/cjfas"
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "JournalLeader",
+        "volume" : null,
+        "issue" : null,
+        "articleNumber" : null,
+        "pages" : {
+          "type" : "Range",
+          "begin" : null,
+          "end" : null
+        },
+        "peerReviewed" : false
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "d21a5b15-52e4-46c4-b649-fe46389a83af",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC0",
+        "labels" : {
+          "nb" : "CC0"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "ddddfc29-521f-4174-af1a-b4df72e497ab",
+  "status" : "DRAFT",
+  "owner" : "jeg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-29T10:42:40.864286Z",
+  "modifiedDate" : "2021-02-10T11:40:22.445725Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Report of the National High Blood Pressure Education Program Working Group on High Blood Pressure in Pregnancy",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2000",
+      "month" : "7",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3089669",
+        "name" : "Garshol, Jan Erik",
+        "nameType" : null,
+        "orcId" : "0000-0002-4488-9118",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      }, {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/7511.2.0.0",
+        "labels" : null
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : [ "Obstetrics and Gynaecology" ],
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "American Journal of Obstetrics and Gynecology",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0002-9378",
+        "onlineIssn" : null,
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1067/mob.2000.107928",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "183",
+        "issue" : "1",
+        "articleNumber" : null,
+        "peerReviewed" : true,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "1",
+          "end" : "1"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "4263a41b-9640-4f9f-a6f6-8df4601c0f03",
+      "name" : "Me icon.gif",
+      "mimeType" : "image/gif",
+      "size" : 5923,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC0",
+        "labels" : {
+          "nb" : "CC0"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : true,
+      "publisherAuthority" : false,
+      "embargoDate" : "2021-05-20T10:39:00Z"
+    } ]
+  },
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "405509",
+    "name" : "A Learning Activity Oriented platform for Pedagogical Inclusion of High Quality\r\nVideo and Intelligent Learning Objects within Natural Science Education at\r\nEngineering Schools",
+    "grants" : null,
+    "approvals" : null
+  } ]
+}, {
+  "identifier" : "0178686d2496-4564a535-cc4f-4c05-a8cb-02f75bc0b320",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-25T08:08:06.551489Z",
+  "modifiedDate" : "2021-03-25T08:08:06.549006Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "DLR",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : null,
+    "contributors" : null,
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : null,
+    "metadataSource" : null,
+    "abstract" : "Learning Resource Repository (LOR)"
+  },
+  "fileSet" : null,
+  "projects" : null
+}, {
+  "identifier" : "847e2658-6f74-4f0c-a438-e2d73c304093",
+  "status" : "DRAFT",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-06T10:12:50.032615Z",
+  "modifiedDate" : "2021-01-26T13:21:16.150038Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Kladd 1",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : null,
+      "month" : null,
+      "day" : null
+    },
+    "contributors" : null,
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Book",
+        "seriesTitle" : null,
+        "seriesNumber" : null,
+        "publisher" : null,
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "url" : null,
+        "isbnList" : null
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "BookAnthology",
+        "textbookContent" : false,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "MonographPages",
+          "introduction" : null,
+          "pages" : null,
+          "illustrated" : false
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "c3b6e797-627d-490b-873a-c85f654b5b2a",
+  "status" : "DRAFT",
+  "owner" : "hj@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2020-12-02T13:35:41.702303Z",
+  "modifiedDate" : "2020-12-02T13:35:41.702303Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "4450694a-f172-46bf-8530-4184fb03f529",
+      "name" : "Filnåvn.pdf",
+      "mimeType" : "application/pdf",
+      "size" : 38608,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "0178688653cf-f79f99da-5c86-4d02-b9d7-9210cd5f839c",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-25T08:35:37.040548Z",
+  "modifiedDate" : "2021-03-25T08:35:37.029390Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "50e17c0a-e8e6-49e3-a567-e026d968154c",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "01785e4f184b-2043413e-765a-4153-80e6-9d87003af476",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-23T08:59:05.163883Z",
+  "modifiedDate" : "2021-03-23T08:59:05.161323Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "efadb4b3-1d6c-42e5-8f8d-7cb7e2a4e353",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "01786476ed7c-e072caf7-c9f1-4b3b-9c25-d9f263b5107f",
+  "status" : "DRAFT",
+  "owner" : "hj@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/ec20779c-870c-46a2-904b-ade8ba7e1f5e",
+    "labels" : null
+  },
+  "createdDate" : "2021-03-24T13:40:18.941515Z",
+  "modifiedDate" : "2021-03-24T13:40:18.934862Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : null,
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "5ee8bf15-fc6b-41f1-b1cc-2eeeb7a9fafc",
+      "name" : "publikasjonen.pdf",
+      "mimeType" : "application/pdf",
+      "size" : 84038,
+      "license" : null,
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "2881840c-b101-4871-920f-d40010689e5a",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-09T07:48:50.578933Z",
+  "modifiedDate" : "2021-02-09T07:49:50.922111Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Title",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2021",
+      "month" : "2",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3055930",
+        "name" : "Nilsen, Eirik",
+        "nameType" : null,
+        "orcId" : "0000-0002-2764-1727",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Canadian Journal of Fisheries and Aquatic Sciences",
+        "level" : "NO_LEVEL",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : null,
+        "onlineIssn" : "0706-652X",
+        "url" : "http://www.nrcresearchpress.com/journal/cjfas"
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "JournalReview",
+        "volume" : null,
+        "issue" : null,
+        "articleNumber" : null,
+        "pages" : {
+          "type" : "Range",
+          "begin" : null,
+          "end" : null
+        },
+        "peerReviewed" : false
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "9b1db030-d6ad-4b71-af72-b7e4a716885a",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC0",
+        "labels" : {
+          "nb" : "CC0"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "47c3b425-cfa7-4029-a69f-da0c41513052",
+  "status" : "DRAFT",
+  "owner" : "en@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-04T11:30:44.971869Z",
+  "modifiedDate" : "2021-02-08T07:41:37.441418Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "Title",
+    "alternativeTitles" : null,
+    "language" : null,
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2021",
+      "month" : "1",
+      "day" : "1"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/3055930",
+        "name" : "Nilsen, Eirik",
+        "nameType" : null,
+        "orcId" : "0000-0002-2764-1727",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/institutions/20202",
+        "labels" : null
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : null,
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "The International Journal of Tuberculosis and Lung Disease",
+        "level" : "NO_LEVEL",
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : null,
+        "onlineIssn" : "1027-3719",
+        "url" : "https://www.theunion.org/what-we-do/journals/ijtld"
+      },
+      "doi" : null,
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : null,
+        "issue" : null,
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : null,
+          "end" : null
+        }
+      }
+    },
+    "metadataSource" : null,
+    "abstract" : null
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "a37e975e-4dd8-48d0-96fa-f4206c65d209",
+      "name" : "example.txt",
+      "mimeType" : "text/plain",
+      "size" : 1334,
+      "license" : {
+        "type" : "License",
+        "identifier" : "CC0",
+        "labels" : {
+          "nb" : "CC0"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : null
+}, {
+  "identifier" : "a5f91a14-fc6a-4bd5-b815-0399bddfd82f",
+  "status" : "PUBLISHED",
+  "owner" : "sase@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-01-05T12:54:07.212920Z",
+  "modifiedDate" : "2021-01-08T10:12:33.406353Z",
+  "publishedDate" : "2021-01-06T11:48:48.569196Z",
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : "https://doi.org/10.16903/hned-7128",
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "RapIoT toolkit: Rapid prototyping of collaborative Internet of Things applications",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2019",
+      "month" : null,
+      "day" : null
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/1585565752369",
+        "name" : "Gianni, Francesco",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/194.63.10.0",
+        "labels" : {
+          "eng" : "Institutt for datateknologi og informatikk"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : true,
+      "email" : "gianni@ntnu.no"
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/10102863",
+        "name" : "Mora, Simone",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/194.63.10.0",
+        "labels" : {
+          "eng" : "Institutt for datateknologi og informatikk"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 2,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : "https://api.dev.nva.aws.unit.no/person/98057074",
+        "name" : "Divitini, Monica",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : "https://api.cristin.no/v2/units/194.63.10.0",
+        "labels" : {
+          "eng" : "Institutt for datateknologi og informatikk"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 3,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : "1045",
+    "tags" : [ "iot", "rapid prototyping", "cs", "ubiqutous" ],
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Future Generation Computer Systems",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0167-739X",
+        "onlineIssn" : null,
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1016/j.future.2018.02.030",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "95",
+        "issue" : null,
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "867",
+          "end" : "879"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : "The Internet of Things holds huge promise in enhancing collaboration in multiple application domains. Bringing internet connectivity to everyday objects and environments promotes ubiquitous access to information and integration with third-party systems. Further, connected “things” can be used as physical interfaces to enable users to cooperate, leveraging multiple devices via parallel and distributed actions. Yet creating prototypes of IoT systems is a complex task for developers non-expert in IoT, as it requires dealing with multi-layered hardware and software infrastructures. We introduce RapIoT, a software toolkit that facilitates the prototyping of IoT systems by providing an integrated set of technologies. Our solution abstracts low-level details and communication protocols, allowing developers non-expert in IoT to focus on application logic, facilitating rapid prototyping. RapIoT supports the development of collaborative applications by enabling the definition of high-level data type primitives and allowing interactions spread among multiple smart objects. RapIoT primitives act as a loosely coupled interface between generic IoT devices and applications, simplifying the development of systems that make use of an ecology of devices distributed to multiple users and environments. We illustrate the potential of our toolkit by presenting the development process of an IoT application ideated during a workshop with non-expert developers and addressing real-world challenges affecting smart cities. We conclude by discussing the strength and limitations of our platform, highlighting further possible uses for collaborative applications."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ {
+      "type" : "File",
+      "identifier" : "159f2e7c-d6e2-4648-a9ba-5954b389d17f",
+      "name" : "Skjermbilde 2020-10-27 kl. 14.56.11.png",
+      "mimeType" : "image/png",
+      "size" : 100957,
+      "license" : {
+        "type" : "License",
+        "identifier" : "Utgivers betingelser",
+        "labels" : {
+          "nb" : "Utgivers betingelser"
+        },
+        "link" : null
+      },
+      "administrativeAgreement" : false,
+      "publisherAuthority" : false,
+      "embargoDate" : null
+    } ]
+  },
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "636564",
+    "name" : "Resource-aware IoT with Enhanced Intelligence and Security",
+    "grants" : null,
+    "approvals" : null
+  } ]
+}, {
+  "identifier" : "58694f58-d2c0-4a0a-bd57-9c243d51cea0",
+  "status" : "DRAFT",
+  "owner" : "jeg@unit.no",
+  "publisher" : {
+    "type" : "Organization",
+    "id" : "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "labels" : null
+  },
+  "createdDate" : "2021-02-15T09:33:33.543693Z",
+  "modifiedDate" : "2021-02-15T10:12:58.273014Z",
+  "publishedDate" : null,
+  "indexedDate" : null,
+  "handle" : null,
+  "doi" : null,
+  "doiRequest" : null,
+  "link" : null,
+  "entityDescription" : {
+    "type" : "EntityDescription",
+    "mainTitle" : "COVID-19 and its implications for thrombosis and anticoagulation",
+    "alternativeTitles" : null,
+    "language" : "http://lexvo.org/id/iso639-3/eng",
+    "date" : {
+      "type" : "PublicationDate",
+      "year" : "2020",
+      "month" : "6",
+      "day" : "4"
+    },
+    "contributors" : [ {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Connors, Jean M.",
+        "nameType" : null,
+        "orcId" : "http://orcid.org/0000-0001-6445-582X",
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Hematology Division, Department of Medicine, Brigham and Women’s Hospital, Harvard Medical School, Boston, MA; and"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    }, {
+      "type" : "Contributor",
+      "identity" : {
+        "type" : "Identity",
+        "id" : null,
+        "name" : "Levy, Jerrold H.",
+        "nameType" : null,
+        "orcId" : null,
+        "arpId" : null
+      },
+      "affiliations" : [ {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Department of Anesthesiology,"
+        }
+      }, {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Division of Critical Care Medicine, and"
+        }
+      }, {
+        "type" : "Organization",
+        "id" : null,
+        "labels" : {
+          "en" : "Department of Surgery, Division of Cardiothoracic Surgery, Duke University School of Medicine, Durham, NC"
+        }
+      } ],
+      "role" : null,
+      "sequence" : 1,
+      "correspondingAuthor" : false,
+      "email" : null
+    } ],
+    "npiSubjectHeading" : null,
+    "tags" : [ "Immunology", "Cell Biology", "Biochemistry", "Hematology" ],
+    "description" : null,
+    "reference" : {
+      "type" : "Reference",
+      "publicationContext" : {
+        "type" : "Journal",
+        "title" : "Blood",
+        "level" : null,
+        "openAccess" : false,
+        "peerReviewed" : false,
+        "printIssn" : "0006-4971",
+        "onlineIssn" : "1528-0020",
+        "url" : null
+      },
+      "doi" : "https://doi.org/10.1182/blood.2020006000",
+      "publicationInstance" : {
+        "type" : "JournalArticle",
+        "volume" : "135",
+        "issue" : "23",
+        "articleNumber" : null,
+        "peerReviewed" : false,
+        "pages" : {
+          "type" : "Range",
+          "begin" : "2033",
+          "end" : "2040"
+        }
+      }
+    },
+    "metadataSource" : "https://www.crossref.org/",
+    "abstract" : "Abstract Severe acute respiratory syndrome coronavirus 2, coronavirus disease 2019 (COVID-19)-induced infection can be associated with a coagulopathy, findings consistent with infection-induced inflammatory changes as observed in patients with disseminated intravascular coagulopathy (DIC). The lack of prior immunity to COVID-19 has resulted in large numbers of infected patients across the globe and uncertainty regarding management of the complications that arise in the course of this viral illness. The lungs are the target organ for COVID-19; patients develop acute lung injury that can progress to respiratory failure, although multiorgan failure can also occur. The initial coagulopathy of COVID-19 presents with prominent elevation of D-dimer and fibrin/fibrinogen-degradation products, whereas abnormalities in prothrombin time, partial thromboplastin time, and platelet counts are relatively uncommon in initial presentations. Coagulation test screening, including the measurement of D-dimer and fibrinogen levels, is suggested. COVID-19–associated coagulopathy should be managed as it would be for any critically ill patient, following the established practice of using thromboembolic prophylaxis for critically ill hospitalized patients, and standard supportive care measures for those with sepsis-induced coagulopathy or DIC. Although D-dimer, sepsis physiology, and consumptive coagulopathy are indicators of mortality, current data do not suggest the use of full-intensity anticoagulation doses unless otherwise clinically indicated. Even though there is an associated coagulopathy with COVID-19, bleeding manifestations, even in those with DIC, have not been reported. If bleeding does occur, standard guidelines for the management of DIC and bleeding should be followed."
+  },
+  "fileSet" : {
+    "type" : "FileSet",
+    "files" : [ ]
+  },
+  "projects" : null
+} ]

@@ -1,128 +1,137 @@
 package no.unit.nva.search;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ListObjectsV2Request;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import no.unit.nva.utils.ImportDataCreateResponse;
-import no.unit.nva.utils.ImportDataRequest;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.core.Environment;
-import nva.commons.logutils.LogUtils;
-import nva.commons.logutils.TestAppender;
-import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-
-import java.time.Instant;
-
 import static no.unit.nva.search.ElasticSearchHighLevelRestClient.ELASTICSEARCH_ENDPOINT_ADDRESS_KEY;
 import static no.unit.nva.search.ElasticSearchHighLevelRestClient.ELASTICSEARCH_ENDPOINT_INDEX_KEY;
-import static no.unit.nva.search.ImportToSearchIndexHandler.AWS_S3_BUCKET_REGION_KEY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.amazonaws.services.lambda.runtime.Context;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+import no.unit.nva.dataimport.S3IonReader;
+import no.unit.nva.search.exception.SearchException;
+import no.unit.nva.utils.ImportDataRequest;
+import nva.commons.core.Environment;
+import nva.commons.core.ioutils.IoUtils;
+import nva.commons.logutils.LogUtils;
+import nva.commons.logutils.TestAppender;
+import org.javers.core.JaversBuilder;
+import org.javers.core.diff.Diff;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class ImportToSearchIndexHandlerTest {
 
     public static final String ELASTICSEARCH_ENDPOINT_ADDRESS = "localhost";
-    private static final String SAMPLE_BUCKET_NAME = "nva-datapipeline";
-    private static final String SAMPLE_S3FOLDER_KEY = "2020-10-12-06-55-32";
-    private static final String SAMPLE_S3REGION = "eu-west-1";
+    public static final String SOME_BUCKET = "someBucket";
+    public static final String INPUT_1 = "input1.ion.gz";
+    public static final String INPUT_2 = "input2.ion.gz";
+    public static final String INPUT_3 = "input3.ion.gz";
+    public static final String INPUT_4 = "input4.ion.gz";
+    public static final String[] RESOURCES = {INPUT_1, INPUT_2, INPUT_3, INPUT_4};
+    public static final Context CONTEXT = mock(Context.class);
+    public static final String PUBLISHED_RESOURCES_IDENTIFIERS = "published_resources_identifiers_for_all_files.txt";
+    public static final String EXPECTED_EXCEPTION_MESSAGE = "expectedMessage";
+    private static final String SOME_S3_LOCATION = "s3://some-bucket/some/path";
+
     private static final String ELASTICSEARCH_ENDPOINT_INDEX = "resources";
 
-
-    private Context mockContext = mock(Context.class);
     private Environment mockEnvironment = setupMockEnvironment();
-    private TestAppender testAppender;
+    private Stub3Driver s3Driver;
+    private String importRequest;
+    private ByteArrayOutputStream outputStream;
+    private StubElasticSearchHighLevelRestClient mockElasticSearchClient;
 
+    @BeforeEach
+    public void initialize() {
+        s3Driver = new Stub3Driver(SOME_BUCKET, RESOURCES);
+        importRequest = new ImportDataRequest(SOME_S3_LOCATION).toJsonString();
+        outputStream = new ByteArrayOutputStream();
+        mockEnvironment = setupMockEnvironment();
+        mockElasticSearchClient = new StubElasticSearchHighLevelRestClient(mockEnvironment);
+    }
+
+    @Test
+    public void handlerIndexesAllPublicationsStoredInResourceFiles() throws IOException {
+        s3Driver = new Stub3Driver(SOME_BUCKET, RESOURCES);
+        ImportToSearchIndexHandler handler = newHandler();
+
+        handler.handleRequest(newImportRequest(), outputStream, CONTEXT);
+        var actualIdentifiers = mockElasticSearchClient.getIndex().keySet();
+
+        Set<String> expectedIdentifiers = constructExpectedListOfPublicationIdentifiers();
+        Diff diff = JaversBuilder.javers()
+                        .build()
+                        .compare(expectedIdentifiers, actualIdentifiers);
+        assertThat(diff.prettyPrint(), actualIdentifiers, is(equalTo(expectedIdentifiers)));
+    }
+
+    @Test
+    public void handlerReturnsErrorEntryForEveryFailedIndexAction() throws IOException {
+        String outputString = handlerFailsToInsertPublications();
+
+        Set<String> expectedIdentifiers = constructExpectedListOfPublicationIdentifiers();
+        for (String failedImportIdentifier : expectedIdentifiers) {
+            assertThat(outputString, containsString(failedImportIdentifier));
+        }
+        assertThat(outputString, containsString(EXPECTED_EXCEPTION_MESSAGE));
+    }
+
+    @Test
+    public void handlerLogsErrorEntryForEveryFailedIndexAction() throws IOException {
+        TestAppender appender = LogUtils.getTestingAppenderForRootLogger();
+        handlerFailsToInsertPublications();
+        Set<String> expectedIdentifiers = constructExpectedListOfPublicationIdentifiers();
+        for (String failedImportIdentifier : expectedIdentifiers) {
+            assertThat(appender.getMessages(), containsString(failedImportIdentifier));
+        }
+
+        assertThat(appender.getMessages(), containsString(EXPECTED_EXCEPTION_MESSAGE));
+    }
+
+    private String handlerFailsToInsertPublications() throws IOException {
+        s3Driver = new Stub3Driver(SOME_BUCKET, RESOURCES);
+        mockElasticSearchClient = failingElasticSearch();
+        ImportToSearchIndexHandler handler = newHandler();
+        handler.handleRequest(newImportRequest(), outputStream, CONTEXT);
+        return outputStream.toString();
+    }
+
+    private StubElasticSearchHighLevelRestClient failingElasticSearch() {
+        return new StubElasticSearchHighLevelRestClient(mockEnvironment) {
+            @Override
+            public void addDocumentToIndex(IndexDocument document) throws SearchException {
+                throw new SearchException(document.getId().toString(),
+                                          new RuntimeException(EXPECTED_EXCEPTION_MESSAGE));
+            }
+        };
+    }
+
+    private ImportToSearchIndexHandler newHandler() {
+        return new ImportToSearchIndexHandler(s3Driver, new S3IonReader(s3Driver), mockElasticSearchClient);
+    }
 
     private Environment setupMockEnvironment() {
         Environment environment = mock(Environment.class);
         doReturn(ELASTICSEARCH_ENDPOINT_ADDRESS).when(environment)
-                .readEnv(ELASTICSEARCH_ENDPOINT_ADDRESS_KEY);
+            .readEnv(ELASTICSEARCH_ENDPOINT_ADDRESS_KEY);
         doReturn(ELASTICSEARCH_ENDPOINT_INDEX).when(environment)
-                .readEnv(ELASTICSEARCH_ENDPOINT_INDEX_KEY);
-        doReturn(SAMPLE_S3REGION).when(environment)
-                .readEnv(AWS_S3_BUCKET_REGION_KEY);
+            .readEnv(ELASTICSEARCH_ENDPOINT_INDEX_KEY);
         return environment;
     }
 
-
-    ImportToSearchIndexHandler setupMockHandler() {
-
-        ElasticSearchHighLevelRestClient mockElasticSearchClient = mock(ElasticSearchHighLevelRestClient.class);
-        AmazonS3 mockS3Client = mock(AmazonS3.class);
-        ListObjectsV2Result listing = mock(ListObjectsV2Result.class);
-        when(mockS3Client.listObjectsV2(anyString(), anyString())).thenReturn(listing);
-        when(mockS3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(listing);
-        ImportToSearchIndexHandler handler = new ImportToSearchIndexHandler(mockEnvironment,
-                mockElasticSearchClient,
-                mockS3Client);
-        testAppender = LogUtils.getTestingAppender(ImportToSearchIndexHandler.class);
-        return handler;
+    private Set<String> constructExpectedListOfPublicationIdentifiers() {
+        return new HashSet<>(IoUtils.linesfromResource(Path.of(PUBLISHED_RESOURCES_IDENTIFIERS)));
     }
 
-
-    @Test
-    void handlerAcceptsSampleImportRequest() throws ApiGatewayException {
-        ImportDataRequest importDataRequest = getImportDataRequest();
-        setupMockHandler().processInput(importDataRequest, new RequestInfo(), mockContext);
-
+    private InputStream newImportRequest() {
+        return IoUtils.stringToStream(importRequest);
     }
-
-    @Test
-    void handlerThrowsExceptionWhenInputIsBad() {
-        Executable executable = () -> setupMockHandler().processInput(null, null, mockContext);
-        assertThrows(ApiGatewayException.class, executable);
-    }
-
-    @Test
-    void constructorWithEnvironmentCreatesHandler() {
-        ImportToSearchIndexHandler handler = new ImportToSearchIndexHandler(mockEnvironment);
-        assertNotNull(handler);
-    }
-
-    @Test
-    void getSuccessStatusCodeReturnsCodeFromResponse() {
-        int imATeaPot = 418;
-        ImportDataCreateResponse response = new ImportDataCreateResponse("",
-                getImportDataRequest(),
-                imATeaPot,
-                Instant.now());
-        Integer statusCode = setupMockHandler().getSuccessStatusCode(null, response);
-        assertEquals(statusCode, imATeaPot);
-    }
-
-
-    @Test
-    void handlerReturnsAcceptedWhenInputIsOK() throws ApiGatewayException {
-
-        ImportDataRequest importDataRequest = getImportDataRequest();
-
-        ImportDataCreateResponse response = setupMockHandler().processInput(importDataRequest,
-                new RequestInfo(),
-                mockContext);
-
-        ImportDataCreateResponse expected = new ImportDataCreateResponse(response.getMessage(),
-                importDataRequest,
-                HttpStatus.SC_ACCEPTED,
-                response.getTimestamp());
-
-        assertEquals(expected,response);
-    }
-
-    private ImportDataRequest getImportDataRequest() {
-        return new ImportDataRequest.Builder()
-                .withS3Bucket(SAMPLE_BUCKET_NAME)
-                .withS3FolderKey(SAMPLE_S3FOLDER_KEY)
-                .build();
-    }
-
 }

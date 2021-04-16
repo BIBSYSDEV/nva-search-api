@@ -1,40 +1,50 @@
 package no.unit.nva.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nva.commons.core.JacocoGenerated;
-
+import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.JsonSerializable;
 
-public class ImportDataRequest {
+public class ImportDataRequest implements JsonSerializable {
 
-    private final String s3bucket;
-    private final String s3folderkey;
+    public static final String S3_LOCATION_FIELD = "s3Location";
+    @JsonProperty(S3_LOCATION_FIELD)
+    private final URI s3Location;
 
     @JsonCreator
-    public ImportDataRequest(@JsonProperty("s3bucket") String s3bucket,
-                             @JsonProperty("s3folderkey") String s3folderkey) {
-        this.s3bucket = s3bucket;
-        this.s3folderkey = s3folderkey;
+    public ImportDataRequest(@JsonProperty(S3_LOCATION_FIELD) String s3Location) {
+        this.s3Location = Optional.ofNullable(s3Location).map(URI::create).orElseThrow(this::reportMissingValue);
     }
 
-    protected ImportDataRequest(Builder builder) {
-        this.s3bucket = builder.s3bucket;
-        this.s3folderkey = builder.s3folderkey;
+    public String getS3Location() {
+        return s3Location.toString();
     }
 
-    public String getS3bucket() {
-        return s3bucket;
+    @JsonIgnore
+    @JacocoGenerated
+    public String getBucket() {
+        return s3Location.getHost();
     }
 
-    public String getS3folderkey() {
-        return s3folderkey;
+    @JsonIgnore
+    @JacocoGenerated
+    public String getS3Path() {
+        return s3Location.getPath();
+    }
+
+    @JacocoGenerated
+    @Override
+    public int hashCode() {
+        return Objects.hash(getS3Location());
     }
 
     @JacocoGenerated
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
@@ -42,39 +52,10 @@ public class ImportDataRequest {
             return false;
         }
         ImportDataRequest that = (ImportDataRequest) o;
-        return Objects.equals(s3bucket, that.s3bucket)
-            && Objects.equals(s3folderkey, that.s3folderkey);
+        return Objects.equals(getS3Location(), that.getS3Location());
     }
 
-    @JacocoGenerated
-    @Override
-    public int hashCode() {
-        return Objects.hash(s3bucket, s3folderkey);
+    private IllegalArgumentException reportMissingValue() {
+        return new IllegalArgumentException("Missing input:" + S3_LOCATION_FIELD);
     }
-
-    @JacocoGenerated
-    public static final class Builder {
-
-        private String s3bucket;
-        private String s3folderkey;
-
-        public Builder() {
-        }
-
-        public ImportDataRequest.Builder withS3Bucket(String s3bucket) {
-            this.s3bucket = s3bucket;
-            return this;
-        }
-
-        public ImportDataRequest.Builder withS3FolderKey(String s3folderkey) {
-            this.s3folderkey = s3folderkey;
-            return this;
-        }
-
-        public ImportDataRequest build() {
-            return new ImportDataRequest(this);
-        }
-
-    }
-
 }

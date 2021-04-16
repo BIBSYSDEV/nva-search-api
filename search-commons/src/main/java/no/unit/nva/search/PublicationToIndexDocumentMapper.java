@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import no.unit.nva.model.EntityDescription;
@@ -20,7 +21,7 @@ class PublicationToIndexDocumentMapper {
         this.publication = publication;
     }
 
-   protected IndexDocument generateIndexDocument() {
+    protected IndexDocument generateIndexDocument() {
         return new Builder()
                    .withId(publication.getIdentifier())
                    .withTitle(extractTitle())
@@ -52,6 +53,7 @@ class PublicationToIndexDocumentMapper {
         return entityDescription()
                    .stream()
                    .map(EntityDescription::getContributors)
+                   .filter(Objects::nonNull)
                    .flatMap(Collection::stream)
                    .map(IndexContributor::fromContributor)
                    .collect(Collectors.toList());

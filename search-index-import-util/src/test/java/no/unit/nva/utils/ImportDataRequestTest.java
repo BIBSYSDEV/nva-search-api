@@ -1,27 +1,41 @@
 package no.unit.nva.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import nva.commons.core.JsonUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.function.Executable;
 
 public class ImportDataRequestTest {
 
-    private static final String SAMPLE_BUCKET = "bucket";
-    private static final String SAMPLE_FOLDERKEY = "folderKey";
+    private static final String SOME_S3_LOCATION = "s3://some-bucket/some/path";
 
     @Test
-    void compareImportDataRequestWithBuilderAndWithConnstructor() {
-        ImportDataRequest importDataRequest1 = new ImportDataRequest(SAMPLE_BUCKET, SAMPLE_FOLDERKEY);
-
-        ImportDataRequest importDataRequest2 = new ImportDataRequest.Builder()
-                .withS3Bucket(SAMPLE_BUCKET)
-                .withS3FolderKey(SAMPLE_FOLDERKEY)
-                .build();
-
-        assertEquals(importDataRequest1, importDataRequest2);
-        assertEquals(importDataRequest2.getS3bucket(), SAMPLE_BUCKET);
-        assertEquals(importDataRequest2.getS3folderkey(), SAMPLE_FOLDERKEY);
-
+    public void creatorReturnsValidObjectWhenInputIsNotEmpty() {
+        ImportDataRequest request = new ImportDataRequest(SOME_S3_LOCATION);
+        assertThat(request.getS3Location(), is(equalTo(SOME_S3_LOCATION)));
     }
 
+    @Test
+    public void creatorThrowsExceptionWhenInputIsInvalid() {
+        ObjectNode objectNode = JsonUtils.objectMapperNoEmpty.createObjectNode();
+        String jsonString = objectNode.toPrettyString();
+        Executable action = () -> JsonUtils.objectMapper.readValue(jsonString, ImportDataRequest.class);
+        ValueInstantiationException exception = assertThrows(ValueInstantiationException.class, action);
+        assertThat(exception.getMessage(), containsString(ImportDataRequest.S3_LOCATION_FIELD));
+    }
+
+    @Test
+    public void serializationWithJsonReturnsValidObject() throws JsonProcessingException {
+        ObjectNode objectNode = JsonUtils.objectMapperNoEmpty.createObjectNode();
+        String jsonString = objectNode.put(ImportDataRequest.S3_LOCATION_FIELD, SOME_S3_LOCATION).toPrettyString();
+        ImportDataRequest deserialized = JsonUtils.objectMapper.readValue(jsonString, ImportDataRequest.class);
+        assertThat(deserialized.getS3Location(), is(equalTo(SOME_S3_LOCATION)));
+    }
 }

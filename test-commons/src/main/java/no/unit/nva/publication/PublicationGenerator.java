@@ -299,5 +299,6 @@ public final class PublicationGenerator {
         calendar.setTime(date);
         return calendar;
     }
+
 }
 

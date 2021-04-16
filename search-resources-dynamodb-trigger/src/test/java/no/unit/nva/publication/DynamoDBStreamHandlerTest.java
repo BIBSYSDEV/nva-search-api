@@ -285,7 +285,7 @@ public class DynamoDBStreamHandlerTest {
     void handlerIgnoresResourcesThatAreNotPublished(PublicationStatus publicationStatus)
         throws InvalidIssnException, IOException {
         InputStream input = dataGenerator.createResourceEvent(MODIFY, publicationStatus, publicationStatus);
-        String resourceIdentifier = dataGenerator.getNewPublication().getIdentifier().toString();
+        final String resourceIdentifier = dataGenerator.getNewPublication().getIdentifier().toString();
         handler.handleRequest(input, output, context);
         verifyRestClientIsNotInvoked();
 
