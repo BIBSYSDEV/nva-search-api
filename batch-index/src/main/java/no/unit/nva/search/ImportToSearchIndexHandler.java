@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static nva.commons.core.attempt.Try.attempt;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,19 +25,29 @@ import no.unit.nva.publication.storage.model.daos.DynamoEntry;
 import no.unit.nva.publication.storage.model.daos.ResourceDao;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.exception.SearchException;
+import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.JsonUtils;
 import nva.commons.core.attempt.Try;
 import nva.commons.core.exceptions.ExceptionUtils;
 import nva.commons.core.ioutils.IoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 public class ImportToSearchIndexHandler implements RequestStreamHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportToSearchIndexHandler.class);
-    private final S3IonReader ionReader;
     private final ElasticSearchHighLevelRestClient elasticSearchRestClient;
-    private final S3Driver s3Driver;
+    private S3IonReader ionReader;
+    private S3Driver s3Driver;
+    private Environment environment;
+
+    public ImportToSearchIndexHandler(Environment environment) {
+        this(null, null, defaultEsClient(environment));
+        this.environment = environment;
+    }
 
     public ImportToSearchIndexHandler(S3Driver s3Driver, S3IonReader ionReader,
                                       ElasticSearchHighLevelRestClient elasticSearchRestClient) {
@@ -49,6 +60,7 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         String inputString = IoUtils.streamToString(input);
         ImportDataRequest request = JsonUtils.objectMapper.readValue(inputString, ImportDataRequest.class);
+        setupS3Access(request.getBucket());
         Stream<Publication> publishedPublications = fetchPublishedPublicationsFromDynamoDbExportInS3(request);
 
         List<Try<SortableIdentifier>> indexActions = insertToIndex(publishedPublications)
@@ -65,6 +77,23 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
             String outputJson = JsonUtils.objectMapperWithEmpty.writeValueAsString(failures);
             writer.write(outputJson);
         }
+    }
+
+    private static ElasticSearchHighLevelRestClient defaultEsClient(Environment environment) {
+        return new ElasticSearchHighLevelRestClient(environment);
+    }
+
+    @JacocoGenerated
+    private void setupS3Access(String bucketName) {
+        s3Driver = new S3Driver(defaultS3Client(), bucketName);
+        ionReader = new S3IonReader(s3Driver);
+    }
+
+    private S3Client defaultS3Client() {
+        String awsRegion = environment
+                               .readEnvOpt("AWS_REGION")
+                               .orElse(Regions.EU_WEST_1.getName());
+        return S3Client.builder().region(Region.of(awsRegion)).build();
     }
 
     private void logFailure(String failureMessage) {
