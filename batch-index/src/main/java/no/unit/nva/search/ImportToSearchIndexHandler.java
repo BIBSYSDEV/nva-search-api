@@ -39,8 +39,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 public class ImportToSearchIndexHandler implements RequestStreamHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImportToSearchIndexHandler.class);
     public static final String AWS_REGION_ENV_VARIABLE = "AWS_REGION";
+    private static final Logger logger = LoggerFactory.getLogger(ImportToSearchIndexHandler.class);
     private final ElasticSearchHighLevelRestClient elasticSearchRestClient;
     private S3IonReader ionReader;
     private S3Driver s3Driver;
@@ -70,11 +70,13 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
         ImportDataRequest request = JsonUtils.objectMapper.readValue(inputString, ImportDataRequest.class);
         setupS3Access(request.getBucket());
         List<Publication> publishedPublications = fetchPublishedPublicationsFromDynamoDbExportInS3(request)
-            .collect(Collectors.toList());
+                                                      .collect(Collectors.toList());
 
         List<Try<SortableIdentifier>> indexActions = insertToIndex(publishedPublications.stream())
                                                          .collect(Collectors.toList());
 
+        List<SortableIdentifier> successes = collectSuccesses(indexActions.stream());
+        successes.forEach(this::logSuccess);
         List<String> failures = collectFailures(indexActions.stream());
         failures.forEach(this::logFailure);
         writeOutput(output, failures);
@@ -91,6 +93,17 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
     @JacocoGenerated
     private static ElasticSearchHighLevelRestClient defaultEsClient(Environment environment) {
         return new ElasticSearchHighLevelRestClient(environment);
+    }
+
+    private void logSuccess(SortableIdentifier identifier) {
+        logger.info("Successfully indexed:" + identifier);
+    }
+
+    private List<SortableIdentifier> collectSuccesses(Stream<Try<SortableIdentifier>> stream) {
+        return stream
+                   .filter(Try::isSuccess)
+                   .map(Try::orElseThrow)
+                   .collect(Collectors.toList());
     }
 
     // This method is necessary due to the fact that S3Driver needs the bucket for initialization which is
