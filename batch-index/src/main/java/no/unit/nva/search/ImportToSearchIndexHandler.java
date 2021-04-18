@@ -72,6 +72,11 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
         List<Publication> publishedPublications = fetchPublishedPublicationsFromDynamoDbExportInS3(request)
                                                       .collect(Collectors.toList());
 
+        List<SortableIdentifier> allIds = publishedPublications.stream()
+                                              .map(p -> p.getIdentifier())
+                                              .collect(Collectors.toList());
+        allIds.forEach(this::logSuccess);
+
         List<Try<SortableIdentifier>> indexActions = insertToIndex(publishedPublications.stream())
                                                          .collect(Collectors.toList());
 
