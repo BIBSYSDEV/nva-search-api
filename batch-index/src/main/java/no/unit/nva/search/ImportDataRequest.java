@@ -36,7 +36,6 @@ public class ImportDataRequest implements JsonSerializable {
     public String getS3Path() {
         return Optional.ofNullable(s3Location)
                    .map(URI::getPath)
-                   .map(uri -> toString())
                    .map(this::removeRoot)
                    .orElseThrow();
     }

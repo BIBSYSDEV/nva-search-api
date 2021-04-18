@@ -68,8 +68,8 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         String inputString = IoUtils.streamToString(input);
         ImportDataRequest request = JsonUtils.objectMapper.readValue(inputString, ImportDataRequest.class);
-        logger.info("Bucket:"+request.getBucket());
-        logger.info("Path"+request.getS3Path());
+        logger.info("Bucket: " +request.getBucket());
+        logger.info("Path: "+ request.getS3Path());
         setupS3Access(request.getBucket());
         logger.info("S3 is setup");
         List<Publication> publishedPublications = fetchPublishedPublicationsFromDynamoDbExportInS3(request)
