@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static java.util.Objects.isNull;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -39,6 +40,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 public class ImportToSearchIndexHandler implements RequestStreamHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportToSearchIndexHandler.class);
+    public static final String AWS_REGION_ENV_VARIABLE = "AWS_REGION";
     private final ElasticSearchHighLevelRestClient elasticSearchRestClient;
     private S3IonReader ionReader;
     private S3Driver s3Driver;
@@ -85,6 +87,7 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
         }
     }
 
+    @JacocoGenerated
     private static ElasticSearchHighLevelRestClient defaultEsClient(Environment environment) {
         return new ElasticSearchHighLevelRestClient(environment);
     }
@@ -93,14 +96,15 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
     // known only in query time.
     @JacocoGenerated
     private void setupS3Access(String bucketName) {
-        s3Driver = new S3Driver(defaultS3Client(), bucketName);
-        ionReader = new S3IonReader(s3Driver);
+        if (isNull(s3Driver)) {
+            s3Driver = new S3Driver(defaultS3Client(), bucketName);
+            ionReader = new S3IonReader(s3Driver);
+        }
     }
 
+    @JacocoGenerated
     private S3Client defaultS3Client() {
-        String awsRegion = environment
-                               .readEnvOpt("AWS_REGION")
-                               .orElse(Regions.EU_WEST_1.getName());
+        String awsRegion = environment.readEnvOpt(AWS_REGION_ENV_VARIABLE).orElse(Regions.EU_WEST_1.getName());
         return S3Client.builder().region(Region.of(awsRegion)).build();
     }
 
