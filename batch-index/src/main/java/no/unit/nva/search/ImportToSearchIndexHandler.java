@@ -44,6 +44,12 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
     private S3Driver s3Driver;
     private Environment environment;
 
+    @JacocoGenerated
+    public ImportToSearchIndexHandler() {
+        this(new Environment());
+    }
+
+    @JacocoGenerated
     public ImportToSearchIndexHandler(Environment environment) {
         this(null, null, defaultEsClient(environment));
         this.environment = environment;
@@ -83,6 +89,8 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
         return new ElasticSearchHighLevelRestClient(environment);
     }
 
+    // This method is necessary due to the fact that S3Driver needs the bucket for initialization which is
+    // known only in query time.
     @JacocoGenerated
     private void setupS3Access(String bucketName) {
         s3Driver = new S3Driver(defaultS3Client(), bucketName);
