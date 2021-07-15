@@ -2,7 +2,7 @@
 
 dependencies {
 
-    api group: 'com.github.BIBSYSDEV', name: 'nva-datamodel-java', version: nvaDatamodelVersion
+    api group: 'com.github.bibsysdev', name: 'nva-datamodel-java', version: nvaDatamodelVersion
 
     api group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
@@ -53,6 +53,12 @@ task buildZipForLayer(type: Zip) {
     }
     into('java/lib')
 }
+
+test {
+    environment 'ELASTICSEARCH_REGION', 'eu-west-1'
+    environment 'ELASTICSEARCH_ENDPOINT_INDEX', 'resources'
+}
+
 
 buildZipForLayer.dependsOn copyDepsForLayer
 build.dependsOn buildZipForLayer

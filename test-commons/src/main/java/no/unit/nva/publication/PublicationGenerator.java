@@ -1,16 +1,6 @@
 package no.unit.nva.publication;
 
 import com.github.javafaker.Faker;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.model.Approval;
 import no.unit.nva.model.ApprovalStatus;
@@ -42,6 +32,17 @@ import no.unit.nva.model.pages.Pages;
 import no.unit.nva.model.pages.Range;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Generates a Publication with no empty field, except for DoiRequest.
@@ -130,7 +131,7 @@ public final class PublicationGenerator {
         return FAKER.internet().emailAddress();
     }
 
-    private static List<ResearchProject> randomProjects() {
+    public static List<ResearchProject> randomProjects() {
         List<Grant> grants = randomGrants();
         List<Approval> approvals = randomApprovals();
         ResearchProject project = new Builder()
@@ -172,14 +173,14 @@ public final class PublicationGenerator {
                    .build();
     }
 
-    private static Organization samplePublisher() {
+    public static Organization samplePublisher() {
         return new Organization.Builder()
                    .withId(URI.create(PUBLISHER_ID))
                    .withLabels(randomMap())
                    .build();
     }
 
-    private static FileSet sampleFileSet() {
+    public static FileSet sampleFileSet() {
         License licenseId = randomLicense();
         File file = randomFile(licenseId);
         return new FileSet.Builder().withFiles(List.of(file)).build();
@@ -233,11 +234,11 @@ public final class PublicationGenerator {
                    .build();
     }
 
-    private static Map<String, String> randomTitles() {
+    public static Map<String, String> randomTitles() {
         return Map.of(LEXVO_ENG, randomString());
     }
 
-    private static PublicationDate randomPublicationDate() {
+    public static PublicationDate randomPublicationDate() {
         return new PublicationDate.Builder().withYear(randomYear()).withMonth(randomMonth()).withDay(
             randomDayOfMonth()).build();
     }
@@ -276,7 +277,7 @@ public final class PublicationGenerator {
                    .build();
     }
 
-    private static Integer randomInteger() {
+    public static Integer randomInteger() {
         return RANDOM.nextInt(MAX_INT);
     }
 
@@ -284,7 +285,7 @@ public final class PublicationGenerator {
         return Integer.toString(randomDate().get(Calendar.DAY_OF_MONTH));
     }
 
-    private static String randomMonth() {
+    public static String randomMonth() {
         return Integer.toString(randomDate().get(Calendar.MONTH));
     }
 
@@ -293,7 +294,7 @@ public final class PublicationGenerator {
         return Integer.toString(calendar.get(Calendar.YEAR));
     }
 
-    private static Calendar randomDate() {
+    public static Calendar randomDate() {
         Date date = FAKER.date().birthday();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
