@@ -1,0 +1,21 @@
+{
+  "@context": {
+    "@vocab": "https://example.org/onto#",
+    "id": "@id",
+    "type": "@type",
+    "series": {
+      "@type": "@id"
+    }
+  },
+  "type": "Resource",
+  "entityDescription": {
+    "type": "EntityDescription",
+    "reference": {
+      "type": "Reference",
+      "publicationContext": {
+        "type": "Book",
+        "series": "https://api.dev.nva.aws.unit.no/publication-channels/journal/449575/2020"
+      }
+    }
+  }
+}

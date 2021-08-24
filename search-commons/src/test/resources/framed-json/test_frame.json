@@ -1,0 +1,18 @@
+{
+  "@context": {
+    "@vocab": "https://example.org/onto#",
+    "channel": "https://bibsysdev.github.io/src/publication-channel/ontology.ttl#",
+    "id": "@id",
+    "type": "@type"
+  },
+  "@type": "Resource",
+  "entityDescription": {
+    "reference": {
+      "publicationContext": {
+        "series": {
+          "@type": "channel:Journal"
+        }
+      }
+    }
+  }
+}

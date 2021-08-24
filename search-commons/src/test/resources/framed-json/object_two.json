@@ -1,0 +1,16 @@
+{
+  "@context": "https://bibsysdev.github.io/src/publication-channel/channel-context.json",
+  "id": "https://api.dev.nva.aws.unit.no/publication-channels/journal/449575/2020",
+  "type": "https://bibsysdev.github.io/src/publication-channel/ontology.ttl#Journal",
+  "identifier": "449575",
+  "name": "Doktoravhandlinger ved NTNU",
+  "website": "http://NA",
+  "level": "0",
+  "active": true,
+  "onlineIssn": null,
+  "printIssn": "1503-8181",
+  "npiDomain": "Ikke tildelt",
+  "openAccess": null,
+  "language": "Flerspråklig",
+  "publisherId": null
+}
