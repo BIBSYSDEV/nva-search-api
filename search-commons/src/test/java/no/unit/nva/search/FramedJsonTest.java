@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 class FramedJsonTest {
 
@@ -20,7 +22,7 @@ class FramedJsonTest {
         List<InputStream> objects = List.of(one, two);
         InputStream frame = IoUtils.inputStreamFromResources("framed-json/test_frame.json");
         var framedJson = new FramedJson(objects, frame);
-        assertThat(framedJson.getFramedJson(), null);
+        assertThat(framedJson.getFramedJson(), is(notNullValue()));
     }
 
 }
