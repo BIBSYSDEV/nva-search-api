@@ -191,7 +191,7 @@ public class ElasticSearchHighLevelRestClient {
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) throws InterruptedException {
         ParallelMapper<Publication,IndexDocument> mapper =
-            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 100);
+            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 10);
         mapper.map();
         return mapper.getSuccesses();
     }
