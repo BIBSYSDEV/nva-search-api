@@ -18,7 +18,5 @@ dependencies {
     testImplementation(group: 'org.javers', name: 'javers-core', version: '6.0.1') {
         because "For comparing objects during migration"
     }
-    compileOnly(group: 'software.amazon.awssdk', name: 's3', version: project.ext.awsSdk2Version) {
-        because 'PMD complains about "Lsoftware/amazon/awssdk/services/s3/S3Client"'
-    }
+    implementation(group: 'software.amazon.awssdk', name: 's3', version: project.ext.awsSdk2Version)
 }
