@@ -72,6 +72,7 @@ public class ElasticSearchHighLevelRestClient {
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchHighLevelRestClient.class);
     private static final ObjectMapper mapper = JsonUtils.objectMapperWithEmpty;
     private static final AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
+    public static final int AMOUNT_OF_PUBLICATIONS_EXPANDED_SIMULTANEOUSLY = 10;
     private final RestHighLevelClientWrapper elasticSearchClient;
 
     /**
@@ -191,7 +192,7 @@ public class ElasticSearchHighLevelRestClient {
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) throws InterruptedException {
         ParallelMapper<Publication,IndexDocument> mapper =
-            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 10);
+            new ParallelMapper<>(bulk, IndexDocument::fromPublication, AMOUNT_OF_PUBLICATIONS_EXPANDED_SIMULTANEOUSLY);
         mapper.map();
         return mapper.getSuccesses();
     }
