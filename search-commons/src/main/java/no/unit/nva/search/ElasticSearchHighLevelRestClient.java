@@ -32,6 +32,7 @@ import no.unit.nva.search.exception.SearchException;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.JsonUtils;
 import nva.commons.core.attempt.Try;
+import nva.commons.core.parallel.ParallelMapper;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.DocWriteResponse;
@@ -65,7 +66,7 @@ public class ElasticSearchHighLevelRestClient {
             = "Document with id={} was not found in elasticsearch";
     public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
     public static final String ELASTIC_SEARCH_NUMBER_OF_REPLICAS = "index.number_of_replicas";
-    public static final int BULK_SIZE = 100;
+    public static final int BULK_SIZE = 1000;
     public static final boolean SEQUENTIAL = false;
     public static final String QUERY_PARAMETER_START = "?query=";
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchHighLevelRestClient.class);
@@ -152,7 +153,6 @@ public class ElasticSearchHighLevelRestClient {
 
     public Stream<BulkResponse> batchInsert(Stream<Publication> publications) {
         Stream<List<Publication>> stream = splitStreamToBatches(publications);
-
         return stream.map(attempt(this::insertBatch)).map(Try::orElseThrow);
     }
 
@@ -175,11 +175,11 @@ public class ElasticSearchHighLevelRestClient {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(bulks, Spliterator.ORDERED), SEQUENTIAL);
     }
 
-    private BulkResponse insertBatch(List<Publication> bulk) throws IOException {
-        List<IndexRequest> indexRequests = bulk.stream()
+    private BulkResponse insertBatch(List<Publication> bulk) throws IOException, InterruptedException {
+        List<IndexRequest> indexRequests = createIndexDocuments(bulk)
+            .stream()
             .parallel()
-            .map(IndexDocument::fromPublication)
-            .map(this::getUpdateRequest)
+            .map(this::createUpdateRequest)
             .collect(Collectors.toList());
 
         BulkRequest request = new BulkRequest();
@@ -187,6 +187,13 @@ public class ElasticSearchHighLevelRestClient {
         request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
         request.waitForActiveShards(ActiveShardCount.ONE);
         return elasticSearchClient.bulk(request, RequestOptions.DEFAULT);
+    }
+
+    private List<IndexDocument> createIndexDocuments(List<Publication> bulk) throws InterruptedException {
+        ParallelMapper<Publication,IndexDocument> mapper =
+            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 100);
+        mapper.map();
+        return mapper.getSuccesses();
     }
 
     private SearchResponse doSearch(String term,
@@ -211,10 +218,10 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private void doUpsert(IndexDocument document) throws IOException {
-        elasticSearchClient.index(getUpdateRequest(document), RequestOptions.DEFAULT);
+        elasticSearchClient.index(createUpdateRequest(document), RequestOptions.DEFAULT);
     }
 
-    private IndexRequest getUpdateRequest(IndexDocument document) {
+    private IndexRequest createUpdateRequest(IndexDocument document) {
         return new IndexRequest(ELASTICSEARCH_ENDPOINT_INDEX)
                 .source(document.toJsonString(), XContentType.JSON)
                 .id(document.getIdentifier().toString());

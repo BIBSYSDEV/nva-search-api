@@ -26,7 +26,7 @@ public class IndexDocumentWrapperLinkedData {
     }
 
     public String toFramedJsonLd(JsonNode indexDocument) throws IOException {
-        try (InputStream frame = new SearchIndexFrame().asInputStream()) {
+        try (InputStream frame =  SearchIndexFrame.asInputStream()) {
             return new FramedJsonGenerator(getInputStreams(indexDocument), frame).getFramedJson();
         }
     }

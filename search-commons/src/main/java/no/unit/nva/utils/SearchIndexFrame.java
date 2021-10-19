@@ -5,16 +5,16 @@ import nva.commons.core.ioutils.IoUtils;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-public class SearchIndexFrame {
+public final class SearchIndexFrame {
 
     public static final String FRAME_JSON = "publication_frame.json";
-    private final String frameSrc;
+    private static final String frameSrc =IoUtils.stringFromResources(Path.of(FRAME_JSON));
 
-    public SearchIndexFrame() {
-        frameSrc = IoUtils.stringFromResources(Path.of(FRAME_JSON));
+    private SearchIndexFrame() {
+
     }
 
-    public InputStream asInputStream() {
+    public static InputStream asInputStream() {
         return IoUtils.stringToStream(frameSrc);
     }
 
