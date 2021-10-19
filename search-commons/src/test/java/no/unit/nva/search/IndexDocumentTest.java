@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.model.Publication;
 import no.unit.nva.model.contexttypes.Publisher;
 import no.unit.nva.model.exceptions.InvalidIsbnException;
-import no.unit.nva.utils.UriRetriever;
+import no.unit.nva.search.utils.UriRetriever;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
@@ -23,10 +23,10 @@ import static no.unit.nva.publication.PublicationGenerator.sampleReportWithAPubl
 import static no.unit.nva.search.IndexDocument.PUBLISHER_ID_JSON_PTR;
 import static no.unit.nva.search.IndexDocument.SERIES_ID_JSON_PTR;
 import static no.unit.nva.search.IndexDocument.fromPublication;
-import static no.unit.nva.utils.IndexDocumentWrapperLinkedDataTest.PUBLISHER_NAME_JSON_PTR;
-import static no.unit.nva.utils.IndexDocumentWrapperLinkedDataTest.SERIES_NAME_JSON_PTR;
-import static no.unit.nva.utils.PublicationChannelGenerator.getPublicationChannelSampleJournal;
-import static no.unit.nva.utils.PublicationChannelGenerator.getPublicationChannelSamplePublisher;
+import static no.unit.nva.search.utils.IndexDocumentWrapperLinkedDataTest.PUBLISHER_NAME_JSON_PTR;
+import static no.unit.nva.search.utils.IndexDocumentWrapperLinkedDataTest.SERIES_NAME_JSON_PTR;
+import static no.unit.nva.search.utils.PublicationChannelGenerator.getPublicationChannelSampleJournal;
+import static no.unit.nva.search.utils.PublicationChannelGenerator.getPublicationChannelSamplePublisher;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;

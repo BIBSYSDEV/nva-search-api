@@ -1,4 +1,4 @@
-package no.unit.nva.utils;
+package no.unit.nva.search.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.model.Publication;
@@ -18,8 +18,8 @@ import static no.unit.nva.publication.PublicationGenerator.sampleReportWithAPubl
 import static no.unit.nva.search.IndexDocument.PUBLISHER_ID_JSON_PTR;
 import static no.unit.nva.search.IndexDocument.SERIES_ID_JSON_PTR;
 import static no.unit.nva.search.IndexDocument.fromPublication;
-import static no.unit.nva.utils.PublicationChannelGenerator.getPublicationChannelSampleJournal;
-import static no.unit.nva.utils.PublicationChannelGenerator.getPublicationChannelSamplePublisher;
+import static no.unit.nva.search.utils.PublicationChannelGenerator.getPublicationChannelSampleJournal;
+import static no.unit.nva.search.utils.PublicationChannelGenerator.getPublicationChannelSamplePublisher;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

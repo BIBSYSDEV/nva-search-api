@@ -1,7 +1,8 @@
-package no.unit.nva.utils;
+package no.unit.nva.search.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import no.unit.nva.model.Publication;
+import no.unit.nva.search.utils.DynamodbItemUtilsClone;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
