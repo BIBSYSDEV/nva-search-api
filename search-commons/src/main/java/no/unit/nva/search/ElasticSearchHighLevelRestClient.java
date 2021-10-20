@@ -62,7 +62,7 @@ public class ElasticSearchHighLevelRestClient {
     public static final String TOOK_JSON_POINTER = "/took";
     public static final String HITS_JSON_POINTER = "/hits/hits";
     public static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_ELASTICSEARCH
-            = "Document with id={} was not found in elasticsearch";
+        = "Document with id={} was not found in elasticsearch";
     public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
     public static final String ELASTIC_SEARCH_NUMBER_OF_REPLICAS = "index.number_of_replicas";
     public static final int BULK_SIZE = 1000;
@@ -90,15 +90,6 @@ public class ElasticSearchHighLevelRestClient {
 
         this.elasticSearchClient = elasticSearchClient;
         logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, ELASTICSEARCH_ENDPOINT_INDEX);
-    }
-
-    private static int intFromNode(JsonNode jsonNode, String jsonPointer) {
-        JsonNode json = jsonNode.at(jsonPointer);
-        return isPopulated(json) ? json.asInt() : 0;
-    }
-
-    private static boolean isPopulated(JsonNode json) {
-        return !json.isNull() && !json.asText().isBlank();
     }
 
     /**
@@ -149,7 +140,6 @@ public class ElasticSearchHighLevelRestClient {
         }
     }
 
-
     public Stream<BulkResponse> batchInsert(Stream<Publication> publications) {
         Stream<List<Publication>> stream = splitStreamToBatches(publications);
         return stream.map(attempt(this::insertBatch)).map(Try::orElseThrow);
@@ -158,19 +148,28 @@ public class ElasticSearchHighLevelRestClient {
     protected final RestHighLevelClientWrapper createElasticsearchClientWithInterceptor() {
         AWS4Signer signer = getAws4Signer();
         HttpRequestInterceptor interceptor =
-                new AWSRequestSigningApacheInterceptor(ELASTIC_SEARCH_SERVICE_NAME,
-                        signer,
-                        credentialsProvider);
+            new AWSRequestSigningApacheInterceptor(ELASTIC_SEARCH_SERVICE_NAME,
+                                                   signer,
+                                                   credentialsProvider);
 
         RestClientBuilder clientBuilder = RestClient
-                .builder(HttpHost.create(ELASTICSEARCH_ENDPOINT_ADDRESS))
-                .setHttpClientConfigCallback(config -> config.addInterceptorLast(interceptor));
+            .builder(HttpHost.create(ELASTICSEARCH_ENDPOINT_ADDRESS))
+            .setHttpClientConfigCallback(config -> config.addInterceptorLast(interceptor));
         return new RestHighLevelClientWrapper(clientBuilder);
+    }
+
+    private static int intFromNode(JsonNode jsonNode, String jsonPointer) {
+        JsonNode json = jsonNode.at(jsonPointer);
+        return isPopulated(json) ? json.asInt() : 0;
+    }
+
+    private static boolean isPopulated(JsonNode json) {
+        return !json.isNull() && !json.asText().isBlank();
     }
 
     private Stream<List<Publication>> splitStreamToBatches(Stream<Publication> indexDocuments) {
         UnmodifiableIterator<List<Publication>> bulks = Iterators.partition(
-                indexDocuments.iterator(), BULK_SIZE);
+            indexDocuments.iterator(), BULK_SIZE);
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(bulks, Spliterator.ORDERED), SEQUENTIAL);
     }
 
@@ -189,7 +188,7 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) {
-       return bulk.stream().parallel().map(IndexDocument::fromPublication).collect(Collectors.toList());
+        return bulk.stream().parallel().map(IndexDocument::fromPublication).collect(Collectors.toList());
     }
 
     private SearchResponse doSearch(String term,
@@ -198,18 +197,18 @@ public class ElasticSearchHighLevelRestClient {
                                     String orderBy,
                                     SortOrder sortOrder) throws IOException {
         return elasticSearchClient.search(getSearchRequest(term,
-                results,
-                from,
-                orderBy,
-                sortOrder), RequestOptions.DEFAULT);
+                                                           results,
+                                                           from,
+                                                           orderBy,
+                                                           sortOrder), RequestOptions.DEFAULT);
     }
 
     private SearchRequest getSearchRequest(String term, int results, int from, String orderBy, SortOrder sortOrder) {
         final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder()
-                .query(QueryBuilders.queryStringQuery(term))
-                .sort(orderBy, sortOrder)
-                .from(from)
-                .size(results);
+            .query(QueryBuilders.queryStringQuery(term))
+            .sort(orderBy, sortOrder)
+            .from(from)
+            .size(results);
         return new SearchRequest(ELASTICSEARCH_ENDPOINT_INDEX).source(sourceBuilder);
     }
 
@@ -219,46 +218,46 @@ public class ElasticSearchHighLevelRestClient {
 
     private IndexRequest createUpdateRequest(IndexDocument document) {
         return new IndexRequest(ELASTICSEARCH_ENDPOINT_INDEX)
-                .source(document.toJsonString(), XContentType.JSON)
-                .id(document.getIdentifier().toString());
+            .source(document.toJsonString(), XContentType.JSON)
+            .id(document.getIdentifier().toString());
     }
 
     private void doDelete(String identifier) throws IOException {
         DeleteResponse deleteResponse = elasticSearchClient
-                .delete(new DeleteRequest(ELASTICSEARCH_ENDPOINT_INDEX, identifier),
-                        RequestOptions.DEFAULT);
+            .delete(new DeleteRequest(ELASTICSEARCH_ENDPOINT_INDEX, identifier),
+                    RequestOptions.DEFAULT);
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_ELASTICSEARCH, identifier);
         }
     }
 
     private SearchResourcesResponse toSearchResourcesResponse(String searchterm, String body)
-            throws JsonProcessingException {
+        throws JsonProcessingException {
         JsonNode values = mapper.readTree(body);
 
         List<JsonNode> sourceList = extractSourceList(values);
         int total = intFromNode(values, TOTAL_JSON_POINTER);
         int took = intFromNode(values, TOOK_JSON_POINTER);
         URI searchResultId =
-                URI.create(createIdWithQuery(searchterm));
+            URI.create(createIdWithQuery(searchterm));
         return new SearchResourcesResponse.Builder()
-                .withContext(DEFAULT_SEARCH_CONTEXT)
-                .withId(searchResultId)
-                .withTook(took)
-                .withTotal(total)
-                .withHits(sourceList)
-                .build();
+            .withContext(DEFAULT_SEARCH_CONTEXT)
+            .withId(searchResultId)
+            .withTook(took)
+            .withTotal(total)
+            .withHits(sourceList)
+            .build();
     }
 
     private String createIdWithQuery(String searchterm) {
-        return SEARCH_API_BASE_ADDRESS + QUERY_PARAMETER_START +  URLEncoder.encode(searchterm, StandardCharsets.UTF_8);
+        return SEARCH_API_BASE_ADDRESS + QUERY_PARAMETER_START + URLEncoder.encode(searchterm, StandardCharsets.UTF_8);
     }
 
     private List<JsonNode> extractSourceList(JsonNode record) {
         return toStream(record.at(HITS_JSON_POINTER))
-                .map(this::extractSourceStripped)
-                .map(this::extractIdAndContext)
-                .collect(Collectors.toList());
+            .map(this::extractSourceStripped)
+            .map(this::extractIdAndContext)
+            .collect(Collectors.toList());
     }
 
     private JsonNode extractSourceStripped(JsonNode record) {
