@@ -191,7 +191,7 @@ public class ElasticSearchHighLevelRestClient {
         logger.info("Started creating index documents");
         long tt1= System.currentTimeMillis();
         ParallelMapper<Publication, IndexDocument> mapper =
-            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 200);
+            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 400);
         mapper.map();
         long tt2= System.currentTimeMillis();
         double seconds = ((double)tt2-tt1)/((double)1000);
