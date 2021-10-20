@@ -174,14 +174,13 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private BulkResponse insertBatch(List<Publication> bulk) throws IOException, InterruptedException {
-        List<IndexRequest> indexRequests = createIndexDocuments(bulk)
+        BulkRequest request = new BulkRequest();
+        createIndexDocuments(bulk)
             .stream()
             .parallel()
             .map(this::createUpdateRequest)
-            .collect(Collectors.toList());
+            .forEach(request::add);
 
-        BulkRequest request = new BulkRequest();
-        indexRequests.forEach(request::add);
         request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
         request.waitForActiveShards(ActiveShardCount.ONE);
         return elasticSearchClient.bulk(request, RequestOptions.DEFAULT);
@@ -191,7 +190,7 @@ public class ElasticSearchHighLevelRestClient {
         logger.info("Started creating index documents");
         long tt1= System.currentTimeMillis();
         ParallelMapper<Publication, IndexDocument> mapper =
-            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 400);
+            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 200);
         mapper.map();
         long tt2= System.currentTimeMillis();
         double seconds = ((double)tt2-tt1)/((double)1000);
