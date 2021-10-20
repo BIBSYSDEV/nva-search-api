@@ -188,9 +188,14 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) throws InterruptedException {
+        logger.info("Started creating index documents");
+        long tt1= System.currentTimeMillis();
         ParallelMapper<Publication, IndexDocument> mapper =
             new ParallelMapper<>(bulk, IndexDocument::fromPublication, 200);
         mapper.map();
+        long tt2= System.currentTimeMillis();
+        double seconds = ((double)tt2-tt1)/((double)1000);
+        logger.info("Finished creating documents.Time: " +seconds);
         return mapper.getSuccesses();
     }
 
