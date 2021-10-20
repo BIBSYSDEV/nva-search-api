@@ -32,6 +32,7 @@ import no.unit.nva.search.exception.SearchException;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.JsonUtils;
 import nva.commons.core.attempt.Try;
+import nva.commons.core.parallel.ParallelMapper;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.DocWriteResponse;
@@ -64,7 +65,6 @@ public class ElasticSearchHighLevelRestClient {
     public static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_ELASTICSEARCH
         = "Document with id={} was not found in elasticsearch";
     public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
-    public static final String ELASTIC_SEARCH_NUMBER_OF_REPLICAS = "index.number_of_replicas";
     public static final int BULK_SIZE = 1000;
     public static final boolean SEQUENTIAL = false;
     public static final String QUERY_PARAMETER_START = "?query=";
@@ -186,10 +186,11 @@ public class ElasticSearchHighLevelRestClient {
         return elasticSearchClient.bulk(request, RequestOptions.DEFAULT);
     }
 
-    private List<IndexDocument> createIndexDocuments(List<Publication> bulk) {
-        //        ParallelMapper<Publication,IndexDocument> mapper =
-        //            new ParallelMapper<>(bulk, IndexDocument::fromPublication,10);
-        return bulk.stream().parallel().map(IndexDocument::fromPublication).collect(Collectors.toList());
+    private List<IndexDocument> createIndexDocuments(List<Publication> bulk) throws InterruptedException {
+        ParallelMapper<Publication, IndexDocument> mapper =
+            new ParallelMapper<>(bulk, IndexDocument::fromPublication, 100);
+        mapper.map();
+        return mapper.getSuccesses();
     }
 
     private SearchResponse doSearch(String term,
