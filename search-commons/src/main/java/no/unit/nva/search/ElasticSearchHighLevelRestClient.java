@@ -187,7 +187,9 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) {
-        return bulk.stream().map(IndexDocument::fromPublication).collect(Collectors.toList());
+        //        ParallelMapper<Publication,IndexDocument> mapper =
+        //            new ParallelMapper<>(bulk, IndexDocument::fromPublication,10);
+        return bulk.stream().parallel().map(IndexDocument::fromPublication).collect(Collectors.toList());
     }
 
     private SearchResponse doSearch(String term,
