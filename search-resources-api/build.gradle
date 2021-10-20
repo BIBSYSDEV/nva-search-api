@@ -1,4 +1,16 @@
 dependencies {
     implementation project(':search-commons')
 
+    implementation group: 'com.github.bibsysdev', name: 'core', version: nvaCommonsVersion
+    implementation group: 'com.github.bibsysdev', name: 'apigateway', version: nvaCommonsVersion
+    implementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticSearchVersion
+    implementation group: 'org.elasticsearch', name: 'elasticsearch-core', version: elasticSearchVersion
+
+
+    testImplementation group: 'com.github.bibsysdev', name: 'identifiers', version: nvaCommonsVersion
+    testImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: elasticSearchVersion
+    testImplementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: elasticSearchVersion
+
+
+
 }

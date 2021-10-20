@@ -1,11 +1,21 @@
 dependencies {
     implementation project(':search-commons')
 
+    implementation group: 'org.elasticsearch', name: 'elasticsearch', version: elasticSearchVersion
+    implementation group: 'org.elasticsearch', name: 'elasticsearch-core', version: elasticSearchVersion
+
     implementation group: 'com.github.BIBSYSDEV.nva-publication-api', name: 's3-import-commons', version: project.ext.nvaPublicationApiVersion
     implementation group: 'com.github.BIBSYSDEV.nva-publication-api', name: 'storage-model', version: project.ext.nvaPublicationApiVersion
     implementation group: 'com.github.bibsysdev', name: 's3', version: project.ext.nvaCommonsVersion
     implementation group: 'com.github.bibsysdev', name: 'eventhandlers', version: project.ext.nvaCommonsVersion
+    implementation group: 'com.github.bibsysdev', name: 'nva-datamodel-java', version: project.ext.nvaDatamodelVersion
+    implementation group: 'com.github.bibsysdev', name: 'core', version: project.ext.nvaCommonsVersion
+    implementation group: 'com.github.bibsysdev', name: 'apigateway', version: project.ext.nvaCommonsVersion
+    implementation group: 'com.github.bibsysdev', name: 'identifiers', version: project.ext.nvaCommonsVersion
 
+
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: project.ext.awsSdk1Version
+    implementation(group: 'software.amazon.awssdk', name: 's3', version: project.ext.awsSdk2Version)
     implementation group: 'software.amazon.awssdk', name: 'url-connection-client', version: project.ext.awsSdk2Version
     implementation group: 'software.amazon.awssdk', name: 'eventbridge', version:project.ext.awsSdk2Version
 
@@ -18,5 +28,5 @@ dependencies {
     testImplementation(group: 'org.javers', name: 'javers-core', version: '6.0.1') {
         because "For comparing objects during migration"
     }
-    implementation(group: 'software.amazon.awssdk', name: 's3', version: project.ext.awsSdk2Version)
+
 }
