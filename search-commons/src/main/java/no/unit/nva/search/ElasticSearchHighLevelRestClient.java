@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -72,6 +73,7 @@ public class ElasticSearchHighLevelRestClient {
     private static final ObjectMapper mapper = JsonUtils.objectMapperWithEmpty;
     private static final AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
     private final RestHighLevelClientWrapper elasticSearchClient;
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     /**
      * Creates a new ElasticSearchRestClient.
@@ -187,7 +189,7 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) throws InterruptedException {
-        logger.info("Started creating index documents");
+        logger.info("Started creating index documents.Counter:"+counter.addAndGet(1000));
         long tt1= System.currentTimeMillis();
         ParallelMapper<Publication, IndexDocument> mapper =
             new ParallelMapper<>(bulk, IndexDocument::fromPublication, 200);
