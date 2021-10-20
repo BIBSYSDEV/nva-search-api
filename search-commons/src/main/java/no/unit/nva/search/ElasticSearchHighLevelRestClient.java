@@ -65,7 +65,7 @@ public class ElasticSearchHighLevelRestClient {
         = "Document with id={} was not found in elasticsearch";
     public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
     public static final String ELASTIC_SEARCH_NUMBER_OF_REPLICAS = "index.number_of_replicas";
-    public static final int BULK_SIZE = 100;
+    public static final int BULK_SIZE = 1000;
     public static final boolean SEQUENTIAL = false;
     public static final String QUERY_PARAMETER_START = "?query=";
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchHighLevelRestClient.class);
@@ -187,7 +187,7 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private List<IndexDocument> createIndexDocuments(List<Publication> bulk) {
-        return bulk.stream().parallel().map(IndexDocument::fromPublication).collect(Collectors.toList());
+        return bulk.stream().map(IndexDocument::fromPublication).collect(Collectors.toList());
     }
 
     private SearchResponse doSearch(String term,
