@@ -1,5 +1,6 @@
 package no.unit.nva.search.utils;
 
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class SearchIndexFrame {
 
     public static final String FRAME_SRC = "{\n"
