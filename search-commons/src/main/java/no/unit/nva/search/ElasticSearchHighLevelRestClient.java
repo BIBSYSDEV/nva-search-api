@@ -176,13 +176,14 @@ public class ElasticSearchHighLevelRestClient {
     }
 
     private BulkResponse insertBatch(List<Publication> bulk) throws IOException, InterruptedException {
-        BulkRequest request = new BulkRequest();
-        createIndexDocuments(bulk)
+
+        var requests = createIndexDocuments(bulk)
             .stream()
             .parallel()
             .map(this::createUpdateRequest)
-            .forEach(request::add);
-
+            .collect(Collectors.toList());
+        BulkRequest request = new BulkRequest();
+        requests.forEach(request::add);
         request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
         request.waitForActiveShards(ActiveShardCount.ONE);
         return elasticSearchClient.bulk(request, RequestOptions.DEFAULT);
