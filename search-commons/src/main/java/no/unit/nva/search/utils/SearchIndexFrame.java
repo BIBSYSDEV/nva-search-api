@@ -1,6 +1,5 @@
 package no.unit.nva.search.utils;
 
-import java.io.InputStream;
 import java.nio.file.Path;
 import nva.commons.core.ioutils.IoUtils;
 
@@ -13,7 +12,7 @@ public final class SearchIndexFrame {
 
     }
 
-    public static InputStream fetchFrame() {
-        return IoUtils.stringToStream(frameSrc);
+    public static String fetchFrame() {
+        return frameSrc;
     }
 }

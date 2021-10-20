@@ -1,6 +1,8 @@
 package no.unit.nva.search;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import no.unit.nva.model.Publication;
 import no.unit.nva.model.contexttypes.Publisher;
 import no.unit.nva.model.exceptions.InvalidIsbnException;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static no.unit.nva.hamcrest.DoesNotHaveEmptyValues.doesNotHaveEmptyValuesIgnoringFields;
 import static no.unit.nva.publication.PublicationGenerator.publicationWithIdentifier;
 import static no.unit.nva.publication.PublicationGenerator.publishingHouseWithUri;
@@ -132,9 +135,11 @@ class IndexDocumentTest {
             throws IOException, InterruptedException {
         final UriRetriever mockUriRetriever = mock(UriRetriever.class);
         String publicationChannelSampleJournal = getPublicationChannelSampleJournal(journalId, journalName);
-        when(mockUriRetriever.getRawContent(eq(journalId), any())).thenReturn(publicationChannelSampleJournal);
+        when(mockUriRetriever.getRawContent(eq(journalId), any()))
+            .thenReturn(Optional.of(publicationChannelSampleJournal));
         String publicationChannelSamplePublisher = getPublicationChannelSamplePublisher(publisherId, publisherName);
-        when(mockUriRetriever.getRawContent(eq(publisherId), any())).thenReturn(publicationChannelSamplePublisher);
+        when(mockUriRetriever.getRawContent(eq(publisherId), any()))
+            .thenReturn(Optional.of(publicationChannelSamplePublisher));
         return mockUriRetriever;
     }
 

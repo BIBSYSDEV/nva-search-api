@@ -176,7 +176,6 @@ public class ElasticSearchHighLevelRestClient {
     private BulkResponse insertBatch(List<Publication> bulk) throws IOException, InterruptedException {
         List<IndexRequest> indexRequests = createIndexDocuments(bulk)
             .stream()
-            .parallel()
             .map(this::createUpdateRequest)
             .collect(Collectors.toList());
 

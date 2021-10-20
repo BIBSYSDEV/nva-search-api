@@ -1,14 +1,5 @@
 package no.unit.nva.search.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.model.Publication;
-import no.unit.nva.model.contexttypes.Publisher;
-import no.unit.nva.search.IndexDocument;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.net.URI;
-
 import static no.unit.nva.publication.PublicationGenerator.getPublicationJournalWithLinkedContext;
 import static no.unit.nva.publication.PublicationGenerator.randomPublicationChannelsUri;
 import static no.unit.nva.publication.PublicationGenerator.randomString;
@@ -25,7 +16,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import no.unit.nva.model.Publication;
+import no.unit.nva.model.contexttypes.Publisher;
+import no.unit.nva.search.IndexDocument;
+import org.junit.jupiter.api.Test;
 
 public class IndexDocumentWrapperLinkedDataTest {
 
@@ -35,30 +33,9 @@ public class IndexDocumentWrapperLinkedDataTest {
     public static final String JOURNAL_NAME = "Name Of The journal";
     public static final String CONTEXT_OBJECT_TYPE = "Journal";
     public static final String PUBLISHER_NAME_JSON_PTR =
-            "/entityDescription/reference/publicationContext/publisher/name";
+        "/entityDescription/reference/publicationContext/publisher/name";
     public static final String SERIES_NAME_JSON_PTR =
-            "/entityDescription/reference/publicationContext/series/name";
-
-    private static UriRetriever mockPublicationChannelJournalResponse(URI journalId, String journalName)
-            throws IOException, InterruptedException {
-        final UriRetriever mockUriRetriever = mock(UriRetriever.class);
-        String publicationChannelSample = getPublicationChannelSampleJournal(journalId, journalName);
-        when(mockUriRetriever.getRawContent(eq(journalId), any())).thenReturn(publicationChannelSample);
-        return mockUriRetriever;
-    }
-
-    private static UriRetriever mockPublicationChannelPublisherResponse(URI journalId,
-                                                                        String journalName,
-                                                                        URI publisherId,
-                                                                        String publisherName)
-            throws IOException, InterruptedException {
-        final UriRetriever mockUriRetriever = mock(UriRetriever.class);
-        String publicationChannelSampleJournal = getPublicationChannelSampleJournal(journalId, journalName);
-        when(mockUriRetriever.getRawContent(eq(journalId), any())).thenReturn(publicationChannelSampleJournal);
-        String publicationChannelSamplePublisher = getPublicationChannelSamplePublisher(publisherId, publisherName);
-        when(mockUriRetriever.getRawContent(eq(publisherId), any())).thenReturn(publicationChannelSamplePublisher);
-        return mockUriRetriever;
-    }
+        "/entityDescription/reference/publicationContext/series/name";
 
     @Test
     public void toFramedJsonLdReturnsJsonWithValidReferenceData() throws Exception {
@@ -81,7 +58,7 @@ public class IndexDocumentWrapperLinkedDataTest {
 
         final Publication publication = sampleBookInABookSeriesWithAPublisher(journalUri, new Publisher(publisherUri));
         final UriRetriever mockUriRetriever =
-                mockPublicationChannelPublisherResponse(journalUri, JOURNAL_NAME, publisherUri, publisherName);
+            mockPublicationChannelPublisherResponse(journalUri, JOURNAL_NAME, publisherUri, publisherName);
         final IndexDocument indexDocument = fromPublication(mockUriRetriever, publication);
         final JsonNode framedResultNode = indexDocument.asJsonNode();
 
@@ -95,7 +72,7 @@ public class IndexDocumentWrapperLinkedDataTest {
         final URI publisherUri = randomPublicationChannelsUri();
         final String journalName = randomString();
         final UriRetriever mockUriRetriever =
-                mockPublicationChannelPublisherResponse(bookSeriesUri, journalName, publisherUri, randomString());
+            mockPublicationChannelPublisherResponse(bookSeriesUri, journalName, publisherUri, randomString());
         final Publication publication = sampleDegreeWithAPublisher(bookSeriesUri, new Publisher(publisherUri));
         final IndexDocument indexDocument = fromPublication(mockUriRetriever, publication);
         final JsonNode framedResultNode = indexDocument.asJsonNode();
@@ -110,13 +87,37 @@ public class IndexDocumentWrapperLinkedDataTest {
         final URI publisherUri = randomPublicationChannelsUri();
         final String journalName = randomString();
         final UriRetriever mockUriRetriever =
-                mockPublicationChannelPublisherResponse(bookSeriesUri, journalName, publisherUri, randomString());
+            mockPublicationChannelPublisherResponse(bookSeriesUri, journalName, publisherUri, randomString());
         final Publication publication = sampleReportWithAPublisher(bookSeriesUri, new Publisher(publisherUri));
         final IndexDocument indexDocument = fromPublication(mockUriRetriever, publication);
         final JsonNode framedResultNode = indexDocument.asJsonNode();
 
         assertEquals(bookSeriesUri.toString(), framedResultNode.at(SERIES_ID_JSON_PTR).textValue());
         assertEquals(journalName, framedResultNode.at(SERIES_NAME_JSON_PTR).textValue());
+    }
+
+    private static UriRetriever mockPublicationChannelJournalResponse(URI journalId, String journalName)
+        throws IOException {
+        final UriRetriever mockUriRetriever = mock(UriRetriever.class);
+        String publicationChannelSample = getPublicationChannelSampleJournal(journalId, journalName);
+        when(mockUriRetriever.getRawContent(eq(journalId), any()))
+            .thenReturn(Optional.of(publicationChannelSample));
+        return mockUriRetriever;
+    }
+
+    private static UriRetriever mockPublicationChannelPublisherResponse(URI journalId,
+                                                                        String journalName,
+                                                                        URI publisherId,
+                                                                        String publisherName)
+        throws IOException, InterruptedException {
+        final UriRetriever mockUriRetriever = mock(UriRetriever.class);
+        String publicationChannelSampleJournal = getPublicationChannelSampleJournal(journalId, journalName);
+        when(mockUriRetriever.getRawContent(eq(journalId), any()))
+            .thenReturn(Optional.of(publicationChannelSampleJournal));
+        String publicationChannelSamplePublisher = getPublicationChannelSamplePublisher(publisherId, publisherName);
+        when(mockUriRetriever.getRawContent(eq(publisherId), any()))
+            .thenReturn(Optional.of(publicationChannelSamplePublisher));
+        return mockUriRetriever;
     }
 
     private IndexDocument generateIndexDocumentFromJournal(URI journalId, UriRetriever uriRetriever) {
