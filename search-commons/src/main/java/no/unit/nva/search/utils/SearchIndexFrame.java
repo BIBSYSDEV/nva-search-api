@@ -14,7 +14,7 @@ public final class SearchIndexFrame {
 
     }
 
-    public static InputStream asInputStream() {
+    public static InputStream fetchFrame() {
         return IoUtils.stringToStream(frameSrc);
     }
 
