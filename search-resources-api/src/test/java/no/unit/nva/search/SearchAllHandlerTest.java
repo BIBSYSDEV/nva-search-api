@@ -71,6 +71,7 @@ class SearchAllHandlerTest {
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     private static final String WORKLIST_PATH = "worklist";
     private static final String USERNAME = randomString();
+    public static final int NUMBER_OF_DIFFERENT_OBJECT_TYPES_RETRIEVED_BY_QUERY = 2;
 
     private IdentityClient identityClientMock;
     private SearchAllHandler handler;
@@ -211,12 +212,12 @@ class SearchAllHandlerTest {
 
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
         var query = ((BoolQueryBuilder) searchRequest.source().query());
-        var actualViewingScope = query.must().stream()
+        var actualViewingScope = query.should().stream()
             .map(Object::toString)
             .filter(clause -> containsOneOfExpectedStrings(clause, List.of(CUSTOMER_CRISTIN_ID.toString())))
             .collect(Collectors.toList());
 
-        assertThat(actualViewingScope.size(), is(equalTo(1)));
+        assertThat(actualViewingScope.size(), is(equalTo(NUMBER_OF_DIFFERENT_OBJECT_TYPES_RETRIEVED_BY_QUERY)));
     }
 
     @Test

@@ -90,19 +90,37 @@ public class SearchClient {
 
     private BoolQueryBuilder searchQueryBasedOnOrganizationIdsAndStatus(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
+            .should(allSupportMessages(viewingScope))
+            .should(nonApprovedDoiRequestsForPublishedPublications(viewingScope));
+        return queryBuilder;
+    }
+
+
+
+    private BoolQueryBuilder allSupportMessages(ViewingScope viewingScope){
+        BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
+            .must(QueryBuilders.matchQuery("type","PublicationConversation"))
             .must(existsQuery(ORGANIZATION_IDS));
+        addViewingScope(viewingScope, queryBuilder);
+        return  queryBuilder;
+
+    }
+
+    private BoolQueryBuilder nonApprovedDoiRequestsForPublishedPublications(ViewingScope viewingScope){
+        BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
+            .must(QueryBuilders.matchQuery("type","DoiRequest"))
+            .must(existsQuery(ORGANIZATION_IDS))
+            .mustNot(QueryBuilders.matchQuery(STATUS, APPROVED))
+            .mustNot(QueryBuilders.matchQuery(PUBLICATION_STATUS, DRAFT));
+        addViewingScope(viewingScope, queryBuilder);
+        return queryBuilder;
+    }
+    private void addViewingScope(ViewingScope viewingScope, BoolQueryBuilder queryBuilder) {
         for (URI includedOrganizationId : viewingScope.getIncludedUnits()) {
             queryBuilder.must(matchPhraseQuery(ORGANIZATION_IDS, includedOrganizationId.toString()));
         }
         for (URI excludedOrganizationId : viewingScope.getExcludedUnits()) {
             queryBuilder.mustNot(matchPhraseQuery(ORGANIZATION_IDS, excludedOrganizationId.toString()));
         }
-        excludeApprovedDoiRequestsAndDoiRequestsForDraftPublications(queryBuilder);
-        return queryBuilder;
-    }
-
-    private void excludeApprovedDoiRequestsAndDoiRequestsForDraftPublications(BoolQueryBuilder queryBuilder) {
-        queryBuilder.mustNot(QueryBuilders.matchQuery(STATUS, APPROVED));
-        queryBuilder.mustNot(QueryBuilders.matchQuery(PUBLICATION_STATUS, DRAFT));
     }
 }

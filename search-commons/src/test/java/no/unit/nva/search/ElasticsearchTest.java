@@ -36,7 +36,7 @@ import org.testcontainers.utility.DockerImageName;
 public class ElasticsearchTest {
 
     public static final String ELASTICSEARCH_OSS = "docker.elastic.co/elasticsearch/elasticsearch-oss";
-    public static final String INDEX_NAME = RandomDataGenerator.randomString().toLowerCase();
+    public static final String INDEX_NAME = "doirequests";
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
@@ -199,6 +199,7 @@ public class ElasticsearchTest {
         );
         Map<String, Object> map = Map.of(
             ORGANIZATION_IDS, organizationIds,
+            "type","DoiRequest",
             STATUS, status
         );
         JsonNode jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);

@@ -75,7 +75,7 @@ class SearchClientTest {
         var sentRequest = sentRequestBuffer.get();
         var query = sentRequest.source().query();
         var draftStatusIndexInQueryBuilderMustNotClause = 2;
-        var expectedMustNotClause = ((MatchQueryBuilder) ((BoolQueryBuilder) query).mustNot()
+        var expectedMustNotClause = ((MatchQueryBuilder) ((BoolQueryBuilder) query).should()
             .get(draftStatusIndexInQueryBuilderMustNotClause)).value();
         assertThat(expectedMustNotClause, is(equalTo("DRAFT")));
     }
