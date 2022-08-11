@@ -271,6 +271,9 @@ Resources:
       Handler:  no.unit.nva.search.demo.DemoHandler::handleRequest
       Runtime: java11
       Role: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
       Events:
         GetEvent:
           Type: Api

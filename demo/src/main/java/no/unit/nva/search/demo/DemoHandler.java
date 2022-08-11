@@ -1,23 +1,37 @@
 package no.unit.nva.search.demo;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import nva.commons.core.ioutils.IoUtils;
+import java.net.HttpURLConnection;
+import java.util.Optional;
+import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
 
-public class DemoHandler implements RequestStreamHandler {
+public class DemoHandler extends ApiGatewayHandler<InputClass, OutputClass> {
+    
+    public static final String NO_DATA_ERROR = "We would like your name";
+    
+    @JacocoGenerated
+    public DemoHandler() {
+        super(InputClass.class);
+    }
     
     @Override
-    public void handleRequest(InputStream input, OutputStream output, Context context)
-        throws IOException {
-        var inputString = IoUtils.streamToString(input);
-        try (var writer = new BufferedWriter(new OutputStreamWriter(output))) {
-            writer.write(inputString);
-            writer.flush();
-        }
+    protected OutputClass processInput(InputClass input, RequestInfo requestInfo, Context context)
+        throws BadRequestException {
+        var name = extractName(input);
+        return new OutputClass(name);
+    }
+    
+    @Override
+    protected Integer getSuccessStatusCode(InputClass input, OutputClass output) {
+        return HttpURLConnection.HTTP_OK;
+    }
+    
+    private String extractName(InputClass input) throws BadRequestException {
+        return Optional.ofNullable(input)
+            .map(InputClass::getName)
+            .orElseThrow(() -> new BadRequestException(NO_DATA_ERROR));
     }
 }

@@ -15,6 +15,7 @@ dependencies {
     implementation libs.aws.sdk2.eventbridge
 
     implementation libs.bundles.jackson
+    implementation libs.problem
 
     testImplementation project (":search-testing")
     testImplementation libs.bundles.testing
@@ -23,6 +24,8 @@ dependencies {
 }
 
 test {
+    environment "ALLOWED_ORIGIN","*"
+    environment "COGNITO_URI", "http://localhost"
     environment "EXPANDED_RESOURCES_BUCKET", "indexBucket"
     environment "ELASTICSEARCH_REGION", "eu-west-1"
     environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"

@@ -1,21 +1,27 @@
 package no.unit.nva.search.demo;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
-import no.unit.nva.commons.json.JsonSerializable;
 import nva.commons.core.JacocoGenerated;
 
-public class InputClass implements JsonSerializable {
+public class InputClass {
     
-    private String name;
+    public static final String NAME_FIELD = "name";
+    @JsonProperty(NAME_FIELD)
+    private final String name;
     
-    @JacocoGenerated
-    public String getName() {
-        return name;
+    @JsonCreator
+    public InputClass(@JsonProperty(NAME_FIELD) String name) {
+        this.name = name;
     }
     
-    @JacocoGenerated
-    public void setName(String name) {
-        this.name = name;
+    public static InputClass empty() {
+        return new InputClass(null);
+    }
+    
+    public String getName() {
+        return name;
     }
     
     @Override
@@ -35,10 +41,5 @@ public class InputClass implements JsonSerializable {
         }
         InputClass that = (InputClass) o;
         return Objects.equals(getName(), that.getName());
-    }
-    
-    @Override
-    public String toString(){
-        return toJsonString();
     }
 }
