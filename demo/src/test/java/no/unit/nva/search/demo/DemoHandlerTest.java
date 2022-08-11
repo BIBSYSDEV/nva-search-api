@@ -3,11 +3,13 @@ package no.unit.nva.search.demo;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,10 +52,8 @@ class DemoHandlerTest {
         handler.handleRequest(request, outputStream, context);
         var response = GatewayResponse.fromOutputStream(outputStream, Problem.class);
         var body = response.getBodyObject(Problem.class);
-        assertThat(response.getStatusCode(),is(equalTo(HTTP_BAD_REQUEST)));
-        assertThat(body.getDetail(),is(equalTo(DemoHandler.NO_DATA_ERROR)));
-        
-        
+        assertThat(response.getStatusCode(), is(equalTo(HTTP_BAD_REQUEST)));
+        assertThat(body.getDetail(), is(equalTo(DemoHandler.NO_DATA_ERROR)));
     }
     
     private InputStream createRequest(InputClass input) throws JsonProcessingException {

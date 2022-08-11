@@ -205,6 +205,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Publication"
+      security:
+        - CognitoUserPool: ["https://api.nva.unit.no/scopes/frontend", "https://api.nva.unit.no/scopes/backend" ]
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DemoHandler.Arn}/invocations

@@ -70,7 +70,6 @@ public class IndexResourceHandlerTest {
     @Test
     void shouldAddDocumentToIndexWhenResourceExistsInResourcesStorage() throws Exception {
         URI resourceLocation = prepareEventStorageResourceFile();
-
         InputStream input = createEventBridgeEvent(resourceLocation);
         indexResourceHandler.handleRequest(input, output, context);
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());

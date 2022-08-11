@@ -17,6 +17,9 @@ dependencies {
     implementation libs.bundles.jackson
     implementation libs.problem
 
+    implementation group: 'com.amazonaws', name: 'aws-lambda-java-events', version: '3.11.0'
+
+
     testImplementation project (":search-testing")
     testImplementation libs.bundles.testing
     testImplementation libs.aws.sdk2.s3
