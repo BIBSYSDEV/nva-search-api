@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class DemoHandler extends ApiGatewayHandler<InputClass, OutputClass> {
     
     public static final String NO_DATA_ERROR = "We would like your name";
-    private Logger logger = LoggerFactory.getLogger(DemoHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(DemoHandler.class);
     
     @JacocoGenerated
     public DemoHandler() {
