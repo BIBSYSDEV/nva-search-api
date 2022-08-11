@@ -197,7 +197,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
   /demo:
-    get:
+    post:
       responses:
         '200':
           description: "OK"
