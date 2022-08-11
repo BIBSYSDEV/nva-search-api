@@ -264,6 +264,21 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  DemoHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: demo
+      Handler:  no.unit.nva.search.demo.DemoHandler::handleRequest
+      Runtime: java11
+      Role: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /demo
+            Method: get
+            RestApiId: !Ref NvaSearchApi
+
   NvaSearchPublishingRequestsHandler:
     Type: AWS::Serverless::Function
     Properties:

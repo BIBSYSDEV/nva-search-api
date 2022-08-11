@@ -1,0 +1,29 @@
+plugins{
+    id 'nva.search.service.java-common-conventions'
+}
+
+dependencies {
+    implementation project(':search-commons')
+
+    implementation libs.nva.core
+    implementation libs.nva.json
+    implementation libs.nva.identifiers
+    implementation libs.nva.apigateway
+    implementation libs.nva.s3
+    implementation libs.nva.eventhandlers
+    implementation libs.aws.sdk2.urlconnection
+    implementation libs.aws.sdk2.eventbridge
+
+    implementation libs.bundles.jackson
+
+    testImplementation project (":search-testing")
+    testImplementation libs.bundles.testing
+    testImplementation libs.aws.sdk2.s3
+
+}
+
+test {
+    environment "EXPANDED_RESOURCES_BUCKET", "indexBucket"
+    environment "ELASTICSEARCH_REGION", "eu-west-1"
+    environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
+}
