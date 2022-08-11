@@ -3,19 +3,20 @@ package no.unit.nva.search.demo;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-import static nva.commons.core.attempt.Try.attempt;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.GatewayResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,8 +58,12 @@ class DemoHandlerTest {
     }
     
     private InputStream createRequest(InputClass input) throws JsonProcessingException {
+        URI customerId = randomUri();
         return new HandlerRequestBuilder<InputClass>(JsonUtils.dtoObjectMapper)
             .withBody(input)
+            .withNvaUsername(randomString())
+            .withCustomerId(customerId)
+            .withAccessRights(customerId, AccessRight.EDIT_OWN_INSTITUTION_PROJECTS.toString())
             .build();
     }
 }
