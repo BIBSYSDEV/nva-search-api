@@ -276,7 +276,7 @@ Resources:
           Type: Api
           Properties:
             Path: /demo
-            Method: get
+            Method: post
             RestApiId: !Ref NvaSearchApi
 
   NvaSearchPublishingRequestsHandler:
