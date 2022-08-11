@@ -1,9 +1,10 @@
 package no.unit.nva.search.demo;
 
 import java.util.Objects;
+import no.unit.nva.commons.json.JsonSerializable;
 import nva.commons.core.JacocoGenerated;
 
-public class InputClass {
+public class InputClass implements JsonSerializable {
     
     private String name;
     
@@ -34,5 +35,10 @@ public class InputClass {
         }
         InputClass that = (InputClass) o;
         return Objects.equals(getName(), that.getName());
+    }
+    
+    @Override
+    public String toString(){
+        return toJsonString();
     }
 }
