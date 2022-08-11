@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import java.io.IOException;
 import nva.commons.core.JacocoGenerated;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -16,8 +17,6 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * Class for avoiding mocking/spying the ES final classes.
@@ -65,7 +64,7 @@ public class RestHighLevelClientWrapper {
     public UpdateResponse update(UpdateRequest updateRequest, RequestOptions requestOptions) throws IOException {
         return client.update(updateRequest, requestOptions);
     }
-
+    
     @JacocoGenerated
     public IndicesClientWrapper indices() {
         return new IndicesClientWrapper(client.indices());

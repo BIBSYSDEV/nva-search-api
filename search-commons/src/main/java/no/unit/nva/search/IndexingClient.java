@@ -24,6 +24,7 @@ import nva.commons.core.attempt.Try;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -84,25 +85,31 @@ public class IndexingClient {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_ELASTICSEARCH, identifier);
         }
     }
-
+    
     public Void createIndex(String indexName) throws IOException {
         elasticSearchClient.indices().create(new CreateIndexRequest(indexName), RequestOptions.DEFAULT);
         return null;
     }
-
+    
     public Stream<BulkResponse> batchInsert(Stream<IndexDocument> contents) {
         var batches = splitStreamToBatches(contents);
         return batches.map(attempt(this::insertBatch)).map(Try::orElseThrow);
     }
-
+    
+    public Void deleteIndex(String indexName) throws IOException {
+        DeleteIndexRequest deleteIndex = new DeleteIndexRequest(indexName);
+        this.elasticSearchClient.indices().delete(deleteIndex, RequestOptions.DEFAULT);
+        return null;
+    }
+    
     @JacocoGenerated
     private RestHighLevelClientWrapper createElasticsearchClientWithInterceptor() {
         AWS4Signer signer = getAws4Signer();
         HttpRequestInterceptor interceptor =
             new AWSRequestSigningApacheInterceptor(ELASTIC_SEARCH_SERVICE_NAME,
-                                                   signer,
-                                                   credentialsProvider);
-
+                signer,
+                credentialsProvider);
+        
         RestClientBuilder clientBuilder = RestClient
             .builder(HttpHost.create(ELASTICSEARCH_ENDPOINT_ADDRESS))
             .setHttpClientConfigCallback(config -> config.addInterceptorLast(interceptor));
