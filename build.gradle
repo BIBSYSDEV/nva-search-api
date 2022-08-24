@@ -1,12 +1,8 @@
 plugins{
     id 'nva.search.service.rootplugin'
-    id 'nva.search.service.java-common-conventions'
 }
 
 //workaround for jacoco-merge to work
-allprojects{
-    apply plugin: 'nva.search.service.java-common-conventions'
-}
 
 wrapper {
     gradleVersion = '7.3.3'

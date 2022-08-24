@@ -8,3 +8,4 @@ allprojects {
     apply plugin: 'nva.search.service.java-common-conventions'
 }
 
+
