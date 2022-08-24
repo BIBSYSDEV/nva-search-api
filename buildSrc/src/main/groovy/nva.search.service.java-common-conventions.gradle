@@ -13,7 +13,7 @@ plugins {
     id 'base'
 }
 
-group 'com.github.BIBSYSDEV.nva-search-api'
+group = 'com.github.BIBSYSDEV'
 version = '0.0.1-alpha'
 
 repositories {
