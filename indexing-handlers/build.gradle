@@ -1,6 +1,5 @@
 plugins{
     id 'nva.search.service.java-common-conventions'
-    id 'nva.search.service.publish-maven'
 }
 
 dependencies {
