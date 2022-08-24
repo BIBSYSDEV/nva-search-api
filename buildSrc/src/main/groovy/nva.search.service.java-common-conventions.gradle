@@ -12,7 +12,8 @@ plugins {
     id 'base'
 }
 
-
+group 'com.github.bibsysdev'
+version = '0.0.1-alpha'
 
 repositories {
     mavenCentral()
