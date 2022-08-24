@@ -3,7 +3,7 @@ junit = { strictly = '5.8.1' }
 jackson = { strictly = '2.13.0' }
 awsSdk1 = { strictly = '1.12.111' }
 awsSdk2 = { strictly = '2.17.82' }
-nvaCommons = { strictly = '49155c7ddba1af442600e539022bda798c9338c0' }
+nvaCommons = { strictly = '1.25.2' }
 elasticSearch = { strictly = '7.10.2' }
 slf4j = { strictly = '1.8.0-beta4' }
 testContainers = { strictly = '1.16.2' }
@@ -21,14 +21,14 @@ javers = { strictly = '6.5.1' }
 hamcrestJackson = { strictly = '1.2.0' }
 
 [libraries]
-nva-core = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'core', version.ref = 'nvaCommons' }
-nva-json = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'json', version.ref = 'nvaCommons' }
-nva-identifiers = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'identifiers', version.ref = 'nvaCommons' }
-nva-apigateway = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'apigateway', version.ref = 'nvaCommons' }
-nva-s3 = { group = 'com.github.BIBSYSDEV.nva-commons', name = 's3', version.ref = 'nvaCommons' }
-nva-eventhandlers = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'eventhandlers', version.ref = 'nvaCommons' }
-nva-testutils = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'nvatestutils', version.ref = 'nvaCommons' }
-nva-logutils = { group = 'com.github.BIBSYSDEV.nva-commons', name = 'logutils', version.ref = 'nvaCommons' }
+nva-core = { group = 'com.github.bibsysdev', name = 'core', version.ref = 'nvaCommons' }
+nva-json = { group = 'com.github.bibsysdev', name = 'json', version.ref = 'nvaCommons' }
+nva-identifiers = { group = 'com.github.bibsysdev', name = 'identifiers', version.ref = 'nvaCommons' }
+nva-apigateway = { group = 'com.github.bibsysdev', name = 'apigateway', version.ref = 'nvaCommons' }
+nva-s3 = { group = 'com.github.bibsysdev', name = 's3', version.ref = 'nvaCommons' }
+nva-eventhandlers = { group = 'com.github.bibsysdev', name = 'eventhandlers', version.ref = 'nvaCommons' }
+nva-testutils = { group = 'com.github.bibsysdev', name = 'nvatestutils', version.ref = 'nvaCommons' }
+nva-logutils = { group = 'com.github.bibsysdev', name = 'logutils', version.ref = 'nvaCommons' }
 
 aws-sdk2-s3 = { group = 'software.amazon.awssdk', name = 's3', version.ref = 'awsSdk2' }
 aws-sdk2-urlconnection = { group = 'software.amazon.awssdk', name = 'url-connection-client', version.ref = 'awsSdk2' }
