@@ -4,3 +4,7 @@ plugins{
     id 'nva.search.service.jacoco-merge'
 }
 
+allprojects {
+    apply plugin: 'nvacommons.java-conventions'
+}
+
