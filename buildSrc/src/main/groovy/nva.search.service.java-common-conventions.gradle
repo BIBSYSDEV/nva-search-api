@@ -5,7 +5,6 @@
 plugins {
     // Apply the java Plugin to add support for Java.
     id 'java'
-    id 'java-library'
     id 'jacoco'
     id 'checkstyle'
     id 'pmd'
