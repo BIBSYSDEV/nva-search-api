@@ -28,7 +28,7 @@ publishing {
             pom {
                 name = project.name
                 description = 'A commons library for the NVA project'
-                url = 'https://github.com/BIBSYSDEV/nva-commons'
+                url = 'https://github.com/BIBSYSDEV/nva-search-api'
                 licenses {
                     license {
                         name = 'MIT License'
@@ -44,9 +44,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/BIBSYSDEV/nva-commons.git'
-                    developerConnection = 'scm:git:ssh://github.com/BIBSYSDEV/nva-commons.git'
-                    url = 'https://github.com/BIBSYSDEV/nva-commons/tree/main'
+                    connection = 'scm:git:git://github.com/BIBSYSDEV/nva-search-api.git'
+                    developerConnection = 'scm:git:ssh://github.com/BIBSYSDEV/nva-search-api.git'
+                    url = 'https://github.com/BIBSYSDEV/nva-search-api/tree/main'
                 }
             }
         }
