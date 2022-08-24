@@ -5,6 +5,6 @@ plugins{
 }
 
 allprojects {
-    apply plugin: 'nvacommons.java-conventions'
+    apply plugin: 'nva.search.service.java-common-conventions'
 }
 
