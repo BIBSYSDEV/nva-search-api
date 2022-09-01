@@ -13,6 +13,7 @@ dependencies {
     implementation libs.nva.eventhandlers
     implementation libs.aws.sdk2.urlconnection
     implementation libs.aws.sdk2.eventbridge
+    implementation libs.bundles.logging
 
     implementation libs.bundles.jackson
 
