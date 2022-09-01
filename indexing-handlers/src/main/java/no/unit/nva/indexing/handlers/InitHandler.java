@@ -9,11 +9,14 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import no.unit.nva.search.IndexingClient;
 import nva.commons.core.JacocoGenerated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InitHandler implements RequestHandler<Object, String> {
     
     public static final String FINISHED = "FINISHED";
     private final IndexingClient indexingClient;
+    private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
     
     @JacocoGenerated
     public InitHandler() {
@@ -26,10 +29,17 @@ public class InitHandler implements RequestHandler<Object, String> {
     
     @Override
     public String handleRequest(Object input, Context context) {
-        attempt(() -> indexingClient.createIndex(RESOURCES_INDEX)).orElseThrow();
-        attempt(() -> indexingClient.createIndex(DOIREQUESTS_INDEX)).orElseThrow();
-        attempt(() -> indexingClient.createIndex(MESSAGES_INDEX)).orElseThrow();
-        attempt(() -> indexingClient.createIndex(PUBLISHING_REQUESTS_INDEX)).orElseThrow();
+        
+        attempt(() -> indexingClient.createIndex(RESOURCES_INDEX)).orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.createIndex(DOIREQUESTS_INDEX)).orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.createIndex(MESSAGES_INDEX)).orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.createIndex(PUBLISHING_REQUESTS_INDEX)).orElse(
+            fail -> logError(fail.getException()));
         return FINISHED;
+    }
+    
+    private Void logError(Exception exception) {
+        logger.warn("Index creation failed", exception);
+        return null;
     }
 }
