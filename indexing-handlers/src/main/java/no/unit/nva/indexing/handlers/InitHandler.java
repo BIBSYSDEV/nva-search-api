@@ -12,7 +12,7 @@ import nva.commons.core.JacocoGenerated;
 
 public class InitHandler implements RequestHandler<Object, String> {
     
-    public static final String SUCCESS_RESPONSE = "OK";
+    public static final String FINISHED = "FINISHED";
     private final IndexingClient indexingClient;
     
     @JacocoGenerated
@@ -30,6 +30,6 @@ public class InitHandler implements RequestHandler<Object, String> {
         attempt(() -> indexingClient.createIndex(DOIREQUESTS_INDEX)).orElseThrow();
         attempt(() -> indexingClient.createIndex(MESSAGES_INDEX)).orElseThrow();
         attempt(() -> indexingClient.createIndex(PUBLISHING_REQUESTS_INDEX)).orElseThrow();
-        return SUCCESS_RESPONSE;
+        return FINISHED;
     }
 }

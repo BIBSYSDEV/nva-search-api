@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS_RESPONSE;
+import static no.unit.nva.indexing.handlers.InitHandler.FINISHED;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
@@ -34,7 +34,7 @@ class InitHandlerTest {
     void shouldNotThrowExceptionIfIndicesClientDoesNotThrowException() throws IOException {
         doNothing().when(indexingClient).createIndex(any(String.class));
         var response = initHandler.handleRequest(null, context);
-        assertEquals(response, SUCCESS_RESPONSE);
+        assertEquals(response, FINISHED);
     }
 
     @Test
