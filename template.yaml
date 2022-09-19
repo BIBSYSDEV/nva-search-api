@@ -259,8 +259,6 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
-
-
   NvaWorklistHandler:
     Type: AWS::Serverless::Function
     Properties:
