@@ -10,6 +10,7 @@ Globals:
     Environment:
       Variables:
         COGNITO_URI: !Ref CognitoUri
+        API_HOST: !Sub 'api.${CustomDomain}'
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
