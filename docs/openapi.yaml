@@ -31,7 +31,7 @@ paths:
         - CognitoUserPool: ["https://api.nva.unit.no/scopes/frontend"]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchFunction.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -62,7 +62,7 @@ paths:
         - CognitoUserPool: ["https://api.nva.unit.no/scopes/frontend"]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchFunction.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -93,7 +93,7 @@ paths:
         - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend" ]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchFunction.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -124,7 +124,7 @@ paths:
         - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend" ]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchFunction.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -186,7 +186,7 @@ paths:
             type: string
         - in: query
           name: from
-          description: "Start posision from results, 0-based."
+          description: "Start position from results, 0-based."
           required: false
           schema:
             type: string
@@ -198,7 +198,7 @@ paths:
             type: string
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchFunction.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
