@@ -31,7 +31,7 @@ paths:
         - CognitoUserPool: ["https://api.nva.unit.no/scopes/frontend"]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchMessagesHandler.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -62,7 +62,38 @@ paths:
         - CognitoUserPool: ["https://api.nva.unit.no/scopes/frontend"]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchDoiRequestsHandler.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+  /tickets:
+    get:
+      description: Listing of all tickets
+      parameters:
+        - in: path
+          name: index
+          description: "Index for Tickets related to publications"
+          required: true
+        - in: query
+          name: viewingScope
+          description: "List tickets for this organization."
+          required: false
+          schema:
+            type: string
+            format: uri
+            example: "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
+      security:
+        - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend" ]
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -93,7 +124,7 @@ paths:
         - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend" ]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchPublishingRequestsHandler.Arn}/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -155,7 +186,7 @@ paths:
             type: string
         - in: query
           name: from
-          description: "Start posision from results, 0-based."
+          description: "Start position from results, 0-based."
           required: false
           schema:
             type: string
@@ -167,7 +198,7 @@ paths:
             type: string
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NvaSearchResourcesApiFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY

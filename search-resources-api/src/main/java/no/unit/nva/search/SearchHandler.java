@@ -23,6 +23,8 @@ import nva.commons.core.attempt.Try;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
 import org.elasticsearch.action.search.SearchResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesResponse> {
 
@@ -34,7 +36,8 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     public static final int DEFAULT_RESULTS_INDEX = 0;
     private final SearchClient searchClient;
     private final IdentityClient identityClient;
-
+    private static final Logger logger = LoggerFactory.getLogger(SearchHandler.class);
+    
     @JacocoGenerated
     public SearchHandler() {
         this(new Environment(), defaultSearchClient(), defaultIdentityClient());
@@ -49,7 +52,8 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     @Override
     protected SearchResourcesResponse processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
-        String indexName = getIndexName(requestInfo);
+        var indexName = getIndexName(requestInfo);
+        logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
         SearchResponse searchResponse = searchClient.findResourcesForOrganizationIds(viewingScope,
