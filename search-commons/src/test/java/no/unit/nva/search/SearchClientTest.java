@@ -1,9 +1,9 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.SearchClient.APPROVED;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
-import static no.unit.nva.search.SearchClient.DRAFT;
-import static no.unit.nva.search.SearchClient.PUBLICATION_CONVERSATION;
+import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
+import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_REQUEST;
+import static no.unit.nva.search.SearchClient.PENDING;
 import static no.unit.nva.search.SearchClientConfig.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
@@ -83,17 +83,16 @@ class SearchClientTest {
             DEFAULT_PAGE_NO,
             ELASTICSEARCH_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
-        var rulesForExcludingDoiRequests = listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
-        var mustExcludeApprovedDoiRequests =
-            rulesForExcludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(
-                APPROVED));
+        var rulesForIncludingDoiRequests = listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
+        var mustIncludeOnlyPendingDoiRequests =
+            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(PENDING));
         var mustExcludeDoiRequestsForDraftPublications =
-            rulesForExcludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(DRAFT));
+            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(
+                DRAFT_PUBLICATION_STATUS));
         var mustIncludeDoiRequestsType =
-            rulesForExcludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(
-                DOI_REQUEST));
+            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(DOI_REQUEST));
         
-        assertTrue(mustExcludeApprovedDoiRequests, "Could not find rule for excluding APPROVED DoiRequests");
+        assertTrue(mustIncludeOnlyPendingDoiRequests, "Could not find rule for including Pending DoiRequests");
         assertTrue(mustExcludeDoiRequestsForDraftPublications,
             "Could not find rule for excluding DoiRequests for Draft Publications");
         assertTrue(mustIncludeDoiRequestsType, "Could not find rule for including DoiRequest");
@@ -123,7 +122,7 @@ class SearchClientTest {
             listAllInclusionAndExclusionRulesForPublicationConversation(sentRequest);
         var mustIncludePublicationConversationType =
             rulesForIncludingPublicationConversation.stream()
-                .anyMatch(rule -> rule.value().equals(PUBLICATION_CONVERSATION));
+                .anyMatch(rule -> rule.value().equals(GENERAL_SUPPORT_REQUEST));
         assertTrue(mustIncludePublicationConversationType, "Could not find rule for including PublicationConversation");
     }
     
@@ -269,7 +268,7 @@ class SearchClientTest {
                 .stream()
                 .filter(this::keepOnlyMatchTypeRules)
                 .map(match -> (MatchQueryBuilder) match)
-                .anyMatch(match -> match.value().equals(PUBLICATION_CONVERSATION));
+                .anyMatch(match -> match.value().equals(GENERAL_SUPPORT_REQUEST));
     }
     
     private Stream<BoolQueryBuilder> listAllDisjunctiveRulesForMatchingDocuments(SearchRequest sentRequest) {

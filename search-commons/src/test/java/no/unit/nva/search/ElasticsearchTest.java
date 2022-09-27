@@ -1,10 +1,9 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.SearchClient.APPROVED;
 import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
-import static no.unit.nva.search.SearchClient.STATUS;
+import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
@@ -45,14 +44,15 @@ public class ElasticsearchTest {
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
     public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
     public static final int ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED = 1;
-    public static final String STATUS_TO_INCLUDE_IN_RESULT = "UNREAD";
+    public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
     public static final int ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT = 0;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final String ELASTICSEARCH_VERSION = "7.10.2";
     private static final int PAGE_SIZE = 10;
     private static final int PAGE_NO = 0;
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create("https://www.example.com/20754.0.0.0");
-
+    private static final String COMPLETED = "Completed";
+    
     @Container
     public ElasticsearchContainer container = new ElasticsearchContainer(DockerImageName
                                                                              .parse(ELASTICSEARCH_OSS)
@@ -104,9 +104,9 @@ public class ElasticsearchTest {
     }
 
     @Test
-    void shouldReturnZeroHitsBecauseStatusIsApproved() throws Exception {
+    void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
         indexingClient.addDocumentToIndex(
-            getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID), APPROVED)
+            getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
         );
 
         Thread.sleep(DELAY_AFTER_INDEXING);
@@ -225,7 +225,7 @@ public class ElasticsearchTest {
         Map<String, Object> map = Map.of(
             ORGANIZATION_IDS, organizationIds,
             DOCUMENT_TYPE, DOI_REQUEST,
-            STATUS, status
+            TICKET_STATUS, status
         );
         JsonNode jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
