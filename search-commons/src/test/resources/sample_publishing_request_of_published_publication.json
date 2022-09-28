@@ -38,6 +38,7 @@
     "identifier": "0181f7ed4cd3-80bafad9-b6c8-49ea-88f9-a5e3e371254a",
     "mainTitle": "This is the main title"
   },
+  "status": "Completed",
   "messages": {
     "type": "MessageCollection",
     "messages": [],
