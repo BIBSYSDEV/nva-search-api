@@ -508,3 +508,16 @@ Resources:
         Variables:
           ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
           ELASTICSEARCH_REGION: !Ref "AWS::Region"
+
+  DeleteIndicesHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: indexing-handlers
+      Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Role: !GetAtt ReadOnlyAccessS3Role.Arn
+      Environment:
+        Variables:
+          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
+          ELASTICSEARCH_REGION: !Ref "AWS::Region"

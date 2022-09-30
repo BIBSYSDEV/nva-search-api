@@ -24,6 +24,7 @@ import nva.commons.core.attempt.Try;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -134,5 +135,10 @@ public class IndexingClient {
         signer.setServiceName(ELASTIC_SEARCH_SERVICE_NAME);
         signer.setRegionName(ELASTICSEARCH_REGION);
         return signer;
+    }
+
+    public Void deleteIndex(String indexName) throws IOException {
+        elasticSearchClient.indices().delete(new DeleteIndexRequest(indexName), RequestOptions.DEFAULT);
+        return null;
     }
 }
