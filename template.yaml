@@ -102,7 +102,7 @@ Resources:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:IdentityServiceSecret*'
 
-  ReadOnlyAccessS3Role:
+  SearchHandlerRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -141,6 +141,7 @@ Resources:
                 Action:
                   - es:ESHttpPost
                   - es:ESHttpPut
+                  - es:ESHttpDelete
                 Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
 
   NVAElasticSearch:
@@ -456,7 +457,7 @@ Resources:
       Runtime: java11
       MemorySize: 10240
       Timeout: 900
-      Role: !GetAtt ReadOnlyAccessS3Role.Arn
+      Role: !GetAtt SearchHandlerRole.Arn
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule
@@ -480,7 +481,7 @@ Resources:
       Runtime: java11
       MemorySize: 1024
       Timeout: 900
-      Role: !GetAtt ReadOnlyAccessS3Role.Arn
+      Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
@@ -503,7 +504,7 @@ Resources:
       Handler: no.unit.nva.indexing.handlers.InitHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
-      Role: !GetAtt ReadOnlyAccessS3Role.Arn
+      Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
           ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
@@ -516,7 +517,7 @@ Resources:
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
-      Role: !GetAtt ReadOnlyAccessS3Role.Arn
+      Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
           ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
