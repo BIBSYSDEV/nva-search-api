@@ -8,6 +8,8 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.URI;
 import java.util.Optional;
+
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.IdentityClientImpl;
@@ -56,11 +58,13 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
+        logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope)));
         SearchResponse searchResponse = searchClient.findResourcesForOrganizationIds(viewingScope,
                                                                                      DEFAULT_PAGE_SIZE,
                                                                                      DEFAULT_RESULTS_INDEX,
                                                                                      indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
+        logger.info("Query URI: {}", requestUri);
         return SearchResourcesResponse.fromSearchResponse(searchResponse, requestUri);
     }
 
