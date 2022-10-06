@@ -53,7 +53,6 @@ public class IndexingClient {
     @JacocoGenerated
     public IndexingClient() {
         elasticSearchClient = createElasticsearchClientWithInterceptor();
-        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, ELASTICSEARCH_ENDPOINT_INDEX);
     }
 
     /**
@@ -64,10 +63,10 @@ public class IndexingClient {
     public IndexingClient(RestHighLevelClientWrapper elasticSearchClient) {
 
         this.elasticSearchClient = elasticSearchClient;
-        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, ELASTICSEARCH_ENDPOINT_INDEX);
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
+        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, indexDocument.getIndexName());
         elasticSearchClient.index(indexDocument.toIndexRequest(), RequestOptions.DEFAULT);
         return null;
     }
