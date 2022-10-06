@@ -58,13 +58,13 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
-        logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope)));
+        logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
+                .orElseThrow());
         SearchResponse searchResponse = searchClient.findResourcesForOrganizationIds(viewingScope,
                                                                                      DEFAULT_PAGE_SIZE,
                                                                                      DEFAULT_RESULTS_INDEX,
                                                                                      indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
-        logger.info("Query URI: {}", requestUri);
         return SearchResourcesResponse.fromSearchResponse(searchResponse, requestUri);
     }
 
