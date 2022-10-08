@@ -106,6 +106,7 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     private ViewingScope authorizeCustomViewingScope(ViewingScope viewingScope, RequestInfo requestInfo)
         throws ForbiddenException {
         var customerCristinId = requestInfo.getTopLevelOrgCristinId().orElseThrow();
+        logger.info("customerCristinId: {}", customerCristinId);
         return userIsAuthorized(viewingScope, customerCristinId);
     }
 
@@ -136,6 +137,8 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     }
 
     private boolean isUnderUsersInstitution(URI requestedOrg, URI customerCristinId) {
+        logger.info("viewingScope for requeest institution: {}", requestedOrg);
+        logger.info("viewingScope for institution: {}", customerCristinId);
         String requestedOrgInstitutionNumber = extractInstitutionNumberFromRequestedOrganization(requestedOrg);
         String customerCristinInstitutionNumber = extractInstitutionNumberFromRequestedOrganization(customerCristinId);
         return customerCristinInstitutionNumber.equals(requestedOrgInstitutionNumber);
