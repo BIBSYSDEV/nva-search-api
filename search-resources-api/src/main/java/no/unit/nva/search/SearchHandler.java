@@ -57,6 +57,8 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
+        logger.info("CustomerId getViewingScopeForUser: {}", requestInfo.getCustomerId());
+        logger.info("topLevelOrg getViewingScopeForUser: {}", requestInfo.getTopLevelOrgCristinId());
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
         logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
                 .orElseThrow());
