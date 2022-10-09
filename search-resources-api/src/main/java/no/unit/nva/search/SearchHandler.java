@@ -57,8 +57,7 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
-        logger.info("CustomerId getViewingScopeForUser: {}", requestInfo.getCustomerId());
-        logger.info("topLevelOrg getViewingScopeForUser: {}", requestInfo.getTopLevelOrgCristinId());
+        logViewScopeData(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
         logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
                 .orElseThrow());
@@ -68,6 +67,12 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
                                                                                      indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
         return SearchResourcesResponse.fromSearchResponse(searchResponse, requestUri);
+    }
+
+    private static void logViewScopeData(RequestInfo requestInfo) {
+        logger.info("CustomerId getViewingScopeForUser: {}", attempt(() ->Optional.ofNullable(requestInfo.getCustomerId()).orElse(URI.create("https://example.org/unset")))
+                .orElse(fail -> URI.create("https://example.org/unset")));
+        logger.info("topLevelOrg getViewingScopeForUser: {}", requestInfo.getTopLevelOrgCristinId().orElse(URI.create("https://example.org/unset")));
     }
 
     @Override
