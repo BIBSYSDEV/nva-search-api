@@ -31,6 +31,7 @@ import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -136,6 +137,18 @@ class IndexingClientTest {
         when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
         IndexingClient indexingClient = new IndexingClient(restHighLevelClient);
         assertDoesNotThrow(() -> indexingClient.removeDocumentFromIndex("1234"));
+    }
+
+
+    @Test
+    void shouldCallEsClientDeleteIndexRequest() throws IOException {
+        var indicesClient = mock(IndicesClient.class);
+        var indicesClientWrapper = new IndicesClientWrapper(indicesClient);
+        when(esClient.indices()).thenReturn(indicesClientWrapper);
+        indexingClient.deleteIndex(randomString());
+        var expectedNumberOfCreateInvocationsToEs = 1;
+        verify(indicesClient, times(expectedNumberOfCreateInvocationsToEs)).delete(any(DeleteIndexRequest.class),
+                any(RequestOptions.class));
     }
 
     @NotNull

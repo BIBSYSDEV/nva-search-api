@@ -24,6 +24,7 @@ import nva.commons.core.attempt.Try;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -52,7 +53,6 @@ public class IndexingClient {
     @JacocoGenerated
     public IndexingClient() {
         elasticSearchClient = createElasticsearchClientWithInterceptor();
-        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, ELASTICSEARCH_ENDPOINT_INDEX);
     }
 
     /**
@@ -63,10 +63,10 @@ public class IndexingClient {
     public IndexingClient(RestHighLevelClientWrapper elasticSearchClient) {
 
         this.elasticSearchClient = elasticSearchClient;
-        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, ELASTICSEARCH_ENDPOINT_INDEX);
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
+        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, indexDocument.getIndexName());
         elasticSearchClient.index(indexDocument.toIndexRequest(), RequestOptions.DEFAULT);
         return null;
     }
@@ -134,5 +134,10 @@ public class IndexingClient {
         signer.setServiceName(ELASTIC_SEARCH_SERVICE_NAME);
         signer.setRegionName(ELASTICSEARCH_REGION);
         return signer;
+    }
+
+    public Void deleteIndex(String indexName) throws IOException {
+        elasticSearchClient.indices().delete(new DeleteIndexRequest(indexName), RequestOptions.DEFAULT);
+        return null;
     }
 }

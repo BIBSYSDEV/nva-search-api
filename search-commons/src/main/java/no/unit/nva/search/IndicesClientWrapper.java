@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import nva.commons.core.JacocoGenerated;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.IndicesClient;
@@ -47,5 +48,10 @@ public class IndicesClientWrapper {
 
     public GetIndexResponse get(GetIndexRequest getIndexRequest, RequestOptions requestOptions) throws IOException {
         return indicesClient.get(getIndexRequest, requestOptions);
+    }
+
+    public AcknowledgedResponse delete(DeleteIndexRequest deleteIndexRequest, RequestOptions requestOptions)
+            throws IOException {
+        return indicesClient.delete(deleteIndexRequest, requestOptions);
     }
 }

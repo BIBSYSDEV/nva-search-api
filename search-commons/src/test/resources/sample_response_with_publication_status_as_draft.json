@@ -73,6 +73,6 @@
     "type": "MessageCollection"
   },
   "type": "DoiRequest",
-  "status": "REQUESTED"
+  "status": "Pending"
 }
 

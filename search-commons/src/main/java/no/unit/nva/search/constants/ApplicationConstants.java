@@ -13,9 +13,14 @@ public final class ApplicationConstants {
     public static final String DOIREQUESTS_INDEX = "doirequests";
     public static final String MESSAGES_INDEX = "messages";
     public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
+
+    public static final String TICKETS_INDEX = "tickets";
     
     public static final List<String> TICKET_INDICES =
         List.of(DOIREQUESTS_INDEX, MESSAGES_INDEX, PUBLISHING_REQUESTS_INDEX);
+
+    public static final List<String> ALL_INDICES = List.of(RESOURCES_INDEX, DOIREQUESTS_INDEX, MESSAGES_INDEX,
+            TICKETS_INDEX, PUBLISHING_REQUESTS_INDEX);
     
     public static final Environment ENVIRONMENT = new Environment();
     public static final String ELASTICSEARCH_REGION = readElasticSearchRegion();

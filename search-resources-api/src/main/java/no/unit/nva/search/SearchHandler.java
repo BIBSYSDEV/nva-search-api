@@ -8,6 +8,8 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.URI;
 import java.util.Optional;
+
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.IdentityClientImpl;
@@ -55,13 +57,22 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
+        logViewScopeData(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
+        logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
+                .orElseThrow());
         SearchResponse searchResponse = searchClient.findResourcesForOrganizationIds(viewingScope,
                                                                                      DEFAULT_PAGE_SIZE,
                                                                                      DEFAULT_RESULTS_INDEX,
                                                                                      indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
         return SearchResourcesResponse.fromSearchResponse(searchResponse, requestUri);
+    }
+
+    private static void logViewScopeData(RequestInfo requestInfo) {
+        logger.info("CustomerId getViewingScopeForUser: {}", attempt(() ->Optional.ofNullable(requestInfo.getCustomerId()).orElse(URI.create("https://example.org/unset")))
+                .orElse(fail -> URI.create("https://example.org/unset")));
+        logger.info("topLevelOrg getViewingScopeForUser: {}", requestInfo.getTopLevelOrgCristinId().orElse(URI.create("https://example.org/unset")));
     }
 
     @Override
@@ -102,6 +113,7 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     private ViewingScope authorizeCustomViewingScope(ViewingScope viewingScope, RequestInfo requestInfo)
         throws ForbiddenException {
         var customerCristinId = requestInfo.getTopLevelOrgCristinId().orElseThrow();
+        logger.info("customerCristinId: {}", customerCristinId);
         return userIsAuthorized(viewingScope, customerCristinId);
     }
 
@@ -132,6 +144,8 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     }
 
     private boolean isUnderUsersInstitution(URI requestedOrg, URI customerCristinId) {
+        logger.info("viewingScope for requeest institution: {}", requestedOrg);
+        logger.info("viewingScope for institution: {}", customerCristinId);
         String requestedOrgInstitutionNumber = extractInstitutionNumberFromRequestedOrganization(requestedOrg);
         String customerCristinInstitutionNumber = extractInstitutionNumberFromRequestedOrganization(customerCristinId);
         return customerCristinInstitutionNumber.equals(requestedOrgInstitutionNumber);
