@@ -2,6 +2,8 @@ package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.function.Predicate.isEqual;
+import static no.unit.nva.search.RequestUtil.FROM_KEY;
+import static no.unit.nva.search.RequestUtil.RESULTS_KEY;
 import static no.unit.nva.search.SearchClientConfig.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.attempt.Try.attempt;
@@ -52,8 +54,8 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     @Override
     protected SearchResourcesResponse processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
-        var from = requestInfo.getQueryParameterOpt("from").map(Integer::parseInt).orElse(DEFAULT_RESULTS_INDEX);
-        var pageSize = requestInfo.getQueryParameterOpt("results").map(Integer::parseInt).orElse(DEFAULT_PAGE_SIZE);
+        var from = requestInfo.getQueryParameterOpt(FROM_KEY).map(Integer::parseInt).orElse(DEFAULT_RESULTS_INDEX);
+        var pageSize = requestInfo.getQueryParameterOpt(RESULTS_KEY).map(Integer::parseInt).orElse(DEFAULT_PAGE_SIZE);
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
