@@ -16,6 +16,18 @@ paths:
     get:
       description: Listing of all tickets
       parameters:
+        - in: query
+          name: from
+          description: "Start position from results, 0-based."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: results
+          description: "Maximum number of publications in response."
+          required: false
+          schema:
+            type: string
         - in: path
           name: index
           description: "Index for Tickets related to publications"
