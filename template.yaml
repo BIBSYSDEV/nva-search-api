@@ -236,22 +236,10 @@ Resources:
           ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
           ELASTICSEARCH_REGION: !Ref "AWS::Region"
       Events:
-        GetMessages:
-          Type: Api
-          Properties:
-            Path: /messages
-            Method: get
-            RestApiId: !Ref NvaSearchApi
         GetTickets:
           Type: Api
           Properties:
             Path: /tickets
-            Method: get
-            RestApiId: !Ref NvaSearchApi
-        GetDoiRequests:
-          Type: Api
-          Properties:
-            Path: /doirequests
             Method: get
             RestApiId: !Ref NvaSearchApi
   SearchResourcesFunction:
