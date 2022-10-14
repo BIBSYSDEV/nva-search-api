@@ -88,6 +88,14 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     
     private ViewingScope getViewingScopeForUser(RequestInfo requestInfo) throws ApiGatewayException {
         var defaultScope = getUserDefinedViewingScore(requestInfo);
+        if(defaultScope.isPresent()){
+            var json=
+                attempt(()->JsonUtils.dtoObjectMapper.writeValueAsString(defaultScope.orElseThrow())).orElseThrow();
+            logger.info("Orestis, ViewingScope defined by user:{}", json);
+        }
+        else{
+            logger.info("Orestis, Viewing scope not defined by user.");
+        }
         return defaultScope
                    .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
                    .orElseGet(() -> defaultViewingScope(requestInfo))

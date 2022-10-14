@@ -44,7 +44,9 @@ public class IdentityClientImpl implements IdentityClient {
             HttpRequest request = createGetUserHttpRequest(createGetUserInternalUri(username), accessToken);
             HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
             if (response.statusCode() == HTTP_OK) {
-                userResponse = UserResponse.fromJson(response.body());
+                var body = response.body();
+                logger.info("UserResponse:{}", body);
+                userResponse = UserResponse.fromJson(body);
             } else {
                 logWarning(response);
             }
