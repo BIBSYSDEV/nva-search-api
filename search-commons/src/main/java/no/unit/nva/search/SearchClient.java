@@ -26,7 +26,7 @@ public class SearchClient {
     public static final String DRAFT_PUBLICATION_STATUS = "DRAFT";
     public static final String DOCUMENT_TYPE = "type";
     public static final String DOI_REQUEST = "DoiRequest";
-    public static final String GENERAL_SUPPORT_REQUEST = "GeneralSupportRequest";
+    public static final String GENERAL_SUPPORT_CASE = "GeneralSupportCase";
     public static final String PUBLISHING_REQUEST = "PublishingRequest";
     public static final String GENERAL_SUPPORT_QUERY_NAME = "GeneralSupportQuery";
     public static final String DOI_REQUESTS_QUERY_NAME = "DoiRequestsQuery";
@@ -117,7 +117,7 @@ public class SearchClient {
     
     private BoolQueryBuilder allPendingGeneralSupportTickets(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
-                                            .must(matchQuery(DOCUMENT_TYPE, GENERAL_SUPPORT_REQUEST))
+                                            .must(matchQuery(DOCUMENT_TYPE, GENERAL_SUPPORT_CASE))
                                             .must(existsQuery(ORGANIZATION_IDS))
                                             .must(matchQuery(TICKET_STATUS, PENDING))
                                             .queryName(GENERAL_SUPPORT_QUERY_NAME);

@@ -2,7 +2,7 @@ package no.unit.nva.search;
 
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
-import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_REQUEST;
+import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
 import static no.unit.nva.search.SearchClientConfig.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
@@ -122,7 +122,7 @@ class SearchClientTest {
             listAllInclusionAndExclusionRulesForPublicationConversation(sentRequest);
         var mustIncludePublicationConversationType =
             rulesForIncludingPublicationConversation.stream()
-                .anyMatch(rule -> rule.value().equals(GENERAL_SUPPORT_REQUEST));
+                .anyMatch(rule -> rule.value().equals(GENERAL_SUPPORT_CASE));
         assertTrue(mustIncludePublicationConversationType, "Could not find rule for including PublicationConversation");
     }
     
@@ -268,7 +268,7 @@ class SearchClientTest {
                 .stream()
                 .filter(this::keepOnlyMatchTypeRules)
                 .map(match -> (MatchQueryBuilder) match)
-                .anyMatch(match -> match.value().equals(GENERAL_SUPPORT_REQUEST));
+                .anyMatch(match -> match.value().equals(GENERAL_SUPPORT_CASE));
     }
     
     private Stream<BoolQueryBuilder> listAllDisjunctiveRulesForMatchingDocuments(SearchRequest sentRequest) {
