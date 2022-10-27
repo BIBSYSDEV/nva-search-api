@@ -31,6 +31,7 @@ test {
     environment "NUMBER_OF_FILES_PER_EVENT", "1"
     environment "ELASTICSEARCH_REGION", "eu-west-1"
     environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
+    environment "PERSISTED_RESOURCES_PATH","s3://somebucket/some/folder"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
 }
