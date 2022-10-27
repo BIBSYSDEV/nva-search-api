@@ -29,7 +29,7 @@ public class StartBatchIndexingHandler implements RequestStreamHandler {
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
-        var firstImportRequestEvent = new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH);
+        var firstImportRequestEvent = new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH.get());
         emitEvent(eventBridgeClient, firstImportRequestEvent, context);
         writeOutput(output);
     }
