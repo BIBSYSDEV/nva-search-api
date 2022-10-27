@@ -6,41 +6,36 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ImportToSearchIndexHandlerTest extends BatchIndexTest {
+class StartBatchIndexingHandlerTest extends BatchIndexTest {
 
-    private static final String SOME_S3_LOCATION = "s3://some-bucket/some/path";
-
-    private ImportDataRequestEvent importRequest;
     private ByteArrayOutputStream outputStream;
-
     private StubEventBridgeClient eventBridgeClient;
 
     @BeforeEach
     public void initialize() {
-
-        importRequest = new ImportDataRequestEvent(SOME_S3_LOCATION);
         outputStream = new ByteArrayOutputStream();
         eventBridgeClient = new StubEventBridgeClient();
     }
 
     @Test
-    public void handlerSendsEventToEventBridgeWhenItReceivesAnImportRequest() throws IOException {
+    void handlerSendsEventToEventBridgeWhenItReceivesAnImportRequest() throws IOException {
 
-        ImportToSearchIndexHandler handler = newHandler();
+        var handler = newHandler();
 
         handler.handleRequest(newImportRequest(), outputStream, CONTEXT);
-        assertThat(eventBridgeClient.getLatestEvent(), is(equalTo(importRequest)));
+        ImportDataRequestEvent expectedImportRequest =
+            new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH);
+        assertThat(eventBridgeClient.getLatestEvent(), is(equalTo(expectedImportRequest)));
     }
 
-    private ImportToSearchIndexHandler newHandler() {
-        return new ImportToSearchIndexHandler(eventBridgeClient);
+    private StartBatchIndexingHandler newHandler() {
+        return new StartBatchIndexingHandler(eventBridgeClient);
     }
 
     private InputStream newImportRequest() {
-        return IoUtils.stringToStream(importRequest.toJsonString());
+        return null;
     }
 }

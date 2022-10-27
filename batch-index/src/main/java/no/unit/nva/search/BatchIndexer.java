@@ -36,6 +36,7 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     }
 
     public IndexingResult<SortableIdentifier> processRequest() {
+        
         ListingResult listFilesResult = fetchNextPageOfFilenames();
         List<IndexDocument> contents = fileContents(listFilesResult.getFiles()).collect(Collectors.toList());
         List<SortableIdentifier> failedResults = indexFileContents(contents);
@@ -83,7 +84,7 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     }
 
     private <T> void logFailure(T failureMessage) {
-        logger.warn("Failed to index resource:" + failureMessage.toString());
+        logger.warn("Failed to index resource:{}", failureMessage);
     }
 
     private Stream<SortableIdentifier> collectFailures(Stream<BulkResponse> indexActions) {
