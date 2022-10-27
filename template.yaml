@@ -448,7 +448,6 @@ Resources:
           ELASTICSEARCH_REGION: !Ref "AWS::Region"
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
 
-
   StartBatchIndexingButton:
     Type: AWS::Serverless::Function
     Properties:
