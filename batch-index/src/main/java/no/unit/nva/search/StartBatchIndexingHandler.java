@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.BatchIndexingConstants.config;
 import static no.unit.nva.search.BatchIndexingConstants.defaultEventBridgeClient;
 import static no.unit.nva.search.EmitEventUtils.emitEvent;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -17,6 +18,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 public class StartBatchIndexingHandler implements RequestStreamHandler {
     
     private final EventBridgeClient eventBridgeClient;
+    public static final String PERSISTED_RESOURCES_PATH = config.getString("batch.persistedResourcesPath");
 
     @JacocoGenerated
     public StartBatchIndexingHandler() {
@@ -29,7 +31,7 @@ public class StartBatchIndexingHandler implements RequestStreamHandler {
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
-        var firstImportRequestEvent = new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH);
+        var firstImportRequestEvent = new ImportDataRequestEvent(PERSISTED_RESOURCES_PATH);
         emitEvent(eventBridgeClient, firstImportRequestEvent, context);
         writeOutput(output);
     }
