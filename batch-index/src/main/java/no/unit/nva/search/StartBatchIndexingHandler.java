@@ -11,29 +11,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import nva.commons.core.JacocoGenerated;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 
-public class ImportToSearchIndexHandler implements RequestStreamHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(ImportToSearchIndexHandler.class);
+public class StartBatchIndexingHandler implements RequestStreamHandler {
+    
     private final EventBridgeClient eventBridgeClient;
 
     @JacocoGenerated
-    public ImportToSearchIndexHandler() {
+    public StartBatchIndexingHandler() {
         this(defaultEventBridgeClient());
     }
 
-    public ImportToSearchIndexHandler(EventBridgeClient eventBridgeClient) {
+    public StartBatchIndexingHandler(EventBridgeClient eventBridgeClient) {
         this.eventBridgeClient = eventBridgeClient;
     }
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
-        ImportDataRequestEvent request = parseInput(input);
-        emitEvent(eventBridgeClient, request, context);
+        var firstImportRequestEvent = new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH);
+        emitEvent(eventBridgeClient, firstImportRequestEvent, context);
         writeOutput(output);
     }
 
@@ -45,10 +42,5 @@ public class ImportToSearchIndexHandler implements RequestStreamHandler {
         }
     }
 
-    private ImportDataRequestEvent parseInput(InputStream input) throws IOException {
-        ImportDataRequestEvent request = objectMapperWithEmpty.readValue(input, ImportDataRequestEvent.class);
-        logger.info("Bucket: " + request.getBucket());
-        logger.info("Path: " + request.getS3Path());
-        return request;
-    }
+    
 }

@@ -14,6 +14,7 @@ public final class BatchIndexingConstants {
     public static final Environment ENVIRONMENT = new Environment();
     public static final String BATCH_INDEX_EVENT_TOPIC = "SearchService.Index.Batch";
     public static final String AWS_REGION_ENV_VARIABLE = "AWS_REGION";
+    public static final String PERSISTED_RESOURCES_PATH = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_PATH");
     private static final Config config = ConfigFactory.load();
     public  static final int NUMBER_OF_FILES_PER_EVENT = config.getInt("batch.index.number_of_files_per_event");
     public static final boolean RECURSION_ENABLED = config.getBoolean("batch.index.recursion");
