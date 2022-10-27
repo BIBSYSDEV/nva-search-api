@@ -27,7 +27,7 @@ class StartBatchIndexingHandlerTest extends BatchIndexTest {
 
         handler.handleRequest(newImportRequest(), outputStream, CONTEXT);
         ImportDataRequestEvent expectedImportRequest =
-            new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH);
+            new ImportDataRequestEvent(BatchIndexingConstants.PERSISTED_RESOURCES_PATH.get());
         assertThat(eventBridgeClient.getLatestEvent(), is(equalTo(expectedImportRequest)));
     }
 
