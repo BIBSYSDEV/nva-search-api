@@ -25,4 +25,6 @@ test{
     environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
     environment "ALLOWED_ORIGIN", "*"
     environment "COGNITO_URI", "https://example.org"
+    environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
+    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
 }
