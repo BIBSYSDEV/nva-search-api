@@ -448,11 +448,11 @@ Resources:
           ELASTICSEARCH_REGION: !Ref "AWS::Region"
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
 
-  BatchIndexingFromS3:
+  StartBatchIndexingButton:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.ImportToSearchIndexHandler::handleRequest
+      Handler: no.unit.nva.search.StartBatchIndexingHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Timeout: 900
@@ -463,6 +463,7 @@ Resources:
           ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
           ELASTICSEARCH_REGION: !Ref "AWS::Region"
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
+          PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
   BatchIndexEventBus:
     Type: AWS::Events::EventBus

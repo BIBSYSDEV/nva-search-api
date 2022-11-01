@@ -12,8 +12,8 @@ import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingConfig;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.common.xcontent.XContentType;
 
 public class IndexDocument implements JsonSerializable {
 

@@ -14,7 +14,7 @@ dependencies {
     implementation libs.nva.apigateway
     implementation libs.nva.identifiers
 
-    implementation libs.elasticsearch.rest.highlevel.client
+    implementation libs.opensearch.rest.highlevel.client
     implementation libs.guava
 
     testImplementation libs.bundles.testing

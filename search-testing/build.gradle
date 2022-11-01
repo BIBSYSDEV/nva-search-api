@@ -4,6 +4,6 @@ dependencies {
     implementation libs.nva.core
     implementation libs.nva.json
     implementation libs.bundles.jackson
-    implementation libs.elasticsearch
+    implementation libs.opensearch
     implementation libs.bundles.testing
 }

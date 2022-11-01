@@ -9,9 +9,9 @@ import no.unit.nva.s3.ListingResult;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.paths.UnixPath;
-import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkItemResponse.Failure;
-import org.elasticsearch.action.bulk.BulkResponse;
+import org.opensearch.action.bulk.BulkItemResponse;
+import org.opensearch.action.bulk.BulkItemResponse.Failure;
+import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -36,6 +36,7 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     }
 
     public IndexingResult<SortableIdentifier> processRequest() {
+        
         ListingResult listFilesResult = fetchNextPageOfFilenames();
         List<IndexDocument> contents = fileContents(listFilesResult.getFiles()).collect(Collectors.toList());
         List<SortableIdentifier> failedResults = indexFileContents(contents);
@@ -83,7 +84,7 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     }
 
     private <T> void logFailure(T failureMessage) {
-        logger.warn("Failed to index resource:" + failureMessage.toString());
+        logger.warn("Failed to index resource:{}", failureMessage);
     }
 
     private Stream<SortableIdentifier> collectFailures(Stream<BulkResponse> indexActions) {

@@ -9,10 +9,10 @@ import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.search.constants.ApplicationConstants;
 import no.unit.nva.search.models.IndexDocument;
-import org.elasticsearch.action.DocWriteRequest.OpType;
-import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkItemResponse.Failure;
-import org.elasticsearch.action.bulk.BulkResponse;
+import org.opensearch.action.DocWriteRequest.OpType;
+import org.opensearch.action.bulk.BulkItemResponse;
+import org.opensearch.action.bulk.BulkItemResponse.Failure;
+import org.opensearch.action.bulk.BulkResponse;
 
 public class BatchIndexTest {
 
