@@ -162,10 +162,12 @@ class SearchHandlerTest {
     
     private InputStream queryWithPaginationParameters(String path, Integer from, Integer resultSize)
         throws JsonProcessingException {
+        var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withNvaUsername(USERNAME)
                    .withHeaders(defaultQueryHeaders())
-                   .withAccessRight(EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+                   .withCustomerId(customerId)
+                   .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS.toString())
                    .withRequestContextValue(PATH, path)
                    .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -207,10 +209,12 @@ class SearchHandlerTest {
     }
     
     private InputStream queryWithoutQueryParameters(String path) throws JsonProcessingException {
+        var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withNvaUsername(USERNAME)
                    .withHeaders(defaultQueryHeaders())
-                   .withAccessRight(EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+                   .withCustomerId(customerId)
+                   .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS.toString())
                    .withRequestContextValue(PATH, path)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
                    .build();
@@ -221,9 +225,11 @@ class SearchHandlerTest {
     }
     
     private InputStream queryWithoutAppropriateAccessRight() throws JsonProcessingException {
+        var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withNvaUsername(USERNAME)
-                   .withAccessRight("SomeOtherAccessRight")
+                   .withCustomerId(customerId)
+                   .withAccessRights(customerId,"SomeOtherAccessRight")
                    .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
                    .withRequestContextValue(PATH, MESSAGES_PATH)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -235,10 +241,12 @@ class SearchHandlerTest {
     }
     
     private InputStream queryWithCustomOrganizationAsQueryParameter(URI desiredOrgUri) throws JsonProcessingException {
+        var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withQueryParameters(Map.of(VIEWING_SCOPE_QUERY_PARAMETER, desiredOrgUri.toString()))
                    .withNvaUsername(USERNAME)
-                   .withAccessRight(EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+                   .withCustomerId(customerId)
+                   .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS.toString())
                    .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
                    .withRequestContextValue(PATH, MESSAGES_PATH)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)

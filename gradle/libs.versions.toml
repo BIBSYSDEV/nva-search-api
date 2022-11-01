@@ -1,16 +1,16 @@
 [versions]
 junit = { strictly = '5.8.1' }
-jackson = { strictly = '2.13.1' }
+jackson = { strictly = '2.13.3' }
 awsSdk1 = { strictly = '1.12.111' }
 awsSdk2 = { strictly = '2.17.82' }
-nvaCommons = { strictly = '1.21.0-alpha13' }
-opensearch = { strictly = '1.3.3' }
+nvaCommons = { strictly = '1.25.7' }
+opensearch = { strictly = '2.3.0' }
 slf4j = { strictly = '1.8.0-beta4' }
 testContainers = { strictly = '1.16.2' }
 zalandoProblem = { strictly = '0.26.0' }
-log4j = { strictly = '2.17.1' }
+log4j = { strictly = '2.17.2' }
 awsApacheInterceptor = { strictly = 'deb7941e85' }
-guava = { strictly = '31.0.1-jre' }
+guava = { strictly = '31.1-jre' }
 javaFaker = { strictly = '1.0.2' }
 hamcrest = { strictly = '2.2' }
 mockito = { strictly = '4.2.0' }
