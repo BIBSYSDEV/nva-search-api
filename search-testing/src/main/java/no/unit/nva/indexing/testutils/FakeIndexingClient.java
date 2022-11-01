@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.models.IndexDocument;
-import org.elasticsearch.action.DocWriteRequest.OpType;
-import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkResponse;
+import org.opensearch.action.DocWriteRequest.OpType;
+import org.opensearch.action.DocWriteResponse;
+import org.opensearch.action.bulk.BulkItemResponse;
+import org.opensearch.action.bulk.BulkResponse;
 
 /**
  * Faking the Indexing Client instead of the ElasticSearch client because faking the ElasticSearch client is difficult.

@@ -1,9 +1,9 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
-import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.opensearch.index.query.QueryBuilders.existsQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import java.io.IOException;
 import java.net.URI;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -11,12 +11,12 @@ import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 public class SearchClient {
     
