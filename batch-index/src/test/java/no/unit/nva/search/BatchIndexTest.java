@@ -38,7 +38,7 @@ public class BatchIndexTest {
     }
 
     private Failure createFailure(String identifier) {
-        return new Failure(ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX, "failureType",
+        return new Failure(ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX,
                            identifier, new Exception("failingBulkIndexMessage"));
     }
 
