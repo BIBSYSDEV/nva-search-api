@@ -190,9 +190,10 @@ public class ElasticsearchTest {
     @Test
     void shouldReturnPendingPublishingRequestsForDraftPublications()
         throws IOException, InterruptedException, BadGatewayException {
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument("sample_publishing_request_of_published_publication"
-                                                                   + ".json"));
+        indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
