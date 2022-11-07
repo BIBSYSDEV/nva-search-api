@@ -1,9 +1,6 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_ADDRESS;
-import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
-import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_REGION;
-import static no.unit.nva.search.constants.ApplicationConstants.ELASTIC_SEARCH_SERVICE_NAME;
+import static no.unit.nva.search.constants.ApplicationConstants.*;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.auth.AWS4Signer;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -47,12 +44,11 @@ public class IndexingClient {
     public static final int BULK_SIZE = 100;
     public static final boolean SEQUENTIAL = false;
     private static final Logger logger = LoggerFactory.getLogger(IndexingClient.class);
-    private static final AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
     private final RestHighLevelClientWrapper elasticSearchClient;
 
     @JacocoGenerated
     public IndexingClient() {
-        elasticSearchClient = createElasticsearchClientWithInterceptor();
+        elasticSearchClient = SearchClientConfig.defaultRestHighLevelClientWrapper();
     }
 
     /**
@@ -66,7 +62,7 @@ public class IndexingClient {
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        logger.info(INITIAL_LOG_MESSAGE, ELASTICSEARCH_ENDPOINT_ADDRESS, indexDocument.getIndexName());
+        logger.info(INITIAL_LOG_MESSAGE, SEARCH_INFRASTRUCTURE_API_URI, indexDocument.getIndexName());
         elasticSearchClient.index(indexDocument.toIndexRequest(), RequestOptions.DEFAULT);
         return null;
     }
@@ -95,20 +91,6 @@ public class IndexingClient {
         return batches.map(attempt(this::insertBatch)).map(Try::orElseThrow);
     }
 
-    @JacocoGenerated
-    private RestHighLevelClientWrapper createElasticsearchClientWithInterceptor() {
-        AWS4Signer signer = getAws4Signer();
-        HttpRequestInterceptor interceptor =
-            new AWSRequestSigningApacheInterceptor(ELASTIC_SEARCH_SERVICE_NAME,
-                                                   signer,
-                                                   credentialsProvider);
-
-        RestClientBuilder clientBuilder = RestClient
-            .builder(HttpHost.create(ELASTICSEARCH_ENDPOINT_ADDRESS))
-            .setHttpClientConfigCallback(config -> config.addInterceptorLast(interceptor));
-        return new RestHighLevelClientWrapper(clientBuilder);
-    }
-
     private Stream<List<IndexDocument>> splitStreamToBatches(Stream<IndexDocument> indexDocuments) {
         UnmodifiableIterator<List<IndexDocument>> bulks = Iterators.partition(
             indexDocuments.iterator(), BULK_SIZE);
@@ -126,14 +108,6 @@ public class IndexingClient {
         request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
         request.waitForActiveShards(ActiveShardCount.ONE);
         return elasticSearchClient.bulk(request, RequestOptions.DEFAULT);
-    }
-
-    @JacocoGenerated
-    private AWS4Signer getAws4Signer() {
-        AWS4Signer signer = new AWS4Signer();
-        signer.setServiceName(ELASTIC_SEARCH_SERVICE_NAME);
-        signer.setRegionName(ELASTICSEARCH_REGION);
-        return signer;
     }
 
     public Void deleteIndex(String indexName) throws IOException {

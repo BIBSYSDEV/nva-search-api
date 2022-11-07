@@ -5,12 +5,15 @@ plugins{
 dependencies {
 
     implementation libs.bundles.jackson
+    implementation libs.bundles.jacksonjr
     implementation libs.slf4j
     implementation libs.bundles.aws.xray
 
     implementation libs.aws.apache.interceptor
     implementation libs.nva.core
     implementation libs.nva.json
+    implementation libs.nva.auth
+    implementation libs.nva.secrets
     implementation libs.nva.apigateway
     implementation libs.nva.identifiers
 
@@ -30,6 +33,6 @@ test {
     environment "IDENTITY_SERVICE_SECRET_NAME", "secretName"
     environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"
     environment "API_HOST", "localhost"
-    environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
-    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
+    environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
+    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
 }

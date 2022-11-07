@@ -35,7 +35,7 @@ Parameters:
   SearchInfrastructureAuthUri:
     Type: String
     Description: URI to auth for external search infrastructure API (SWS).
-    Default: 'https://sws-auth.auth.eu-west-1.amazoncognito.com/oauth2/token'
+    Default: 'https://sws-auth.auth.eu-west-1.amazoncognito.com'
   CustomDomain:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Custom API to connect this lambda to
