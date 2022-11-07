@@ -35,15 +35,15 @@ public class SearchClient {
     public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
     public static final String PENDING = "Pending";
-    private final RestHighLevelClientWrapper elasticSearchClient;
+    private final RestHighLevelClientWrapper openSearchClient;
     
     /**
      * Creates a new ElasticSearchRestClient.
      *
-     * @param elasticSearchClient client to use for access to ElasticSearch
+     * @param openSearchClient client to use for access to ElasticSearch
      */
-    public SearchClient(RestHighLevelClientWrapper elasticSearchClient) {
-        this.elasticSearchClient = elasticSearchClient;
+    public SearchClient(RestHighLevelClientWrapper openSearchClient) {
+        this.openSearchClient = openSearchClient;
     }
     
     /**
@@ -68,7 +68,7 @@ public class SearchClient {
                 pageSize,
                 pageNo,
                 index);
-            return elasticSearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            return openSearchClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
@@ -77,7 +77,7 @@ public class SearchClient {
     public SearchResponse doSearch(SearchDocumentsQuery query, String index) throws BadGatewayException {
         try {
             SearchRequest searchRequest = query.toSearchRequest(index);
-            return elasticSearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            return openSearchClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
