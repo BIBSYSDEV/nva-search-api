@@ -75,8 +75,8 @@ public class OpensearchTest {
 
         var httpHostAddress = getContainerHost();
 
-        RestClientBuilder restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
-        RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+        var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
+        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
 
         searchClient = new SearchClient(restHighLevelClientWrapper);
         indexingClient = new IndexingClient(restHighLevelClientWrapper);
@@ -93,14 +93,14 @@ public class OpensearchTest {
 
         var httpHostAddress = getContainerHost();
 
-        HttpClient httpClient = HttpClient.newBuilder().build();
+        var httpClient = HttpClient.newBuilder().build();
 
-        HttpRequest request = HttpRequest.newBuilder()
+        var request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create("http://" + httpHostAddress))
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertThat(response.statusCode(), is(equalTo(200)));
     }
@@ -112,7 +112,7 @@ public class OpensearchTest {
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(getEmptyViewingScope(),
+        var response = searchClient.findResourcesForOrganizationIds(getEmptyViewingScope(),
                 PAGE_SIZE,
                 PAGE_NO,
                 INDEX_NAME);
@@ -128,10 +128,10 @@ public class OpensearchTest {
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        ViewingScope viewingScope = getEmptyViewingScope();
+        var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(viewingScope,
+        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
                 INDEX_NAME);
@@ -148,10 +148,10 @@ public class OpensearchTest {
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        ViewingScope viewingScope = getEmptyViewingScope();
+        var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(viewingScope,
+        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
                 INDEX_NAME);
@@ -171,7 +171,7 @@ public class OpensearchTest {
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
         viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(viewingScope,
+        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
                 INDEX_NAME);
@@ -256,7 +256,7 @@ public class OpensearchTest {
     }
 
     private IndexDocument getIndexDocument(Set<URI> organizationIds, String status) {
-        EventConsumptionAttributes eventConsumptionAttributes = new EventConsumptionAttributes(
+        var eventConsumptionAttributes = new EventConsumptionAttributes(
                 INDEX_NAME,
                 SortableIdentifier.next()
         );
@@ -265,16 +265,16 @@ public class OpensearchTest {
                 DOCUMENT_TYPE, DOI_REQUEST,
                 TICKET_STATUS, status
         );
-        JsonNode jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
+        var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
 
     private IndexDocument crateSampleIndexDocument(String jsonFile) throws IOException {
-        EventConsumptionAttributes eventConsumptionAttributes = new EventConsumptionAttributes(
+        var eventConsumptionAttributes = new EventConsumptionAttributes(
                 INDEX_NAME,
                 SortableIdentifier.next()
         );
-        JsonNode jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
+        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
                 JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
