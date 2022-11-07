@@ -38,7 +38,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Testcontainers
-public class ElasticsearchTest {
+public class OpensearchTest {
 
     public static final String INDEX_NAME = RandomDataGenerator.randomString().toLowerCase();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
@@ -53,6 +53,7 @@ public class ElasticsearchTest {
     private static final int PAGE_NO = 0;
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create("https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
+    private static final int CONTAINER_PORT = 9200;
 
     private SearchClient searchClient;
     private IndexingClient indexingClient;
@@ -68,13 +69,11 @@ public class ElasticsearchTest {
     @BeforeEach
     void setUp() {
 
-        container.setPortBindings(List.of("9200:9200", "9600:9600"));
-        container.setExposedPorts(List.of(9200, 9600));
+        container.setPortBindings(List.of(CONTAINER_PORT + ":" + CONTAINER_PORT));
+        container.setExposedPorts(List.of(CONTAINER_PORT));
         container.start();
 
-        var port9200 = container.getMappedPort(9200);
-        var host = container.getHost();
-        var httpHostAddress = host + ":" + port9200;
+        var httpHostAddress = getContainerHost();
 
         RestClientBuilder restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
         RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
@@ -92,19 +91,13 @@ public class ElasticsearchTest {
     @Test
     void canConnectToContainer() throws IOException, InterruptedException{
 
-        var port9200 = container.getMappedPort(9200);
-        var host = container.getHost();
-        var httpHostAddress = host + ":" + port9200;
+        var httpHostAddress = getContainerHost();
 
         HttpClient httpClient = HttpClient.newBuilder().build();
-
-        String authenticatorValue = "admin:admin";
-        String credentials = Base64.getEncoder().encodeToString(authenticatorValue.getBytes(StandardCharsets.UTF_8));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create("http://" + httpHostAddress))
-                .header("Authorization", "Basic " + credentials)
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -285,5 +278,10 @@ public class ElasticsearchTest {
                 JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
+    }
+
+    private String getContainerHost() {
+        var host = container.getHost();
+        return host + ":" + CONTAINER_PORT;
     }
 }
