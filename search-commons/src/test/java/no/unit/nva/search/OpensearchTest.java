@@ -12,20 +12,15 @@ import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestClient;
-import org.opensearch.client.RestClientBuilder;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,27 +48,16 @@ public class OpensearchTest {
     private static final int PAGE_NO = 0;
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create("https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
-    private static final int CONTAINER_PORT = 9200;
 
     private SearchClient searchClient;
     private IndexingClient indexingClient;
+    private final OpenSearchContainer container = new OpenSearchContainer();
 
-
-    @SuppressWarnings("rawtypes")
-    private final GenericContainer container = new GenericContainer(
-            DockerImageName.parse("opensearchproject/opensearch:latest"))
-            .withEnv("plugins.security.disabled", "true")
-            .withEnv("discovery.type", "single-node");
-
-    @SuppressWarnings("unchecked")
     @BeforeEach
     void setUp() {
-
-        container.setPortBindings(List.of(CONTAINER_PORT + ":" + CONTAINER_PORT));
-        container.setExposedPorts(List.of(CONTAINER_PORT));
         container.start();
 
-        var httpHostAddress = getContainerHost();
+        var httpHostAddress = container.getHttpHostAddress();
 
         var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
@@ -91,7 +75,7 @@ public class OpensearchTest {
     @Test
     void canConnectToContainer() throws IOException, InterruptedException{
 
-        var httpHostAddress = getContainerHost();
+        var httpHostAddress = container.getHttpHostAddress();
 
         var httpClient = HttpClient.newBuilder().build();
 
@@ -280,8 +264,4 @@ public class OpensearchTest {
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
 
-    private String getContainerHost() {
-        var host = container.getHost();
-        return host + ":" + CONTAINER_PORT;
-    }
 }
