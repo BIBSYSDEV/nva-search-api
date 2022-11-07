@@ -1,25 +1,10 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.constants.ApplicationConstants.*;
-import static nva.commons.core.attempt.Try.attempt;
-import com.amazonaws.auth.AWS4Signer;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.http.AWSRequestSigningApacheInterceptor;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
-import java.io.IOException;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequestInterceptor;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.bulk.BulkRequest;
@@ -30,11 +15,21 @@ import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestClient;
-import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.indices.CreateIndexRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
+import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
+import static nva.commons.core.attempt.Try.attempt;
 
 public class IndexingClient {
 

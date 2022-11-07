@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,6 +31,7 @@ import java.util.stream.IntStream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
+import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.opensearch.action.bulk.BulkRequest;
@@ -58,11 +60,6 @@ class IndexingClientTest {
         esClient = setupMockEsClient();
         indexingClient = new IndexingClient(esClient);
         submittedIndexRequest = new AtomicReference<>();
-    }
-
-    @Test
-    void shouldCreateDefaultObjectWithoutFailing() {
-        assertDoesNotThrow((Executable) IndexingClient::new);
     }
 
     @Test

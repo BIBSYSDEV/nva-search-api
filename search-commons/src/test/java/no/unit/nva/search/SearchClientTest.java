@@ -4,7 +4,7 @@ import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
-import static no.unit.nva.search.SearchClientConfig.defaultSearchClient;
+import static no.unit.nva.search.SearchClientConfig.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
@@ -27,11 +29,14 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
+import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RequestOptions;
@@ -58,8 +63,13 @@ class SearchClientTest {
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     
     @Test
-    void constructorWithEnvironmentDefinedShouldCreateInstance() {
-        SearchClient searchClient = defaultSearchClient();
+    void constructorWithSecretsReaderDefinedShouldCreateInstance() {
+        SecretsReader secretsReaderMock = mock(SecretsReader.class);
+        var testCredentials = new UsernamePasswordWrapper("user", "password");
+        when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
+                .thenReturn(testCredentials);
+
+        SearchClient searchClient = prepareWithSecretReader(secretsReaderMock);
         assertNotNull(searchClient);
     }
     

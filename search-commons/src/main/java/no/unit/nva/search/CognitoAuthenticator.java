@@ -2,6 +2,7 @@ package no.unit.nva.search;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 import no.unit.nva.auth.CognitoCredentials;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
 import java.net.HttpURLConnection;
@@ -29,6 +30,16 @@ public class CognitoAuthenticator {
     public CognitoAuthenticator(HttpClient httpClient, CognitoCredentials credentials) {
         this.httpClient = httpClient;
         this.credentials = credentials;
+    }
+
+    @JacocoGenerated
+    public static CognitoAuthenticator prepareWithCognitoCredentials(CognitoCredentials cognitoCredentials) {
+        return prepareWithCognitoCredentials(HttpClient.newHttpClient(), cognitoCredentials);
+    }
+
+    public static CognitoAuthenticator prepareWithCognitoCredentials(HttpClient httpClient,
+                                                                     CognitoCredentials cognitoApiClientCredentials) {
+        return new CognitoAuthenticator(httpClient, cognitoApiClientCredentials);
     }
 
     public String getBearerToken() {
@@ -75,7 +86,7 @@ public class CognitoAuthenticator {
                 .orElseThrow();
     }
 
-    private HttpResponse<String> responseIsSuccessful(HttpResponse<String> response) throws RuntimeException {
+    private HttpResponse<String> responseIsSuccessful(HttpResponse<String> response) {
         if (HttpURLConnection.HTTP_OK != response.statusCode()) {
             throw new RuntimeException(AUTHORIZATION_ERROR_MESSAGE);
         }
