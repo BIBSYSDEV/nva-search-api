@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +29,8 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Testcontainers
 public class OpensearchTest {
@@ -61,8 +61,10 @@ public class OpensearchTest {
 
         var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+        var authenticator = mock(CognitoAuthenticator.class);
+        when(authenticator.getBearerToken()).thenReturn("Bearer mock");
 
-        searchClient = new SearchClient(restHighLevelClientWrapper);
+        searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
         indexingClient = new IndexingClient(restHighLevelClientWrapper);
     }
 

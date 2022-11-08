@@ -43,7 +43,7 @@ public class IndexingClient {
 
     @JacocoGenerated
     public IndexingClient() {
-        elasticSearchClient = SearchClientConfig.defaultRestHighLevelClientWrapper();
+        elasticSearchClient = RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper();
     }
 
     /**
