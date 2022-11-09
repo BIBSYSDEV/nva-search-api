@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -186,9 +184,9 @@ public class OpensearchTest {
 
     @Test
     void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument(
+        indexingClient.addDocumentToIndex(createSampleIndexDocument(
                 "sample_response_with_publication_status_as_draft.json"));
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument(
+        indexingClient.addDocumentToIndex(createSampleIndexDocument(
                 "sample_response_with_publication_status_as_requested.json"));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
@@ -212,9 +210,9 @@ public class OpensearchTest {
     void shouldReturnPendingPublishingRequestsForDraftPublications()
             throws IOException, InterruptedException, BadGatewayException {
         indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
+                createSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
         indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
+                createSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
@@ -253,7 +251,7 @@ public class OpensearchTest {
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
 
-    private IndexDocument crateSampleIndexDocument(String jsonFile) throws IOException {
+    private IndexDocument createSampleIndexDocument(String jsonFile) throws IOException {
         var eventConsumptionAttributes = new EventConsumptionAttributes(
                 INDEX_NAME,
                 SortableIdentifier.next()
