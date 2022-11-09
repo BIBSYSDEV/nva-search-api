@@ -72,11 +72,14 @@ class SearchHandlerTest {
     private Context context;
     private ByteArrayOutputStream outputStream;
     private FakeRestHighLevelClientWrapper restHighLevelClientWrapper;
+    private CognitoAuthenticator authenticator;
 
     @BeforeEach
     void init() throws IOException {
+        authenticator =  mock(CognitoAuthenticator.class);
+        when(authenticator.getBearerToken()).thenReturn("Bearer mock");
         prepareSearchClientWithResponse();
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper);
+        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
         setupFakeIdentityClient();
         handler = new SearchHandler(new Environment(), searchClient, identityClientMock);
         context = mock(Context.class);

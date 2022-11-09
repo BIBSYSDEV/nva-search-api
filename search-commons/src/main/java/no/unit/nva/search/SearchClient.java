@@ -1,11 +1,13 @@
 package no.unit.nva.search;
 
+import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import java.io.IOException;
 import java.net.URI;
+
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
@@ -36,14 +38,17 @@ public class SearchClient {
     public static final String TICKET_STATUS = "status";
     public static final String PENDING = "Pending";
     private final RestHighLevelClientWrapper openSearchClient;
+
+    private final CognitoAuthenticator authenticator;
     
     /**
      * Creates a new ElasticSearchRestClient.
      *
      * @param openSearchClient client to use for access to ElasticSearch
      */
-    public SearchClient(RestHighLevelClientWrapper openSearchClient) {
+    public SearchClient(RestHighLevelClientWrapper openSearchClient, CognitoAuthenticator authenticator) {
         this.openSearchClient = openSearchClient;
+        this.authenticator = authenticator;
     }
     
     /**
@@ -68,16 +73,23 @@ public class SearchClient {
                 pageSize,
                 pageNo,
                 index);
-            return openSearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            return openSearchClient.search(searchRequest, getRequestOptions());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
     }
-    
+
+    private RequestOptions getRequestOptions() {
+        return RequestOptions.DEFAULT
+                .toBuilder()
+                .addHeader(AUTHORIZATION, authenticator.getBearerToken())
+                .build();
+    }
+
     public SearchResponse doSearch(SearchDocumentsQuery query, String index) throws BadGatewayException {
         try {
             SearchRequest searchRequest = query.toSearchRequest(index);
-            return openSearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            return openSearchClient.search(searchRequest, getRequestOptions());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }

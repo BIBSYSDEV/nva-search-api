@@ -50,11 +50,15 @@ public class SearchResourcesApiHandlerTest {
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
 
+    private CognitoAuthenticator authenticator;
+
     @BeforeEach
     void init() {
         restHighLevelClientMock = mock(RestHighLevelClient.class);
+        authenticator = mock(CognitoAuthenticator.class);
+        when(authenticator.getBearerToken()).thenReturn("Bearer mock");
         RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper);
+        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
         handler = new SearchResourcesApiHandler(new Environment(), searchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
