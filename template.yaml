@@ -111,6 +111,14 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:IdentityServiceSecret*'
+        - PolicyName: readSearchInfrastructureSecret
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
 
   SearchHandlerRole:
     Type: AWS::IAM::Role
@@ -176,12 +184,12 @@ Resources:
             Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
       ElasticsearchClusterConfig: !If [ LargeElasticSearch,
         {
-            DedicatedMasterEnabled: true,
-            DedicatedMasterType: t2.medium.elasticsearch,
-            DedicatedMasterCount: 3,
-            InstanceCount: 2,
-            ZoneAwarenessEnabled: false,
-            InstanceType: t2.medium.elasticsearch
+          DedicatedMasterEnabled: true,
+          DedicatedMasterType: t2.medium.elasticsearch,
+          DedicatedMasterCount: 3,
+          InstanceCount: 2,
+          ZoneAwarenessEnabled: false,
+          InstanceType: t2.medium.elasticsearch
         },
         {
           DedicatedMasterEnabled: false,
