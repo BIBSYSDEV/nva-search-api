@@ -65,7 +65,7 @@ public class OpensearchTest {
         when(authenticator.getBearerToken()).thenReturn("Bearer mock");
 
         searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
-        indexingClient = new IndexingClient(restHighLevelClientWrapper);
+        indexingClient = new IndexingClient(restHighLevelClientWrapper, authenticator);
     }
 
     @AfterEach

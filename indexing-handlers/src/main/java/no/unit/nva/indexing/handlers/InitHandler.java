@@ -4,7 +4,6 @@ import static no.unit.nva.search.constants.ApplicationConstants.DOIREQUESTS_INDE
 import static no.unit.nva.search.constants.ApplicationConstants.MESSAGES_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_INDEX;
-import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import no.unit.nva.search.IndexingClient;
@@ -15,12 +14,13 @@ import org.slf4j.LoggerFactory;
 public class InitHandler implements RequestHandler<Object, String> {
     
     public static final String FINISHED = "FINISHED";
+    public static final String FAILED_MESSAGE = "Failed. See logs";
     private final IndexingClient indexingClient;
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
     
     @JacocoGenerated
     public InitHandler() {
-        this(new IndexingClient());
+        this(IndexingClient.defaultIndexingClient());
     }
     
     public InitHandler(IndexingClient indexingClient) {
@@ -29,17 +29,16 @@ public class InitHandler implements RequestHandler<Object, String> {
     
     @Override
     public String handleRequest(Object input, Context context) {
-        
-        attempt(() -> indexingClient.createIndex(RESOURCES_INDEX)).orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.createIndex(DOIREQUESTS_INDEX)).orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.createIndex(MESSAGES_INDEX)).orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.createIndex(PUBLISHING_REQUESTS_INDEX)).orElse(
-            fail -> logError(fail.getException()));
+        try {
+            indexingClient.createIndex(RESOURCES_INDEX);
+            indexingClient.createIndex(DOIREQUESTS_INDEX);
+            indexingClient.createIndex(MESSAGES_INDEX);
+            indexingClient.createIndex(PUBLISHING_REQUESTS_INDEX);
+        } catch (Exception e) {
+            logger.warn("Index creation failed", e);
+            return FAILED_MESSAGE;
+        }
+
         return FINISHED;
-    }
-    
-    private Void logError(Exception exception) {
-        logger.warn("Index creation failed", exception);
-        return null;
     }
 }

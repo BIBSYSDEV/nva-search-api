@@ -1,5 +1,6 @@
 package no.unit.nva.search.models;
 
+import static no.unit.nva.search.IndexingClient.objectMapper;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,7 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.IndexingConfig;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
@@ -40,7 +40,7 @@ public class IndexDocument implements JsonSerializable {
     }
 
     public static IndexDocument fromJsonString(String json) {
-        return attempt(() -> IndexingConfig.objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
+        return attempt(() -> objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
     }
 
     @JacocoGenerated
@@ -94,6 +94,6 @@ public class IndexDocument implements JsonSerializable {
     }
 
     private String serializeResource() {
-        return attempt(() -> IndexingConfig.objectMapper.writeValueAsString(resource)).orElseThrow();
+        return attempt(() -> objectMapper.writeValueAsString(resource)).orElseThrow();
     }
 }

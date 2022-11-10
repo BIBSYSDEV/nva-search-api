@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT;
+import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -75,7 +76,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         var request = new ImportDataRequestEvent(importLocation);
         indexer.handleRequest(eventStream(request), outputStream, CONTEXT);
         var actualIdentifiersOfNonIndexedEntries =
-            Arrays.asList(IndexingConfig.objectMapper.readValue(outputStream.toString(), String[].class));
+            Arrays.asList(objectMapper.readValue(outputStream.toString(), String[].class));
         var expectedIdentifiesOfNonIndexedEntries = extractIdentifiersFromFailingFiles(filesFailingToBeIndexed);
 
         assertThat(actualIdentifiersOfNonIndexedEntries, containsInAnyOrder(expectedIdentifiesOfNonIndexedEntries));

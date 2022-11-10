@@ -28,7 +28,16 @@ public class FakeIndexingClient extends IndexingClient {
     private final Map<String, Set<JsonNode>> indexContents;
 
     public FakeIndexingClient() {
-        super(null);
+
+
+
+
+
+
+
+
+
+        super(null, null);
         indexContents = new ConcurrentHashMap<>();
     }
 

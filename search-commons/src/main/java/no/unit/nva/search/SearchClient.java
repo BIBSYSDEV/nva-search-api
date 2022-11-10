@@ -1,6 +1,6 @@
 package no.unit.nva.search;
 
-import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
@@ -13,14 +13,15 @@ import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
-import org.opensearch.client.RequestOptions;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 
-public class SearchClient {
+public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     
     public static final String NO_RESPONSE_FROM_INDEX = "No response from index";
     public static final String ORGANIZATION_IDS = "organizationIds";
@@ -37,20 +38,17 @@ public class SearchClient {
     public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
     public static final String PENDING = "Pending";
-    private final RestHighLevelClientWrapper openSearchClient;
 
-    private final CognitoAuthenticator authenticator;
-    
     /**
-     * Creates a new ElasticSearchRestClient.
+     * Creates a new SearchClient.
      *
      * @param openSearchClient client to use for access to ElasticSearch
+     * @param authenticator
      */
     public SearchClient(RestHighLevelClientWrapper openSearchClient, CognitoAuthenticator authenticator) {
-        this.openSearchClient = openSearchClient;
-        this.authenticator = authenticator;
+        super(openSearchClient, authenticator);
     }
-    
+
     /**
      * Searches for a searchTerm or index:searchTerm in elasticsearch index.
      *
@@ -77,13 +75,6 @@ public class SearchClient {
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
-    }
-
-    private RequestOptions getRequestOptions() {
-        return RequestOptions.DEFAULT
-                .toBuilder()
-                .addHeader(AUTHORIZATION, authenticator.getBearerToken())
-                .build();
     }
 
     public SearchResponse doSearch(SearchDocumentsQuery query, String index) throws BadGatewayException {
@@ -159,4 +150,17 @@ public class SearchClient {
                 .queryName(EXCLUDED_VIEWING_SCOPES_QUERY_NAME);
         }
     }
+
+    @JacocoGenerated
+    public static SearchClient defaultSearchClient() {
+        return prepareWithSecretReader(new SecretsReader());
+    }
+
+    public static SearchClient prepareWithSecretReader(SecretsReader secretReader) {
+        var cognitoCredentials = createCognitoCredentials(secretReader);
+        var cognitoAuthenticator
+            = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
+        return new SearchClient(defaultRestHighLevelClientWrapper(), cognitoAuthenticator);
+    }
+
 }

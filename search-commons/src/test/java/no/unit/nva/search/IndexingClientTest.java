@@ -2,7 +2,7 @@ package no.unit.nva.search;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.search.IndexingClient.BULK_SIZE;
-import static no.unit.nva.search.IndexingConfig.objectMapper;
+import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -13,10 +13,11 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,6 +32,7 @@ import java.util.stream.IntStream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search.models.UsernamePasswordWrapper;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -54,12 +56,26 @@ class IndexingClientTest {
     private RestHighLevelClientWrapper esClient;
     private IndexingClient indexingClient;
     private AtomicReference<IndexRequest> submittedIndexRequest;
+    public static final String TOKEN_MOCK = "Bearer mock";
+    CognitoAuthenticator cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
 
     @BeforeEach
     public void init() throws IOException {
+        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(TOKEN_MOCK);
         esClient = setupMockEsClient();
-        indexingClient = new IndexingClient(esClient);
+        indexingClient = new IndexingClient(esClient, cogintoAuthenticatorMock);
         submittedIndexRequest = new AtomicReference<>();
+    }
+
+    @Test
+    void constructorWithSecretsReaderDefinedShouldCreateInstance() {
+        SecretsReader secretsReaderMock = mock(SecretsReader.class);
+        var testCredentials = new UsernamePasswordWrapper("user", "password");
+        when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
+            .thenReturn(testCredentials);
+
+        IndexingClient indexingClient = IndexingClient.prepareWithSecretReader(secretsReaderMock);
+        assertNotNull(indexingClient);
     }
 
     @Test
@@ -119,7 +135,7 @@ class IndexingClientTest {
         when(esClient.index(any(IndexRequest.class), any(RequestOptions.class)))
             .thenThrow(new IOException(expectedMessage));
 
-        indexingClient = new IndexingClient(esClient);
+        indexingClient = new IndexingClient(esClient, cogintoAuthenticatorMock);
 
         Executable indexingAction = () -> indexingClient.addDocumentToIndex(sampleIndexDocument());
         var exception = assertThrows(IOException.class, indexingAction);
@@ -132,7 +148,7 @@ class IndexingClientTest {
         DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
         when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
         when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
-        IndexingClient indexingClient = new IndexingClient(restHighLevelClient);
+        IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cogintoAuthenticatorMock);
         assertDoesNotThrow(() -> indexingClient.removeDocumentFromIndex("1234"));
     }
 

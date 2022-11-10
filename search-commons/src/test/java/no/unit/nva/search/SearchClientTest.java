@@ -5,7 +5,7 @@ import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
-import static no.unit.nva.search.SearchClientConfig.prepareWithSecretReader;
+import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
