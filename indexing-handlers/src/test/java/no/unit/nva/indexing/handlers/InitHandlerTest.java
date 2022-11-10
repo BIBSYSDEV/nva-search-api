@@ -1,6 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexing.handlers.InitHandler.FINISHED;
+import static no.unit.nva.indexing.handlers.InitHandler.FAILED;
+import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
@@ -33,16 +34,17 @@ class InitHandlerTest {
     void shouldNotThrowExceptionIfIndicesClientDoesNotThrowException() throws IOException {
         doNothing().when(indexingClient).createIndex(any(String.class));
         var response = initHandler.handleRequest(null, context);
-        assertEquals(response, FINISHED);
+        assertEquals(response, SUCCESS);
     }
 
     @Test
-    void shouldLogWarningWhenIndexingClientFailedToCreateIndex() throws IOException {
+    void shouldLogWarningAndReturnFailedWhenIndexingClientFailedToCreateIndex() throws IOException {
         var logger = LogUtils.getTestingAppenderForRootLogger();
         String expectedMessage = randomString();
         when(indexingClient.createIndex(any(String.class))).thenThrow(
             new IOException(expectedMessage));
-        initHandler.handleRequest(null, context);
+        var response = initHandler.handleRequest(null, context);
+        assertEquals(response, FAILED);
 
         assertThat(logger.getMessages(), containsString(expectedMessage));
     }
