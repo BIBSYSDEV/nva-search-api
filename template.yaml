@@ -405,6 +405,14 @@ Resources:
                   - s3:List*
                   - events:*
                 Resource: '*'
+        - PolicyName: readSearchInfrastructureSecret
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
 
   IndexResources:
     DependsOn:
