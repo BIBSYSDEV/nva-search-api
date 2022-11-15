@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.search.IndexingClient.BULK_SIZE;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -56,12 +58,13 @@ class IndexingClientTest {
     private RestHighLevelClientWrapper esClient;
     private IndexingClient indexingClient;
     private AtomicReference<IndexRequest> submittedIndexRequest;
-    public static final String TOKEN_MOCK = "Bearer mock";
     CognitoAuthenticator cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
+    DecodedJWT jwt = mock(DecodedJWT.class);
 
     @BeforeEach
     public void init() throws IOException {
-        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(TOKEN_MOCK);
+        when(jwt.getToken()).thenReturn(TEST_TOKEN);
+        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
         esClient = setupMockEsClient();
         indexingClient = new IndexingClient(esClient, cogintoAuthenticatorMock);
         submittedIndexRequest = new AtomicReference<>();

@@ -12,10 +12,12 @@ import java.util.NoSuchElementException;
 
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_SCOPE;
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.search.CognitoAuthenticator.AUTHORIZATION_ERROR_MESSAGE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +43,7 @@ class CognitoAuthenticatorTest {
         cognitoAuthenticator = new CognitoAuthenticator(httpClient, credentials);
 
         when(okResponse.statusCode()).thenReturn(HTTP_OK);
-        when(okResponse.body()).thenReturn("{\"access_token\": \"dummytoken\"}");
+        when(okResponse.body()).thenReturn("{\"access_token\": \"" + TEST_TOKEN + "\"}");
 
         when(invalidResponse.statusCode()).thenReturn(HTTP_OK);
         when(invalidResponse.body()).thenReturn("{}");
@@ -51,11 +53,19 @@ class CognitoAuthenticatorTest {
     }
 
     @Test
-    void shouldGetTokenThatIsStructuedLikeAToken() throws IOException, InterruptedException {
+    void shouldReturnJwtTokenFromHttpRequestToCognito() throws IOException, InterruptedException {
         when(httpClient.<String>send(any(),any())).thenReturn(okResponse);
 
-        var token = cognitoAuthenticator.getBearerToken();
-        assertThat(token, containsString("Bearer dummytoken"));
+        var jwt = cognitoAuthenticator.getBearerToken();
+        assertThat(jwt.getToken(), is(TEST_TOKEN));
+    }
+
+    @Test
+    void shouldReturnDecodedJwtWithClaims() throws IOException, InterruptedException {
+        when(httpClient.<String>send(any(),any())).thenReturn(okResponse);
+
+        var jwt = cognitoAuthenticator.getBearerToken();
+        assertThat(jwt.getClaim("scope").asString(), is(TEST_SCOPE));
     }
 
     @Test

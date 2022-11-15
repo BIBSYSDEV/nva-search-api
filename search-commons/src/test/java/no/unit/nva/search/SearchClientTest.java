@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -66,10 +68,12 @@ class SearchClientTest {
     CognitoAuthenticator cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
 
     SearchResponse defaultSearchResponse = mock(SearchResponse.class);
+    DecodedJWT jwt = mock(DecodedJWT.class);
 
     @BeforeEach
     void setup() {
-        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(TOKEN_MOCK);
+        when(jwt.getToken()).thenReturn(TEST_TOKEN);
+        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
     }
     
     @Test
@@ -89,7 +93,7 @@ class SearchClientTest {
 
         var expectedRequestOptions = RequestOptions.DEFAULT
                 .toBuilder()
-                .addHeader(AUTHORIZATION, TOKEN_MOCK)
+                .addHeader(AUTHORIZATION, "Bearer " + TEST_TOKEN)
                 .build();
 
         var restClient = mock(RestHighLevelClient.class);

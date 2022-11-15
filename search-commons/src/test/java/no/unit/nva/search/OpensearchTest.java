@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
@@ -23,6 +24,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Set;
 
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.search.SearchClient.*;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -52,6 +54,7 @@ public class OpensearchTest {
     private SearchClient searchClient;
     private IndexingClient indexingClient;
     private final OpenSearchContainer container = new OpenSearchContainer();
+    DecodedJWT jwt = mock(DecodedJWT.class);
 
     @BeforeEach
     void setUp() {
@@ -61,11 +64,13 @@ public class OpensearchTest {
 
         var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-        var authenticator = mock(CognitoAuthenticator.class);
-        when(authenticator.getBearerToken()).thenReturn("Bearer mock");
+        var cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
 
-        searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
-        indexingClient = new IndexingClient(restHighLevelClientWrapper, authenticator);
+        when(jwt.getToken()).thenReturn(TEST_TOKEN);
+        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
+
+        searchClient = new SearchClient(restHighLevelClientWrapper, cogintoAuthenticatorMock);
+        indexingClient = new IndexingClient(restHighLevelClientWrapper, cogintoAuthenticatorMock);
     }
 
     @AfterEach

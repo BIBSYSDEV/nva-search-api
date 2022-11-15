@@ -19,16 +19,18 @@ public class AuthenticatedOpenSearchClientWrapper {
      *
      * @param openSearchClient client to use for access to ElasticSearch
      */
-    public AuthenticatedOpenSearchClientWrapper(RestHighLevelClientWrapper openSearchClient, CognitoAuthenticator authenticator) {
+    public AuthenticatedOpenSearchClientWrapper(RestHighLevelClientWrapper openSearchClient,
+                                                CognitoAuthenticator authenticator) {
         this.openSearchClient = openSearchClient;
         this.authenticator = authenticator;
     }
 
 
     protected RequestOptions getRequestOptions() {
+        var token = "Bearer " + authenticator.getBearerToken().getToken();
         return RequestOptions.DEFAULT
                    .toBuilder()
-                   .addHeader(AUTHORIZATION, authenticator.getBearerToken())
+                   .addHeader(AUTHORIZATION, token)
                    .build();
     }
 

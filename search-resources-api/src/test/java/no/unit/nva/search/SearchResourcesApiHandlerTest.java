@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search.models.SearchResourcesResponse;
@@ -56,7 +57,8 @@ public class SearchResourcesApiHandlerTest {
     void init() {
         restHighLevelClientMock = mock(RestHighLevelClient.class);
         authenticator = mock(CognitoAuthenticator.class);
-        when(authenticator.getBearerToken()).thenReturn("Bearer mock");
+        var jwt = mock(DecodedJWT.class);
+        when(authenticator.getBearerToken()).thenReturn(jwt);
         RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
         SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
         handler = new SearchResourcesApiHandler(new Environment(), searchClient);

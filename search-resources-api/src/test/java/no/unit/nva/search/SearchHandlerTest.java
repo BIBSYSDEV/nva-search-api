@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.SearchHandler.EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.HttpHeaders;
@@ -72,14 +74,16 @@ class SearchHandlerTest {
     private Context context;
     private ByteArrayOutputStream outputStream;
     private FakeRestHighLevelClientWrapper restHighLevelClientWrapper;
-    private CognitoAuthenticator authenticator;
+    private CognitoAuthenticator cogintoAuthenticatorMock;
 
     @BeforeEach
     void init() throws IOException {
-        authenticator =  mock(CognitoAuthenticator.class);
-        when(authenticator.getBearerToken()).thenReturn("Bearer mock");
+        cogintoAuthenticatorMock =  mock(CognitoAuthenticator.class);
+        var jwt = mock(DecodedJWT.class);
+        when(jwt.getToken()).thenReturn(TEST_TOKEN);
+        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
         prepareSearchClientWithResponse();
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
+        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, cogintoAuthenticatorMock);
         setupFakeIdentityClient();
         handler = new SearchHandler(new Environment(), searchClient, identityClientMock);
         context = mock(Context.class);
