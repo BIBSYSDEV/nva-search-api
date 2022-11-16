@@ -1,5 +1,7 @@
 package no.unit.nva.search;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.jr.ob.JSON;
 import no.unit.nva.auth.CognitoCredentials;
 import nva.commons.core.JacocoGenerated;
@@ -42,10 +44,15 @@ public class CognitoAuthenticator {
         return new CognitoAuthenticator(httpClient, cognitoApiClientCredentials);
     }
 
-    public String getBearerToken() {
+    private String getBearerTokenString() {
         var tokenUri = standardOauth2TokenEndpoint(credentials.getCognitoOAuthServerUri());
         var request = formatRequestForJwtToken(tokenUri);
         return sendRequestAndExtractToken(request);
+    }
+
+    public DecodedJWT getBearerToken() {
+        var string =  getBearerTokenString();
+        return JWT.decode(string);
     }
 
     private static URI standardOauth2TokenEndpoint(URI cognitoHost) {
@@ -82,7 +89,6 @@ public class CognitoAuthenticator {
                 .map(json -> json.get(JWT_TOKEN_FIELD))
                 .toOptional()
                 .map(Objects::toString)
-                .map(this::createBearerToken)
                 .orElseThrow();
     }
 
@@ -99,9 +105,5 @@ public class CognitoAuthenticator {
                 .setHeader(CONTENT_TYPE, APPLICATION_X_WWW_FORM_URLENCODED)
                 .POST(clientCredentialsAuthType())
                 .build();
-    }
-
-    private String createBearerToken(String accessToken) {
-        return "Bearer " + accessToken;
     }
 }

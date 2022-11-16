@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.IndexingClient.BULK_SIZE;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -56,14 +57,14 @@ class IndexingClientTest {
     private RestHighLevelClientWrapper esClient;
     private IndexingClient indexingClient;
     private AtomicReference<IndexRequest> submittedIndexRequest;
-    public static final String TOKEN_MOCK = "Bearer mock";
-    CognitoAuthenticator cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
+
+    private CachedJwtProvider cachedJwtProvider;
 
     @BeforeEach
     public void init() throws IOException {
-        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(TOKEN_MOCK);
+        cachedJwtProvider = setupMockedCachedJwtProvider();
         esClient = setupMockEsClient();
-        indexingClient = new IndexingClient(esClient, cogintoAuthenticatorMock);
+        indexingClient = new IndexingClient(esClient, cachedJwtProvider);
         submittedIndexRequest = new AtomicReference<>();
     }
 
@@ -135,7 +136,7 @@ class IndexingClientTest {
         when(esClient.index(any(IndexRequest.class), any(RequestOptions.class)))
             .thenThrow(new IOException(expectedMessage));
 
-        indexingClient = new IndexingClient(esClient, cogintoAuthenticatorMock);
+        indexingClient = new IndexingClient(esClient, cachedJwtProvider);
 
         Executable indexingAction = () -> indexingClient.addDocumentToIndex(sampleIndexDocument());
         var exception = assertThrows(IOException.class, indexingAction);
@@ -148,7 +149,7 @@ class IndexingClientTest {
         DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
         when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
         when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
-        IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cogintoAuthenticatorMock);
+        IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
         assertDoesNotThrow(() -> indexingClient.removeDocumentFromIndex("1234"));
     }
 

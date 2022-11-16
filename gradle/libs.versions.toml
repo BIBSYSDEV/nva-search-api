@@ -19,6 +19,7 @@ awsIon = { strictly = '1.5.1' }
 typesafe = { strictly = '1.4.1' }
 javers = { strictly = '6.5.1' }
 hamcrestJackson = { strictly = '1.2.0' }
+com-auth0-jwt = { strictly = '3.18.3' }
 
 [libraries]
 nva-core = { group = 'com.github.bibsysdev', name = 'core', version.ref = 'nvaCommons' }
@@ -67,6 +68,8 @@ aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'aws
 typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
 problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProblem' }
 
+com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-auth0-jwt' }
+
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
 testcontainers-elasticsearch = { group = 'org.testcontainers', name = 'elasticsearch', version.ref = 'testContainers' }
@@ -78,6 +81,7 @@ junit-jupiter-api = { group = 'org.junit.jupiter', name = 'junit-jupiter-api', v
 junit-jupiter-params = { group = 'org.junit.jupiter', name = 'junit-jupiter-params', version.ref = 'junit' }
 javers = { group = 'org.javers', name = 'javers-core', version.ref = 'javers' }
 jackson-hamrest = { group= 'com.spotify', name= 'hamcrest-jackson', version.ref = 'hamcrestJackson' }
+
 
 
 [bundles]

@@ -6,4 +6,5 @@ dependencies {
     implementation libs.bundles.jackson
     implementation libs.opensearch
     implementation libs.bundles.testing
+    implementation libs.com.auth0.jwt
 }

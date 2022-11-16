@@ -19,11 +19,14 @@ dependencies {
 
     implementation libs.opensearch.rest.highlevel.client
     implementation libs.guava
+    implementation libs.com.auth0.jwt
 
     testImplementation libs.bundles.testing
 
 
     testImplementation libs.bundles.testcontainers
+
+    testImplementation project(':search-testing')
 
 }
 

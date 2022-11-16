@@ -12,8 +12,8 @@ dependencies {
     implementation libs.nva.apigateway
     implementation libs.bundles.logging
 
-    
     testImplementation libs.opensearch.rest.highlevel.client
+    implementation libs.com.auth0.jwt
 
     implementation libs.problem
     testImplementation libs.bundles.testing
