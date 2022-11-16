@@ -49,8 +49,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
      *
      * @param openSearchClient client to use for access to OpenSearch
      */
-    public IndexingClient(RestHighLevelClientWrapper openSearchClient, CognitoAuthenticator authenticator) {
-        super(openSearchClient, authenticator);
+    public IndexingClient(RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwtProvider) {
+        super(openSearchClient, cachedJwtProvider);
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
@@ -116,6 +116,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         var cognitoCredentials = createCognitoCredentials(secretReader);
         var cognitoAuthenticator
             = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
-        return new IndexingClient(defaultRestHighLevelClientWrapper(), cognitoAuthenticator);
+        var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
+        return new IndexingClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
     }
 }

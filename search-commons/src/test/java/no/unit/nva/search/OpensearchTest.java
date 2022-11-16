@@ -1,7 +1,25 @@
 package no.unit.nva.search;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
+import static no.unit.nva.search.SearchClient.DOI_REQUEST;
+import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
+import static no.unit.nva.search.SearchClient.TICKET_STATUS;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
+import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
@@ -15,24 +33,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Map;
-import java.util.Set;
-
-import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
-import static no.unit.nva.search.SearchClient.*;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Testcontainers
 public class OpensearchTest {
@@ -54,7 +54,6 @@ public class OpensearchTest {
     private SearchClient searchClient;
     private IndexingClient indexingClient;
     private final OpenSearchContainer container = new OpenSearchContainer();
-    DecodedJWT jwt = mock(DecodedJWT.class);
 
     @BeforeEach
     void setUp() {
@@ -64,13 +63,11 @@ public class OpensearchTest {
 
         var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
-        var cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
 
-        when(jwt.getToken()).thenReturn(TEST_TOKEN);
-        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
+        var cachedJwtProvider = setupMockedCachedJwtProvider();
 
-        searchClient = new SearchClient(restHighLevelClientWrapper, cogintoAuthenticatorMock);
-        indexingClient = new IndexingClient(restHighLevelClientWrapper, cogintoAuthenticatorMock);
+        searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
+        indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
     }
 
     @AfterEach

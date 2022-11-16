@@ -2,6 +2,7 @@ package no.unit.nva.search;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
@@ -19,10 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -64,16 +67,13 @@ class SearchClientTest {
     private static final String ELASTIC_SAMPLE_RESPONSE_FILE = "sample_elasticsearch_response.json";
     private static final int ELASTIC_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
     private static final URI SAMPLE_REQUEST_URI = randomUri();
-    public static final String TOKEN_MOCK = "Bearer mock";
-    CognitoAuthenticator cogintoAuthenticatorMock = mock(CognitoAuthenticator.class);
-
     SearchResponse defaultSearchResponse = mock(SearchResponse.class);
-    DecodedJWT jwt = mock(DecodedJWT.class);
+
+    CachedJwtProvider cachedJwtProvider;
 
     @BeforeEach
     void setup() {
-        when(jwt.getToken()).thenReturn(TEST_TOKEN);
-        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
+        cachedJwtProvider = setupMockedCachedJwtProvider();
     }
     
     @Test
@@ -101,7 +101,7 @@ class SearchClientTest {
                 .thenReturn(defaultSearchResponse);
 
         var restClientWrapper = new RestHighLevelClientWrapper(restClient);
-        var searchClient = new SearchClient(restClientWrapper, cogintoAuthenticatorMock);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
         var result = searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX);
 
@@ -121,7 +121,7 @@ class SearchClientTest {
             }
         };
         
-        var searchClient = new SearchClient(restClientWrapper, cogintoAuthenticatorMock);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
             DEFAULT_PAGE_NO,
@@ -155,7 +155,7 @@ class SearchClientTest {
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper, cogintoAuthenticatorMock);
+        SearchClient searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
             DEFAULT_PAGE_NO,
@@ -175,7 +175,7 @@ class SearchClientTest {
         when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
         SearchClient searchClient =
-            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cogintoAuthenticatorMock);
+            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         SearchResourcesResponse searchResourcesResponse =
             searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX);
         assertNotNull(searchResourcesResponse);
@@ -187,7 +187,7 @@ class SearchClientTest {
         when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
         SearchClient searchClient =
-            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cogintoAuthenticatorMock);
+            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         SearchResponse response =
             searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
                 DEFAULT_PAGE_SIZE,
@@ -209,7 +209,7 @@ class SearchClientTest {
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper, cogintoAuthenticatorMock);
+        SearchClient searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             resultSize,
@@ -232,7 +232,7 @@ class SearchClientTest {
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper, cogintoAuthenticatorMock);
+        SearchClient searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int pageNo = randomInteger(100);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
@@ -250,7 +250,7 @@ class SearchClientTest {
         String elasticSearchResponseJson = generateElasticSearchResponseAsString();
         when(defaultSearchResponse.toString()).thenReturn(elasticSearchResponseJson);
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
-        SearchClient searchClient = new SearchClient(restHighLevelClient, cogintoAuthenticatorMock);
+        SearchClient searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         
         SearchDocumentsQuery queryWithMaxResults = new SearchDocumentsQuery(SAMPLE_TERM,
             MAX_RESULTS,
@@ -269,7 +269,7 @@ class SearchClientTest {
     void searchSingleTermReturnsErrorResponseWhenExceptionInDoSearch() throws IOException {
         RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         when(restHighLevelClient.search(any(), any())).thenThrow(new IOException());
-        SearchClient searchClient = new SearchClient(restHighLevelClient, cogintoAuthenticatorMock);
+        SearchClient searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         assertThrows(BadGatewayException.class,
             () -> searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX));
     }

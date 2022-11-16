@@ -12,7 +12,7 @@ import org.opensearch.client.RequestOptions;
 public class AuthenticatedOpenSearchClientWrapper {
 
     protected final RestHighLevelClientWrapper openSearchClient;
-    protected final CognitoAuthenticator authenticator;
+    protected final CachedJwtProvider cachedJwtProvider;
 
     /**
      * Creates a new OpensearchClient.
@@ -20,14 +20,14 @@ public class AuthenticatedOpenSearchClientWrapper {
      * @param openSearchClient client to use for access to ElasticSearch
      */
     public AuthenticatedOpenSearchClientWrapper(RestHighLevelClientWrapper openSearchClient,
-                                                CognitoAuthenticator authenticator) {
+                                                CachedJwtProvider cachedJwtProvider) {
         this.openSearchClient = openSearchClient;
-        this.authenticator = authenticator;
+        this.cachedJwtProvider = cachedJwtProvider;
     }
 
 
     protected RequestOptions getRequestOptions() {
-        var token = "Bearer " + authenticator.getBearerToken().getToken();
+        var token = "Bearer " + cachedJwtProvider.getValue().getToken();
         return RequestOptions.DEFAULT
                    .toBuilder()
                    .addHeader(AUTHORIZATION, token)

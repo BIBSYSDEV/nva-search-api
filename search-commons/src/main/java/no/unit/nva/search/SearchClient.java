@@ -45,8 +45,8 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
      * @param openSearchClient client to use for access to ElasticSearch
      * @param authenticator A Authenticator that will prove tokens
      */
-    public SearchClient(RestHighLevelClientWrapper openSearchClient, CognitoAuthenticator authenticator) {
-        super(openSearchClient, authenticator);
+    public SearchClient(RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwt) {
+        super(openSearchClient, cachedJwt);
     }
 
     /**
@@ -160,7 +160,8 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         var cognitoCredentials = createCognitoCredentials(secretReader);
         var cognitoAuthenticator
             = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
-        return new SearchClient(defaultRestHighLevelClientWrapper(), cognitoAuthenticator);
+        var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
+        return new SearchClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
     }
 
 }

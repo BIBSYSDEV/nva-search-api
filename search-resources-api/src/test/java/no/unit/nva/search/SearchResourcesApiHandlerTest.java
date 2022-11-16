@@ -1,7 +1,6 @@
 package no.unit.nva.search;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search.models.SearchResourcesResponse;
@@ -22,6 +21,7 @@ import java.util.Map;
 
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -51,16 +51,12 @@ public class SearchResourcesApiHandlerTest {
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
 
-    private CognitoAuthenticator authenticator;
-
     @BeforeEach
     void init() {
         restHighLevelClientMock = mock(RestHighLevelClient.class);
-        authenticator = mock(CognitoAuthenticator.class);
-        var jwt = mock(DecodedJWT.class);
-        when(authenticator.getBearerToken()).thenReturn(jwt);
+        var cachedJwtProvider = setupMockedCachedJwtProvider();
         RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, authenticator);
+        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
         handler = new SearchResourcesApiHandler(new Environment(), searchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
