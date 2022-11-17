@@ -70,7 +70,7 @@ class IndexingClientTest {
 
     @Test
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
-        SecretsReader secretsReaderMock = mock(SecretsReader.class);
+        var secretsReaderMock = mock(SecretsReader.class);
         var testCredentials = new UsernamePasswordWrapper("user", "password");
         when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
             .thenReturn(testCredentials);

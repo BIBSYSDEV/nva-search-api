@@ -55,8 +55,8 @@ public class SearchResourcesApiHandlerTest {
     void init() {
         restHighLevelClientMock = mock(RestHighLevelClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
+        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
+        var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
         handler = new SearchResourcesApiHandler(new Environment(), searchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();

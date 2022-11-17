@@ -78,12 +78,12 @@ class SearchClientTest {
     
     @Test
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
-        SecretsReader secretsReaderMock = mock(SecretsReader.class);
+        var secretsReaderMock = mock(SecretsReader.class);
         var testCredentials = new UsernamePasswordWrapper("user", "password");
         when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
                 .thenReturn(testCredentials);
 
-        SearchClient searchClient = prepareWithSecretReader(secretsReaderMock);
+        var searchClient = prepareWithSecretReader(secretsReaderMock);
         assertNotNull(searchClient);
     }
 
@@ -155,7 +155,7 @@ class SearchClientTest {
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
             DEFAULT_PAGE_NO,
@@ -171,10 +171,10 @@ class SearchClientTest {
     
     @Test
     void searchSingleTermReturnsResponse() throws ApiGatewayException, IOException {
-        RestHighLevelClient restHighLevelClient = mock(RestHighLevelClient.class);
+        var restHighLevelClient = mock(RestHighLevelClient.class);
         when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
-        SearchClient searchClient =
+        var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         SearchResourcesResponse searchResourcesResponse =
             searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX);
@@ -186,9 +186,9 @@ class SearchClientTest {
         RestHighLevelClient restHighLevelClient = mock(RestHighLevelClient.class);
         when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
-        SearchClient searchClient =
+        var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
-        SearchResponse response =
+        var response =
             searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
                 DEFAULT_PAGE_SIZE,
                 DEFAULT_PAGE_NO,
@@ -209,7 +209,7 @@ class SearchClientTest {
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             resultSize,
@@ -232,7 +232,7 @@ class SearchClientTest {
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int pageNo = randomInteger(100);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
@@ -246,11 +246,11 @@ class SearchClientTest {
     
     @Test
     void searchSingleTermReturnsResponseWithStatsFromElastic() throws ApiGatewayException, IOException {
-        RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-        String elasticSearchResponseJson = generateElasticSearchResponseAsString();
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        var elasticSearchResponseJson = generateElasticSearchResponseAsString();
         when(defaultSearchResponse.toString()).thenReturn(elasticSearchResponseJson);
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
-        SearchClient searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         
         SearchDocumentsQuery queryWithMaxResults = new SearchDocumentsQuery(SAMPLE_TERM,
             MAX_RESULTS,
@@ -267,9 +267,9 @@ class SearchClientTest {
     
     @Test
     void searchSingleTermReturnsErrorResponseWhenExceptionInDoSearch() throws IOException {
-        RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         when(restHighLevelClient.search(any(), any())).thenThrow(new IOException());
-        SearchClient searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         assertThrows(BadGatewayException.class,
             () -> searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX));
     }

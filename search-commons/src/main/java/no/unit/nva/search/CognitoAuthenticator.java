@@ -22,6 +22,11 @@ import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.protocol.HTTP.CONTENT_TYPE;
 
 public class CognitoAuthenticator {
+
+    public static final String OAUTH2_PATH_SEGMENT = "oauth2";
+    public static final String TOKEN_PATH_SEGMENT = "token";
+    public static final String BASIC_AUTH_CREDENTIALS_TEMPLATE = "%s:%s";
+    public static final String BASIC_AUTH_HEADER_TEMPLATE = "%s %s";
     private final CognitoCredentials credentials;
     public static final String AUTHORIZATION_ERROR_MESSAGE = "Could not authorizer client";
     public static final String GRANT_TYPE_CLIENT_CREDENTIALS = "grant_type=client_credentials";
@@ -44,19 +49,13 @@ public class CognitoAuthenticator {
         return new CognitoAuthenticator(httpClient, cognitoApiClientCredentials);
     }
 
-    private String getBearerTokenString() {
-        var tokenUri = standardOauth2TokenEndpoint(credentials.getCognitoOAuthServerUri());
-        var request = formatRequestForJwtToken(tokenUri);
-        return sendRequestAndExtractToken(request);
-    }
-
     public DecodedJWT getBearerToken() {
-        var string =  getBearerTokenString();
-        return JWT.decode(string);
+        var token = sendRequestAndExtractToken();
+        return JWT.decode(token);
     }
 
     private static URI standardOauth2TokenEndpoint(URI cognitoHost) {
-        return UriWrapper.fromUri(cognitoHost).addChild("oauth2").addChild("token").getUri();
+        return UriWrapper.fromUri(cognitoHost).addChild(OAUTH2_PATH_SEGMENT).addChild(TOKEN_PATH_SEGMENT).getUri();
     }
 
     private static HttpRequest.BodyPublisher clientCredentialsAuthType() {
@@ -64,26 +63,34 @@ public class CognitoAuthenticator {
     }
 
     private String formatAuthenticationHeaderValue() {
-        return String.format("%s:%s",
-                credentials.getCognitoAppClientId(),
-                credentials.getCognitoAppClientSecret());
+        return String.format(BASIC_AUTH_CREDENTIALS_TEMPLATE,
+                             credentials.getCognitoAppClientId(),
+                             credentials.getCognitoAppClientSecret());
     }
 
     private String formatBasicAuthenticationHeader() {
         return attempt(this::formatAuthenticationHeaderValue)
                 .map(str -> Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8)))
-                .map(credentials -> "Basic " + credentials)
+                .map(credentials -> String.format(BASIC_AUTH_HEADER_TEMPLATE, "Basic", credentials))
                 .orElseThrow();
     }
 
-    private String sendRequestAndExtractToken(HttpRequest request) {
-        var response = attempt(
-                        () -> this.httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
-                    )
-                .map(this::responseIsSuccessful)
-                .orElseThrow();
+    private HttpRequest createTokenRequest() {
+        var tokenUri = standardOauth2TokenEndpoint(credentials.getCognitoOAuthServerUri());
+        return formatRequestForJwtToken(tokenUri);
+    }
 
-        return attempt(() -> response)
+    private HttpResponse<String> fetchTokenResponse() {
+        return attempt(
+            () -> this.httpClient.send(createTokenRequest(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+        )
+           .map(this::responseIsSuccessful)
+           .orElseThrow();
+    }
+
+    private String sendRequestAndExtractToken() {
+        var tokenResponse = fetchTokenResponse();
+        return attempt(() -> tokenResponse)
                 .map(HttpResponse::body)
                 .map(JSON.std::mapFrom)
                 .map(json -> json.get(JWT_TOKEN_FIELD))

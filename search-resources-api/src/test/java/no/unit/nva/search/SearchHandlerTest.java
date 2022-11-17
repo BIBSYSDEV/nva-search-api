@@ -77,7 +77,7 @@ class SearchHandlerTest {
     void init() throws IOException {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         prepareSearchClientWithResponse();
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
+        var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
         setupFakeIdentityClient();
         handler = new SearchHandler(new Environment(), searchClient, identityClientMock);
         context = mock(Context.class);

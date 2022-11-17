@@ -78,6 +78,6 @@ class CognitoAuthenticatorTest {
     void shouldThrowWhenResponseIsNot200Ok() throws IOException, InterruptedException {
         when(httpClient.<String>send(any(),any())).thenReturn(errorResponse);
         var exception = assertThrows(RuntimeException.class, () -> cognitoAuthenticator.getBearerToken());
-        assertEquals(exception.getMessage(), AUTHORIZATION_ERROR_MESSAGE);
+        assertEquals(AUTHORIZATION_ERROR_MESSAGE, exception.getMessage());
     }
 }
