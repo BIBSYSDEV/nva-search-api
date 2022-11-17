@@ -50,8 +50,15 @@ public class CognitoAuthenticator {
     }
 
     public DecodedJWT getBearerToken() {
-        var token = sendRequestAndExtractToken();
-        return JWT.decode(token);
+        var tokenResponse = fetchTokenResponse();
+        return attempt(() -> tokenResponse)
+                   .map(HttpResponse::body)
+                   .map(JSON.std::mapFrom)
+                   .map(json -> json.get(JWT_TOKEN_FIELD))
+                   .toOptional()
+                   .map(Objects::toString)
+                   .map(JWT::decode)
+                   .orElseThrow();
     }
 
     private static URI standardOauth2TokenEndpoint(URI cognitoHost) {
@@ -86,17 +93,6 @@ public class CognitoAuthenticator {
         )
            .map(this::responseIsSuccessful)
            .orElseThrow();
-    }
-
-    private String sendRequestAndExtractToken() {
-        var tokenResponse = fetchTokenResponse();
-        return attempt(() -> tokenResponse)
-                .map(HttpResponse::body)
-                .map(JSON.std::mapFrom)
-                .map(json -> json.get(JWT_TOKEN_FIELD))
-                .toOptional()
-                .map(Objects::toString)
-                .orElseThrow();
     }
 
     private HttpResponse<String> responseIsSuccessful(HttpResponse<String> response) {
