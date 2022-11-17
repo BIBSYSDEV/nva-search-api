@@ -1,8 +1,9 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.IndexingClient.BULK_SIZE;
-import static no.unit.nva.search.IndexingConfig.objectMapper;
+import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -13,9 +14,11 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,16 +33,18 @@ import java.util.stream.IntStream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
-import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.IndicesClient;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.indices.CreateIndexRequest;
+import no.unit.nva.search.models.UsernamePasswordWrapper;
+import nva.commons.secrets.SecretsReader;
+import org.opensearch.action.DocWriteResponse;
+import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.opensearch.action.bulk.BulkRequest;
+import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.action.delete.DeleteResponse;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.action.index.IndexResponse;
+import org.opensearch.client.IndicesClient;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.indices.CreateIndexRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,16 +58,25 @@ class IndexingClientTest {
     private IndexingClient indexingClient;
     private AtomicReference<IndexRequest> submittedIndexRequest;
 
+    private CachedJwtProvider cachedJwtProvider;
+
     @BeforeEach
     public void init() throws IOException {
+        cachedJwtProvider = setupMockedCachedJwtProvider();
         esClient = setupMockEsClient();
-        indexingClient = new IndexingClient(esClient);
+        indexingClient = new IndexingClient(esClient, cachedJwtProvider);
         submittedIndexRequest = new AtomicReference<>();
     }
 
     @Test
-    void shouldCreateDefaultObjectWithoutFailing() {
-        assertDoesNotThrow((Executable) IndexingClient::new);
+    void constructorWithSecretsReaderDefinedShouldCreateInstance() {
+        var secretsReaderMock = mock(SecretsReader.class);
+        var testCredentials = new UsernamePasswordWrapper("user", "password");
+        when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
+            .thenReturn(testCredentials);
+
+        IndexingClient indexingClient = IndexingClient.prepareWithSecretReader(secretsReaderMock);
+        assertNotNull(indexingClient);
     }
 
     @Test
@@ -122,7 +136,7 @@ class IndexingClientTest {
         when(esClient.index(any(IndexRequest.class), any(RequestOptions.class)))
             .thenThrow(new IOException(expectedMessage));
 
-        indexingClient = new IndexingClient(esClient);
+        indexingClient = new IndexingClient(esClient, cachedJwtProvider);
 
         Executable indexingAction = () -> indexingClient.addDocumentToIndex(sampleIndexDocument());
         var exception = assertThrows(IOException.class, indexingAction);
@@ -135,7 +149,7 @@ class IndexingClientTest {
         DeleteResponse nothingFoundResponse = mock(DeleteResponse.class);
         when(nothingFoundResponse.getResult()).thenReturn(DocWriteResponse.Result.NOT_FOUND);
         when(restHighLevelClient.delete(any(), any())).thenReturn(nothingFoundResponse);
-        IndexingClient indexingClient = new IndexingClient(restHighLevelClient);
+        IndexingClient indexingClient = new IndexingClient(restHighLevelClient, cachedJwtProvider);
         assertDoesNotThrow(() -> indexingClient.removeDocumentFromIndex("1234"));
     }
 

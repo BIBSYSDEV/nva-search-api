@@ -21,7 +21,7 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
 
     @JacocoGenerated
     public DeleteIndicesHandler() {
-        this(new IndexingClient());
+        this(IndexingClient.defaultIndexingClient());
     }
 
     public DeleteIndicesHandler(IndexingClient indexingClient) {

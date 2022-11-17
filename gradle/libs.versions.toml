@@ -1,16 +1,16 @@
 [versions]
 junit = { strictly = '5.8.1' }
-jackson = { strictly = '2.13.0' }
+jackson = { strictly = '2.13.3' }
 awsSdk1 = { strictly = '1.12.111' }
 awsSdk2 = { strictly = '2.17.82' }
-nvaCommons = { strictly = '1.21.0-alpha13' }
-elasticSearch = { strictly = '7.10.2' }
+nvaCommons = { strictly = '1.25.16' }
+opensearch = { strictly = '2.3.0' }
 slf4j = { strictly = '1.8.0-beta4' }
 testContainers = { strictly = '1.16.2' }
 zalandoProblem = { strictly = '0.26.0' }
-log4j = { strictly = '2.17.1' }
+log4j = { strictly = '2.17.2' }
 awsApacheInterceptor = { strictly = 'deb7941e85' }
-guava = { strictly = '31.0.1-jre' }
+guava = { strictly = '31.1-jre' }
 javaFaker = { strictly = '1.0.2' }
 hamcrest = { strictly = '2.2' }
 mockito = { strictly = '4.2.0' }
@@ -19,10 +19,13 @@ awsIon = { strictly = '1.5.1' }
 typesafe = { strictly = '1.4.1' }
 javers = { strictly = '6.5.1' }
 hamcrestJackson = { strictly = '1.2.0' }
+com-auth0-jwt = { strictly = '3.18.3' }
 
 [libraries]
 nva-core = { group = 'com.github.bibsysdev', name = 'core', version.ref = 'nvaCommons' }
 nva-json = { group = 'com.github.bibsysdev', name = 'json', version.ref = 'nvaCommons' }
+nva-auth = { group = 'com.github.bibsysdev', name = 'auth', version.ref = 'nvaCommons' }
+nva-secrets = { group = 'com.github.bibsysdev', name = 'secrets', version.ref = 'nvaCommons' }
 nva-identifiers = { group = 'com.github.bibsysdev', name = 'identifiers', version.ref = 'nvaCommons' }
 nva-apigateway = { group = 'com.github.bibsysdev', name = 'apigateway', version.ref = 'nvaCommons' }
 nva-s3 = { group = 'com.github.bibsysdev', name = 's3', version.ref = 'nvaCommons' }
@@ -46,20 +49,26 @@ jackson-annotations = { group = 'com.fasterxml.jackson.core', name = 'jackson-an
 jackson-datatype-jsr310 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jsr310', version.ref = 'jackson' }
 jackson-datatype-jdk8 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jdk8', version.ref = 'jackson' }
 
+jackson-jr-objects = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-objects', version.ref = 'jackson' }
+jackson-jr-stree = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-stree', version.ref = 'jackson' }
+jackson-jr-annotations = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-annotation-support', version.ref = 'jackson' }
+
 slf4j = { group = 'org.slf4j', name = 'slf4j-api', version.ref = 'slf4j' }
 log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
 log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.ref = 'log4j' }
 
-elasticsearch-rest-highlevel-client = { group = 'org.elasticsearch.client', name = 'elasticsearch-rest-high-level-client', version.ref = 'elasticSearch' }
-elasticsearch = { group = 'org.elasticsearch', name = 'elasticsearch', version.ref = 'elasticSearch' }
-elasticsearch-core = { group = 'org.elasticsearch', name = 'elasticsearch-core', version.ref = 'elasticSearch' }
-elasticsearch-rest-client = { group = 'org.elasticsearch.client', name = 'elasticsearch-rest-client', version.ref = 'elasticSearch' }
-elasticsearch-x-content = { group = 'org.elasticsearch', name = 'elasticsearch-x-content', version.ref = 'elasticSearch' }
+opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch' }
+opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch' }
+opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
+opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
+opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch'}
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
 typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
 problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProblem' }
+
+com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-auth0-jwt' }
 
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
@@ -74,11 +83,13 @@ javers = { group = 'org.javers', name = 'javers-core', version.ref = 'javers' }
 jackson-hamrest = { group= 'com.spotify', name= 'hamcrest-jackson', version.ref = 'hamcrestJackson' }
 
 
+
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
+jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
 testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainers-elasticsearch']
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javafaker', 'javers',
     'nva-testutils', 'nva-logutils','jackson-hamrest']
-elasticsearch = ['elasticsearch', 'elasticsearch-core', 'elasticsearch-rest-client', 'elasticsearch-x-content']
+opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content']
 aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']

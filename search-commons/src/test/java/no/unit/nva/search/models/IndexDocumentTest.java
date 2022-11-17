@@ -1,6 +1,6 @@
 package no.unit.nva.search.models;
 
-import static no.unit.nva.search.IndexingConfig.objectMapper;
+import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;

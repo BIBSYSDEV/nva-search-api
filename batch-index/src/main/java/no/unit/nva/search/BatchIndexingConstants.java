@@ -32,7 +32,7 @@ public final class BatchIndexingConstants {
     
     @JacocoGenerated
     public static IndexingClient defaultEsClient() {
-        return new IndexingClient();
+        return IndexingClient.defaultIndexingClient();
     }
     
     @JacocoGenerated

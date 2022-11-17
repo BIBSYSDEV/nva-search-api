@@ -6,14 +6,14 @@ dependencies {
     implementation project(':search-commons')
 
     implementation libs.bundles.jackson
-    implementation libs.bundles.elasticsearch
+    implementation libs.bundles.opensearch
     implementation libs.nva.core
     implementation libs.nva.json
     implementation libs.nva.apigateway
     implementation libs.bundles.logging
 
-    
-    testImplementation libs.elasticsearch.rest.highlevel.client
+    testImplementation libs.opensearch.rest.highlevel.client
+    implementation libs.com.auth0.jwt
 
     implementation libs.problem
     testImplementation libs.bundles.testing
@@ -25,4 +25,8 @@ test{
     environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
     environment "ALLOWED_ORIGIN", "*"
     environment "COGNITO_URI", "https://example.org"
+    environment "COGNITO_HOST", "https://example.org"
+    environment "API_HOST", "https://example.org"
+    environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
+    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
 }

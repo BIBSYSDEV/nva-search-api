@@ -1,24 +1,27 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
-import static org.elasticsearch.index.query.QueryBuilders.existsQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.opensearch.index.query.QueryBuilders.existsQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import java.io.IOException;
 import java.net.URI;
+
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.secrets.SecretsReader;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
-public class SearchClient {
+public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     
     public static final String NO_RESPONSE_FROM_INDEX = "No response from index";
     public static final String ORGANIZATION_IDS = "organizationIds";
@@ -35,17 +38,17 @@ public class SearchClient {
     public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
     public static final String PENDING = "Pending";
-    private final RestHighLevelClientWrapper elasticSearchClient;
-    
+
     /**
-     * Creates a new ElasticSearchRestClient.
+     * Creates a new SearchClient.
      *
-     * @param elasticSearchClient client to use for access to ElasticSearch
+     * @param openSearchClient client to use for access to ElasticSearch
+     * @param authenticator A Authenticator that will prove tokens
      */
-    public SearchClient(RestHighLevelClientWrapper elasticSearchClient) {
-        this.elasticSearchClient = elasticSearchClient;
+    public SearchClient(RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwt) {
+        super(openSearchClient, cachedJwt);
     }
-    
+
     /**
      * Searches for a searchTerm or index:searchTerm in elasticsearch index.
      *
@@ -68,16 +71,16 @@ public class SearchClient {
                 pageSize,
                 pageNo,
                 index);
-            return elasticSearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            return openSearchClient.search(searchRequest, getRequestOptions());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
     }
-    
+
     public SearchResponse doSearch(SearchDocumentsQuery query, String index) throws BadGatewayException {
         try {
             SearchRequest searchRequest = query.toSearchRequest(index);
-            return elasticSearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            return openSearchClient.search(searchRequest, getRequestOptions());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
@@ -147,4 +150,18 @@ public class SearchClient {
                 .queryName(EXCLUDED_VIEWING_SCOPES_QUERY_NAME);
         }
     }
+
+    @JacocoGenerated
+    public static SearchClient defaultSearchClient() {
+        return prepareWithSecretReader(new SecretsReader());
+    }
+
+    public static SearchClient prepareWithSecretReader(SecretsReader secretReader) {
+        var cognitoCredentials = createCognitoCredentials(secretReader);
+        var cognitoAuthenticator
+            = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
+        var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
+        return new SearchClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
+    }
+
 }

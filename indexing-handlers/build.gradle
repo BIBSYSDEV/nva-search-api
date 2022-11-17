@@ -27,4 +27,6 @@ test {
     environment "EXPANDED_RESOURCES_BUCKET", "indexBucket"
     environment "ELASTICSEARCH_REGION", "eu-west-1"
     environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
+    environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
+    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
 }

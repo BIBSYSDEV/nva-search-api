@@ -9,6 +9,8 @@ Globals:
     MemorySize: 1800
     Environment:
       Variables:
+        SEARCH_INFRASTRUCTURE_API_URI: !Ref SearchInfrastructureApiUri
+        SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
         COGNITO_URI: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
   Api:
@@ -26,6 +28,14 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Reference to Cognito UserPool for the stage
     Default: CognitoAuthorizerArn
+  SearchInfrastructureApiUri:
+    Type: String
+    Description: URI to external search infrastructure API (SWS).
+    Default: 'https://api.sws.aws.sikt.no'
+  SearchInfrastructureAuthUri:
+    Type: String
+    Description: URI to auth for external search infrastructure API (SWS).
+    Default: 'https://sws-auth.auth.eu-west-1.amazoncognito.com'
   CustomDomain:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Custom API to connect this lambda to
@@ -101,6 +111,14 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:IdentityServiceSecret*'
+        - PolicyName: readSearchInfrastructureSecret
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
 
   SearchHandlerRole:
     Type: AWS::IAM::Role
@@ -143,6 +161,14 @@ Resources:
                   - es:ESHttpPut
                   - es:ESHttpDelete
                 Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
+        - PolicyName: readSearchInfrastructureSecret
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
 
   NVAElasticSearch:
     Type: AWS::Elasticsearch::Domain
@@ -166,12 +192,12 @@ Resources:
             Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
       ElasticsearchClusterConfig: !If [ LargeElasticSearch,
         {
-            DedicatedMasterEnabled: true,
-            DedicatedMasterType: t2.medium.elasticsearch,
-            DedicatedMasterCount: 3,
-            InstanceCount: 2,
-            ZoneAwarenessEnabled: false,
-            InstanceType: t2.medium.elasticsearch
+          DedicatedMasterEnabled: true,
+          DedicatedMasterType: t2.medium.elasticsearch,
+          DedicatedMasterCount: 3,
+          InstanceCount: 2,
+          ZoneAwarenessEnabled: false,
+          InstanceType: t2.medium.elasticsearch
         },
         {
           DedicatedMasterEnabled: false,
@@ -379,6 +405,14 @@ Resources:
                   - s3:List*
                   - events:*
                 Resource: '*'
+        - PolicyName: readSearchInfrastructureSecret
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
 
   IndexResources:
     DependsOn:

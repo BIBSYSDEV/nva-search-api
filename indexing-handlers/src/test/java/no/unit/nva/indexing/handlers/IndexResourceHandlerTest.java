@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.search.IndexingConfig.objectMapper;
+import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search.models.IndexDocument.MISSING_IDENTIFIER_IN_RESOURCE;
 import static no.unit.nva.search.models.IndexDocument.MISSING_INDEX_NAME_IN_RESOURCE;

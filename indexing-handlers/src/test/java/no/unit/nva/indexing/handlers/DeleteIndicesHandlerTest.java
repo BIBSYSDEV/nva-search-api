@@ -20,7 +20,7 @@ class DeleteIndicesHandlerTest {
     @Test
     void shouldDeleteIndicesWhenFunctionIsInvoked() {
         final var buffer = new ArrayList<String>();
-        var indexingClient = new IndexingClient(null) {
+        var indexingClient = new IndexingClient(null, null) {
             @Override
             public Void deleteIndex(String indexName) throws IOException {
                 buffer.add(indexName);
@@ -36,7 +36,7 @@ class DeleteIndicesHandlerTest {
     void shouldLogWarningWhenIndexDeletionFails() {
         var logger = LogUtils.getTestingAppenderForRootLogger();
         var expectedMessage = randomString();
-        var indexingClient = new IndexingClient(null) {
+        var indexingClient = new IndexingClient(null, null) {
             @Override
             public Void deleteIndex(String indexName) throws IOException {
                 throw new RuntimeException(expectedMessage);

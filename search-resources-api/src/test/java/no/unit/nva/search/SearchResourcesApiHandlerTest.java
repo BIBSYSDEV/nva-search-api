@@ -7,8 +7,8 @@ import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zalando.problem.Problem;
@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -53,8 +54,9 @@ public class SearchResourcesApiHandlerTest {
     @BeforeEach
     void init() {
         restHighLevelClientMock = mock(RestHighLevelClient.class);
-        RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
-        SearchClient searchClient = new SearchClient(restHighLevelClientWrapper);
+        var cachedJwtProvider = setupMockedCachedJwtProvider();
+        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
+        var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
         handler = new SearchResourcesApiHandler(new Environment(), searchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();

@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
@@ -14,6 +15,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -24,20 +28,15 @@ import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.elasticsearch.ElasticsearchContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class ElasticsearchTest {
+public class OpensearchTest {
 
-    public static final String ELASTICSEARCH_OSS = "docker.elastic.co/elasticsearch/elasticsearch-oss";
     public static final String INDEX_NAME = RandomDataGenerator.randomString().toLowerCase();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
@@ -47,27 +46,53 @@ public class ElasticsearchTest {
     public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
     public static final int ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT = 0;
     public static final long DELAY_AFTER_INDEXING = 1000L;
-    private static final String ELASTICSEARCH_VERSION = "7.10.2";
     private static final int PAGE_SIZE = 10;
     private static final int PAGE_NO = 0;
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create("https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
-    
-    @Container
-    public ElasticsearchContainer container = new ElasticsearchContainer(DockerImageName
-                                                                             .parse(ELASTICSEARCH_OSS)
-                                                                             .withTag(ELASTICSEARCH_VERSION));
+
     private SearchClient searchClient;
     private IndexingClient indexingClient;
+    private final OpenSearchContainer container = new OpenSearchContainer();
 
     @BeforeEach
     void setUp() {
-        RestClientBuilder restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-        RestHighLevelClientWrapper restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+        container.start();
 
-        searchClient = new SearchClient(restHighLevelClientWrapper);
-        indexingClient = new IndexingClient(restHighLevelClientWrapper);
+        var httpHostAddress = container.getHttpHostAddress();
+
+        var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
+        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
+
+        var cachedJwtProvider = setupMockedCachedJwtProvider();
+
+        searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
+        indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
     }
+
+    @AfterEach
+    void afterEach() {
+        container.stop();
+    }
+
+
+    @Test
+    void canConnectToContainer() throws IOException, InterruptedException{
+
+        var httpHostAddress = container.getHttpHostAddress();
+
+        var httpClient = HttpClient.newBuilder().build();
+
+        var request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://" + httpHostAddress))
+                .build();
+
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode(), is(equalTo(200)));
+    }
+
 
     @Test
     void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
@@ -75,13 +100,13 @@ public class ElasticsearchTest {
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(getEmptyViewingScope(),
-                                                                               PAGE_SIZE,
-                                                                               PAGE_NO,
-                                                                               INDEX_NAME);
+        var response = searchClient.findResourcesForOrganizationIds(getEmptyViewingScope(),
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
 
         assertThat(response.getHits().getHits().length,
-                   is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
+                is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
     }
 
     @Test
@@ -91,36 +116,36 @@ public class ElasticsearchTest {
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        ViewingScope viewingScope = getEmptyViewingScope();
+        var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                               PAGE_SIZE,
-                                                                               PAGE_NO,
-                                                                               INDEX_NAME);
+        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
 
         assertThat(response.getHits().getHits().length,
-                   is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
+                is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
     }
 
     @Test
     void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
         indexingClient.addDocumentToIndex(
-            getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
+                getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
         );
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        ViewingScope viewingScope = getEmptyViewingScope();
+        var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                               PAGE_SIZE,
-                                                                               PAGE_NO,
-                                                                               INDEX_NAME);
+        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
 
         assertThat(response.getHits().getHits().length,
-                   is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
+                is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
     }
 
     @Test
@@ -134,13 +159,13 @@ public class ElasticsearchTest {
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
         viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
 
-        SearchResponse response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                               PAGE_SIZE,
-                                                                               PAGE_NO,
-                                                                               INDEX_NAME);
+        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
 
         assertThat(response.getHits().getHits().length,
-                   is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
+                is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
     }
 
     @Test
@@ -152,9 +177,9 @@ public class ElasticsearchTest {
 
         var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    INDEX_NAME);
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
         var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
 
@@ -166,17 +191,17 @@ public class ElasticsearchTest {
     @Test
     void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
         indexingClient.addDocumentToIndex(crateSampleIndexDocument(
-            "sample_response_with_publication_status_as_draft.json"));
+                "sample_response_with_publication_status_as_draft.json"));
         indexingClient.addDocumentToIndex(crateSampleIndexDocument(
-            "sample_response_with_publication_status_as_requested.json"));
+                "sample_response_with_publication_status_as_requested.json"));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    INDEX_NAME);
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
         var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
 
@@ -184,29 +209,30 @@ public class ElasticsearchTest {
         assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
         var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
         assertThat(searchResourcesResponse.getHits().size(),
-                   is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
+                is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
     }
-    
+
     @Test
     void shouldReturnPendingPublishingRequestsForDraftPublications()
-        throws IOException, InterruptedException, BadGatewayException {
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument("sample_publishing_request_of_published_publication"
-                                                                   + ".json"));
+            throws IOException, InterruptedException, BadGatewayException {
+        indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-            PAGE_SIZE,
-            PAGE_NO,
-            INDEX_NAME);
-    
+                PAGE_SIZE,
+                PAGE_NO,
+                INDEX_NAME);
+
         var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
         assertThat(searchResourcesResponse, is(notNullValue()));
         var expectedHits = 1;
         assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
-    
-    
+
+
     }
 
     private ViewingScope getEmptyViewingScope() {
@@ -218,27 +244,28 @@ public class ElasticsearchTest {
     }
 
     private IndexDocument getIndexDocument(Set<URI> organizationIds, String status) {
-        EventConsumptionAttributes eventConsumptionAttributes = new EventConsumptionAttributes(
-            INDEX_NAME,
-            SortableIdentifier.next()
+        var eventConsumptionAttributes = new EventConsumptionAttributes(
+                INDEX_NAME,
+                SortableIdentifier.next()
         );
         Map<String, Object> map = Map.of(
-            ORGANIZATION_IDS, organizationIds,
-            DOCUMENT_TYPE, DOI_REQUEST,
-            TICKET_STATUS, status
+                ORGANIZATION_IDS, organizationIds,
+                DOCUMENT_TYPE, DOI_REQUEST,
+                TICKET_STATUS, status
         );
-        JsonNode jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
+        var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
 
     private IndexDocument crateSampleIndexDocument(String jsonFile) throws IOException {
-        EventConsumptionAttributes eventConsumptionAttributes = new EventConsumptionAttributes(
-            INDEX_NAME,
-            SortableIdentifier.next()
+        var eventConsumptionAttributes = new EventConsumptionAttributes(
+                INDEX_NAME,
+                SortableIdentifier.next()
         );
-        JsonNode jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-                                                            JsonNode.class);
+        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
+                JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
+
 }

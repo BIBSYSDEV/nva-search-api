@@ -1,10 +1,13 @@
 package no.unit.nva.search;
 
+import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
-import static no.unit.nva.search.SearchClientConfig.defaultSearchClient;
+import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -18,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
@@ -27,19 +33,24 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
+import no.unit.nva.search.utils.RequestOptionsHeaderMatcher;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortOrder;
+import nva.commons.secrets.SecretsReader;
+import org.junit.jupiter.api.BeforeEach;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MatchQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.sort.SortOrder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -56,11 +67,45 @@ class SearchClientTest {
     private static final String ELASTIC_SAMPLE_RESPONSE_FILE = "sample_elasticsearch_response.json";
     private static final int ELASTIC_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
     private static final URI SAMPLE_REQUEST_URI = randomUri();
+    SearchResponse defaultSearchResponse = mock(SearchResponse.class);
+
+    CachedJwtProvider cachedJwtProvider;
+
+    @BeforeEach
+    void setup() {
+        cachedJwtProvider = setupMockedCachedJwtProvider();
+    }
     
     @Test
-    void constructorWithEnvironmentDefinedShouldCreateInstance() {
-        SearchClient searchClient = defaultSearchClient();
+    void constructorWithSecretsReaderDefinedShouldCreateInstance() {
+        var secretsReaderMock = mock(SecretsReader.class);
+        var testCredentials = new UsernamePasswordWrapper("user", "password");
+        when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
+                .thenReturn(testCredentials);
+
+        var searchClient = prepareWithSecretReader(secretsReaderMock);
         assertNotNull(searchClient);
+    }
+
+    @Test
+    void shouldPassBearerTokenToOpensearchWhenPerformingSearch() throws ApiGatewayException, IOException {
+        when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+
+        var expectedRequestOptions = RequestOptions.DEFAULT
+                .toBuilder()
+                .addHeader(AUTHORIZATION, "Bearer " + TEST_TOKEN)
+                .build();
+
+        var restClient = mock(RestHighLevelClient.class);
+        when(restClient.search(any(), argThat(new RequestOptionsHeaderMatcher(expectedRequestOptions))))
+                .thenReturn(defaultSearchResponse);
+
+        var restClientWrapper = new RestHighLevelClientWrapper(restClient);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+
+        var result = searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX);
+
+        assertNotNull(result);
     }
     
     @Test
@@ -71,13 +116,12 @@ class SearchClientTest {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                var searchResponse = mock(SearchResponse.class);
-                when(searchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return searchResponse;
+                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+                return defaultSearchResponse;
             }
         };
         
-        var searchClient = new SearchClient(restClientWrapper);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
             DEFAULT_PAGE_NO,
@@ -106,13 +150,12 @@ class SearchClientTest {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                var searchResponse = mock(SearchResponse.class);
-                when(searchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return searchResponse;
+                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+                return defaultSearchResponse;
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
             DEFAULT_PAGE_NO,
@@ -128,12 +171,11 @@ class SearchClientTest {
     
     @Test
     void searchSingleTermReturnsResponse() throws ApiGatewayException, IOException {
-        RestHighLevelClient restHighLevelClient = mock(RestHighLevelClient.class);
-        SearchResponse searchResponse = mock(SearchResponse.class);
-        when(searchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
-        SearchClient searchClient =
-            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient));
+        var restHighLevelClient = mock(RestHighLevelClient.class);
+        when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+        when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
+        var searchClient =
+            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         SearchResourcesResponse searchResourcesResponse =
             searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX);
         assertNotNull(searchResourcesResponse);
@@ -142,12 +184,11 @@ class SearchClientTest {
     @Test
     void shouldReturnSearchResponseWhenSearchingWithOrganizationIds() throws ApiGatewayException, IOException {
         RestHighLevelClient restHighLevelClient = mock(RestHighLevelClient.class);
-        SearchResponse searchResponse = mock(SearchResponse.class);
-        when(searchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
-        SearchClient searchClient =
-            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient));
-        SearchResponse response =
+        when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+        when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
+        var searchClient =
+            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
+        var response =
             searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
                 DEFAULT_PAGE_SIZE,
                 DEFAULT_PAGE_NO,
@@ -162,13 +203,13 @@ class SearchClientTest {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                var searchResponse = mock(SearchResponse.class);
-                when(searchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return searchResponse;
+
+                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+                return defaultSearchResponse;
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             resultSize,
@@ -186,13 +227,12 @@ class SearchClientTest {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                var searchResponse = mock(SearchResponse.class);
-                when(searchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return searchResponse;
+                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+                return defaultSearchResponse;
             }
         };
         
-        SearchClient searchClient = new SearchClient(restClientWrapper);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int pageNo = randomInteger(100);
         searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
             DEFAULT_PAGE_SIZE,
@@ -206,12 +246,11 @@ class SearchClientTest {
     
     @Test
     void searchSingleTermReturnsResponseWithStatsFromElastic() throws ApiGatewayException, IOException {
-        RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-        SearchResponse searchResponse = mock(SearchResponse.class);
-        String elasticSearchResponseJson = generateElasticSearchResponseAsString();
-        when(searchResponse.toString()).thenReturn(elasticSearchResponseJson);
-        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
-        SearchClient searchClient = new SearchClient(restHighLevelClient);
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        var elasticSearchResponseJson = generateElasticSearchResponseAsString();
+        when(defaultSearchResponse.toString()).thenReturn(elasticSearchResponseJson);
+        when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         
         SearchDocumentsQuery queryWithMaxResults = new SearchDocumentsQuery(SAMPLE_TERM,
             MAX_RESULTS,
@@ -228,9 +267,9 @@ class SearchClientTest {
     
     @Test
     void searchSingleTermReturnsErrorResponseWhenExceptionInDoSearch() throws IOException {
-        RestHighLevelClientWrapper restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         when(restHighLevelClient.search(any(), any())).thenThrow(new IOException());
-        SearchClient searchClient = new SearchClient(restHighLevelClient);
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         assertThrows(BadGatewayException.class,
             () -> searchClient.searchSingleTerm(generateSampleQuery(), ELASTICSEARCH_ENDPOINT_INDEX));
     }

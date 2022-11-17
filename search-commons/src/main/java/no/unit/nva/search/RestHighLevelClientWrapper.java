@@ -1,30 +1,38 @@
 package no.unit.nva.search;
 
 import nva.commons.core.JacocoGenerated;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.apache.http.HttpHost;
+import org.opensearch.action.bulk.BulkRequest;
+import org.opensearch.action.bulk.BulkResponse;
+import org.opensearch.action.delete.DeleteRequest;
+import org.opensearch.action.delete.DeleteResponse;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.action.index.IndexResponse;
+import org.opensearch.action.search.SearchRequest;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.action.update.UpdateRequest;
+import org.opensearch.action.update.UpdateResponse;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestClientBuilder;
+import org.opensearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
+import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 
 /**
  * Class for avoiding mocking/spying the ES final classes.
  */
 public class RestHighLevelClientWrapper {
 
+
+    public static final String INITIAL_LOG_MESSAGE = "Connecting to Elasticsearch at {}";
     private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
+    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+
     private final RestHighLevelClient client;
 
     public RestHighLevelClientWrapper(RestHighLevelClient client) {
@@ -74,5 +82,17 @@ public class RestHighLevelClientWrapper {
     @JacocoGenerated
     public BulkResponse bulk(BulkRequest request, RequestOptions requestOption) throws IOException {
         return client.bulk(request, requestOption);
+    }
+
+    public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
+        return prepareRestHighLevelClientWrapperForUri(SEARCH_INFRASTRUCTURE_API_URI);
+    }
+
+    public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(String address) {
+        logger.info(INITIAL_LOG_MESSAGE, address);
+
+        RestClientBuilder clientBuilder = RestClient
+                .builder(HttpHost.create(address));
+        return new RestHighLevelClientWrapper(clientBuilder);
     }
 }
