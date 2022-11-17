@@ -11,6 +11,10 @@ public class UsernamePasswordWrapper {
     public String password;
 
     @JacocoGenerated
+    public UsernamePasswordWrapper() {
+    }
+
+    @JacocoGenerated
     public UsernamePasswordWrapper(String username, String password) {
         this.username = username;
         this.password = password;
