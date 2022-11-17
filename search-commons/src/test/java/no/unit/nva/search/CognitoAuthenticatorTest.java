@@ -67,7 +67,7 @@ class CognitoAuthenticatorTest {
     void shouldReturnJwtTokenFromHttpRequestToCognito() throws IOException, InterruptedException {
         when(httpClient.<String>send(any(),any())).thenReturn(okResponse);
 
-        var jwt = cognitoAuthenticator.getBearerToken();
+        var jwt = cognitoAuthenticator.fetchBearerToken();
         assertThat(jwt.getToken(), is(TEST_TOKEN));
     }
 
@@ -75,7 +75,7 @@ class CognitoAuthenticatorTest {
     void shouldReturnDecodedJwtWithClaims() throws IOException, InterruptedException {
         when(httpClient.<String>send(any(),any())).thenReturn(okResponse);
 
-        var jwt = cognitoAuthenticator.getBearerToken();
+        var jwt = cognitoAuthenticator.fetchBearerToken();
         assertThat(jwt.getClaim("scope").asString(), is(TEST_SCOPE));
     }
 
@@ -95,20 +95,20 @@ class CognitoAuthenticatorTest {
         when(httpClient.<String>send(argThat(new HttpRequestMetadataMatcher(expectedRequest)), any()))
             .thenReturn(okResponse);
 
-        var jwt = cognitoAuthenticator.getBearerToken();
+        var jwt = cognitoAuthenticator.fetchBearerToken();
         assertNotNull(jwt);
     }
 
     @Test
     void shouldThrowWhenResponseIsNotStructuedLikeAToken() throws IOException, InterruptedException {
         when(httpClient.<String>send(any(),any())).thenReturn(invalidResponse);
-        assertThrows(NoSuchElementException.class, () -> cognitoAuthenticator.getBearerToken());
+        assertThrows(NoSuchElementException.class, () -> cognitoAuthenticator.fetchBearerToken());
     }
 
     @Test
     void shouldThrowWhenResponseIsNot200Ok() throws IOException, InterruptedException {
         when(httpClient.<String>send(any(),any())).thenReturn(errorResponse);
-        var exception = assertThrows(RuntimeException.class, () -> cognitoAuthenticator.getBearerToken());
+        var exception = assertThrows(RuntimeException.class, () -> cognitoAuthenticator.fetchBearerToken());
         assertEquals(AUTHORIZATION_ERROR_MESSAGE, exception.getMessage());
     }
 }

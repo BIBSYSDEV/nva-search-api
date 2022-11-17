@@ -34,7 +34,7 @@ class CachedJwtTest {
 
 
         var cognitoAuthenticator = mock(CognitoAuthenticator.class);
-        when(cognitoAuthenticator.getBearerToken())
+        when(cognitoAuthenticator.fetchBearerToken())
             .thenReturn(jwt1)
             .thenReturn(jwt2);
         cachedJwtProvider = new CachedJwtProvider(cognitoAuthenticator, mockedClock);

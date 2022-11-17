@@ -18,7 +18,7 @@ public class TestSetup {
 
         when(jwt.getToken()).thenReturn(TEST_TOKEN);
         when(jwt.getExpiresAt()).thenReturn(Date.from(Instant.now().plus(Duration.ofMinutes(5))));
-        when(cogintoAuthenticatorMock.getBearerToken()).thenReturn(jwt);
+        when(cogintoAuthenticatorMock.fetchBearerToken()).thenReturn(jwt);
 
         return CachedJwtProvider.prepareWithAuthenticator(cogintoAuthenticatorMock);
     }

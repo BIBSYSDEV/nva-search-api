@@ -49,7 +49,7 @@ public class CognitoAuthenticator {
         return new CognitoAuthenticator(httpClient, cognitoApiClientCredentials);
     }
 
-    public DecodedJWT getBearerToken() {
+    public DecodedJWT fetchBearerToken() {
         var tokenResponse = fetchTokenResponse();
         return attempt(() -> tokenResponse)
                    .map(HttpResponse::body)
