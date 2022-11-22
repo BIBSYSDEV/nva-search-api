@@ -428,7 +428,7 @@ Resources:
 
   InitHandler:
     Type: AWS::Serverless::Function
-    Description: Lambda that creates all indeces. Needs to be run manually from Test
+    Description: Lambda that creates all indices. Needs to be run manually from Test
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.InitHandler::handleRequest
@@ -438,7 +438,7 @@ Resources:
 
   DeleteIndicesHandler:
     Type: AWS::Serverless::Function
-    Description: Lambda that deletes all indeces. Needs to be run manually from Test
+    Description: Lambda that deletes all indices. Needs to be run manually from Test
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
