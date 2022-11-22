@@ -21,7 +21,7 @@ public class BatchIndexTest {
     public static final Random RANDOM = new Random();
     public static final int ARBITRARY_QUERY_TIME = 123;
 
-    protected FakeIndexingClient failingElasticSearchClient() {
+    protected FakeIndexingClient failingOpenSearchClient() {
         return new FakeIndexingClient() {
             @Override
             public Stream<BulkResponse> batchInsert(Stream<IndexDocument> indexDocuments) {
@@ -38,7 +38,7 @@ public class BatchIndexTest {
     }
 
     private Failure createFailure(String identifier) {
-        return new Failure(ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX,
+        return new Failure(ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX,
                            identifier, new Exception("failingBulkIndexMessage"));
     }
 

@@ -28,7 +28,7 @@ class IndexDocumentTest {
     }
 
     @Test
-    void shouldReturnElasticSearchIndexRequestWithIndexNameSpecifiedByConsumptionAttributes() {
+    void shouldReturnOpenSearchIndexRequestWithIndexNameSpecifiedByConsumptionAttributes() {
         var consumptionAttributes = randomConsumptionAttributes();
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         var indexRequest = indexDocument.toIndexRequest();

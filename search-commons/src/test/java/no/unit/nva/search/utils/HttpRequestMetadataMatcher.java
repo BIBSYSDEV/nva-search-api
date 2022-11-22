@@ -17,12 +17,16 @@ public class HttpRequestMetadataMatcher implements ArgumentMatcher<HttpRequest> 
 
     @Override
     public boolean matches(HttpRequest request) {
-        if (!request.method().equals(sourceRequest.method()))
+        if (!request.method().equals(sourceRequest.method())) {
             return false;
-        if (!request.uri().equals(sourceRequest.uri()))
+        }
+        if (!request.uri().equals(sourceRequest.uri())) {
             return false;
-        if (!request.headers().equals(sourceRequest.headers()))
+        }
+        if (!request.headers().equals(sourceRequest.headers())) {
             return false;
+        }
+
         return true;
     }
 }

@@ -21,8 +21,6 @@ dependencies {
 }
 
 test{
-    environment "ELASTICSEARCH_REGION", "eu-west-1"
-    environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
     environment "ALLOWED_ORIGIN", "*"
     environment "COGNITO_URI", "https://example.org"
     environment "COGNITO_HOST", "https://example.org"

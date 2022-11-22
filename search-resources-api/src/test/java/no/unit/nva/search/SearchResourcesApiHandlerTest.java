@@ -40,8 +40,8 @@ import static org.mockito.Mockito.when;
 public class SearchResourcesApiHandlerTest {
 
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
-    public static final String SAMPLE_ELASTICSEARCH_RESPONSE_JSON = "sample_elasticsearch_response.json";
-    public static final String EMPTY_ELASTICSEARCH_RESPONSE_JSON = "empty_elasticsearch_response.json";
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
+    public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -119,14 +119,14 @@ public class SearchResourcesApiHandlerTest {
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
-        String result = stringFromResources(Path.of(SAMPLE_ELASTICSEARCH_RESPONSE_JSON));
+        String result = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_JSON));
         SearchResponse searchResponse = createSearchResponseWithHits(result);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
-        String result = stringFromResources(Path.of(EMPTY_ELASTICSEARCH_RESPONSE_JSON));
+        String result = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         SearchResponse searchResponse = createSearchResponseWithHits(result);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);

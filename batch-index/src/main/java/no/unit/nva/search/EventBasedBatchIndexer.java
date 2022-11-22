@@ -22,7 +22,7 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
 
     private static final Logger logger = LoggerFactory.getLogger(EventBasedBatchIndexer.class);
     private final S3Client s3Client;
-    private final IndexingClient elasticSearchClient;
+    private final IndexingClient openSearchClient;
     private final EventBridgeClient eventBridgeClient;
     private final int numberOfFilesPerEvent;
 
@@ -32,13 +32,13 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
     }
 
     protected EventBasedBatchIndexer(S3Client s3Client,
-                                     IndexingClient elasticSearchClient,
+                                     IndexingClient openSearchClient,
                                      EventBridgeClient eventBridgeClient,
                                      int numberOfFilesPerEvent
     ) {
         super(ImportDataRequestEvent.class);
         this.s3Client = s3Client;
-        this.elasticSearchClient = elasticSearchClient;
+        this.openSearchClient = openSearchClient;
         this.eventBridgeClient = eventBridgeClient;
         this.numberOfFilesPerEvent = numberOfFilesPerEvent;
     }
@@ -57,7 +57,7 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
         logger.info("Indexing folder:" + input.getS3Location());
         logger.info("Indexing startingPoint:" + input.getStartMarker());
         IndexingResult<SortableIdentifier> result = new BatchIndexer(input, s3Client,
-                                                                     elasticSearchClient,
+                                                                     openSearchClient,
                                                                      numberOfFilesPerEvent
                                                                      ).processRequest();
         if (result.isTruncated() && BatchIndexingConstants.RECURSION_ENABLED) {

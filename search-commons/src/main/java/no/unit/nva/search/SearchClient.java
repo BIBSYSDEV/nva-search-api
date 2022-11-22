@@ -42,7 +42,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     /**
      * Creates a new SearchClient.
      *
-     * @param openSearchClient client to use for access to ElasticSearch
+     * @param openSearchClient client to use for access to the external search infrastructure
      * @param authenticator A Authenticator that will prove tokens
      */
     public SearchClient(RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwt) {
@@ -50,7 +50,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     /**
-     * Searches for a searchTerm or index:searchTerm in elasticsearch index.
+     * Searches for a searchTerm or index:searchTerm in opensearch index.
      *
      * @param query query object
      * @throws ApiGatewayException thrown when uri is misconfigured, service i not available or interrupted

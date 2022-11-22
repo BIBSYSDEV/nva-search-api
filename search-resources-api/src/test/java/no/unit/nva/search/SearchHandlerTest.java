@@ -59,7 +59,7 @@ import org.zalando.problem.Problem;
 
 class SearchHandlerTest {
 
-    public static final String SAMPLE_ELASTICSEARCH_RESPONSE_JSON = "sample_elasticsearch_response.json";
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
     public static final String RESOURCE_ID = "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8";
     public static final URI CUSTOMER_CRISTIN_ID = URI.create("https://example.org/123.XXX.XXX.XXX");
     public static final URI SOME_LEGAL_CUSTOM_CRISTIN_ID = URI.create("https://example.org/123.111.222.333");
@@ -258,7 +258,7 @@ class SearchHandlerTest {
     }
 
     private SearchResponse getSearchResponse() throws IOException {
-        String jsonResponse = stringFromResources(Path.of(SAMPLE_ELASTICSEARCH_RESPONSE_JSON));
+        String jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_JSON));
         return SearchResponseUtil.getSearchResponseFromJson(jsonResponse);
     }
 }

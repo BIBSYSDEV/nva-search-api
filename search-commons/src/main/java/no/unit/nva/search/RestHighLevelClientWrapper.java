@@ -29,7 +29,7 @@ import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRU
 public class RestHighLevelClientWrapper {
 
 
-    public static final String INITIAL_LOG_MESSAGE = "Connecting to Elasticsearch at {}";
+    public static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
     private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
 

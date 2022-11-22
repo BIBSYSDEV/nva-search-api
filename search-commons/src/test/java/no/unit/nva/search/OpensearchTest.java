@@ -77,7 +77,7 @@ public class OpensearchTest {
 
 
     @Test
-    void canConnectToContainer() throws IOException, InterruptedException{
+    void canConnectToContainer() throws IOException, InterruptedException {
 
         var httpHostAddress = container.getHttpHostAddress();
 
