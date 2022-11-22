@@ -30,24 +30,24 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.constants.ApplicationConstants.ELASTICSEARCH_ENDPOINT_INDEX;
+import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 import static nva.commons.core.attempt.Try.attempt;
 
 public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
     public static final ObjectMapper objectMapper = JsonUtils.dtoObjectMapper;
-    public static final String INITIAL_LOG_MESSAGE = "using Elasticsearch endpoint {} and index {}";
-    public static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_ELASTICSEARCH
-        = "Document with id={} was not found in elasticsearch";
+    public static final String INITIAL_LOG_MESSAGE = "using search infrastructure endpoint {} and index {}";
+    public static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE
+        = "Document with id={} was not found in search infrastructure";
     public static final int BULK_SIZE = 100;
     public static final boolean SEQUENTIAL = false;
     private static final Logger logger = LoggerFactory.getLogger(IndexingClient.class);
 
     /**
-     * Creates a new ElasticSearchRestClient.
+     * Creates a new OpenSearchRestClient.
      *
-     * @param openSearchClient client to use for access to OpenSearch
+     * @param openSearchClient client to use for access to search infrastructure
      */
     public IndexingClient(RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwtProvider) {
         super(openSearchClient, cachedJwtProvider);
@@ -60,16 +60,16 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     /**
-     * Removes a document from Elasticsearch index.
+     * Removes a document from Opensearch index.
      *
      * @param identifier og document
      */
     public void removeDocumentFromIndex(String identifier) throws IOException {
         DeleteResponse deleteResponse = openSearchClient
-            .delete(new DeleteRequest(ELASTICSEARCH_ENDPOINT_INDEX, identifier),
+            .delete(new DeleteRequest(OPENSEARCH_ENDPOINT_INDEX, identifier),
                     getRequestOptions());
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
-            logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_ELASTICSEARCH, identifier);
+            logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
         }
     }
 

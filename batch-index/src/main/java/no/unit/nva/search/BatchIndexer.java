@@ -21,16 +21,16 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     private static final Logger logger = LoggerFactory.getLogger(BatchIndexer.class);
     private final ImportDataRequestEvent importDataRequest;
     private final S3Driver s3Driver;
-    private final IndexingClient elasticSearchRestClient;
+    private final IndexingClient openSearchRestClient;
     private IndexingResultRecord<SortableIdentifier> processingResult;
     private final int numberOfFilesPerEvent;
 
     public BatchIndexer(ImportDataRequestEvent importDataRequestEvent,
                         S3Client s3Client,
-                        IndexingClient elasticSearchRestClient,
+                        IndexingClient openSearchRestClient,
                         int numberOfFilesPerEvent) {
         this.importDataRequest = importDataRequestEvent;
-        this.elasticSearchRestClient = elasticSearchRestClient;
+        this.openSearchRestClient = openSearchRestClient;
         this.s3Driver = new S3Driver(s3Client, importDataRequestEvent.getBucket());
         this.numberOfFilesPerEvent = numberOfFilesPerEvent;
     }
@@ -77,7 +77,7 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
 
     private List<SortableIdentifier> indexFileContents(List<IndexDocument> contents) {
 
-        Stream<BulkResponse> result = elasticSearchRestClient.batchInsert(contents.stream());
+        Stream<BulkResponse> result = openSearchRestClient.batchInsert(contents.stream());
         List<SortableIdentifier> failures = collectFailures(result).collect(Collectors.toList());
         failures.forEach(this::logFailure);
         return failures;

@@ -31,8 +31,6 @@ dependencies {
 }
 
 test {
-    environment "ELASTICSEARCH_REGION", "eu-west-1"
-    environment "ELASTICSEARCH_ENDPOINT_ADDRESS", "localhost"
     environment "IDENTITY_SERVICE_SECRET_NAME", "secretName"
     environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"
     environment "API_HOST", "localhost"

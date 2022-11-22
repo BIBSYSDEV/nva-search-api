@@ -72,7 +72,6 @@ com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-au
 
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
-testcontainers-elasticsearch = { group = 'org.testcontainers', name = 'elasticsearch', version.ref = 'testContainers' }
 javafaker = { group = 'com.github.javafaker', name = 'javafaker', version.ref = 'javaFaker' }
 hamcrest = { group = 'org.hamcrest', name = 'hamcrest', version.ref = 'hamcrest' }
 mockitocore = { group = 'org.mockito', name = 'mockito-core', version.ref = 'mockito' }
@@ -87,7 +86,7 @@ jackson-hamrest = { group= 'com.spotify', name= 'hamcrest-jackson', version.ref 
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
 jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
-testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainers-elasticsearch']
+testcontainers = ['testcontainers-core', 'testcontainers-junit']
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javafaker', 'javers',
     'nva-testutils', 'nva-logutils','jackson-hamrest']

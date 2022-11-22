@@ -67,22 +67,16 @@ Parameters:
     Description: Suffix used for naming resources for feature branches to avoid conflicts.
   ElasticSearchSize:
     Type: String
-    AllowedValues:
-      - small
-      - large
-
-
+    Default: dummy-value
 
 Conditions:
   WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
-  LargeElasticSearch:  !Equals [ !Ref ElasticSearchSize, 'large' ]
-
 
 Resources:
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
 
-  ReadOnlyAccessElasticSearchRole:
+  ReadOnlySearchInfrastructureRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -151,16 +145,6 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*'
-        - PolicyName: writetoelasticsearch
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - es:ESHttpPost
-                  - es:ESHttpPut
-                  - es:ESHttpDelete
-                Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
         - PolicyName: readSearchInfrastructureSecret
           PolicyDocument:
             Version: 2012-10-17
@@ -169,50 +153,6 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:SearchInfrastructureCredentials*'
-
-  NVAElasticSearch:
-    Type: AWS::Elasticsearch::Domain
-    Properties:
-      AccessPolicies:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS: !GetAtt TriggerExecutionRole.Arn
-            Action: 'es:*'
-            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
-          - Effect: Allow
-            Principal:
-              AWS: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
-            Action:
-              - es:ESHttpPost
-              - es:ESHttpGet
-              - es:ESHttpPut
-              - es:ESHttpHead
-            Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*'
-      ElasticsearchClusterConfig: !If [ LargeElasticSearch,
-        {
-          DedicatedMasterEnabled: true,
-          DedicatedMasterType: t2.medium.elasticsearch,
-          DedicatedMasterCount: 3,
-          InstanceCount: 2,
-          ZoneAwarenessEnabled: false,
-          InstanceType: t2.medium.elasticsearch
-        },
-        {
-          DedicatedMasterEnabled: false,
-          InstanceCount: 1,
-          ZoneAwarenessEnabled: false,
-          InstanceType: t2.medium.elasticsearch
-        }
-      ]
-      ElasticsearchVersion: '7.10'
-      EBSOptions:
-        EBSEnabled: true
-        VolumeSize: 10
-        VolumeType: gp2
-      CognitoOptions:
-        Enabled: false
 
   NvaSearchApi:
     Type: AWS::Serverless::Api
@@ -244,6 +184,7 @@ Resources:
 
   SearchTicketsFunction:
     Type: AWS::Serverless::Function
+    Description: Lambda for searching Tickets
     Properties:
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchHandler::handleRequest
@@ -255,12 +196,10 @@ Resources:
         Type: AllAtOnce
       ProvisionedConcurrencyConfig:
         ProvisionedConcurrentExecutions: 1
-      Role: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"
       Events:
         GetTickets:
           Type: Api
@@ -270,6 +209,7 @@ Resources:
             RestApiId: !Ref NvaSearchApi
   SearchResourcesFunction:
     Type: AWS::Serverless::Function
+    Description: Lambda for searching Resources
     Properties:
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchResourcesApiHandler::handleRequest
@@ -281,12 +221,10 @@ Resources:
         Type: AllAtOnce
       ProvisionedConcurrencyConfig:
         ProvisionedConcurrentExecutions: 1
-      Role: !GetAtt ReadOnlyAccessElasticSearchRole.Arn
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"
       Events:
         GetResources:
           Type: Api
@@ -426,11 +364,6 @@ Resources:
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
-      Environment:
-        Variables:
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"
-          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
@@ -468,8 +401,6 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
 
   StartBatchIndexingButton:
@@ -484,8 +415,6 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
@@ -499,26 +428,20 @@ Resources:
 
   InitHandler:
     Type: AWS::Serverless::Function
+    Description: Lambda that creates all indices. Needs to be run manually from Test
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.InitHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
-      Environment:
-        Variables:
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"
 
   DeleteIndicesHandler:
     Type: AWS::Serverless::Function
+    Description: Lambda that deletes all indices. Needs to be run manually from Test
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
-      Environment:
-        Variables:
-          ELASTICSEARCH_ENDPOINT_ADDRESS: !GetAtt NVAElasticSearch.DomainEndpoint
-          ELASTICSEARCH_REGION: !Ref "AWS::Region"

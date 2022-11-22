@@ -45,7 +45,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
 
     private EventBasedBatchIndexer indexer;
     private ByteArrayOutputStream outputStream;
-    private FakeIndexingClient elasticSearchClient;
+    private FakeIndexingClient openSearchClient;
     private StubEventBridgeClient eventBridgeClient;
     private FakeS3Client s3Client;
     private S3Driver s3Driver;
@@ -53,12 +53,12 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     @BeforeEach
     public void init() {
         this.outputStream = new ByteArrayOutputStream();
-        elasticSearchClient = mockEsClient();
+        openSearchClient = mockOsClient();
         eventBridgeClient = new StubEventBridgeClient();
         s3Client = new FakeS3Client();
         s3Driver = new S3Driver(s3Client, "ingoredBucket");
         indexer = new EventBasedBatchIndexer(s3Client,
-                                             elasticSearchClient,
+                                             openSearchClient,
                                              eventBridgeClient,
                                              NUMBER_OF_FILES_PER_EVENT);
     }
@@ -69,7 +69,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(int numberOfFilesPerEvent)
         throws JsonProcessingException {
         var logger = LogUtils.getTestingAppenderForRootLogger();
-        indexer = new EventBasedBatchIndexer(s3Client, failingElasticSearchClient(), eventBridgeClient,
+        indexer = new EventBasedBatchIndexer(s3Client, failingOpenSearchClient(), eventBridgeClient,
                                              numberOfFilesPerEvent);
         var filesFailingToBeIndexed = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
         var importLocation = filesFailingToBeIndexed.get(0).getHost().toString();
@@ -95,7 +95,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     @ParameterizedTest(name = "batch indexer processes n files per request:{0}")
     @ValueSource(ints = {1, 2, 5, 10, 50, 100})
     void shouldIndexNFilesPerEvent(int numberOfFilesPerEvent) throws IOException {
-        indexer = new EventBasedBatchIndexer(s3Client, elasticSearchClient, eventBridgeClient, numberOfFilesPerEvent);
+        indexer = new EventBasedBatchIndexer(s3Client, openSearchClient, eventBridgeClient, numberOfFilesPerEvent);
         var expectedFiles = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
         var unexpectedFile = randomEntryInS3(s3Driver);
 
@@ -105,12 +105,12 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
 
         for (var expectedFile : expectedFiles) {
             IndexDocument indexDocument = fetchIndexDocumentFromS3(expectedFile);
-            assertThat(elasticSearchClient.getIndex(indexDocument.getIndexName()),
+            assertThat(openSearchClient.getIndex(indexDocument.getIndexName()),
                        hasItem(indexDocument.getResource()));
         }
 
         IndexDocument notYetIndexedDocument = fetchIndexDocumentFromS3(unexpectedFile);
-        assertThat(elasticSearchClient.getIndex(notYetIndexedDocument.getIndexName()),
+        assertThat(openSearchClient.getIndex(notYetIndexedDocument.getIndexName()),
                    not(hasItem(notYetIndexedDocument.getResource())));
     }
 
@@ -158,17 +158,17 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
 
     private void assertThatIndexHasBothDocuments(IndexDocument firstDocumentToIndex,
                                                  IndexDocument secondDocumentIndex) {
-        assertThat(elasticSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
+        assertThat(openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
                    hasItem(firstDocumentToIndex.getResource()));
-        assertThat(elasticSearchClient.getIndex(secondDocumentIndex.getIndexName()),
+        assertThat(openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
                    hasItem(secondDocumentIndex.getResource()));
     }
 
     private void assertThatIndexHasFirstButNotSecondDocument(IndexDocument firstDocumentToIndex,
                                                              IndexDocument secondDocumentIndex) {
-        assertThat(elasticSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
+        assertThat(openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
                    hasItem(firstDocumentToIndex.getResource()));
-        assertThat(elasticSearchClient.getIndex(secondDocumentIndex.getIndexName()),
+        assertThat(openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
                    not(hasItem(secondDocumentIndex.getResource())));
     }
 
@@ -212,7 +212,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
     }
 
-    private FakeIndexingClient mockEsClient() {
+    private FakeIndexingClient mockOsClient() {
         return new FakeIndexingClient();
     }
 

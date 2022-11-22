@@ -6,9 +6,7 @@ import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 
 public final class ApplicationConstants {
-    
-    public static final String ELASTIC_SEARCH_SERVICE_NAME = "es";
-    public static final String ELASTICSEARCH_ENDPOINT_INDEX = "resources";
+    public static final String OPENSEARCH_ENDPOINT_INDEX = "resources";
     public static final String RESOURCES_INDEX = "resources";
     public static final String DOIREQUESTS_INDEX = "doirequests";
     public static final String MESSAGES_INDEX = "messages";

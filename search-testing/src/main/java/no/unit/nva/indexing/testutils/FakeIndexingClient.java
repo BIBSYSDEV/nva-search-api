@@ -20,7 +20,7 @@ import org.opensearch.action.bulk.BulkItemResponse;
 import org.opensearch.action.bulk.BulkResponse;
 
 /**
- * Faking the Indexing Client instead of the ElasticSearch client because faking the ElasticSearch client is difficult.
+ * Faking the Indexing Client instead of the OpenSearch client because faking the OpenSearch client is difficult.
  */
 public class FakeIndexingClient extends IndexingClient {
 

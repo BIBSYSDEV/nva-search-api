@@ -17,7 +17,7 @@ public class AuthenticatedOpenSearchClientWrapper {
     /**
      * Creates a new OpensearchClient.
      *
-     * @param openSearchClient client to use for access to ElasticSearch
+     * @param openSearchClient client to use for access to external search infrastructure
      */
     public AuthenticatedOpenSearchClientWrapper(RestHighLevelClientWrapper openSearchClient,
                                                 CachedJwtProvider cachedJwtProvider) {
