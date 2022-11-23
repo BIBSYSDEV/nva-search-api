@@ -4,8 +4,8 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
-import static no.unit.nva.search.SearchHandler.EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS;
-import static no.unit.nva.search.SearchHandler.VIEWING_SCOPE_QUERY_PARAMETER;
+import static no.unit.nva.search.SearchTicketsHandler.EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS;
+import static no.unit.nva.search.SearchTicketsHandler.VIEWING_SCOPE_QUERY_PARAMETER;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -57,7 +57,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zalando.problem.Problem;
 
-class SearchHandlerTest {
+class SearchTicketsHandlerTest {
 
     public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
     public static final String RESOURCE_ID = "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8";
@@ -69,17 +69,18 @@ class SearchHandlerTest {
     private static final String USERNAME = randomString();
 
     private IdentityClient identityClientMock;
-    private SearchHandler handler;
+    private SearchTicketsHandler handler;
     private Context context;
     private ByteArrayOutputStream outputStream;
     private FakeRestHighLevelClientWrapper restHighLevelClientWrapper;
+
     @BeforeEach
     void init() throws IOException {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         prepareSearchClientWithResponse();
         var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
         setupFakeIdentityClient();
-        handler = new SearchHandler(new Environment(), searchClient, identityClientMock);
+        handler = new SearchTicketsHandler(new Environment(), searchClient, identityClientMock);
         context = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }

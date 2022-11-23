@@ -2,6 +2,8 @@ package no.unit.nva.search.constants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
+
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 
@@ -13,7 +15,14 @@ public final class ApplicationConstants {
     public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
 
     public static final String TICKETS_INDEX = "tickets";
-    
+
+    public static final Map<String, String> AGGREGATIONS = Map.of(
+            "Kategori", "entityDescription.reference.publicationInstance.type.keyword",
+            "Institusjon", "resourceOwner.owner.keyword",
+            "Sektor", "resourceOwner.ownerAffiliation.keyword",
+            "Bidragsyter", "entityDescription.contributors.identity.name.keyword"
+    );
+
     public static final List<String> TICKET_INDICES =
         List.of(DOIREQUESTS_INDEX, MESSAGES_INDEX, PUBLISHING_REQUESTS_INDEX);
 

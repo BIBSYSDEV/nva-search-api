@@ -92,5 +92,21 @@
         }
       }
     ]
+  },
+  "aggregations": {
+    "Tittel": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": [
+        {
+          "key": "Exploratory product search using top-k join queries",
+          "doc_count": 2
+        },
+        {
+          "key": "Highly Oscillatory Systems in Hilbert Spaces",
+          "doc_count": 1
+        }
+      ]
+    }
   }
 }
