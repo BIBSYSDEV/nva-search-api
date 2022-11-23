@@ -3,6 +3,7 @@ package no.unit.nva.search.models;
 import static com.spotify.hamcrest.jackson.JsonMatchers.jsonObject;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.hamcrest.DoesNotHaveEmptyValues.doesNotHaveEmptyValues;
+import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -44,6 +45,7 @@ class SearchResourcesResponseTest {
             .withSize(randomInteger())
             .withProcessingTime(randomInteger())
             .withHits(randomJsonList())
+            .withAggregations(randomJsonNode())
             .build();
     }
 
@@ -52,5 +54,9 @@ class SearchResourcesResponseTest {
             .map(attempt(dtoObjectMapper::readTree))
             .flatMap(Try::stream)
             .collect(Collectors.toList());
+    }
+
+    private JsonNode randomJsonNode() {
+        return attempt(() -> objectMapper.readTree(randomJson())).orElseThrow();
     }
 }

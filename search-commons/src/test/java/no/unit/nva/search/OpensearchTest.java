@@ -5,37 +5,64 @@ import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
+import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.isNotNull;
+import static org.mockito.Mockito.mock;
+import static org.opensearch.search.sort.SortOrder.DESC;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Iterators;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResourcesResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestClient;
+import org.opensearch.search.aggregations.Aggregation;
+import org.opensearch.search.aggregations.Aggregations;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 public class OpensearchTest {
+
+    public static final String SAMPLE_TERM = "SampleSearchTerm";
+    public static final int MAX_RESULTS = 100;
+    public static final int DEFAULT_PAGE_SIZE = 100;
+    public static final int DEFAULT_PAGE_NO = 0;
+    private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
+    private static final String SAMPLE_JSON_RESPONSE = "{}";
+    private static final int SAMPLE_FROM = 0;
+    private static final String SAMPLE_ORDERBY = "orderByField";
+    private static final String ELASTIC_SAMPLE_RESPONSE_FILE = "sample_elasticsearch_response.json";
+    private static final int ELASTIC_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
+    private static final URI SAMPLE_REQUEST_URI = randomUri();
+    SearchResponse defaultSearchResponse = mock(SearchResponse.class);
 
     public static final String INDEX_NAME = RandomDataGenerator.randomString().toLowerCase();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
@@ -234,6 +261,73 @@ public class OpensearchTest {
 
 
     }
+
+    @Test
+    void shouldReturnAggregations() throws ApiGatewayException, IOException, InterruptedException {
+        indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        SearchDocumentsQuery query = new SearchDocumentsQuery(
+                "*",
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI
+        );
+
+        var aggregationFields = Map.of(
+                "status-field-1", "publication.status.keyword",
+                "status-field-2", "publication.status.keyword"
+        );
+
+        query.setAggregationFields(aggregationFields);
+
+        var response = searchClient.searchWithSearchDocumentQuery(query, INDEX_NAME);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getAggregations(), notNullValue());
+        assertThat(Iterators.size(response.getAggregations().fields()), is(equalTo(2)));
+
+
+        assertThat(response.getAggregations()
+                       .get("status-field-1")
+                       .get("buckets")
+                       .get(0)
+                       .get("doc_count")
+                       .asInt(),
+                   is(equalTo(1))
+        );
+
+    }
+
+    @Test
+    void shouldNotReturnAggregationsWhenNotRequested() throws ApiGatewayException, IOException, InterruptedException {
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        SearchDocumentsQuery query = new SearchDocumentsQuery(
+            "*",
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI
+        );
+
+        var response = searchClient.searchWithSearchDocumentQuery(query, INDEX_NAME);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getAggregations(), nullValue());
+    }
+
+
 
     private ViewingScope getEmptyViewingScope() {
         return new ViewingScope();

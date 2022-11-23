@@ -31,7 +31,7 @@ import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesResponse> {
+public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResourcesResponse> {
 
     public static final String VIEWING_SCOPE_QUERY_PARAMETER = "viewingScope";
     public static final String CRISTIN_ORG_LEVEL_DELIMITER = "\\.";
@@ -39,16 +39,16 @@ public class SearchHandler extends ApiGatewayHandler<Void, SearchResourcesRespon
     public static final String EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS = "APPROVE_DOI_REQUEST";
     public static final int DEFAULT_PAGE_SIZE = 100;
     public static final int DEFAULT_RESULTS_INDEX = 0;
-    private static final Logger logger = LoggerFactory.getLogger(SearchHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
     private final SearchClient searchClient;
     private final IdentityClient identityClient;
 
     @JacocoGenerated
-    public SearchHandler() {
+    public SearchTicketsHandler() {
         this(new Environment(), defaultSearchClient(), defaultIdentityClient());
     }
 
-    public SearchHandler(Environment environment, SearchClient searchClient, IdentityClient identityClient) {
+    public SearchTicketsHandler(Environment environment, SearchClient searchClient, IdentityClient identityClient) {
         super(Void.class, environment, objectMapperWithEmpty);
         this.searchClient = searchClient;
         this.identityClient = identityClient;
