@@ -8,8 +8,8 @@ import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.IndexingClient;
+import no.unit.nva.search.IndexingConfig;
 import no.unit.nva.search.models.IndexDocument;
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
@@ -19,7 +19,7 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
     public static final String MISSING_INDEX_ERROR = "Missing field 'index' in consumption attributes";
     public static final String MISSING_DOC_IDENTIFIER_ERROR =
         "Missing field 'documentIdentifier' in consumption attributes";
-    private static final String EXPANDED_RESOURCES_BUCKET = new Environment().readEnv(
+    private static final String EXPANDED_RESOURCES_BUCKET = IndexingConfig.ENVIRONMENT.readEnv(
         "EXPANDED_RESOURCES_BUCKET");
     private final S3Driver s3Driver;
     private final IndexingClient indexingClient;
