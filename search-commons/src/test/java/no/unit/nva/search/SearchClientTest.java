@@ -9,9 +9,9 @@ import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
 import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
-import static no.unit.nva.testutils.RandomDataGenerator.*;
-import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
+import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;
@@ -284,9 +284,9 @@ class SearchClientTest {
 
         var sentRequest = sentRequestBuffer.get();
         var json = objectMapper.readTree(sentRequest.source().aggregations().toString());
-        aggregationFields.forEach( (term, field) ->
-                assertAggregationHasField(json, term, field)
-                );
+        aggregationFields.forEach((term, field) ->
+            assertAggregationHasField(json, term, field)
+        );
     }
 
     private void assertAggregationHasField(JsonNode json, String term, String expectedField) {

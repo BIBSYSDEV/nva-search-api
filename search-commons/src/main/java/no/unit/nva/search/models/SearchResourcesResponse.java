@@ -4,18 +4,12 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search.IndexedDocumentsJsonPointers.SOURCE_JSON_POINTER;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.attempt.Try.attempt;
-import static org.opensearch.common.xcontent.DeprecationHandler.IGNORE_DEPRECATIONS;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,27 +17,12 @@ import java.util.stream.StreamSupport;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.action.search.SearchResponse;
-import org.opensearch.common.ParseField;
-import org.opensearch.common.xcontent.ContextParser;
-import org.opensearch.common.xcontent.NamedXContentRegistry;
-import org.opensearch.common.xcontent.ToXContent;
-import org.opensearch.common.xcontent.XContentBuilder;
-import org.opensearch.common.xcontent.XContentParser;
-import org.opensearch.common.xcontent.cbor.CborXContent;
-import org.opensearch.common.xcontent.json.JsonXContent;
-import org.opensearch.search.aggregations.Aggregation;
-import org.opensearch.search.aggregations.Aggregations;
-import org.opensearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.opensearch.search.aggregations.bucket.terms.StringTerms;
-import org.opensearch.search.aggregations.metrics.ParsedTopHits;
-import org.opensearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 
 public class SearchResourcesResponse {
 
     public static final String TOTAL_JSON_POINTER = "/hits/total/value";
     public static final String TOOK_JSON_POINTER = "/took";
     public static final String HITS_JSON_POINTER = "/hits/hits";
-    private static final String AGGREGATIONS_JSON_POINTER = "/aggregations";
     public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
     public static final String QUERY_PARAMETER = "query";
 
@@ -80,12 +59,14 @@ public class SearchResourcesResponse {
 
     private static JsonNode getAggregationFromBody(String body) {
         try {
-            ObjectNode outputAggregationNode = objectMapperWithEmpty.createObjectNode();
+            var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
 
             var json = objectMapperWithEmpty.readTree(body);
             JsonNode rawAggregationNode = json.get("aggregations");
 
-            if (rawAggregationNode == null) return null;
+            if (rawAggregationNode == null) {
+                return null;
+            }
 
             for (var iterator = rawAggregationNode.fields(); iterator.hasNext();) {
                 var child = iterator.next();
@@ -174,7 +155,9 @@ public class SearchResourcesResponse {
         this.hits = hits;
     }
 
-    public void setAggregations(JsonNode aggregations) { this.aggregations = aggregations; }
+    public void setAggregations(JsonNode aggregations) {
+        this.aggregations = aggregations;
+    }
 
     @JsonProperty("total")
     @Deprecated(forRemoval = true)
@@ -240,12 +223,6 @@ public class SearchResourcesResponse {
         return toStream(record.at(HITS_JSON_POINTER))
             .map(SearchResourcesResponse::extractSourceStripped)
             .collect(Collectors.toList());
-    }
-
-    private static Aggregations extractAggregations(JsonNode values) {
-        return attempt( () ->
-                objectMapperWithEmpty.treeToValue(values.at(AGGREGATIONS_JSON_POINTER), Aggregations.class)
-        ).orElseThrow();
     }
 
     private static JsonNode extractSourceStripped(JsonNode record) {

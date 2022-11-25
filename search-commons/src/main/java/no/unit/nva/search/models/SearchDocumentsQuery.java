@@ -1,8 +1,6 @@
 package no.unit.nva.search.models;
 
 import org.opensearch.action.search.SearchRequest;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -11,8 +9,6 @@ import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
 import java.util.Map;
-
-import static no.unit.nva.search.constants.ApplicationConstants.AGGREGATIONS;
 
 public class SearchDocumentsQuery {
 
