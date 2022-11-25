@@ -50,17 +50,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 public class OpensearchTest {
-
-    public static final String SAMPLE_TERM = "SampleSearchTerm";
-    public static final int MAX_RESULTS = 100;
-    public static final int DEFAULT_PAGE_SIZE = 100;
-    public static final int DEFAULT_PAGE_NO = 0;
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
-    private static final String SAMPLE_JSON_RESPONSE = "{}";
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
-    private static final String ELASTIC_SAMPLE_RESPONSE_FILE = "sample_elasticsearch_response.json";
-    private static final int ELASTIC_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     SearchResponse defaultSearchResponse = mock(SearchResponse.class);
 

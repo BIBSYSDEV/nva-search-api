@@ -1,7 +1,6 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.models.SearchResourcesResponse.fromSearchResponse;
 import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
