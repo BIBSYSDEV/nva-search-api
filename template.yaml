@@ -364,6 +364,9 @@ Resources:
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
+      Environment:
+        Variables:
+          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
