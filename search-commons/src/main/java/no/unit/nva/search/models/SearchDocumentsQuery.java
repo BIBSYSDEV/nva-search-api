@@ -20,11 +20,12 @@ public class SearchDocumentsQuery {
     private final SortOrder sortOrder;
     private final URI requestUri;
 
+    private Map<String, String> aggregationFields;
+
+
     public void setAggregationFields(Map<String, String> aggregationFields) {
         this.aggregationFields = aggregationFields;
     }
-
-    private Map<String, String> aggregationFields;
 
     public SearchDocumentsQuery(String searchTerm,
                                 int results,

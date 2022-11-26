@@ -40,7 +40,8 @@ import static org.mockito.Mockito.when;
 public class SearchResourcesApiHandlerTest {
 
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
-    public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON
+            = "sample_opensearch_response_with_aggregation.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String SAMPLE_PATH = "search";
@@ -77,6 +78,27 @@ public class SearchResourcesApiHandlerTest {
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
         assertThat(actual, is(equalTo(expected)));
     }
+
+    @Test
+    void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
+        prepareRestHighLevelClientOkResponse();
+
+        handler.handleRequest(getInputStream(), outputStream, contextMock);
+
+        var gatewayResponse =  GatewayResponse
+                .fromOutputStream(outputStream, SearchResourcesResponse.class);
+
+        SearchResourcesResponse actual = gatewayResponse.getBodyObject(SearchResourcesResponse.class);
+
+        SearchResourcesResponse expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertThat(actual, is(equalTo(expected)));
+        assertNotNull(actual.getAggregations());
+        assertNotNull(actual.getAggregations().get("Bidragsyter"));
+    }
+
 
     @Test
     void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException {
@@ -119,7 +141,7 @@ public class SearchResourcesApiHandlerTest {
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
-        String result = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_JSON));
+        String result = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         SearchResponse searchResponse = createSearchResponseWithHits(result);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
