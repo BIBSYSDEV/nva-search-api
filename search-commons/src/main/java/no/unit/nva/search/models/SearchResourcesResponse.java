@@ -6,7 +6,6 @@ import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWith
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -59,8 +58,6 @@ public class SearchResourcesResponse {
 
     private static JsonNode getAggregationFromBody(String body) {
         try {
-            var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
-
             var json = objectMapperWithEmpty.readTree(body);
             JsonNode rawAggregationNode = json.get("aggregations");
 
@@ -68,7 +65,10 @@ public class SearchResourcesResponse {
                 return null;
             }
 
-            for (var iterator = rawAggregationNode.fields(); iterator.hasNext();) {
+            var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
+
+            var iterator = rawAggregationNode.fields();
+            while (iterator.hasNext()) {
                 var child = iterator.next();
                 var newName = child.getKey().replace("sterms#","");
                 outputAggregationNode.set(newName, child.getValue());
