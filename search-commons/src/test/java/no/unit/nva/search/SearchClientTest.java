@@ -43,7 +43,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search.models.SearchDocumentsQuery;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.search.utils.RequestOptionsHeaderMatcher;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -182,9 +182,9 @@ class SearchClientTest {
         when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
-        SearchResourcesResponse searchResourcesResponse =
+        SearchResponseDto searchResponseDto =
             searchClient.searchWithSearchDocumentQuery(generateSampleQuery(), OPENSEARCH_ENDPOINT_INDEX);
-        assertNotNull(searchResourcesResponse);
+        assertNotNull(searchResponseDto);
     }
     
     @Test
@@ -309,10 +309,10 @@ class SearchClientTest {
             DESC,
             SAMPLE_REQUEST_URI);
         
-        SearchResourcesResponse searchResourcesResponse =
+        SearchResponseDto searchResponseDto =
             searchClient.searchWithSearchDocumentQuery(queryWithMaxResults, OPENSEARCH_ENDPOINT_INDEX);
-        assertNotNull(searchResourcesResponse);
-        assertEquals(searchResourcesResponse.getSize(), OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS);
+        assertNotNull(searchResponseDto);
+        assertEquals(searchResponseDto.getSize(), OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS);
     }
     
     @Test

@@ -3,10 +3,7 @@ package no.unit.nva.search.models;
 import static com.spotify.hamcrest.jackson.JsonMatchers.jsonObject;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.hamcrest.DoesNotHaveEmptyValues.doesNotHaveEmptyValues;
-import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
-import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
-import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static no.unit.nva.testutils.RandomDataGenerator.*;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -20,17 +17,17 @@ import java.util.stream.Stream;
 import nva.commons.core.attempt.Try;
 import org.junit.jupiter.api.Test;
 
-class SearchResourcesResponseTest {
+class SearchResponseDtoTest {
 
     @Test
     void builderReturnsObjectWithoutAnyEmptyField() {
-        SearchResourcesResponse response = randomResponse();
+        SearchResponseDto response = randomResponse();
         assertThat(response, doesNotHaveEmptyValues());
     }
 
     @Test
     void jsonSerializationShouldKeepDeprecatedFieldsUntilFrontendHasMigrated() throws JsonProcessingException {
-        SearchResourcesResponse searchResponse = randomResponse();
+        SearchResponseDto searchResponse = randomResponse();
         var serialized = dtoObjectMapper.writeValueAsString(searchResponse);
         var json = (ObjectNode) dtoObjectMapper.readTree(serialized);
         // took and total are the deprecated fields
@@ -38,8 +35,25 @@ class SearchResourcesResponseTest {
         assertThat(json, is(jsonObject().where("total", JsonMatchers.jsonLong(searchResponse.getSize()))));
     }
 
-    private SearchResourcesResponse randomResponse() {
-        return SearchResourcesResponse.builder()
+    @Test
+    void fromStringShouldStripFieldTypesFromAggregation() throws JsonProcessingException {
+
+        SearchResponseDto expectedResponse = randomResponse();
+        var aggregation = expectedResponse.getAggregations().fieldNames().next();
+        var serialized = dtoObjectMapper.writeValueAsString(expectedResponse);
+        var aggregationWithFieldType = serialized.replaceAll(aggregation, randomString() + "#" + aggregation);
+
+        var actualSearchResponse = SearchResponseDto.fromString(
+                randomUri(),
+                randomString(),
+                aggregationWithFieldType
+        );
+
+        assert(expectedResponse.getAggregations().equals(actualSearchResponse.getAggregations()));
+    }
+
+    private SearchResponseDto randomResponse() {
+        return SearchResponseDto.builder()
             .withContext(randomUri())
             .withId(randomUri())
             .withSize(randomInteger())

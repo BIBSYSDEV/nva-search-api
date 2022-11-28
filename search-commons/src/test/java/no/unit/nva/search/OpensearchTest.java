@@ -5,9 +5,7 @@ import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
-import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,7 +13,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.mock;
 import static org.opensearch.search.sort.SortOrder.DESC;
 
@@ -26,14 +23,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -44,8 +40,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestClient;
-import org.opensearch.search.aggregations.Aggregation;
-import org.opensearch.search.aggregations.Aggregations;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -219,8 +213,8 @@ public class OpensearchTest {
                 PAGE_SIZE,
                 PAGE_NO,
                 indexName);
-        var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
-        var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
+        var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
+        var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
 
         assertThat(searchResourcesResponse, is(notNullValue()));
         assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
@@ -247,8 +241,8 @@ public class OpensearchTest {
                 PAGE_SIZE,
                 PAGE_NO,
                 indexName);
-        var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
-        var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
+        var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
+        var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
 
         assertThat(searchResourcesResponse, is(notNullValue()));
         assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
@@ -275,8 +269,8 @@ public class OpensearchTest {
                 PAGE_NO,
                 indexName);
 
-        var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
-        var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
+        var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
+        var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
         assertThat(searchResourcesResponse, is(notNullValue()));
         var expectedHits = 1;
         assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));

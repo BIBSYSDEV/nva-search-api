@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.Optional;
 
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.IdentityClientImpl;
 import no.unit.nva.search.restclients.responses.UserResponse;
@@ -31,7 +31,7 @@ import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResourcesResponse> {
+public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponseDto> {
 
     public static final String VIEWING_SCOPE_QUERY_PARAMETER = "viewingScope";
     public static final String CRISTIN_ORG_LEVEL_DELIMITER = "\\.";
@@ -55,7 +55,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResource
     }
 
     @Override
-    protected SearchResourcesResponse processInput(Void input, RequestInfo requestInfo, Context context)
+    protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
 
         var indexName = getIndexName(requestInfo);
@@ -79,11 +79,11 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResource
                 from,
                 indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
-        return SearchResourcesResponse.fromSearchResponse(searchResponse, requestUri);
+        return SearchResponseDto.fromSearchResponse(searchResponse, requestUri);
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, SearchResourcesResponse output) {
+    protected Integer getSuccessStatusCode(Void input, SearchResponseDto output) {
         return HTTP_OK;
     }
 

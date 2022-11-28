@@ -3,7 +3,7 @@ package no.unit.nva.search;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -69,10 +69,10 @@ public class SearchResourcesApiHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse =  GatewayResponse.fromOutputStream(outputStream,SearchResourcesResponse.class);
-        SearchResourcesResponse actual = gatewayResponse.getBodyObject(SearchResourcesResponse.class);
+        var gatewayResponse =  GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
-        SearchResourcesResponse expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
+        SearchResponseDto expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -86,11 +86,11 @@ public class SearchResourcesApiHandlerTest {
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
         var gatewayResponse =  GatewayResponse
-                .fromOutputStream(outputStream, SearchResourcesResponse.class);
+                .fromOutputStream(outputStream, SearchResponseDto.class);
 
-        SearchResourcesResponse actual = gatewayResponse.getBodyObject(SearchResourcesResponse.class);
+        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
-        SearchResourcesResponse expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
+        SearchResponseDto expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -106,8 +106,8 @@ public class SearchResourcesApiHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.fromOutputStream(outputStream, SearchResourcesResponse.class);
-        var body = gatewayResponse.getBodyObject(SearchResourcesResponse.class);
+        var gatewayResponse = GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        var body = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -158,10 +158,10 @@ public class SearchResourcesApiHandlerTest {
         when(restHighLevelClientMock.search(any(), any())).thenThrow(IOException.class);
     }
 
-    private SearchResourcesResponse getSearchResourcesResponseFromFile(String filename)
+    private SearchResponseDto getSearchResourcesResponseFromFile(String filename)
             throws JsonProcessingException {
         return objectMapperWithEmpty
-                .readValue(stringFromResources(Path.of(filename)), SearchResourcesResponse.class);
+                .readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
     }
 
     private SearchResponse createSearchResponseWithHits(String hits) {
