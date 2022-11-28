@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.RestRequestHandler;
@@ -16,7 +16,7 @@ import static no.unit.nva.search.constants.ApplicationConstants.AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 
-public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchResourcesResponse> {
+public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchResponseDto> {
 
     private final SearchClient openSearchClient;
 
@@ -42,9 +42,9 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
      *                             method {@link RestRequestHandler#getFailureStatusCode}
      */
     @Override
-    protected SearchResourcesResponse processInput(Void input,
-                                                   RequestInfo requestInfo,
-                                                   Context context) throws ApiGatewayException {
+    protected SearchResponseDto processInput(Void input,
+                                             RequestInfo requestInfo,
+                                             Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, AGGREGATIONS);
         return openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
     }
@@ -57,7 +57,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
      * @return the success status code.
      */
     @Override
-    protected Integer getSuccessStatusCode(Void input, SearchResourcesResponse output) {
+    protected Integer getSuccessStatusCode(Void input, SearchResponseDto output) {
         return HttpStatus.SC_OK;
     }
 

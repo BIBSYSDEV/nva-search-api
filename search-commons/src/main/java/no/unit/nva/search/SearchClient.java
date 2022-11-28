@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
+import static no.unit.nva.search.models.SearchResponseDto.fromString;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import no.unit.nva.search.models.SearchDocumentsQuery;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
@@ -55,13 +55,13 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
      * @param query query object
      * @throws ApiGatewayException thrown when uri is misconfigured, service i not available or interrupted
      */
-    public SearchResourcesResponse searchWithSearchDocumentQuery(
+    public SearchResponseDto searchWithSearchDocumentQuery(
             SearchDocumentsQuery query,
             String index
     ) throws ApiGatewayException {
 
         var searchResponse = doSearch(query, index);
-        return toSearchResourcesResponse(query.getRequestUri(), query.getSearchTerm(), searchResponse.toString());
+        return fromString(query.getRequestUri(), query.getSearchTerm(), searchResponse.toString());
     }
     
     public SearchResponse findResourcesForOrganizationIds(ViewingScope viewingScope,
