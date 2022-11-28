@@ -28,8 +28,8 @@ import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.apache.http.HttpHost;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -37,7 +37,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class OpensearchTest {
 
-    public static final String INDEX_NAME = RandomDataGenerator.randomString().toLowerCase();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
@@ -51,12 +50,12 @@ public class OpensearchTest {
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create("https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
 
-    private SearchClient searchClient;
-    private IndexingClient indexingClient;
-    private final OpenSearchContainer container = new OpenSearchContainer();
+    private static SearchClient searchClient;
+    private static IndexingClient indexingClient;
+    private static final OpenSearchContainer container = new OpenSearchContainer();
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         container.start();
 
         var httpHostAddress = container.getHttpHostAddress();
@@ -70,8 +69,8 @@ public class OpensearchTest {
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
     }
 
-    @AfterEach
-    void afterEach() {
+    @AfterAll
+    static void afterEach() {
         container.stop();
     }
 
@@ -96,23 +95,31 @@ public class OpensearchTest {
 
     @Test
     void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of()));
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var response = searchClient.findResourcesForOrganizationIds(getEmptyViewingScope(),
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
 
         assertThat(response.getHits().getHits().length,
                 is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
     }
 
+    private static String generateIndexName() {
+        return RandomDataGenerator.randomString().toLowerCase();
+    }
+
     @Test
     void shouldReturnTwoHitsOnViewingScopeWithIncludedUnit() throws Exception {
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID)));
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID)));
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -122,16 +129,20 @@ public class OpensearchTest {
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
 
         assertThat(response.getHits().getHits().length,
                 is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
+
+        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
+        var indexName = generateIndexName();
+
         indexingClient.addDocumentToIndex(
-                getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
+                getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
         );
 
         Thread.sleep(DELAY_AFTER_INDEXING);
@@ -142,16 +153,21 @@ public class OpensearchTest {
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
 
         assertThat(response.getHits().getHits().length,
                 is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
+
+        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnOneHitOnViewingScopeWithExcludedUnit() throws Exception {
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID)));
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID, EXCLUDED_ORGANIZATION_ID)));
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID,
+                                                                   EXCLUDED_ORGANIZATION_ID)));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -162,16 +178,20 @@ public class OpensearchTest {
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
 
         assertThat(response.getHits().getHits().length,
                 is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
+
+        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldCreateSearchResourcesResponseFromSearchResponse() throws Exception {
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID)));
-        indexingClient.addDocumentToIndex(getIndexDocument(Set.of(INCLUDED_ORGANIZATION_ID)));
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -179,20 +199,26 @@ public class OpensearchTest {
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
         var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
 
         assertThat(searchResourcesResponse, is(notNullValue()));
         assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
         assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
+
+        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
+        var indexName = generateIndexName();
+
         indexingClient.addDocumentToIndex(crateSampleIndexDocument(
+            indexName,
                 "sample_response_with_publication_status_as_draft.json"));
         indexingClient.addDocumentToIndex(crateSampleIndexDocument(
+            indexName,
                 "sample_response_with_publication_status_as_requested.json"));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
@@ -201,7 +227,7 @@ public class OpensearchTest {
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
         var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
 
@@ -210,21 +236,25 @@ public class OpensearchTest {
         var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
         assertThat(searchResourcesResponse.getHits().size(),
                 is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
+
+        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnPendingPublishingRequestsForDraftPublications()
             throws IOException, InterruptedException, BadGatewayException {
+        var indexName = generateIndexName();
+
         indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument("sample_publishing_request_of_draft_publication.json"));
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
         indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
         var response = searchClient.findResourcesForOrganizationIds(viewingScope,
                 PAGE_SIZE,
                 PAGE_NO,
-                INDEX_NAME);
+                indexName);
 
         var searchId = SearchResourcesResponse.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResourcesResponse.fromSearchResponse(response, searchId);
@@ -232,20 +262,20 @@ public class OpensearchTest {
         var expectedHits = 1;
         assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
 
-
+        indexingClient.deleteIndex(indexName);
     }
 
     private ViewingScope getEmptyViewingScope() {
         return new ViewingScope();
     }
 
-    private IndexDocument getIndexDocument(Set<URI> organizationIds) {
-        return getIndexDocument(organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
+    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds) {
+        return getIndexDocument(indexName, organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
     }
 
-    private IndexDocument getIndexDocument(Set<URI> organizationIds, String status) {
+    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds, String status) {
         var eventConsumptionAttributes = new EventConsumptionAttributes(
-                INDEX_NAME,
+                indexName,
                 SortableIdentifier.next()
         );
         Map<String, Object> map = Map.of(
@@ -257,9 +287,9 @@ public class OpensearchTest {
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
 
-    private IndexDocument crateSampleIndexDocument(String jsonFile) throws IOException {
+    private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
         var eventConsumptionAttributes = new EventConsumptionAttributes(
-                INDEX_NAME,
+                indexName,
                 SortableIdentifier.next()
         );
         var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
