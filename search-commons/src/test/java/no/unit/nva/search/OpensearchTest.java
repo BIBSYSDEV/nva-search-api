@@ -13,7 +13,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
 import static org.opensearch.search.sort.SortOrder.DESC;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +37,6 @@ import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -49,7 +47,6 @@ public class OpensearchTest {
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
     private static final URI SAMPLE_REQUEST_URI = randomUri();
-    public static final String INDEX_NAME = RandomDataGenerator.randomString().toLowerCase();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
@@ -304,7 +301,7 @@ public class OpensearchTest {
 
         query.setAggregationFields(aggregationFields);
 
-        var response = searchClient.searchWithSearchDocumentQuery(query, INDEX_NAME);
+        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
         assertThat(response, notNullValue());
         assertThat(response.getAggregations(), notNullValue());
@@ -321,7 +318,46 @@ public class OpensearchTest {
         );
 
         indexingClient.deleteIndex(indexName);
+    }
 
+    @Test
+    void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
+                                                                 InterruptedException {
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        SearchDocumentsQuery query = new SearchDocumentsQuery(
+            "*",
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI
+        );
+
+        var aggregationFields = Map.of(
+            "publication.status", "publication.status.keyword"
+        );
+
+        query.setAggregationFields(aggregationFields);
+        query.setAggregationBucketAmount(1);
+
+        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+
+        assertThat(response.getAggregations()
+                       .get("publication.status")
+                       .get("buckets")
+                       .size(),
+                   is(equalTo(1))
+        );
+
+        indexingClient.deleteIndex(indexName);
     }
 
     @Test
@@ -343,7 +379,7 @@ public class OpensearchTest {
             SAMPLE_REQUEST_URI
         );
 
-        var response = searchClient.searchWithSearchDocumentQuery(query, INDEX_NAME);
+        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
         assertThat(response, notNullValue());
         assertThat(response.getAggregations(), nullValue());

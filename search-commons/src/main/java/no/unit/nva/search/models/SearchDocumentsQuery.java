@@ -19,9 +19,12 @@ public class SearchDocumentsQuery {
     private final String orderBy;
     private final SortOrder sortOrder;
     private final URI requestUri;
-
     private Map<String, String> aggregationFields;
+    private int aggregationBucketAmount = 10;
 
+    public void setAggregationBucketAmount(int aggregationBucketAmount) {
+        this.aggregationBucketAmount = aggregationBucketAmount;
+    }
 
     public void setAggregationFields(Map<String, String> aggregationFields) {
         this.aggregationFields = aggregationFields;
@@ -74,6 +77,7 @@ public class SearchDocumentsQuery {
                         AggregationBuilders
                                 .terms(term)
                                 .field(field)
+                                .size(aggregationBucketAmount)
                 )
         );
     }
