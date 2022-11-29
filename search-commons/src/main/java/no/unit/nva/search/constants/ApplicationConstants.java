@@ -17,10 +17,10 @@ public final class ApplicationConstants {
     public static final String TICKETS_INDEX = "tickets";
 
     public static final Map<String, String> AGGREGATIONS = Map.of(
-            "Kategori", "entityDescription.reference.publicationInstance.type.keyword",
-            "Institusjon", "resourceOwner.owner.keyword",
-            "Sektor", "resourceOwner.ownerAffiliation.keyword",
-            "Bidragsyter", "entityDescription.contributors.identity.name.keyword"
+        "entityDescription.reference.publicationInstance.type", "entityDescription.reference.publicationInstance.type.keyword",
+        "resourceOwner.owner", "resourceOwner.owner.keyword",
+        "resourceOwner.ownerAffiliation", "resourceOwner.ownerAffiliation.keyword",
+        "Bidragsyter", "entityDescription.contributors.identity.name.keyword"
     );
 
     public static final List<String> TICKET_INDICES =
