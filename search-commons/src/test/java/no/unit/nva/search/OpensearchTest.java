@@ -256,21 +256,20 @@ public class OpensearchTest {
                 crateSampleIndexDocument("sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
 
+        var aggregationFields = Map.of(
+                "status-field-1", "publication.status.keyword",
+                "status-field-2", "publication.status.keyword"
+        );
+
         SearchDocumentsQuery query = new SearchDocumentsQuery(
                 "*",
                 SAMPLE_NUMBER_OF_RESULTS,
                 SAMPLE_FROM,
                 SAMPLE_ORDERBY,
                 DESC,
-                SAMPLE_REQUEST_URI
+                SAMPLE_REQUEST_URI,
+                aggregationFields
         );
-
-        var aggregationFields = Map.of(
-                "status-field-1", "publication.status.keyword",
-                "status-field-2", "publication.status.keyword"
-        );
-
-        query.setAggregationFields(aggregationFields);
 
         var response = searchClient.searchWithSearchDocumentQuery(query, INDEX_NAME);
 
@@ -304,7 +303,8 @@ public class OpensearchTest {
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
             DESC,
-            SAMPLE_REQUEST_URI
+            SAMPLE_REQUEST_URI,
+            null
         );
 
         var response = searchClient.searchWithSearchDocumentQuery(query, INDEX_NAME);

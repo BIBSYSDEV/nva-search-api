@@ -262,22 +262,20 @@ class SearchClientTest {
             }
         };
 
+        var aggregationFields = Map.of(
+                randomString(), randomString(),
+                randomString(), randomString()
+        );
+
         SearchDocumentsQuery sampleQuery = new SearchDocumentsQuery(
                 SAMPLE_TERM,
                 SAMPLE_NUMBER_OF_RESULTS,
                 SAMPLE_FROM,
                 SAMPLE_ORDERBY,
                 DESC,
-                SAMPLE_REQUEST_URI
+                SAMPLE_REQUEST_URI,
+                aggregationFields
         );
-
-        var aggregationFields = Map.of(
-                randomString(), randomString(),
-                randomString(), randomString()
-        );
-
-        sampleQuery.setAggregationFields(aggregationFields);
-
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.searchWithSearchDocumentQuery(sampleQuery, OPENSEARCH_ENDPOINT_INDEX);
@@ -307,7 +305,8 @@ class SearchClientTest {
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
             DESC,
-            SAMPLE_REQUEST_URI);
+            SAMPLE_REQUEST_URI,
+                null);
         
         SearchResponseDto searchResponseDto =
             searchClient.searchWithSearchDocumentQuery(queryWithMaxResults, OPENSEARCH_ENDPOINT_INDEX);
@@ -396,7 +395,8 @@ class SearchClientTest {
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
             DESC,
-            SAMPLE_REQUEST_URI);
+            SAMPLE_REQUEST_URI,
+            null);
     }
     
     private String generateOpenSearchResponseAsString() {
