@@ -70,7 +70,7 @@ public class OpensearchTest {
     }
 
     @AfterAll
-    static void afterEach() {
+    static void afterAll() {
         container.stop();
     }
 
