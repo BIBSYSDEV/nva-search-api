@@ -20,7 +20,7 @@ public final class ApplicationConstants {
         "entityDescription.reference.publicationInstance.type", "entityDescription.reference.publicationInstance.type.keyword",
         "resourceOwner.owner", "resourceOwner.owner.keyword",
         "resourceOwner.ownerAffiliation", "resourceOwner.ownerAffiliation.keyword",
-        "Bidragsyter", "entityDescription.contributors.identity.name.keyword"
+        "entityDescription.contributors.identity.name", "entityDescription.contributors.identity.name.keyword"
     );
 
     public static final List<String> TICKET_INDICES =
