@@ -3,6 +3,7 @@ package no.unit.nva.search;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
@@ -142,14 +144,13 @@ public class SearchResourcesApiHandlerTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         String result = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        SearchResponse searchResponse = createSearchResponseWithHits(result);
+        SearchResponse searchResponse = createSearchResponseWithHits(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
-        String result = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        SearchResponse searchResponse = createSearchResponseWithHits(result);
+        SearchResponse searchResponse = createSearchResponseWithHits(EMPTY_OPENSEARCH_RESPONSE_JSON);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
@@ -164,9 +165,8 @@ public class SearchResourcesApiHandlerTest {
                 .readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
     }
 
-    private SearchResponse createSearchResponseWithHits(String hits) {
-        var searchResponse = mock(SearchResponse.class);
-        when(searchResponse.toString()).thenReturn(hits);
-        return searchResponse;
+    private SearchResponse createSearchResponseWithHits(String responseJsonFile) throws IOException {
+        String jsonResponse = stringFromResources(Path.of(responseJsonFile));
+        return getSearchResponseFromJson(jsonResponse);
     }
 }

@@ -1,7 +1,8 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.models.SearchResponseDto.fromString;
+import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
+import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
@@ -61,7 +62,8 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     ) throws ApiGatewayException {
 
         var searchResponse = doSearch(query, index);
-        return fromString(query.getRequestUri(), query.getSearchTerm(), searchResponse.toString());
+        var id = createIdWithQuery(query.getRequestUri(), query.getSearchTerm());
+        return fromSearchResponse(searchResponse, id);
     }
     
     public SearchResponse findResourcesForOrganizationIds(ViewingScope viewingScope,
