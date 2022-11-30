@@ -7,6 +7,7 @@ import nva.commons.core.paths.UriWrapper;
 import org.opensearch.search.sort.SortOrder;
 
 import java.net.URI;
+import java.util.Map;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -71,14 +72,15 @@ public class RequestUtil {
                 .orElseThrow();
     }
 
-    public static SearchDocumentsQuery toQuery(RequestInfo requestInfo) {
+    public static SearchDocumentsQuery toQuery(RequestInfo requestInfo, Map<String, String> aggregationFields) {
         return new SearchDocumentsQuery(
                 getSearchTerm(requestInfo),
                 getResults(requestInfo),
                 getFrom(requestInfo),
                 getOrderBy(requestInfo),
                 getSortOrder(requestInfo),
-                getRequestUri(requestInfo)
+                getRequestUri(requestInfo),
+                aggregationFields
         );
     }
 

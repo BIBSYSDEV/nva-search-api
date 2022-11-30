@@ -1,7 +1,8 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.models.SearchResourcesResponse.toSearchResourcesResponse;
+import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
+import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
 import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import no.unit.nva.search.models.SearchDocumentsQuery;
-import no.unit.nva.search.models.SearchResourcesResponse;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
@@ -43,7 +44,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
      * Creates a new SearchClient.
      *
      * @param openSearchClient client to use for access to the external search infrastructure
-     * @param authenticator A Authenticator that will prove tokens
+     * @param cachedJwt A jwtProvider that will provide tokens
      */
     public SearchClient(RestHighLevelClientWrapper openSearchClient, CachedJwtProvider cachedJwt) {
         super(openSearchClient, cachedJwt);
@@ -55,10 +56,14 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
      * @param query query object
      * @throws ApiGatewayException thrown when uri is misconfigured, service i not available or interrupted
      */
-    public SearchResourcesResponse searchSingleTerm(SearchDocumentsQuery query, String index)
-        throws ApiGatewayException {
+    public SearchResponseDto searchWithSearchDocumentQuery(
+            SearchDocumentsQuery query,
+            String index
+    ) throws ApiGatewayException {
+
         var searchResponse = doSearch(query, index);
-        return toSearchResourcesResponse(query.getRequestUri(), query.getSearchTerm(), searchResponse.toString());
+        var id = createIdWithQuery(query.getRequestUri(), query.getSearchTerm());
+        return fromSearchResponse(searchResponse, id);
     }
     
     public SearchResponse findResourcesForOrganizationIds(ViewingScope viewingScope,

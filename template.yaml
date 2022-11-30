@@ -187,7 +187,7 @@ Resources:
     Description: Lambda for searching Tickets
     Properties:
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchHandler::handleRequest
+      Handler: no.unit.nva.search.SearchTicketsHandler::handleRequest
       Runtime: java11
       AutoPublishAlias: live
       DeploymentPreference:
@@ -207,6 +207,7 @@ Resources:
             Path: /tickets
             Method: get
             RestApiId: !Ref NvaSearchApi
+
   SearchResourcesFunction:
     Type: AWS::Serverless::Function
     Description: Lambda for searching Resources

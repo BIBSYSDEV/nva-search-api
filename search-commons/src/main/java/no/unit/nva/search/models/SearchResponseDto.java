@@ -1,29 +1,27 @@
 package no.unit.nva.search.models;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search.IndexedDocumentsJsonPointers.SOURCE_JSON_POINTER;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.search.SearchHit;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.opensearch.action.search.SearchResponse;
 
-public class SearchResourcesResponse {
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static nva.commons.core.attempt.Try.attempt;
 
-    public static final String TOTAL_JSON_POINTER = "/hits/total/value";
-    public static final String TOOK_JSON_POINTER = "/took";
-    public static final String HITS_JSON_POINTER = "/hits/hits";
+public class SearchResponseDto {
+
     public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
     public static final String QUERY_PARAMETER = "query";
+    public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
 
     @JsonProperty("@context")
     private URI context;
@@ -34,39 +32,48 @@ public class SearchResourcesResponse {
     @JsonProperty("size")
     private long size;
     private List<JsonNode> hits;
+    @JsonProperty("aggregations")
+    private JsonNode aggregations;
 
-    public SearchResourcesResponse() {
+    public SearchResponseDto() {
     }
 
-    public static SearchResourcesResponse fromSearchResponse(SearchResponse searchResponse, URI id) {
+    public static SearchResponseDto fromSearchResponse(SearchResponse searchResponse, URI id) {
         List<JsonNode> sourcesList = extractSourcesList(searchResponse);
         long total = searchResponse.getHits().getTotalHits().value;
         long took = searchResponse.getTook().duration();
+        var aggregations = getAggregationFromBody(searchResponse.toString());
 
-        return SearchResourcesResponse.builder()
-            .withContext(DEFAULT_SEARCH_CONTEXT)
-            .withId(id)
-            .withHits(sourcesList)
-            .withSize(total)
-            .withProcessingTime(took)
-            .build();
+        return SearchResponseDto.builder()
+                .withContext(DEFAULT_SEARCH_CONTEXT)
+                .withId(id)
+                .withHits(sourcesList)
+                .withSize(total)
+                .withProcessingTime(took)
+                .withAggregations(aggregations)
+                .build();
     }
 
-    public static SearchResourcesResponse toSearchResourcesResponse(URI requestUri, String searchTerm, String body) {
+    private static JsonNode getAggregationFromBody(String body) {
+        JsonNode json = attempt(() ->
+                objectMapperWithEmpty.readTree(body)
+        ).orElseThrow();
 
-        JsonNode values = attempt(() -> objectMapperWithEmpty.readTree(body)).orElseThrow();
+        JsonNode rawAggregationNode = json.get("aggregations");
+        if (rawAggregationNode == null) {
+            return null;
+        }
 
-        List<JsonNode> sourceList = extractSourceList(values);
-        long total = longFromNode(values, TOTAL_JSON_POINTER);
-        long took = longFromNode(values, TOOK_JSON_POINTER);
-        URI searchResultId = createIdWithQuery(requestUri, searchTerm);
-        return SearchResourcesResponse.builder()
-            .withContext(DEFAULT_SEARCH_CONTEXT)
-            .withId(searchResultId)
-            .withProcessingTime(took)
-            .withSize(total)
-            .withHits(sourceList)
-            .build();
+        var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
+
+        var iterator = rawAggregationNode.fields();
+        while (iterator.hasNext()) {
+            var child = iterator.next();
+            var newName = child.getKey().replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, "");
+            outputAggregationNode.set(newName, child.getValue());
+        }
+
+        return outputAggregationNode;
     }
 
     public static URI createIdWithQuery(URI requestUri, String searchTerm) {
@@ -126,6 +133,10 @@ public class SearchResourcesResponse {
         this.hits = hits;
     }
 
+    public void setAggregations(JsonNode aggregations) {
+        this.aggregations = aggregations;
+    }
+
     @JsonProperty("total")
     @Deprecated(forRemoval = true)
     @JacocoGenerated
@@ -171,50 +182,31 @@ public class SearchResourcesResponse {
             return false;
         }
 
-        SearchResourcesResponse that = (SearchResourcesResponse) o;
+        SearchResponseDto that = (SearchResponseDto) o;
         return processingTime == that.processingTime
-               && size == that.size
-               && Objects.equals(context, that.context)
-               && Objects.equals(id, that.id)
-               && Objects.equals(hits, that.hits);
+                && size == that.size
+                && Objects.equals(context, that.context)
+                && Objects.equals(id, that.id)
+                && Objects.equals(hits, that.hits);
     }
 
     private static List<JsonNode> extractSourcesList(SearchResponse searchResponse) {
         return Arrays.stream(searchResponse.getHits().getHits())
-            .map(hit -> hit.getSourceAsMap())
-            .map(source -> objectMapperWithEmpty.convertValue(source, JsonNode.class))
-            .collect(Collectors.toList());
+                .map(SearchHit::getSourceAsMap)
+                .map(source -> objectMapperWithEmpty.convertValue(source, JsonNode.class))
+                .collect(Collectors.toList());
     }
 
-    private static List<JsonNode> extractSourceList(JsonNode record) {
-        return toStream(record.at(HITS_JSON_POINTER))
-            .map(SearchResourcesResponse::extractSourceStripped)
-            .collect(Collectors.toList());
-    }
-
-    private static JsonNode extractSourceStripped(JsonNode record) {
-        return record.at(SOURCE_JSON_POINTER);
-    }
-
-    private static Stream<JsonNode> toStream(JsonNode node) {
-        return StreamSupport.stream(node.spliterator(), false);
-    }
-
-    private static long longFromNode(JsonNode jsonNode, String jsonPointer) {
-        JsonNode json = jsonNode.at(jsonPointer);
-        return isPopulated(json) ? json.asLong() : 0L;
-    }
-
-    private static boolean isPopulated(JsonNode json) {
-        return !json.isNull() && !json.asText().isBlank();
+    public JsonNode getAggregations() {
+        return aggregations;
     }
 
     public static final class Builder {
 
-        private final SearchResourcesResponse response;
+        private final SearchResponseDto response;
 
         public Builder() {
-            response = new SearchResourcesResponse();
+            response = new SearchResponseDto();
         }
 
         public Builder withContext(URI context) {
@@ -242,7 +234,12 @@ public class SearchResourcesResponse {
             return this;
         }
 
-        public SearchResourcesResponse build() {
+        public Builder withAggregations(JsonNode aggregations) {
+            response.setAggregations(aggregations);
+            return this;
+        }
+
+        public SearchResponseDto build() {
             return this.response;
         }
     }
