@@ -3,7 +3,6 @@ package no.unit.nva.search;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -43,7 +42,7 @@ public class SearchResourcesApiHandlerTest {
 
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON
-            = "sample_opensearch_response_with_aggregation.json";
+        = "sample_opensearch_response.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String SAMPLE_PATH = "search";
@@ -71,7 +70,7 @@ public class SearchResourcesApiHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse =  GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        var gatewayResponse = GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
         SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
         SearchResponseDto expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
@@ -87,8 +86,8 @@ public class SearchResourcesApiHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse =  GatewayResponse
-                .fromOutputStream(outputStream, SearchResponseDto.class);
+        var gatewayResponse = GatewayResponse
+            .fromOutputStream(outputStream, SearchResponseDto.class);
 
         SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
@@ -100,7 +99,6 @@ public class SearchResourcesApiHandlerTest {
         assertNotNull(actual.getAggregations());
         assertNotNull(actual.getAggregations().get("Bidragsyter"));
     }
-
 
     @Test
     void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException {
@@ -124,7 +122,7 @@ public class SearchResourcesApiHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        GatewayResponse<Problem> gatewayResponse = GatewayResponse.fromOutputStream(outputStream,Problem.class);
+        GatewayResponse<Problem> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, Problem.class);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_BAD_GATEWAY, gatewayResponse.getStatusCode());
@@ -132,14 +130,14 @@ public class SearchResourcesApiHandlerTest {
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withQueryParameters(Map.of(RequestUtil.SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
-                .withRequestContext(getRequestContext())
-                .build();
+            .withQueryParameters(Map.of(RequestUtil.SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+            .withRequestContext(getRequestContext())
+            .build();
     }
 
     private ObjectNode getRequestContext() {
         return objectMapperWithEmpty.convertValue(Map.of(PATH, SAMPLE_PATH, DOMAIN_NAME, SAMPLE_DOMAIN_NAME),
-                ObjectNode.class);
+                                                  ObjectNode.class);
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
@@ -160,9 +158,9 @@ public class SearchResourcesApiHandlerTest {
     }
 
     private SearchResponseDto getSearchResourcesResponseFromFile(String filename)
-            throws JsonProcessingException {
+        throws JsonProcessingException {
         return objectMapperWithEmpty
-                .readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
+            .readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
     }
 
     private SearchResponse createSearchResponseWithHits(String responseJsonFile) throws IOException {

@@ -73,16 +73,15 @@ public class RequestUtil {
     }
 
     public static SearchDocumentsQuery toQuery(RequestInfo requestInfo, Map<String, String> aggregationFields) {
-        var searchDocumentsQuery = new SearchDocumentsQuery(
+        return new SearchDocumentsQuery(
                 getSearchTerm(requestInfo),
                 getResults(requestInfo),
                 getFrom(requestInfo),
                 getOrderBy(requestInfo),
                 getSortOrder(requestInfo),
-                getRequestUri(requestInfo)
+                getRequestUri(requestInfo),
+                aggregationFields
         );
-        searchDocumentsQuery.setAggregationFields(aggregationFields);
-        return searchDocumentsQuery;
     }
 
 }

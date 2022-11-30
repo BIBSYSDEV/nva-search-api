@@ -1,14 +1,15 @@
 package no.unit.nva.search.models;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.nonNull;
+import java.net.URI;
+import java.util.Map;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
-
-import java.net.URI;
-import java.util.Map;
 
 public class SearchDocumentsQuery {
 
@@ -20,7 +21,7 @@ public class SearchDocumentsQuery {
     private final SortOrder sortOrder;
     private final URI requestUri;
     private Map<String, String> aggregationFields;
-    private int aggregationBucketAmount = 10;
+    private int aggregationBucketAmount = 100;
 
     public void setAggregationBucketAmount(int aggregationBucketAmount) {
         this.aggregationBucketAmount = aggregationBucketAmount;
@@ -35,13 +36,15 @@ public class SearchDocumentsQuery {
                                 int from,
                                 String orderBy,
                                 SortOrder sortOrder,
-                                URI requestUri) {
+                                URI requestUri,
+                                Map<String, String> aggregationFields) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;
         this.orderBy = orderBy;
         this.sortOrder = sortOrder;
         this.requestUri = requestUri;
+        this.aggregationFields = nonNull(aggregationFields) ? aggregationFields : emptyMap();
     }
 
     public String getSearchTerm() {
