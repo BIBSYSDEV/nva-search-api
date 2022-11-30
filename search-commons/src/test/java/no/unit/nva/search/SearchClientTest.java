@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
@@ -39,7 +40,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -67,7 +67,7 @@ class SearchClientTest {
     public static final int DEFAULT_PAGE_SIZE = 100;
     public static final int DEFAULT_PAGE_NO = 0;
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
-    private static final String SAMPLE_JSON_RESPONSE = "{}";
+    private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
     private static final String OPENSEARCH_SAMPLE_RESPONSE_FILE = "sample_opensearch_response.json";
@@ -95,35 +95,38 @@ class SearchClientTest {
 
     @Test
     void shouldPassBearerTokenToOpensearchWhenPerformingSearch() throws ApiGatewayException, IOException {
-        when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
+
+        var restClient = mock(RestHighLevelClient.class);
+        var searchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
 
         var expectedRequestOptions = RequestOptions.DEFAULT
                 .toBuilder()
                 .addHeader(AUTHORIZATION, "Bearer " + TEST_TOKEN)
                 .build();
 
-        var restClient = mock(RestHighLevelClient.class);
         when(restClient.search(any(), argThat(new RequestOptionsHeaderMatcher(expectedRequestOptions))))
-                .thenReturn(defaultSearchResponse);
+                .thenReturn(searchResponse);
 
         var restClientWrapper = new RestHighLevelClientWrapper(restClient);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        var result = searchClient.searchWithSearchDocumentQuery(generateSampleQuery(), OPENSEARCH_ENDPOINT_INDEX);
+        var result = searchClient.searchWithSearchDocumentQuery(generateSampleQuery(),
+                OPENSEARCH_ENDPOINT_INDEX);
 
         assertNotNull(result);
     }
     
     @Test
     void shouldSendQueryWithAllNeededRulesForDoiRequestsTypeWhenSearchingForResources()
-        throws ApiGatewayException {
+            throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
         var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return defaultSearchResponse;
+                return mockSearchResponse;
             }
         };
         
@@ -133,7 +136,8 @@ class SearchClientTest {
             DEFAULT_PAGE_NO,
                 OPENSEARCH_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
-        var rulesForIncludingDoiRequests = listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
+        var rulesForIncludingDoiRequests =
+                listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
         var mustIncludeOnlyPendingDoiRequests =
             rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(PENDING));
         var mustExcludeDoiRequestsForDraftPublications =
@@ -150,14 +154,15 @@ class SearchClientTest {
     
     @Test
     void shouldSendQueryWithAllNeededClauseForPublicationConversationTypeWhenSearchingForResources()
-        throws ApiGatewayException {
+            throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
         var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return defaultSearchResponse;
+                return mockSearchResponse;
             }
         };
         
@@ -172,14 +177,15 @@ class SearchClientTest {
         var mustIncludePublicationConversationType =
             rulesForIncludingPublicationConversation.stream()
                 .anyMatch(rule -> rule.value().equals(GENERAL_SUPPORT_CASE));
-        assertTrue(mustIncludePublicationConversationType, "Could not find rule for including PublicationConversation");
+        assertTrue(mustIncludePublicationConversationType,
+                "Could not find rule for including PublicationConversation");
     }
     
     @Test
     void searchSingleTermReturnsResponse() throws ApiGatewayException, IOException {
         var restHighLevelClient = mock(RestHighLevelClient.class);
-        when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-        when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
+        var searchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         SearchResponseDto searchResponseDto =
@@ -190,8 +196,8 @@ class SearchClientTest {
     @Test
     void shouldReturnSearchResponseWhenSearchingWithOrganizationIds() throws ApiGatewayException, IOException {
         RestHighLevelClient restHighLevelClient = mock(RestHighLevelClient.class);
-        when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-        when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
+        var searchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         var response =
@@ -203,15 +209,15 @@ class SearchClientTest {
     }
     
     @Test
-    void shouldSendRequestWithSuppliedPageSizeWhenSearchingForResources() throws ApiGatewayException {
+    void shouldSendRequestWithSuppliedPageSizeWhenSearchingForResources() throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
         var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-
-                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return defaultSearchResponse;
+                return mockSearchResponse;
             }
         };
         
@@ -227,14 +233,16 @@ class SearchClientTest {
     }
     
     @Test
-    void shouldSendRequestWithFirstEntryIndexCalculatedBySuppliedPageSizeAndPageNumber() throws ApiGatewayException {
+    void shouldSendRequestWithFirstEntryIndexCalculatedBySuppliedPageSizeAndPageNumber()
+            throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
         var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return defaultSearchResponse;
+                return mockSearchResponse;
             }
         };
         
@@ -251,14 +259,15 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendRequestWithAggregations() throws ApiGatewayException, JsonProcessingException {
+    void shouldSendRequestWithAggregations() throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
         var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
             @Override
             public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
                 sentRequestBuffer.set(searchRequest);
-                when(defaultSearchResponse.toString()).thenReturn(SAMPLE_JSON_RESPONSE);
-                return defaultSearchResponse;
+                return mockSearchResponse;
             }
         };
 
@@ -297,9 +306,9 @@ class SearchClientTest {
     @Test
     void searchSingleTermReturnsResponseWithStatsFromOpensearch() throws ApiGatewayException, IOException {
         var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-        var openSearchResponseJson = generateOpenSearchResponseAsString();
-        when(defaultSearchResponse.toString()).thenReturn(openSearchResponseJson);
-        when(restHighLevelClient.search(any(), any())).thenReturn(defaultSearchResponse);
+        var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_RESPONSE_FILE);
+        var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
+        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         
         SearchDocumentsQuery queryWithMaxResults = new SearchDocumentsQuery(SAMPLE_TERM,
@@ -398,8 +407,13 @@ class SearchClientTest {
             DESC,
             SAMPLE_REQUEST_URI);
     }
-    
-    private String generateOpenSearchResponseAsString() {
-        return streamToString(inputStreamFromResources(OPENSEARCH_SAMPLE_RESPONSE_FILE));
+
+    private String generateOpenSearchResponseAsString(String fileName) {
+        return streamToString(inputStreamFromResources(fileName));
+    }
+
+    private SearchResponse generateMockSearchResponse(String fileName) throws IOException {
+        String jsonResponse = generateOpenSearchResponseAsString(fileName);
+        return getSearchResponseFromJson(jsonResponse);
     }
 }

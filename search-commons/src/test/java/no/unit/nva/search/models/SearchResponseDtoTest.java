@@ -3,7 +3,10 @@ package no.unit.nva.search.models;
 import static com.spotify.hamcrest.jackson.JsonMatchers.jsonObject;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.hamcrest.DoesNotHaveEmptyValues.doesNotHaveEmptyValues;
-import static no.unit.nva.testutils.RandomDataGenerator.*;
+import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
+import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
+import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -35,22 +38,6 @@ class SearchResponseDtoTest {
         assertThat(json, is(jsonObject().where("total", JsonMatchers.jsonLong(searchResponse.getSize()))));
     }
 
-    @Test
-    void fromStringShouldStripFieldTypesFromAggregation() throws JsonProcessingException {
-
-        SearchResponseDto expectedResponse = randomResponse();
-        var aggregation = expectedResponse.getAggregations().fieldNames().next();
-        var serialized = dtoObjectMapper.writeValueAsString(expectedResponse);
-        var aggregationWithFieldType = serialized.replaceAll(aggregation, randomString() + "#" + aggregation);
-
-        var actualSearchResponse = SearchResponseDto.fromString(
-                randomUri(),
-                randomString(),
-                aggregationWithFieldType
-        );
-
-        assert(expectedResponse.getAggregations().equals(actualSearchResponse.getAggregations()));
-    }
 
     private SearchResponseDto randomResponse() {
         return SearchResponseDto.builder()
