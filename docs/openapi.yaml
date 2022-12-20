@@ -28,10 +28,6 @@ paths:
           required: false
           schema:
             type: string
-        - in: path
-          name: index
-          description: "Index for Tickets related to publications"
-          required: true
         - in: query
           name: viewingScope
           description: "List tickets for this organization."
