@@ -1,6 +1,5 @@
 package no.unit.nva.search;
 
-import static java.util.Collections.emptyMap;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
@@ -16,18 +15,17 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.opensearch.search.sort.SortOrder.DESC;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Iterators;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.search.models.AggregationDTO;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -50,8 +48,9 @@ public class OpensearchTest {
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
     private static final URI SAMPLE_REQUEST_URI = randomUri();
-    private static final Map<String, String> SAMPLE_AGGREGATIONS = Map.of(randomString(), randomString());
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
+    private static final List<AggregationDTO> SAMPLE_AGGREGATIONS = List.of(
+        new AggregationDTO(randomString(), randomString()));
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
     public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
@@ -288,9 +287,9 @@ public class OpensearchTest {
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        var aggregationFields = Map.of(
-            "status-field-1", "publication.status.keyword",
-            "status-field-2", "publication.status.keyword"
+        var aggregationDto = new AggregationDTO(
+            "contributors", "publication.contributors.identity.name.keyword",
+            new AggregationDTO("affiliations", "publication.contributors.affiliations.id.keyword")
         );
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
@@ -300,23 +299,19 @@ public class OpensearchTest {
             SAMPLE_ORDERBY,
             DESC,
             SAMPLE_REQUEST_URI,
-            aggregationFields
+            List.of(aggregationDto)
         );
 
         var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
         assertThat(response, notNullValue());
-        assertThat(response.getAggregations(), notNullValue());
-        assertThat(Iterators.size(response.getAggregations().fields()), is(equalTo(2)));
+        var aggregations = response.getAggregations()
+            .at("/contributors/buckets");
+        assertThat(aggregations.size(), is(equalTo(2)));
 
-        assertThat(response.getAggregations()
-                       .get("status-field-1")
-                       .get("buckets")
-                       .get(0)
-                       .get("doc_count")
-                       .asInt(),
-                   is(equalTo(1))
-        );
+        var affiliation = aggregations.get(0).at("/sterms#affiliations/buckets").get(0).at("/key");
+        assertThat("org is on right format",
+                   affiliation.asText().matches("https://api.dev.nva.aws.unit.no/cristin/organization/.*"));
 
         indexingClient.deleteIndex(indexName);
     }
@@ -332,9 +327,10 @@ public class OpensearchTest {
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        var aggregationFields = Map.of(
-            "publication.status", "publication.status.keyword"
-        );
+        var aggregationDto = new AggregationDTO("publication.status",
+                                                "publication.status.keyword",
+                                                null,
+                                                1);
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
             "*",
@@ -343,10 +339,8 @@ public class OpensearchTest {
             SAMPLE_ORDERBY,
             DESC,
             SAMPLE_REQUEST_URI,
-            aggregationFields
+            List.of(aggregationDto)
         );
-
-        query.setAggregationBucketAmount(1);
 
         var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
@@ -377,7 +371,7 @@ public class OpensearchTest {
             SAMPLE_ORDERBY,
             DESC,
             SAMPLE_REQUEST_URI,
-            emptyMap()
+            null
         );
 
         var response = searchClient.searchWithSearchDocumentQuery(query, indexName);

@@ -30,26 +30,26 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opensearch.search.sort.SortOrder.DESC;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search.models.AggregationDTO;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.search.utils.RequestOptionsHeaderMatcher;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.secrets.SecretsReader;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RequestOptions;
@@ -57,8 +57,6 @@ import org.opensearch.client.RestHighLevelClient;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 
 class SearchClientTest {
 
@@ -73,7 +71,9 @@ class SearchClientTest {
     private static final String OPENSEARCH_SAMPLE_RESPONSE_FILE = "sample_opensearch_response.json";
     private static final int OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
     private static final URI SAMPLE_REQUEST_URI = randomUri();
-    private static final Map<String, String> SAMPLE_AGGREGATIONS = Map.of(randomString(), randomString());
+    private static final List<AggregationDTO> SAMPLE_AGGREGATIONS = List.of(
+        new AggregationDTO(randomString(), randomString()));
+
     SearchResponse defaultSearchResponse = mock(SearchResponse.class);
 
     CachedJwtProvider cachedJwtProvider;
@@ -272,6 +272,22 @@ class SearchClientTest {
             }
         };
 
+        var nestedAggregationDTOs = List.of(
+            new AggregationDTO(
+                randomString(),
+                randomString(),
+                new AggregationDTO(
+                    randomString(),
+                    randomString(),
+                    SAMPLE_AGGREGATIONS.get(0)
+                )
+            ),
+            new AggregationDTO(
+                randomString(),
+                randomString()
+            )
+        );
+
         SearchDocumentsQuery sampleQuery = new SearchDocumentsQuery(
             SAMPLE_TERM,
             SAMPLE_NUMBER_OF_RESULTS,
@@ -279,29 +295,25 @@ class SearchClientTest {
             SAMPLE_ORDERBY,
             DESC,
             SAMPLE_REQUEST_URI,
-            SAMPLE_AGGREGATIONS
+            nestedAggregationDTOs
         );
-
-        var aggregationFields = Map.of(
-            randomString(), randomString(),
-            randomString(), randomString()
-        );
-
-        sampleQuery.setAggregationFields(aggregationFields);
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.searchWithSearchDocumentQuery(sampleQuery, OPENSEARCH_ENDPOINT_INDEX);
 
         var sentRequest = sentRequestBuffer.get();
-        var json = objectMapper.readTree(sentRequest.source().aggregations().toString());
-        aggregationFields.forEach((term, field) ->
-                                      assertAggregationHasField(json, term, field)
-        );
+        var actualAggregation = objectMapper.readTree(sentRequest.source().aggregations().toString());
+
+        nestedAggregationDTOs.forEach(aggDTO -> assertAggregationHasField(actualAggregation, aggDTO));
     }
 
-    private void assertAggregationHasField(JsonNode json, String term, String expectedField) {
-        var actualField = json.at("/" + term + "/terms/field").asText();
-        assertThat(actualField, is(equalTo(expectedField)));
+    private void assertAggregationHasField(JsonNode json, AggregationDTO aggDto) {
+        var actualField = json.at("/" + aggDto.term + "/terms/field").asText();
+        assertThat(actualField, is(equalTo(aggDto.field)));
+
+        if (aggDto.subAggregation != null) {
+            assertAggregationHasField(json.at("/" + aggDto.term + "/aggregations"), aggDto.subAggregation);
+        }
     }
 
     @Test
