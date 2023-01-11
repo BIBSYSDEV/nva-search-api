@@ -17,7 +17,7 @@ public class SearchDocumentsQuery {
     private final String orderBy;
     private final SortOrder sortOrder;
     private final URI requestUri;
-    private final List<AggregationDTO> aggregations;
+    private final List<AggregationDto> aggregations;
 
     public SearchDocumentsQuery(String searchTerm,
                                 int results,
@@ -25,7 +25,7 @@ public class SearchDocumentsQuery {
                                 String orderBy,
                                 SortOrder sortOrder,
                                 URI requestUri,
-                                List<AggregationDTO> aggregations) {
+                                List<AggregationDto> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;

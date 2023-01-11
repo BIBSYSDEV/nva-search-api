@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.models.AggregationDTO;
+import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
@@ -71,8 +71,8 @@ class SearchClientTest {
     private static final String OPENSEARCH_SAMPLE_RESPONSE_FILE = "sample_opensearch_response.json";
     private static final int OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
     private static final URI SAMPLE_REQUEST_URI = randomUri();
-    private static final List<AggregationDTO> SAMPLE_AGGREGATIONS = List.of(
-        new AggregationDTO(randomString(), randomString()));
+    private static final List<AggregationDto> SAMPLE_AGGREGATIONS = List.of(
+        new AggregationDto(randomString(), randomString()));
 
     SearchResponse defaultSearchResponse = mock(SearchResponse.class);
 
@@ -273,16 +273,16 @@ class SearchClientTest {
         };
 
         var nestedAggregationDTOs = List.of(
-            new AggregationDTO(
+            new AggregationDto(
                 randomString(),
                 randomString(),
-                new AggregationDTO(
+                new AggregationDto(
                     randomString(),
                     randomString(),
                     SAMPLE_AGGREGATIONS.get(0)
                 )
             ),
-            new AggregationDTO(
+            new AggregationDto(
                 randomString(),
                 randomString()
             )
@@ -307,7 +307,7 @@ class SearchClientTest {
         nestedAggregationDTOs.forEach(aggDTO -> assertAggregationHasField(actualAggregation, aggDTO));
     }
 
-    private void assertAggregationHasField(JsonNode json, AggregationDTO aggDto) {
+    private void assertAggregationHasField(JsonNode json, AggregationDto aggDto) {
         var actualField = json.at("/" + aggDto.term + "/terms/field").asText();
         assertThat(actualField, is(equalTo(aggDto.field)));
 

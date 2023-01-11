@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.models.AggregationDTO;
+import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -49,8 +49,8 @@ public class OpensearchTest {
     private static final String SAMPLE_ORDERBY = "orderByField";
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
-    private static final List<AggregationDTO> SAMPLE_AGGREGATIONS = List.of(
-        new AggregationDTO(randomString(), randomString()));
+    private static final List<AggregationDto> SAMPLE_AGGREGATIONS = List.of(
+        new AggregationDto(randomString(), randomString()));
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
     public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
@@ -287,9 +287,9 @@ public class OpensearchTest {
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        var aggregationDto = new AggregationDTO(
+        var aggregationDto = new AggregationDto(
             "contributors", "publication.contributors.identity.name.keyword",
-            new AggregationDTO("affiliations", "publication.contributors.affiliations.id.keyword")
+            new AggregationDto("affiliations", "publication.contributors.affiliations.id.keyword")
         );
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
@@ -327,10 +327,9 @@ public class OpensearchTest {
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        var aggregationDto = new AggregationDTO("publication.status",
-                                                "publication.status.keyword",
-                                                null,
-                                                1);
+        var aggregationDto = new AggregationDto("publication.status",
+                                                "publication.status.keyword");
+        aggregationDto.setAggregationBucketAmount(1);
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
             "*",

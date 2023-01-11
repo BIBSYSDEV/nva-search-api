@@ -3,28 +3,25 @@ package no.unit.nva.search.models;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
-public class AggregationDTO {
+public class AggregationDto {
 
     public String term;
     public String field;
-    public AggregationDTO subAggregation;
+    public AggregationDto subAggregation;
     public int aggregationBucketAmount = 100;
 
-    public AggregationDTO(String term, String field) {
+    public AggregationDto(String term, String field) {
         this.term = term;
         this.field = field;
     }
 
-    public AggregationDTO(String term, String field, AggregationDTO subAggregation) {
+    public AggregationDto(String term, String field, AggregationDto subAggregation) {
         this.term = term;
         this.field = field;
         this.subAggregation = subAggregation;
     }
 
-    public AggregationDTO(String term, String field, AggregationDTO subAggregation, int aggregationBucketAmount) {
-        this.term = term;
-        this.field = field;
-        this.subAggregation = subAggregation;
+    public void setAggregationBucketAmount(int aggregationBucketAmount) {
         this.aggregationBucketAmount = aggregationBucketAmount;
     }
 
@@ -32,7 +29,7 @@ public class AggregationDTO {
         return buildAggregations(this);
     }
 
-    private static TermsAggregationBuilder buildAggregations(AggregationDTO aggDTO) {
+    private static TermsAggregationBuilder buildAggregations(AggregationDto aggDTO) {
         var aggregationBuilder = AggregationBuilders
             .terms(aggDTO.term)
             .field(aggDTO.field)

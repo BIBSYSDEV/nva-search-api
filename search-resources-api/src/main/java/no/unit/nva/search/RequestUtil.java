@@ -3,7 +3,7 @@ package no.unit.nva.search;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;
 import java.util.List;
-import no.unit.nva.search.models.AggregationDTO;
+import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.JacocoGenerated;
@@ -72,7 +72,7 @@ public class RequestUtil {
     }
 
     public static SearchDocumentsQuery toQuery(RequestInfo requestInfo,
-                                               List<AggregationDTO> aggregations) {
+                                               List<AggregationDto> aggregations) {
         return new SearchDocumentsQuery(
             getSearchTerm(requestInfo),
             getResults(requestInfo),

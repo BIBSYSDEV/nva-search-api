@@ -3,7 +3,7 @@ package no.unit.nva.search.constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search.models.AggregationDTO;
+import no.unit.nva.search.models.AggregationDto;
 import nva.commons.core.Environment;
 
 public final class ApplicationConstants {
@@ -16,18 +16,18 @@ public final class ApplicationConstants {
 
     public static final String TICKETS_INDEX = "tickets";
 
-    public static final List<AggregationDTO> AGGREGATIONS = List.of(
-        new AggregationDTO("entityDescription.reference.publicationInstance.type",
+    public static final List<AggregationDto> AGGREGATIONS = List.of(
+        new AggregationDto("entityDescription.reference.publicationInstance.type",
                            "entityDescription.reference.publicationInstance.type.keyword"),
-        new AggregationDTO("resourceOwner.owner",
+        new AggregationDto("resourceOwner.owner",
                            "resourceOwner.owner.keyword"),
-        new AggregationDTO("resourceOwner.ownerAffiliation",
+        new AggregationDto("resourceOwner.ownerAffiliation",
                            "resourceOwner.ownerAffiliation.keyword"),
-        new AggregationDTO("entityDescription.contributors.identity.name",
+        new AggregationDto("entityDescription.contributors.identity.name",
                            "entityDescription.contributors.identity.name.keyword"),
-        new AggregationDTO("entityDescription.contributors.identity.name.keyword",
-                           "entityDescription.contributors.identity.name.keyword",
-                           new AggregationDTO(
+        new AggregationDto("entityDescription.contributors.affiliations.partOf.id.keyword",
+                           "entityDescription.contributors.affiliations.partOf.id.keyword",
+                           new AggregationDto(
                                "entityDescription.contributors.affiliations.id.keyword",
                                "entityDescription.contributors.affiliations.id.keyword"))
     );
