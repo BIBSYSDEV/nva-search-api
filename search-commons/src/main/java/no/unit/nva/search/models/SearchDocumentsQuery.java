@@ -1,12 +1,9 @@
 package no.unit.nva.search.models;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.nonNull;
 import java.net.URI;
-import java.util.Map;
+import java.util.List;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
@@ -20,16 +17,7 @@ public class SearchDocumentsQuery {
     private final String orderBy;
     private final SortOrder sortOrder;
     private final URI requestUri;
-    private Map<String, String> aggregationFields;
-    private int aggregationBucketAmount = 100;
-
-    public void setAggregationBucketAmount(int aggregationBucketAmount) {
-        this.aggregationBucketAmount = aggregationBucketAmount;
-    }
-
-    public void setAggregationFields(Map<String, String> aggregationFields) {
-        this.aggregationFields = aggregationFields;
-    }
+    private final List<AggregationDto> aggregations;
 
     public SearchDocumentsQuery(String searchTerm,
                                 int results,
@@ -37,14 +25,14 @@ public class SearchDocumentsQuery {
                                 String orderBy,
                                 SortOrder sortOrder,
                                 URI requestUri,
-                                Map<String, String> aggregationFields) {
+                                List<AggregationDto> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;
         this.orderBy = orderBy;
         this.sortOrder = sortOrder;
         this.requestUri = requestUri;
-        this.aggregationFields = nonNull(aggregationFields) ? aggregationFields : emptyMap();
+        this.aggregations = aggregations;
     }
 
     public String getSearchTerm() {
@@ -62,26 +50,19 @@ public class SearchDocumentsQuery {
     private SearchSourceBuilder toSearchSourceBuilder() {
 
         var sourceBuilder = new SearchSourceBuilder()
-                .query(QueryBuilders.queryStringQuery(searchTerm))
-                .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
-                .from(from)
-                .size(results);
+            .query(QueryBuilders.queryStringQuery(searchTerm))
+            .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+            .from(from)
+            .size(results);
 
-        if (aggregationFields != null) {
-            addAggregationToSourceBuilder(sourceBuilder);
+        if (aggregations != null) {
+            addAggregations(sourceBuilder);
         }
 
         return sourceBuilder;
     }
 
-    private void addAggregationToSourceBuilder(SearchSourceBuilder sourceBuilder) {
-        aggregationFields.forEach((term, field) ->
-                sourceBuilder.aggregation(
-                        AggregationBuilders
-                                .terms(term)
-                                .field(field)
-                                .size(aggregationBucketAmount)
-                )
-        );
+    private void addAggregations(SearchSourceBuilder sourceBuilder) {
+        aggregations.forEach(aggDTO -> sourceBuilder.aggregation(aggDTO.toAggregationBuilder()));
     }
 }

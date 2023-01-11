@@ -1,15 +1,14 @@
 package no.unit.nva.search;
 
+import static nva.commons.core.attempt.Try.attempt;
+import java.net.URI;
+import java.util.List;
+import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.search.sort.SortOrder;
-
-import java.net.URI;
-import java.util.Map;
-
-import static nva.commons.core.attempt.Try.attempt;
 
 @JacocoGenerated
 public class RequestUtil {
@@ -51,7 +50,7 @@ public class RequestUtil {
     }
 
     public static SortOrder getSortOrder(RequestInfo requestInfo) {
-        return SortOrder.fromString(requestInfo.getQueryParameters().getOrDefault(SORTORDER_KEY, DEFAULT_SORT_ORDER));
+        return SortOrder.valueOf(requestInfo.getQueryParameters().getOrDefault(SORTORDER_KEY, DEFAULT_SORT_ORDER));
     }
 
     public static URI getRequestUri(RequestInfo requestInfo) {
@@ -62,26 +61,26 @@ public class RequestUtil {
 
     public static String getRequestPath(RequestInfo requestInfo) {
         return attempt(() -> requestInfo.getRequestContext()
-                .get(PATH).asText())
-                .orElseThrow();
+            .get(PATH).asText())
+            .orElseThrow();
     }
 
     public static String getRequestDomainName(RequestInfo requestInfo) {
         return attempt(() -> requestInfo.getRequestContext()
-                .get(DOMAIN_NAME).asText())
-                .orElseThrow();
+            .get(DOMAIN_NAME).asText())
+            .orElseThrow();
     }
 
-    public static SearchDocumentsQuery toQuery(RequestInfo requestInfo, Map<String, String> aggregationFields) {
+    public static SearchDocumentsQuery toQuery(RequestInfo requestInfo,
+                                               List<AggregationDto> aggregations) {
         return new SearchDocumentsQuery(
-                getSearchTerm(requestInfo),
-                getResults(requestInfo),
-                getFrom(requestInfo),
-                getOrderBy(requestInfo),
-                getSortOrder(requestInfo),
-                getRequestUri(requestInfo),
-                aggregationFields
+            getSearchTerm(requestInfo),
+            getResults(requestInfo),
+            getFrom(requestInfo),
+            getOrderBy(requestInfo),
+            getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
+            aggregations
         );
     }
-
 }

@@ -27,7 +27,13 @@
           "name": "Orestis Gkorgkas",
           "nameType": "Personal"
         },
-        "affiliations": [],
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0",
+            "type": "Organization",
+            "labels": {}
+          }
+        ],
         "role": "Creator",
         "sequence": 1,
         "correspondingAuthor": false
