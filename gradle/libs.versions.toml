@@ -1,9 +1,9 @@
 [versions]
 junit = { strictly = '5.8.1' }
-jackson = { strictly = '2.13.3' }
+jackson = { strictly = '2.14.1' }
 awsSdk1 = { strictly = '1.12.111' }
 awsSdk2 = { strictly = '2.17.82' }
-nvaCommons = { strictly = '1.25.16' }
+nvaCommons = { strictly = '1.27.0' }
 opensearch = { strictly = '2.3.0' }
 slf4j = { strictly = '1.8.0-beta4' }
 testContainers = { strictly = '1.16.2' }
