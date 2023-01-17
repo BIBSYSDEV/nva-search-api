@@ -50,7 +50,7 @@ public class RequestUtil {
     }
 
     public static SortOrder getSortOrder(RequestInfo requestInfo) {
-        return SortOrder.valueOf(requestInfo.getQueryParameters().getOrDefault(SORTORDER_KEY, DEFAULT_SORT_ORDER));
+        return SortOrder.fromString(requestInfo.getQueryParameters().getOrDefault(SORTORDER_KEY, DEFAULT_SORT_ORDER));
     }
 
     public static URI getRequestUri(RequestInfo requestInfo) {

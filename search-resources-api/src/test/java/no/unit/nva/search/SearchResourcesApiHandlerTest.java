@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search.utils.SortKeyHttpRequestMatcher;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -25,6 +26,8 @@ import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchRespons
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
+import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
+import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -117,6 +121,72 @@ public class SearchResourcesApiHandlerTest {
     }
 
     @Test
+    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException {
+        prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
+
+        handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
+
+        var gatewayResponse = GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        var body = gatewayResponse.getBodyObject(SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertThat(body.getSize(), is(equalTo(0L)));
+        assertThat(body.getHits(), is(empty()));
+        assertDoesNotThrow(() -> body.getId().normalize());
+    }
+
+    @Test
+    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
+        prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
+
+        var queryParameters = Map.of(
+            SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "desc"
+        );
+
+        var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                              .withQueryParameters(queryParameters)
+                              .withRequestContext(getRequestContext())
+                              .build();
+
+        handler.handleRequest(inputStream, outputStream, mock(Context.class));
+
+        var gatewayResponse = GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        var body = gatewayResponse.getBodyObject(SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertThat(body.getSize(), is(equalTo(0L)));
+        assertThat(body.getHits(), is(empty()));
+        assertDoesNotThrow(() -> body.getId().normalize());
+    }
+
+    @Test
+    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
+        prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
+
+        var queryParameters = Map.of(
+            SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "asc"
+        );
+
+        var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                              .withQueryParameters(queryParameters)
+                              .withRequestContext(getRequestContext())
+                              .build();
+
+        handler.handleRequest(inputStream, outputStream, mock(Context.class));
+
+        var gatewayResponse = GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        var body = gatewayResponse.getBodyObject(SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertThat(body.getSize(), is(equalTo(0L)));
+        assertThat(body.getHits(), is(empty()));
+        assertDoesNotThrow(() -> body.getId().normalize());
+    }
+
+    @Test
     void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException {
         prepareRestHighLevelClientNoResponse();
 
@@ -130,7 +200,7 @@ public class SearchResourcesApiHandlerTest {
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withQueryParameters(Map.of(RequestUtil.SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+            .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
             .withRequestContext(getRequestContext())
             .build();
     }
@@ -151,6 +221,13 @@ public class SearchResourcesApiHandlerTest {
         SearchResponse searchResponse = createSearchResponseWithHits(EMPTY_OPENSEARCH_RESPONSE_JSON);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
+    }
+
+    private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
+        SearchResponse searchResponse = createSearchResponseWithHits(EMPTY_OPENSEARCH_RESPONSE_JSON);
+        when(
+            restHighLevelClientMock.search(argThat(new SortKeyHttpRequestMatcher(sortOrder)), any())
+        ).thenReturn(searchResponse);
     }
 
     private void prepareRestHighLevelClientNoResponse() throws IOException {
