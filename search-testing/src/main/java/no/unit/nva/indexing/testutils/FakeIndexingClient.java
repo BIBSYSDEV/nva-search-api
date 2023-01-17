@@ -52,7 +52,7 @@ public class FakeIndexingClient extends IndexingClient {
     }
 
     @Override
-    public void removeDocumentFromIndex(String identifier) {
+    public void removeDocumentFromIndex(String identifier) throws IOException {
         // TODO remove document from index needs an index name to delete the document from.
         throw new UnsupportedOperationException();
     }

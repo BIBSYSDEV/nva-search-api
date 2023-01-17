@@ -13,13 +13,14 @@ dependencies {
     implementation libs.nva.eventhandlers
     implementation libs.aws.sdk2.urlconnection
     implementation libs.aws.sdk2.eventbridge
+    implementation libs.aws.sdk2.core
     implementation libs.bundles.logging
 
     implementation libs.bundles.jackson
 
     testImplementation project (":search-testing")
     testImplementation libs.bundles.testing
-    testImplementation libs.aws.sdk2.s3
+    implementation libs.aws.sdk2.s3
 
 }
 
