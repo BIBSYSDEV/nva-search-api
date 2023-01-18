@@ -2,14 +2,12 @@ package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.s3.S3Driver.defaultS3Client;
 import com.amazonaws.services.lambda.runtime.Context;
-import java.io.IOException;
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.models.DeleteResourceEvent;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +54,7 @@ public class DeleteResourceFromIndexHandler extends DestinationsEventBridgeEvent
         return DeleteResourceEvent.fromJson(json);
     }
 
-    private Void logError(Exception exception) {
+    private void logError(Exception exception) {
         logger.warn("Removing document failed", exception);
-        return null;
     }
 }

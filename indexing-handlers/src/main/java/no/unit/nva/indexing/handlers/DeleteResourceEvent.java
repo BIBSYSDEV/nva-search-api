@@ -1,4 +1,4 @@
-package no.unit.nva.search.models;
+package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static nva.commons.core.attempt.Try.attempt;
@@ -11,7 +11,7 @@ import no.unit.nva.identifiers.SortableIdentifier;
 import nva.commons.core.JacocoGenerated;
 
 public class DeleteResourceEvent implements JsonSerializable {
-    public static final String EVENT_TOPIC = "PublicationService.Resource.Deletion";
+    public static final String EVENT_TOPIC = "PublicationService.ExpandedEntry.Deleted";
 
     private final String topic;
     private final SortableIdentifier identifier;
@@ -33,6 +33,7 @@ public class DeleteResourceEvent implements JsonSerializable {
         this.customerId = customerId;
     }
 
+    @JacocoGenerated
     public String getTopic() {
         return topic;
     }
@@ -41,14 +42,17 @@ public class DeleteResourceEvent implements JsonSerializable {
         return identifier;
     }
 
+    @JacocoGenerated
     public String getStatus() {
         return status;
     }
 
+    @JacocoGenerated
     public URI getDoi() {
         return doi;
     }
 
+    @JacocoGenerated
     public URI getCustomerId() {
         return customerId;
     }

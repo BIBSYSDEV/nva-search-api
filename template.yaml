@@ -390,12 +390,9 @@ Resources:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndexHandler::handleRequest
       Runtime: java11
-      ReservedConcurrentExecutions: 1
+      ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
-      Environment:
-        Variables:
-          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
@@ -407,7 +404,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "PublicationService.Resource.Deletion" ]
+                  topic: [ "PublicationService.ExpandedEntry.Deleted" ]
 
 
   ResourcesIndexerDLQ:
