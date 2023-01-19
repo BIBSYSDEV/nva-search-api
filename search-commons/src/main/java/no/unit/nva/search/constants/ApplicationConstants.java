@@ -26,7 +26,8 @@ public final class ApplicationConstants {
         new AggregationDto("entityDescription.contributors.identity.name",
                            "entityDescription.contributors.identity.name.keyword"),
         new AggregationDto("entityDescription.contributors.affiliations.partOf.id.keyword",
-                           "entityDescription.contributors.affiliations.partOf.id.keyword",
+                           "entityDescription.contributors.affiliations."
+                           + "http://bibsysdev.github.io/src/organization-ontology.ttl#partOf.id.keyword",
                            new AggregationDto(
                                "entityDescription.contributors.affiliations.id.keyword",
                                "entityDescription.contributors.affiliations.id.keyword"))
