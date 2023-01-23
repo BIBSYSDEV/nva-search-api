@@ -388,7 +388,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: indexing-handlers
-      Handler: no.unit.nva.indexing.handlers.DeleteIndexHandler::handleRequest
+      Handler: no.unit.nva.indexing.handlers.DeleteResourceFromIndexHandler::handleRequest
       Runtime: java11
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
