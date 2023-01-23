@@ -36,7 +36,8 @@ public class DeleteResourceFromIndexHandler extends DestinationsEventBridgeEvent
     protected Void processInputPayload(EventReference input,
                                        AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>> event,
                                        Context context) {
-
+        logger.info("INPUT toString: " + input.toString());
+        logger.info("Input json string" + input.toJsonString());
         var eventbody = readEventBody(input);
         try {
             indexingClient.removeDocumentFromIndex(eventbody.getIdentifier().toString());
