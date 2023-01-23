@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation project (":search-testing")
     testImplementation libs.bundles.testing
-    implementation libs.aws.sdk2.s3
+    testImplementation libs.aws.sdk2.s3
 
 }
 
