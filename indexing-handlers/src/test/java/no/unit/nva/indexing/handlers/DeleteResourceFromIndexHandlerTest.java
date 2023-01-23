@@ -19,19 +19,14 @@ import java.io.InputStream;
 import java.util.Set;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.events.models.EventReference;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
-import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
-import no.unit.nva.stubs.FakeS3Client;
-import nva.commons.core.paths.UnixPath;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import software.amazon.awssdk.services.s3.S3Client;
 
 public class DeleteResourceFromIndexHandlerTest {
 
@@ -40,8 +35,6 @@ public class DeleteResourceFromIndexHandlerTest {
     public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
     private final Context CONTEXT = Mockito.mock(Context.class);
     private FakeIndexingClient indexingClient;
-    private S3Client s3Client;
-    private S3Driver s3Driver;
 
     private ByteArrayOutputStream output;
 
@@ -49,10 +42,8 @@ public class DeleteResourceFromIndexHandlerTest {
 
     @BeforeEach
     void init() {
-        s3Client = new FakeS3Client();
-        s3Driver = new S3Driver(s3Client, "ignored");
         indexingClient = new FakeIndexingClient();
-        handler = new DeleteResourceFromIndexHandler(indexingClient, s3Client);
+        handler = new DeleteResourceFromIndexHandler(indexingClient);
         output = new ByteArrayOutputStream();
     }
 
@@ -60,7 +51,7 @@ public class DeleteResourceFromIndexHandlerTest {
     void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException() throws IOException {
         var appender = LogUtils.getTestingAppenderForRootLogger();
         indexingClient = new FakeIndexingClientThrowingException();
-        handler = new DeleteResourceFromIndexHandler(indexingClient, s3Client);
+        handler = new DeleteResourceFromIndexHandler(indexingClient);
         var eventReference = createEventBridgeEvent(SortableIdentifier.next());
         assertThrows(RuntimeException.class,
                      () -> handler.handleRequest(eventReference, output, CONTEXT));
@@ -78,14 +69,6 @@ public class DeleteResourceFromIndexHandlerTest {
         assertThat(allIndexedDocuments, not(contains(sampleDocument.getResource())));
     }
 
-    private static DeleteResourceEvent createEventBody(SortableIdentifier resourceIdentifier) {
-        return new DeleteResourceEvent(DeleteResourceEvent.EVENT_TOPIC,
-                                       resourceIdentifier,
-                                       null,
-                                       null,
-                                       null);
-    }
-
     private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
         String randomJson = randomJson();
         ObjectNode objectNode = attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
@@ -98,14 +81,13 @@ public class DeleteResourceFromIndexHandlerTest {
     }
 
     private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier) throws IOException {
-        var eventBody = createEventBody(resourceIdentifier);
-        var eventFileUri = s3Driver.insertEvent(UnixPath.EMPTY_PATH, eventBody.toJsonString());
-        EventReference eventReference = new EventReference(DeleteResourceEvent.EVENT_TOPIC, eventFileUri);
+        DeleteResourceEvent deleteResourceEvent = new DeleteResourceEvent(DeleteResourceEvent.EVENT_TOPIC,
+                                                                          resourceIdentifier);
 
-        AwsEventBridgeDetail<EventReference> detail = new AwsEventBridgeDetail<>();
-        detail.setResponsePayload(eventReference);
+        AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
+        detail.setResponsePayload(deleteResourceEvent);
 
-        AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>> event = new AwsEventBridgeEvent<>();
+        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event = new AwsEventBridgeEvent<>();
         event.setDetail(detail);
 
         return new ByteArrayInputStream(objectMapperWithEmpty.writeValueAsBytes(event));
