@@ -25,12 +25,10 @@ public final class ApplicationConstants {
                            "resourceOwner.ownerAffiliation.keyword"),
         new AggregationDto("entityDescription.contributors.identity.name",
                            "entityDescription.contributors.identity.name.keyword"),
-        new AggregationDto("entityDescription.contributors.affiliations.partOf.id.keyword",
+        new AggregationDto("entityDescription.contributors.affiliations."
+                           + "https://example.org/vocab#topLevelAffiliation.id.keyword",
                            "entityDescription.contributors.affiliations."
-                           + "http://bibsysdev.github.io/src/organization-ontology.ttl#partOf.id.keyword",
-                           new AggregationDto(
-                               "entityDescription.contributors.affiliations.id.keyword",
-                               "entityDescription.contributors.affiliations.id.keyword"))
+                           + "https://example.org/vocab#topLevelAffiliation.id.keyword")
     );
 
     public static final List<String> TICKET_INDICES =
