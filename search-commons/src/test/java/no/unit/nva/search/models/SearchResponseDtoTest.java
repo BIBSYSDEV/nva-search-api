@@ -8,19 +8,30 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.spotify.hamcrest.jackson.JsonMatchers;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import nva.commons.core.attempt.Try;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opensearch.action.search.SearchResponse;
 
 class SearchResponseDtoTest {
+
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
 
     @Test
     void builderReturnsObjectWithoutAnyEmptyField() {
@@ -36,6 +47,24 @@ class SearchResponseDtoTest {
         // took and total are the deprecated fields
         assertThat(json, is(jsonObject().where("took", JsonMatchers.jsonLong(searchResponse.getProcessingTime()))));
         assertThat(json, is(jsonObject().where("total", JsonMatchers.jsonLong(searchResponse.getSize()))));
+    }
+
+    @Test
+    void searchResponseShouldMapSnakeCaseToCamelCase() throws IOException {
+        var searchResponse = getSearchResponse();
+        var aggregations = SearchResponseDto.fromSearchResponse(searchResponse, randomUri()).getAggregations();
+
+        var docCount = aggregations.findValue("docCount");
+        Assertions.assertNotNull(docCount);
+        Assertions.assertEquals(2, docCount.asInt());
+
+        var snakeCase = aggregations.findValue("doc_cound_error_upper_bound");
+        assertThat(snakeCase, is(nullValue()));
+    }
+
+    private SearchResponse getSearchResponse() throws IOException {
+        String jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_JSON));
+        return SearchResponseUtil.getSearchResponseFromJson(jsonResponse);
     }
 
 

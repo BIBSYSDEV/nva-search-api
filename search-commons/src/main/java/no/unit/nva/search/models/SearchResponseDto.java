@@ -2,6 +2,8 @@ package no.unit.nva.search.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Map;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.action.search.SearchResponse;
@@ -23,6 +25,13 @@ public class SearchResponseDto {
     public static final String QUERY_PARAMETER = "query";
     public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
 
+    private static final String BUCKETS_FIELD_NAME = "buckets";
+    private static final Map<String, String> AGGREGATION_FIELD_TO_CHANGE = Map.of(
+        "doc_count_error_upper_bound", "docCountErrorUpperBound",
+        "sum_other_doc_count", "sumOtherDocCount");
+    private static final Map<String, String> BUCKET_FIELD_TO_CHANGE = Map.of("doc_count", "docCount");
+
+
     @JsonProperty("@context")
     private URI context;
     @JsonProperty("id")
@@ -42,38 +51,16 @@ public class SearchResponseDto {
         List<JsonNode> sourcesList = extractSourcesList(searchResponse);
         long total = searchResponse.getHits().getTotalHits().value;
         long took = searchResponse.getTook().duration();
-        var aggregations = getAggregationFromBody(searchResponse.toString());
+        var aggregations = extractAggregations(searchResponse);
 
         return SearchResponseDto.builder()
-                .withContext(DEFAULT_SEARCH_CONTEXT)
-                .withId(id)
-                .withHits(sourcesList)
-                .withSize(total)
-                .withProcessingTime(took)
-                .withAggregations(aggregations)
-                .build();
-    }
-
-    private static JsonNode getAggregationFromBody(String body) {
-        JsonNode json = attempt(() ->
-                objectMapperWithEmpty.readTree(body)
-        ).orElseThrow();
-
-        JsonNode rawAggregationNode = json.get("aggregations");
-        if (rawAggregationNode == null) {
-            return null;
-        }
-
-        var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
-
-        var iterator = rawAggregationNode.fields();
-        while (iterator.hasNext()) {
-            var child = iterator.next();
-            var newName = child.getKey().replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, "");
-            outputAggregationNode.set(newName, child.getValue());
-        }
-
-        return outputAggregationNode;
+            .withContext(DEFAULT_SEARCH_CONTEXT)
+            .withId(id)
+            .withHits(sourcesList)
+            .withSize(total)
+            .withProcessingTime(took)
+            .withAggregations(aggregations)
+            .build();
     }
 
     public static URI createIdWithQuery(URI requestUri, String searchTerm) {
@@ -184,17 +171,65 @@ public class SearchResponseDto {
 
         SearchResponseDto that = (SearchResponseDto) o;
         return processingTime == that.processingTime
-                && size == that.size
-                && Objects.equals(context, that.context)
-                && Objects.equals(id, that.id)
-                && Objects.equals(hits, that.hits);
+               && size == that.size
+               && Objects.equals(context, that.context)
+               && Objects.equals(id, that.id)
+               && Objects.equals(hits, that.hits);
     }
 
     private static List<JsonNode> extractSourcesList(SearchResponse searchResponse) {
         return Arrays.stream(searchResponse.getHits().getHits())
-                .map(SearchHit::getSourceAsMap)
-                .map(source -> objectMapperWithEmpty.convertValue(source, JsonNode.class))
-                .collect(Collectors.toList());
+            .map(SearchHit::getSourceAsMap)
+            .map(source -> objectMapperWithEmpty.convertValue(source, JsonNode.class))
+            .collect(Collectors.toList());
+    }
+
+    private static JsonNode extractAggregations(SearchResponse searchResponse) {
+        JsonNode json = attempt(() -> objectMapperWithEmpty.readTree(searchResponse.toString())).orElseThrow();
+
+        JsonNode aggregations = json.get("aggregations");
+
+        if (aggregations == null) {
+            return null;
+        }
+
+        var jsonWithCorrectNames = stripAggregationName(aggregations);
+
+        return aggregationFieldsToCamelCase(jsonWithCorrectNames);
+    }
+
+    private static ObjectNode stripAggregationName(JsonNode aggregations) {
+        var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
+
+        var iterator = aggregations.fields();
+        while (iterator.hasNext()) {
+            var child = iterator.next();
+            var newName = child.getKey().replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, "");
+            outputAggregationNode.set(newName, child.getValue());
+        }
+
+        return outputAggregationNode;
+    }
+
+    private static ObjectNode aggregationFieldsToCamelCase(JsonNode aggregations) {
+        var json = (ObjectNode) aggregations;
+
+        for (JsonNode aggregationNode : json) {
+            var aggregation = (ObjectNode) aggregationNode;
+            AGGREGATION_FIELD_TO_CHANGE.forEach((oldname, newName) -> renameField(aggregation, oldname, newName));
+
+            for (JsonNode bucketNode : aggregation.get(BUCKETS_FIELD_NAME)) {
+                var bucket = (ObjectNode) bucketNode;
+                BUCKET_FIELD_TO_CHANGE.forEach((oldName, newName) -> renameField(bucket, oldName, newName));
+            }
+        }
+
+        return json;
+    }
+
+    private static void renameField(ObjectNode json, String oldFieldName, String newFieldName) {
+        var field = json.remove(oldFieldName);
+        json.set(newFieldName, field);
     }
 
     public JsonNode getAggregations() {
