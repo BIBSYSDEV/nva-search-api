@@ -6,6 +6,8 @@ import static no.unit.nva.search.constants.ApplicationConstants.AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import com.amazonaws.services.lambda.runtime.Context;
+import java.util.Arrays;
+import no.unit.nva.search.exception.SearchException;
 import no.unit.nva.search.models.SearchResponseDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -14,10 +16,17 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
+import org.opensearch.OpenSearchStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchResponseDto> {
 
+    private static final Logger logger = LoggerFactory.getLogger(SearchResourcesApiHandler.class);
     private final SearchClient openSearchClient;
+    private static final String TOO_MANY_NESTED_CLAUSES = "too_many_nested_clauses";
+    public static final String TOO_MANY_NESTED_CLAUSES_FULL = "too_many_nested_clauses: Query contains too many nested "
+                                                       + "clauses";
 
     @JacocoGenerated
     public SearchResourcesApiHandler() {
@@ -45,7 +54,12 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
                                              RequestInfo requestInfo,
                                              Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, AGGREGATIONS);
-        return openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
+
+        try {
+            return openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
+        } catch (OpenSearchStatusException e) {
+            throw handleOpenSearchFailure(e);
+        }
     }
 
     /**
@@ -58,5 +72,21 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
     @Override
     protected Integer getSuccessStatusCode(Void input, SearchResponseDto output) {
         return HttpStatus.SC_OK;
+    }
+
+    private boolean exceptionIsTooManyClauses(OpenSearchStatusException exception) {
+        var rooCause = exception.guessRootCauses();
+        return Arrays.stream(rooCause)
+                   .anyMatch(rc -> rc.getDetailedMessage().contains(TOO_MANY_NESTED_CLAUSES));
+    }
+
+    private ApiGatewayException handleOpenSearchFailure(OpenSearchStatusException exception) {
+        if (exceptionIsTooManyClauses(exception)) {
+            return new SearchException(TOO_MANY_NESTED_CLAUSES_FULL, exception);
+        }
+
+        logger.warn("Unhandled OpenSearchStatusException", exception.getMessage());
+
+        throw new RuntimeException(exception);
     }
 }

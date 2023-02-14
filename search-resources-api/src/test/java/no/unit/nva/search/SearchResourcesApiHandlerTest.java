@@ -8,6 +8,8 @@ import no.unit.nva.search.utils.SortKeyHttpRequestMatcher;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
+import org.opensearch.OpenSearchException;
+import org.opensearch.OpenSearchStatusException;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +22,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static no.unit.nva.search.SearchResourcesApiHandler.TOO_MANY_NESTED_CLAUSES_FULL;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
+import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
@@ -196,6 +200,31 @@ public class SearchResourcesApiHandlerTest {
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_BAD_GATEWAY, gatewayResponse.getStatusCode());
+    }
+
+    @Test
+    void shouldReturnTooManyNestedClausesErrorWhenThrownByOpenSearchClient() throws IOException {
+        var cause = new OpenSearchException("blabla too_many_nested_clauses blabla");
+        when(restHighLevelClientMock.search(any(), any()))
+            .thenThrow(new OpenSearchStatusException("all shards " + "failed", null, cause));
+
+        var queryParameters = Map.of(
+            SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "asc"
+        );
+
+        var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                              .withQueryParameters(queryParameters)
+                              .withRequestContext(getRequestContext())
+                              .build();
+
+        handler.handleRequest(inputStream, outputStream, mock(Context.class));
+
+        GatewayResponse<Problem> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, Problem.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_INTERNAL_ERROR, gatewayResponse.getStatusCode());
+        assertEquals(TOO_MANY_NESTED_CLAUSES_FULL, gatewayResponse.getBodyObject(Problem.class).getDetail());
+
     }
 
     private InputStream getInputStream() throws JsonProcessingException {
