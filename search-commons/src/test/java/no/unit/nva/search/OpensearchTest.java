@@ -11,6 +11,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -294,6 +295,7 @@ public class OpensearchTest {
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
             "*",
+            "*",
             SAMPLE_NUMBER_OF_RESULTS,
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
@@ -333,6 +335,7 @@ public class OpensearchTest {
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
             "*",
+            "*",
             SAMPLE_NUMBER_OF_RESULTS,
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
@@ -365,6 +368,7 @@ public class OpensearchTest {
 
         SearchDocumentsQuery query = new SearchDocumentsQuery(
             "*",
+            "*",
             SAMPLE_NUMBER_OF_RESULTS,
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
@@ -377,6 +381,68 @@ public class OpensearchTest {
 
         assertThat(response, notNullValue());
         assertThat(response.getAggregations(), nullValue());
+
+        indexingClient.deleteIndex(indexName);
+    }
+
+    @Test
+    void shouldReturnMatchingResultWhenSearchTermIsSet() throws ApiGatewayException, IOException, InterruptedException {
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        var seach = "publication.status:\"PUBLISHED\"";
+
+        SearchDocumentsQuery query = new SearchDocumentsQuery(
+            seach,
+            "*",
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            null
+        );
+
+        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getHits(), hasSize(1));
+
+        indexingClient.deleteIndex(indexName);
+    }
+
+    @Test
+    void shouldReturnMatchingResultWhenFilterTermIsSet() throws ApiGatewayException, IOException, InterruptedException {
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        var filter = "publication.status:\"PUBLISHED\"";
+
+        SearchDocumentsQuery query = new SearchDocumentsQuery(
+            "*",
+            filter,
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            null
+        );
+
+        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getHits(), hasSize(1));
 
         indexingClient.deleteIndex(indexName);
     }

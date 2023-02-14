@@ -14,12 +14,14 @@ import org.opensearch.search.sort.SortOrder;
 public class RequestUtil {
 
     public static final String SEARCH_TERM_KEY = "query";
+    public static final String FILTER_TERM_KEY = "filter";
     public static final String RESULTS_KEY = "results";
     public static final String FROM_KEY = "from";
     public static final String ORDERBY_KEY = "orderBy";
     public static final String SORTORDER_KEY = "sortOrder";
     private static final String RESULTS_DEFAULT_SIZE = "10";
     public static final String SEARCH_ALL_PUBLICATIONS_DEFAULT_QUERY = "*";
+    public static final String FILTER_ALL_PUBLICATIONS_DEFAULT_QUERY = "*";
     private static final String ORDERBY_DEFAULT_POSITION = "modifiedDate";
     private static final String DEFAULT_SORT_ORDER = SortOrder.DESC.name();
     private static final String FROM_DEFAULT_POSITION = "0";
@@ -35,6 +37,10 @@ public class RequestUtil {
      */
     public static String getSearchTerm(RequestInfo requestInfo) {
         return requestInfo.getQueryParameters().getOrDefault(SEARCH_TERM_KEY, SEARCH_ALL_PUBLICATIONS_DEFAULT_QUERY);
+    }
+
+    public static String getFilterTerm(RequestInfo requestInfo) {
+        return requestInfo.getQueryParameters().getOrDefault(FILTER_TERM_KEY, FILTER_ALL_PUBLICATIONS_DEFAULT_QUERY);
     }
 
     public static int getResults(RequestInfo requestInfo) {
@@ -75,6 +81,7 @@ public class RequestUtil {
                                                List<AggregationDto> aggregations) {
         return new SearchDocumentsQuery(
             getSearchTerm(requestInfo),
+            getFilterTerm(requestInfo),
             getResults(requestInfo),
             getFrom(requestInfo),
             getOrderBy(requestInfo),

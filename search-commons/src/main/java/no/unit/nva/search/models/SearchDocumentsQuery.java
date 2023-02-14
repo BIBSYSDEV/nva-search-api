@@ -12,6 +12,7 @@ public class SearchDocumentsQuery {
 
     public static final String STRING = "string";
     private final String searchTerm;
+    private final String filterTerm;
     private final int results;
     private final int from;
     private final String orderBy;
@@ -20,6 +21,7 @@ public class SearchDocumentsQuery {
     private final List<AggregationDto> aggregations;
 
     public SearchDocumentsQuery(String searchTerm,
+                                String filterTerm,
                                 int results,
                                 int from,
                                 String orderBy,
@@ -27,6 +29,7 @@ public class SearchDocumentsQuery {
                                 URI requestUri,
                                 List<AggregationDto> aggregations) {
         this.searchTerm = searchTerm;
+        this.filterTerm = filterTerm;
         this.results = results;
         this.from = from;
         this.orderBy = orderBy;
@@ -51,6 +54,7 @@ public class SearchDocumentsQuery {
 
         var sourceBuilder = new SearchSourceBuilder()
                                 .query(QueryBuilders.queryStringQuery(searchTerm))
+                                .postFilter(QueryBuilders.queryStringQuery(filterTerm))
                                 .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
                                 .from(from)
                                 .size(results)

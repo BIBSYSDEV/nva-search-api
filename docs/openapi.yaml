@@ -4,12 +4,6 @@ info:
   version: '0.2.0'
   description: |-
     Public search API for resources in NVA. The API is backed by Amazon OpenSearch and uses [OpenSearch query syntax](https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/).
-    ## Path Parameters
-    * **query** - a string containing a valid opensearch query expression
-    * **orderBy** - Indexed field to order results by
-    * **sortOrder** - The order defaults to *desc* when sorting on the _score, and defaults to *asc* when sorting on anything else.
-    * **from** - starting position of result
-    * **results** - integer number of results returned
 paths:
 
   /tickets:
@@ -59,6 +53,12 @@ paths:
         - in: query
           name: query
           description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: filter
+          description: "Term to filter for in resource."
           required: false
           schema:
             type: string

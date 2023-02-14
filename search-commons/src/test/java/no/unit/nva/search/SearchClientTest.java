@@ -66,6 +66,7 @@ import org.opensearch.index.query.QueryBuilder;
 class SearchClientTest {
 
     public static final String SAMPLE_TERM = "SampleSearchTerm";
+    public static final String SAMPLE_FILTER = "SampleFilterTerm";
     public static final int MAX_RESULTS = 100;
     public static final int DEFAULT_PAGE_SIZE = 100;
     public static final int DEFAULT_PAGE_NO = 0;
@@ -296,6 +297,7 @@ class SearchClientTest {
 
         SearchDocumentsQuery sampleQuery = new SearchDocumentsQuery(
             SAMPLE_TERM,
+            SAMPLE_FILTER,
             SAMPLE_NUMBER_OF_RESULTS,
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
@@ -331,6 +333,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
         SearchDocumentsQuery queryWithMaxResults = new SearchDocumentsQuery(SAMPLE_TERM,
+                                                                            SAMPLE_FILTER,
                                                                             MAX_RESULTS,
                                                                             SAMPLE_FROM,
                                                                             SAMPLE_ORDERBY,
@@ -452,6 +455,7 @@ class SearchClientTest {
 
     private SearchDocumentsQuery generateSampleQuery() {
         return new SearchDocumentsQuery(SAMPLE_TERM,
+                                        SAMPLE_FILTER,
                                         SAMPLE_NUMBER_OF_RESULTS,
                                         SAMPLE_FROM,
                                         SAMPLE_ORDERBY,
