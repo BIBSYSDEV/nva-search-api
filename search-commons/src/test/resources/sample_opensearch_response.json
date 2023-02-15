@@ -94,17 +94,37 @@
     ]
   },
   "aggregations": {
-    "sterms#Bidragsyter": {
+    "sterms#contributors": {
       "doc_count_error_upper_bound": 0,
       "sum_other_doc_count": 0,
       "buckets": [
         {
-          "key": "Exploratory product search using top-k join queries",
-          "doc_count": 2
+          "key": "Hans Nordmann",
+          "doc_count": 1,
+          "sterms#affiliations": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "https://api.dev.nva.aws.unit.no/cristin/organization/185.27.82.0",
+                "doc_count": 1
+              }
+            ]
+          }
         },
         {
-          "key": "Highly Oscillatory Systems in Hilbert Spaces",
-          "doc_count": 1
+          "key": "Orestis Gkorgkas",
+          "doc_count": 1,
+          "sterms#affiliations": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+              {
+                "key": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0",
+                "doc_count": 1
+              }
+            ]
+          }
         }
       ]
     }

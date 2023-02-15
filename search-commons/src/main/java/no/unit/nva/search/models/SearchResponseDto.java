@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Map;
+import java.util.Optional;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.action.search.SearchResponse;
@@ -25,12 +26,10 @@ public class SearchResponseDto {
     public static final String QUERY_PARAMETER = "query";
     public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
 
-    private static final String BUCKETS_FIELD_NAME = "buckets";
-    private static final Map<String, String> AGGREGATION_FIELD_TO_CHANGE = Map.of(
+    private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
         "doc_count_error_upper_bound", "docCountErrorUpperBound",
-        "sum_other_doc_count", "sumOtherDocCount");
-    private static final Map<String, String> BUCKET_FIELD_TO_CHANGE = Map.of("doc_count", "docCount");
-
+        "sum_other_doc_count", "sumOtherDocCount",
+        "doc_count", "docCount");
 
     @JsonProperty("@context")
     private URI context;
@@ -187,49 +186,41 @@ public class SearchResponseDto {
     private static JsonNode extractAggregations(SearchResponse searchResponse) {
         JsonNode json = attempt(() -> objectMapperWithEmpty.readTree(searchResponse.toString())).orElseThrow();
 
-        JsonNode aggregations = json.get("aggregations");
+        ObjectNode aggregations = (ObjectNode) json.get("aggregations");
 
         if (aggregations == null) {
             return null;
         }
 
-        var jsonWithCorrectNames = stripAggregationName(aggregations);
-
-        return aggregationFieldsToCamelCase(jsonWithCorrectNames);
+        return formatAggregations(aggregations);
     }
 
-    private static ObjectNode stripAggregationName(JsonNode aggregations) {
+    private static JsonNode formatAggregations(JsonNode aggregations) {
         var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
 
         var iterator = aggregations.fields();
         while (iterator.hasNext()) {
-            var child = iterator.next();
-            var newName = child.getKey().replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, "");
-            outputAggregationNode.set(newName, child.getValue());
-        }
+            var nodeEntry = iterator.next();
+            var fieldName = nodeEntry.getKey();
 
-        return outputAggregationNode;
-    }
+            Optional<String> newName = Optional.ofNullable(AGGREGATION_FIELDS_TO_CHANGE.get(fieldName));
+            if (newName.isEmpty()) {
+                newName = Optional.of(fieldName.replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, ""));
+            }
 
-    private static ObjectNode aggregationFieldsToCamelCase(JsonNode aggregations) {
-        var json = (ObjectNode) aggregations;
-
-        for (JsonNode aggregationNode : json) {
-            var aggregation = (ObjectNode) aggregationNode;
-            AGGREGATION_FIELD_TO_CHANGE.forEach((oldname, newName) -> renameField(aggregation, oldname, newName));
-
-            for (JsonNode bucketNode : aggregation.get(BUCKETS_FIELD_NAME)) {
-                var bucket = (ObjectNode) bucketNode;
-                BUCKET_FIELD_TO_CHANGE.forEach((oldName, newName) -> renameField(bucket, oldName, newName));
+            var value = nodeEntry.getValue();
+            if (value.isValueNode()) {
+                outputAggregationNode.set(newName.get(), value);
+            } else if (value.isArray()) {
+                var arrayNode = objectMapperWithEmpty.createArrayNode();
+                value.forEach( element -> arrayNode.add(formatAggregations(element)));
+                outputAggregationNode.set(newName.get(), arrayNode);
+            } else {
+                outputAggregationNode.set(newName.get(), formatAggregations(nodeEntry.getValue()));
             }
         }
 
-        return json;
-    }
-
-    private static void renameField(ObjectNode json, String oldFieldName, String newFieldName) {
-        var field = json.remove(oldFieldName);
-        json.set(newFieldName, field);
+        return outputAggregationNode;
     }
 
     public JsonNode getAggregations() {

@@ -1,0 +1,36 @@
+{
+  "contributors": {
+    "docCountErrorUpperBound": 0,
+    "sumOtherDocCount": 0,
+    "buckets": [
+      {
+        "key": "Hans Nordmann",
+        "docCount": 1,
+        "affiliations": {
+          "docCountErrorUpperBound": 0,
+          "sumOtherDocCount": 0,
+          "buckets": [
+            {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/organization/185.27.82.0",
+              "docCount": 1
+            }
+          ]
+        }
+      },
+      {
+        "key": "Orestis Gkorgkas",
+        "docCount": 1,
+        "affiliations": {
+          "docCountErrorUpperBound": 0,
+          "sumOtherDocCount": 0,
+          "buckets": [
+            {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0",
+              "docCount": 1
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -3,13 +3,17 @@ package no.unit.nva.search.models;
 import static com.spotify.hamcrest.jackson.JsonMatchers.jsonObject;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.hamcrest.DoesNotHaveEmptyValues.doesNotHaveEmptyValues;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -25,13 +29,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import nva.commons.core.attempt.Try;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.search.SearchResponse;
 
 class SearchResponseDtoTest {
 
     public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
+    public static final String EXPECTED_AGGREGATIONS = "sample_opensearch_response_searchresponsedto_aggregations.json";
 
     @Test
     void builderReturnsObjectWithoutAnyEmptyField() {
@@ -50,16 +54,14 @@ class SearchResponseDtoTest {
     }
 
     @Test
-    void searchResponseShouldMapSnakeCaseToCamelCase() throws IOException {
+    void searchResponseShouldFormatAggregationsCorrectly() throws IOException {
         var searchResponse = getSearchResponse();
         var aggregations = SearchResponseDto.fromSearchResponse(searchResponse, randomUri()).getAggregations();
 
-        var docCount = aggregations.findValue("docCount");
-        Assertions.assertNotNull(docCount);
-        Assertions.assertEquals(2, docCount.asInt());
+        var expected = objectMapperWithEmpty.readValue(inputStreamFromResources(EXPECTED_AGGREGATIONS),
+                                                       JsonNode.class);
 
-        var snakeCase = aggregations.findValue("doc_cound_error_upper_bound");
-        assertThat(snakeCase, is(nullValue()));
+        assertThat(aggregations, is(equalTo(expected)));
     }
 
     private SearchResponse getSearchResponse() throws IOException {

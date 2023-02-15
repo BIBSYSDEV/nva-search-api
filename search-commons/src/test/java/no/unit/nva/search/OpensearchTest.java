@@ -309,7 +309,7 @@ public class OpensearchTest {
             .at("/contributors/buckets");
         assertThat(aggregations.size(), is(equalTo(2)));
 
-        var affiliation = aggregations.get(0).at("/sterms#affiliations/buckets").get(0).at("/key");
+        var affiliation = aggregations.get(0).at("/affiliations/buckets").get(0).at("/key");
         assertThat("org is on right format",
                    affiliation.asText().matches("https://api.dev.nva.aws.unit.no/cristin/organization/.*"));
 
