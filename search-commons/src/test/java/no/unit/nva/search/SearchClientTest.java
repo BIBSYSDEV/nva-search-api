@@ -368,6 +368,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         SearchDocumentsQuery sampleQuery = new SearchDocumentsQuery(
             SAMPLE_TERM,
+            SAMPLE_FILTER,
             SAMPLE_NUMBER_OF_RESULTS,
             SAMPLE_FROM,
             SAMPLE_ORDERBY,
