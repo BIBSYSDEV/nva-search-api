@@ -10,12 +10,14 @@ import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
 import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -33,11 +35,13 @@ import static org.opensearch.search.sort.SortOrder.DESC;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
@@ -47,6 +51,7 @@ import no.unit.nva.search.utils.RequestOptionsHeaderMatcher;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.secrets.SecretsReader;
+import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +78,7 @@ class SearchClientTest {
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     private static final List<AggregationDto> SAMPLE_AGGREGATIONS = List.of(
         new AggregationDto(randomString(), randomString()));
+    public static final String EXPECTED_AGGREGATIONS = "sample_opensearch_response_searchresponsedto_aggregations.json";
 
     SearchResponse defaultSearchResponse = mock(SearchResponse.class);
 
@@ -346,6 +352,36 @@ class SearchClientTest {
         assertThrows(BadGatewayException.class,
                      () -> searchClient.searchWithSearchDocumentQuery(generateSampleQuery(),
                                                                       OPENSEARCH_ENDPOINT_INDEX));
+    }
+
+    @Test
+    void searchResponseShouldFormatAggregationsCorrectly() throws IOException, ApiGatewayException {
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_RESPONSE_FILE);
+        var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
+
+        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
+
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
+        SearchDocumentsQuery sampleQuery = new SearchDocumentsQuery(
+            SAMPLE_TERM,
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            SAMPLE_AGGREGATIONS
+        );
+
+        SearchResponseDto searchResponseDto =
+            searchClient.searchWithSearchDocumentQuery(sampleQuery, OPENSEARCH_ENDPOINT_INDEX);
+
+        var aggregations = searchResponseDto.getAggregations();
+
+        var expected = objectMapperWithEmpty.readValue(inputStreamFromResources(EXPECTED_AGGREGATIONS),
+                                                       JsonNode.class);
+
+        assertThat(aggregations, is(Matchers.equalTo(expected)));
     }
 
     @NotNull

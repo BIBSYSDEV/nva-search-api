@@ -34,9 +34,6 @@ import org.opensearch.action.search.SearchResponse;
 
 class SearchResponseDtoTest {
 
-    public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
-    public static final String EXPECTED_AGGREGATIONS = "sample_opensearch_response_searchresponsedto_aggregations.json";
-
     @Test
     void builderReturnsObjectWithoutAnyEmptyField() {
         SearchResponseDto response = randomResponse();
@@ -51,22 +48,6 @@ class SearchResponseDtoTest {
         // took and total are the deprecated fields
         assertThat(json, is(jsonObject().where("took", JsonMatchers.jsonLong(searchResponse.getProcessingTime()))));
         assertThat(json, is(jsonObject().where("total", JsonMatchers.jsonLong(searchResponse.getSize()))));
-    }
-
-    @Test
-    void searchResponseShouldFormatAggregationsCorrectly() throws IOException {
-        var searchResponse = getSearchResponse();
-        var aggregations = SearchResponseDto.fromSearchResponse(searchResponse, randomUri()).getAggregations();
-
-        var expected = objectMapperWithEmpty.readValue(inputStreamFromResources(EXPECTED_AGGREGATIONS),
-                                                       JsonNode.class);
-
-        assertThat(aggregations, is(equalTo(expected)));
-    }
-
-    private SearchResponse getSearchResponse() throws IOException {
-        String jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_JSON));
-        return SearchResponseUtil.getSearchResponseFromJson(jsonResponse);
     }
 
 
