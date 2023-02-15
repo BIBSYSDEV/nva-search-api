@@ -75,17 +75,15 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
     }
 
     private boolean exceptionIsTooManyClauses(OpenSearchStatusException exception) {
-        var rooCause = exception.guessRootCauses();
-        return Arrays.stream(rooCause)
-                   .anyMatch(rc -> rc.getDetailedMessage().contains(TOO_MANY_NESTED_CLAUSES));
+        var rootCause = exception.guessRootCauses();
+        return Arrays.stream(rootCause)
+                   .anyMatch(rc -> rc.getDetailedMessage().contains(TOO_MANY_NESTED_CLAUSES)
+                        || Arrays.stream(rc.guessRootCauses())
+                               .anyMatch( nrc -> nrc.getDetailedMessage().contains(TOO_MANY_NESTED_CLAUSES))) ;
     }
 
     @JacocoGenerated
     private ApiGatewayException handleOpenSearchFailure(OpenSearchStatusException exception) {
-        if (exceptionIsTooManyClauses(exception)) {
-            return new SearchException(TOO_MANY_NESTED_CLAUSES_FULL, exception);
-        }
-
         logger.warn("Unhandled OpenSearchStatusException", exception.getMessage());
 
         logger.warn(exception.toString());
@@ -96,6 +94,10 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
                 logger.warn("getMessage: " + rc.getMessage());
                 logger.warn("getDetailedMessage: " + rc.getDetailedMessage());
             });
+
+        if (exceptionIsTooManyClauses(exception)) {
+            return new SearchException(TOO_MANY_NESTED_CLAUSES_FULL, exception);
+        }
 
         throw new RuntimeException(exception);
     }
