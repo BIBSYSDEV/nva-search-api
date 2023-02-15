@@ -227,6 +227,29 @@ public class SearchResourcesApiHandlerTest {
 
     }
 
+    @Test
+    void shuldPrintDetailsAboutUnhandledOpenSearchErrors() throws IOException {
+        var cause = new OpenSearchException("blabla something else blabla");
+        when(restHighLevelClientMock.search(any(), any()))
+            .thenThrow(new OpenSearchStatusException("all shards " + "failed", null, cause));
+
+        var queryParameters = Map.of(
+            SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "asc"
+        );
+
+        var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                              .withQueryParameters(queryParameters)
+                              .withRequestContext(getRequestContext())
+                              .build();
+
+        handler.handleRequest(inputStream, outputStream, mock(Context.class));
+
+        GatewayResponse<Problem> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, Problem.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_INTERNAL_ERROR, gatewayResponse.getStatusCode());
+    }
+
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))

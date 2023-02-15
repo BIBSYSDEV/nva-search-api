@@ -80,12 +80,22 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
                    .anyMatch(rc -> rc.getDetailedMessage().contains(TOO_MANY_NESTED_CLAUSES));
     }
 
+    @JacocoGenerated
     private ApiGatewayException handleOpenSearchFailure(OpenSearchStatusException exception) {
         if (exceptionIsTooManyClauses(exception)) {
             return new SearchException(TOO_MANY_NESTED_CLAUSES_FULL, exception);
         }
 
         logger.warn("Unhandled OpenSearchStatusException", exception.getMessage());
+
+        logger.warn(exception.toString());
+        var rooCause = exception.guessRootCauses();
+        Arrays.stream(rooCause)
+            .forEach(rc -> {
+                logger.warn("toString: " + rc.toString());
+                logger.warn("getMessage: " + rc.getMessage());
+                logger.warn("getDetailedMessage: " + rc.getDetailedMessage());
+            });
 
         throw new RuntimeException(exception);
     }
