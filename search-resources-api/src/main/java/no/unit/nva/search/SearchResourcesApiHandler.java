@@ -86,6 +86,12 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, SearchRes
     private ApiGatewayException handleOpenSearchFailure(OpenSearchStatusException exception) {
         logger.warn("Unhandled OpenSearchStatusException", exception.getMessage());
 
+        logger.warn("getRootCause.toString" + exception.getRootCause().toString() );
+        logger.warn("getRootCause.getMessage" + exception.getRootCause().getMessage() );
+
+        logger.warn("getCause.toString" + exception.getCause().toString() );
+        logger.warn("getCause.getMessage" + exception.getCause().getMessage() );
+
         exception.printStackTrace();
         logger.warn(exception.toString());
         var rooCause = exception.guessRootCauses();
