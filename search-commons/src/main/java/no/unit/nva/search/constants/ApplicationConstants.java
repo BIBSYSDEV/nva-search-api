@@ -16,7 +16,7 @@ public final class ApplicationConstants {
 
     public static final String TICKETS_INDEX = "tickets";
 
-    public static final List<AggregationDto> AGGREGATIONS = List.of(
+    public static final List<AggregationDto> RESOURCES_AGGREGATIONS = List.of(
         new AggregationDto("entityDescription.reference.publicationInstance.type",
                            "entityDescription.reference.publicationInstance.type.keyword"),
         new AggregationDto("resourceOwner.owner",
@@ -25,10 +25,8 @@ public final class ApplicationConstants {
                            "resourceOwner.ownerAffiliation.keyword"),
         new AggregationDto("entityDescription.contributors.identity.name",
                            "entityDescription.contributors.identity.name.keyword"),
-        new AggregationDto("entityDescription.contributors.affiliations."
-                           + "https://example.org/vocab#topLevelAffiliation.id.keyword",
-                           "entityDescription.contributors.affiliations."
-                           + "https://example.org/vocab#topLevelAffiliation.id.keyword")
+        new AggregationDto("entityDescription.contributors.affiliations.topLevelOrganization.id",
+                           "entityDescription.contributors.affiliations.topLevelOrganization.id.keyword")
     );
 
     public static final List<String> TICKET_INDICES =
