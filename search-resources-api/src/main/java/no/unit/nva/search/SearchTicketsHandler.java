@@ -58,6 +58,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
 
+        //TODO
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
