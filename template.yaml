@@ -200,6 +200,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
+          COGNITO_HOST: !Ref CognitoUri
       Events:
         GetTickets:
           Type: Api
