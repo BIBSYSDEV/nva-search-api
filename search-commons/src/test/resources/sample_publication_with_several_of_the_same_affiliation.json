@@ -1,0 +1,190 @@
+{
+  "type": "Publication",
+  "publicationContextUris": [
+    "https://api.nva.unit.no/publication-channels/journal/1111/2019"
+  ],
+  "@context": {
+    "@vocab": "https://nva.sikt.no/ontology/publication#",
+    "id": "@id",
+    "type": "@type",
+    "contributors": {
+      "@container": "@set"
+    },
+    "additionalIdentifiers": {
+      "@container": "@set"
+    },
+    "affiliations": {
+      "@container": "@set"
+    },
+    "subjects": {
+      "@container": "@set"
+    },
+    "projects": {
+      "@container": "@set"
+    },
+    "fundings": {
+      "@container": "@set"
+    },
+    "outputs": {
+      "@container": "@set"
+    },
+    "trackList": {
+      "@container": "@set"
+    },
+    "related": {
+      "@container": "@set"
+    },
+    "compliesWith": {
+      "@container": "@set"
+    },
+    "concertProgramme": {
+      "@container": "@set"
+    },
+    "referencedBy": {
+      "@container": "@set"
+    },
+    "musicalWorks": {
+      "@container": "@set"
+    },
+    "alternativeNames": {
+      "@id": "alternativeName",
+      "@container": "@language"
+    },
+    "tags": {
+      "@container": "@set"
+    },
+    "isbnList": {
+      "@container": "@set"
+    },
+    "venues": {
+      "@container": "@set"
+    },
+    "files": {
+      "@container": "@set"
+    },
+    "associatedArtifacts": {
+      "@container": "@set"
+    },
+    "grants": {
+      "@container": "@set"
+    },
+    "approvals": {
+      "@container": "@set"
+    },
+    "messages": {
+      "@container": "@set"
+    }
+  },
+  "id": "https://api.sandbox.nva.aws.unit.no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df",
+  "additionalIdentifiers": [
+    {
+      "type": "AdditionalIdentifier",
+      "source": "scopusIdentifier",
+      "value": "2-s2.0-85124989905"
+    }
+  ],
+  "entityDescription": {
+    "type": "EntityDescription",
+    "abstract": "The demand for sustainably produced proteins is increasing with the world population and is prompting a dietary shift toward plant sourced proteins. Vegetable proteins have lower digestibility and biological value compared to animal derived counterparts. We explored sprouting of chickpea seeds as a strategy for improving digestibility. Protein evolution associated with by the sprouting process was assessed by proteomics. The sprouting induced breakdown of seed storage proteins and doubled the release of free alpha-amino nitrogen in sprouted chickpea flour. During sprouting, several enzymes involved in plant development were newly expressed. An ex vivo model of gastroduodenal and jejunal digestion was applied to assess the bioaccessibility of the protein digests. Proteins from chickpea sprouts showed a greater susceptibility to digestion with a 10% increase in alpha amino nitrogen. Peptides with potential immunoreactivity or bioactivity were catalogued in both digested chickpea sprouts and seeds using an in-silico approach. Peptides belonging to the non-specific transfer proteins, which are allergens in pulses, and peptides belonging to an IgE-binding hemagglutinin protein could only be identified in the digested chickpea sprouts. The observation collected paved the way to immune-based evaluations to assess the effect of germination on the allergenic potential.",
+    "alternativeTitles": {},
+    "contributors": [
+      {
+        "type": "Contributor",
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.27.82.0",
+            "type": "Organization",
+            "labels": {
+              "en": "Faculty of Chemistry, Biotechnology and Food Science, Norwegian University of Life Sciences"
+            },
+            "topLevelOrganization": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0"
+            }
+          }
+        ],
+        "correspondingAuthor": false,
+        "identity": {
+          "type": "Identity",
+          "name": "Vegarud, Gerd Elisabeth"
+        },
+        "role": "Creator",
+        "sequence": 2
+      },
+      {
+        "type": "Contributor",
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/9876.27.82.0",
+            "type": "Organization",
+            "labels": {
+              "it": "Department of Food, Environmental and Nutritional Sciences (DeFENS), Università degli Studi di Milano"
+            },
+            "topLevelOrganization": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/9876.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.27.34.0",
+            "type": "Organization",
+            "labels": {
+              "en": "Faculty of Chemistry, Biotechnology and Food Science, Norwegian University of Life Sciences"
+            },
+            "topLevelOrganization": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0"
+            }
+          }
+        ],
+        "correspondingAuthor": false,
+        "identity": {
+          "type": "Identity",
+          "name": "Iametti, Stefania"
+        },
+        "role": "Creator",
+        "sequence": 7
+      }
+    ],
+    "date": {
+      "type": "PublicationDate",
+      "day": "01",
+      "month": "04",
+      "year": "2022"
+    },
+    "language": "http://lexvo.org/id/iso639-3/eng",
+    "mainTitle": "Effect of sprouting on the proteome of chickpea flour and on its digestibility by ex vivo gastro-duodenal digestion complemented with jejunal brush border membrane enzymes",
+    "reference": {
+      "type": "Reference",
+      "doi": "https://doi.org/10.1016/j.foodres.2022.111012",
+      "publicationContext": {
+        "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
+        "type": "Journal"
+      },
+      "publicationInstance": {
+        "type": "AcademicArticle",
+        "articleNumber": "111012",
+        "volume": "154"
+      }
+    },
+    "tags": [
+      "Brush border membrane enzymes",
+      "Discovery mass spectrometry",
+      "Germination",
+      "Chickpea",
+      "Human gastric and duodenal juice",
+      "Ex vivo digestion",
+      "Sprouting"
+    ]
+  },
+  "identifier": "0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9",
+  "modelVersion": "0.19.33",
+  "modifiedDate": "2023-02-08T09:21:22.370874Z",
+  "publisher": {
+    "id": "https://api.sandbox.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
+    "type": "Organization",
+    "labels": {}
+  },
+  "resourceOwner": {
+    "owner": "fredrikTest@unit.no",
+    "ownerAffiliation": "https://www.example.org"
+  },
+  "status": "PUBLISHED"
+}

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.search.constants.ApplicationConstants;
 import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
@@ -278,45 +279,6 @@ public class OpensearchTest {
     }
 
     @Test
-    void shouldReturnAggregations() throws ApiGatewayException, IOException, InterruptedException {
-        var indexName = generateIndexName();
-
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
-
-        var aggregationDto = new AggregationDto(
-            "contributors", "publication.contributors.identity.name.keyword",
-            new AggregationDto("affiliations", "publication.contributors.affiliations.id.keyword")
-        );
-
-        SearchDocumentsQuery query = new SearchDocumentsQuery(
-            "*",
-            SAMPLE_NUMBER_OF_RESULTS,
-            SAMPLE_FROM,
-            SAMPLE_ORDERBY,
-            DESC,
-            SAMPLE_REQUEST_URI,
-            List.of(aggregationDto)
-        );
-
-        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-        assertThat(response, notNullValue());
-        var aggregations = response.getAggregations()
-            .at("/contributors/buckets");
-        assertThat(aggregations.size(), is(equalTo(2)));
-
-        var affiliation = aggregations.get(0).at("/affiliations/buckets").get(0).at("/key");
-        assertThat("org is on right format",
-                   affiliation.asText().matches("https://api.dev.nva.aws.unit.no/cristin/organization/.*"));
-
-        indexingClient.deleteIndex(indexName);
-    }
-
-    @Test
     void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
                                                                                  InterruptedException {
         var indexName = generateIndexName();
@@ -379,6 +341,66 @@ public class OpensearchTest {
         assertThat(response.getAggregations(), nullValue());
 
         indexingClient.deleteIndex(indexName);
+    }
+
+    @Test
+    void shouldReturnCorrectAggregations() throws IOException, InterruptedException, ApiGatewayException {
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_publication_with_several_of_the_same_affiliation.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
+
+        SearchDocumentsQuery query = new SearchDocumentsQuery(
+            "*",
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            aggregations
+        );
+
+        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+        assertThat(response, notNullValue());
+
+        var actualAggregations = response.getAggregations();
+        var topOrgAggregation = actualAggregations.at("/entityDescription.contributors.affiliations"
+                                                      + ".topLevelOrganization.id/buckets");
+        assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
+
+
+        var typeAggregation = actualAggregations.at("/entityDescription.reference.publicationInstance.type/"
+                                                    + "buckets");
+        assertAggregation(typeAggregation, "AcademicArticle", 2);
+
+        var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
+        assertAggregation(ownerAggregation, "fredrikTest@unit.no", 1);
+
+        var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
+        assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
+
+        var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
+                                                           + "buckets");
+        assertAggregation(contributorAggregation, "lametti, Stefania", 2);
+
+
+        indexingClient.deleteIndex(indexName);
+    }
+
+    void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
+        aggregationNode.forEach(
+            bucketNode -> {
+                if (bucketNode.get("key").asText().equals(key)) {
+                    assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
+                }
+            }
+        );
     }
 
     private ViewingScope getEmptyViewingScope() {
