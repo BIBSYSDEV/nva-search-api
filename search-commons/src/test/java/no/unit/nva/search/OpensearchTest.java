@@ -30,6 +30,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search.models.SearchTicketsQuery;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -112,11 +113,10 @@ public class OpensearchTest {
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
-
-        var response = searchClient.findResourcesForOrganizationIds(getEmptyViewingScope(),
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
+                                                                  searchTicketsQuery,
+                                                                  indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
@@ -137,11 +137,10 @@ public class OpensearchTest {
 
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-
-        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                  searchTicketsQuery,
+                                                                  indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
@@ -161,11 +160,10 @@ public class OpensearchTest {
 
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-
-        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                  searchTicketsQuery,
+                                                                  indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
@@ -186,11 +184,10 @@ public class OpensearchTest {
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
         viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
-
-        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                  searchTicketsQuery,
+                                                                  indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
@@ -208,10 +205,10 @@ public class OpensearchTest {
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
-        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                  searchTicketsQuery,
+                                                                  indexName);
         var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
 
@@ -236,10 +233,10 @@ public class OpensearchTest {
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                  searchTicketsQuery,
+                                                                  indexName);
         var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
 
@@ -263,10 +260,10 @@ public class OpensearchTest {
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        var response = searchClient.findResourcesForOrganizationIds(viewingScope,
-                                                                    PAGE_SIZE,
-                                                                    PAGE_NO,
-                                                                    indexName);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                  searchTicketsQuery,
+                                                                  indexName);
 
         var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
         var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);

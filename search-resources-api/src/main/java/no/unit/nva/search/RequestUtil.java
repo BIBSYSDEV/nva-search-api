@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.List;
 import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
+import no.unit.nva.search.models.SearchTicketsQuery;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
@@ -81,6 +82,13 @@ public class RequestUtil {
             getSortOrder(requestInfo),
             getRequestUri(requestInfo),
             aggregations
+        );
+    }
+
+    public static SearchTicketsQuery toQueryTickets(RequestInfo requestInfo) {
+        return new SearchTicketsQuery(
+            getResults(requestInfo),
+            getFrom(requestInfo)
         );
     }
 }

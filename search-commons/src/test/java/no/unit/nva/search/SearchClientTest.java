@@ -17,7 +17,6 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -35,16 +34,15 @@ import static org.opensearch.search.sort.SortOrder.DESC;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search.models.SearchTicketsQuery;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.search.utils.RequestOptionsHeaderMatcher;
@@ -138,10 +136,10 @@ class SearchClientTest {
         };
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
-                                                     DEFAULT_PAGE_SIZE,
-                                                     DEFAULT_PAGE_NO,
-                                                     OPENSEARCH_ENDPOINT_INDEX);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO);
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingDoiRequests =
             listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
@@ -174,10 +172,10 @@ class SearchClientTest {
         };
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
-                                                     DEFAULT_PAGE_SIZE,
-                                                     DEFAULT_PAGE_NO,
-                                                     OPENSEARCH_ENDPOINT_INDEX);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO);
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationConversation =
             listAllInclusionAndExclusionRulesForPublicationConversation(sentRequest);
@@ -207,11 +205,11 @@ class SearchClientTest {
         when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO);
         var response =
-            searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
-                                                         DEFAULT_PAGE_SIZE,
-                                                         DEFAULT_PAGE_NO,
-                                                         OPENSEARCH_ENDPOINT_INDEX);
+            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                       searchTicketsQuery,
+                                                       OPENSEARCH_ENDPOINT_INDEX);
         assertNotNull(response);
     }
 
@@ -230,10 +228,10 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
-        searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
-                                                     resultSize,
-                                                     DEFAULT_PAGE_NO,
-                                                     OPENSEARCH_ENDPOINT_INDEX);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(resultSize, DEFAULT_PAGE_NO);
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var actualRequestedSize = sentRequest.source().size();
         assertThat(actualRequestedSize, is(equalTo(resultSize)));
@@ -255,10 +253,10 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int pageNo = randomInteger(100);
-        searchClient.findResourcesForOrganizationIds(generateSampleViewingScope(),
-                                                     DEFAULT_PAGE_SIZE,
-                                                     pageNo,
-                                                     OPENSEARCH_ENDPOINT_INDEX);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, pageNo);
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var actualResultsFrom = sentRequest.source().from();
         var resultsFrom = pageNo * DEFAULT_PAGE_SIZE;
