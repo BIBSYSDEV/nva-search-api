@@ -59,7 +59,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
-        logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
+        logger.info("ViewingScope: {} ", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
             .orElseThrow());
 
         var searchResponse = searchClient.findTicketsForOrganizationIds(viewingScope,
