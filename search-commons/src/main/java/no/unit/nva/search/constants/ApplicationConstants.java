@@ -29,6 +29,11 @@ public final class ApplicationConstants {
                            "entityDescription.contributors.affiliations.topLevelOrganization.id.keyword")
     );
 
+    public static final List<AggregationDto> TICKETS_AGGREGATIONS = List.of(
+        new AggregationDto("type",
+                           "type.keyword")
+    );
+
     public static final List<String> TICKET_INDICES =
         List.of(DOIREQUESTS_INDEX, MESSAGES_INDEX, PUBLISHING_REQUESTS_INDEX);
 
