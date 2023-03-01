@@ -2,8 +2,7 @@ package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.function.Predicate.isEqual;
-import static no.unit.nva.search.RequestUtil.FROM_KEY;
-import static no.unit.nva.search.RequestUtil.RESULTS_KEY;
+import static no.unit.nva.search.RequestUtil.toQueryTickets;
 import static no.unit.nva.search.SearchClient.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.attempt.Try.attempt;
@@ -37,8 +36,6 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     public static final String CRISTIN_ORG_LEVEL_DELIMITER = "\\.";
     public static final int HIGHEST_LEVEL_ORGANIZATION = 0;
     public static final String EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS = "APPROVE_DOI_REQUEST";
-    public static final int DEFAULT_PAGE_SIZE = 100;
-    public static final int DEFAULT_RESULTS_INDEX = 0;
     private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
     private final SearchClient searchClient;
     private final IdentityClient identityClient;
@@ -56,28 +53,18 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     @Override
     protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+        throws ApiGatewayException {
 
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
         assertUserHasAppropriateAccessRights(requestInfo);
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
-        logger.info("ViewingScope: {}", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
-                .orElseThrow());
+        logger.info("ViewingScope: {} ", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
+            .orElseThrow());
 
-        var from = requestInfo
-                .getQueryParameterOpt(FROM_KEY)
-                .map(Integer::parseInt)
-                .orElse(DEFAULT_RESULTS_INDEX);
-        var pageSize = requestInfo
-                .getQueryParameterOpt(RESULTS_KEY)
-                .map(Integer::parseInt)
-                .orElse(DEFAULT_PAGE_SIZE);
-
-        var searchResponse = searchClient.findResourcesForOrganizationIds(viewingScope,
-                pageSize,
-                from,
-                indexName);
+        var searchResponse = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                        toQueryTickets(requestInfo),
+                                                                        indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
         return SearchResponseDto.fromSearchResponse(searchResponse, requestUri);
     }
@@ -102,15 +89,16 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         var defaultScope = getUserDefinedViewingScore(requestInfo);
         if (defaultScope.isPresent()) {
             var json = attempt(() ->
-                    JsonUtils.dtoObjectMapper.writeValueAsString(defaultScope.orElseThrow())).orElseThrow();
+                                   JsonUtils.dtoObjectMapper.writeValueAsString(
+                                       defaultScope.orElseThrow())).orElseThrow();
             logger.info("Orestis, ViewingScope defined by user:{}", json);
         } else {
             logger.info("Orestis, Viewing scope not defined by user.");
         }
         return defaultScope
-                .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
-                .orElseGet(() -> defaultViewingScope(requestInfo))
-                .orElseThrow(failure -> handleFailure(failure.getException()));
+            .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
+            .orElseGet(() -> defaultViewingScope(requestInfo))
+            .orElseThrow(failure -> handleFailure(failure.getException()));
     }
 
     private ApiGatewayException handleFailure(Exception exception) {
@@ -125,7 +113,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     //TODO: When the Cristin proxy is mature and quick, we should query the Cristin proxy in
     // order to avoid using semantically charged identifiers.
     private ViewingScope authorizeCustomViewingScope(ViewingScope viewingScope, RequestInfo requestInfo)
-            throws ForbiddenException {
+        throws ForbiddenException {
         var customerCristinId = requestInfo.getTopLevelOrgCristinId().orElseThrow();
         logger.info("customerCristinId: {}", customerCristinId);
         return userIsAuthorized(viewingScope, customerCristinId);
@@ -133,15 +121,15 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private Try<ViewingScope> defaultViewingScope(RequestInfo requestInfo) {
         return attempt(requestInfo::getUserName)
-                .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
-                .map(Optional::orElseThrow)
-                .map(UserResponse::getViewingScope);
+            .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
+            .map(Optional::orElseThrow)
+            .map(UserResponse::getViewingScope);
     }
 
     private Optional<ViewingScope> getUserDefinedViewingScore(RequestInfo requestInfo) {
         return requestInfo.getQueryParameterOpt(VIEWING_SCOPE_QUERY_PARAMETER)
-                .map(URI::create)
-                .map(ViewingScope::create);
+            .map(URI::create)
+            .map(ViewingScope::create);
     }
 
     private ViewingScope userIsAuthorized(ViewingScope viewingScope, URI customerCristinId) throws ForbiddenException {
@@ -153,8 +141,8 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private boolean allIncludedUnitsAreLegal(ViewingScope viewingScope, URI customerCristinId) {
         return viewingScope.getIncludedUnits().stream()
-                .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
-                .allMatch(isEqual(true));
+            .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
+            .allMatch(isEqual(true));
     }
 
     private boolean isUnderUsersInstitution(URI requestedOrg, URI customerCristinId) {
