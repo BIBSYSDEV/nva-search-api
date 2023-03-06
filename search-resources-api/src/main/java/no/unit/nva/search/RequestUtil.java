@@ -85,10 +85,11 @@ public class RequestUtil {
         );
     }
 
-    public static SearchTicketsQuery toQueryTickets(RequestInfo requestInfo) {
+    public static SearchTicketsQuery toQueryTickets(RequestInfo requestInfo, List<AggregationDto> aggregations) {
         return new SearchTicketsQuery(
             getResults(requestInfo),
-            getFrom(requestInfo)
+            getFrom(requestInfo),
+            aggregations
         );
     }
 }

@@ -114,7 +114,7 @@ public class OpensearchTest {
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
         var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -138,7 +138,7 @@ public class OpensearchTest {
 
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -161,7 +161,7 @@ public class OpensearchTest {
 
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -185,7 +185,7 @@ public class OpensearchTest {
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
         viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -197,7 +197,7 @@ public class OpensearchTest {
     }
 
     @Test
-    void shouldCreateSearchResourcesResponseFromSearchResponse() throws Exception {
+    void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
         var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
@@ -206,7 +206,7 @@ public class OpensearchTest {
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -234,7 +234,7 @@ public class OpensearchTest {
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -260,8 +260,10 @@ public class OpensearchTest {
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
+
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO);
+        var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, aggregations);
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -371,7 +373,6 @@ public class OpensearchTest {
                                                       + ".topLevelOrganization.id/buckets");
         assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
-
         var typeAggregation = actualAggregations.at("/entityDescription.reference.publicationInstance.type/"
                                                     + "buckets");
         assertAggregation(typeAggregation, "AcademicArticle", 2);
@@ -385,7 +386,6 @@ public class OpensearchTest {
         var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
                                                            + "buckets");
         assertAggregation(contributorAggregation, "lametti, Stefania", 2);
-
 
         indexingClient.deleteIndex(indexName);
     }
@@ -431,5 +431,64 @@ public class OpensearchTest {
                                                        JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
+    }
+
+    @Test
+    void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException, IOException,
+                                                                     InterruptedException {
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
+        var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
+                                                                               indexName);
+
+        SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
+                                                                                   SAMPLE_REQUEST_URI);
+
+        assertThat(searchResponseDto, notNullValue());
+        assertThat(searchResponseDto.getAggregations(), nullValue());
+
+        indexingClient.deleteIndex(indexName);
+    }
+
+    @Test
+    void shouldReturnCorrectTicketsAggregations() throws IOException, InterruptedException, ApiGatewayException {
+        var indexName = generateIndexName();
+
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
+
+        var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, aggregations);
+        var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
+                                                                               indexName);
+
+        SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
+                                                                                   SAMPLE_REQUEST_URI);
+
+        assertThat(searchResponseDto, notNullValue());
+
+        var actualAggregations = searchResponseDto.getAggregations();
+
+        var typeAggregation = actualAggregations.at("/type/"
+                                                    + "buckets");
+        assertAggregation(typeAggregation, "GeneralSupportCase", 1);
+
+        var ownerAggregation = actualAggregations.at("/publication.status/buckets");
+        assertAggregation(ownerAggregation, "DRAFT", 1);
+
+        indexingClient.deleteIndex(indexName);
     }
 }

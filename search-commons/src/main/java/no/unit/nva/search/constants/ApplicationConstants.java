@@ -31,7 +31,9 @@ public final class ApplicationConstants {
 
     public static final List<AggregationDto> TICKETS_AGGREGATIONS = List.of(
         new AggregationDto("type",
-                           "type.keyword")
+                           "type.keyword"),
+        new AggregationDto("publication.status",
+                           "publication.status.keyword")
     );
 
     public static final List<String> TICKET_INDICES =

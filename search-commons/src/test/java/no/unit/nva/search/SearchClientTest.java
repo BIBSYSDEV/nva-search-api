@@ -122,7 +122,7 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendQueryWithAllNeededRulesForDoiRequestsTypeWhenSearchingForResources()
+    void shouldSendQueryWithAllNeededRulesForDoiRequestsTypeWhenSearchingForTickets()
         throws ApiGatewayException, IOException {
         var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
 
@@ -136,7 +136,8 @@ class SearchClientTest {
         };
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       null);
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -158,7 +159,7 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendQueryWithAllNeededClauseForPublicationConversationTypeWhenSearchingForResources()
+    void shouldSendQueryWithAllNeededClauseForPublicationConversationTypeWhenSearchingForTickets()
         throws ApiGatewayException, IOException {
         var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
 
@@ -172,7 +173,8 @@ class SearchClientTest {
         };
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       null);
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -199,13 +201,14 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldReturnSearchResponseWhenSearchingWithOrganizationIds() throws ApiGatewayException, IOException {
+    void shouldReturnTicketsSearchResponseWhenSearchingWithOrganizationIds() throws ApiGatewayException, IOException {
         RestHighLevelClient restHighLevelClient = mock(RestHighLevelClient.class);
         var searchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
         when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       null);
         var response =
             searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                        searchTicketsQuery,
@@ -214,7 +217,8 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendRequestWithSuppliedPageSizeWhenSearchingForResources() throws ApiGatewayException, IOException {
+    void shouldSendRequestWithSuppliedPageSizeWhenSearchingForTickets() throws ApiGatewayException,
+                                                                               IOException {
         var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
 
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
@@ -228,7 +232,8 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(resultSize, DEFAULT_PAGE_NO);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(resultSize, DEFAULT_PAGE_NO,
+                                                                       null);
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -238,7 +243,7 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendRequestWithFirstEntryIndexCalculatedBySuppliedPageSizeAndPageNumber()
+    void shouldSendTicketsRequestWithFirstEntryIndexCalculatedBySuppliedPageSizeAndPageNumber()
         throws ApiGatewayException, IOException {
         var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
 
@@ -253,7 +258,7 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int pageNo = randomInteger(100);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, pageNo);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, pageNo, null);
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -264,7 +269,7 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendRequestWithAggregations() throws ApiGatewayException, IOException {
+    void shouldSendResourcesRequestWithAggregations() throws ApiGatewayException, IOException {
         var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
 
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
@@ -321,7 +326,7 @@ class SearchClientTest {
     }
 
     @Test
-    void searchSingleTermReturnsResponseWithStatsFromOpensearch() throws ApiGatewayException, IOException {
+    void searchSingleTermReturnsResourcesResponseWithStatsFromOpensearch() throws ApiGatewayException, IOException {
         var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_RESPONSE_FILE);
         var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
@@ -343,7 +348,7 @@ class SearchClientTest {
     }
 
     @Test
-    void searchSingleTermReturnsErrorResponseWhenExceptionInDoSearch() throws IOException {
+    void searchSingleTermReturnsErrorResponseWhenExceptionInResourcesDoSearch() throws IOException {
         var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         when(restHighLevelClient.search(any(), any())).thenThrow(new IOException());
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
@@ -353,7 +358,7 @@ class SearchClientTest {
     }
 
     @Test
-    void searchResponseShouldFormatAggregationsCorrectly() throws IOException, ApiGatewayException {
+    void resourcesSearchResponseShouldFormatAggregationsCorrectly() throws IOException, ApiGatewayException {
         var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_RESPONSE_FILE);
         var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
@@ -465,5 +470,76 @@ class SearchClientTest {
     private SearchResponse generateMockSearchResponse(String fileName) throws IOException {
         String jsonResponse = generateOpenSearchResponseAsString(fileName);
         return getSearchResponseFromJson(jsonResponse);
+    }
+
+    @Test
+    void shouldSendTicketsRequestWithAggregations() throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
+        AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
+        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
+            @Override
+            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
+                sentRequestBuffer.set(searchRequest);
+                return mockSearchResponse;
+            }
+        };
+
+        var nestedAggregationDTOs = List.of(
+            new AggregationDto(
+                randomString(),
+                randomString(),
+                new AggregationDto(
+                    randomString(),
+                    randomString(),
+                    SAMPLE_AGGREGATIONS.get(0)
+                )
+            ),
+            new AggregationDto(
+                randomString(),
+                randomString()
+            )
+        );
+
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       nestedAggregationDTOs);
+
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), searchTicketsQuery,
+                                                   OPENSEARCH_ENDPOINT_INDEX);
+
+        var sentRequest = sentRequestBuffer.get();
+        var actualAggregation = objectMapper.readTree(sentRequest.source().aggregations().toString());
+
+        nestedAggregationDTOs.forEach(aggDTO -> assertAggregationHasField(actualAggregation, aggDTO));
+    }
+
+    @Test
+    void searchTicketsResponseShouldFormatAggregationsCorrectly() throws IOException, ApiGatewayException {
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_RESPONSE_FILE);
+        var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
+
+        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
+
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
+
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       SAMPLE_AGGREGATIONS
+        );
+
+        SearchResponse ticketsSearchResponse =
+            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), searchTicketsQuery,
+                                                       OPENSEARCH_ENDPOINT_INDEX);
+
+        SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
+                                                                                   SAMPLE_REQUEST_URI);
+
+        var aggregations = searchResponseDto.getAggregations();
+
+        var expected = objectMapperWithEmpty.readValue(inputStreamFromResources(EXPECTED_AGGREGATIONS),
+                                                       JsonNode.class);
+
+        assertThat(aggregations, is(Matchers.equalTo(expected)));
     }
 }

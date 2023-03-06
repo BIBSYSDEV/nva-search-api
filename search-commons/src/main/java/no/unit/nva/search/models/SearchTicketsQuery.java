@@ -1,6 +1,7 @@
 package no.unit.nva.search.models;
 
 import java.net.URI;
+import java.util.List;
 import no.unit.nva.search.SearchClient;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import org.opensearch.action.search.SearchRequest;
@@ -13,10 +14,12 @@ public class SearchTicketsQuery {
 
     public final int pageSize;
     public final int pageNo;
+    private final List<AggregationDto> aggregations;
 
-    public SearchTicketsQuery(int pageSize, int pageNo) {
+    public SearchTicketsQuery(int pageSize, int pageNo, List<AggregationDto> aggregations) {
         this.pageSize = pageSize;
         this.pageNo = pageNo;
+        this.aggregations = aggregations;
     }
 
     public SearchRequest createSearchRequestForTicketsWithOrganizationIds(
@@ -26,6 +29,10 @@ public class SearchTicketsQuery {
             .query(queryBuilder)
             .size(pageSize)
             .from(calculateFirstEntryIndex(pageSize, pageNo));
+
+        if (aggregations != null) {
+            addAggregations(searchSourceBuilder);
+        }
 
         return new SearchRequest(indices).source(searchSourceBuilder);
     }
@@ -84,5 +91,9 @@ public class SearchTicketsQuery {
                     QueryBuilders.matchPhraseQuery(SearchClient.ORGANIZATION_IDS, excludedOrganizationId.toString()))
                 .queryName(SearchClient.EXCLUDED_VIEWING_SCOPES_QUERY_NAME);
         }
+    }
+
+    private void addAggregations(SearchSourceBuilder sourceBuilder) {
+        aggregations.forEach(aggDTO -> sourceBuilder.aggregation(aggDTO.toAggregationBuilder()));
     }
 }
