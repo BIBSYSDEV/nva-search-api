@@ -94,6 +94,6 @@ public class SearchTicketsQuery {
     }
 
     private void addAggregations(SearchSourceBuilder sourceBuilder) {
-        aggregations.forEach(aggDTO -> sourceBuilder.aggregation(aggDTO.toAggregationBuilder()));
+        aggregations.forEach(aggregation -> sourceBuilder.aggregation(aggregation.toAggregationBuilder()));
     }
 }

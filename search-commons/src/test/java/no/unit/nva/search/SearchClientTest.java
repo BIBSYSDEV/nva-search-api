@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static java.util.Collections.emptyList;
 import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
@@ -137,7 +138,7 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       null);
+                                                                       emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -174,7 +175,7 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       null);
+                                                                       emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -208,7 +209,7 @@ class SearchClientTest {
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
         SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       null);
+                                                                       emptyList());
         var response =
             searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                        searchTicketsQuery,
@@ -233,7 +234,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
         SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(resultSize, DEFAULT_PAGE_NO,
-                                                                       null);
+                                                                       emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -258,7 +259,7 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int pageNo = randomInteger(100);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, pageNo, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, pageNo, emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_ENDPOINT_INDEX);
@@ -313,15 +314,17 @@ class SearchClientTest {
         var sentRequest = sentRequestBuffer.get();
         var actualAggregation = objectMapper.readTree(sentRequest.source().aggregations().toString());
 
-        nestedAggregationDTOs.forEach(aggDTO -> assertAggregationHasField(actualAggregation, aggDTO));
+        nestedAggregationDTOs.forEach(
+            nestedAggregationDTO -> assertAggregationHasField(actualAggregation, nestedAggregationDTO));
     }
 
-    private void assertAggregationHasField(JsonNode json, AggregationDto aggDto) {
-        var actualField = json.at("/" + aggDto.term + "/terms/field").asText();
-        assertThat(actualField, is(equalTo(aggDto.field)));
+    private void assertAggregationHasField(JsonNode json, AggregationDto aggregationDto) {
+        var actualField = json.at("/" + aggregationDto.term + "/terms/field").asText();
+        assertThat(actualField, is(equalTo(aggregationDto.field)));
 
-        if (aggDto.subAggregation != null) {
-            assertAggregationHasField(json.at("/" + aggDto.term + "/aggregations"), aggDto.subAggregation);
+        if (aggregationDto.subAggregation != null) {
+            assertAggregationHasField(json.at("/" + aggregationDto.term + "/aggregations"),
+                                      aggregationDto.subAggregation);
         }
     }
 
@@ -511,7 +514,8 @@ class SearchClientTest {
         var sentRequest = sentRequestBuffer.get();
         var actualAggregation = objectMapper.readTree(sentRequest.source().aggregations().toString());
 
-        nestedAggregationDTOs.forEach(aggDTO -> assertAggregationHasField(actualAggregation, aggDTO));
+        nestedAggregationDTOs.forEach(
+            nestedAggregationDTO -> assertAggregationHasField(actualAggregation, nestedAggregationDTO));
     }
 
     @Test

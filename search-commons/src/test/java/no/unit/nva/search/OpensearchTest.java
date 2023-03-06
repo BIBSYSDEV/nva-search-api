@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static java.util.Collections.emptyList;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
@@ -39,6 +40,7 @@ import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -69,6 +71,7 @@ public class OpensearchTest {
     private static SearchClient searchClient;
     private static IndexingClient indexingClient;
     private static final OpenSearchContainer container = new OpenSearchContainer();
+    private static String indexName;
 
     @BeforeAll
     static void setUp() {
@@ -86,8 +89,14 @@ public class OpensearchTest {
     }
 
     @AfterAll
-    static void afterAll() {
+    static void afterAll() throws Exception {
+        indexingClient.deleteIndex(indexName);
         container.stop();
+    }
+
+    @BeforeEach
+    void beforeEachTest() {
+        indexName = generateIndexName();
     }
 
     @Test
@@ -109,12 +118,11 @@ public class OpensearchTest {
 
     @Test
     void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
 
         Thread.sleep(DELAY_AFTER_INDEXING);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -129,7 +137,6 @@ public class OpensearchTest {
 
     @Test
     void shouldReturnTwoHitsOnViewingScopeWithIncludedUnit() throws Exception {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
@@ -138,20 +145,17 @@ public class OpensearchTest {
 
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
@@ -161,20 +165,17 @@ public class OpensearchTest {
 
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnOneHitOnViewingScopeWithExcludedUnit() throws Exception {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID,
@@ -185,20 +186,17 @@ public class OpensearchTest {
         var viewingScope = getEmptyViewingScope();
         viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
         viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
 
         assertThat(response.getHits().getHits().length,
                    is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
         indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
@@ -206,7 +204,7 @@ public class OpensearchTest {
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -216,13 +214,10 @@ public class OpensearchTest {
         assertThat(searchResourcesResponse, is(notNullValue()));
         assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
         assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(crateSampleIndexDocument(
             indexName,
@@ -234,7 +229,7 @@ public class OpensearchTest {
         Thread.sleep(DELAY_AFTER_INDEXING);
 
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                   searchTicketsQuery,
                                                                   indexName);
@@ -246,14 +241,11 @@ public class OpensearchTest {
         var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
         assertThat(searchResourcesResponse.getHits().size(),
                    is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnPendingPublishingRequestsForDraftPublications()
         throws IOException, InterruptedException, BadGatewayException {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
@@ -273,14 +265,11 @@ public class OpensearchTest {
         assertThat(searchResourcesResponse, is(notNullValue()));
         var expectedHits = 1;
         assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
                                                                                  InterruptedException {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
@@ -310,13 +299,10 @@ public class OpensearchTest {
                        .size(),
                    is(equalTo(1))
         );
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldNotReturnAggregationsWhenNotRequested() throws ApiGatewayException, IOException, InterruptedException {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
@@ -338,13 +324,10 @@ public class OpensearchTest {
 
         assertThat(response, notNullValue());
         assertThat(response.getAggregations(), nullValue());
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnCorrectAggregations() throws IOException, InterruptedException, ApiGatewayException {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
@@ -386,8 +369,6 @@ public class OpensearchTest {
         var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
                                                            + "buckets");
         assertAggregation(contributorAggregation, "lametti, Stefania", 2);
-
-        indexingClient.deleteIndex(indexName);
     }
 
     void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
@@ -436,7 +417,6 @@ public class OpensearchTest {
     @Test
     void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException, IOException,
                                                                      InterruptedException {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
@@ -444,7 +424,7 @@ public class OpensearchTest {
             crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
         Thread.sleep(DELAY_AFTER_INDEXING);
 
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, null);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
         var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
         var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
                                                                                indexName);
@@ -454,13 +434,10 @@ public class OpensearchTest {
 
         assertThat(searchResponseDto, notNullValue());
         assertThat(searchResponseDto.getAggregations(), nullValue());
-
-        indexingClient.deleteIndex(indexName);
     }
 
     @Test
     void shouldReturnCorrectTicketsAggregations() throws IOException, InterruptedException, ApiGatewayException {
-        var indexName = generateIndexName();
 
         indexingClient.addDocumentToIndex(
             crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
@@ -488,7 +465,5 @@ public class OpensearchTest {
 
         var ownerAggregation = actualAggregations.at("/publication.status/buckets");
         assertAggregation(ownerAggregation, "DRAFT", 1);
-
-        indexingClient.deleteIndex(indexName);
     }
 }
