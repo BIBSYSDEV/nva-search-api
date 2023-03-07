@@ -383,7 +383,7 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
+                crateSampleIndexDocument(indexName, "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
@@ -404,7 +404,7 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
+                crateSampleIndexDocument(indexName, "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
@@ -425,8 +425,8 @@ public class OpensearchTest {
                                                         + "buckets");
             assertAggregation(typeAggregation, "GeneralSupportCase", 1);
 
-            var ownerAggregation = actualAggregations.at("/status/buckets");
-            assertAggregation(ownerAggregation, "Pending", 2);
+            var statusAggregation = actualAggregations.at("/status/buckets");
+            assertAggregation(statusAggregation, "Pending", 2);
         }
 
         void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
