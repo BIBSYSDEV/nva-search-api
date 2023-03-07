@@ -1,0 +1,16 @@
+{
+  "type": {
+    "docCountErrorUpperBound": 0,
+    "sumOtherDocCount": 0,
+    "buckets": [
+      {
+        "key": "PublishingRequest",
+        "docCount": 1
+      },
+      {
+        "key": "GeneralSupportCase",
+        "docCount": 1
+      }
+    ]
+  }
+}

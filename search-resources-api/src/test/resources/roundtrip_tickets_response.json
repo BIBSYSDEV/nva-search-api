@@ -1,0 +1,58 @@
+{
+  "@context": "https://api.nva.unit.no/resources/search",
+  "id": "https://localhost/messages",
+  "processingTime": 49,
+  "size": 2,
+  "hits": [
+    {
+      "type": "PublishingRequest",
+      "customerId": "https://api.sandbox.nva.aws.unit.no/customer/69af2cc0-9c78-40df-964e-79758d83445a",
+      "owner": "1306838@20754.0.0.0",
+      "modifiedDate": "2023-01-23T13:43:05.709054Z",
+      "createdDate": "2023-01-23T13:42:54.498817Z",
+      "id": "0185dede1522-f1cff045-bf63-47d4-8be6-71817d409c8d",
+      "messages": [],
+      "viewedBy": [
+        "1306838@20754.0.0.0"
+      ],
+      "publication": {
+        "owner": "1136263@20754.0.0.0",
+        "createdDate": "2022-07-13T14:18:53.006211Z",
+        "modifiedDate": "2022-07-13T14:18:53.006211Z",
+        "status": "DRAFT",
+        "id": "https://api.dev.nva.aws.unit.no/publication/0181f7ed4cd3-80bafad9-b6c8-49ea-88f9-a5e3e371254a",
+        "identifier": "0181f7ed4cd3-80bafad9-b6c8-49ea-88f9-a5e3e371254a",
+        "mainTitle": "This is the main title"
+      },
+      "status": "Pending",
+      "organizationIds": [
+        "https://www.example.com/20754.0.0.0"
+      ]
+    },
+    {
+      "type": "GeneralSupportCase",
+      "customerId": "https://api.sandbox.nva.aws.unit.no/customer/69af2cc0-9c78-40df-964e-79758d83445a",
+      "owner": "1137245@20754.0.0.0",
+      "modifiedDate": "2023-01-19T12:46:25.139460Z",
+      "createdDate": "2023-01-19T12:46:14.497829Z",
+      "id": "0185ca10c3e1-a59da4af-f987-4363-8f5e-d01eb3796c97",
+      "messages": [],
+      "viewedBy": [
+        "1137245@20754.0.0.0"
+      ],
+      "publication": {
+        "owner": "1137245@20754.0.0.0",
+        "createdDate": "2023-01-19T12:27:09.710051Z",
+        "modifiedDate": "2023-01-19T12:46:27.516873Z",
+        "status": "PUBLISHED",
+        "id": "https://api.sandbox.nva.aws.unit.no/publication/0185c9ff4c0e-53ed7dfa-d57d-4289-8e97-a5c356125365",
+        "identifier": "0185c9ff4c0e-53ed7dfa-d57d-4289-8e97-a5c356125365",
+        "mainTitle": "FredrikTest Aggregering"
+      },
+      "organizationIds": [
+        "https://www.example.com/20754.0.0.0"
+      ],
+      "status": "Pending"
+    }
+  ]
+}

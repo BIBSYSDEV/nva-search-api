@@ -39,8 +39,10 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -89,14 +91,8 @@ public class OpensearchTest {
     }
 
     @AfterAll
-    static void afterAll() throws Exception {
-        indexingClient.deleteIndex(indexName);
+    static void afterAll() {
         container.stop();
-    }
-
-    @BeforeEach
-    void beforeEachTest() {
-        indexName = generateIndexName();
     }
 
     @Test
@@ -116,354 +112,368 @@ public class OpensearchTest {
         assertThat(response.statusCode(), is(equalTo(200)));
     }
 
-    @Test
-    void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
+    @Nested
+    class AddDocumentToIndexTest {
 
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
+        @BeforeEach
+        void beforeEachTest() {
+            indexName = generateIndexName();
+        }
 
-        Thread.sleep(DELAY_AFTER_INDEXING);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
-                                                                  searchTicketsQuery,
-                                                                  indexName);
+        @AfterEach
+        void afterEachTest() throws Exception {
+            indexingClient.deleteIndex(indexName);
+        }
 
-        assertThat(response.getHits().getHits().length,
-                   is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
-    }
+        @Test
+        void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
 
-    private static String generateIndexName() {
-        return RandomDataGenerator.randomString().toLowerCase();
-    }
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
 
-    @Test
-    void shouldReturnTwoHitsOnViewingScopeWithIncludedUnit() throws Exception {
+            Thread.sleep(DELAY_AFTER_INDEXING);
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
+                                                                      searchTicketsQuery,
+                                                                      indexName);
 
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+            assertThat(response.getHits().getHits().length,
+                       is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
+        }
 
-        Thread.sleep(DELAY_AFTER_INDEXING);
+        @Test
+        void shouldReturnTwoHitsOnViewingScopeWithIncludedUnit() throws Exception {
 
-        var viewingScope = getEmptyViewingScope();
-        viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                  searchTicketsQuery,
-                                                                  indexName);
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
 
-        assertThat(response.getHits().getHits().length,
-                   is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
-    }
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-    @Test
-    void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
+            var viewingScope = getEmptyViewingScope();
+            viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                      searchTicketsQuery,
+                                                                      indexName);
 
-        indexingClient.addDocumentToIndex(
-            getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
-        );
+            assertThat(response.getHits().getHits().length,
+                       is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
+        }
 
-        Thread.sleep(DELAY_AFTER_INDEXING);
+        @Test
+        void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
 
-        var viewingScope = getEmptyViewingScope();
-        viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                  searchTicketsQuery,
-                                                                  indexName);
+            indexingClient.addDocumentToIndex(
+                getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
+            );
 
-        assertThat(response.getHits().getHits().length,
-                   is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
-    }
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-    @Test
-    void shouldReturnOneHitOnViewingScopeWithExcludedUnit() throws Exception {
+            var viewingScope = getEmptyViewingScope();
+            viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                      searchTicketsQuery,
+                                                                      indexName);
 
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID,
-                                                                             EXCLUDED_ORGANIZATION_ID)));
+            assertThat(response.getHits().getHits().length,
+                       is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
+        }
 
-        Thread.sleep(DELAY_AFTER_INDEXING);
+        @Test
+        void shouldReturnOneHitOnViewingScopeWithExcludedUnit() throws Exception {
 
-        var viewingScope = getEmptyViewingScope();
-        viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-        viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                  searchTicketsQuery,
-                                                                  indexName);
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID,
+                                                                                 EXCLUDED_ORGANIZATION_ID)));
 
-        assertThat(response.getHits().getHits().length,
-                   is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
-    }
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-    @Test
-    void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
+            var viewingScope = getEmptyViewingScope();
+            viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
+            viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                      searchTicketsQuery,
+                                                                      indexName);
 
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-        indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+            assertThat(response.getHits().getHits().length,
+                       is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
+        }
 
-        Thread.sleep(DELAY_AFTER_INDEXING);
+        @Test
+        void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
 
-        var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                  searchTicketsQuery,
-                                                                  indexName);
-        var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
-        var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
 
-        assertThat(searchResourcesResponse, is(notNullValue()));
-        assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
-        assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
-    }
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-    @Test
-    void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
+            var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                      searchTicketsQuery,
+                                                                      indexName);
+            var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
+            var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
 
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument(
-            indexName,
-            "sample_response_with_publication_status_as_draft.json"));
-        indexingClient.addDocumentToIndex(crateSampleIndexDocument(
-            indexName,
-            "sample_response_with_publication_status_as_requested.json"));
+            assertThat(searchResourcesResponse, is(notNullValue()));
+            assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
+            assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
+        }
 
-        Thread.sleep(DELAY_AFTER_INDEXING);
+        @Test
+        void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
 
-        var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                  searchTicketsQuery,
-                                                                  indexName);
-        var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
-        var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
+            indexingClient.addDocumentToIndex(crateSampleIndexDocument(
+                indexName,
+                "sample_response_with_publication_status_as_draft.json"));
+            indexingClient.addDocumentToIndex(crateSampleIndexDocument(
+                indexName,
+                "sample_response_with_publication_status_as_requested.json"));
 
-        assertThat(searchResourcesResponse, is(notNullValue()));
-        assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
-        var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
-        assertThat(searchResourcesResponse.getHits().size(),
-                   is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
-    }
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-    @Test
-    void shouldReturnPendingPublishingRequestsForDraftPublications()
-        throws IOException, InterruptedException, BadGatewayException {
+            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                      searchTicketsQuery,
+                                                                      indexName);
+            var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
+            var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
 
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
+            assertThat(searchResourcesResponse, is(notNullValue()));
+            assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
+            var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
+            assertThat(searchResourcesResponse.getHits().size(),
+                       is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
+        }
 
-        var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, aggregations);
-        var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                  searchTicketsQuery,
-                                                                  indexName);
+        @Test
+        void shouldReturnPendingPublishingRequestsForDraftPublications()
+            throws IOException, InterruptedException, BadGatewayException {
 
-        var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
-        var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
-        assertThat(searchResourcesResponse, is(notNullValue()));
-        var expectedHits = 1;
-        assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
-    }
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-    @Test
-    void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
-                                                                                 InterruptedException {
+            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
+                                                                      searchTicketsQuery,
+                                                                      indexName);
 
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
+            var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
+            var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
+            assertThat(searchResourcesResponse, is(notNullValue()));
+            var expectedHits = 1;
+            assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
+        }
 
-        var aggregationDto = new AggregationDto("publication.status",
-                                                "publication.status.keyword");
-        aggregationDto.setAggregationBucketAmount(1);
+        @Test
+        void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
+                                                                                     InterruptedException {
 
-        SearchDocumentsQuery query = new SearchDocumentsQuery(
-            "*",
-            SAMPLE_NUMBER_OF_RESULTS,
-            SAMPLE_FROM,
-            SAMPLE_ORDERBY,
-            DESC,
-            SAMPLE_REQUEST_URI,
-            List.of(aggregationDto)
-        );
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            var aggregationDto = new AggregationDto("publication.status",
+                                                    "publication.status.keyword");
+            aggregationDto.setAggregationBucketAmount(1);
 
-        assertThat(response.getAggregations()
-                       .get("publication.status")
-                       .get("buckets")
-                       .size(),
-                   is(equalTo(1))
-        );
-    }
+            SearchDocumentsQuery query = new SearchDocumentsQuery(
+                "*",
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI,
+                List.of(aggregationDto)
+            );
 
-    @Test
-    void shouldNotReturnAggregationsWhenNotRequested() throws ApiGatewayException, IOException, InterruptedException {
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
+            assertThat(response.getAggregations()
+                           .get("publication.status")
+                           .get("buckets")
+                           .size(),
+                       is(equalTo(1))
+            );
+        }
 
-        SearchDocumentsQuery query = new SearchDocumentsQuery(
-            "*",
-            SAMPLE_NUMBER_OF_RESULTS,
-            SAMPLE_FROM,
-            SAMPLE_ORDERBY,
-            DESC,
-            SAMPLE_REQUEST_URI,
-            null
-        );
+        @Test
+        void shouldNotReturnAggregationsWhenNotRequested()
+            throws ApiGatewayException, IOException, InterruptedException {
 
-        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-        assertThat(response, notNullValue());
-        assertThat(response.getAggregations(), nullValue());
-    }
+            SearchDocumentsQuery query = new SearchDocumentsQuery(
+                "*",
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI,
+                null
+            );
 
-    @Test
-    void shouldReturnCorrectAggregations() throws IOException, InterruptedException, ApiGatewayException {
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_publication_with_several_of_the_same_affiliation.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
+            assertThat(response, notNullValue());
+            assertThat(response.getAggregations(), nullValue());
+        }
 
-        var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
+        @Test
+        void shouldReturnCorrectAggregations() throws IOException, InterruptedException, ApiGatewayException {
 
-        SearchDocumentsQuery query = new SearchDocumentsQuery(
-            "*",
-            SAMPLE_NUMBER_OF_RESULTS,
-            SAMPLE_FROM,
-            SAMPLE_ORDERBY,
-            DESC,
-            SAMPLE_REQUEST_URI,
-            aggregations
-        );
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publication_with_several_of_the_same_affiliation.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
 
-        var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
 
-        assertThat(response, notNullValue());
+            SearchDocumentsQuery query = new SearchDocumentsQuery(
+                "*",
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI,
+                aggregations
+            );
 
-        var actualAggregations = response.getAggregations();
-        var topOrgAggregation = actualAggregations.at("/entityDescription.contributors.affiliations"
-                                                      + ".topLevelOrganization.id/buckets");
-        assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-        var typeAggregation = actualAggregations.at("/entityDescription.reference.publicationInstance.type/"
-                                                    + "buckets");
-        assertAggregation(typeAggregation, "AcademicArticle", 2);
+            assertThat(response, notNullValue());
 
-        var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
-        assertAggregation(ownerAggregation, "fredrikTest@unit.no", 1);
+            var actualAggregations = response.getAggregations();
+            var topOrgAggregation = actualAggregations.at("/entityDescription.contributors.affiliations"
+                                                          + ".topLevelOrganization.id/buckets");
+            assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
-        var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
-        assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
+            var typeAggregation = actualAggregations.at("/entityDescription.reference.publicationInstance.type/"
+                                                        + "buckets");
+            assertAggregation(typeAggregation, "AcademicArticle", 2);
 
-        var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
-                                                           + "buckets");
-        assertAggregation(contributorAggregation, "lametti, Stefania", 2);
-    }
+            var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
+            assertAggregation(ownerAggregation, "fredrikTest@unit.no", 1);
 
-    void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
-        aggregationNode.forEach(
-            bucketNode -> {
-                if (bucketNode.get("key").asText().equals(key)) {
-                    assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
+            var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
+            assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
+
+            var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
+                                                               + "buckets");
+            assertAggregation(contributorAggregation, "lametti, Stefania", 2);
+        }
+
+        @Test
+        void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException, IOException,
+                                                                         InterruptedException {
+
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
+
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
+            var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
+                                                                                   indexName);
+
+            SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
+                                                                                       SAMPLE_REQUEST_URI);
+
+            assertThat(searchResponseDto, notNullValue());
+            assertThat(searchResponseDto.getAggregations(), nullValue());
+        }
+
+        @Test
+        void shouldReturnCorrectTicketsAggregations() throws IOException, InterruptedException, ApiGatewayException {
+
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
+
+            var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
+
+            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, aggregations);
+            var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
+                                                                                   indexName);
+
+            SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
+                                                                                       SAMPLE_REQUEST_URI);
+
+            assertThat(searchResponseDto, notNullValue());
+
+            var actualAggregations = searchResponseDto.getAggregations();
+
+            var typeAggregation = actualAggregations.at("/type/"
+                                                        + "buckets");
+            assertAggregation(typeAggregation, "GeneralSupportCase", 1);
+
+            var ownerAggregation = actualAggregations.at("/status/buckets");
+            assertAggregation(ownerAggregation, "Pending", 2);
+        }
+
+        void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
+            aggregationNode.forEach(
+                bucketNode -> {
+                    if (bucketNode.get("key").asText().equals(key)) {
+                        assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
+                    }
                 }
-            }
-        );
-    }
+            );
+        }
 
-    private ViewingScope getEmptyViewingScope() {
-        return new ViewingScope();
-    }
+        private ViewingScope getEmptyViewingScope() {
+            return new ViewingScope();
+        }
 
-    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds) {
-        return getIndexDocument(indexName, organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
-    }
+        private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds) {
+            return getIndexDocument(indexName, organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
+        }
 
-    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds, String status) {
-        var eventConsumptionAttributes = new EventConsumptionAttributes(
-            indexName,
-            SortableIdentifier.next()
-        );
-        Map<String, Object> map = Map.of(
-            ORGANIZATION_IDS, organizationIds,
-            DOCUMENT_TYPE, DOI_REQUEST,
-            TICKET_STATUS, status
-        );
-        var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
-        return new IndexDocument(eventConsumptionAttributes, jsonNode);
-    }
+        private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds, String status) {
+            var eventConsumptionAttributes = new EventConsumptionAttributes(
+                indexName,
+                SortableIdentifier.next()
+            );
+            Map<String, Object> map = Map.of(
+                ORGANIZATION_IDS, organizationIds,
+                DOCUMENT_TYPE, DOI_REQUEST,
+                TICKET_STATUS, status
+            );
+            var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
+            return new IndexDocument(eventConsumptionAttributes, jsonNode);
+        }
 
-    private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
-        var eventConsumptionAttributes = new EventConsumptionAttributes(
-            indexName,
-            SortableIdentifier.next()
-        );
-        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-                                                       JsonNode.class);
+        private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
+            var eventConsumptionAttributes = new EventConsumptionAttributes(
+                indexName,
+                SortableIdentifier.next()
+            );
+            var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
+                                                           JsonNode.class);
 
-        return new IndexDocument(eventConsumptionAttributes, jsonNode);
-    }
+            return new IndexDocument(eventConsumptionAttributes, jsonNode);
+        }
 
-    @Test
-    void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException, IOException,
-                                                                     InterruptedException {
-
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
-
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
-        var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
-                                                                               indexName);
-
-        SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
-                                                                                   SAMPLE_REQUEST_URI);
-
-        assertThat(searchResponseDto, notNullValue());
-        assertThat(searchResponseDto.getAggregations(), nullValue());
-    }
-
-    @Test
-    void shouldReturnCorrectTicketsAggregations() throws IOException, InterruptedException, ApiGatewayException {
-
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_published_publication.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
-
-        var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
-
-        var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, aggregations);
-        var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
-                                                                               indexName);
-
-        SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
-                                                                                   SAMPLE_REQUEST_URI);
-
-        assertThat(searchResponseDto, notNullValue());
-
-        var actualAggregations = searchResponseDto.getAggregations();
-
-        var typeAggregation = actualAggregations.at("/type/"
-                                                    + "buckets");
-        assertAggregation(typeAggregation, "GeneralSupportCase", 1);
-
-        var ownerAggregation = actualAggregations.at("/publication.status/buckets");
-        assertAggregation(ownerAggregation, "DRAFT", 1);
+        private String generateIndexName() {
+            return RandomDataGenerator.randomString().toLowerCase();
+        }
     }
 }

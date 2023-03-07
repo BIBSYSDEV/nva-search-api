@@ -19,6 +19,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -43,6 +45,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.responses.UserResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
@@ -59,8 +62,9 @@ import org.zalando.problem.Problem;
 
 class SearchTicketsHandlerTest {
 
-    public static final String SAMPLE_OPENSEARCH_RESPONSE_JSON = "sample_opensearch_response.json";
-    public static final String RESOURCE_ID = "f367b260-c15e-4d0f-b197-e1dc0e9eb0e8";
+    public static final String SAMPLE_OPENSEARCH_TICKETS_RESPONSE_JSON = "sample_opensearch_tickets_response.json";
+    public static final String ROUNDTRIP_RESPONSE_TICKETS_JSON = "roundtrip_tickets_response.json";
+    public static final String TICKET_ID = "0185dede1522-f1cff045-bf63-47d4-8be6-71817d409c8d";
     public static final URI CUSTOMER_CRISTIN_ID = URI.create("https://example.org/123.XXX.XXX.XXX");
     public static final URI SOME_LEGAL_CUSTOM_CRISTIN_ID = URI.create("https://example.org/123.111.222.333");
     public static final URI SOME_ILLEGAL_CUSTOM_CRISTIN_ID = URI.create("https://example.org/124.111.222.333");
@@ -92,7 +96,7 @@ class SearchTicketsHandlerTest {
         var response = GatewayResponse.fromOutputStream(outputStream, String.class);
 
         assertThat(response.getStatusCode(), is(equalTo(HTTP_OK)));
-        assertThat(response.getBody(), containsString(RESOURCE_ID));
+        assertThat(response.getBody(), containsString(TICKET_ID));
 
         JsonNode jsonNode = objectMapperWithEmpty.readTree(response.getBody());
         assertThat(jsonNode, is(notNullValue()));
@@ -100,10 +104,10 @@ class SearchTicketsHandlerTest {
 
     @Test
     void shouldSendQueryOverridingDefaultViewingScopeWhenUserRequestsToViewDoiRequestsOrMessagesWithinTheirLegalScope()
-            throws IOException {
+        throws IOException {
         handler.handleRequest(queryWithCustomOrganizationAsQueryParameter(SOME_LEGAL_CUSTOM_CRISTIN_ID),
-                outputStream,
-                context);
+                              outputStream,
+                              context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
         var queryDescription = searchRequest.buildDescription();
 
@@ -113,10 +117,10 @@ class SearchTicketsHandlerTest {
 
     @Test
     void shouldNotSendQueryAndReturnForbiddenWhenUserRequestsToViewDoiRequestsOrMessagesOutsideTheirLegalScope()
-            throws IOException {
+        throws IOException {
         handler.handleRequest(queryWithCustomOrganizationAsQueryParameter(SOME_ILLEGAL_CUSTOM_CRISTIN_ID),
-                outputStream,
-                context);
+                              outputStream,
+                              context);
         var response = GatewayResponse.fromOutputStream(outputStream, Problem.class);
         assertThat(response.getStatusCode(), is(equalTo(HttpURLConnection.HTTP_FORBIDDEN)));
 
@@ -165,18 +169,35 @@ class SearchTicketsHandlerTest {
         assertThat(searchRequest.source().size(), is(equalTo(requestedPageSize)));
     }
 
+    @Test
+    void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
+        handler.handleRequest(queryWithoutQueryParameters(), outputStream, context);
+        var gatewayResponse = GatewayResponse
+            .fromOutputStream(outputStream, SearchResponseDto.class);
+
+        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
+        SearchResponseDto expected = objectMapperWithEmpty
+            .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)), SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertThat(actual, is(equalTo(expected)));
+        assertNotNull(actual.getAggregations());
+        assertNotNull(actual.getAggregations().get("Bidragsyter"));
+    }
+
     private InputStream queryWithPaginationParameters(String path, Integer from, Integer resultSize)
-            throws JsonProcessingException {
+        throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withUserName(USERNAME)
-                .withHeaders(defaultQueryHeaders())
-                .withCurrentCustomer(customerId)
-                .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-                .withRequestContextValue(PATH, path)
-                .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
-                .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-                .build();
+            .withUserName(USERNAME)
+            .withHeaders(defaultQueryHeaders())
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withRequestContextValue(PATH, path)
+            .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
     }
 
     private void assertThatDefaultScopeHasBeenOverridden(String queryDescription) {
@@ -188,9 +209,9 @@ class SearchTicketsHandlerTest {
 
     private Set<URI> includedUrisInDefaultViewingScope() {
         return identityClientMock.getUser(USERNAME, randomString())
-                .map(UserResponse::getViewingScope)
-                .map(ViewingScope::getIncludedUnits)
-                .orElseThrow();
+            .map(UserResponse::getViewingScope)
+            .map(ViewingScope::getIncludedUnits)
+            .orElseThrow();
     }
 
     private void setupFakeIdentityClient() {
@@ -216,13 +237,13 @@ class SearchTicketsHandlerTest {
     private InputStream queryWithoutQueryParameters(String path) throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withUserName(USERNAME)
-                .withHeaders(defaultQueryHeaders())
-                .withCurrentCustomer(customerId)
-                .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-                .withRequestContextValue(PATH, path)
-                .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-                .build();
+            .withUserName(USERNAME)
+            .withHeaders(defaultQueryHeaders())
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withRequestContextValue(PATH, path)
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
     }
 
     private InputStream queryWithoutQueryParameters() throws JsonProcessingException {
@@ -232,13 +253,13 @@ class SearchTicketsHandlerTest {
     private InputStream queryWithoutAppropriateAccessRight() throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withUserName(USERNAME)
-                .withCurrentCustomer(customerId)
-                .withAccessRights(customerId, "SomeOtherAccessRight")
-                .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
-                .withRequestContextValue(PATH, MESSAGES_PATH)
-                .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-                .build();
+            .withUserName(USERNAME)
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, "SomeOtherAccessRight")
+            .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
+            .withRequestContextValue(PATH, MESSAGES_PATH)
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
     }
 
     private Map<String, String> defaultQueryHeaders() {
@@ -248,18 +269,18 @@ class SearchTicketsHandlerTest {
     private InputStream queryWithCustomOrganizationAsQueryParameter(URI desiredOrgUri) throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withQueryParameters(Map.of(VIEWING_SCOPE_QUERY_PARAMETER, desiredOrgUri.toString()))
-                .withUserName(USERNAME)
-                .withCurrentCustomer(customerId)
-                .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-                .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
-                .withRequestContextValue(PATH, MESSAGES_PATH)
-                .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-                .build();
+            .withQueryParameters(Map.of(VIEWING_SCOPE_QUERY_PARAMETER, desiredOrgUri.toString()))
+            .withUserName(USERNAME)
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
+            .withRequestContextValue(PATH, MESSAGES_PATH)
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
     }
 
     private SearchResponse getSearchResponse() throws IOException {
-        String jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_JSON));
+        String jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_TICKETS_RESPONSE_JSON));
         return SearchResponseUtil.getSearchResponseFromJson(jsonResponse);
     }
 }
