@@ -25,8 +25,8 @@ public final class ApplicationConstants {
                            "resourceOwner.ownerAffiliation.keyword"),
         new AggregationDto("entityDescription.contributors.identity.name",
                            "entityDescription.contributors.identity.name.keyword"),
-        new AggregationDto("entityDescription.contributors.affiliations.topLevelOrganization.id",
-                           "entityDescription.contributors.affiliations.topLevelOrganization.id.keyword")
+        new AggregationDto("topLevelOrganization.id",
+                           "topLevelOrganization.id.keyword")
     );
 
     public static final List<String> TICKET_INDICES =

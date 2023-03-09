@@ -367,8 +367,7 @@ public class OpensearchTest {
         assertThat(response, notNullValue());
 
         var actualAggregations = response.getAggregations();
-        var topOrgAggregation = actualAggregations.at("/entityDescription.contributors.affiliations"
-                                                      + ".topLevelOrganization.id/buckets");
+        var topOrgAggregation = actualAggregations.at("/topLevelOrganization.id/buckets");
         assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
 
