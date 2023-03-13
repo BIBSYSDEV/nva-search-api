@@ -429,6 +429,7 @@ public class OpensearchTest {
             assertAggregation(statusAggregation, "Pending", 2);
         }
 
+
         void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
             aggregationNode.forEach(
                 bucketNode -> {
