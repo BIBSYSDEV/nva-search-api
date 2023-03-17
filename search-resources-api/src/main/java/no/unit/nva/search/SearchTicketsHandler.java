@@ -4,6 +4,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.function.Predicate.isEqual;
 import static no.unit.nva.search.RequestUtil.toQueryTickets;
 import static no.unit.nva.search.SearchClient.defaultSearchClient;
+import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -63,7 +64,8 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
             .orElseThrow());
 
         var searchResponse = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                        toQueryTickets(requestInfo),
+                                                                        toQueryTickets(requestInfo,
+                                                                                       TICKETS_AGGREGATIONS),
                                                                         indexName);
         URI requestUri = RequestUtil.getRequestUri(requestInfo);
         return SearchResponseDto.fromSearchResponse(searchResponse, requestUri);
