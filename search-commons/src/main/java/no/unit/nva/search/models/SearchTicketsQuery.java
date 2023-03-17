@@ -43,12 +43,12 @@ public class SearchTicketsQuery {
 
     private BoolQueryBuilder searchQueryBasedOnOrganizationIdsAndStatus(ViewingScope viewingScope) {
         return new BoolQueryBuilder()
-            .should(allPendingGeneralSupportTickets(viewingScope))
-            .should(allPendingDoiRequestsForPublishedPublications(viewingScope))
-            .should(pendingPublishingRequestsForDraftPublications(viewingScope));
+            .should(generalSupportTickets(viewingScope))
+            .should(doiRequestsForPublishedPublications(viewingScope))
+            .should(publishingRequestsForDraftPublications(viewingScope));
     }
 
-    private QueryBuilder pendingPublishingRequestsForDraftPublications(ViewingScope viewingScope) {
+    private QueryBuilder publishingRequestsForDraftPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
             .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
@@ -58,7 +58,7 @@ public class SearchTicketsQuery {
         return queryBuilder;
     }
 
-    private BoolQueryBuilder allPendingGeneralSupportTickets(ViewingScope viewingScope) {
+    private BoolQueryBuilder generalSupportTickets(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.GENERAL_SUPPORT_CASE))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
@@ -68,7 +68,7 @@ public class SearchTicketsQuery {
         return queryBuilder;
     }
 
-    private BoolQueryBuilder allPendingDoiRequestsForPublishedPublications(ViewingScope viewingScope) {
+    private BoolQueryBuilder doiRequestsForPublishedPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.DOI_REQUEST))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
