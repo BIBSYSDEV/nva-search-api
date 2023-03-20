@@ -62,7 +62,7 @@ public class OpensearchTest {
     public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
     public static final int ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED = 1;
     public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
-    public static final int ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT = 0;
+    public static final int NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final int PAGE_SIZE = 10;
     private static final int PAGE_NO = 0;
@@ -176,7 +176,7 @@ public class OpensearchTest {
                                                                       indexName);
 
             assertThat(response.getHits().getHits().length,
-                       is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
+                       is(equalTo(NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED)));
         }
 
         @Test
@@ -383,7 +383,8 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_ticket_general_support_case_of_published_publication.json"));
+                crateSampleIndexDocument(indexName,
+                                         "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
@@ -404,7 +405,8 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_ticket_general_support_case_of_published_publication.json"));
+                crateSampleIndexDocument(indexName,
+                                         "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
@@ -428,7 +430,6 @@ public class OpensearchTest {
             var statusAggregation = actualAggregations.at("/status/buckets");
             assertAggregation(statusAggregation, "Pending", 2);
         }
-
 
         void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
             aggregationNode.forEach(

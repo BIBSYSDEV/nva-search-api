@@ -52,7 +52,7 @@ public class SearchTicketsQuery {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
             .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
-            .must(QueryBuilders.matchQuery(SearchClient.TICKET_STATUS, SearchClient.PENDING))
+            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
@@ -62,7 +62,7 @@ public class SearchTicketsQuery {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.GENERAL_SUPPORT_CASE))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
-            .must(QueryBuilders.matchQuery(SearchClient.TICKET_STATUS, SearchClient.PENDING))
+            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .queryName(SearchClient.GENERAL_SUPPORT_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
@@ -72,7 +72,7 @@ public class SearchTicketsQuery {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.DOI_REQUEST))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
-            .must(QueryBuilders.matchQuery(SearchClient.TICKET_STATUS, SearchClient.PENDING))
+            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .mustNot(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
             .queryName(SearchClient.DOI_REQUESTS_QUERY_NAME);
 

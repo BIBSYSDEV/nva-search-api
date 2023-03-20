@@ -9,6 +9,7 @@ import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.SearchClient.PENDING;
+import static no.unit.nva.search.SearchClient.PUBLISHING_REQUEST;
 import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_TICKET_ENDPOINT_INDEX;
@@ -60,6 +61,7 @@ import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestHighLevelClient;
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.ExistsQueryBuilder;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 
@@ -149,15 +151,12 @@ class SearchClientTest {
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingDoiRequests =
             listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
-        var mustIncludeOnlyPendingDoiRequests =
-            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(PENDING));
         var mustExcludeDoiRequestsForDraftPublications =
             rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(
                 DRAFT_PUBLICATION_STATUS));
         var mustIncludeDoiRequestsType =
             rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(DOI_REQUEST));
 
-        assertTrue(mustIncludeOnlyPendingDoiRequests, "Could not find rule for including Pending DoiRequests");
         assertTrue(mustExcludeDoiRequestsForDraftPublications,
                    "Could not find rule for excluding DoiRequests for Draft Publications");
         assertTrue(mustIncludeDoiRequestsType, "Could not find rule for including DoiRequest");
@@ -466,6 +465,114 @@ class SearchClientTest {
         assertThat(aggregations, is(Matchers.equalTo(expected)));
     }
 
+    @Test
+    void shouldSendQueryWithAllNeededClauseForPublishingRequestTypeWhenSearchingForTickets()
+        throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
+        AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
+        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
+            @Override
+            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
+                sentRequestBuffer.set(searchRequest);
+                return mockSearchResponse;
+            }
+        };
+
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       emptyList());
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        var sentRequest = sentRequestBuffer.get();
+        var rulesForIncludingPublishingRequest =
+            listAllExistingRulesForPublishingRequest(sentRequest);
+        var mustIncludePublishingRequestType =
+            rulesForIncludingPublishingRequest.stream()
+                .anyMatch(rule -> rule.value().equals(PUBLISHING_REQUEST));
+        var mustIncludePublishingRequestForDraftPublications =
+            rulesForIncludingPublishingRequest.stream().anyMatch(rule -> rule.value().equals(
+                DRAFT_PUBLICATION_STATUS));
+
+        assertTrue(mustIncludePublishingRequestType,
+                   "Could not find rule for including PublishingRequest");
+        assertTrue(mustIncludePublishingRequestForDraftPublications,
+                   "Could not find rule for including for Draft Publications");
+    }
+
+    @Test
+    void shouldSendQueryWithAllExistingRulesForDoiRequestsTypeWhenSearchingForTickets()
+        throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
+        AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
+        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
+            @Override
+            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
+                sentRequestBuffer.set(searchRequest);
+                return mockSearchResponse;
+            }
+        };
+
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       emptyList());
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        var sentRequest = sentRequestBuffer.get();
+        var rulesForIncludingDoiRequests =
+            listAllExistingRulesForDoiRequests(sentRequest);
+        var mustExistsTicketStatusInDoiRequests =
+            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.fieldName().equals("status"));
+        var mustExistsOrganizationIdsInDoiRequests =
+            rulesForIncludingDoiRequests.stream()
+                .anyMatch(condition -> condition.fieldName().equals("organizationIds"));
+        assertTrue(mustExistsTicketStatusInDoiRequests, "Could not find rule for including ticket status for "
+                                                        + "DoiRequests");
+        assertTrue(mustExistsOrganizationIdsInDoiRequests,
+                   "Could not find rule for including organizationIds for DoiRequests");
+    }
+
+    @Test
+    void shouldSendQueryWithAllExistingRulesForPublicationConversationTypeWhenSearchingForTickets()
+        throws ApiGatewayException, IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+
+        AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
+        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
+            @Override
+            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
+                sentRequestBuffer.set(searchRequest);
+                return mockSearchResponse;
+            }
+        };
+
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
+                                                                       emptyList());
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        var sentRequest = sentRequestBuffer.get();
+
+        var rulesForIncludingExistingPublicationConversation =
+            listAllExistingRulesForPublicationConversation(sentRequest);
+
+        var mustExistsTicketStatusInDoiRequests =
+            rulesForIncludingExistingPublicationConversation.stream()
+                .anyMatch(condition -> condition.fieldName().equals("status"));
+        var mustExistsOrganizationIdsInDoiRequests =
+            rulesForIncludingExistingPublicationConversation.stream()
+                .anyMatch(condition -> condition.fieldName().equals(
+                    "organizationIds"));
+        assertTrue(mustExistsTicketStatusInDoiRequests, "Could not find rule for including ticket status for "
+                                                        + "GeneralSupportCase");
+        assertTrue(mustExistsOrganizationIdsInDoiRequests,
+                   "Could not find rule for including OrganizationIds for GeneralSupportCase");
+    }
+
     @NotNull
     private List<MatchQueryBuilder> listAllInclusionAndExclusionRulesForDoiRequests(SearchRequest sentRequest) {
         return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
@@ -549,5 +656,50 @@ class SearchClientTest {
     private SearchResponse generateMockSearchResponse(String fileName) throws IOException {
         String jsonResponse = generateOpenSearchResponseAsString(fileName);
         return getSearchResponseFromJson(jsonResponse);
+    }
+
+    @NotNull
+    private List<ExistsQueryBuilder> listAllExistingRulesForDoiRequests(SearchRequest sentRequest) {
+        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+            .filter(this::keepOnlyTheDoiRequestRelatedConditions)
+            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
+            .filter(this::keepOnlyExistsTypeRules)
+            .map(exists -> (ExistsQueryBuilder) exists)
+            .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<ExistsQueryBuilder> listAllExistingRulesForPublicationConversation(
+        SearchRequest sentRequest) {
+        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+            .filter(this::keepOnlyThePublicationConversationRelatedConditions)
+            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
+            .filter(this::keepOnlyExistsTypeRules)
+            .map(matches -> (ExistsQueryBuilder) matches)
+            .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<MatchQueryBuilder> listAllExistingRulesForPublishingRequest(
+        SearchRequest sentRequest) {
+        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+            .filter(this::keepOnlyThePublishingRequestRelatedConditions)
+            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
+            .filter(this::keepOnlyMatchTypeRules)
+            .map(matches -> (MatchQueryBuilder) matches)
+            .collect(Collectors.toList());
+    }
+
+    private boolean keepOnlyExistsTypeRules(QueryBuilder condition) {
+        return condition instanceof ExistsQueryBuilder;
+    }
+
+    private boolean keepOnlyThePublishingRequestRelatedConditions(BoolQueryBuilder q) {
+        return
+            q.must()
+                .stream()
+                .filter(this::keepOnlyMatchTypeRules)
+                .map(match -> (MatchQueryBuilder) match)
+                .anyMatch(match -> match.value().equals(PUBLISHING_REQUEST));
     }
 }

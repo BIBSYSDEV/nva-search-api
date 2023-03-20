@@ -71,6 +71,8 @@ class SearchTicketsHandlerTest {
     public static final String MESSAGES_PATH = "/messages";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     private static final String USERNAME = randomString();
+    private static String ORGANIZATION_IDS = "https://www.example.com/20754.0.0.0";
+    public static final String COMPLETED = "Completed";
 
     private IdentityClient identityClientMock;
     private SearchTicketsHandler handler;
@@ -184,6 +186,20 @@ class SearchTicketsHandlerTest {
         assertThat(actual, is(equalTo(expected)));
         assertNotNull(actual.getAggregations());
         assertNotNull(actual.getAggregations().get("Bidragsyter"));
+    }
+
+    @Test
+    void shouldReturnSearchResponseWithOrganizationIdsAndStatusWhenSearchingForTickets() throws IOException {
+        handler.handleRequest(queryWithoutQueryParameters(), outputStream, context);
+
+        var response = GatewayResponse.fromOutputStream(outputStream, String.class);
+
+        assertThat(response.getStatusCode(), is(equalTo(HTTP_OK)));
+        assertThat(response.getBody(), containsString(ORGANIZATION_IDS));
+        assertThat(response.getBody(), containsString(COMPLETED));
+
+        JsonNode jsonNode = objectMapperWithEmpty.readTree(response.getBody());
+        assertThat(jsonNode, is(notNullValue()));
     }
 
     private InputStream queryWithPaginationParameters(String path, Integer from, Integer resultSize)
