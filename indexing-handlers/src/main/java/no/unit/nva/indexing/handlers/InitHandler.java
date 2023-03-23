@@ -10,7 +10,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,8 @@ public class InitHandler implements RequestHandler<Object, String> {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED. See logs";
 
-    private static final InputStream RESOURCES_MAPPINGS =
-            IoUtils.inputStreamFromResources("resources_mapping.json");
+    private static final String RESOURCES_MAPPINGS =
+            IoUtils.stringFromResources(Path.of("resources_mapping.json"));
     private static final List<IndexRequest> INDEXES = List.of(
             new IndexRequest(RESOURCES_INDEX, RESOURCES_MAPPINGS),
             new IndexRequest(DOIREQUESTS_INDEX),
@@ -79,7 +79,7 @@ public class InitHandler implements RequestHandler<Object, String> {
             this.mappings = Collections.emptyMap();
         }
 
-        public IndexRequest(String name, InputStream jsonMappings) {
+        public IndexRequest(String name, String jsonMappings) {
             this.name = name;
             var typeReference = new TypeReference<Map<String, Object>>(){};
             this.mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonMappings, typeReference))
