@@ -82,7 +82,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     public Void createIndex(String indexName, Map<String, ?> mappings) throws IOException {
         var createRequest = new CreateIndexRequest(indexName);
         createRequest.mapping(mappings);
-        openSearchClient.indices().create(new CreateIndexRequest(indexName), getRequestOptions());
+        openSearchClient.indices().create(createRequest, getRequestOptions());
         return null;
     }
 

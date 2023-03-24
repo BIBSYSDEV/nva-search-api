@@ -8,15 +8,18 @@ import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 
 public class SearchTicketsQuery {
 
     public final int pageSize;
     public final int pageNo;
-    private final List<AggregationDto> aggregations;
+    private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
-    public SearchTicketsQuery(int pageSize, int pageNo, List<AggregationDto> aggregations) {
+    public SearchTicketsQuery(int pageSize,
+                              int pageNo,
+                              List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.pageSize = pageSize;
         this.pageNo = pageNo;
         this.aggregations = aggregations;
@@ -94,6 +97,6 @@ public class SearchTicketsQuery {
     }
 
     private void addAggregations(SearchSourceBuilder sourceBuilder) {
-        aggregations.forEach(aggregation -> sourceBuilder.aggregation(aggregation.toAggregationBuilder()));
+        aggregations.forEach(sourceBuilder::aggregation);
     }
 }
