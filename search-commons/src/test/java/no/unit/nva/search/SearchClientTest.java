@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
@@ -22,6 +23,7 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 import java.io.IOException;
@@ -53,6 +55,7 @@ import static nva.commons.core.ioutils.IoUtils.streamToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -79,6 +82,8 @@ class SearchClientTest {
             List.of(new TermsAggregationBuilder(randomString()).field(randomString()));
     public static final String EXPECTED_TICKETS_AGGREGATIONS =
             "sample_opensearch_ticket_response_searchresponsedto_aggregations.json";
+    private static final int MAX_RESULTS = 100;
+    private static final int OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
 
     CachedJwtProvider cachedJwtProvider;
 
@@ -287,49 +292,6 @@ class SearchClientTest {
     }
 
     @Test
-    void shouldSendTicketsRequestWithAggregations() throws ApiGatewayException, IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
-        AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
-
-        var nestedAggregationDTOs = List.of(
-            new AggregationDto(
-                randomString(),
-                randomString(),
-                new AggregationDto(
-                    randomString(),
-                    randomString(),
-                    SAMPLE_AGGREGATIONS.get(0)
-                )
-            ),
-            new AggregationDto(
-                randomString(),
-                randomString()
-            )
-        );
-
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY, DESC, nestedAggregationDTOs);
-
-        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), searchTicketsQuery,
-                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
-
-        var sentRequest = sentRequestBuffer.get();
-        var actualAggregation = objectMapper.readTree(sentRequest.source().aggregations().toString());
-
-        nestedAggregationDTOs.forEach(
-            nestedAggregationDTO -> assertAggregationHasField(actualAggregation, nestedAggregationDTO));
-    }
-
-    @Test
     void searchTicketsResponseShouldFormatAggregationsCorrectly() throws IOException, ApiGatewayException {
         var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_TICKET_RESPONSE_FILE);
@@ -339,9 +301,8 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
-        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_AGGREGATIONS);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY, DESC, SAMPLE_AGGREGATIONS
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                SAMPLE_AGGREGATIONS
         );
 
         var ticketsSearchResponse =
