@@ -164,8 +164,7 @@ class SearchTicketsHandlerTest {
         var request = queryWithPaginationParameters("tickets", requestedPageNumber, requestedPageSize);
         handler.handleRequest(request, outputStream, context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
-        var expectedIndexOfFirstItem = requestedPageNumber * requestedPageSize;
-        assertThat(searchRequest.source().from(), is(equalTo(expectedIndexOfFirstItem)));
+        assertThat(searchRequest.source().from(), is(equalTo(requestedPageNumber)));
         assertThat(searchRequest.source().size(), is(equalTo(requestedPageSize)));
     }
 
