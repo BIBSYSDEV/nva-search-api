@@ -21,6 +21,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,69 +132,57 @@ class SearchClientTest {
     @Test
     void shouldSendQueryWithAllNeededRulesForDoiRequestsTypeWhenSearchingForTickets()
         throws ApiGatewayException, IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
 
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY,
-                                                                       DESC,
-                                                                       emptyList());
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                                                        emptyList());
+
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
-        var rulesForIncludingDoiRequests =
-            listAllInclusionAndExclusionRulesForDoiRequests(sentRequest);
-        var mustExcludeDoiRequestsForDraftPublications =
-            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(
-                DRAFT_PUBLICATION_STATUS));
-        var mustIncludeDoiRequestsType =
-            rulesForIncludingDoiRequests.stream().anyMatch(condition -> condition.value().equals(DOI_REQUEST));
-
-        assertTrue(mustExcludeDoiRequestsForDraftPublications,
-                   "Could not find rule for excluding DoiRequests for Draft Publications");
-        assertTrue(mustIncludeDoiRequestsType, "Could not find rule for including DoiRequest");
+        var rulesForIncludingDoiRequest = extractQueryBuilderValuesForDoiRequests(sentRequest);
+        assertThat(rulesForIncludingDoiRequest, hasItem(DRAFT_PUBLICATION_STATUS));
+        assertThat(rulesForIncludingDoiRequest, hasItem(DOI_REQUEST));
     }
 
     @Test
-    void shouldSendQueryWithAllNeededClauseForPublicationConversationTypeWhenSearchingForTickets()
+    void shouldSendQueryWithAllNeededRulesForPublicationConversationTypeWhenSearchingForTickets()
         throws ApiGatewayException, IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
 
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY,
-                                                                       DESC,
-                                                                       emptyList());
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                                                        emptyList());
+
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
-        var rulesForIncludingPublicationConversation =
-            listAllInclusionAndExclusionRulesForPublicationConversation(sentRequest);
-        var mustIncludePublicationConversationType =
-            rulesForIncludingPublicationConversation.stream()
-                .anyMatch(rule -> rule.value().equals(GENERAL_SUPPORT_CASE));
-        assertTrue(mustIncludePublicationConversationType,
-                   "Could not find rule for including PublicationConversation");
+        var rulesForIncludingPublicationConversation = extractQueryBuilderValuesForPublicationConversation(sentRequest);
+        assertThat(rulesForIncludingPublicationConversation, hasItem(GENERAL_SUPPORT_CASE));
+    }
+
+    @Test
+    void shouldSendQueryWithAllNeededRulesForPublishingRequestTypeWhenSearchingForTickets()
+        throws ApiGatewayException, IOException {
+        AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
+
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
+        var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY,
+                                                        DESC,
+                                                        emptyList());
+        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
+                                                   searchTicketsQuery,
+                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        var sentRequest = sentRequestBuffer.get();
+        var rulesForIncludingPublicationRequest = extractQueryBuilderValuesForPublicationRequest(sentRequest);
+        assertThat(rulesForIncludingPublicationRequest, hasItem(DRAFT_PUBLICATION_STATUS));
+        assertThat(rulesForIncludingPublicationRequest, hasItem(PUBLISHING_REQUEST));
     }
 
     @Test
@@ -215,10 +204,9 @@ class SearchClientTest {
         when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient =
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY,
-                                                                       DESC,
-                                                                       emptyList());
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                                                        emptyList());
+
         var response =
             searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                        searchTicketsQuery,
@@ -229,22 +217,14 @@ class SearchClientTest {
     @Test
     void shouldSendRequestWithSuppliedPageSizeWhenSearchingForTickets() throws ApiGatewayException,
                                                                                IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
 
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(resultSize, DEFAULT_PAGE_NO, SAMPLE_ORDERBY,
-                                                                       DESC,
-                                                                       emptyList());
+        var searchTicketsQuery = new SearchTicketsQuery(resultSize, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                                                        emptyList());
+
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
@@ -256,21 +236,13 @@ class SearchClientTest {
     @Test
     void shouldSendTicketsRequestWithSuppliedPageNumberWhenSearchingForTickets()
         throws ApiGatewayException, IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
 
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultsFrom = randomInteger(100);
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, resultsFrom, SAMPLE_ORDERBY,
-                                                                       DESC, emptyList());
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, resultsFrom, SAMPLE_ORDERBY,
+                                                        DESC, emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
@@ -281,16 +253,7 @@ class SearchClientTest {
 
     @Test
     void shouldSendResourcesRequestWithAggregations() throws ApiGatewayException, IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
 
         var nestedAggregationDTOs = List.of(
             new AggregationDto(
@@ -317,7 +280,7 @@ class SearchClientTest {
             SAMPLE_REQUEST_URI,
             nestedAggregationDTOs
         );
-
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.searchWithSearchDocumentQuery(sampleQuery, OPENSEARCH_ENDPOINT_INDEX);
 
@@ -402,16 +365,7 @@ class SearchClientTest {
 
     @Test
     void shouldSendTicketsRequestWithAggregations() throws ApiGatewayException, IOException {
-        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
-
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
-        var restClientWrapper = new RestHighLevelClientWrapper((RestHighLevelClient) null) {
-            @Override
-            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
-                sentRequestBuffer.set(searchRequest);
-                return mockSearchResponse;
-            }
-        };
 
         var nestedAggregationDTOs = List.of(
             new AggregationDto(
@@ -429,9 +383,9 @@ class SearchClientTest {
             )
         );
 
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY, DESC, nestedAggregationDTOs);
-
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                                                        nestedAggregationDTOs);
+        var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
@@ -453,9 +407,8 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
-        SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO,
-                                                                       SAMPLE_ORDERBY, DESC, SAMPLE_AGGREGATIONS
-        );
+        var searchTicketsQuery = new SearchTicketsQuery(DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NO, SAMPLE_ORDERBY, DESC,
+                                                        SAMPLE_AGGREGATIONS);
 
         SearchResponse ticketsSearchResponse =
             searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), searchTicketsQuery,
@@ -521,6 +474,17 @@ class SearchClientTest {
         return Stream.concat(exclusionRules.stream(), inclusionRules.stream());
     }
 
+    @NotNull
+    private List<MatchQueryBuilder> listAllInclusionAndExclusionRulesForPublicationRequest(
+        SearchRequest sentRequest) {
+        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+            .filter(this::keepOnlyThePublicationRequestRelatedConditions)
+            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
+            .filter(this::keepOnlyMatchTypeRules)
+            .map(matches -> (MatchQueryBuilder) matches)
+            .collect(Collectors.toList());
+    }
+
     private boolean keepOnlyThePublicationConversationRelatedConditions(BoolQueryBuilder q) {
         return
             q.must()
@@ -547,6 +511,15 @@ class SearchClientTest {
                 .filter(this::keepOnlyMatchTypeRules)
                 .map(match -> (MatchQueryBuilder) match)
                 .anyMatch(match -> match.value().equals(DOI_REQUEST));
+    }
+
+    private boolean keepOnlyThePublicationRequestRelatedConditions(BoolQueryBuilder q) {
+        return
+            q.must()
+                .stream()
+                .filter(this::keepOnlyMatchTypeRules)
+                .map(match -> (MatchQueryBuilder) match)
+                .anyMatch(match -> match.value().equals(PUBLISHING_REQUEST));
     }
 
     private BoolQueryBuilder booleanQuery(QueryBuilder queryBuilder) {
@@ -579,48 +552,33 @@ class SearchClientTest {
         return getSearchResponseFromJson(jsonResponse);
     }
 
-    @NotNull
-    private List<ExistsQueryBuilder> listAllExistingRulesForDoiRequests(SearchRequest sentRequest) {
-        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
-            .filter(this::keepOnlyTheDoiRequestRelatedConditions)
-            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
-            .filter(this::keepOnlyExistsTypeRules)
-            .map(exists -> (ExistsQueryBuilder) exists)
+    RestHighLevelClientWrapper getSearchClientReturningZeroHits(AtomicReference<SearchRequest> sentRequestBuffer)
+        throws IOException {
+        var mockSearchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+        return new RestHighLevelClientWrapper((RestHighLevelClient) null) {
+            @Override
+            public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) {
+                sentRequestBuffer.set(searchRequest);
+                return mockSearchResponse;
+            }
+        };
+    }
+
+    private List<Object> extractQueryBuilderValuesForPublicationConversation(SearchRequest sentRequest) {
+        return listAllInclusionAndExclusionRulesForPublicationConversation(sentRequest)
+            .stream().map(MatchQueryBuilder::value)
             .collect(Collectors.toList());
     }
 
-    @NotNull
-    private List<ExistsQueryBuilder> listAllExistingRulesForPublicationConversation(
-        SearchRequest sentRequest) {
-        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
-            .filter(this::keepOnlyThePublicationConversationRelatedConditions)
-            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
-            .filter(this::keepOnlyExistsTypeRules)
-            .map(matches -> (ExistsQueryBuilder) matches)
+    private List<Object> extractQueryBuilderValuesForDoiRequests(SearchRequest sentRequest) {
+        return listAllInclusionAndExclusionRulesForDoiRequests(sentRequest)
+            .stream().map(MatchQueryBuilder::value)
             .collect(Collectors.toList());
     }
 
-    @NotNull
-    private List<MatchQueryBuilder> listAllExistingRulesForPublishingRequest(
-        SearchRequest sentRequest) {
-        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
-            .filter(this::keepOnlyThePublishingRequestRelatedConditions)
-            .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
-            .filter(this::keepOnlyMatchTypeRules)
-            .map(matches -> (MatchQueryBuilder) matches)
+    private List<Object> extractQueryBuilderValuesForPublicationRequest(SearchRequest sentRequest) {
+        return listAllInclusionAndExclusionRulesForPublicationRequest(sentRequest)
+            .stream().map(MatchQueryBuilder::value)
             .collect(Collectors.toList());
-    }
-
-    private boolean keepOnlyExistsTypeRules(QueryBuilder condition) {
-        return condition instanceof ExistsQueryBuilder;
-    }
-
-    private boolean keepOnlyThePublishingRequestRelatedConditions(BoolQueryBuilder q) {
-        return
-            q.must()
-                .stream()
-                .filter(this::keepOnlyMatchTypeRules)
-                .map(match -> (MatchQueryBuilder) match)
-                .anyMatch(match -> match.value().equals(PUBLISHING_REQUEST));
     }
 }
