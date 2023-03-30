@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "topLevelOrganization": {
+      "type": "nested",
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "labels": {
+          "type": "nested"
+        }
+      }
+    }
+  }
+}

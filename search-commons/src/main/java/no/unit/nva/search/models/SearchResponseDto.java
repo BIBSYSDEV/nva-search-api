@@ -213,7 +213,7 @@ public class SearchResponseDto {
                 outputAggregationNode.set(newName.get(), value);
             } else if (value.isArray()) {
                 var arrayNode = objectMapperWithEmpty.createArrayNode();
-                value.forEach( element -> arrayNode.add(formatAggregations(element)));
+                value.forEach(element -> arrayNode.add(formatAggregations(element)));
                 outputAggregationNode.set(newName.get(), arrayNode);
             } else {
                 outputAggregationNode.set(newName.get(), formatAggregations(nodeEntry.getValue()));

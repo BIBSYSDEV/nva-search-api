@@ -33,7 +33,7 @@ public class DeleteResourceFromIndexHandlerTest {
     public static final String RESOURCES_INDEX = "resource";
 
     public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
-    private final Context CONTEXT = Mockito.mock(Context.class);
+    private static final Context CONTEXT = Mockito.mock(Context.class);
     private FakeIndexingClient indexingClient;
 
     private ByteArrayOutputStream output;
@@ -49,7 +49,7 @@ public class DeleteResourceFromIndexHandlerTest {
 
     @Test
     void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException() throws IOException {
-        var appender = LogUtils.getTestingAppenderForRootLogger();
+        final var appender = LogUtils.getTestingAppenderForRootLogger();
         indexingClient = new FakeIndexingClientThrowingException();
         handler = new DeleteResourceFromIndexHandler(indexingClient);
         var eventReference = createEventBridgeEvent(SortableIdentifier.next());

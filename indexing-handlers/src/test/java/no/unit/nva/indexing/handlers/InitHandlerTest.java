@@ -12,10 +12,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.io.IOException;
+
 import no.unit.nva.search.IndexingClient;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class InitHandlerTest {
 
@@ -41,10 +43,10 @@ class InitHandlerTest {
     void shouldLogWarningAndReturnFailedWhenIndexingClientFailedToCreateIndex() throws IOException {
         var logger = LogUtils.getTestingAppenderForRootLogger();
         String expectedMessage = randomString();
-        when(indexingClient.createIndex(any(String.class))).thenThrow(
+        when(indexingClient.createIndex(Mockito.anyString(), Mockito.anyMap())).thenThrow(
             new IOException(expectedMessage));
         var response = initHandler.handleRequest(null, context);
-        assertEquals(response, FAILED);
+        assertEquals(FAILED, response);
 
         assertThat(logger.getMessages(), containsString(expectedMessage));
     }

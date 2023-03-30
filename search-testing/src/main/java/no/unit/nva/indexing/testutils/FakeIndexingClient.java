@@ -38,7 +38,8 @@ public class FakeIndexingClient extends IndexingClient {
             indexContents.put(indexDocument.getIndexName(), new HashMap<>());
         }
 
-        indexContents.get(indexDocument.getIndexName()).put(indexDocument.getDocumentIdentifier(), indexDocument.getResource());
+        indexContents.get(indexDocument.getIndexName())
+                .put(indexDocument.getDocumentIdentifier(), indexDocument.getResource());
         return null;
     }
 

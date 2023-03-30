@@ -1,15 +1,17 @@
 package no.unit.nva.search;
 
-import static nva.commons.core.attempt.Try.attempt;
-import java.net.URI;
-import java.util.List;
-import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchTicketsQuery;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
+
+import java.net.URI;
+import java.util.List;
+
+import static nva.commons.core.attempt.Try.attempt;
 
 @JacocoGenerated
 public class RequestUtil {
@@ -72,8 +74,9 @@ public class RequestUtil {
             .orElseThrow();
     }
 
-    public static SearchDocumentsQuery toQuery(RequestInfo requestInfo,
-                                               List<AggregationDto> aggregations) {
+    public static SearchDocumentsQuery toQuery(
+            RequestInfo requestInfo,
+            List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         return new SearchDocumentsQuery(
             getSearchTerm(requestInfo),
             getResults(requestInfo),
@@ -85,7 +88,9 @@ public class RequestUtil {
         );
     }
 
-    public static SearchTicketsQuery toQueryTickets(RequestInfo requestInfo, List<AggregationDto> aggregations) {
+    public static SearchTicketsQuery toQueryTickets(
+            RequestInfo requestInfo,
+            List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         return new SearchTicketsQuery(
             getResults(requestInfo),
             getFrom(requestInfo),
