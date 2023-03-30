@@ -9,6 +9,7 @@ import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public final class ApplicationConstants {
 
@@ -36,12 +37,10 @@ public final class ApplicationConstants {
     );
     public static final String LABELS = "labels";
     public static final String KEYWORD = "keyword";
-    public static final String ENGLISH = "en";
-    public static final String BOKMAAL = "nb";
-    public static final String NYNORSK = "nn";
-    public static final String SAMI = "sme";
-
-    public static final List<String> LANGUAGE_CODES = List.of(BOKMAAL, ENGLISH, NYNORSK, SAMI);
+    public static final String ENGLISH_CODE = "en";
+    public static final String BOKMAAL_CODE = "nb";
+    public static final String NYNORSK_CODE = "nn";
+    public static final String SAMI_CODE = "sme";
     public static final String ID = "id";
     public static final String JSON_PATH_DELIMITER = ".";
 
@@ -96,7 +95,7 @@ public final class ApplicationConstants {
 
     private static NestedAggregationBuilder generateLabelsAggregation(String object) {
         var nestedAggregation = new NestedAggregationBuilder(LABELS, jsonPath(object, LABELS));
-        LANGUAGE_CODES.stream()
+        Stream.of(BOKMAAL_CODE, ENGLISH_CODE, NYNORSK_CODE, SAMI_CODE)
                 .map(code -> generateSimpleAggregation(code,  jsonPath(object, LABELS, code, KEYWORD)))
                 .forEach(nestedAggregation::subAggregation);
         return nestedAggregation;
