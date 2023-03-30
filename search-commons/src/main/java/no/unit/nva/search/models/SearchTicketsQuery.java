@@ -9,16 +9,24 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortBuilders;
+import org.opensearch.search.sort.SortOrder;
 
 public class SearchTicketsQuery {
 
-    public final int pageSize;
-    public final int pageNo;
+    public static final String STRING = "string";
+    public final int results;
+    public final int from;
+    private final String orderBy;
+    private final SortOrder sortOrder;
     private final List<AggregationDto> aggregations;
 
-    public SearchTicketsQuery(int pageSize, int pageNo, List<AggregationDto> aggregations) {
-        this.pageSize = pageSize;
-        this.pageNo = pageNo;
+    public SearchTicketsQuery(int results, int from, String orderBy,
+                              SortOrder sortOrder, List<AggregationDto> aggregations) {
+        this.results = results;
+        this.from = from;
+        this.orderBy = orderBy;
+        this.sortOrder = sortOrder;
         this.aggregations = aggregations;
     }
 
@@ -27,18 +35,17 @@ public class SearchTicketsQuery {
         BoolQueryBuilder queryBuilder = searchQueryBasedOnOrganizationIdsAndStatus(viewingScope);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
             .query(queryBuilder)
-            .size(pageSize)
-            .from(calculateFirstEntryIndex(pageSize, pageNo));
+            .sort(
+                SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+            .size(results)
+            .from(from)
+            .trackTotalHits(true);
 
         if (aggregations != null) {
             addAggregations(searchSourceBuilder);
         }
 
         return new SearchRequest(indices).source(searchSourceBuilder);
-    }
-
-    private int calculateFirstEntryIndex(int pageSize, int pageNo) {
-        return pageSize * pageNo;
     }
 
     private BoolQueryBuilder searchQueryBasedOnOrganizationIdsAndStatus(ViewingScope viewingScope) {
