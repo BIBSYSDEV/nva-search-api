@@ -73,6 +73,7 @@ public class OpensearchTest {
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create(
         "https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
+    public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
 
     private static SearchClient searchClient;
     private static IndexingClient indexingClient;
@@ -123,7 +124,7 @@ public class OpensearchTest {
         void beforeEachTest() throws IOException {
             indexName = generateIndexName();
 
-            var mappingsJson = stringFromResources(Path.of("test_resources_mappings.json"));
+            var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
             var type = new TypeReference<Map<String, Object>>(){};
             var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
             indexingClient.createIndex(indexName, mappings);

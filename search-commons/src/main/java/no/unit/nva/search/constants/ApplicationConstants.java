@@ -40,6 +40,8 @@ public final class ApplicationConstants {
     public static final String BOKMAAL = "nb";
     public static final String NYNORSK = "nn";
     public static final String SAMI = "sme";
+
+    public static final List<String> LANGUAGE_CODES = List.of(BOKMAAL, ENGLISH, NYNORSK, SAMI);
     public static final String ID = "id";
     public static final String JSON_PATH_DELIMITER = ".";
 
@@ -58,6 +60,7 @@ public final class ApplicationConstants {
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final ObjectMapper objectMapperNoEmpty = JsonUtils.dynamoObjectMapper;
+    public static final int DEFAULT_AGGREGATION_SIZE = 100;
 
     private ApplicationConstants() {
 
@@ -76,7 +79,7 @@ public final class ApplicationConstants {
         return AggregationBuilders
                 .terms(term)
                 .field(field)
-                .size(100);
+                .size(DEFAULT_AGGREGATION_SIZE);
     }
 
     private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
@@ -87,20 +90,19 @@ public final class ApplicationConstants {
     private static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
                 .field(jsonPath(object, ID))
-                .size(100)
+                .size(DEFAULT_AGGREGATION_SIZE)
                 .subAggregation(generateLabelsAggregation(object));
     }
 
     private static NestedAggregationBuilder generateLabelsAggregation(String object) {
-        return new NestedAggregationBuilder(LABELS, jsonPath(object, LABELS))
-                .subAggregation(generateSimpleAggregation(ENGLISH,  jsonPath(object, LABELS, ENGLISH, KEYWORD)))
-                .subAggregation(generateSimpleAggregation(BOKMAAL, jsonPath(object, LABELS, BOKMAAL, KEYWORD)))
-                .subAggregation(generateSimpleAggregation(NYNORSK, jsonPath(object, LABELS, NYNORSK, KEYWORD)))
-                .subAggregation(generateSimpleAggregation(SAMI, jsonPath(object, LABELS, SAMI, KEYWORD)));
+        var nestedAggregation = new NestedAggregationBuilder(LABELS, jsonPath(object, LABELS));
+        LANGUAGE_CODES.stream()
+                .map(code -> generateSimpleAggregation(code,  jsonPath(object, LABELS, code, KEYWORD)))
+                .forEach(nestedAggregation::subAggregation);
+        return nestedAggregation;
     }
 
     private static String jsonPath(String... args) {
         return String.join(JSON_PATH_DELIMITER, args);
     }
-
 }
