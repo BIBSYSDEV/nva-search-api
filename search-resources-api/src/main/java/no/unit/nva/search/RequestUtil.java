@@ -94,6 +94,8 @@ public class RequestUtil {
         return new SearchTicketsQuery(
             getResults(requestInfo),
             getFrom(requestInfo),
+            getOrderBy(requestInfo),
+            getSortOrder(requestInfo),
             aggregations
         );
     }

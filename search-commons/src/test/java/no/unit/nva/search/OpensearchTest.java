@@ -141,7 +141,8 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
 
             Thread.sleep(DELAY_AFTER_INDEXING);
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -160,7 +161,8 @@ public class OpensearchTest {
 
             var viewingScope = getEmptyViewingScope();
             viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -180,7 +182,8 @@ public class OpensearchTest {
 
             var viewingScope = getEmptyViewingScope();
             viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -201,7 +204,8 @@ public class OpensearchTest {
             var viewingScope = getEmptyViewingScope();
             viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
             viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -219,7 +223,8 @@ public class OpensearchTest {
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -244,7 +249,8 @@ public class OpensearchTest {
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -269,7 +275,8 @@ public class OpensearchTest {
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var response = searchClient.findTicketsForOrganizationIds(viewingScope,
                                                                       searchTicketsQuery,
                                                                       indexName);
@@ -393,10 +400,11 @@ public class OpensearchTest {
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName,
-                        "sample_ticket_general_support_case_of_published_publication.json"));
+                                         "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, emptyList());
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, emptyList());
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
                                                                                    indexName);
@@ -415,13 +423,14 @@ public class OpensearchTest {
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName,
-                        "sample_ticket_general_support_case_of_published_publication.json"));
+                                         "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, aggregations);
+            SearchTicketsQuery searchTicketsQuery = new SearchTicketsQuery(PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                           DESC, aggregations);
             var ticketsSearchResponse = searchClient.findTicketsForOrganizationIds(viewingScope, searchTicketsQuery,
                                                                                    indexName);
 
@@ -439,7 +448,6 @@ public class OpensearchTest {
             var statusAggregation = actualAggregations.at("/status/buckets");
             assertAggregation(statusAggregation, "Pending", 2);
         }
-
 
         void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
             aggregationNode.forEach(
