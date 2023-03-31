@@ -8,6 +8,7 @@ import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
@@ -19,10 +20,13 @@ public class SearchTicketsQuery {
     public final int from;
     private final String orderBy;
     private final SortOrder sortOrder;
-    private final List<AggregationDto> aggregations;
+    private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
-    public SearchTicketsQuery(int results, int from, String orderBy,
-                              SortOrder sortOrder, List<AggregationDto> aggregations) {
+    public SearchTicketsQuery(int results,
+                              int from,
+                              String orderBy,
+                              SortOrder sortOrder,
+                              List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.results = results;
         this.from = from;
         this.orderBy = orderBy;
@@ -101,6 +105,6 @@ public class SearchTicketsQuery {
     }
 
     private void addAggregations(SearchSourceBuilder sourceBuilder) {
-        aggregations.forEach(aggregation -> sourceBuilder.aggregation(aggregation.toAggregationBuilder()));
+        aggregations.forEach(sourceBuilder::aggregation);
     }
 }

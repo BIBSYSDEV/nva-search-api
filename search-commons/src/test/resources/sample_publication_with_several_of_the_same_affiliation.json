@@ -180,10 +180,18 @@
   "status": "PUBLISHED",
   "topLevelOrganization": [
     {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0"
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0",
+      "labels": {
+        "en": "A smaller university",
+        "nb": "Et mindre universitet"
+      }
     },
     {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/9876.0.0.0"
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/9876.0.0.0",
+      "labels": {
+        "en": "A larger university",
+        "nb": "Et større universitet"
+      }
     }
   ]
 }
