@@ -1,33 +1,10 @@
 package no.unit.nva.search;
 
-import static java.util.Collections.emptyList;
-import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
-import static no.unit.nva.search.SearchClient.DOI_REQUEST;
-import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
-import static no.unit.nva.search.SearchClient.TICKET_STATUS;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.opensearch.search.sort.SortOrder.DESC;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.constants.ApplicationConstants;
-import no.unit.nva.search.models.AggregationDto;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -45,7 +22,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.emptyList;
+import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
+import static no.unit.nva.search.SearchClient.DOI_REQUEST;
+import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
+import static no.unit.nva.search.SearchClient.TICKET_STATUS;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.opensearch.search.sort.SortOrder.DESC;
 
 @Testcontainers
 public class OpensearchTest {
@@ -55,8 +61,6 @@ public class OpensearchTest {
     private static final String SAMPLE_ORDERBY = "orderByField";
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
-    private static final List<AggregationDto> SAMPLE_AGGREGATIONS = List.of(
-        new AggregationDto(randomString(), randomString()));
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
     public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
@@ -69,6 +73,7 @@ public class OpensearchTest {
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create(
         "https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
+    public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
 
     private static SearchClient searchClient;
     private static IndexingClient indexingClient;
@@ -91,7 +96,7 @@ public class OpensearchTest {
     }
 
     @AfterAll
-    static void afterAll() {
+    static void afterAll() throws IOException {
         container.stop();
     }
 
@@ -116,8 +121,13 @@ public class OpensearchTest {
     class AddDocumentToIndexTest {
 
         @BeforeEach
-        void beforeEachTest() {
+        void beforeEachTest() throws IOException {
             indexName = generateIndexName();
+
+            var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
+            var type = new TypeReference<Map<String, Object>>(){};
+            var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
+            indexingClient.createIndex(indexName, mappings);
         }
 
         @AfterEach
@@ -288,9 +298,9 @@ public class OpensearchTest {
                 crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
-            var aggregationDto = new AggregationDto("publication.status",
-                                                    "publication.status.keyword");
-            aggregationDto.setAggregationBucketAmount(1);
+            var aggregationDto = new TermsAggregationBuilder("publication.status")
+                    .field("publication.status.keyword")
+                    .size(1);
 
             SearchDocumentsQuery query = new SearchDocumentsQuery(
                 "*",
@@ -340,7 +350,6 @@ public class OpensearchTest {
 
         @Test
         void shouldReturnCorrectAggregations() throws IOException, InterruptedException, ApiGatewayException {
-
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
             indexingClient.addDocumentToIndex(
