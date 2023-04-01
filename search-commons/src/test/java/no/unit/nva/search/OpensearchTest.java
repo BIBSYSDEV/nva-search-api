@@ -448,52 +448,73 @@ public class OpensearchTest {
             var statusAggregation = actualAggregations.at("/status/buckets");
             assertAggregation(statusAggregation, "Pending", 2);
         }
+    }
 
-        void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
-            aggregationNode.forEach(
-                bucketNode -> {
-                    if (bucketNode.get("key").asText().equals(key)) {
-                        assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
-                    }
+
+    @Test
+    void shouldReturnCorrectMappingsFromIndexWhenIndexIsCreatedWithMappingAndAfterDocIsAdded() throws IOException,
+                                                                                       InterruptedException {
+        indexName = generateIndexName();
+
+        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
+        var type = new TypeReference<Map<String, Object>>(){};
+        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
+
+        indexingClient.createIndex(indexName, mappings);
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "sample_response_with_publication_status_as_draft.json"));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+
+        var mapping = indexingClient.getMapping(indexName);
+        assertThat(mapping, is(notNullValue()));
+        var topLevelOrgType = mapping.path("properties").path("topLevelOrganization").path("type").textValue();
+        assertThat(topLevelOrgType, is(equalTo("nested")));
+    }
+
+    private String generateIndexName() {
+        return RandomDataGenerator.randomString().toLowerCase();
+    }
+
+    void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
+        aggregationNode.forEach(
+            bucketNode -> {
+                if (bucketNode.get("key").asText().equals(key)) {
+                    assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
                 }
-            );
-        }
+            }
+        );
+    }
 
-        private ViewingScope getEmptyViewingScope() {
-            return new ViewingScope();
-        }
+    private ViewingScope getEmptyViewingScope() {
+        return new ViewingScope();
+    }
 
-        private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds) {
-            return getIndexDocument(indexName, organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
-        }
+    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds) {
+        return getIndexDocument(indexName, organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
+    }
 
-        private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds, String status) {
-            var eventConsumptionAttributes = new EventConsumptionAttributes(
-                indexName,
-                SortableIdentifier.next()
-            );
-            Map<String, Object> map = Map.of(
-                ORGANIZATION_IDS, organizationIds,
-                DOCUMENT_TYPE, DOI_REQUEST,
-                TICKET_STATUS, status
-            );
-            var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
-            return new IndexDocument(eventConsumptionAttributes, jsonNode);
-        }
+    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds, String status) {
+        var eventConsumptionAttributes = new EventConsumptionAttributes(
+            indexName,
+            SortableIdentifier.next()
+        );
+        Map<String, Object> map = Map.of(
+            ORGANIZATION_IDS, organizationIds,
+            DOCUMENT_TYPE, DOI_REQUEST,
+            TICKET_STATUS, status
+        );
+        var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
+        return new IndexDocument(eventConsumptionAttributes, jsonNode);
+    }
 
-        private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
-            var eventConsumptionAttributes = new EventConsumptionAttributes(
-                indexName,
-                SortableIdentifier.next()
-            );
-            var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-                                                           JsonNode.class);
+    private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
+        var eventConsumptionAttributes = new EventConsumptionAttributes(
+            indexName,
+            SortableIdentifier.next()
+        );
+        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
+                                                       JsonNode.class);
 
-            return new IndexDocument(eventConsumptionAttributes, jsonNode);
-        }
-
-        private String generateIndexName() {
-            return RandomDataGenerator.randomString().toLowerCase();
-        }
+        return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
 }
