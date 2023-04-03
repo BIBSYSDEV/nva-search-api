@@ -48,6 +48,7 @@ import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -443,9 +444,11 @@ public class OpensearchTest {
 
             var typeAggregation = actualAggregations.at("/type/"
                                                         + "buckets");
+            assertThat(typeAggregation.size(), greaterThan(0));
             assertAggregation(typeAggregation, "GeneralSupportCase", 1);
 
             var statusAggregation = actualAggregations.at("/status/buckets");
+            assertThat(statusAggregation.size(), greaterThan(0));
             assertAggregation(statusAggregation, "Pending", 2);
         }
 
