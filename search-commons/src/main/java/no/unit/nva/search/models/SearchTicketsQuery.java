@@ -54,36 +54,36 @@ public class SearchTicketsQuery {
 
     private BoolQueryBuilder searchQueryBasedOnOrganizationIdsAndStatus(ViewingScope viewingScope) {
         return new BoolQueryBuilder()
-            .should(allPendingGeneralSupportTickets(viewingScope))
-            .should(allPendingDoiRequestsForPublishedPublications(viewingScope))
-            .should(pendingPublishingRequestsForDraftPublications(viewingScope));
+            .should(generalSupportTickets(viewingScope))
+            .should(doiRequestsForPublishedPublications(viewingScope))
+            .should(publishingRequestsForDraftPublications(viewingScope));
     }
 
-    private QueryBuilder pendingPublishingRequestsForDraftPublications(ViewingScope viewingScope) {
+    private QueryBuilder publishingRequestsForDraftPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
             .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
-            .must(QueryBuilders.matchQuery(SearchClient.TICKET_STATUS, SearchClient.PENDING))
+            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
     }
 
-    private BoolQueryBuilder allPendingGeneralSupportTickets(ViewingScope viewingScope) {
+    private BoolQueryBuilder generalSupportTickets(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.GENERAL_SUPPORT_CASE))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
-            .must(QueryBuilders.matchQuery(SearchClient.TICKET_STATUS, SearchClient.PENDING))
+            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .queryName(SearchClient.GENERAL_SUPPORT_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
     }
 
-    private BoolQueryBuilder allPendingDoiRequestsForPublishedPublications(ViewingScope viewingScope) {
+    private BoolQueryBuilder doiRequestsForPublishedPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.DOI_REQUEST))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
-            .must(QueryBuilders.matchQuery(SearchClient.TICKET_STATUS, SearchClient.PENDING))
+            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .mustNot(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
             .queryName(SearchClient.DOI_REQUESTS_QUERY_NAME);
 
