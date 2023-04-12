@@ -48,6 +48,7 @@ import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -66,7 +67,7 @@ public class OpensearchTest {
     public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
     public static final int ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED = 1;
     public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
-    public static final int ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT = 0;
+    public static final int NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final int PAGE_SIZE = 10;
     private static final int PAGE_NO = 0;
@@ -189,7 +190,7 @@ public class OpensearchTest {
                                                                       indexName);
 
             assertThat(response.getHits().getHits().length,
-                       is(equalTo(ZERO_HITS_BECAUSE_APPROVED_WAS_FILTERED_OUT)));
+                       is(equalTo(NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED)));
         }
 
         @Test
@@ -443,9 +444,11 @@ public class OpensearchTest {
 
             var typeAggregation = actualAggregations.at("/type/"
                                                         + "buckets");
+            assertThat(typeAggregation.size(), greaterThan(0));
             assertAggregation(typeAggregation, "GeneralSupportCase", 1);
 
             var statusAggregation = actualAggregations.at("/status/buckets");
+            assertThat(statusAggregation.size(), greaterThan(0));
             assertAggregation(statusAggregation, "Pending", 2);
         }
     }
