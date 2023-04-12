@@ -4,6 +4,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
+import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
 import static no.unit.nva.search.SearchTicketsHandler.EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS;
 import static no.unit.nva.search.SearchTicketsHandler.VIEWING_SCOPE_QUERY_PARAMETER;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -52,6 +53,8 @@ import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,6 +76,8 @@ class SearchTicketsHandlerTest {
     private static final String USERNAME = randomString();
     private static String ORGANIZATION_IDS = "https://www.example.com/20754.0.0.0";
     public static final String COMPLETED = "Completed";
+    public static final String SAMPLE_PATH = "search";
+    public static final String SAMPLE_SEARCH_TERM = "searchTerm";
 
     private IdentityClient identityClientMock;
     private SearchTicketsHandler handler;
@@ -172,7 +177,7 @@ class SearchTicketsHandlerTest {
 
     @Test
     void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
-        handler.handleRequest(queryWithoutQueryParameters(), outputStream, context);
+        handler.handleRequest(getInputStream(), outputStream, context);
         var gatewayResponse = GatewayResponse
             .fromOutputStream(outputStream, SearchResponseDto.class);
 
@@ -199,6 +204,22 @@ class SearchTicketsHandlerTest {
 
         JsonNode jsonNode = objectMapperWithEmpty.readTree(response.getBody());
         assertThat(jsonNode, is(notNullValue()));
+    }
+
+    @Test
+    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
+        handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
+
+        var gatewayResponse = GatewayResponse
+            .fromOutputStream(outputStream, SearchResponseDto.class);
+        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
+
+        SearchResponseDto expected = objectMapperWithEmpty
+            .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)), SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertThat(actual, Is.is(CoreMatchers.equalTo(expected)));
     }
 
     private InputStream queryWithPaginationParameters(String path, Integer from, Integer resultSize)
@@ -298,4 +319,18 @@ class SearchTicketsHandlerTest {
         String jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_TICKETS_RESPONSE_JSON));
         return SearchResponseUtil.getSearchResponseFromJson(jsonResponse);
     }
+
+    private InputStream getInputStream() throws JsonProcessingException {
+        var customerId = randomUri();
+        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+            .withUserName(USERNAME)
+            .withHeaders(defaultQueryHeaders())
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withRequestContextValue(PATH, SAMPLE_PATH)
+            .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
+    }
+
 }

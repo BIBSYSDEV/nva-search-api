@@ -21,18 +21,21 @@ public class SearchTicketsQuery {
     public final int from;
     private final String orderBy;
     private final SortOrder sortOrder;
+    private final URI requestUri;
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
     public SearchTicketsQuery(String searchTerm, int results,
                               int from,
                               String orderBy,
                               SortOrder sortOrder,
+                              URI requestUri,
                               List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;
         this.orderBy = orderBy;
         this.sortOrder = sortOrder;
+        this.requestUri = requestUri;
         this.aggregations = aggregations;
     }
 
@@ -111,5 +114,13 @@ public class SearchTicketsQuery {
 
     private void addAggregations(SearchSourceBuilder sourceBuilder) {
         aggregations.forEach(sourceBuilder::aggregation);
+    }
+
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public URI getRequestUri() {
+        return requestUri;
     }
 }

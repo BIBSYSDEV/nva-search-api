@@ -209,6 +209,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, resultSize, SAMPLE_FROM, SAMPLE_ORDERBY, DESC,
+                                                        SAMPLE_REQUEST_URI,
                                                         emptyList());
 
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
@@ -229,7 +230,7 @@ class SearchClientTest {
         int resultsFrom = randomInteger(100);
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, SAMPLE_NUMBER_OF_RESULTS, resultsFrom,
                                                         SAMPLE_ORDERBY,
-                                                        DESC, emptyList());
+                                                        DESC, SAMPLE_REQUEST_URI, emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
@@ -393,6 +394,7 @@ class SearchClientTest {
                                       SAMPLE_FROM,
                                       SAMPLE_ORDERBY,
                                       DESC,
+                                      SAMPLE_REQUEST_URI,
                                       SAMPLE_AGGREGATIONS);
     }
 

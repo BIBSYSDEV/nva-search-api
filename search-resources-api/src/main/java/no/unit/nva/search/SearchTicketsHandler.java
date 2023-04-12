@@ -63,12 +63,8 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         logger.info("ViewingScope: {} ", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
             .orElseThrow());
 
-        var searchResponse = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                        toQueryTickets(requestInfo,
-                                                                                       TICKETS_AGGREGATIONS),
-                                                                        indexName);
-        URI requestUri = RequestUtil.getRequestUri(requestInfo);
-        return SearchResponseDto.fromSearchResponse(searchResponse, requestUri);
+        return searchClient.searchWithSearchTicketQuery(viewingScope, toQueryTickets(requestInfo, TICKETS_AGGREGATIONS),
+                                                        indexName);
     }
 
     @Override

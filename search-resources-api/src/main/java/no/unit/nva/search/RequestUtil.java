@@ -97,6 +97,7 @@ public class RequestUtil {
             getFrom(requestInfo),
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
             aggregations
         );
     }
