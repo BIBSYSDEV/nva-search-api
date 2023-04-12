@@ -181,8 +181,8 @@ class SearchTicketsHandlerTest {
         var gatewayResponse = GatewayResponse
             .fromOutputStream(outputStream, SearchResponseDto.class);
 
-        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
-        SearchResponseDto expected = objectMapperWithEmpty
+        var actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
+        var expected = objectMapperWithEmpty
             .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)), SearchResponseDto.class);
 
         assertNotNull(gatewayResponse.getHeaders());
@@ -212,9 +212,9 @@ class SearchTicketsHandlerTest {
 
         var gatewayResponse = GatewayResponse
             .fromOutputStream(outputStream, SearchResponseDto.class);
-        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
+        var actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
-        SearchResponseDto expected = objectMapperWithEmpty
+        var expected = objectMapperWithEmpty
             .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)), SearchResponseDto.class);
 
         assertNotNull(gatewayResponse.getHeaders());
