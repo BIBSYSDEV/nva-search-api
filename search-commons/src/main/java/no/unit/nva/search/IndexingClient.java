@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
@@ -18,6 +19,10 @@ import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
+import org.opensearch.client.indices.GetMappingsRequest;
+import org.opensearch.cluster.metadata.MappingMetadata;
+import org.opensearch.common.bytes.BytesReference;
+import org.opensearch.common.compress.CompressedXContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +118,25 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     public Void deleteIndex(String indexName) throws IOException {
         openSearchClient.indices().delete(new DeleteIndexRequest(indexName), getRequestOptions());
         return null;
+    }
+
+    private MappingMetadata getMappingMetadata(String indexName) throws IOException {
+        var request = new GetMappingsRequest().indices(indexName);
+        return openSearchClient
+                   .indices()
+                   .getIndicesClient()
+                   .getMapping(request, getRequestOptions())
+                   .mappings()
+                   .get(indexName);
+    }
+
+    public JsonNode getMapping(String indexName) {
+        return attempt(() -> getMappingMetadata(indexName))
+                   .map(MappingMetadata::source)
+                   .map(CompressedXContent::uncompressed)
+                   .map(BytesReference::utf8ToString)
+                   .map(JsonUtils.dtoObjectMapper::readTree)
+                   .orElseThrow();
     }
 
     @JacocoGenerated
