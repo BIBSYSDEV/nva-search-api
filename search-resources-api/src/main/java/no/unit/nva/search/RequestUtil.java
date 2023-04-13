@@ -92,10 +92,12 @@ public class RequestUtil {
             RequestInfo requestInfo,
             List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         return new SearchTicketsQuery(
+            getSearchTerm(requestInfo),
             getResults(requestInfo),
             getFrom(requestInfo),
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
             aggregations
         );
     }

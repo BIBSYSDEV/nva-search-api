@@ -60,6 +60,17 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         return fromSearchResponse(searchResponse, id);
     }
 
+    public SearchResponseDto searchWithSearchTicketQuery(
+        ViewingScope viewingScope,
+        SearchTicketsQuery searchTicketsQuery,
+        String... index
+    ) throws ApiGatewayException {
+
+        var searchResponse = findTicketsForOrganizationIds(viewingScope, searchTicketsQuery, index);
+        var id = createIdWithQuery(searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
+        return fromSearchResponse(searchResponse, id);
+    }
+
     public SearchResponse findTicketsForOrganizationIds(ViewingScope viewingScope,
                                                         SearchTicketsQuery searchTicketsQuery,
                                                         String... index)

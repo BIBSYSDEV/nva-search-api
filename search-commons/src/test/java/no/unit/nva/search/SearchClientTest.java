@@ -208,7 +208,8 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
-        var searchTicketsQuery = new SearchTicketsQuery(resultSize, SAMPLE_FROM, SAMPLE_ORDERBY, DESC,
+        var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, resultSize, SAMPLE_FROM, SAMPLE_ORDERBY, DESC,
+                                                        SAMPLE_REQUEST_URI,
                                                         emptyList());
 
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
@@ -227,8 +228,9 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultsFrom = randomInteger(100);
-        var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_NUMBER_OF_RESULTS, resultsFrom, SAMPLE_ORDERBY,
-                                                        DESC, emptyList());
+        var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, SAMPLE_NUMBER_OF_RESULTS, resultsFrom,
+                                                        SAMPLE_ORDERBY,
+                                                        DESC, SAMPLE_REQUEST_URI, emptyList());
         searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
                                                    searchTicketsQuery,
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
@@ -281,11 +283,8 @@ class SearchClientTest {
         when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
-        SearchTicketsQuery queryWithMaxResults = new SearchTicketsQuery(MAX_RESULTS, SAMPLE_FROM, SAMPLE_ORDERBY, DESC,
-                                                                        emptyList());
-
         SearchResponse ticketsSearchResponse =
-            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), queryWithMaxResults,
+            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), generateSampleTicketQuery(),
                                                        OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
         SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
@@ -390,10 +389,12 @@ class SearchClientTest {
     }
 
     private SearchTicketsQuery generateSampleTicketQuery() {
-        return new SearchTicketsQuery(SAMPLE_NUMBER_OF_RESULTS,
+        return new SearchTicketsQuery(SAMPLE_TERM,
+                                      SAMPLE_NUMBER_OF_RESULTS,
                                       SAMPLE_FROM,
                                       SAMPLE_ORDERBY,
                                       DESC,
+                                      SAMPLE_REQUEST_URI,
                                       SAMPLE_AGGREGATIONS);
     }
 

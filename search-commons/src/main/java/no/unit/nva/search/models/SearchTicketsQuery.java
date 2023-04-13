@@ -16,21 +16,26 @@ import org.opensearch.search.sort.SortOrder;
 public class SearchTicketsQuery {
 
     public static final String STRING = "string";
+    private final String searchTerm;
     public final int results;
     public final int from;
     private final String orderBy;
     private final SortOrder sortOrder;
+    private final URI requestUri;
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
-    public SearchTicketsQuery(int results,
+    public SearchTicketsQuery(String searchTerm, int results,
                               int from,
                               String orderBy,
                               SortOrder sortOrder,
+                              URI requestUri,
                               List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;
         this.orderBy = orderBy;
         this.sortOrder = sortOrder;
+        this.requestUri = requestUri;
         this.aggregations = aggregations;
     }
 
@@ -64,6 +69,7 @@ public class SearchTicketsQuery {
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
             .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
             .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
+            .must(QueryBuilders.queryStringQuery(searchTerm))
             .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
@@ -74,6 +80,7 @@ public class SearchTicketsQuery {
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.GENERAL_SUPPORT_CASE))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
             .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
+            .must(QueryBuilders.queryStringQuery(searchTerm))
             .queryName(SearchClient.GENERAL_SUPPORT_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
@@ -84,6 +91,7 @@ public class SearchTicketsQuery {
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.DOI_REQUEST))
             .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
             .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
+            .must(QueryBuilders.queryStringQuery(searchTerm))
             .mustNot(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
             .queryName(SearchClient.DOI_REQUESTS_QUERY_NAME);
 
@@ -106,5 +114,13 @@ public class SearchTicketsQuery {
 
     private void addAggregations(SearchSourceBuilder sourceBuilder) {
         aggregations.forEach(sourceBuilder::aggregation);
+    }
+
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public URI getRequestUri() {
+        return requestUri;
     }
 }
