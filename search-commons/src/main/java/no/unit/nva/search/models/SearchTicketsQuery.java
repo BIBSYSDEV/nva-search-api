@@ -67,7 +67,6 @@ public class SearchTicketsQuery {
     private QueryBuilder publishingRequestsForDraftPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
-            .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
             .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .must(QueryBuilders.queryStringQuery(searchTerm))
             .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);

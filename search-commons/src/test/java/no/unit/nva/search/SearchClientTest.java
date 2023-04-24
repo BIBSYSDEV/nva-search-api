@@ -168,7 +168,6 @@ class SearchClientTest {
                                                    OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationRequest = extractQueryBuilderValuesForPublicationRequest(sentRequest);
-        assertThat(rulesForIncludingPublicationRequest, hasItem(DRAFT_PUBLICATION_STATUS));
         assertThat(rulesForIncludingPublicationRequest, hasItem(PUBLISHING_REQUEST));
     }
 

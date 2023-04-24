@@ -286,7 +286,7 @@ public class OpensearchTest {
             var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
             var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
             assertThat(searchResourcesResponse, is(notNullValue()));
-            var expectedHits = 1;
+            var expectedHits = 2;
             assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
         }
 
