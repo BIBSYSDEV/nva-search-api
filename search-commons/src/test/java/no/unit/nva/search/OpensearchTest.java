@@ -239,7 +239,7 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
+        void shouldVerifySearchNotReturningHitsWithPublicationRequestInSearchResponse() throws Exception {
 
             indexingClient.addDocumentToIndex(crateSampleIndexDocument(
                 indexName,
@@ -267,7 +267,7 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldReturnPendingPublishingRequestsForDraftPublications()
+        void shouldReturnPendingPublishingRequestsForPublications()
             throws IOException, InterruptedException, BadGatewayException {
 
             indexingClient.addDocumentToIndex(
