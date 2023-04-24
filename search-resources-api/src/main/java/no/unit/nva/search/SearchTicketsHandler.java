@@ -75,6 +75,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     private SearchResponseDto handleCreatorSearch(RequestInfo requestInfo, String indexName)
             throws UnauthorizedException, BadGatewayException {
         final var owner = requestInfo.getUserName();
+        logger.info("OwnerScope: {}", owner);
         return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, TICKETS_AGGREGATIONS), owner, indexName);
     }
 
