@@ -4,6 +4,7 @@ import no.unit.nva.search.SearchClient;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
@@ -76,7 +77,7 @@ public class SearchTicketsQuery {
 
     private BoolQueryBuilder searchQueryBasedUserAndStatus(String owner) {
         return new BoolQueryBuilder()
-                .must(QueryBuilders.queryStringQuery(searchTerm))
+                .must(QueryBuilders.queryStringQuery(searchTerm).defaultOperator(Operator.AND))
                 .must(QueryBuilders.matchQuery("owner", owner))
                 .queryName("OwnerTicketsQuery")
                 ;
