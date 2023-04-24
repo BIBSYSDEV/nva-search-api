@@ -1,7 +1,5 @@
 package no.unit.nva.search.models;
 
-import java.net.URI;
-import java.util.List;
 import no.unit.nva.search.SearchClient;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import org.opensearch.action.search.SearchRequest;
@@ -13,23 +11,28 @@ import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
 
+import java.net.URI;
+import java.util.List;
+
 public class SearchTicketsQuery {
 
     public static final String STRING = "string";
     private final String searchTerm;
-    public final int results;
-    public final int from;
+    private final int results;
+    private final int from;
     private final String orderBy;
     private final SortOrder sortOrder;
     private final URI requestUri;
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
-    public SearchTicketsQuery(String searchTerm, int results,
-                              int from,
-                              String orderBy,
-                              SortOrder sortOrder,
-                              URI requestUri,
-                              List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+    public SearchTicketsQuery(
+            String searchTerm,
+            int results,
+            int from,
+            String orderBy,
+            SortOrder sortOrder,
+            URI requestUri,
+            List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;
@@ -40,15 +43,22 @@ public class SearchTicketsQuery {
     }
 
     public SearchRequest createSearchRequestForTicketsWithOrganizationIds(
-        ViewingScope viewingScope, String... indices) {
-        BoolQueryBuilder queryBuilder = searchQueryBasedOnOrganizationIdsAndStatus(viewingScope);
+            ViewingScope viewingScope, String... indices) {
+        return getSearchRequest(searchQueryBasedOnOrganizationIdsAndStatus(viewingScope), indices);
+    }
+
+    public SearchRequest createSearchRequestForTicketsByOwner(String owner, String... indices) {
+        return getSearchRequest(searchQueryBasedUserAndStatus(owner), indices);
+    }
+
+    private SearchRequest getSearchRequest(BoolQueryBuilder queryBuilder, String[] indices) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
-            .query(queryBuilder)
-            .sort(
-                SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
-            .size(results)
-            .from(from)
-            .trackTotalHits(true);
+                .query(queryBuilder)
+                .sort(
+                        SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+                .size(results)
+                .from(from)
+                .trackTotalHits(true);
 
         if (aggregations != null) {
             addAggregations(searchSourceBuilder);
@@ -59,41 +69,51 @@ public class SearchTicketsQuery {
 
     private BoolQueryBuilder searchQueryBasedOnOrganizationIdsAndStatus(ViewingScope viewingScope) {
         return new BoolQueryBuilder()
-            .should(generalSupportTickets(viewingScope))
-            .should(doiRequestsForPublishedPublications(viewingScope))
-            .should(publishingRequestsForDraftPublications(viewingScope));
+                .should(generalSupportTickets(viewingScope))
+                .should(doiRequestsForPublishedPublications(viewingScope))
+                .should(publishingRequestsForDraftPublications(viewingScope));
+    }
+
+    private BoolQueryBuilder searchQueryBasedUserAndStatus(String owner) {
+        return new BoolQueryBuilder()
+                .must(QueryBuilders.queryStringQuery(searchTerm))
+                .must(QueryBuilders.matchQuery("owner", owner))
+                .queryName("OwnerTicketsQuery")
+                ;
+
     }
 
     private QueryBuilder publishingRequestsForDraftPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
-            .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
-            .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
-            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
-            .must(QueryBuilders.queryStringQuery(searchTerm))
-            .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);
+                .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
+                .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
+                .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
+                .must(QueryBuilders.queryStringQuery(searchTerm))
+                .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
     }
 
     private BoolQueryBuilder generalSupportTickets(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
-            .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.GENERAL_SUPPORT_CASE))
-            .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
-            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
-            .must(QueryBuilders.queryStringQuery(searchTerm))
-            .queryName(SearchClient.GENERAL_SUPPORT_QUERY_NAME);
+                .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.GENERAL_SUPPORT_CASE))
+                .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
+                .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
+                .must(QueryBuilders.queryStringQuery(searchTerm))
+                .queryName(SearchClient.GENERAL_SUPPORT_QUERY_NAME);
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
     }
 
     private BoolQueryBuilder doiRequestsForPublishedPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
-            .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.DOI_REQUEST))
-            .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
-            .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
-            .must(QueryBuilders.queryStringQuery(searchTerm))
-            .mustNot(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
-            .queryName(SearchClient.DOI_REQUESTS_QUERY_NAME);
+                .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.DOI_REQUEST))
+                .must(QueryBuilders.existsQuery(SearchClient.ORGANIZATION_IDS))
+                .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
+                .must(QueryBuilders.queryStringQuery(searchTerm))
+                .mustNot(QueryBuilders.matchQuery(
+                        SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
+                .queryName(SearchClient.DOI_REQUESTS_QUERY_NAME);
 
         addViewingScope(viewingScope, queryBuilder);
         return queryBuilder;
@@ -102,13 +122,15 @@ public class SearchTicketsQuery {
     private void addViewingScope(ViewingScope viewingScope, BoolQueryBuilder queryBuilder) {
         for (URI includedOrganizationId : viewingScope.getIncludedUnits()) {
             queryBuilder.must(
-                    QueryBuilders.matchPhraseQuery(SearchClient.ORGANIZATION_IDS, includedOrganizationId.toString()))
-                .queryName(SearchClient.INCLUDED_VIEWING_SCOPES_QUERY_NAME);
+                            QueryBuilders.matchPhraseQuery(
+                                    SearchClient.ORGANIZATION_IDS, includedOrganizationId.toString()))
+                    .queryName(SearchClient.INCLUDED_VIEWING_SCOPES_QUERY_NAME);
         }
         for (URI excludedOrganizationId : viewingScope.getExcludedUnits()) {
             queryBuilder.mustNot(
-                    QueryBuilders.matchPhraseQuery(SearchClient.ORGANIZATION_IDS, excludedOrganizationId.toString()))
-                .queryName(SearchClient.EXCLUDED_VIEWING_SCOPES_QUERY_NAME);
+                            QueryBuilders.matchPhraseQuery(
+                                    SearchClient.ORGANIZATION_IDS, excludedOrganizationId.toString()))
+                    .queryName(SearchClient.EXCLUDED_VIEWING_SCOPES_QUERY_NAME);
         }
     }
 

@@ -1,10 +1,5 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
-import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
-import java.io.IOException;
-
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
@@ -15,6 +10,12 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.action.search.SearchResponse;
+
+import java.io.IOException;
+
+import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
+import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
+import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
 
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
@@ -51,8 +52,8 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
      * @throws ApiGatewayException thrown when uri is misconfigured, service i not available or interrupted
      */
     public SearchResponseDto searchWithSearchDocumentQuery(
-        SearchDocumentsQuery query,
-        String index
+            SearchDocumentsQuery query,
+            String index
     ) throws ApiGatewayException {
 
         var searchResponse = doSearch(query, index);
@@ -61,11 +62,10 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public SearchResponseDto searchWithSearchTicketQuery(
-        ViewingScope viewingScope,
-        SearchTicketsQuery searchTicketsQuery,
-        String... index
+            ViewingScope viewingScope,
+            SearchTicketsQuery searchTicketsQuery,
+            String... index
     ) throws ApiGatewayException {
-
         var searchResponse = findTicketsForOrganizationIds(viewingScope, searchTicketsQuery, index);
         var id = createIdWithQuery(searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
         return fromSearchResponse(searchResponse, id);
@@ -74,11 +74,32 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public SearchResponse findTicketsForOrganizationIds(ViewingScope viewingScope,
                                                         SearchTicketsQuery searchTicketsQuery,
                                                         String... index)
-        throws BadGatewayException {
+            throws BadGatewayException {
         try {
             SearchRequest searchRequest = searchTicketsQuery.createSearchRequestForTicketsWithOrganizationIds(
-                viewingScope,
-                index);
+                    viewingScope,
+                    index);
+            return openSearchClient.search(searchRequest, getRequestOptions());
+        } catch (IOException e) {
+            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
+        }
+    }
+
+    public SearchResponseDto searchOwnerTickets(
+            SearchTicketsQuery searchTicketsQuery,
+            String owner,
+            String... index) throws BadGatewayException {
+        var searchResponse = findTicketsForCreator(searchTicketsQuery, owner, index);
+        var id = createIdWithQuery(searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
+        return fromSearchResponse(searchResponse, id);
+
+    }
+
+
+    public SearchResponse findTicketsForCreator(SearchTicketsQuery searchTicketsQuery, String owner, String... index)
+            throws BadGatewayException {
+        try {
+            var searchRequest = searchTicketsQuery.createSearchRequestForTicketsByOwner(owner, index);
             return openSearchClient.search(searchRequest, getRequestOptions());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
@@ -102,7 +123,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static SearchClient prepareWithSecretReader(SecretsReader secretReader) {
         var cognitoCredentials = createCognitoCredentials(secretReader);
         var cognitoAuthenticator
-            = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
+                = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
         var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
         return new SearchClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
     }
