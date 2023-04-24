@@ -239,7 +239,7 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldVerifySearchNotReturningHitsWithDraftPublicationRequestInSearchResponse() throws Exception {
+        void shouldVerifySearchNotReturningHitsWithPublicationRequestInSearchResponse() throws Exception {
 
             indexingClient.addDocumentToIndex(crateSampleIndexDocument(
                 indexName,
@@ -267,7 +267,7 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldReturnPendingPublishingRequestsForDraftPublications()
+        void shouldReturnPendingPublishingRequestsForPublications()
             throws IOException, InterruptedException, BadGatewayException {
 
             indexingClient.addDocumentToIndex(
@@ -286,7 +286,7 @@ public class OpensearchTest {
             var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
             var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
             assertThat(searchResourcesResponse, is(notNullValue()));
-            var expectedHits = 1;
+            var expectedHits = 2;
             assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
         }
 

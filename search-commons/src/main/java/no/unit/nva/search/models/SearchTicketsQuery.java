@@ -61,13 +61,12 @@ public class SearchTicketsQuery {
         return new BoolQueryBuilder()
             .should(generalSupportTickets(viewingScope))
             .should(doiRequestsForPublishedPublications(viewingScope))
-            .should(publishingRequestsForDraftPublications(viewingScope));
+            .should(publishingRequestsForPublications(viewingScope));
     }
 
-    private QueryBuilder publishingRequestsForDraftPublications(ViewingScope viewingScope) {
+    private QueryBuilder publishingRequestsForPublications(ViewingScope viewingScope) {
         BoolQueryBuilder queryBuilder = new BoolQueryBuilder()
             .must(QueryBuilders.matchQuery(SearchClient.DOCUMENT_TYPE, SearchClient.PUBLISHING_REQUEST))
-            .must(QueryBuilders.matchQuery(SearchClient.PUBLICATION_STATUS, SearchClient.DRAFT_PUBLICATION_STATUS))
             .must(QueryBuilders.existsQuery(SearchClient.TICKET_STATUS))
             .must(QueryBuilders.queryStringQuery(searchTerm))
             .queryName(SearchClient.PUBLISHING_REQUESTS_QUERY_NAME);
