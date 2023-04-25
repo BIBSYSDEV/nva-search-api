@@ -77,8 +77,8 @@ public class SearchTicketsQuery {
 
     private BoolQueryBuilder searchQueryBasedUserAndStatus(String owner) {
         return new BoolQueryBuilder()
-                .must(QueryBuilders.queryStringQuery(searchTerm).defaultOperator(Operator.AND))
-                .must(QueryBuilders.matchQuery("owner", owner))
+                .must(QueryBuilders.queryStringQuery(searchTerm))
+                .must(QueryBuilders.matchQuery("owner", owner).operator(Operator.AND))
                 .queryName("OwnerTicketsQuery")
                 ;
 
