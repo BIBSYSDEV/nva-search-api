@@ -65,11 +65,9 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         var role = requestInfo.getQueryParameterOpt(PARAM_ROLE).orElse(ROLE_CURATOR);
         if (ROLE_CURATOR.equals(role)) {
             return handleCuratorSearch(requestInfo, indexName);
-
         } else {
             return handleCreatorSearch(requestInfo, indexName);
         }
-
     }
 
     private SearchResponseDto handleCreatorSearch(RequestInfo requestInfo, String indexName)

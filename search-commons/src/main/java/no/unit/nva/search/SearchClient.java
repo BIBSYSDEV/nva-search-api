@@ -33,7 +33,6 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String INCLUDED_VIEWING_SCOPES_QUERY_NAME = "IncludedViewingScopesQuery";
     public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
-    public static final String PENDING = "Pending";
 
     /**
      * Creates a new SearchClient.

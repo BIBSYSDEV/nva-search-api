@@ -17,7 +17,9 @@ import java.util.List;
 
 public class SearchTicketsQuery {
 
-    public static final String STRING = "string";
+    private static final String STRING = "string";
+    private static final String OWNER_PROPERTY = "owner";
+    private static final String OWNER_TICKETS_QUERY = "OwnerTicketsQuery";
     private final String searchTerm;
     private final int results;
     private final int from;
@@ -78,8 +80,8 @@ public class SearchTicketsQuery {
     private BoolQueryBuilder searchQueryBasedUserAndStatus(String owner) {
         return new BoolQueryBuilder()
                 .must(QueryBuilders.queryStringQuery(searchTerm))
-                .must(QueryBuilders.matchQuery("owner", owner).operator(Operator.AND))
-                .queryName("OwnerTicketsQuery")
+                .must(QueryBuilders.matchQuery(OWNER_PROPERTY, owner).operator(Operator.AND))
+                .queryName(OWNER_TICKETS_QUERY)
                 ;
 
     }
