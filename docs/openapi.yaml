@@ -301,13 +301,6 @@ components:
       type: object
       description: Search meta information, with results
       properties:
-        hits:
-          type: array
-          description: search results (numberOf = [size])
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Publication'
-              - $ref: '#/components/schemas/Ticket'
         '@context':
           $ref: '#/components/schemas/Context'
         id:
@@ -327,15 +320,49 @@ components:
         took:
           type: integer
           description: time consumed on server in ms.
-      example:
-        hits: []
-        "@context": "https://example.org/resources/search"
-        id: "https://example.org/search/resources"
-        processingTime: 123
-        size: 0
-        aggregations: {}
-        total: 0
-        took: 123
+    TicketSearchResponse:
+      allOf: # Combines the BasicErrorModel and the inline model
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: search results (numberOf = [size])
+              items:
+                  - $ref: '#/components/schemas/Ticket'
+          example:
+            hits: [ ]
+            "@context": "https://example.org/tickets/search"
+            id: "https://example.org/search/tickets"
+            processingTime: 123
+            size: 0
+            aggregations: { }
+            total: 0
+            took: 123
+
+    PublicationSearchResponse:
+      allOf: # Combines the BasicErrorModel and the inline model
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: search results (numberOf = [size])
+              items:
+                  - $ref: '#/components/schemas/Publication'
+          example:
+            hits: [ ]
+            "@context": "https://example.org/resources/search"
+            id: "https://example.org/search/resources"
+            processingTime: 123
+            size: 0
+            aggregations: { }
+            total: 0
+            took: 123
     Context:
       type: string
       pattern: 'https:\/\/.*$'
