@@ -303,7 +303,7 @@ components:
       properties:
         hits:
           type: array
-          description: results of size [size]
+          description: search results (numberOf = [size])
           items:
             oneOf:
               - $ref: '#/components/schemas/Publication'
@@ -336,7 +336,6 @@ components:
         aggregations: {}
         total: 0
         took: 123
-
     Context:
       type: string
       pattern: 'https:\/\/.*$'
