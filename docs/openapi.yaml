@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: "#/components/schemas/TicketSearchResponse"
 
   /resources:
     get:
@@ -108,7 +108,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Publication"
+                $ref: "#/components/schemas/PublicationSearchResponse"
         "400":
           description: Bad Request
           content:
@@ -252,6 +252,25 @@ components:
             type: string
         title:
           type: string
+    Ticket:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - DoiRequest
+            - PublishingRequest
+            - GeneralSupportCase
+        viewedBy:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+            - Pending
+            - Completed
+            - Closed
     Problem:
       type: object
       description: NVA error reporting object
@@ -278,7 +297,79 @@ components:
         type:
           type: string
           description: A URI describing the error and mitigations, in generic cases, this is about:blank
-
+    SearchResponse:
+      type: object
+      description: Search meta information, with results
+      properties:
+        '@context':
+          $ref: '#/components/schemas/Context'
+        id:
+          $ref: '#/components/schemas/Id'
+        processingTime:
+          type: integer
+          description: time consumed on server in ms.
+        size:
+          type: integer
+          description: Number of results returned from query
+        aggregations:
+          type: object
+          description: entity containing the different facets hit by the search.
+        total:
+          type: integer
+          description: Total number of results from query
+        took:
+          type: integer
+          description: time consumed on server in ms.
+    TicketSearchResponse:
+      allOf: # Combines SearchResponse with Ticket hits
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: Ticket search results (numberOf = [size])
+              items:
+                  - $ref: '#/components/schemas/Ticket'
+          example:
+            hits: [ ]
+            "@context": "https://example.org/tickets/search"
+            id: "https://example.org/search/tickets"
+            processingTime: 123
+            size: 0
+            aggregations: { }
+            total: 0
+            took: 123
+    PublicationSearchResponse:
+      allOf: # Combines SearchResponse with Publication hits
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: Publication search results (numberOf = [size])
+              items:
+                  - $ref: '#/components/schemas/Publication'
+          example:
+            hits: [ ]
+            "@context": "https://example.org/resources/search"
+            id: "https://example.org/search/resources"
+            processingTime: 123
+            size: 0
+            aggregations: { }
+            total: 0
+            took: 123
+    Context:
+      type: string
+      pattern: 'https:\/\/.*$'
+      description: The JSON-LD context object for the data, which describes the object in the data and allows machine processing of the data at a semantic level
+    Id:
+      type: string
+      pattern: 'https:\/\/.*$'
+      description: The URI of the object ID
   securitySchemes:
     CognitoUserPool:
       type: apiKey
