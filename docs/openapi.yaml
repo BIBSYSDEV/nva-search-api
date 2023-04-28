@@ -313,7 +313,7 @@ components:
           description: Number of results returned from query
         aggregations:
           type: object
-          description: The requested path associated with the error
+          description: entity containing the different facets hit by the search.
         total:
           type: integer
           description: Total number of results from query
@@ -321,7 +321,7 @@ components:
           type: integer
           description: time consumed on server in ms.
     TicketSearchResponse:
-      allOf: # Combines the BasicErrorModel and the inline model
+      allOf: # Combines SearchResponse with Ticket hits
         - $ref: '#/components/schemas/SearchResponse'
         - type: object
           required:
@@ -329,7 +329,7 @@ components:
           properties:
             hits:
               type: array
-              description: search results (numberOf = [size])
+              description: Ticket search results (numberOf = [size])
               items:
                   - $ref: '#/components/schemas/Ticket'
           example:
@@ -342,7 +342,7 @@ components:
             total: 0
             took: 123
     PublicationSearchResponse:
-      allOf: # Combines the BasicErrorModel and the inline model
+      allOf: # Combines SearchResponse with Publication hits
         - $ref: '#/components/schemas/SearchResponse'
         - type: object
           required:
@@ -350,7 +350,7 @@ components:
           properties:
             hits:
               type: array
-              description: search results (numberOf = [size])
+              description: Publication search results (numberOf = [size])
               items:
                   - $ref: '#/components/schemas/Publication'
           example:
