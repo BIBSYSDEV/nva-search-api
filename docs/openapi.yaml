@@ -23,6 +23,7 @@ paths:
           schema:
             type: string
             default: "curator"
+            enum: [curator, creator]
         - in: query
           name: query
           description: "Term to search for in resource."

@@ -76,7 +76,7 @@ class SearchMyTicketsHandlerTest {
     }
 
     @Test
-    void shouldShouldReturnCuratorTicketsIfCuratorRoleIsSet() throws IOException {
+    void shouldReturnCuratorTicketsIfCuratorRoleIsSet() throws IOException {
         var query = searchQueryWithParameters(Map.of(ROLE, "curator"));
         handler.handleRequest(query, outputStream, context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
@@ -88,7 +88,7 @@ class SearchMyTicketsHandlerTest {
     }
 
     @Test
-    void shouldNotContainOrgIfRoleCreaterIsProvided() throws IOException {
+    void shouldNotContainOrgIfRoleCreatorIsProvided() throws IOException {
         var query = searchQueryWithParameters(Map.of(ROLE, "creator"));
         handler.handleRequest(query, outputStream, context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
