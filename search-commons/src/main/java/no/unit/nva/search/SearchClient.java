@@ -9,9 +9,9 @@ import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
-import org.opensearch.action.search.SearchResponse;
 
 import java.io.IOException;
+import java.net.URI;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
@@ -54,10 +54,13 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
             SearchDocumentsQuery query,
             String index
     ) throws ApiGatewayException {
+        try {
+            SearchRequest searchRequest = query.toSearchRequest(index);
+            return doSearch(searchRequest, query.getRequestUri(), query.getSearchTerm());
+        } catch (IOException e) {
+            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
+        }
 
-        var searchResponse = doSearch(query, index);
-        var id = createIdWithQuery(query.getRequestUri(), query.getSearchTerm());
-        return fromSearchResponse(searchResponse, id);
     }
 
     public SearchResponseDto searchWithSearchTicketQuery(
@@ -65,54 +68,37 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
             SearchTicketsQuery searchTicketsQuery,
             String... index
     ) throws ApiGatewayException {
-        var searchResponse = findTicketsForOrganizationIds(viewingScope, searchTicketsQuery, index);
-        var id = createIdWithQuery(searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
-        return fromSearchResponse(searchResponse, id);
-    }
-
-    public SearchResponse findTicketsForOrganizationIds(ViewingScope viewingScope,
-                                                        SearchTicketsQuery searchTicketsQuery,
-                                                        String... index)
-            throws BadGatewayException {
         try {
             SearchRequest searchRequest = searchTicketsQuery.createSearchRequestForTicketsWithOrganizationIds(
                     viewingScope,
                     index);
-            return openSearchClient.search(searchRequest, getRequestOptions());
+            return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
+
+    }
+
+    private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)
+            throws IOException {
+        var searchResponse = openSearchClient.search(searchRequest, getRequestOptions());
+        var id = createIdWithQuery(requestUri, searchTerm);
+        return fromSearchResponse(searchResponse, id);
     }
 
     public SearchResponseDto searchOwnerTickets(
             SearchTicketsQuery searchTicketsQuery,
             String owner,
             String... index) throws BadGatewayException {
-        var searchResponse = findTicketsForCreator(searchTicketsQuery, owner, index);
-        var id = createIdWithQuery(searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
-        return fromSearchResponse(searchResponse, id);
-
-    }
-
-
-    public SearchResponse findTicketsForCreator(SearchTicketsQuery searchTicketsQuery, String owner, String... index)
-            throws BadGatewayException {
         try {
             var searchRequest = searchTicketsQuery.createSearchRequestForTicketsByOwner(owner, index);
-            return openSearchClient.search(searchRequest, getRequestOptions());
+            return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
         }
+
     }
 
-    public SearchResponse doSearch(SearchDocumentsQuery query, String index) throws BadGatewayException {
-        try {
-            SearchRequest searchRequest = query.toSearchRequest(index);
-            return openSearchClient.search(searchRequest, getRequestOptions());
-        } catch (IOException e) {
-            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
-        }
-    }
 
     @JacocoGenerated
     public static SearchClient defaultSearchClient() {

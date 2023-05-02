@@ -54,7 +54,7 @@ public class SearchTicketsQuery {
         return getSearchRequest(searchQueryBasedUserAndStatus(owner), indices);
     }
 
-    private SearchRequest getSearchRequest(BoolQueryBuilder queryBuilder, String[] indices) {
+    private SearchRequest getSearchRequest(BoolQueryBuilder queryBuilder, String... indices) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(queryBuilder)
                 .sort(

@@ -43,7 +43,6 @@ import static org.mockito.Mockito.when;
 class SearchMyTicketsHandlerTest {
     private static final String SAMPLE_OPENSEARCH_TICKETS_RESPONSE_JSON = "sample_opensearch_mytickets_response.json";
     private static final String OWNER_ID = "1306838@20754.0.0.0";
-    private static final String MESSAGES_PATH = "/messages";
     private static final String SAMPLE_DOMAIN_NAME = "localhost";
     private static final String USERNAME = randomString();
     private static final String ROLE = "role";
@@ -99,6 +98,7 @@ class SearchMyTicketsHandlerTest {
             assertThat(queryDescription, not(containsString(uriInDefaultViewingScope.toString())));
         }
     }
+
     @Test
     void shouldQueryOnOwnerIfRoleCreator() throws IOException {
         var query = searchQueryWithParameters(Map.of(ROLE, "creator"));
@@ -113,33 +113,33 @@ class SearchMyTicketsHandlerTest {
     private InputStream searchQueryWithParameters(Map<String, String> queryParams) throws JsonProcessingException {
         URI customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withQueryParameters(queryParams)
-                .withUserName(OWNER_ID)
-                .withHeaders(defaultQueryHeaders())
-                .withCurrentCustomer(customerId)
-                .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-                .withRequestContextValue(PATH, "tickets")
-                .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-                .build();
+            .withQueryParameters(queryParams)
+            .withUserName(OWNER_ID)
+            .withHeaders(defaultQueryHeaders())
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withRequestContextValue(PATH, "tickets")
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
     }
 
     private Set<URI> includedUrisInDefaultViewingScope() {
         return identityClientMock.getUser(USERNAME, randomString())
-                .map(UserResponse::getViewingScope)
-                .map(ViewingScope::getIncludedUnits)
-                .orElseThrow();
+            .map(UserResponse::getViewingScope)
+            .map(ViewingScope::getIncludedUnits)
+            .orElseThrow();
     }
 
     private InputStream searchQueryWithoutAnyParameters() throws JsonProcessingException {
         URI customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withUserName(USERNAME)
-                .withHeaders(defaultQueryHeaders())
-                .withCurrentCustomer(customerId)
-                .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-                .withRequestContextValue(PATH, "tickets")
-                .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-                .build();
+            .withUserName(USERNAME)
+            .withHeaders(defaultQueryHeaders())
+            .withCurrentCustomer(customerId)
+            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withRequestContextValue(PATH, "tickets")
+            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .build();
     }
 
     private void prepareSearchClientWithResponse() throws IOException {

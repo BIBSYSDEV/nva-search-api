@@ -113,7 +113,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         if (exception instanceof ForbiddenException) {
             return (ForbiddenException) exception;
         }
-        throw new RuntimeException(exception);
+        return new BadGatewayException(exception.getMessage());
     }
 
     //This is quick fix for implementing authorization. It is based on the assumption that
