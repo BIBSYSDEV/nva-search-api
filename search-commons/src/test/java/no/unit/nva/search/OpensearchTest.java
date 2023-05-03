@@ -63,11 +63,11 @@ public class OpensearchTest {
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
     public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
-    public static final int ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
-    public static final int TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
-    public static final int ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED = 1;
+    public static final long ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
+    public static final long TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
+    public static final long ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED = 1;
     public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
-    public static final int NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
+    public static final long NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final int PAGE_SIZE = 10;
     private static final int PAGE_NO = 0;
@@ -144,13 +144,13 @@ public class OpensearchTest {
 
             Thread.sleep(DELAY_AFTER_INDEXING);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(getEmptyViewingScope(),
-                                                                      searchTicketsQuery,
-                                                                      indexName);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var response = searchClient.searchWithSearchTicketQuery(getEmptyViewingScope(),
+                searchTicketsQuery,
+                indexName);
 
-            assertThat(response.getHits().getHits().length,
-                       is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
+            assertThat(response.getSize(),
+                is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
         }
 
         @Test
@@ -164,13 +164,13 @@ public class OpensearchTest {
             var viewingScope = getEmptyViewingScope();
             viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                      searchTicketsQuery,
-                                                                      indexName);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var response = searchClient.searchWithSearchTicketQuery(viewingScope,
+                searchTicketsQuery,
+                indexName);
 
-            assertThat(response.getHits().getHits().length,
-                       is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
+            assertThat(response.getSize(),
+                is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
         }
 
         @Test
@@ -185,13 +185,13 @@ public class OpensearchTest {
             var viewingScope = getEmptyViewingScope();
             viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                      searchTicketsQuery,
-                                                                      indexName);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var response = searchClient.searchWithSearchTicketQuery(viewingScope,
+                searchTicketsQuery,
+                indexName);
 
-            assertThat(response.getHits().getHits().length,
-                       is(equalTo(NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED)));
+            assertThat(response.getSize(),
+                is(equalTo(NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED)));
         }
 
         @Test
@@ -199,7 +199,7 @@ public class OpensearchTest {
 
             indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
             indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID,
-                                                                                 EXCLUDED_ORGANIZATION_ID)));
+                EXCLUDED_ORGANIZATION_ID)));
 
             Thread.sleep(DELAY_AFTER_INDEXING);
 
@@ -207,13 +207,13 @@ public class OpensearchTest {
             viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
             viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                      searchTicketsQuery,
-                                                                      indexName);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var response = searchClient.searchWithSearchTicketQuery(viewingScope,
+                searchTicketsQuery,
+                indexName);
 
-            assertThat(response.getHits().getHits().length,
-                       is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
+            assertThat(response.getSize(),
+                is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
         }
 
         @Test
@@ -226,15 +226,12 @@ public class OpensearchTest {
 
             var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                      searchTicketsQuery,
-                                                                      indexName);
-            var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
-            var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(viewingScope,
+                searchTicketsQuery,
+                indexName);
 
             assertThat(searchResourcesResponse, is(notNullValue()));
-            assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
             assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
         }
 
@@ -252,23 +249,20 @@ public class OpensearchTest {
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                      searchTicketsQuery,
-                                                                      indexName);
-            var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
-            var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(viewingScope,
+                searchTicketsQuery,
+                indexName);
 
             assertThat(searchResourcesResponse, is(notNullValue()));
-            assertThat(searchResourcesResponse.getId(), is(equalTo(searchId)));
             var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
             assertThat(searchResourcesResponse.getHits().size(),
-                       is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
+                is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
         }
 
         @Test
         void shouldReturnPendingPublishingRequestsForPublications()
-            throws IOException, InterruptedException, BadGatewayException {
+            throws IOException, InterruptedException, ApiGatewayException {
 
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
@@ -278,13 +272,12 @@ public class OpensearchTest {
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.findTicketsForOrganizationIds(viewingScope,
-                                                                      searchTicketsQuery,
-                                                                      indexName);
+                DESC, SAMPLE_REQUEST_URI, emptyList());
+            var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(viewingScope,
+                searchTicketsQuery,
+                indexName);
 
-            var searchId = SearchResponseDto.createIdWithQuery(randomUri(), null);
-            var searchResourcesResponse = SearchResponseDto.fromSearchResponse(response, searchId);
+
             assertThat(searchResourcesResponse, is(notNullValue()));
             var expectedHits = 2;
             assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
@@ -292,12 +285,13 @@ public class OpensearchTest {
 
         @Test
         void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
-                                                                                     InterruptedException {
+            InterruptedException {
 
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+                crateSampleIndexDocument(indexName,
+                    "sample_publishing_request_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var aggregationDto = new TermsAggregationBuilder("publication.status")
@@ -317,10 +311,10 @@ public class OpensearchTest {
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
             assertThat(response.getAggregations()
-                           .get("publication.status")
-                           .get("buckets")
-                           .size(),
-                       is(equalTo(1))
+                    .get("publication.status")
+                    .get("buckets")
+                    .size(),
+                is(equalTo(1))
             );
         }
 
@@ -331,7 +325,8 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
+                crateSampleIndexDocument(indexName,
+                    "sample_publishing_request_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             SearchDocumentsQuery query = new SearchDocumentsQuery(
@@ -355,7 +350,8 @@ public class OpensearchTest {
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
             indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publication_with_several_of_the_same_affiliation.json"));
+                crateSampleIndexDocument(indexName,
+                    "sample_publication_with_several_of_the_same_affiliation.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
@@ -376,11 +372,11 @@ public class OpensearchTest {
 
             var actualAggregations = response.getAggregations();
             var topOrgAggregation = actualAggregations.at("/entityDescription.contributors.affiliations"
-                                                          + ".topLevelOrganization.id/buckets");
+                + ".topLevelOrganization.id/buckets");
             assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
             var typeAggregation = actualAggregations.at("/entityDescription.reference.publicationInstance.type/"
-                                                        + "buckets");
+                + "buckets");
             assertAggregation(typeAggregation, "AcademicArticle", 2);
 
             var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
@@ -390,26 +386,26 @@ public class OpensearchTest {
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
             var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
-                                                               + "buckets");
+                + "buckets");
             assertAggregation(contributorAggregation, "lametti, Stefania", 2);
         }
 
         @Test
         void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException, IOException,
-                                                                         InterruptedException {
+            InterruptedException {
 
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName,
-                                         "sample_ticket_general_support_case_of_published_publication.json"));
+                    "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, emptyList());
+                DESC, SAMPLE_REQUEST_URI, emptyList());
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var searchResponseDto = searchClient.searchWithSearchTicketQuery(viewingScope, searchTicketsQuery,
-                                                                             indexName);
+                indexName);
 
             assertThat(searchResponseDto, notNullValue());
             assertThat(searchResponseDto.getAggregations(), nullValue());
@@ -422,23 +418,23 @@ public class OpensearchTest {
                 crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
             indexingClient.addDocumentToIndex(
                 crateSampleIndexDocument(indexName,
-                                         "sample_ticket_general_support_case_of_published_publication.json"));
+                    "sample_ticket_general_support_case_of_published_publication.json"));
             Thread.sleep(DELAY_AFTER_INDEXING);
 
             var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                           DESC, SAMPLE_REQUEST_URI, aggregations);
+                DESC, SAMPLE_REQUEST_URI, aggregations);
             var searchResponseDto = searchClient.searchWithSearchTicketQuery(viewingScope, searchTicketsQuery,
-                                                                             indexName);
+                indexName);
 
             assertThat(searchResponseDto, notNullValue());
 
             var actualAggregations = searchResponseDto.getAggregations();
 
             var typeAggregation = actualAggregations.at("/type/"
-                                                        + "buckets");
+                + "buckets");
             assertThat(typeAggregation.size(), greaterThan(0));
             assertAggregation(typeAggregation, "GeneralSupportCase", 1);
 
@@ -451,11 +447,12 @@ public class OpensearchTest {
 
     @Test
     void shouldReturnCorrectMappingsFromIndexWhenIndexIsCreatedWithMappingAndAfterDocIsAdded() throws IOException,
-                                                                                       InterruptedException {
+        InterruptedException {
         indexName = generateIndexName();
 
         var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
-        var type = new TypeReference<Map<String, Object>>(){};
+        var type = new TypeReference<Map<String, Object>>() {
+        };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
 
         indexingClient.createIndex(indexName, mappings);
@@ -511,7 +508,7 @@ public class OpensearchTest {
             SortableIdentifier.next()
         );
         var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-                                                       JsonNode.class);
+            JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }

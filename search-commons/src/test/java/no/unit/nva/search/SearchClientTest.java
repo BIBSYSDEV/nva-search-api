@@ -117,7 +117,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
         var result = searchClient.searchWithSearchDocumentQuery(generateSampleQuery(),
-                                                                OPENSEARCH_ENDPOINT_INDEX);
+            OPENSEARCH_ENDPOINT_INDEX);
 
         assertNotNull(result);
     }
@@ -130,9 +130,9 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
-                                                   generateSampleTicketQuery(),
-                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
+            generateSampleTicketQuery(),
+            OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingDoiRequest = extractQueryBuilderValuesForDoiRequests(sentRequest);
         assertThat(rulesForIncludingDoiRequest, hasItem(DRAFT_PUBLICATION_STATUS));
@@ -147,9 +147,9 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
-                                                   generateSampleTicketQuery(),
-                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
+            generateSampleTicketQuery(),
+            OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationConversation = extractQueryBuilderValuesForPublicationConversation(sentRequest);
         assertThat(rulesForIncludingPublicationConversation, hasItem(GENERAL_SUPPORT_CASE));
@@ -163,9 +163,9 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
-                                                   generateSampleTicketQuery(),
-                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
+            generateSampleTicketQuery(),
+            OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationRequest = extractQueryBuilderValuesForPublicationRequest(sentRequest);
         assertThat(rulesForIncludingPublicationRequest, hasItem(PUBLISHING_REQUEST));
@@ -192,15 +192,30 @@ class SearchClientTest {
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
 
         var response =
-            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
-                                                       generateSampleTicketQuery(),
-                                                       OPENSEARCH_TICKET_ENDPOINT_INDEX);
+            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
+                generateSampleTicketQuery(),
+                OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        assertNotNull(response);
+    }
+
+    @Test
+    void shouldReturnOwnerTicketSearchResponse() throws ApiGatewayException, IOException {
+        var restHighLevelClient = mock(RestHighLevelClient.class);
+        var searchResponse = generateMockSearchResponse(NO_HITS_RESPONSE_JSON);
+        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
+        var searchClient =
+            new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
+
+        var response =
+            searchClient.searchOwnerTickets(generateSampleTicketQuery(),
+                "",
+                OPENSEARCH_TICKET_ENDPOINT_INDEX);
         assertNotNull(response);
     }
 
     @Test
     void shouldSendRequestWithSuppliedPageSizeWhenSearchingForTickets() throws ApiGatewayException,
-                                                                               IOException {
+        IOException {
 
         AtomicReference<SearchRequest> sentRequestBuffer = new AtomicReference<>();
 
@@ -208,12 +223,12 @@ class SearchClientTest {
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultSize = 1 + randomInteger(1000);
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, resultSize, SAMPLE_FROM, SAMPLE_ORDERBY, DESC,
-                                                        SAMPLE_REQUEST_URI,
-                                                        emptyList());
+            SAMPLE_REQUEST_URI,
+            emptyList());
 
-        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
-                                                   searchTicketsQuery,
-                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
+            searchTicketsQuery,
+            OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var actualRequestedSize = sentRequest.source().size();
         assertThat(actualRequestedSize, is(equalTo(resultSize)));
@@ -228,11 +243,11 @@ class SearchClientTest {
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
         int resultsFrom = randomInteger(100);
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, SAMPLE_NUMBER_OF_RESULTS, resultsFrom,
-                                                        SAMPLE_ORDERBY,
-                                                        DESC, SAMPLE_REQUEST_URI, emptyList());
-        searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(),
-                                                   searchTicketsQuery,
-                                                   OPENSEARCH_TICKET_ENDPOINT_INDEX);
+            SAMPLE_ORDERBY,
+            DESC, SAMPLE_REQUEST_URI, emptyList());
+        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
+            searchTicketsQuery,
+            OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var actualResultsFrom = sentRequest.source().from();
         assertThat(actualResultsFrom, is(equalTo(resultsFrom)));
@@ -244,8 +259,18 @@ class SearchClientTest {
         when(restHighLevelClient.search(any(), any())).thenThrow(new IOException());
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         assertThrows(BadGatewayException.class,
-                     () -> searchClient.searchWithSearchDocumentQuery(generateSampleQuery(),
-                                                                      OPENSEARCH_ENDPOINT_INDEX));
+            () -> searchClient.searchWithSearchDocumentQuery(generateSampleQuery(),
+                OPENSEARCH_ENDPOINT_INDEX));
+    }
+
+    @Test
+    void searchOwnerReturnsErrorResponseWhenExceptionInResourcesDoSearch() throws IOException {
+        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
+        when(restHighLevelClient.search(any(), any())).thenThrow(new IOException());
+        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
+        assertThrows(BadGatewayException.class,
+            () -> searchClient.searchOwnerTickets(generateSampleTicketQuery(), "",
+                OPENSEARCH_ENDPOINT_INDEX));
     }
 
     @Test
@@ -258,36 +283,31 @@ class SearchClientTest {
 
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
-        var ticketsSearchResponse =
-            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), generateSampleTicketQuery(),
-                                                       OPENSEARCH_TICKET_ENDPOINT_INDEX);
-
-        var searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
-                                                                     SAMPLE_REQUEST_URI);
+        var searchResponseDto =
+            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
+                OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
         var aggregations = searchResponseDto.getAggregations();
 
         var expected = objectMapperWithEmpty.readValue(inputStreamFromResources(EXPECTED_TICKETS_AGGREGATIONS),
-                                                       JsonNode.class);
+            JsonNode.class);
 
         assertThat(aggregations, is(Matchers.equalTo(expected)));
     }
 
     @Test
     void searchSingleTermReturnsTicketsResponseWithStatsFromOpensearch() throws ApiGatewayException,
-                                                                                IOException {
+        IOException {
         var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
         var openSearchResponseJson = generateOpenSearchResponseAsString(OPENSEARCH_SAMPLE_TICKET_RESPONSE_FILE);
         var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
         when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
-        SearchResponse ticketsSearchResponse =
-            searchClient.findTicketsForOrganizationIds(generateSampleViewingScope(), generateSampleTicketQuery(),
-                                                       OPENSEARCH_TICKET_ENDPOINT_INDEX);
+        SearchResponseDto searchResponseDto =
+            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
+                OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
-        SearchResponseDto searchResponseDto = SearchResponseDto.fromSearchResponse(ticketsSearchResponse,
-                                                                                   SAMPLE_REQUEST_URI);
         assertNotNull(searchResponseDto);
         assertEquals(searchResponseDto.getHits().size(), OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS);
     }
@@ -379,22 +399,22 @@ class SearchClientTest {
 
     private SearchDocumentsQuery generateSampleQuery() {
         return new SearchDocumentsQuery(SAMPLE_TERM,
-                                        SAMPLE_NUMBER_OF_RESULTS,
-                                        SAMPLE_FROM,
-                                        SAMPLE_ORDERBY,
-                                        DESC,
-                                        SAMPLE_REQUEST_URI,
-                                        SAMPLE_AGGREGATIONS);
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            SAMPLE_AGGREGATIONS);
     }
 
     private SearchTicketsQuery generateSampleTicketQuery() {
         return new SearchTicketsQuery(SAMPLE_TERM,
-                                      SAMPLE_NUMBER_OF_RESULTS,
-                                      SAMPLE_FROM,
-                                      SAMPLE_ORDERBY,
-                                      DESC,
-                                      SAMPLE_REQUEST_URI,
-                                      SAMPLE_AGGREGATIONS);
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            SAMPLE_AGGREGATIONS);
     }
 
     private String generateOpenSearchResponseAsString(String fileName) {

@@ -98,7 +98,8 @@ class SearchTicketsHandlerTest {
 
     @Test
     void shouldReturnSearchResponseWithSearchHit() throws IOException {
-        handler.handleRequest(queryWithoutQueryParameters(), outputStream, context);
+        var inputStream = queryWithoutQueryParameters();
+        handler.handleRequest(inputStream, outputStream, context);
 
         var response = GatewayResponse.fromOutputStream(outputStream, String.class);
 

@@ -9,6 +9,14 @@ paths:
       description: Listing of all tickets
       parameters:
         - in: query
+          name: role
+          description: "The role you have when getting tickets"
+          required: false
+          schema:
+            type: string
+            default: "curator"
+            enum: [curator, creator]
+        - in: query
           name: query
           description: "Term to search for in resource."
           required: false
