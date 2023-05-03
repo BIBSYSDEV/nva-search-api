@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import java.util.ArrayList;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.IdentityClient;
@@ -18,6 +19,10 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +79,15 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
             throws UnauthorizedException, BadGatewayException {
         final var owner = requestInfo.getUserName();
         logger.info("OwnerScope: {}", owner);
-        return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, TICKETS_AGGREGATIONS), owner, indexName);
+        var aggregates = new ArrayList<>(
+            TICKETS_AGGREGATIONS);
+        var unreadQuery = new BoolQueryBuilder()
+                              .must(QueryBuilders.queryStringQuery(RequestUtil.getSearchTerm(requestInfo)))
+                              .must(QueryBuilders.matchQuery("owner", owner).operator(Operator.AND))
+                              .mustNot(QueryBuilders.matchQuery("viewedBy", owner).operator(Operator.AND))
+            ;
+        aggregates.add(new FilterAggregationBuilder("unread", unreadQuery));
+        return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, aggregates), owner, indexName);
     }
 
     private SearchResponseDto handleCuratorSearch(RequestInfo requestInfo, String indexName)
