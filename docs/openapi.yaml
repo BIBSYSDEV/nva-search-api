@@ -279,6 +279,12 @@ components:
             - Pending
             - Completed
             - Closed
+      example:
+        type: GeneralSupportCase
+        viewedBy:
+          - user1
+          - user2
+        status: Pending
     Problem:
       type: object
       description: NVA error reporting object
@@ -333,15 +339,25 @@ components:
         - $ref: '#/components/schemas/SearchResponse'
         - type: object
           required:
-            - hits
+            hits
           properties:
             hits:
               type: array
               description: Ticket search results (numberOf = [size])
               items:
-                  - $ref: '#/components/schemas/Ticket'
+                $ref: '#/components/schemas/Ticket'
           example:
-            hits: [ ]
+            hits:
+              - type: GeneralSupportCase
+                viewedBy:
+                  - user1
+                  - user2
+                status: Pending
+              - type: GeneralSupportCase
+                viewedBy:
+                  - user3
+                  - user4
+                status: Completed
             "@context": "https://example.org/tickets/search"
             id: "https://example.org/search/tickets"
             processingTime: 123
@@ -354,22 +370,13 @@ components:
         - $ref: '#/components/schemas/SearchResponse'
         - type: object
           required:
-            - hits
+            hits
           properties:
             hits:
               type: array
               description: Publication search results (numberOf = [size])
               items:
-                  - $ref: '#/components/schemas/Publication'
-          example:
-            hits: [ ]
-            "@context": "https://example.org/resources/search"
-            id: "https://example.org/search/resources"
-            processingTime: 123
-            size: 0
-            aggregations: { }
-            total: 0
-            took: 123
+                $ref: '#/components/schemas/Publication'
     Context:
       type: string
       pattern: 'https:\/\/.*$'
