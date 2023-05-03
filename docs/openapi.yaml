@@ -260,6 +260,38 @@ components:
             type: string
         title:
           type: string
+      example:
+        abstract: Short abstract
+        alternativeTitles:
+          - Another short abstract
+        contributors:
+          - user71
+          - user72
+        description: something ado about nothing
+        doi: doiUri
+        id: idUri
+        modifiedDate: 01-01-2023
+        owner: ownerUri
+        publicationDate:
+          day: 1
+          month: 1
+          type: date
+          year: 20023
+        publicationType: Article
+        publishedDate: 01-01-2023
+        publisher:
+          id: publisherUri
+          name: publisher1
+        reference:
+          doi: doiref
+          publicationContext:
+          publicationInstance:
+          type: ReferenceType
+        tags:
+          - tag1
+          - tag2
+          - tag3
+        title: TITL1
     Ticket:
       type: object
       properties:
@@ -279,6 +311,12 @@ components:
             - Pending
             - Completed
             - Closed
+      example:
+        type: GeneralSupportCase
+        viewedBy:
+          - user1
+          - user2
+        status: Pending
     Problem:
       type: object
       description: NVA error reporting object
@@ -339,15 +377,25 @@ components:
               type: array
               description: Ticket search results (numberOf = [size])
               items:
-                  - $ref: '#/components/schemas/Ticket'
+                $ref: '#/components/schemas/Ticket'
           example:
-            hits: [ ]
+            hits:
+              - type: GeneralSupportCase
+                viewedBy:
+                  - user1
+                  - user2
+                status: Pending
+              - type: GeneralSupportCase
+                viewedBy:
+                  - user3
+                  - user4
+                status: Completed
             "@context": "https://example.org/tickets/search"
             id: "https://example.org/search/tickets"
             processingTime: 123
-            size: 0
+            size: 2
             aggregations: { }
-            total: 0
+            total: 2
             took: 123
     PublicationSearchResponse:
       allOf: # Combines SearchResponse with Publication hits
@@ -360,16 +408,18 @@ components:
               type: array
               description: Publication search results (numberOf = [size])
               items:
-                  - $ref: '#/components/schemas/Publication'
+                $ref: '#/components/schemas/Publication'
           example:
-            hits: [ ]
-            "@context": "https://example.org/resources/search"
-            id: "https://example.org/search/resources"
+            hits:
+              -
+            "@context": "https://example.org/publications/search"
+            id: "https://example.org/search/publications"
             processingTime: 123
             size: 0
             aggregations: { }
             total: 0
             took: 123
+
     Context:
       type: string
       pattern: 'https:\/\/.*$'
