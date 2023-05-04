@@ -346,25 +346,6 @@ components:
               description: Ticket search results (numberOf = [size])
               items:
                 $ref: '#/components/schemas/Ticket'
-          example:
-            hits:
-              - type: GeneralSupportCase
-                viewedBy:
-                  - user1
-                  - user2
-                status: Pending
-              - type: GeneralSupportCase
-                viewedBy:
-                  - user3
-                  - user4
-                status: Completed
-            "@context": "https://example.org/tickets/search"
-            id: "https://example.org/search/tickets"
-            processingTime: 123
-            size: 2
-            aggregations: { }
-            total: 2
-            took: 123
     PublicationSearchResponse:
       allOf: # Combines SearchResponse with Publication hits
         - $ref: '#/components/schemas/SearchResponse'
@@ -377,17 +358,6 @@ components:
               description: Publication search results (numberOf = [size])
               items:
                 $ref: '#/components/schemas/Publication'
-          example:
-            hits:
-              -
-            "@context": "https://example.org/publications/search"
-            id: "https://example.org/search/publications"
-            processingTime: 123
-            size: 0
-            aggregations: { }
-            total: 0
-            took: 123
-
     Context:
       type: string
       pattern: 'https:\/\/.*$'
