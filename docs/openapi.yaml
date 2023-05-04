@@ -260,38 +260,6 @@ components:
             type: string
         title:
           type: string
-      example:
-        abstract: Short abstract
-        alternativeTitles:
-          - Another short abstract
-        contributors:
-          - user71
-          - user72
-        description: something ado about nothing
-        doi: doiUri
-        id: idUri
-        modifiedDate: 01-01-2023
-        owner: ownerUri
-        publicationDate:
-          day: 1
-          month: 1
-          type: date
-          year: 20023
-        publicationType: Article
-        publishedDate: 01-01-2023
-        publisher:
-          id: publisherUri
-          name: publisher1
-        reference:
-          doi: doiref
-          publicationContext:
-          publicationInstance:
-          type: ReferenceType
-        tags:
-          - tag1
-          - tag2
-          - tag3
-        title: TITL1
     Ticket:
       type: object
       properties:
