@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import java.util.ArrayList;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.IdentityClient;
@@ -18,6 +19,9 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +61,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     @Override
     protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+        throws ApiGatewayException {
 
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
@@ -71,19 +75,27 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     }
 
     private SearchResponseDto handleCreatorSearch(RequestInfo requestInfo, String indexName)
-            throws UnauthorizedException, BadGatewayException {
+        throws UnauthorizedException, BadGatewayException {
         final var owner = requestInfo.getUserName();
         logger.info("OwnerScope: {}", owner);
         return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, TICKETS_AGGREGATIONS), owner, indexName);
     }
 
     private SearchResponseDto handleCuratorSearch(RequestInfo requestInfo, String indexName)
-            throws ApiGatewayException {
+        throws ApiGatewayException {
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
         logger.info("ViewingScope: {} ", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
-                .orElseThrow());
-        return searchClient.searchWithSearchTicketQuery(viewingScope, toQueryTickets(requestInfo, TICKETS_AGGREGATIONS),
-                indexName);
+                                             .orElseThrow());
+        var curatorUnread = new FilterAggregationBuilder(
+            "curator.unread",
+            new BoolQueryBuilder()
+                .must(QueryBuilders.queryStringQuery(RequestUtil.getSearchTerm(requestInfo)))
+                .must(QueryBuilders.matchQuery("assignee.username", requestInfo.getUserName()))
+                .mustNot(QueryBuilders.matchQuery("viewedBy", requestInfo.getUserName())));
+        var aggr = new ArrayList<>(TICKETS_AGGREGATIONS);
+        aggr.add(curatorUnread);
+        return searchClient.searchWithSearchTicketQuery(viewingScope, toQueryTickets(requestInfo, aggr),
+                                                        indexName);
     }
 
     @Override
@@ -104,9 +116,9 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private ViewingScope getViewingScopeForUser(RequestInfo requestInfo) throws ApiGatewayException {
         return getUserDefinedViewingScore(requestInfo)
-                .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
-                .orElseGet(() -> defaultViewingScope(requestInfo))
-                .orElseThrow(failure -> handleFailure(failure.getException()));
+                   .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
+                   .orElseGet(() -> defaultViewingScope(requestInfo))
+                   .orElseThrow(failure -> handleFailure(failure.getException()));
     }
 
     private ApiGatewayException handleFailure(Exception exception) {
@@ -121,7 +133,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     //TODO: When the Cristin proxy is mature and quick, we should query the Cristin proxy in
     // order to avoid using semantically charged identifiers.
     private ViewingScope authorizeCustomViewingScope(ViewingScope viewingScope, RequestInfo requestInfo)
-            throws ForbiddenException {
+        throws ForbiddenException {
         var customerCristinId = requestInfo.getTopLevelOrgCristinId().orElseThrow();
         logger.info("customerCristinId: {}", customerCristinId);
         return userIsAuthorized(viewingScope, customerCristinId);
@@ -129,15 +141,15 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private Try<ViewingScope> defaultViewingScope(RequestInfo requestInfo) {
         return attempt(requestInfo::getUserName)
-                .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
-                .map(Optional::orElseThrow)
-                .map(UserResponse::getViewingScope);
+                   .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
+                   .map(Optional::orElseThrow)
+                   .map(UserResponse::getViewingScope);
     }
 
     private Optional<ViewingScope> getUserDefinedViewingScore(RequestInfo requestInfo) {
         return requestInfo.getQueryParameterOpt(VIEWING_SCOPE_QUERY_PARAMETER)
-                .map(URI::create)
-                .map(ViewingScope::create);
+                   .map(URI::create)
+                   .map(ViewingScope::create);
     }
 
     private ViewingScope userIsAuthorized(ViewingScope viewingScope, URI customerCristinId) throws ForbiddenException {
@@ -149,8 +161,8 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private boolean allIncludedUnitsAreLegal(ViewingScope viewingScope, URI customerCristinId) {
         return viewingScope.getIncludedUnits().stream()
-                .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
-                .allMatch(isEqual(true));
+                   .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
+                   .allMatch(isEqual(true));
     }
 
     private boolean isUnderUsersInstitution(URI requestedOrg, URI customerCristinId) {
