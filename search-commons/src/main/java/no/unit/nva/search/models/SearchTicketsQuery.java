@@ -18,7 +18,7 @@ import java.util.List;
 public class SearchTicketsQuery {
 
     private static final String STRING = "string";
-    private static final String OWNER_PROPERTY = "owner";
+    private static final String OWNER_PROPERTY = "owner.username";
     private static final String OWNER_TICKETS_QUERY = "OwnerTicketsQuery";
     private final String searchTerm;
     private final int results;
