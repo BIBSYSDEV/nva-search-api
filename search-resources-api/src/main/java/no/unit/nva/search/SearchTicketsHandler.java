@@ -1,7 +1,18 @@
 package no.unit.nva.search;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.function.Predicate.isEqual;
+import static no.unit.nva.search.RequestUtil.toQueryTickets;
+import static no.unit.nva.search.SearchClient.defaultSearchClient;
+import static no.unit.nva.search.constants.ApplicationConstants.STATUS_TERMS_AGGREGATION;
+import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
+import static no.unit.nva.search.constants.ApplicationConstants.TYPE_TERMS_AGGREGATION;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
-import java.util.ArrayList;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.IdentityClient;
@@ -20,6 +31,7 @@ import nva.commons.core.attempt.Try;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.slf4j.Logger;
@@ -61,7 +73,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     @Override
     protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
-        throws ApiGatewayException {
+            throws ApiGatewayException {
 
         var indexName = getIndexName(requestInfo);
         logger.info("Index name: {}", indexName);
@@ -74,28 +86,33 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         }
     }
 
-    private SearchResponseDto handleCreatorSearch(RequestInfo requestInfo, String indexName)
-        throws UnauthorizedException, BadGatewayException {
-        final var owner = requestInfo.getUserName();
-        logger.info("OwnerScope: {}", owner);
-        return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, TICKETS_AGGREGATIONS), owner, indexName);
-    }
+  private SearchResponseDto handleCreatorSearch(RequestInfo requestInfo, String indexName)
+      throws UnauthorizedException, BadGatewayException {
+    final var owner = requestInfo.getUserName();
+    logger.info("OwnerScope: {}", owner);
+    var unread = new FilterAggregationBuilder(
+        "unread",
+        notInFilter(requestInfo, owner, "owner", "viewedBy"));
+    var aggregations = List.of(
+        TYPE_TERMS_AGGREGATION, STATUS_TERMS_AGGREGATION, unread);
+    return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, aggregations), owner, indexName);
+  }
+
+  private static BoolQueryBuilder notInFilter(RequestInfo requestInfo, String owner, String mustField,
+                                              String notInField) {
+    return new BoolQueryBuilder()
+               .must(QueryBuilders.queryStringQuery(RequestUtil.getSearchTerm(requestInfo)))
+               .must(QueryBuilders.matchQuery(mustField, owner).operator(Operator.AND))
+               .mustNot(QueryBuilders.matchQuery(notInField, owner).operator(Operator.AND));
+  }
 
     private SearchResponseDto handleCuratorSearch(RequestInfo requestInfo, String indexName)
-        throws ApiGatewayException {
+            throws ApiGatewayException {
         ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
         logger.info("ViewingScope: {} ", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
-                                             .orElseThrow());
-        var curatorUnread = new FilterAggregationBuilder(
-            "curator.unread",
-            new BoolQueryBuilder()
-                .must(QueryBuilders.queryStringQuery(RequestUtil.getSearchTerm(requestInfo)))
-                .must(QueryBuilders.matchQuery("assignee.username", requestInfo.getUserName()))
-                .mustNot(QueryBuilders.matchQuery("viewedBy", requestInfo.getUserName())));
-        var aggr = new ArrayList<>(TICKETS_AGGREGATIONS);
-        aggr.add(curatorUnread);
-        return searchClient.searchWithSearchTicketQuery(viewingScope, toQueryTickets(requestInfo, aggr),
-                                                        indexName);
+                .orElseThrow());
+        return searchClient.searchWithSearchTicketQuery(viewingScope, toQueryTickets(requestInfo, TICKETS_AGGREGATIONS),
+                indexName);
     }
 
     @Override
@@ -116,9 +133,9 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private ViewingScope getViewingScopeForUser(RequestInfo requestInfo) throws ApiGatewayException {
         return getUserDefinedViewingScore(requestInfo)
-                   .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
-                   .orElseGet(() -> defaultViewingScope(requestInfo))
-                   .orElseThrow(failure -> handleFailure(failure.getException()));
+                .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
+                .orElseGet(() -> defaultViewingScope(requestInfo))
+                .orElseThrow(failure -> handleFailure(failure.getException()));
     }
 
     private ApiGatewayException handleFailure(Exception exception) {
@@ -133,7 +150,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     //TODO: When the Cristin proxy is mature and quick, we should query the Cristin proxy in
     // order to avoid using semantically charged identifiers.
     private ViewingScope authorizeCustomViewingScope(ViewingScope viewingScope, RequestInfo requestInfo)
-        throws ForbiddenException {
+            throws ForbiddenException {
         var customerCristinId = requestInfo.getTopLevelOrgCristinId().orElseThrow();
         logger.info("customerCristinId: {}", customerCristinId);
         return userIsAuthorized(viewingScope, customerCristinId);
@@ -141,15 +158,15 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private Try<ViewingScope> defaultViewingScope(RequestInfo requestInfo) {
         return attempt(requestInfo::getUserName)
-                   .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
-                   .map(Optional::orElseThrow)
-                   .map(UserResponse::getViewingScope);
+                .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
+                .map(Optional::orElseThrow)
+                .map(UserResponse::getViewingScope);
     }
 
     private Optional<ViewingScope> getUserDefinedViewingScore(RequestInfo requestInfo) {
         return requestInfo.getQueryParameterOpt(VIEWING_SCOPE_QUERY_PARAMETER)
-                   .map(URI::create)
-                   .map(ViewingScope::create);
+                .map(URI::create)
+                .map(ViewingScope::create);
     }
 
     private ViewingScope userIsAuthorized(ViewingScope viewingScope, URI customerCristinId) throws ForbiddenException {
@@ -161,8 +178,8 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private boolean allIncludedUnitsAreLegal(ViewingScope viewingScope, URI customerCristinId) {
         return viewingScope.getIncludedUnits().stream()
-                   .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
-                   .allMatch(isEqual(true));
+                .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
+                .allMatch(isEqual(true));
     }
 
     private boolean isUnderUsersInstitution(URI requestedOrg, URI customerCristinId) {
