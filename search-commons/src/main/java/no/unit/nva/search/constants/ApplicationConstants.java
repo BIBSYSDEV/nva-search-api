@@ -15,6 +15,7 @@ public final class ApplicationConstants {
   public static final String OPENSEARCH_ENDPOINT_INDEX = "resources";
   public static final String OPENSEARCH_TICKET_ENDPOINT_INDEX = "messages";
   public static final String RESOURCES_INDEX = "resources";
+  public static final String IMPORT_CANDIDATES_INDEX = "importCandidates";
   public static final String DOIREQUESTS_INDEX = "doirequests";
   public static final String MESSAGES_INDEX = "messages";
   public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
