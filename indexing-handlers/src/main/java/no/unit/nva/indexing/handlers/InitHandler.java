@@ -1,5 +1,19 @@
 package no.unit.nva.indexing.handlers;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import no.unit.nva.indexing.model.IndexRequest;
+import no.unit.nva.search.IndexingClient;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Failure;
+import nva.commons.core.ioutils.IoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static no.unit.nva.search.IndexingClient.defaultIndexingClient;
 import static no.unit.nva.search.constants.ApplicationConstants.DOIREQUESTS_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.MESSAGES_INDEX;
@@ -7,23 +21,6 @@ import static no.unit.nva.search.constants.ApplicationConstants.PUBLISHING_REQUE
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_INDEX;
 import static nva.commons.core.attempt.Try.attempt;
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
-
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search.IndexingClient;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.attempt.Failure;
-import nva.commons.core.ioutils.IoUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InitHandler implements RequestHandler<Object, String> {
 
@@ -39,8 +36,8 @@ public class InitHandler implements RequestHandler<Object, String> {
             new IndexRequest(TICKETS_INDEX),
             new IndexRequest(PUBLISHING_REQUESTS_INDEX)
     );
-    private final IndexingClient indexingClient;
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
+    private final IndexingClient indexingClient;
 
     @JacocoGenerated
     public InitHandler() {
@@ -68,30 +65,5 @@ public class InitHandler implements RequestHandler<Object, String> {
         failState.set(true);
         logger.warn("Index creation failed", failure.getException());
         return null;
-    }
-
-    private static class IndexRequest {
-        private final String name;
-        private final Map<String, Object> mappings;
-
-        public IndexRequest(String name) {
-            this.name = name;
-            this.mappings = Collections.emptyMap();
-        }
-
-        public IndexRequest(String name, String jsonMappings) {
-            this.name = name;
-            var typeReference = new TypeReference<Map<String, Object>>(){};
-            this.mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonMappings, typeReference))
-                    .orElseThrow();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Map<String, Object> getMappings() {
-            return mappings;
-        }
     }
 }
