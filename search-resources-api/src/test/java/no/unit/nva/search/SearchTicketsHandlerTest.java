@@ -1,11 +1,13 @@
 package no.unit.nva.search;
 
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
-import static no.unit.nva.search.SearchTicketsHandler.EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS;
+import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
+import static no.unit.nva.search.SearchTicketsHandler.ROLE_CREATOR;
 import static no.unit.nva.search.SearchTicketsHandler.VIEWING_SCOPE_QUERY_PARAMETER;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
@@ -26,12 +28,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.HttpHeaders;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,23 +44,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.responses.UserResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.RestHighLevelClient;
 import org.zalando.problem.Problem;
 
 class SearchTicketsHandlerTest {
@@ -73,12 +73,12 @@ class SearchTicketsHandlerTest {
     public static final URI SOME_ILLEGAL_CUSTOM_CRISTIN_ID = URI.create("https://example.org/124.111.222.333");
     public static final String MESSAGES_PATH = "/messages";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
-    private static final String USERNAME = randomString();
-    private static String ORGANIZATION_IDS = "https://www.example.com/20754.0.0.0";
+    public static final String ROLE = "role";
     public static final String COMPLETED = "Completed";
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
-
+    private static final String USERNAME = randomString();
+    private static final String ORGANIZATION_IDS = "https://www.example.com/20754.0.0.0";
     private IdentityClient identityClientMock;
     private SearchTicketsHandler handler;
     private Context context;
@@ -99,6 +99,20 @@ class SearchTicketsHandlerTest {
     @Test
     void shouldReturnSearchResponseWithSearchHit() throws IOException {
         var inputStream = queryWithoutQueryParameters();
+        handler.handleRequest(inputStream, outputStream, context);
+
+        var response = GatewayResponse.fromOutputStream(outputStream, String.class);
+
+        assertThat(response.getStatusCode(), is(equalTo(HTTP_OK)));
+        assertThat(response.getBody(), containsString(TICKET_ID));
+
+        JsonNode jsonNode = objectMapperWithEmpty.readTree(response.getBody());
+        assertThat(jsonNode, is(notNullValue()));
+    }
+
+    @Test
+    void shouldReturnSearchResultsForCreator() throws IOException {
+        var inputStream = queryWithRole(ROLE_CREATOR);
         handler.handleRequest(inputStream, outputStream, context);
 
         var response = GatewayResponse.fromOutputStream(outputStream, String.class);
@@ -180,11 +194,12 @@ class SearchTicketsHandlerTest {
     void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
         handler.handleRequest(getInputStream(), outputStream, context);
         var gatewayResponse = GatewayResponse
-            .fromOutputStream(outputStream, SearchResponseDto.class);
+                                  .fromOutputStream(outputStream, SearchResponseDto.class);
 
         var actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
         var expected = objectMapperWithEmpty
-            .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)), SearchResponseDto.class);
+                           .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)),
+                                      SearchResponseDto.class);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -212,11 +227,12 @@ class SearchTicketsHandlerTest {
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
         var gatewayResponse = GatewayResponse
-            .fromOutputStream(outputStream, SearchResponseDto.class);
+                                  .fromOutputStream(outputStream, SearchResponseDto.class);
         var actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
         var expected = objectMapperWithEmpty
-            .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)), SearchResponseDto.class);
+                           .readValue(stringFromResources(Path.of(ROUNDTRIP_RESPONSE_TICKETS_JSON)),
+                                      SearchResponseDto.class);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -227,14 +243,14 @@ class SearchTicketsHandlerTest {
         throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withUserName(USERNAME)
-            .withHeaders(defaultQueryHeaders())
-            .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-            .withRequestContextValue(PATH, path)
-            .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
-            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-            .build();
+                   .withUserName(USERNAME)
+                   .withHeaders(defaultQueryHeaders())
+                   .withCurrentCustomer(customerId)
+                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withRequestContextValue(PATH, path)
+                   .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
+                   .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .build();
     }
 
     private void assertThatDefaultScopeHasBeenOverridden(String queryDescription) {
@@ -246,9 +262,9 @@ class SearchTicketsHandlerTest {
 
     private Set<URI> includedUrisInDefaultViewingScope() {
         return identityClientMock.getUser(USERNAME, randomString())
-            .map(UserResponse::getViewingScope)
-            .map(ViewingScope::getIncludedUnits)
-            .orElseThrow();
+                   .map(UserResponse::getViewingScope)
+                   .map(ViewingScope::getIncludedUnits)
+                   .orElseThrow();
     }
 
     private void setupFakeIdentityClient() {
@@ -274,29 +290,42 @@ class SearchTicketsHandlerTest {
     private InputStream queryWithoutQueryParameters(String path) throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withUserName(USERNAME)
-            .withHeaders(defaultQueryHeaders())
-            .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-            .withRequestContextValue(PATH, path)
-            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-            .build();
+                   .withUserName(USERNAME)
+                   .withHeaders(defaultQueryHeaders())
+                   .withCurrentCustomer(customerId)
+                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withRequestContextValue(PATH, path)
+                   .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .build();
     }
 
     private InputStream queryWithoutQueryParameters() throws JsonProcessingException {
         return queryWithoutQueryParameters(MESSAGES_PATH);
     }
 
+    private InputStream queryWithRole(String role) throws JsonProcessingException {
+        var customerId = randomUri();
+        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                   .withUserName(USERNAME)
+                   .withCurrentCustomer(customerId)
+                   .withAccessRights(customerId, AccessRight.USER.toString())
+                   .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
+                   .withRequestContextValue(PATH, SAMPLE_PATH)
+                   .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .withQueryParameters(Map.of(ROLE, role))
+                   .build();
+    }
+
     private InputStream queryWithoutAppropriateAccessRight() throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withUserName(USERNAME)
-            .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, "SomeOtherAccessRight")
-            .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
-            .withRequestContextValue(PATH, MESSAGES_PATH)
-            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-            .build();
+                   .withUserName(USERNAME)
+                   .withCurrentCustomer(customerId)
+                   .withAccessRights(customerId, "SomeOtherAccessRight")
+                   .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
+                   .withRequestContextValue(PATH, MESSAGES_PATH)
+                   .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .build();
     }
 
     private Map<String, String> defaultQueryHeaders() {
@@ -306,14 +335,14 @@ class SearchTicketsHandlerTest {
     private InputStream queryWithCustomOrganizationAsQueryParameter(URI desiredOrgUri) throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withQueryParameters(Map.of(VIEWING_SCOPE_QUERY_PARAMETER, desiredOrgUri.toString()))
-            .withUserName(USERNAME)
-            .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-            .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
-            .withRequestContextValue(PATH, MESSAGES_PATH)
-            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-            .build();
+                   .withQueryParameters(Map.of(VIEWING_SCOPE_QUERY_PARAMETER, desiredOrgUri.toString()))
+                   .withUserName(USERNAME)
+                   .withCurrentCustomer(customerId)
+                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
+                   .withRequestContextValue(PATH, MESSAGES_PATH)
+                   .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .build();
     }
 
     private SearchResponse getSearchResponse() throws IOException {
@@ -324,14 +353,13 @@ class SearchTicketsHandlerTest {
     private InputStream getInputStream() throws JsonProcessingException {
         var customerId = randomUri();
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withUserName(USERNAME)
-            .withHeaders(defaultQueryHeaders())
-            .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
-            .withRequestContextValue(PATH, SAMPLE_PATH)
-            .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
-            .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
-            .build();
+                   .withUserName(USERNAME)
+                   .withHeaders(defaultQueryHeaders())
+                   .withCurrentCustomer(customerId)
+                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withRequestContextValue(PATH, SAMPLE_PATH)
+                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+                   .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .build();
     }
-
 }
