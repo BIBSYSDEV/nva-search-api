@@ -97,11 +97,8 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         if (ROLE_CURATOR.equals(role)) {
             assertCuratorHasAppropriateAccessRights(requestInfo);
             return handleCuratorSearch(requestInfo, indexName);
-        }
-        if (ROLE_CREATOR.equals(role)) {
-            return handleCreatorSearch(requestInfo, indexName);
         } else {
-            throw new ForbiddenException();
+        return handleCreatorSearch(requestInfo, indexName);
         }
     }
 

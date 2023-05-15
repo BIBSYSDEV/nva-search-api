@@ -125,15 +125,6 @@ class SearchTicketsHandlerTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenUserWithNotSupportedSearchRole() throws IOException {
-        var inputStream = queryWithRole("UnsupportedRole");
-        handler.handleRequest(inputStream, outputStream, context);
-        var response = GatewayResponse.fromOutputStream(outputStream, String.class);
-
-        assertThat(response.getStatusCode(), is(equalTo(HTTP_FORBIDDEN)));
-    }
-
-    @Test
     void shouldSendQueryOverridingDefaultViewingScopeWhenUserRequestsToViewDoiRequestsOrMessagesWithinTheirLegalScope()
         throws IOException {
         handler.handleRequest(queryWithCustomOrganizationAsQueryParameter(SOME_LEGAL_CUSTOM_CRISTIN_ID),
