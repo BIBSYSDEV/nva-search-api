@@ -408,7 +408,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "ImportCandidates.ExpandedDataEntry.Update" ]
+                  topic: [ "ImportCandidates.ExpandedDataEntry.Persisted" ]
 
   DeleteResources:
     DependsOn:
