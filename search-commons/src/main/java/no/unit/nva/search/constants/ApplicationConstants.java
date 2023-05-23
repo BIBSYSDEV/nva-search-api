@@ -19,9 +19,7 @@ public final class ApplicationConstants {
   public static final String DOIREQUESTS_INDEX = "doirequests";
   public static final String MESSAGES_INDEX = "messages";
   public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
-
   public static final String TICKETS_INDEX = "tickets";
-
   public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
       RESOURCES_AGGREGATIONS = List.of(
 

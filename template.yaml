@@ -257,7 +257,7 @@ Resources:
         GetResources:
           Type: Api
           Properties:
-            Path: /importCandidates
+            Path: /import-candidates
             Method: get
             RestApiId: !Ref NvaSearchApi
 
