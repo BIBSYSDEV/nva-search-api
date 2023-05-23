@@ -382,6 +382,34 @@ Resources:
                 responsePayload:
                   topic: [ "PublicationService.ExpandedEntry.Persisted" ]
 
+  IndexImportCandidates:
+    DependsOn:
+      - ResourcesIndexerDLQ
+      - TriggerExecutionRole
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: indexing-handlers
+      Handler: no.unit.nva.indexing.handlers.IndexImportCandidateHandler::handleRequest
+      Runtime: java11
+      ReservedConcurrentExecutions: 32
+      Role: !GetAtt TriggerExecutionRole.Arn
+      MemorySize: 1408
+      Environment:
+        Variables:
+          EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
+      Events:
+        EventBridgeEvent:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName:
+              Ref: EventBusName
+            Pattern:
+              detail-type:
+                - Lambda Function Invocation Result - Success
+              detail:
+                responsePayload:
+                  topic: [ "ImportCandidates.ExpandedDataEntry.Persisted" ]
+
   DeleteResources:
     DependsOn:
       - ResourcesIndexerDLQ
