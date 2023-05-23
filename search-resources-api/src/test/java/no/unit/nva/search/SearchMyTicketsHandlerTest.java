@@ -27,7 +27,7 @@ import java.util.Set;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
-import static no.unit.nva.search.SearchTicketsHandler.EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS;
+import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -117,7 +117,7 @@ class SearchMyTicketsHandlerTest {
             .withUserName(OWNER_ID)
             .withHeaders(defaultQueryHeaders())
             .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
             .withRequestContextValue(PATH, "tickets")
             .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
             .build();
@@ -136,7 +136,7 @@ class SearchMyTicketsHandlerTest {
             .withUserName(USERNAME)
             .withHeaders(defaultQueryHeaders())
             .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, EXPECTED_ACCESS_RIGHT_FOR_VIEWING_MESSAGES_AND_DOI_REQUESTS)
+            .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
             .withRequestContextValue(PATH, "tickets")
             .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
             .build();
