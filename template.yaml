@@ -235,6 +235,32 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  SearchImportCandidatesFunction:
+    Type: AWS::Serverless::Function
+    Description: Lambda for searching Resources
+    Properties:
+      CodeUri: search-resources-api
+      Handler: no.unit.nva.search.SearchImportCandidatesApiHandler::handleRequest
+      Runtime: java11
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Enabled: true
+        Role: !GetAtt CustomCodeDeployServiceRole.Arn
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: 1
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+      Events:
+        GetResources:
+          Type: Api
+          Properties:
+            Path: /import-candidates
+            Method: get
+            RestApiId: !Ref NvaSearchApi
+
 
   SearchResourcesApiFunctionScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget

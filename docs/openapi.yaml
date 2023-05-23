@@ -138,6 +138,72 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /import-candidates:
+    get:
+      description: "Search for import candidates by given criteria"
+      parameters:
+        - in: query
+          name: query
+          description: "Term to search for in import candidates."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderBy
+          description: "Field to order result by."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          description: "Order of search results (asc or desc)."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: from
+          description: "Start position from results, 0-based."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: results
+          description: "Maximum number of import candidates in response."
+          required: false
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchImportCandidatesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportCandidateSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
 components:
   schemas:
     Publication:
@@ -147,6 +213,134 @@ components:
         abstract:
           type: string
           description: short abstract of content
+        alternativeTitles:
+          type: array
+          description: short abstract of content
+          items:
+            type: string
+        contributors:
+          type: array
+          description: List of contributing people
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+        description:
+          type: string
+        doi:
+          type: string
+        id:
+          type: string
+        modifiedDate:
+          type: string
+          format: date
+        owner:
+          type: string
+        publicationDate:
+          type: object
+          properties:
+            day:
+              type: string
+            month:
+              type: string
+            type:
+              type: string
+            year:
+              type: string
+        publicationType:
+          type: string
+        publishedDate:
+          type: string
+          format: date
+        publisher:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        reference:
+          type: object
+          properties:
+            doi:
+              type: string
+            publicationContext:
+              type: object
+              properties:
+                level:
+                  type: string
+                linkedContext:
+                  type: string
+                onlineIssn:
+                  type: string
+                openAccess:
+                  type: boolean
+                peerReviewed:
+                  type: boolean
+                printIssn:
+                  type: string
+                publisher:
+                  type: string
+                seriesTitle:
+                  type: string
+                title:
+                  type: string
+                type:
+                  type: string
+                url:
+                  type: string
+            publicationInstance:
+              type: object
+              properties:
+                articleNumber:
+                  type: string
+                issue:
+                  type: string
+                pages:
+                  type: object
+                  properties:
+                    begin:
+                      type: string
+                    end:
+                      type: string
+                    illustrated:
+                      type: boolean
+                    pages:
+                      type: string
+                    type:
+                      type: string
+                peerReviewed:
+                  type: boolean
+                textbookContent:
+                  type: boolean
+                type:
+                  type: string
+                volume:
+                  type: string
+            type:
+              type: string
+        tags:
+          type: array
+          items:
+            type: string
+        title:
+          type: string
+    ImportCandidate:
+      type: object
+      description: Complete ImportCandidate entity
+      properties:
+        abstract:
+          type: string
+          description: short abstract of content
+        importStatus:
+          type: string
+          enum:
+            - IMPORTED
+            - NOT_IMPORTED
+            - NOT_APPLICABLE
         alternativeTitles:
           type: array
           description: short abstract of content
@@ -360,6 +554,18 @@ components:
               description: Publication search results (numberOf = [size])
               items:
                 $ref: '#/components/schemas/Publication'
+    ImportCandidateSearchResponse:
+      allOf: # Combines SearchResponse with ImportCandidate hits
+        - $ref: '#/components/schemas/SearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: Import candidate search results (numberOf = [size])
+              items:
+                $ref: '#/components/schemas/ImportCandidate'
     Context:
       type: string
       pattern: 'https:\/\/.*$'
