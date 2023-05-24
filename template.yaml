@@ -237,7 +237,6 @@ Resources:
 
   SearchImportCandidatesFunction:
     Type: AWS::Serverless::Function
-    Description: Lambda for searching Resources
     Properties:
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchImportCandidatesApiHandler::handleRequest
