@@ -43,7 +43,8 @@ public class IndexImportCandidateHandler extends DestinationsEventBridgeEventHan
     protected Void processInputPayload(EventReference input,
                                        AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>> event,
                                        Context context) {
-
+        logger.info("Has been triggered");
+        logger.info("Event: {}", input);
         var resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
         logger.info("Input event {}", input.getUri());
         var indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
