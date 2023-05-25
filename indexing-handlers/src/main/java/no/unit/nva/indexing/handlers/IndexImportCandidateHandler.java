@@ -13,12 +13,9 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IndexImportCandidateHandler extends DestinationsEventBridgeEventHandler<EventReference, Void> {
 
-    private final Logger logger = LoggerFactory.getLogger(IndexImportCandidateHandler.class);
     private static final String EXPANDED_RESOURCES_BUCKET = new Environment().readEnv("EXPANDED_RESOURCES_BUCKET");
     private final S3Driver s3Driver;
     private final IndexingClient indexingClient;
