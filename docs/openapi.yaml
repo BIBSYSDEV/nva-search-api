@@ -332,7 +332,7 @@ components:
       type: object
       description: Complete ImportCandidate entity
       properties:
-        identifier:
+        id:
           type: string
         additionalIdentifiers:
           type: array
