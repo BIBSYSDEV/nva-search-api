@@ -237,7 +237,6 @@ Resources:
 
   SearchImportCandidatesFunction:
     Type: AWS::Serverless::Function
-    Description: Lambda for searching Resources
     Properties:
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchImportCandidatesApiHandler::handleRequest
@@ -536,6 +535,16 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Role: !GetAtt SearchHandlerRole.Arn
+
+  DeleteImportCandidateIndexHandler:
+    Type: AWS::Serverless::Function
+    Description: Lambda that deletes import candidates index. Needs to be run manually from Test
+    Properties:
+      CodeUri: indexing-handlers
+      Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateIndexHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
