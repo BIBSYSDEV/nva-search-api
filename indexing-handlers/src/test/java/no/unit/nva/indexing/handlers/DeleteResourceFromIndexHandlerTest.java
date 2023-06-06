@@ -82,13 +82,13 @@ public class DeleteResourceFromIndexHandlerTest {
     }
 
     private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier) throws IOException {
-        DeleteImportCandidateEvent deleteResourceEvent = new DeleteImportCandidateEvent(DeleteImportCandidateEvent.EVENT_TOPIC,
+        DeleteResourceEvent deleteResourceEvent = new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC,
                                                                                  resourceIdentifier);
 
-        AwsEventBridgeDetail<DeleteImportCandidateEvent> detail = new AwsEventBridgeDetail<>();
+        AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
         detail.setResponsePayload(deleteResourceEvent);
 
-        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteImportCandidateEvent>> event = new AwsEventBridgeEvent<>();
+        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event = new AwsEventBridgeEvent<>();
         event.setDetail(detail);
 
         return new ByteArrayInputStream(objectMapperWithEmpty.writeValueAsBytes(event));

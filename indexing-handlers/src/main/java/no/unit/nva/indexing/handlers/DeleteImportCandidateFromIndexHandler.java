@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 public class DeleteImportCandidateFromIndexHandler
     extends DestinationsEventBridgeEventHandler<DeleteImportCandidateEvent, Void> {
 
+    private static final Logger logger = LoggerFactory.getLogger(DeleteImportCandidateFromIndexHandler.class);
     public static final String REMOVING_DOCUMENT_FAILED_MESSAGE = "Removing document failed";
-    private static final Logger logger = LoggerFactory.getLogger(DeleteResourceFromIndexHandler.class);
     private final IndexingClient indexingClient;
 
     @JacocoGenerated
