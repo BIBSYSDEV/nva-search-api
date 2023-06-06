@@ -44,7 +44,12 @@ public class FakeIndexingClient extends IndexingClient {
     }
 
     @Override
-    public void removeDocumentFromIndex(String identifier) throws IOException {
+    public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
+        indexContents.forEach((index, set) -> removeDocument(set, identifier));
+    }
+
+    @Override
+    public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
         indexContents.forEach((index, set) -> removeDocument(set, identifier));
     }
 

@@ -15,7 +15,6 @@ public class DeleteResourceFromIndexHandler extends DestinationsEventBridgeEvent
 
     private final IndexingClient indexingClient;
 
-
     @JacocoGenerated
     public DeleteResourceFromIndexHandler() {
         this(IndexingClient.defaultIndexingClient());
@@ -31,7 +30,7 @@ public class DeleteResourceFromIndexHandler extends DestinationsEventBridgeEvent
                                        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event,
                                        Context context) {
         try {
-            indexingClient.removeDocumentFromIndex(input.getIdentifier().toString());
+            indexingClient.removeDocumentFromResourcesIndex(input.getIdentifier().toString());
         } catch (Exception e) {
             logError(e);
             throw new RuntimeException(e);

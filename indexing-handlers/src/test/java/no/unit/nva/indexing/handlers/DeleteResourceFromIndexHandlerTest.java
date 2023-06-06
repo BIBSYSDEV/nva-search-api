@@ -20,6 +20,7 @@ import java.util.Set;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
@@ -81,13 +82,13 @@ public class DeleteResourceFromIndexHandlerTest {
     }
 
     private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier) throws IOException {
-        DeleteResourceEvent deleteResourceEvent = new DeleteResourceEvent(DeleteResourceEvent.EVENT_TOPIC,
-                                                                          resourceIdentifier);
+        DeleteImportCandidateEvent deleteResourceEvent = new DeleteImportCandidateEvent(DeleteImportCandidateEvent.EVENT_TOPIC,
+                                                                                 resourceIdentifier);
 
-        AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
+        AwsEventBridgeDetail<DeleteImportCandidateEvent> detail = new AwsEventBridgeDetail<>();
         detail.setResponsePayload(deleteResourceEvent);
 
-        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event = new AwsEventBridgeEvent<>();
+        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteImportCandidateEvent>> event = new AwsEventBridgeEvent<>();
         event.setDetail(detail);
 
         return new ByteArrayInputStream(objectMapperWithEmpty.writeValueAsBytes(event));
@@ -96,7 +97,7 @@ public class DeleteResourceFromIndexHandlerTest {
     static class FakeIndexingClientThrowingException extends FakeIndexingClient {
 
         @Override
-        public void removeDocumentFromIndex(String identifier) throws IOException {
+        public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
             throw new IOException(SOMETHING_BAD_HAPPENED);
         }
     }
