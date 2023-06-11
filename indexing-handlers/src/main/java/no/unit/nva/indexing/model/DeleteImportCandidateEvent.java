@@ -8,7 +8,7 @@ import nva.commons.core.JacocoGenerated;
 
 public class DeleteImportCandidateEvent {
 
-    public static final String EVENT_TOPIC = "ImportCandidates.DataEntry.Delete";
+    public static final String EVENT_TOPIC = "ImportCandidates.ExpandedEntry.Deleted";
     public static final String TOPIC = "topic";
     public static final String IDENTIFIER = "identifier";
 
