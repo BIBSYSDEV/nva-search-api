@@ -3,12 +3,13 @@ package no.unit.nva.indexing.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
+import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
 import nva.commons.core.JacocoGenerated;
 
-public class DeleteImportCandidateEvent {
+public class DeleteImportCandidateEvent implements JsonSerializable {
 
-    public static final String EVENT_TOPIC = "ImportCandidates.DataEntry.Delete";
+    public static final String EVENT_TOPIC = "ImportCandidates.ExpandedEntry.Deleted";
     public static final String TOPIC = "topic";
     public static final String IDENTIFIER = "identifier";
 

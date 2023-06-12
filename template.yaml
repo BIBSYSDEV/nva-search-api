@@ -483,7 +483,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "ImportCandidates.DataEntry.Delete" ]
+                  topic: [ "ImportCandidates.ExpandedEntry.Deleted" ]
 
 
   ResourcesIndexerDLQ:

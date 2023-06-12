@@ -13,8 +13,9 @@ import org.slf4j.LoggerFactory;
 public class DeleteImportCandidateFromIndexHandler
     extends DestinationsEventBridgeEventHandler<DeleteImportCandidateEvent, Void> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeleteImportCandidateFromIndexHandler.class);
     public static final String REMOVING_DOCUMENT_FAILED_MESSAGE = "Removing document failed";
+    public static final String REMOVED_FROM_INDEX_MESSAGE = "Import candidate has been removed from index";
+    private static final Logger logger = LoggerFactory.getLogger(DeleteImportCandidateFromIndexHandler.class);
     private final IndexingClient indexingClient;
 
     @JacocoGenerated
@@ -33,6 +34,7 @@ public class DeleteImportCandidateFromIndexHandler
                                        Context context) {
         try {
             indexingClient.removeDocumentFromImportCandidateIndex(input.getIdentifier().toString());
+            logger.info(REMOVED_FROM_INDEX_MESSAGE);
         } catch (Exception e) {
             logError(e);
             throw new RuntimeException(e);
