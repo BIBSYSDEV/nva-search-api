@@ -2,11 +2,11 @@ package no.unit.nva.search;
 
 import static no.unit.nva.search.RequestUtil.toQuery;
 import static no.unit.nva.search.SearchClient.defaultSearchClient;
+import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
-import java.util.Collections;
 import no.unit.nva.search.models.SearchResponseDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -31,7 +31,7 @@ public class SearchImportCandidatesApiHandler extends ApiGatewayHandler<Void, Se
     @Override
     protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
-        var query = toQuery(requestInfo, Collections.emptyList());
+        var query = toQuery(requestInfo, IMPORT_CANDIDATES_AGGREGATIONS);
         return openSearchClient.searchWithSearchDocumentQuery(query, IMPORT_CANDIDATES_INDEX);
     }
 
