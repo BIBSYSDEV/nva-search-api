@@ -51,8 +51,8 @@ public final class ApplicationConstants {
     );
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
-        generateSimpleAggregation("importStatus",
-                                  "importStatus.keyword")
+        generateSimpleAggregation("importStatus.candidateStatus",
+                                  "importStatus.candidateStatus.keyword")
 
     );
     public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION = generateSimpleAggregation("type",
