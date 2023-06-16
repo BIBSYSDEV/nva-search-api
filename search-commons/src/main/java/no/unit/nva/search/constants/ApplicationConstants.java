@@ -1,14 +1,19 @@
 package no.unit.nva.search.constants;
 
+import static org.opensearch.search.aggregations.AggregationBuilders.terms;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.MultiTermsAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.opensearch.search.aggregations.support.MultiTermsValuesSourceConfig;
 
 public final class ApplicationConstants {
 
@@ -45,8 +50,7 @@ public final class ApplicationConstants {
                                   "resourceOwner.owner.keyword"),
         generateSimpleAggregation("resourceOwner.ownerAffiliation",
                                   "resourceOwner.ownerAffiliation.keyword"),
-        generateSimpleAggregation("entityDescription.contributors.identity.name",
-                                  "entityDescription.contributors.identity.name.keyword"),
+        generateIdentityAggregation("entityDescription.contributors.identity", "name", "id"),
         generateObjectLabelsAggregation("topLevelOrganization")
     );
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
@@ -77,10 +81,39 @@ public final class ApplicationConstants {
     }
 
     private static TermsAggregationBuilder generateSimpleAggregation(String term, String field) {
-        return AggregationBuilders
-                   .terms(term)
+        return terms(term)
                    .field(field)
                    .size(DEFAULT_AGGREGATION_SIZE);
+    }
+
+    private static MultiTermsAggregationBuilder generateIdentityAggregation(String field, String... terms) {
+        //        return new QueryStringQueryBuilder(new ExistsQueryBuilder(jsonPath(field, ID)).toString());
+        var termList = Arrays.stream(terms)
+                           .map(i -> buildTerm(field, jsonPath(i, "keyword")))
+                           .collect(Collectors.toList());
+        return AggregationBuilders
+                   .multiTerms(field)
+                   .terms(termList);
+        //                    .subAggregation(terms(term)
+        //                                        .field(jsonPath(field, "name", "keyword"))
+        //                                        .size(DEFAULT_AGGREGATION_SIZE));
+        //                    .terms(List.of(buildTerm(field, "id.keyword"),
+        //                                   buildTerm(field, "name.keyword")));
+        //                   .field(jsonPath(field, ID, "keyword"))
+        //                   .size(DEFAULT_AGGREGATION_SIZE)
+        //                   .subAggregation(generateSimpleAggregation2(term, field));
+        //        return new FilterAggregationBuilder(field, new ExistsQueryBuilder(jsonPath(field, ID)))
+        //        .subAggregation(s);
+        //        return terms(term)
+        //                   .field(jsonPath(field, "id", "keyword"))
+        //                   .includeExclude(new IncludeExclude(jsonPath(field, "id", "keyword"), null))
+        //                   .size(DEFAULT_AGGREGATION_SIZE);
+    }
+
+    private static MultiTermsValuesSourceConfig buildTerm(String field, String value) {
+        return new MultiTermsValuesSourceConfig.Builder()
+                   .setFieldName(jsonPath(field, value))
+                   .build();
     }
 
     private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
