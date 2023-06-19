@@ -53,7 +53,6 @@ public final class ApplicationConstants {
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String CONTRIBUTORS = "contributors";
     public static final String NAME = "name";
-    public static final String  ="name";
     public static final String IDENTITY = "identity";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
