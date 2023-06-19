@@ -37,19 +37,6 @@ public final class ApplicationConstants {
     public static final ObjectMapper objectMapperNoEmpty = JsonUtils.dynamoObjectMapper;
     public static final int DEFAULT_AGGREGATION_SIZE = 100;
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
-        RESOURCES_AGGREGATIONS = List.of(
-
-        generateSimpleAggregation("entityDescription.reference.publicationInstance.type",
-                                  "entityDescription.reference.publicationInstance.type.keyword"),
-        generateSimpleAggregation("resourceOwner.owner",
-                                  "resourceOwner.owner.keyword"),
-        generateSimpleAggregation("resourceOwner.ownerAffiliation",
-                                  "resourceOwner.ownerAffiliation.keyword"),
-        generateSimpleAggregation("entityDescription.contributors.identity.name",
-                                  "entityDescription.contributors.identity.name.keyword"),
-        generateObjectLabelsAggregation("topLevelOrganization")
-    );
-    public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
         generateSimpleAggregation("importStatus.candidateStatus",
                                   "importStatus.candidateStatus.keyword")
@@ -63,6 +50,23 @@ public final class ApplicationConstants {
         List.of(TYPE_TERMS_AGGREGATION,
                 STATUS_TERMS_AGGREGATION
         );
+    public static final String ENTITY_DESCRIPTION = "entityDescription";
+    public static final String CONTRIBUTORS = "contributors";
+    public static final String NAME = "name";
+    public static final String  ="name";
+    public static final String IDENTITY = "identity";
+    public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
+        RESOURCES_AGGREGATIONS = List.of(
+
+        generateSimpleAggregation("entityDescription.reference.publicationInstance.type",
+                                  "entityDescription.reference.publicationInstance.type.keyword"),
+        generateSimpleAggregation("resourceOwner.owner",
+                                  "resourceOwner.owner.keyword"),
+        generateSimpleAggregation("resourceOwner.ownerAffiliation",
+                                  "resourceOwner.ownerAffiliation.keyword"),
+        generateContributorAggregation(),
+        generateObjectLabelsAggregation("topLevelOrganization")
+    );
 
     private ApplicationConstants() {
 
@@ -83,12 +87,38 @@ public final class ApplicationConstants {
                    .size(DEFAULT_AGGREGATION_SIZE);
     }
 
-    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
-        return new NestedAggregationBuilder(object, object)
-                   .subAggregation(generateIdAggregation(object));
+    private static NestedAggregationBuilder generateContributorAggregation() {
+        return new NestedAggregationBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
+                   .subAggregation(generateNestedContributorAggregation()
+                                       .subAggregation(generateNestedIdentityAggregation()
+                                                           .subAggregation(generateIdentityIdAggregation()
+                                                                               .subAggregation(generateNameAggregation()))));
     }
 
-    private static TermsAggregationBuilder generateIdAggregation(String object) {
+    private static NestedAggregationBuilder generateNestedContributorAggregation() {
+        return new NestedAggregationBuilder(CONTRIBUTORS, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS));
+    }
+
+    private static NestedAggregationBuilder generateNestedIdentityAggregation() {
+        return new NestedAggregationBuilder(IDENTITY,
+                                            jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS,
+                                                     IDENTITY));
+    }
+
+    private static TermsAggregationBuilder generateIdentityIdAggregation() {
+        return generateSimpleAggregation(ID, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID));
+    }
+
+    private static TermsAggregationBuilder generateNameAggregation() {
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME));
+    }
+
+    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
+        return new NestedAggregationBuilder(object, object)
+                   .subAggregation(generateIdentityIdAggregation(object));
+    }
+
+    private static TermsAggregationBuilder generateIdentityIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
                    .field(jsonPath(object, ID))
                    .size(DEFAULT_AGGREGATION_SIZE)
