@@ -102,7 +102,8 @@
         "correspondingAuthor": false,
         "identity": {
           "type": "Identity",
-          "name": "Vegarud, Gerd Elisabeth"
+          "name": "Vegarud, Gerd Elisabeth",
+          "id": "1234"
         },
         "role": "Creator",
         "sequence": 2

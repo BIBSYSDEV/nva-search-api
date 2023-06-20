@@ -10,6 +10,27 @@
           "type": "nested"
         }
       }
+    },
+    "entityDescription": {
+      "type": "nested",
+      "properties": {
+        "contributors": {
+          "type": "nested",
+          "properties": {
+            "identity": {
+              "type": "nested",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
