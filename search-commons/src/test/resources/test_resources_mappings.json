@@ -13,17 +13,33 @@
     },
     "entityDescription": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
         "contributors": {
           "type": "nested",
+          "include_in_parent": true,
           "properties": {
             "identity": {
               "type": "nested",
+              "include_in_parent": true,
               "properties": {
                 "id": {
                   "type": "keyword"
                 },
                 "name": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "reference": {
+          "type": "nested",
+          "properties": {
+            "publicationInstance": {
+              "type": "nested",
+              "properties": {
+                "type": {
                   "type": "keyword"
                 }
               }
