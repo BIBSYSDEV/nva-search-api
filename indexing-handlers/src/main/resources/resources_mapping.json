@@ -29,6 +29,19 @@
               }
             }
           }
+        },
+        "reference": {
+          "type": "nested",
+          "properties": {
+            "publicationInstance": {
+              "type": "nested",
+              "properties": {
+                "type": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
         }
       }
     }
