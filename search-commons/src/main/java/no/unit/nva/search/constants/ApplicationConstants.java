@@ -54,16 +54,17 @@ public final class ApplicationConstants {
     public static final String CONTRIBUTORS = "contributors";
     public static final String NAME = "name";
     public static final String IDENTITY = "identity";
+    public static final String REFERENCE = "reference";
+    public static final String PUBLICATION_INSTANCE = "publicationInstance";
+    public static final String TYPE = "type";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
 
-        generateSimpleAggregation("entityDescription.reference.publicationInstance.type",
-                                  "entityDescription.reference.publicationInstance.type.keyword"),
         generateSimpleAggregation("resourceOwner.owner",
                                   "resourceOwner.owner.keyword"),
         generateSimpleAggregation("resourceOwner.ownerAffiliation",
                                   "resourceOwner.ownerAffiliation.keyword"),
-        generateContributorAggregation(),
+        generateEntityDescriptionAggregation(),
         generateObjectLabelsAggregation("topLevelOrganization")
     );
 
@@ -86,12 +87,33 @@ public final class ApplicationConstants {
                    .size(DEFAULT_AGGREGATION_SIZE);
     }
 
-    private static NestedAggregationBuilder generateContributorAggregation() {
+    private static NestedAggregationBuilder generateTypeAggregation() {
+        return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
+                   .subAggregation(generateNestedPublicationInstanceAggregation()
+                                       .subAggregation(generatePublicationInstanceTypeAggregation()));
+    }
+
+    private static TermsAggregationBuilder generatePublicationInstanceTypeAggregation() {
+        return generateSimpleAggregation(TYPE, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE));
+    }
+
+    private static NestedAggregationBuilder generateNestedPublicationInstanceAggregation() {
+        return new NestedAggregationBuilder(PUBLICATION_INSTANCE,
+                                            jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE));
+    }
+
+    private static NestedAggregationBuilder generateEntityDescriptionAggregation() {
         return new NestedAggregationBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
-                   .subAggregation(generateNestedContributorAggregation()
-                                       .subAggregation(generateNestedIdentityAggregation()
-                                                           .subAggregation(generateIdAggregation()
-                                                                               .subAggregation(generateNameAggregation()))));
+                   .subAggregation(generateContributorAggregations())
+                   .subAggregation(generateTypeAggregation());
+    }
+
+    private static NestedAggregationBuilder generateContributorAggregations() {
+        return generateNestedContributorAggregation()
+                   .subAggregation(generateNestedIdentityAggregation()
+                                       .subAggregation(generateIdAggregation()
+                                                           .subAggregation(
+                                                               generateNameAggregation())));
     }
 
     private static NestedAggregationBuilder generateNestedContributorAggregation() {

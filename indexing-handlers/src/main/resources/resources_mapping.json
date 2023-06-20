@@ -13,12 +13,15 @@
     },
     "entityDescription": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
         "contributors": {
           "type": "nested",
+          "include_in_parent": true,
           "properties": {
             "identity": {
               "type": "nested",
+              "include_in_parent": true,
               "properties": {
                 "id": {
                   "type": "keyword"
@@ -32,9 +35,11 @@
         },
         "reference": {
           "type": "nested",
+          "include_in_parent": true,
           "properties": {
             "publicationInstance": {
               "type": "nested",
+              "include_in_parent": true,
               "properties": {
                 "type": {
                   "type": "keyword"
