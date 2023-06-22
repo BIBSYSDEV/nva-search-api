@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
@@ -106,8 +107,13 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public Void createIndex(String indexName, Map<String, ?> mappings) throws IOException {
+        return createIndex(indexName, mappings, Collections.emptyMap());
+    }
+
+    public Void createIndex(String indexName, Map<String, ?> mappings, Map<String, ?> settings) throws IOException {
         var createRequest = new CreateIndexRequest(indexName);
         createRequest.mapping(mappings);
+        createRequest.settings(settings);
         openSearchClient.indices().create(createRequest, getRequestOptions());
         return null;
     }

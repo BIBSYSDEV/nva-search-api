@@ -29,8 +29,9 @@ public class InitHandler implements RequestHandler<Object, String> {
 
     private static final String RESOURCES_MAPPINGS =
             IoUtils.stringFromResources(Path.of("resources_mapping.json"));
+    private static final String RESOURCES_SETTINGS = IoUtils.stringFromResources(Path.of("resources_settings.json"));
     private static final List<IndexRequest> INDEXES = List.of(
-            new IndexRequest(RESOURCES_INDEX, RESOURCES_MAPPINGS),
+            new IndexRequest(RESOURCES_INDEX, RESOURCES_MAPPINGS, RESOURCES_SETTINGS),
             new IndexRequest(DOIREQUESTS_INDEX),
             new IndexRequest(MESSAGES_INDEX),
             new IndexRequest(TICKETS_INDEX),
@@ -54,7 +55,7 @@ public class InitHandler implements RequestHandler<Object, String> {
         var failState = new AtomicBoolean(false);
 
         INDEXES.forEach(request -> {
-            attempt(() -> indexingClient.createIndex(request.getName(), request.getMappings()))
+            attempt(() -> indexingClient.createIndex(request.getName(), request.getMappings(), request.getSettings()))
                     .orElse(fail -> handleFailure(failState, fail));
         });
 

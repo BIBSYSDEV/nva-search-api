@@ -23,7 +23,9 @@ public class ImportCandidateInitHandler implements RequestHandler<Object, String
     public static final String RESOURCES_MAPPING_JSON = "resources_mapping.json";
     private static final String IMPORT_CANDIDATE_MAPPINGS =
             IoUtils.stringFromResources(Path.of(RESOURCES_MAPPING_JSON));
-    private static final IndexRequest INDEX = new IndexRequest(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS);
+    private static final String IMPORT_CANDIDATE_SETTINGS =
+            IoUtils.stringFromResources(Path.of("resources_settings.json"));
+    private static final IndexRequest INDEX = new IndexRequest(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS, IMPORT_CANDIDATE_SETTINGS);
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
     private final IndexingClient indexingClient;
 
@@ -40,7 +42,7 @@ public class ImportCandidateInitHandler implements RequestHandler<Object, String
     public String handleRequest(Object input, Context context) {
         var failState = new AtomicBoolean(false);
 
-        attempt(() -> indexingClient.createIndex(INDEX.getName(), INDEX.getMappings()))
+        attempt(() -> indexingClient.createIndex(INDEX.getName(), INDEX.getMappings(), INDEX.getSettings()))
                 .orElse(fail -> handleFailure(failState, fail));
 
         return failState.get() ? FAILED : SUCCESS;
