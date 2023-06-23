@@ -88,12 +88,16 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
             String contributorsNames = '"' + String.join(",", contributors) + '"';
 
+            System.out.println("YYYYYYYYYYYY = " +  entityDescription.get("publicationDate").get("day"));
+
             String[] textData = {
                 jsonNode.get("id").toString(),
                 entityDescription.get("mainTitle").toString(),
                 entityDescription.get("publicationDate").get("year").toString(),
-                entityDescription.get("publicationDate").get("month").toString(),
-                entityDescription.get("publicationDate").get("day").toString(),
+                entityDescription.get("publicationDate").get("month") != null ?  entityDescription.get(
+                    "publicationDate").get("month").toString() : "",
+                entityDescription.get("publicationDate").get("day") != null ?  entityDescription.get(
+                    "publicationDate").get("day").toString() : "",
                 entityDescription.get("reference").get("publicationInstance").get("type").toString(),
                 contributorsNames};
 
