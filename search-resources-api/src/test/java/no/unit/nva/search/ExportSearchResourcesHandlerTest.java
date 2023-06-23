@@ -66,7 +66,7 @@ class ExportSearchResourcesHandlerTest {
         var response = GatewayResponse.fromOutputStream(outputStream, String.class);
 
         String actual = response.getBody().trim();
-        String expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_TEXT);//.replaceAll("(\r\n)", "\n");
+        String expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_TEXT).replaceAll("(\r\n)", "\n");
 
         assertNotNull(response.getHeaders());
         assertEquals(HTTP_OK, response.getStatusCode());
