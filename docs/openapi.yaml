@@ -138,6 +138,74 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /resources/export:
+    get:
+      description: "Search for public available publications by given criteria and export the result"
+      tags:
+        - external
+      parameters:
+        - in: query
+          name: query
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderBy
+          description: "Field to order result by."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          description: "Order of search results (asc or desc)."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: from
+          description: "Start position from results, 0-based."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: results
+          description: "Maximum number of publications in response."
+          required: false
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ExportSearchResourcesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicationSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /import-candidates:
     get:
       description: "Search for import candidates by given criteria"
