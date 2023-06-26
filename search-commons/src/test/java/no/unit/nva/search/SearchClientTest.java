@@ -325,8 +325,8 @@ class SearchClientTest {
             searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
                                                      OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
-        var exportSearchResults = SearchClient.exportSearchResults(searchResponseDto);
-        var createTextDataFromSearchResult = SearchClient.createTextDataFromSearchResult(searchResponseDto.getHits());
+        var exportSearchResults = ExportSearchResources.exportSearchResults(searchResponseDto);
+        var createTextDataFromSearchResult = ExportSearchResources.createTextDataFromSearchResult(searchResponseDto.getHits());
         var exportSearchWithDocumentQuery = searchClient.exportSearchWithDocumentQuery(generateSampleQuery(),
                                                                                        OPENSEARCH_ENDPOINT_INDEX);
 

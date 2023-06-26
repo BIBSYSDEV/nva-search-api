@@ -28,7 +28,7 @@ dependencies {
 
     testImplementation project(':search-testing')
 
-    implementation 'com.opencsv:opencsv:4.6'
+    implementation 'com.opencsv:opencsv:5.7.1'
 
 }
 

@@ -3,13 +3,8 @@ package no.unit.nva.search;
 import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
 import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.opencsv.CSVWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
@@ -60,53 +55,6 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         return new SearchClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
     }
 
-    public static String exportSearchResults(SearchResponseDto searchResponseDto) throws IOException {
-
-        List<String[]> textData = createTextDataFromSearchResult(searchResponseDto.getHits());
-        StringWriter writer = new StringWriter();
-        CSVWriter csvwriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER,
-                                            CSVWriter.NO_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-        csvwriter.writeAll(textData);
-        csvwriter.close();
-
-        return writer.toString();
-    }
-
-    public static List<String[]> createTextDataFromSearchResult(List<JsonNode> searchResults) {
-
-        String[] header = {"id", "mainTitle", "publicationYear", "publicationMonth", "publicationDay",
-            "publicationInstance", "contributorNames"};
-        List<String[]> createTextData = new ArrayList<>();
-        createTextData.add(header);
-
-        List<String> contributors = new ArrayList<>();
-        for (JsonNode jsonNode : searchResults) {
-            var entityDescription = jsonNode.get("entityDescription");
-            var publicationDate = "publicationDate";
-            for (JsonNode jsonNode2 : entityDescription.get("contributors")) {
-                contributors.add(String.valueOf(jsonNode2.get("identity").get("name")).replace("\"", ""));
-            }
-
-            String contributorsNames = '"' + String.join(",", contributors) + '"';
-
-            String[] textData = {
-                jsonNode.get("id").toString(),
-                entityDescription.get("mainTitle").toString(),
-                entityDescription.get(publicationDate).get("year").toString(),
-                entityDescription.get(publicationDate).get("month") != null ?  entityDescription.get(
-                    publicationDate).get("month").toString() : "",
-                entityDescription.get(publicationDate).get("day") != null ?  entityDescription.get(
-                    publicationDate).get("day").toString() : "",
-                entityDescription.get("reference").get("publicationInstance").get("type").toString(),
-                contributorsNames};
-
-            createTextData.add(textData);
-            contributors.removeAll(contributors);
-        }
-
-        return createTextData;
-    }
-
     /**
      * Searches for a searchTerm or index:searchTerm in opensearch index.
      *
@@ -155,7 +103,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public String exportSearchWithDocumentQuery(SearchDocumentsQuery query,
                                                 String index) throws ApiGatewayException, IOException {
         var searchResponseDto = searchWithSearchDocumentQuery(query, index);
-        return exportSearchResults(searchResponseDto);
+        return ExportSearchResources.exportSearchResults(searchResponseDto);
     }
 
     private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)
