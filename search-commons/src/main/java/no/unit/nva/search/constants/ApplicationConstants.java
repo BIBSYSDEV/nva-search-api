@@ -64,6 +64,8 @@ public final class ApplicationConstants {
                                   "resourceOwner.owner.keyword"),
         generateSimpleAggregation("resourceOwner.ownerAffiliation",
                                   "resourceOwner.ownerAffiliation.keyword"),
+        generateSimpleAggregation("fundings.source.identifier",
+                                  "fundings.source.identifier.keyword"),
         generateEntityDescriptionAggregation(),
         generateObjectLabelsAggregation("topLevelOrganization")
     );
@@ -107,6 +109,7 @@ public final class ApplicationConstants {
                    .subAggregation(generateContributorAggregations())
                    .subAggregation(generateTypeAggregation());
     }
+
 
     private static NestedAggregationBuilder generateContributorAggregations() {
         return generateNestedContributorAggregation()
