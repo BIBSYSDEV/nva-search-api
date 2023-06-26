@@ -45,7 +45,7 @@ public class RequestUtil {
     }
 
     public static int getExportResults(RequestInfo requestInfo) {
-        return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, "100"));
+        return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, "1000"));
     }
 
     public static int getFrom(RequestInfo requestInfo) {
@@ -97,7 +97,7 @@ public class RequestUtil {
         List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         return new SearchDocumentsQuery(
             getSearchTerm(requestInfo),
-            getExportResults(requestInfo),
+            getResults(requestInfo),
             getFrom(requestInfo),
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),
