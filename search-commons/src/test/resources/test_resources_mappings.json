@@ -11,6 +11,57 @@
         }
       }
     },
+    "fundings": {
+      "type": "nested",
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "activeFrom": {
+          "type": "date"
+        },
+        "activeTo": {
+          "type": "date"
+        },
+        "fundingAmount": {
+          "properties": {
+            "amount": {
+              "type": "long"
+            },
+            "currency": {
+              "type": "keyword"
+            }
+          }
+        },
+        "identifier": {
+          "type": "keyword"
+        },
+        "labels": {
+          "type": "nested"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "keyword"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "identifier": {
+              "type": "keyword"
+            },
+            "labels": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        }
+      }
+    },
     "entityDescription": {
       "type": "nested",
       "include_in_parent": true,
@@ -28,57 +79,6 @@
                 },
                 "name": {
                   "type": "keyword"
-                }
-              }
-            }
-          }
-        },
-        "fundings": {
-          "type": "nested",
-          "properties": {
-            "id": {
-              "type": "keyword"
-            },
-            "type": {
-              "type": "keyword"
-            },
-            "activeFrom": {
-              "type": "date"
-            },
-            "activeTo": {
-              "type": "date"
-            },
-            "fundingAmount": {
-              "properties": {
-                "amount": {
-                  "type": "long"
-                },
-                "currency": {
-                  "type": "keyword"
-                }
-              }
-            },
-            "identifier": {
-              "type": "keyword"
-            },
-            "labels": {
-              "type": "nested"
-            },
-            "source": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "keyword"
-                },
-                "type": {
-                  "type": "keyword"
-                },
-                "identifier": {
-                  "type": "keyword"
-                },
-                "labels": {
-                  "type": "nested",
-                  "include_in_parent": true
                 }
               }
             }

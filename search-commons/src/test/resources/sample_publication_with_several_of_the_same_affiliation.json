@@ -165,6 +165,53 @@
       "Sprouting"
     ]
   },
+  "fundings": [
+    {
+      "id": "https://www.example.org/968af6b5-e039-496c-aa20-e0421d7ccc60",
+      "type": "ConfirmedFunding",
+      "activeFrom": "1988-09-14T13:03:42.198Z",
+      "activeTo": "1998-11-14T05:29:30.440Z",
+      "fundingAmount": {
+        "amount": 1029707864,
+        "currency": "GBP"
+      },
+      "identifier": "FLYDcuXHNhVZIEk",
+      "labels": {
+        "es": "XbCk0u3MuqxaI91j5"
+      },
+      "source": {
+        "id": "https://www.example.org/abb78471-9428-474d-876d-a9c5a64a80b2",
+        "type": "FundingSource",
+        "identifier": "NFR",
+        "labels": {
+          "en": "Research Council of Norway (RCN)",
+          "nb": "Norges forskningsråd"
+        }
+      }
+    },
+    {
+      "type": "UnconfirmedFunding",
+      "activeFrom": "2021-12-28T09:27:03.242Z",
+      "activeTo": "2022-07-12T18:19:14.338Z",
+      "fundingAmount": {
+        "amount": 1381054993,
+        "currency": "NOK"
+      },
+      "identifier": "05PEzFpiGAzkPX3GxNc",
+      "labels": {
+        "cs": "1xv67CAgKP"
+      },
+      "source": {
+        "id": "https://www.example.org/639d25d4-70a0-4398-b6a1-4af6e3bd8d77",
+        "type": "FundingSource",
+        "identifier": "NFR",
+        "labels": {
+          "en": "Research Council of Norway (RCN)",
+          "nb": "Norges forskningsråd"
+        }
+      }
+    }
+  ],
   "identifier": "0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9",
   "modelVersion": "0.19.33",
   "modifiedDate": "2023-02-08T09:21:22.370874Z",
