@@ -186,23 +186,23 @@ paths:
           content:
             text/csv:
               schema:
-                $ref: "#/components/schemas/PublicationSearchResponse"
+                $ref: "#/components/schemas/ExportPublicationSearchResponse"
         "400":
           description: Bad Request
           content:
-            text/csv:
+            application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "404":
           description: Not Found
           content:
-            text/csv:
+            application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
           description: "500 info description"
           content:
-            text/csv:
+            application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
 
@@ -572,6 +572,31 @@ components:
               description: Publication search results (numberOf = [size])
               items:
                 $ref: '#/components/schemas/Publication'
+    ExportPublicationSearchResponse:
+      type: object
+      description: Export publication search results
+      properties:
+        id:
+          type: string
+          description: Uri(id) of the publication
+        mainTitle:
+          type: string
+          description: Title of the publication
+        publicationYear:
+          type: string
+          description: Year of the publication
+        publicationMonth:
+          type: string
+          description: Month of the publication
+        publicationDay:
+          type: string
+          description: Day of the publication
+        publicationInstance:
+          type: string
+          description: Publication instance of the publication
+        contributorNames:
+          type: string
+          description: List of names of the publication contributors
     ImportCandidateSearchResponse:
       allOf: # Combines SearchResponse with ImportCandidate hits
         - $ref: '#/components/schemas/SearchResponse'
