@@ -62,17 +62,10 @@
               "type": "keyword"
             },
             "labels": {
-              "type": "object",
-              "properties": {
-                "key": {
-                  "type": "keyword"
-                },
-                "value": {
-                  "type": "text"
-                }
-              }
+              "type": "nested"
             },
             "source": {
+              "type": "object",
               "properties": {
                 "id": {
                   "type": "keyword"
@@ -84,15 +77,8 @@
                   "type": "keyword"
                 },
                 "labels": {
-                  "type": "object",
-                  "properties": {
-                    "key": {
-                      "type": "keyword"
-                    },
-                    "value": {
-                      "type": "text"
-                    }
-                  }
+                  "type": "nested",
+                  "include_in_parent": true
                 }
               }
             }

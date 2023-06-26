@@ -123,11 +123,6 @@ public final class ApplicationConstants {
 
 
     private static NestedAggregationBuilder generateContributorAggregations() {
-        // TODO Same or different result
-        //        return generateNestedContributorAggregation()
-        //                   .subAggregation(generateNestedIdentityAggregation())
-        //                   .subAggregation(generateIdAggregation())
-        //                   .subAggregation(generateNameAggregation());
         return generateNestedContributorAggregation()
                    .subAggregation(generateNestedIdentityAggregation()
                                        .subAggregation(generateIdAggregation()
