@@ -66,8 +66,8 @@ public final class ExportSearchResources {
                 searchResult.get(ID).toString(),
                 searchResult.get(ENTITY_DESCRIPTION).get(MAIN_TITLE).toString(),
                 searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(YEAR).toString(),
-                searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(MONTH).toString(),
-                searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(DAY).toString(),
+                searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(MONTH) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(MONTH).toString() : "",
+                searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(DAY) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(DAY).toString() : "",
                 searchResult.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(TYPE).toString(),
                 contributorsName
             };
