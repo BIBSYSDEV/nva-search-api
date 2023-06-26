@@ -3,7 +3,6 @@ package no.unit.nva.search;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchTicketsQuery;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
@@ -30,7 +29,6 @@ public class RequestUtil {
     public static final String PATH = "path";
     public static final String DOMAIN_NAME = "domainName";
     public static final String HTTPS = "https";
-    public static final Environment ENVIRONMENT = new Environment();
 
     /**
      * Get searchTerm from request query parameters.
@@ -47,7 +45,7 @@ public class RequestUtil {
     }
 
     public static int getExportResults(RequestInfo requestInfo) {
-        return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, ENVIRONMENT.readEnv("EXPORT_SEARCH_RESULTS_SIZE")));
+        return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, "100"));
     }
 
     public static int getFrom(RequestInfo requestInfo) {
