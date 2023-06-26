@@ -44,6 +44,10 @@ public class RequestUtil {
         return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, RESULTS_DEFAULT_SIZE));
     }
 
+    public static int getExportResults(RequestInfo requestInfo) {
+        return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, "1000"));
+    }
+
     public static int getFrom(RequestInfo requestInfo) {
         return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(FROM_KEY, FROM_DEFAULT_POSITION));
     }
@@ -80,6 +84,20 @@ public class RequestUtil {
         return new SearchDocumentsQuery(
             getSearchTerm(requestInfo),
             getResults(requestInfo),
+            getFrom(requestInfo),
+            getOrderBy(requestInfo),
+            getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
+            aggregations
+        );
+    }
+
+    public static SearchDocumentsQuery toQueryExport(
+        RequestInfo requestInfo,
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        return new SearchDocumentsQuery(
+            getSearchTerm(requestInfo),
+            getExportResults(requestInfo),
             getFrom(requestInfo),
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),

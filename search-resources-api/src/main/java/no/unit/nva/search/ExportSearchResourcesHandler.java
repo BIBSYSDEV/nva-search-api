@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.search.RequestUtil.toQuery;
+import static no.unit.nva.search.RequestUtil.toQueryExport;
 import static no.unit.nva.search.SearchClient.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -31,7 +32,7 @@ public class ExportSearchResourcesHandler extends ApiGatewayHandler<Void, String
     protected String processInput(Void input,
                                   RequestInfo requestInfo,
                                   Context context) throws ApiGatewayException {
-        var query = toQuery(requestInfo, null);
+        var query = toQueryExport(requestInfo, null);
         try {
             return openSearchClient.exportSearchWithDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
         } catch (IOException e) {
