@@ -112,8 +112,13 @@ public final class ApplicationConstants {
                    .subAggregation(generateTypeAggregation());
     }
     private static NestedAggregationBuilder generateFundingSourceAggregation() {
-        return new NestedAggregationBuilder(FUNDINGS, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
-                   .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)));
+        var fundingSourcePath = jsonPath(FUNDINGS, SOURCE);
+        return
+            new NestedAggregationBuilder(FUNDINGS, fundingSourcePath)
+                .subAggregation(
+                    new NestedAggregationBuilder(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
+                        .subAggregation(
+                            generateLabelsAggregation(fundingSourcePath)));
     }
 
 

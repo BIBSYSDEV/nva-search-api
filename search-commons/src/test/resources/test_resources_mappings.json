@@ -33,6 +33,71 @@
             }
           }
         },
+        "fundings": {
+          "type": "nested",
+          "properties": {
+            "id": {
+              "type": "keyword"
+            },
+            "type": {
+              "type": "keyword"
+            },
+            "activeFrom": {
+              "type": "date"
+            },
+            "activeTo": {
+              "type": "date"
+            },
+            "fundingAmount": {
+              "properties": {
+                "amount": {
+                  "type": "long"
+                },
+                "currency": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "identifier": {
+              "type": "keyword"
+            },
+            "labels": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "keyword"
+                },
+                "value": {
+                  "type": "text"
+                }
+              }
+            },
+            "source": {
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "type": {
+                  "type": "keyword"
+                },
+                "identifier": {
+                  "type": "keyword"
+                },
+                "labels": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "keyword"
+                    },
+                    "value": {
+                      "type": "text"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "reference": {
           "type": "nested",
           "include_in_parent": true,
