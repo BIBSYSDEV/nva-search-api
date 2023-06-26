@@ -184,25 +184,25 @@ paths:
         '200':
           description: "OK"
           content:
-            application/json:
+            text/csv:
               schema:
                 $ref: "#/components/schemas/PublicationSearchResponse"
         "400":
           description: Bad Request
           content:
-            application/json:
+            text/csv:
               schema:
                 $ref: "#/components/schemas/Problem"
         "404":
           description: Not Found
           content:
-            application/json:
+            text/csv:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
           description: "500 info description"
           content:
-            application/json:
+            text/csv:
               schema:
                 $ref: "#/components/schemas/Problem"
 
