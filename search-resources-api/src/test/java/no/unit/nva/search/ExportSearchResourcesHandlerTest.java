@@ -35,7 +35,7 @@ import org.opensearch.client.RestHighLevelClient;
 class ExportSearchResourcesHandlerTest {
 
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
-    public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_EXPORT
         = "sample_opensearch_response_export.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_TEXT = "roundtripResponseText";
@@ -74,7 +74,7 @@ class ExportSearchResourcesHandlerTest {
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
-        SearchResponse searchResponse = createSearchResponseWithHits(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT);
+        SearchResponse searchResponse = createSearchResponseWithHits(SAMPLE_OPENSEARCH_RESPONSE_EXPORT);
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 

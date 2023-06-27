@@ -584,22 +584,19 @@ components:
           description: Title of the publication
         publicationYear:
           type: string
-          description: Year of publication
+          description: Year of the publication
         publicationMonth:
           type: string
-          description: Month of publication
+          description: Month of the publication
         publicationDay:
           type: string
-          description: Day of publication
+          description: Day of the publication
         publicationInstance:
           type: string
-          description: Publication instance
+          description: Publication instance of the publication
         contributorNames:
           type: string
-          description: List of contributors of the publication
-      example: |-
-        id,mainTitle,publicationYear,publicationMonth,publicationDay,publicationInstance,contributorNames
-        "https://example/publication","Title","2020","09","02","Academic article","Rached Fristedt,Per Arnér"
+          description: List of names of the publication contributors
     ImportCandidateSearchResponse:
       allOf: # Combines SearchResponse with ImportCandidate hits
         - $ref: '#/components/schemas/SearchResponse'
