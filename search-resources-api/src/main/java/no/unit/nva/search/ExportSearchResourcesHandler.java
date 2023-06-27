@@ -12,10 +12,13 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExportSearchResourcesHandler extends ApiGatewayHandler<Void, String> {
 
     private final SearchClient openSearchClient;
+    private static final Logger logger = LoggerFactory.getLogger(ExportSearchResourcesHandler.class);
 
     @JacocoGenerated
     public ExportSearchResourcesHandler() {
@@ -32,6 +35,7 @@ public class ExportSearchResourcesHandler extends ApiGatewayHandler<Void, String
                                   RequestInfo requestInfo,
                                   Context context) throws ApiGatewayException {
         var query = toQueryExport(requestInfo, null);
+        logger.info("Uri name: {}", query.getRequestUri());
         try {
             return openSearchClient.exportSearchWithDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
         } catch (IOException e) {
