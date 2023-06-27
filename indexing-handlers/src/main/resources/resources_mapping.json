@@ -49,6 +49,29 @@
           }
         }
       }
+    },
+    "fundings": {
+      "type": "nested",
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "identifier": {
+              "type": "keyword"
+            },
+            "labels": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        }
+      }
     }
   }
 }
