@@ -114,8 +114,8 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateFundingSourceAggregation() {
         return
             new NestedAggregationBuilder(FUNDINGS, FUNDINGS).subAggregation(
-                generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, IDENTIFIER)).subAggregation(
-                    generateLabelsAggregation(FUNDINGS)
+                generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)).subAggregation(
+                    generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
                 )
            );
     }
