@@ -63,12 +63,12 @@ public final class ExportSearchResources {
             String contributorsName = getContributorsName(contributors);
 
             String[] textData = {
-                searchResult.get(ID).toString(),
-                searchResult.get(ENTITY_DESCRIPTION).get(MAIN_TITLE).toString(),
-                searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(YEAR).toString(),
+                searchResult.get(ID) != null ? searchResult.get(ID).toString() : "",
+                searchResult.get(ENTITY_DESCRIPTION).get(MAIN_TITLE) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(MAIN_TITLE).toString() : "",
+                searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(YEAR) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(YEAR).toString() : "",
                 searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(MONTH) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(MONTH).toString() : "",
                 searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(DAY) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(PUBLICATION_DATE).get(DAY).toString() : "",
-                searchResult.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(TYPE).toString(),
+                searchResult.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(TYPE) != null ?  searchResult.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(TYPE).toString() : "",
                 contributorsName
             };
             createTextData.add(textData);
@@ -78,7 +78,7 @@ public final class ExportSearchResources {
     private static String getContributorsName(JsonNode contributors) {
         ArrayList<String> extractContributors = new ArrayList<>();
         contributors.forEach(contributor -> {
-            extractContributors.add(contributor.get(IDENTITY).get(NAME).toString());
+            extractContributors.add(contributor.get(IDENTITY).get(NAME) != null ? contributor.get(IDENTITY).get(NAME).toString() : "" );
         });
 
         return extractContributors.stream()
