@@ -70,7 +70,6 @@ class SearchClientTest {
         "sample_opensearch_ticket_response_searchresponsedto_aggregations.json";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response_export.json";
-    public static final String ROUNDTRIP_RESPONSE_TEXT = "roundtripResponseText";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
     private static final int SAMPLE_FROM = 0;
