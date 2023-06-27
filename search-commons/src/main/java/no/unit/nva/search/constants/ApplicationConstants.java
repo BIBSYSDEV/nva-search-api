@@ -52,6 +52,9 @@ public final class ApplicationConstants {
         );
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String CONTRIBUTORS = "contributors";
+    public static final String SOURCE = "source";
+    public static final String IDENTIFIER = "identifier";
+    private static final String FUNDINGS = "fundings";
     public static final String NAME = "name";
     public static final String IDENTITY = "identity";
     public static final String REFERENCE = "reference";
@@ -65,6 +68,7 @@ public final class ApplicationConstants {
         generateSimpleAggregation("resourceOwner.ownerAffiliation",
                                   "resourceOwner.ownerAffiliation.keyword"),
         generateEntityDescriptionAggregation(),
+        generateFundingSourceAggregation(),
         generateObjectLabelsAggregation("topLevelOrganization")
     );
 
@@ -107,6 +111,15 @@ public final class ApplicationConstants {
                    .subAggregation(generateContributorAggregations())
                    .subAggregation(generateTypeAggregation());
     }
+    private static NestedAggregationBuilder generateFundingSourceAggregation() {
+        return
+            new NestedAggregationBuilder(FUNDINGS, FUNDINGS).subAggregation(
+                generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)).subAggregation(
+                    generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
+                )
+           );
+    }
+
 
     private static NestedAggregationBuilder generateContributorAggregations() {
         return generateNestedContributorAggregation()
@@ -121,9 +134,7 @@ public final class ApplicationConstants {
     }
 
     private static NestedAggregationBuilder generateNestedIdentityAggregation() {
-        return new NestedAggregationBuilder(IDENTITY,
-                                            jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS,
-                                                     IDENTITY));
+        return new NestedAggregationBuilder(IDENTITY, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY));
     }
 
     private static TermsAggregationBuilder generateIdAggregation() {
