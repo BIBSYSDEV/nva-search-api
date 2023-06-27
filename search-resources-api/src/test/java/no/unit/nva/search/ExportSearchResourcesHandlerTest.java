@@ -59,7 +59,7 @@ class ExportSearchResourcesHandlerTest {
     }
 
     @Test
-    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
+    void shouldReturnSearchResultsInCsvFormat() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
