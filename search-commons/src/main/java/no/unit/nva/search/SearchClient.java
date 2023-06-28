@@ -1,5 +1,10 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
+import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
+import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
+import java.io.IOException;
+import java.net.URI;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
@@ -9,13 +14,6 @@ import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
-
-import java.io.IOException;
-import java.net.URI;
-
-import static no.unit.nva.search.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
-import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
-import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
 
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
@@ -44,62 +42,6 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         super(openSearchClient, cachedJwt);
     }
 
-    /**
-     * Searches for a searchTerm or index:searchTerm in opensearch index.
-     *
-     * @param query query object
-     * @throws ApiGatewayException thrown when uri is misconfigured, service i not available or interrupted
-     */
-    public SearchResponseDto searchWithSearchDocumentQuery(
-            SearchDocumentsQuery query,
-            String index
-    ) throws ApiGatewayException {
-        try {
-            SearchRequest searchRequest = query.toSearchRequest(index);
-            return doSearch(searchRequest, query.getRequestUri(), query.getSearchTerm());
-        } catch (IOException e) {
-            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
-        }
-
-    }
-
-    public SearchResponseDto searchWithSearchTicketQuery(
-            ViewingScope viewingScope,
-            SearchTicketsQuery searchTicketsQuery,
-            String... index
-    ) throws ApiGatewayException {
-        try {
-            SearchRequest searchRequest = searchTicketsQuery.createSearchRequestForTicketsWithOrganizationIds(
-                    viewingScope,
-                    index);
-            return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
-        } catch (IOException e) {
-            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
-        }
-
-    }
-
-    private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)
-            throws IOException {
-        var searchResponse = openSearchClient.search(searchRequest, getRequestOptions());
-        var id = createIdWithQuery(requestUri, searchTerm);
-        return fromSearchResponse(searchResponse, id);
-    }
-
-    public SearchResponseDto searchOwnerTickets(
-            SearchTicketsQuery searchTicketsQuery,
-            String owner,
-            String... index) throws BadGatewayException {
-        try {
-            var searchRequest = searchTicketsQuery.createSearchRequestForTicketsByOwner(owner, index);
-            return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
-        } catch (IOException e) {
-            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
-        }
-
-    }
-
-
     @JacocoGenerated
     public static SearchClient defaultSearchClient() {
         return prepareWithSecretReader(new SecretsReader());
@@ -108,8 +50,66 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static SearchClient prepareWithSecretReader(SecretsReader secretReader) {
         var cognitoCredentials = createCognitoCredentials(secretReader);
         var cognitoAuthenticator
-                = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
+            = CognitoAuthenticator.prepareWithCognitoCredentials(cognitoCredentials);
         var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
         return new SearchClient(defaultRestHighLevelClientWrapper(), cachedJwtProvider);
+    }
+
+    /**
+     * Searches for a searchTerm or index:searchTerm in opensearch index.
+     *
+     * @param query query object
+     * @throws ApiGatewayException thrown when uri is misconfigured, service i not available or interrupted
+     */
+    public SearchResponseDto searchWithSearchDocumentQuery(
+        SearchDocumentsQuery query,
+        String index
+    ) throws ApiGatewayException {
+        try {
+            SearchRequest searchRequest = query.toSearchRequest(index);
+            return doSearch(searchRequest, query.getRequestUri(), query.getSearchTerm());
+        } catch (IOException e) {
+            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
+        }
+    }
+
+    public SearchResponseDto searchWithSearchTicketQuery(
+        ViewingScope viewingScope,
+        SearchTicketsQuery searchTicketsQuery,
+        String... index
+    ) throws ApiGatewayException {
+        try {
+            SearchRequest searchRequest = searchTicketsQuery.createSearchRequestForTicketsWithOrganizationIds(
+                viewingScope,
+                index);
+            return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
+        } catch (IOException e) {
+            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
+        }
+    }
+
+    public SearchResponseDto searchOwnerTickets(
+        SearchTicketsQuery searchTicketsQuery,
+        String owner,
+        String... index) throws BadGatewayException {
+        try {
+            var searchRequest = searchTicketsQuery.createSearchRequestForTicketsByOwner(owner, index);
+            return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
+        } catch (IOException e) {
+            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
+        }
+    }
+
+    public String exportSearchWithDocumentQuery(SearchDocumentsQuery query,
+                                                String index) throws ApiGatewayException, IOException {
+        var searchResponseDto = searchWithSearchDocumentQuery(query, index);
+        return ExportSearchResources.exportSearchResults(searchResponseDto);
+    }
+
+    private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)
+        throws IOException {
+        var searchResponse = openSearchClient.search(searchRequest, getRequestOptions());
+        var id = createIdWithQuery(requestUri, searchTerm);
+        return fromSearchResponse(searchResponse, id);
     }
 }

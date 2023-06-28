@@ -28,6 +28,8 @@ dependencies {
 
     testImplementation project(':search-testing')
 
+    implementation libs.csv
+
 }
 
 test {
