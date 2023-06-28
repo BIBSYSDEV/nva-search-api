@@ -573,7 +573,7 @@ components:
               items:
                 $ref: '#/components/schemas/Publication'
     ExportPublicationSearchResponse:
-      type: object
+      type: string
       description: Export publication search results
       properties:
         id:
