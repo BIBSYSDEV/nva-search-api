@@ -115,18 +115,22 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateFundingSourceAggregation() {
         return
             new NestedAggregationBuilder(FUNDINGS, FUNDINGS)
-                .subAggregation(new NestedAggregationBuilder(SOURCE, jsonPath(FUNDINGS, SOURCE))
-                    .subAggregation(generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)))
-                    .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
+                .subAggregation(
+                    generateSimpleAggregation(SOURCE, jsonPath(FUNDINGS, SOURCE))
+                        .subAggregation(generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)))
+                        .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
            );
     }
 
     private static NestedAggregationBuilder generateContributorAggregations() {
-        return generateNestedContributorAggregation()
-                   .subAggregation(generateNestedIdentityAggregation()
-                                       .subAggregation(generateIdAggregation()
-                                                           .subAggregation(
-                                                               generateNameAggregation())));
+        return
+            generateNestedContributorAggregation()
+                .subAggregation(
+                    generateNestedIdentityAggregation()
+                       .subAggregation(
+                           generateIdAggregation()
+                               .subAggregation(generateNameAggregation()))
+                );
     }
 
     private static NestedAggregationBuilder generateNestedContributorAggregation() {
