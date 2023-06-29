@@ -111,15 +111,15 @@ public final class ApplicationConstants {
                    .subAggregation(generateContributorAggregations())
                    .subAggregation(generateTypeAggregation());
     }
+
     private static NestedAggregationBuilder generateFundingSourceAggregation() {
         return
-            new NestedAggregationBuilder(FUNDINGS, FUNDINGS).subAggregation(
-                generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)).subAggregation(
-                    generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
-                )
+            new NestedAggregationBuilder(FUNDINGS, FUNDINGS)
+                .subAggregation(new NestedAggregationBuilder(SOURCE, jsonPath(FUNDINGS, SOURCE))
+                    .subAggregation(generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)))
+                    .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
            );
     }
-
 
     private static NestedAggregationBuilder generateContributorAggregations() {
         return generateNestedContributorAggregation()
