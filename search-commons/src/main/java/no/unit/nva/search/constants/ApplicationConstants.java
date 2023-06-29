@@ -116,10 +116,10 @@ public final class ApplicationConstants {
         return
             new NestedAggregationBuilder(FUNDINGS, FUNDINGS)
                 .subAggregation(
-                    generateSimpleAggregation(SOURCE, jsonPath(FUNDINGS, SOURCE))
-                        .subAggregation(generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER)))
-                        .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
-           );
+                    generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
+                        .subAggregation(
+                            generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
+            );
     }
 
     private static NestedAggregationBuilder generateContributorAggregations() {
