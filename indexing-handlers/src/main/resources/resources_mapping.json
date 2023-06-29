@@ -52,6 +52,7 @@
     },
     "fundings": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
         "id": {
           "type": "keyword"
@@ -60,7 +61,8 @@
           "type": "keyword"
         },
         "source": {
-          "type": "object",
+          "type": "nested",
+          "include_in_parent": true,
           "properties": {
             "identifier": {
               "type": "keyword"
