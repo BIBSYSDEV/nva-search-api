@@ -54,12 +54,6 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "keyword"
-        },
-        "type": {
-          "type": "keyword"
-        },
         "source": {
           "type": "nested",
           "include_in_parent": true,
@@ -68,8 +62,7 @@
               "type": "keyword"
             },
             "labels": {
-              "type": "nested",
-              "include_in_parent": true
+              "type": "nested"
             }
           }
         }

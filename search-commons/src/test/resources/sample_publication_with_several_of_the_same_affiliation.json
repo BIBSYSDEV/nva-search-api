@@ -102,7 +102,8 @@
         "correspondingAuthor": false,
         "identity": {
           "type": "Identity",
-          "name": "Vegarud, Gerd Elisabeth"
+          "name": "Vegarud, Gerd Elisabeth",
+          "id": "1234"
         },
         "role": "Creator",
         "sequence": 2
@@ -180,12 +181,12 @@
         "es": "XbCk0u3MuqxaI91j5"
       },
       "source": {
-        "id": "https://www.example.org/abb78471-9428-474d-876d-a9c5a64a80b2",
-        "type": "FundingSource",
-        "identifier": "NFR",
-        "labels": {
-          "en": "Research Council of Norway (RCN)",
-          "nb": "Norges forskningsråd"
+      "id": "https://www.example.org/abb78471-9428-474d-876d-a9c5a64a80b2",
+      "type": "FundingSource",
+      "identifier": "NFR",
+      "labels": {
+        "en": "Research Council of Norway (RCN)",
+        "nb": "Norges forskningsråd"
         }
       }
     },
