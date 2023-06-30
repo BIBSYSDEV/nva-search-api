@@ -14,6 +14,7 @@ import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -40,7 +41,6 @@ import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.apache.http.HttpHost;
-import org.apache.lucene.util.QueryBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,8 +48,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
-import org.opensearch.index.query.QueryShardContext;
-import org.opensearch.index.query.QueryStringQueryBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -95,7 +93,7 @@ public class OpensearchTest {
     }
 
     @AfterAll
-    static void afterAll() throws IOException {
+    static void afterAll() {
         container.stop();
     }
 
@@ -453,6 +451,32 @@ public class OpensearchTest {
             var contributorAggregation = actualAggregations.at("/entityDescription.contributors.identity.name/"
                                                                + "buckets");
             assertAggregation(contributorAggregation, "lametti, Stefania", 2);
+        }
+
+        @Test
+        void shouldQueryingFundingSuccessfully() throws IOException, InterruptedException, ApiGatewayException {
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
+            indexingClient.addDocumentToIndex(
+                crateSampleIndexDocument(indexName,
+                                         "sample_publication_with_several_of_the_same_affiliation.json"));
+            Thread.sleep(DELAY_AFTER_INDEXING);
+
+            var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
+
+            var fundingToQuery = "NFR";
+            SearchDocumentsQuery query = new SearchDocumentsQuery(
+                "fundings.source.identifier:\"" + fundingToQuery + "\"",
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI,
+                aggregations
+            );
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(2));
         }
 
         @Test

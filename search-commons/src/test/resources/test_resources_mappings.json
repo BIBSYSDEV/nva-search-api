@@ -13,22 +13,17 @@
     },
     "fundings": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "keyword"
-        },
-        "type": {
-          "type": "keyword"
-        },
         "source": {
-          "type": "object",
+          "type": "nested",
+          "include_in_parent": true,
           "properties": {
             "identifier": {
               "type": "keyword"
             },
             "labels": {
-              "type": "nested",
-              "include_in_parent": true
+              "type": "nested"
             }
           }
         }
