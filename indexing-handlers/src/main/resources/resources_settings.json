@@ -1,0 +1,14 @@
+{
+  "index": {
+    "query": {
+      "default_field": [
+        "identifier",
+        "entityDescription.mainTitle",
+        "entityDescription.contributors.identity.name",
+        "entityDescription.tags",
+        "reference.publicationContext.name",
+        "reference.doi"
+      ]
+    }
+  }
+}

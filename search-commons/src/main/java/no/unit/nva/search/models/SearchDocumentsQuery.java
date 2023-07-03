@@ -51,7 +51,6 @@ public class SearchDocumentsQuery {
     }
 
     private SearchSourceBuilder toSearchSourceBuilder() {
-
         var sourceBuilder = new SearchSourceBuilder()
                 .query(QueryBuilders.queryStringQuery(searchTerm))
                 .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
@@ -62,7 +61,6 @@ public class SearchDocumentsQuery {
         if (aggregations != null) {
             addAggregations(sourceBuilder);
         }
-
         return sourceBuilder;
     }
 
