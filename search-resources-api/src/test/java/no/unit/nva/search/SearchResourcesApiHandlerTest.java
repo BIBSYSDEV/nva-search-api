@@ -3,6 +3,8 @@ package no.unit.nva.search;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.utils.SortKeyHttpRequestMatcher;
 import no.unit.nva.testutils.HandlerRequestBuilder;
@@ -29,6 +31,8 @@ import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
 import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,6 +48,8 @@ import static org.mockito.Mockito.when;
 
 public class SearchResourcesApiHandlerTest {
 
+    private static final char UTF8_BOM = '\ufeff';
+    private static final String CRLF = "\r\n";
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON
         = "sample_opensearch_response.json";
@@ -51,6 +57,7 @@ public class SearchResourcesApiHandlerTest {
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
+    private static final CharSequence COMMA_DELIMITER = ",";
 
     private RestHighLevelClient restHighLevelClientMock;
     private SearchResourcesApiHandler handler;
@@ -91,7 +98,7 @@ public class SearchResourcesApiHandlerTest {
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
         var gatewayResponse = GatewayResponse
-            .fromOutputStream(outputStream, SearchResponseDto.class);
+                                  .fromOutputStream(outputStream, SearchResponseDto.class);
 
         SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
 
@@ -198,11 +205,125 @@ public class SearchResourcesApiHandlerTest {
         assertEquals(HTTP_BAD_GATEWAY, gatewayResponse.getStatusCode());
     }
 
+    @Test
+    void shouldReturnApplicationJsonIfNoAcceptHeaderProvided() throws IOException {
+        prepareRestHighLevelClientOkResponse();
+        handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
+
+        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
+    }
+
+    @Test
+    void shouldReturnApplicationJsonIfAcceptApplicationJsonProvided() throws IOException {
+        prepareRestHighLevelClientOkResponse();
+        handler.handleRequest(getRequestInputStreamAccepting("application/json"), outputStream, mock(Context.class));
+
+        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
+    }
+
+    @Test
+    void shouldReturnTextCsvIfAcceptTextProvided() throws IOException {
+        prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
+        handler.handleRequest(getRequestInputStreamAccepting("text/*"), outputStream, mock(Context.class));
+
+        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
+    }
+
+    @Test
+    void shouldReturnTextCsvIfAcceptTextCsvProvided() throws IOException {
+        prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
+        handler.handleRequest(getRequestInputStreamAccepting("text/csv"), outputStream, mock(Context.class));
+
+        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
+    }
+
+    @Test
+    void textCsvShouldContainCorrectFormatting() throws IOException {
+        var csvLines = List.of(csvWithFullDate(), csvWithYearOnly());
+        prepareRestHighLevelClientOkResponse(csvLines);
+        handler.handleRequest(getRequestInputStreamAccepting("text/csv"), outputStream, mock(Context.class));
+
+        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
+
+        assertCsvGeneratedCorrectly(gatewayResponse.getBody(), csvLines);
+    }
+
+    private ExportCsv csvWithYearOnly() {
+        var id = randomUri().toString();
+        var title = randomString();
+        var type = "AcademicArticle";
+        var contributors = List.of(randomString(), randomString(), randomString());
+        var date = "2022";
+
+        var exportCsv = new ExportCsv();
+        exportCsv.setId(id);
+        exportCsv.setMainTitle(title);
+        exportCsv.setPublicationInstance(type);
+        exportCsv.setPublicationDate(date);
+        exportCsv.setContributors(String.join(COMMA_DELIMITER, contributors));
+        return exportCsv;
+    }
+
+    private static ExportCsv csvWithFullDate() {
+        var id = randomUri().toString();
+        var title = randomString();
+        var type = "AcademicArticle";
+        var contributors = List.of(randomString(), randomString(), randomString());
+        var date = "2022-01-22";
+
+        var exportCsv = new ExportCsv();
+        exportCsv.setId(id);
+        exportCsv.setMainTitle(title);
+        exportCsv.setPublicationInstance(type);
+        exportCsv.setPublicationDate(date);
+        exportCsv.setContributors(String.join(COMMA_DELIMITER, contributors));
+        return exportCsv;
+    }
+
+    private void assertCsvGeneratedCorrectly(String body, List<ExportCsv> expectedlines) {
+        // first character must be UTF-8 BOM
+        assertThat("CSV must contain UTF-8 BOM at the beginning!", body.charAt(0), is(equalTo(UTF8_BOM)));
+
+        var lines = body.substring(1).split(CRLF);
+        var expectedNumberOfLines = expectedlines.size() + 1;
+        assertThat("CSV must use \\r\\n as line separator and contain a column header row!",
+                   lines.length, is(equalTo(expectedNumberOfLines)));
+
+        assertThat("Should have column header names in first line!",
+                   lines[0], is(equalTo("\"url\";\"title\";\"publicationDate\";\"type\";\"contributors\"")));
+
+        var idx = 0;
+        for (var line : expectedlines) {
+            assertThat(lines[idx + 1], is(equalTo(expectedLine(line))));
+            idx++;
+        }
+    }
+
+    private String expectedLine(ExportCsv line) {
+        return "\"" + line.getId() + "\";"
+               + "\"" + line.getMainTitle() + "\";"
+               + "\"" + line.getPublicationDate() + "\";"
+               + "\"" + line.getPublicationInstance() + "\";"
+               + "\"" + line.getContributors() + "\"";
+    }
+
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
-            .withRequestContext(getRequestContext())
-            .build();
+                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+                   .withRequestContext(getRequestContext())
+                   .build();
+    }
+
+    private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
+        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+                   .withHeaders(Map.of("Accept", contentType))
+                   .withRequestContext(getRequestContext())
+                   .build();
     }
 
     private ObjectNode getRequestContext() {
@@ -210,21 +331,31 @@ public class SearchResourcesApiHandlerTest {
                                                   ObjectNode.class);
     }
 
+    private void prepareRestHighLevelClientOkResponse(List<ExportCsv> exportCsvs) throws IOException {
+        var json = FakeSearchResponse.generateSearchResponseString(exportCsvs);
+        var searchResponse = createSearchResponseWithHits(json);
+        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
+    }
+
+    private SearchResponse createSearchResponseWithHits(String json) throws IOException {
+        return getSearchResponseFromJson(json);
+    }
+
     private void prepareRestHighLevelClientOkResponse() throws IOException {
-        String result = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        SearchResponse searchResponse = createSearchResponseWithHits(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON);
+        SearchResponse searchResponse =
+            createSearchResponseWithHitsFromFile(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
-        SearchResponse searchResponse = createSearchResponseWithHits(EMPTY_OPENSEARCH_RESPONSE_JSON);
+        SearchResponse searchResponse = createSearchResponseWithHitsFromFile(EMPTY_OPENSEARCH_RESPONSE_JSON);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
-        SearchResponse searchResponse = createSearchResponseWithHits(EMPTY_OPENSEARCH_RESPONSE_JSON);
+        SearchResponse searchResponse = createSearchResponseWithHitsFromFile(EMPTY_OPENSEARCH_RESPONSE_JSON);
         when(
             restHighLevelClientMock.search(argThat(new SortKeyHttpRequestMatcher(sortOrder)), any())
         ).thenReturn(searchResponse);
@@ -237,10 +368,10 @@ public class SearchResourcesApiHandlerTest {
     private SearchResponseDto getSearchResourcesResponseFromFile(String filename)
         throws JsonProcessingException {
         return objectMapperWithEmpty
-            .readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
+                   .readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
     }
 
-    private SearchResponse createSearchResponseWithHits(String responseJsonFile) throws IOException {
+    private SearchResponse createSearchResponseWithHitsFromFile(String responseJsonFile) throws IOException {
         String jsonResponse = stringFromResources(Path.of(responseJsonFile));
         return getSearchResponseFromJson(jsonResponse);
     }

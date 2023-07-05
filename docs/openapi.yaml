@@ -113,80 +113,15 @@ paths:
         httpMethod: POST
         type: AWS_PROXY
       responses:
-        '200':
+        "200":
           description: "OK"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublicationSearchResponse"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "500":
-          description: "500 info description"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-
-  /resources/export:
-    get:
-      description: "Search for public available publications by given criteria and export the result"
-      tags:
-        - external
-      parameters:
-        - in: query
-          name: query
-          description: "Term to search for in resource."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: orderBy
-          description: "Field to order result by."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: sortOrder
-          description: "Order of search results (asc or desc)."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: from
-          description: "Start position from results, 0-based."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: results
-          description: "Maximum number of publications in response."
-          required: false
-          schema:
-            type: string
-      x-amazon-apigateway-integration:
-        uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ExportSearchResourcesFunction.Arn}:live/invocations
-        responses: { }
-        httpMethod: POST
-        type: AWS_PROXY
-      responses:
-        '200':
-          description: "OK"
-          content:
             text/csv:
               schema:
-                $ref: "#/components/schemas/ExportPublicationSearchResponse"
+                $ref: "#/components/schemas/PublicationSearchCsv"
         "400":
           description: Bad Request
           content:
@@ -572,34 +507,28 @@ components:
               description: Publication search results (numberOf = [size])
               items:
                 $ref: '#/components/schemas/Publication'
-    ExportPublicationSearchResponse:
+    PublicationSearchCsv:
       type: string
       description: Export publication search results
       properties:
-        id:
+        url:
           type: string
           description: Uri(id) of the publication
-        mainTitle:
+        title:
           type: string
           description: Title of the publication
-        publicationYear:
+        publicationDate:
           type: string
-          description: Year of publication
-        publicationMonth:
-          type: string
-          description: Month of publication
-        publicationDay:
-          type: string
-          description: Day of publication
-        publicationInstance:
+          description: Publication date
+        type:
           type: string
           description: Publication instance
-        contributorNames:
+        contributors:
           type: string
           description: List of contributors of the publication
       example: |-
-        id,mainTitle,publicationYear,publicationMonth,publicationDay,publicationInstance,contributorNames
-        "https://example/publication","Title","2020","09","02","Academic article","Rached Fristedt,Per Arnér"
+        url;title;publicationDate;type;contributors
+        "https://example/publication";"Title";"2020-09-02";"AcademicArticle";"Rached Fristedt,Per Arnér"
     ImportCandidateSearchResponse:
       allOf: # Combines SearchResponse with ImportCandidate hits
         - $ref: '#/components/schemas/SearchResponse'

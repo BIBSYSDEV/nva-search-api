@@ -18,7 +18,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class ExportSearchResourcesTest {
 
-    private static final String COMMA_DELIMITER = ", ";
+    private static final String COMMA_DELIMITER = ",";
 
     @Test
     void shouldAllowCreationOfCsv() throws IOException {
@@ -27,7 +27,8 @@ class ExportSearchResourcesTest {
         var searchResponse = SearchResponseDto.fromSearchResponse(getSearchResponseFromJson(json), randomUri());
 
         var value = ExportSearchResources.exportSearchResults(searchResponse);
-        var actual = CsvUtil.toExportCsv(value);
+        // skipping UTF-8 BOM for some reason is needed
+        var actual = CsvUtil.toExportCsv(value.substring(1));
         assertThat(actual, is(equalTo(expected)));
     }
 

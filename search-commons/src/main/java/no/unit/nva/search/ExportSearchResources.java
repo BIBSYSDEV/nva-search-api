@@ -24,28 +24,33 @@ public final class ExportSearchResources {
     public static final String PUBLICATION_INSTANCE_TYPE_JSON_POINTER
         = "/entityDescription/reference/publicationInstance/type";
     public static final String EMPTY_STRING = "";
+    private static final char UTF8_BOM = '\ufeff';
 
     private ExportSearchResources() {
     }
 
     /**
      * Write search results to Text/CSV format.
+     *
      * @param searchResponseDto output ffrom search results
      */
     public static String exportSearchResults(SearchResponseDto searchResponseDto) {
 
         return createTextDataFromSearchResult(searchResponseDto.getHits());
-
     }
 
     public static String createTextDataFromSearchResult(List<JsonNode> searchResults) {
 
         var stringWriter = new StringWriter();
+        stringWriter.append(UTF8_BOM);
         var lines = extractedJsonSearchResults(searchResults);
         var csvWriter = new StatefulBeanToCsvBuilder<ExportCsv>(stringWriter)
-            .withApplyQuotesToAll(true)
-            .withMappingStrategy(new HeaderColumnNameAndOrderMappingStrategy<>(ExportCsv.class))
-            .build();
+                            .withApplyQuotesToAll(true)
+                            .withQuotechar('"')
+                            .withSeparator(';')
+                            .withLineEnd("\r\n")
+                            .withMappingStrategy(new HeaderColumnNameAndOrderMappingStrategy<>(ExportCsv.class))
+                            .build();
         try {
             csvWriter.write(lines);
         } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
@@ -54,11 +59,9 @@ public final class ExportSearchResources {
         return stringWriter.toString();
     }
 
-
     private static List<ExportCsv> extractedJsonSearchResults(List<JsonNode> searchResults) {
 
         return searchResults.stream().map(ExportSearchResources::createLine).collect(Collectors.toList());
-
     }
 
     private static ExportCsv createLine(JsonNode searchResult) {
@@ -97,12 +100,11 @@ public final class ExportSearchResources {
         return extractText(searchResult, ID_JSON_POINTER, EMPTY_STRING);
     }
 
-
     private static List<String> getContributorsName(JsonNode document) {
         var contributors = document.at(CONTRIBUTORS_JSON_POINTER);
         return StreamSupport.stream(contributors.spliterator(), false)
-            .map(ExportSearchResources::extractName)
-            .collect(Collectors.toList());
+                   .map(ExportSearchResources::extractName)
+                   .collect(Collectors.toList());
     }
 
     private static String extractName(JsonNode contributor) {

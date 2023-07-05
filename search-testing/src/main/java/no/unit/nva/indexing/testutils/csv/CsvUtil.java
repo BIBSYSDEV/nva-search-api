@@ -13,8 +13,10 @@ public class CsvUtil {
 
         try (var reader = new StringReader(string)) {
             var csvCsvToBeanBuilder = new CsvToBeanBuilder<ExportCsv>(reader)
-                    .withType(ExportCsv.class)
-                    .build();
+                                          .withType(ExportCsv.class)
+                                          .withSeparator(';')
+                                          .withQuoteChar('"')
+                                          .build();
 
             csvTransfer.setCsvList(csvCsvToBeanBuilder.parse());
             return csvTransfer.getCsvList();
