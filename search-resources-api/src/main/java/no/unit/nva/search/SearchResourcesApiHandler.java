@@ -51,7 +51,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
                                   Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
         var searchResponse = openSearchClient.searchWithSearchDocumentQuery(query,
-                                                                          OPENSEARCH_ENDPOINT_INDEX);
+                                                                            OPENSEARCH_ENDPOINT_INDEX);
         return createResponse(requestInfo, searchResponse);
     }
 
@@ -59,8 +59,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         throws UnsupportedAcceptHeaderException {
         var contentType = getDefaultResponseContentTypeHeaderValue(requestInfo);
 
-        if ("text".equalsIgnoreCase(contentType.type())) {
-            return ExportSearchResources.exportSearchResults(searchResponse);
+        if (MediaType.ANY_TEXT_TYPE.type().equalsIgnoreCase(contentType.type())) {
+            return CsvTransformer.transform(searchResponse);
         } else {
             return attempt(() -> dtoObjectMapper.writeValueAsString(searchResponse)).orElseThrow();
         }
@@ -70,7 +70,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     protected List<MediaType> listSupportedMediaTypes() {
         return List.of(
             MediaType.JSON_UTF_8,
-            MediaType.CSV_UTF_8
+            MediaType.CSV_UTF_8,
+            MediaType.ANY_TEXT_TYPE
         );
     }
 

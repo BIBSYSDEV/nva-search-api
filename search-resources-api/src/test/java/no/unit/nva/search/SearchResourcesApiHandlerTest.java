@@ -1,29 +1,8 @@
 package no.unit.nva.search;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.List;
-import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.models.SearchResponseDto;
-import no.unit.nva.search.utils.SortKeyHttpRequestMatcher;
-import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.GatewayResponse;
-import nva.commons.core.Environment;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.client.RestHighLevelClient;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.zalando.problem.Problem;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.Map;
-
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
@@ -45,6 +24,29 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search.utils.SortKeyHttpRequestMatcher;
+import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.GatewayResponse;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.client.RestHighLevelClient;
+import org.zalando.problem.Problem;
 
 public class SearchResourcesApiHandlerTest {
 
@@ -63,6 +65,14 @@ public class SearchResourcesApiHandlerTest {
     private SearchResourcesApiHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
+
+    public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {
+        return Stream.of(null, "application/json");
+    }
+
+    public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
+        return Stream.of("text/*", "text/csv");
+    }
 
     @BeforeEach
     void init() {
@@ -205,37 +215,23 @@ public class SearchResourcesApiHandlerTest {
         assertEquals(HTTP_BAD_GATEWAY, gatewayResponse.getStatusCode());
     }
 
-    @Test
-    void shouldReturnApplicationJsonIfNoAcceptHeaderProvided() throws IOException {
+    @ParameterizedTest(name = "should return application/json for accept header {0}")
+    @MethodSource("acceptHeaderValuesProducingApplicationJsonProvider")
+    void shouldProduceApplicationJsonWithGivenAcceptHeader(String acceptHeaderValue) throws IOException {
         prepareRestHighLevelClientOkResponse();
-        handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
+        var requestInput =
+            nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
+        handler.handleRequest(requestInput, outputStream, mock(Context.class));
 
         GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
         assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
     }
 
-    @Test
-    void shouldReturnApplicationJsonIfAcceptApplicationJsonProvided() throws IOException {
-        prepareRestHighLevelClientOkResponse();
-        handler.handleRequest(getRequestInputStreamAccepting("application/json"), outputStream, mock(Context.class));
-
-        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
-        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
-    }
-
-    @Test
-    void shouldReturnTextCsvIfAcceptTextProvided() throws IOException {
+    @ParameterizedTest(name = "should return text/csv for accept header {0}")
+    @MethodSource("acceptHeaderValuesProducingTextCsvProvider")
+    void shouldReturnTextCsvWithGivenAcceptHeader(String acceptHeaderValue) throws IOException {
         prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
-        handler.handleRequest(getRequestInputStreamAccepting("text/*"), outputStream, mock(Context.class));
-
-        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
-        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
-    }
-
-    @Test
-    void shouldReturnTextCsvIfAcceptTextCsvProvided() throws IOException {
-        prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
-        handler.handleRequest(getRequestInputStreamAccepting("text/csv"), outputStream, mock(Context.class));
+        handler.handleRequest(getRequestInputStreamAccepting(acceptHeaderValue), outputStream, mock(Context.class));
 
         GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
         assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
