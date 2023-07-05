@@ -25,6 +25,9 @@ public final class ExportSearchResources {
         = "/entityDescription/reference/publicationInstance/type";
     public static final String EMPTY_STRING = "";
     private static final char UTF8_BOM = '\ufeff';
+    public static final char QUOTE_CHAR = '"';
+    public static final char SEPARATOR = ';';
+    public static final String LINE_END = "\r\n";
 
     private ExportSearchResources() {
     }
@@ -46,9 +49,9 @@ public final class ExportSearchResources {
         var lines = extractedJsonSearchResults(searchResults);
         var csvWriter = new StatefulBeanToCsvBuilder<ExportCsv>(stringWriter)
                             .withApplyQuotesToAll(true)
-                            .withQuotechar('"')
-                            .withSeparator(';')
-                            .withLineEnd("\r\n")
+                            .withQuotechar(QUOTE_CHAR)
+                            .withSeparator(SEPARATOR)
+                            .withLineEnd(LINE_END)
                             .withMappingStrategy(new HeaderColumnNameAndOrderMappingStrategy<>(ExportCsv.class))
                             .build();
         try {
