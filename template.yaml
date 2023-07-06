@@ -13,7 +13,6 @@ Globals:
         SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
         COGNITO_URI: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
-        EXPORT_SEARCH_RESULTS_SIZE: !Ref ExportSearchResultsSize
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
@@ -37,10 +36,6 @@ Parameters:
     Type: String
     Description: URI to auth for external search infrastructure API (SWS).
     Default: 'https://sws-auth.auth.eu-west-1.amazoncognito.com'
-  ExportSearchResultsSize:
-    Type: String
-    Description: Default number of results to export in text/csv format.
-    Default: 100
   CustomDomain:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Custom API to connect this lambda to
@@ -189,8 +184,8 @@ Resources:
 
   SearchTicketsFunction:
     Type: AWS::Serverless::Function
-    Description: Lambda for searching Tickets
     Properties:
+      Description: Lambda for searching Tickets
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchTicketsHandler::handleRequest
       Runtime: java11
@@ -216,8 +211,8 @@ Resources:
 
   SearchResourcesFunction:
     Type: AWS::Serverless::Function
-    Description: Lambda for searching Resources
     Properties:
+      Description: Lambda for searching Resources
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchResourcesApiHandler::handleRequest
       Runtime: java11
@@ -237,32 +232,6 @@ Resources:
           Type: Api
           Properties:
             Path: /resources
-            Method: get
-            RestApiId: !Ref NvaSearchApi
-
-  ExportSearchResourcesFunction:
-    Type: AWS::Serverless::Function
-    Description: Lambda for exporting search resources
-    Properties:
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.ExportSearchResourcesHandler::handleRequest
-      Runtime: java11
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
-      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
-      Environment:
-        Variables:
-          ALLOWED_ORIGIN: '*'
-      Events:
-        GetResources:
-          Type: Api
-          Properties:
-            Path: /resources/export
             Method: get
             RestApiId: !Ref NvaSearchApi
 
@@ -567,8 +536,8 @@ Resources:
 
   InitHandler:
     Type: AWS::Serverless::Function
-    Description: Lambda that creates all indices. Needs to be run manually from Test
     Properties:
+      Description: Lambda that creates all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.InitHandler::handleRequest
       Runtime: java11
@@ -577,8 +546,8 @@ Resources:
 
   ImportCandidatesInitHandler:
     Type: AWS::Serverless::Function
-    Description: Lambda that creates importCandidates index. Needs to be run manually from Test
     Properties:
+      Description: Lambda that creates importCandidates index. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.ImportCandidateInitHandler::handleRequest
       Runtime: java11
@@ -587,8 +556,8 @@ Resources:
 
   DeleteIndicesHandler:
     Type: AWS::Serverless::Function
-    Description: Lambda that deletes all indices. Needs to be run manually from Test
     Properties:
+      Description: Lambda that deletes all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
       Runtime: java11
@@ -597,8 +566,8 @@ Resources:
 
   DeleteImportCandidateIndexHandler:
     Type: AWS::Serverless::Function
-    Description: Lambda that deletes import candidates index. Needs to be run manually from Test
     Properties:
+      Description: Lambda that deletes import candidates index. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateIndexHandler::handleRequest
       Runtime: java11

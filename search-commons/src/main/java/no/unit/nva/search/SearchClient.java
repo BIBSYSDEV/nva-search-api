@@ -103,7 +103,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public String exportSearchWithDocumentQuery(SearchDocumentsQuery query,
                                                 String index) throws ApiGatewayException, IOException {
         var searchResponseDto = searchWithSearchDocumentQuery(query, index);
-        return ExportSearchResources.exportSearchResults(searchResponseDto);
+        return CsvTransformer.transform(searchResponseDto);
     }
 
     private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)

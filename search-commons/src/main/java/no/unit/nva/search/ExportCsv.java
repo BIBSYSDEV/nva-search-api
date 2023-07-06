@@ -8,15 +8,15 @@ import nva.commons.core.StringUtils;
 import java.util.List;
 import java.util.Objects;
 
-@CsvBindByNameOrder({"url", "title", "publication date", "type", "contributors"})
+@CsvBindByNameOrder({"url", "title", "publicationDate", "type", "contributors"})
 public class ExportCsv {
     public static final String DATE_SEPARATOR = "-";
-    public static final String DELIMITER = ", ";
+    public static final String DELIMITER = ",";
     @CsvBindByName(column = "url")
     private String id;
     @CsvBindByName(column = "title")
     private String mainTitle;
-    @CsvBindByName(column = "publication date")
+    @CsvBindByName(column = "publicationDate")
     private String publicationDate;
     @CsvBindByName(column = "type")
     private String publicationInstance;
@@ -124,5 +124,17 @@ public class ExportCsv {
     @JacocoGenerated
     public int hashCode() {
         return Objects.hash(getId(), getMainTitle(), getPublicationDate(), getPublicationInstance(), getContributors());
+    }
+
+    @Override
+    @JacocoGenerated
+    public String toString() {
+        return "ExportCsv{" +
+               "id='" + id + '\'' +
+               ", mainTitle='" + mainTitle + '\'' +
+               ", publicationDate='" + publicationDate + '\'' +
+               ", publicationInstance='" + publicationInstance + '\'' +
+               ", contributors='" + contributors + '\'' +
+               '}';
     }
 }

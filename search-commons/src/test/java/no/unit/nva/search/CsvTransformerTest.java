@@ -16,9 +16,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-class ExportSearchResourcesTest {
+class CsvTransformerTest {
 
-    private static final String COMMA_DELIMITER = ", ";
+    private static final String COMMA_DELIMITER = ",";
 
     @Test
     void shouldAllowCreationOfCsv() throws IOException {
@@ -26,8 +26,9 @@ class ExportSearchResourcesTest {
         var json = FakeSearchResponse.generateSearchResponseString(expected);
         var searchResponse = SearchResponseDto.fromSearchResponse(getSearchResponseFromJson(json), randomUri());
 
-        var value = ExportSearchResources.exportSearchResults(searchResponse);
-        var actual = CsvUtil.toExportCsv(value);
+        var value = CsvTransformer.transform(searchResponse);
+        // skipping UTF-8 BOM for some reason is needed
+        var actual = CsvUtil.toExportCsv(value.substring(1));
         assertThat(actual, is(equalTo(expected)));
     }
 

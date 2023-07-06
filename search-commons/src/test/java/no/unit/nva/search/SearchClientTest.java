@@ -78,7 +78,6 @@ class SearchClientTest {
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     private static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> SAMPLE_AGGREGATIONS =
         List.of(new TermsAggregationBuilder(randomString()).field(randomString()));
-    private static final int MAX_RESULTS = 100;
     private static final int OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS = 2;
     CachedJwtProvider cachedJwtProvider;
 
@@ -324,8 +323,8 @@ class SearchClientTest {
             searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
                                                      OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
-        var exportSearchResults = ExportSearchResources.exportSearchResults(searchResponseDto);
-        var createTextDataFromSearchResult = ExportSearchResources.createTextDataFromSearchResult(searchResponseDto.getHits());
+        var exportSearchResults = CsvTransformer.transform(searchResponseDto);
+        var createTextDataFromSearchResult = CsvTransformer.transform(searchResponseDto.getHits());
         var exportSearchWithDocumentQuery = searchClient.exportSearchWithDocumentQuery(generateSampleQuery(),
                                                                                        OPENSEARCH_ENDPOINT_INDEX);
 
