@@ -1,0 +1,81 @@
+{
+  "importStatus": {
+    "candidateStatus": "NOT_IMPORTED",
+    "modifiedDate": "2023-06-28T13:31:40.082626Z"
+  },
+  "journal": {
+    "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
+    "type": "Journal"
+  },
+  "totalVerifiedContributors": 0,
+  "mainTitle": "Prognosis of cancer survivors: estimation based on differential equations",
+  "organizations": [
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/14100002.0.0.0",
+      "type": "Organization",
+      "labels": {
+        "nb": "Ecole Polytechnique Fédérale de Lausanne",
+        "en": "Swiss Federal Institute of Technology of Lausanne"
+      }
+    },
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/5737.0.0.0",
+      "type": "Organization",
+      "labels": {}
+    },
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.51.13.0",
+      "type": "Organization",
+      "labels": {
+        "nb": "Førsteamanuensis",
+        "en": "Associate professor"
+      }
+    },
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/5737.0.0.0",
+      "type": "Organization",
+      "labels": {
+        "nb": "Kreftregisteret - Institutt for populasjonsbasert kreftforskning",
+        "en": "The Cancer Registry of Norway"
+      }
+    },
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/5737.0.0.0",
+      "type": "Organization",
+      "labels": {
+        "nb": "Kreftregisteret - Institutt for populasjonsbasert kreftforskning",
+        "en": "The Cancer Registry of Norway"
+      }
+    },
+    {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/14100002.0.0.0",
+      "type": "Organization",
+      "labels": {
+        "nb": "Ecole Polytechnique Fédérale de Lausanne",
+        "en": "Swiss Federal Institute of Technology of Lausanne"
+      }
+    }
+  ],
+  "additionalIdentifiers": [
+    {
+      "sourceName": "scopusIdentifier",
+      "type": "AdditionalIdentifier",
+      "value": "2-s2.0-85152189242"
+    }
+  ],
+  "publicationYear": "2023",
+  "id": "https://api.dev.nva.aws.unit.no/publication/01890233db02-313e3fef-e6a2-4a69-9a93-72f1a3623492",
+  "type": "ImportCandidate",
+  "publicationInstance": {
+    "volume": "24",
+    "pages": {
+      "end": "357",
+      "type": "Range",
+      "begin": "345"
+    },
+    "issue": "2",
+    "type": "AcademicArticle"
+  },
+  "doi": "https://doi.org/10.1093/biostatistics/kxab009",
+  "totalContributors": 5
+}

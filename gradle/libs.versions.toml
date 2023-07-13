@@ -1,7 +1,6 @@
 [versions]
 junit = { strictly = '5.8.1' }
 jackson = { strictly = '2.14.1' }
-awsSdk1 = { strictly = '1.12.111' }
 awsSdk2 = { strictly = '2.19.15' }
 nvaCommons = { strictly = '1.27.1' }
 opensearch = { strictly = '2.3.0' }
@@ -87,7 +86,6 @@ csv = {group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv'}
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
 jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
-testcontainers = ['testcontainers-core', 'testcontainers-junit']
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javafaker', 'javers',
     'nva-testutils', 'nva-logutils','jackson-hamrest']

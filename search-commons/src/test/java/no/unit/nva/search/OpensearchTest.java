@@ -6,16 +6,19 @@ import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
+import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.opensearch.search.sort.SortOrder.DESC;
@@ -23,10 +26,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.opensearch.testcontainers.OpensearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -63,6 +65,7 @@ public class OpensearchTest {
     public static final long NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
+    public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
@@ -72,7 +75,7 @@ public class OpensearchTest {
     private static final URI ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES = URI.create(
         "https://www.example.com/20754.0.0.0");
     private static final String COMPLETED = "Completed";
-    private static final OpenSearchContainer container = new OpenSearchContainer();
+    private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     private static SearchClient searchClient;
     private static IndexingClient indexingClient;
     private static String indexName;
@@ -81,9 +84,7 @@ public class OpensearchTest {
     static void setUp() {
         container.start();
 
-        var httpHostAddress = container.getHttpHostAddress();
-
-        var restClientBuilder = RestClient.builder(HttpHost.create(httpHostAddress));
+        var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
 
         var cachedJwtProvider = setupMockedCachedJwtProvider();
@@ -95,23 +96,6 @@ public class OpensearchTest {
     @AfterAll
     static void afterAll() {
         container.stop();
-    }
-
-    @Test
-    void canConnectToContainer() throws IOException, InterruptedException {
-
-        var httpHostAddress = container.getHttpHostAddress();
-
-        var httpClient = HttpClient.newBuilder().build();
-
-        var request = HttpRequest.newBuilder()
-                          .GET()
-                          .uri(URI.create("http://" + httpHostAddress))
-                          .build();
-
-        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertThat(response.statusCode(), is(equalTo(200)));
     }
 
     @Test
@@ -133,6 +117,21 @@ public class OpensearchTest {
         assertThat(mapping, is(notNullValue()));
         var topLevelOrgType = mapping.path("properties").path("topLevelOrganization").path("type").textValue();
         assertThat(topLevelOrgType, is(equalTo("nested")));
+    }
+
+    @Test
+    void shouldCreateAggregationForImportCandidates() throws IOException, ApiGatewayException {
+        indexName = generateIndexName();
+        indexingClient.createIndex(indexName, Map.of());
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "imported_candidate_from_index.json"));
+        indexingClient.addDocumentToIndex(
+            crateSampleIndexDocument(indexName, "not_imported_candidate_from_index.json"));
+        var query = new SearchDocumentsQuery(
+            "*", SAMPLE_NUMBER_OF_RESULTS, SAMPLE_FROM, SAMPLE_ORDERBY, DESC, SAMPLE_REQUEST_URI,
+            IMPORT_CANDIDATES_AGGREGATIONS);
+        var s = searchClient.searchWithSearchDocumentQuery(query, indexName);
+        assertThat(s.getAggregations(), is(not(nullValue())));
     }
 
     void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
@@ -406,6 +405,31 @@ public class OpensearchTest {
 
             assertThat(response, notNullValue());
             assertThat(response.getAggregations(), nullValue());
+        }
+
+        @Test
+        void shouldReturnCorrectAggregationsForImportCandidates()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index");
+            Thread.sleep(DELAY_AFTER_INDEXING);
+
+            SearchDocumentsQuery query = new SearchDocumentsQuery(
+                "*",
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI,
+                IMPORT_CANDIDATES_AGGREGATIONS
+            );
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+            assertThat(response.getAggregations(), is(not(emptyIterable())));
+        }
+
+        private void addDocumentsToIndex(String... files)  {
+            Arrays.asList(files).forEach(file -> attempt(() -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
         }
 
         @Test
