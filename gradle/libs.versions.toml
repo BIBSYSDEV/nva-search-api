@@ -1,12 +1,12 @@
 [versions]
 junit = { strictly = '5.8.1' }
 jackson = { strictly = '2.14.1' }
-awsSdk1 = { strictly = '1.12.111' }
 awsSdk2 = { strictly = '2.19.15' }
 nvaCommons = { strictly = '1.27.1' }
 opensearch = { strictly = '2.3.0' }
 slf4j = { strictly = '1.8.0-beta4' }
-testContainers = { strictly = '1.16.2' }
+testContainers = { strictly = '1.18.3' }
+opensearch-testcontainer = {strictly = '2.0.0'}
 zalandoProblem = { strictly = '0.26.0' }
 log4j = { strictly = '2.17.2' }
 awsApacheInterceptor = { strictly = 'deb7941e85' }
@@ -71,8 +71,10 @@ problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProbl
 
 com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-auth0-jwt' }
 
+testcontainer-opensearch = {group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearch-testcontainer'}
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
+
 javafaker = { group = 'com.github.javafaker', name = 'javafaker', version.ref = 'javaFaker' }
 hamcrest = { group = 'org.hamcrest', name = 'hamcrest', version.ref = 'hamcrest' }
 mockitocore = { group = 'org.mockito', name = 'mockito-core', version.ref = 'mockito' }
@@ -87,7 +89,7 @@ csv = {group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv'}
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
 jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
-testcontainers = ['testcontainers-core', 'testcontainers-junit']
+testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainer-opensearch']
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javafaker', 'javers',
     'nva-testutils', 'nva-logutils','jackson-hamrest']
