@@ -24,9 +24,7 @@ dependencies {
     testImplementation libs.bundles.testing
 
 
-    testImplementation 'org.opensearch:opensearch-testcontainers:2.0.0'
-    testImplementation "org.testcontainers:testcontainers:1.18.3"
-    testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+    testImplementation libs.bundles.testcontainers
 
     testImplementation project(':search-testing')
 

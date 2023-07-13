@@ -49,6 +49,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -117,21 +118,6 @@ public class OpensearchTest {
         assertThat(mapping, is(notNullValue()));
         var topLevelOrgType = mapping.path("properties").path("topLevelOrganization").path("type").textValue();
         assertThat(topLevelOrgType, is(equalTo("nested")));
-    }
-
-    @Test
-    void shouldCreateAggregationForImportCandidates() throws IOException, ApiGatewayException {
-        indexName = generateIndexName();
-        indexingClient.createIndex(indexName, Map.of());
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "imported_candidate_from_index.json"));
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "not_imported_candidate_from_index.json"));
-        var query = new SearchDocumentsQuery(
-            "*", SAMPLE_NUMBER_OF_RESULTS, SAMPLE_FROM, SAMPLE_ORDERBY, DESC, SAMPLE_REQUEST_URI,
-            IMPORT_CANDIDATES_AGGREGATIONS);
-        var s = searchClient.searchWithSearchDocumentQuery(query, indexName);
-        assertThat(s.getAggregations(), is(not(nullValue())));
     }
 
     void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
@@ -300,15 +286,8 @@ public class OpensearchTest {
 
         @Test
         void shouldVerifySearchNotReturningHitsWithPublicationRequestInSearchResponse() throws Exception {
-
-            indexingClient.addDocumentToIndex(crateSampleIndexDocument(
-                indexName,
-                "sample_response_with_publication_status_as_draft.json"));
-            indexingClient.addDocumentToIndex(crateSampleIndexDocument(
-                indexName,
-                "sample_response_with_publication_status_as_requested.json"));
-
-            Thread.sleep(DELAY_AFTER_INDEXING);
+            addDocumentsToIndex("sample_response_with_publication_status_as_draft.json",
+                                "sample_response_with_publication_status_as_requested.json");
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
@@ -325,13 +304,9 @@ public class OpensearchTest {
 
         @Test
         void shouldReturnPendingPublishingRequestsForPublications()
-            throws IOException, InterruptedException, ApiGatewayException {
-
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publishing_request_of_published_publication.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+                                "sample_publishing_request_of_published_publication.json");
 
             var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
@@ -346,29 +321,16 @@ public class OpensearchTest {
         }
 
         @Test
-        void shuldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException, IOException,
-                                                                                     InterruptedException {
-
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName,
-                                         "sample_publishing_request_of_published_publication.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+        void shouldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException,
+                                                                                      InterruptedException {
+            addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+                                "sample_publishing_request_of_published_publication.json");
 
             var aggregationDto = new TermsAggregationBuilder("publication.status")
                                      .field("publication.status.keyword")
                                      .size(1);
 
-            SearchDocumentsQuery query = new SearchDocumentsQuery(
-                "*",
-                SAMPLE_NUMBER_OF_RESULTS,
-                SAMPLE_FROM,
-                SAMPLE_ORDERBY,
-                DESC,
-                SAMPLE_REQUEST_URI,
-                List.of(aggregationDto)
-            );
+            SearchDocumentsQuery query = queryWithTermAndAggregation("*", List.of(aggregationDto));
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
@@ -382,24 +344,12 @@ public class OpensearchTest {
 
         @Test
         void shouldNotReturnAggregationsWhenNotRequested()
-            throws ApiGatewayException, IOException, InterruptedException {
+            throws ApiGatewayException, InterruptedException {
 
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publishing_request_of_draft_publication.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName,
-                                         "sample_publishing_request_of_published_publication.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+            addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+                                "sample_publishing_request_of_published_publication.json");
 
-            SearchDocumentsQuery query = new SearchDocumentsQuery(
-                "*",
-                SAMPLE_NUMBER_OF_RESULTS,
-                SAMPLE_FROM,
-                SAMPLE_ORDERBY,
-                DESC,
-                SAMPLE_REQUEST_URI,
-                null
-            );
+            var query = queryWithTermAndAggregation("*", null);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
@@ -411,47 +361,21 @@ public class OpensearchTest {
         void shouldReturnCorrectAggregationsForImportCandidates()
             throws InterruptedException, ApiGatewayException {
             addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index");
-            Thread.sleep(DELAY_AFTER_INDEXING);
 
-            SearchDocumentsQuery query = new SearchDocumentsQuery(
-                "*",
-                SAMPLE_NUMBER_OF_RESULTS,
-                SAMPLE_FROM,
-                SAMPLE_ORDERBY,
-                DESC,
-                SAMPLE_REQUEST_URI,
-                IMPORT_CANDIDATES_AGGREGATIONS
-            );
+            var query = queryWithTermAndAggregation("*", IMPORT_CANDIDATES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
             assertThat(response.getAggregations(), is(not(emptyIterable())));
         }
 
-        private void addDocumentsToIndex(String... files)  {
-            Arrays.asList(files).forEach(file -> attempt(() -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
-        }
-
         @Test
-        void shouldReturnCorrectAggregations() throws IOException, InterruptedException, ApiGatewayException {
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName,
-                                         "sample_publication_with_several_of_the_same_affiliation.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+        void shouldReturnCorrectAggregations() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json");
 
-            var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
-
-            SearchDocumentsQuery query = new SearchDocumentsQuery(
-                "*",
-                SAMPLE_NUMBER_OF_RESULTS,
-                SAMPLE_FROM,
-                SAMPLE_ORDERBY,
-                DESC,
-                SAMPLE_REQUEST_URI,
-                aggregations
-            );
+            var query = queryWithTermAndAggregation(
+                "*", ApplicationConstants.RESOURCES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
@@ -478,41 +402,24 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldQueryingFundingSuccessfully() throws IOException, InterruptedException, ApiGatewayException {
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_publication_with_affiliations.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName,
-                                         "sample_publication_with_several_of_the_same_affiliation.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+        void shouldQueryingFundingSuccessfully() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json");
 
-            var aggregations = ApplicationConstants.RESOURCES_AGGREGATIONS;
-
-            var fundingToQuery = "NFR";
-            SearchDocumentsQuery query = new SearchDocumentsQuery(
-                "fundings.source.identifier:\"" + fundingToQuery + "\"",
-                SAMPLE_NUMBER_OF_RESULTS,
-                SAMPLE_FROM,
-                SAMPLE_ORDERBY,
-                DESC,
-                SAMPLE_REQUEST_URI,
-                aggregations
-            );
+            var query = queryWithTermAndAggregation(
+                "fundings.source.identifier:\"NFR\"",
+                ApplicationConstants.RESOURCES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
             assertThat(response.getHits(), hasSize(2));
         }
 
         @Test
-        void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException, IOException,
+        void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException,
                                                                          InterruptedException {
 
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName,
-                                         "sample_ticket_general_support_case_of_published_publication.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+            addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
+                                "sample_ticket_general_support_case_of_published_publication.json");
 
             var searchTicketsQuery = new SearchTicketsQuery("*", PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                             DESC, SAMPLE_REQUEST_URI, emptyList());
@@ -525,14 +432,9 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldReturnCorrectTicketsAggregations() throws IOException, InterruptedException, ApiGatewayException {
-
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName, "sample_ticket_publishing_request_of_draft_publication.json"));
-            indexingClient.addDocumentToIndex(
-                crateSampleIndexDocument(indexName,
-                                         "sample_ticket_general_support_case_of_published_publication.json"));
-            Thread.sleep(DELAY_AFTER_INDEXING);
+        void shouldReturnCorrectTicketsAggregations() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
+                                "sample_ticket_general_support_case_of_published_publication.json");
 
             var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
 
@@ -554,6 +456,26 @@ public class OpensearchTest {
             var statusAggregation = actualAggregations.at("/status/buckets");
             assertThat(statusAggregation.size(), greaterThan(0));
             assertAggregation(statusAggregation, "Pending", 2);
+        }
+
+        private SearchDocumentsQuery queryWithTermAndAggregation(String searchTerm,
+                                                                 List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+            return new SearchDocumentsQuery(
+                searchTerm,
+                SAMPLE_NUMBER_OF_RESULTS,
+                SAMPLE_FROM,
+                SAMPLE_ORDERBY,
+                DESC,
+                SAMPLE_REQUEST_URI,
+                aggregations
+            );
+        }
+
+        private void addDocumentsToIndex(String... files) throws InterruptedException {
+            Arrays.asList(files)
+                .forEach(file -> attempt(
+                    () -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
+            Thread.sleep(DELAY_AFTER_INDEXING);
         }
     }
 }
