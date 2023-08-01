@@ -35,8 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.model.PersonPreferencesResponse;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.utils.SortKeyHttpRequestMatcher;
+import no.unit.nva.search.utils.UriRetriever;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -63,6 +65,7 @@ public class SearchResourcesApiHandlerTest {
 
     private RestHighLevelClient restHighLevelClientMock;
     private SearchResourcesApiHandler handler;
+    private UriRetriever uriRetriever;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
 
@@ -80,7 +83,8 @@ public class SearchResourcesApiHandlerTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restHighLevelClientMock);
         var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
-        handler = new SearchResourcesApiHandler(new Environment(), searchClient);
+        uriRetriever = mock(UriRetriever.class);
+        handler = new SearchResourcesApiHandler(new Environment(), searchClient, uriRetriever);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -99,6 +103,21 @@ public class SearchResourcesApiHandlerTest {
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
         assertThat(actual, is(equalTo(expected)));
+    }
+
+    @Test
+    void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException, InterruptedException {
+        prepareRestHighLevelClientOkResponse();
+        when(uriRetriever.getRawContent(any(), any()))
+            .thenReturn(new PersonPreferencesResponse(List.of(randomString(), randomString())).toString());
+        handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
+
+        var gatewayResponse =
+            GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
     }
 
     @Test
@@ -311,6 +330,14 @@ public class SearchResourcesApiHandlerTest {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
                    .withRequestContext(getRequestContext())
+                   .build();
+    }
+
+    private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
+        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, "entityDescription.contributors.identity.id:12345"))
+                   .withRequestContext(getRequestContext())
+                   .withUserName(randomString())
                    .build();
     }
 

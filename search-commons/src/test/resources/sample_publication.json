@@ -75,7 +75,7 @@
       "@container": "@set"
     }
   },
-  "id": "https://api.sandbox.nva.aws.unit.no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9",
+  "id": "https://api.sandbox.nva.aws.unit.no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7bee56789",
   "additionalIdentifiers": [
     {
       "type": "AdditionalIdentifier",
@@ -206,7 +206,7 @@
       }
     }
   ],
-  "identifier": "0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9",
+  "identifier": "0186305463c3-898f18b2-d1eb-47f3-a8e9-7bee56789",
   "modelVersion": "0.19.33",
   "modifiedDate": "2023-02-08T09:21:22.370874Z",
   "publisher": {

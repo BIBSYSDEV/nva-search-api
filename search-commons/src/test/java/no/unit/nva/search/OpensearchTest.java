@@ -49,6 +49,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
@@ -340,6 +341,22 @@ public class OpensearchTest {
                            .size(),
                        is(equalTo(1))
             );
+        }
+
+        @Test
+        void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
+            addDocumentsToIndex("sample_publication.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json",
+                               "sample_publication_with_affiliations.json");
+            var promotedPublications = List.of("https://api.sandbox.nva.aws.unit"
+                                               + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df", "https://api.sandbox.nva.aws.unit"
+                                                + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9");
+            var owner = "1136263@20754.0.0.0";
+            var query = queryWithTermAndAggregation("*", null);
+            var response = searchClient.searchPromotedQuery(owner, promotedPublications, query, indexName);
+
+            assertThat(response, notNullValue());
+            assertThat(response.getAggregations(), nullValue());
         }
 
         @Test
