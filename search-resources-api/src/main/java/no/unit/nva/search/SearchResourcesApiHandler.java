@@ -28,6 +28,8 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
 
@@ -35,6 +37,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     public static final String CONTENT_TYPE = "application/json";
     private final SearchClient openSearchClient;
     private final UriRetriever uriRetriever;
+    private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
 
     @JacocoGenerated
     public SearchResourcesApiHandler() {
@@ -71,6 +74,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
             var contributorId = extractId(query);
             var promotedPublications =
                 attempt(() -> fetchPromotedPublications(contributorId)).or(Callables.returning(List.of())).get();
+            logger.info("promotedPublications: {}", promotedPublications);
             var searchResponse = openSearchClient.searchPromotedQuery(contributorId, promotedPublications,
                                                                       query, OPENSEARCH_ENDPOINT_INDEX);
             return createResponse(requestInfo, searchResponse);
