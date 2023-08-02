@@ -121,6 +121,21 @@ public class SearchResourcesApiHandlerTest {
     }
 
     @Test
+    void shouldNotReturnSortedSearchResultsWhenSendingMultipleContributorId() throws IOException, InterruptedException {
+        prepareRestHighLevelClientOkResponse();
+        when(uriRetriever.getRawContent(any(), any()))
+            .thenReturn(new PersonPreferencesResponse(List.of(randomString(), randomString())).toString());
+        handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
+
+        var gatewayResponse =
+            GatewayResponse.fromOutputStream(outputStream, SearchResponseDto.class);
+        SearchResponseDto actual = gatewayResponse.getBodyObject(SearchResponseDto.class);
+
+        assertNotNull(gatewayResponse.getHeaders());
+        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+    }
+
+    @Test
     void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
@@ -336,6 +351,15 @@ public class SearchResourcesApiHandlerTest {
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withQueryParameters(Map.of(SEARCH_TERM_KEY, "entityDescription.contributors.identity.id:12345"))
+                   .withRequestContext(getRequestContext())
+                   .withUserName(randomString())
+                   .build();
+    }
+
+    private InputStream getInputStreamWithMultipleContributorId() throws JsonProcessingException {
+        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, "(entityDescription.contributors.identity.id:12345)"
+                                                                + "+AND+(entityDescription.contributors.identity.id:54321)"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
