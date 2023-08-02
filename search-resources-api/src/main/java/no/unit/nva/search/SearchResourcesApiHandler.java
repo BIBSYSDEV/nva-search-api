@@ -67,7 +67,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
-        if (containsSingleContributorId(query)) {
+        if (containsSingleContributorIdOnly(query)) {
             var contributorId = extractId(query);
             var promotedPublications =
                 attempt(() -> fetchPromotedPublications(contributorId)).or(Callables.returning(List.of())).get();
@@ -79,8 +79,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         return createResponse(requestInfo, searchResponse);
     }
 
-    private boolean containsSingleContributorId(SearchDocumentsQuery query) {
-        return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2;
+    private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
+        return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2 && !query.getSearchTerm().contains("AND");
     }
 
     /**

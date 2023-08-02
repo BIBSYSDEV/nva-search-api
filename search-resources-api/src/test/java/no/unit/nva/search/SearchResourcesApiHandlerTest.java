@@ -350,7 +350,8 @@ public class SearchResourcesApiHandlerTest {
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, "entityDescription.contributors.identity.id:12345"))
+                   .withQueryParameters(Map.of(SEARCH_TERM_KEY, "entityDescription.contributors.identity"
+                                                                + ".id:12345&results=10&from=0"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
