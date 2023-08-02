@@ -11,6 +11,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.Callables;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -105,8 +106,11 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
                       .addChild("person-preferences")
                       .addChild(URLEncoder.encode(contributorId, StandardCharsets.UTF_8))
                       .getUri();
-        logger.info("GET THE URI: {}", uri);
-        var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
+        logger.info("GET THE URI as string: {}",
+                    uri.toString().replaceFirst("%25253A", "").replaceAll("%25253A", ":").replaceAll("%25252F", "/")   );
+       var uristr = uri.toString().replaceFirst("%25253A", "").replaceAll("%25253A", ":").replaceAll("%25252F", "/");
+       logger.info("GET THE string as  URI: {}", URI.create(uristr));
+       var response = uriRetriever.getRawContent(URI.create(uristr), CONTENT_TYPE);
         logger.info("GET THE response: {}",
                     dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
         return dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications();
