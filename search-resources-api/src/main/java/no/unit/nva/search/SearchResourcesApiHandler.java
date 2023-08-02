@@ -105,7 +105,10 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
                       .addChild("person-preferences")
                       .addChild(URLEncoder.encode(contributorId, StandardCharsets.UTF_8))
                       .getUri();
+        logger.info("GET THE URI: {}", uri);
         var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
+        logger.info("GET THE response: {}",
+                    dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
         return dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications();
     }
 
