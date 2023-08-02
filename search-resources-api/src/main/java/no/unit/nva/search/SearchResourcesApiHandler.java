@@ -11,7 +11,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.Callables;
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import no.unit.nva.search.model.PersonPreferencesResponse;
@@ -103,7 +103,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
         var uri = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
                       .addChild("person-preferences")
-                      .addChild(URLEncoder.encode(contributorId, StandardCharsets.UTF_8))
+                      .addChild(URLDecoder.decode(contributorId, StandardCharsets.UTF_8))
                       .getUri();
         logger.info("GET THE uri: {}", uri);
        var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
