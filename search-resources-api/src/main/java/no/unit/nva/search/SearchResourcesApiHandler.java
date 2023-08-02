@@ -102,13 +102,14 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
+     var colon = "%25253A";
         var uri = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
                       .addChild("person-preferences")
                       .addChild(URLEncoder.encode(contributorId, StandardCharsets.UTF_8))
                       .getUri();
         logger.info("GET THE URI as string: {}",
-                    uri.toString().replaceFirst("%25253A", "").replaceAll("%25253A", ":").replaceAll("%25252F", "/")   );
-       var uristr = uri.toString().replaceFirst("%25253A", "").replaceAll("%25253A", ":").replaceAll("%25252F", "/");
+                    uri.toString().replaceFirst(colon, "").replaceAll(colon, ":").replaceAll("%25252F", "/")   );
+       var uristr = uri.toString().replaceFirst(colon, "").replaceAll(colon, ":").replaceAll("%25252F", "/");
        logger.info("GET THE string as  URI: {}", URI.create(uristr));
        var response = uriRetriever.getRawContent(URI.create(uristr), CONTENT_TYPE);
         logger.info("GET THE response: {}",
