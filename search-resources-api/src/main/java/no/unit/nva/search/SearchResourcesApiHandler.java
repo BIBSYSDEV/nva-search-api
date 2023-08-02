@@ -71,7 +71,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
             var contributorId = extractId(query);
             var promotedPublications =
                 attempt(() -> fetchPromotedPublications(contributorId)).or(Callables.returning(List.of())).get();
-            var searchResponse = openSearchClient.searchPromotedQuery(requestInfo.getUserName(), promotedPublications,
+            var searchResponse = openSearchClient.searchPromotedQuery(contributorId, promotedPublications,
                                                                       query, OPENSEARCH_ENDPOINT_INDEX);
             return createResponse(requestInfo, searchResponse);
         }
