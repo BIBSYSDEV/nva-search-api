@@ -71,7 +71,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
         if (containsSingleContributorIdOnly(query)) {
-            var contributorId = extractId(query).replaceFirst("%3A", "").replaceAll("%3A", ":").replaceAll("%2F", "/");
+            var contributorId = extractId(query);
             var promotedPublications =
                 attempt(() -> fetchPromotedPublications(contributorId)).or(Callables.returning(List.of())).get();
             logger.info("contributorId: {}", contributorId);
