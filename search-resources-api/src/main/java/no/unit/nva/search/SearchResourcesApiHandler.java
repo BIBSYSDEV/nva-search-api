@@ -104,12 +104,10 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
         var uri = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
             .addChild("person-preferences")
-            .addChild(URLDecoder.decode(contributorId, StandardCharsets.UTF_8))
+            .addChild(contributorId)
             .getUri();
-        logger.info("GET THE uri: {}", uri.toString().replace("https:/", "https://"));
-        logger.info("Create the uri: {}", URI.create(uri.toString().replace("https:/", "https://")));
-        var response = uriRetriever.getRawContent(URI.create(uri.toString().replace("https:/", "https://")),
-                                                  CONTENT_TYPE);
+        logger.info("GET THE uri: {}", uri.toString());
+        var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
         logger.info("GET THE response: {}", response);
         logger.info("GET THE promoted publications: {}",
                     dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
