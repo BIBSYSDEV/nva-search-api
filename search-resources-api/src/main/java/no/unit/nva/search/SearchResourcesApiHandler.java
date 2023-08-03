@@ -11,9 +11,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.Callables;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import no.unit.nva.search.model.PersonPreferencesResponse;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -58,8 +55,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     }
 
     /**
-     * Implements the main logic of the handler. Any exception thrown by this method will be handled by {@link
-     * RestRequestHandler#handleExpectedException} method.
+     * Implements the main logic of the handler. Any exception thrown by this method will be handled by
+     * {@link RestRequestHandler#handleExpectedException} method.
      *
      * @param input       The input object to the method. Usually a deserialized json.
      * @param requestInfo Request headers and path.
@@ -73,12 +70,12 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
         if (containsSingleContributorIdOnly(query)) {
             var contributorId = extractId(query);
-            var promotedPublications =
-                attempt(() -> fetchPromotedPublications(contributorId)).or(Callables.returning(List.of())).get();
+            var promotedPublications = attempt(() -> fetchPromotedPublications(contributorId)).or(
+                Callables.returning(List.of())).get();
             logger.info("contributorId: {}", contributorId);
             logger.info("promotedPublications: {}", promotedPublications);
-            var searchResponse = openSearchClient.searchPromotedQuery(contributorId, promotedPublications,
-                                                                      query, OPENSEARCH_ENDPOINT_INDEX);
+            var searchResponse = openSearchClient.searchPromotedQuery(contributorId, promotedPublications, query,
+                                                                      OPENSEARCH_ENDPOINT_INDEX);
             return createResponse(requestInfo, searchResponse);
         }
         var searchResponse = openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
@@ -103,9 +100,9 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
 
     private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
         var uri = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
-            .addChild("person-preferences")
-            .addChild(contributorId)
-            .getUri();
+                      .addChild("person-preferences")
+                      .addChild(contributorId)
+                      .getUri();
         logger.info("GET THE uri: {}", uri.toString());
         var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
         logger.info("GET THE response: {}", response);
@@ -116,7 +113,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
 
     private String extractId(SearchDocumentsQuery query) {
         return query.getSearchTerm().split(CONTRIBUTOR_ID)[1].replaceAll("[()\"]", StringUtils.EMPTY_STRING)
-            .split("&")[0];
+                   .split("&")[0];
     }
 
     private String createResponse(RequestInfo requestInfo, SearchResponseDto searchResponse)
