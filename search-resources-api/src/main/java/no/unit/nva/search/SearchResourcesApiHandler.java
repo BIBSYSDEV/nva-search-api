@@ -11,6 +11,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.Callables;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -33,11 +34,11 @@ import org.slf4j.LoggerFactory;
 
 public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
 
-    public static final String CONTRIBUTOR_ID = "entityDescription.contributors.identity.id";
+    public static final String CONTRIBUTOR_ID = "entityDescription.contributors.identity.id:";
     public static final String CONTENT_TYPE = "application/json";
+    private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
     private final SearchClient openSearchClient;
     private final UriRetriever uriRetriever;
-    private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
 
     @JacocoGenerated
     public SearchResourcesApiHandler() {
@@ -57,8 +58,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     }
 
     /**
-     * Implements the main logic of the handler. Any exception thrown by this method will be handled by
-     * {@link RestRequestHandler#handleExpectedException} method.
+     * Implements the main logic of the handler. Any exception thrown by this method will be handled by {@link
+     * RestRequestHandler#handleExpectedException} method.
      *
      * @param input       The input object to the method. Usually a deserialized json.
      * @param requestInfo Request headers and path.
@@ -84,10 +85,6 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         return createResponse(requestInfo, searchResponse);
     }
 
-    private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
-        return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2 && !query.getSearchTerm().contains("AND");
-    }
-
     /**
      * Define the success status code.
      *
@@ -100,21 +97,26 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         return HttpStatus.SC_OK;
     }
 
+    private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
+        return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2 && !query.getSearchTerm().contains("AND");
+    }
+
     private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
         var uri = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
-                      .addChild("person-preferences")
-                      .addChild(URLDecoder.decode(contributorId, StandardCharsets.UTF_8))
-                      .getUri();
-        logger.info("GET THE uri: {}", uri);
-       var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
+            .addChild("person-preferences")
+            .addChild(URLDecoder.decode(contributorId, StandardCharsets.UTF_8))
+            .getUri();
+        logger.info("GET THE uri: {}", uri.toString().replace("https:/", "https://"));
+        var response = uriRetriever.getRawContent(URI.create(uri.toString().replace("https:/", "https://")),
+                                                  CONTENT_TYPE);
         logger.info("GET THE response: {}",
                     dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
         return dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications();
     }
 
     private String extractId(SearchDocumentsQuery query) {
-        return query.getSearchTerm().split(CONTRIBUTOR_ID)[1].replaceAll("[:()\"]", StringUtils.EMPTY_STRING)
-                   .split("&")[0];
+        return query.getSearchTerm().split(CONTRIBUTOR_ID)[1].replaceAll("[()\"]", StringUtils.EMPTY_STRING)
+            .split("&")[0];
     }
 
     private String createResponse(RequestInfo requestInfo, SearchResponseDto searchResponse)
