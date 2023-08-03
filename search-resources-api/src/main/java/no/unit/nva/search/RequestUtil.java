@@ -94,6 +94,20 @@ public class RequestUtil {
         );
     }
 
+    public static SearchDocumentsQuery toBoostQuery(
+        RequestInfo requestInfo,
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        return new SearchDocumentsQuery(
+            getSearchTerm(requestInfo),
+            getResults(requestInfo),
+            getFrom(requestInfo),
+            getOrderBy(requestInfo),
+            getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
+            aggregations
+        );
+    }
+
     public static SearchDocumentsQuery toQueryExport(
         RequestInfo requestInfo,
         List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
