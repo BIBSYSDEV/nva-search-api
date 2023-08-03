@@ -36,7 +36,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
 
     public static final String CONTRIBUTOR_ID = "entityDescription.contributors.identity.id:";
     public static final String CONTENT_TYPE = "application/json";
-    private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(SearchResourcesApiHandler.class);
     private final SearchClient openSearchClient;
     private final UriRetriever uriRetriever;
 
@@ -109,7 +109,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         logger.info("GET THE uri: {}", uri.toString().replace("https:/", "https://"));
         var response = uriRetriever.getRawContent(URI.create(uri.toString().replace("https:/", "https://")),
                                                   CONTENT_TYPE);
-        logger.info("GET THE response: {}",
+        logger.info("GET THE response: {}", response);
+        logger.info("GET THE prompoted publications: {}",
                     dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
         return dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications();
     }
