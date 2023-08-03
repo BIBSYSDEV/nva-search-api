@@ -68,8 +68,10 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
         if (containsSingleContributorIdOnly(query)) {
-            var searchResponse = openSearchClient.searchWithSearchPromotedPublicationsForContributorQuery(
-                extractContributorId(query), fetchPromotedPublications(query), query, OPENSEARCH_ENDPOINT_INDEX);
+            var searchResponse = !fetchPromotedPublications(query).isEmpty()
+                                     ? openSearchClient.searchWithSearchPromotedPublicationsForContributorQuery(
+                extractContributorId(query), fetchPromotedPublications(query), query, OPENSEARCH_ENDPOINT_INDEX)
+                                     : openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
             return createResponse(requestInfo, searchResponse);
         }
         var searchResponse = openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
@@ -96,8 +98,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private List<String> fetchPromotedPublications(SearchDocumentsQuery query) {
-        return attempt(() -> extractContributorId(query))
-                   .map(SearchResourcesApiHandler::createFetchPromotedPublicationUri)
+        return attempt(() -> extractContributorId(query)).map(
+                SearchResourcesApiHandler::createFetchPromotedPublicationUri)
                    .map(uri -> uriRetriever.getRawContent(uri, CONTENT_TYPE))
                    .map(body -> dtoObjectMapper.readValue(body, PersonPreferencesResponse.class))
                    .map(PersonPreferencesResponse::getPromotedPublications)
