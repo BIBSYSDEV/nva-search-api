@@ -7,6 +7,7 @@ import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
@@ -49,7 +50,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.RestClient;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
@@ -351,12 +351,12 @@ public class OpensearchTest {
             var promotedPublications = List.of("https://api.sandbox.nva.aws.unit"
                                                + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df", "https://api.sandbox.nva.aws.unit"
                                                 + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9");
-            var owner = "1136263@20754.0.0.0";
-            var query = queryWithTermAndAggregation("*", null);
-            var response = searchClient.searchPromotedQuery(owner, promotedPublications, query, indexName);
+            var contributor = "1234";
+            var query = queryWithTermAndAggregation("*", RESOURCES_AGGREGATIONS);
+            var response = searchClient.searchWithSearchPromotedPublicationsForContributorQuery(contributor, promotedPublications, query, indexName);
 
             assertThat(response, notNullValue());
-            assertThat(response.getAggregations(), nullValue());
+            assertThat(response.getAggregations(), notNullValue());
         }
 
         @Test

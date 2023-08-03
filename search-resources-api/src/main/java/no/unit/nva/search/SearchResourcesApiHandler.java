@@ -9,8 +9,6 @@ import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWith
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-import com.google.common.util.concurrent.Callables;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -29,14 +27,11 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
 
     public static final String CONTRIBUTOR_ID = "entityDescription.contributors.identity.id:";
     public static final String CONTENT_TYPE = "application/json";
-    private static final Logger logger = LoggerFactory.getLogger(SearchResourcesApiHandler.class);
     private final SearchClient openSearchClient;
     private final UriRetriever uriRetriever;
 
@@ -72,13 +67,8 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
         if (containsSingleContributorIdOnly(query)) {
-            var contributorId = extractId(query);
-            var promotedPublications = attempt(() -> fetchPromotedPublications(contributorId)).or(
-                Callables.returning(List.of())).get();
-            logger.info("contributorId: {}", contributorId);
-            logger.info("promotedPublications: {}", promotedPublications);
-            var searchResponse = openSearchClient.searchPromotedQuery(contributorId, promotedPublications, query,
-                                                                      OPENSEARCH_ENDPOINT_INDEX);
+            var searchResponse = openSearchClient.searchWithSearchPromotedPublicationsForContributorQuery(
+                extractContributorId(query), fetchPromotedPublications(query), query, OPENSEARCH_ENDPOINT_INDEX);
             return createResponse(requestInfo, searchResponse);
         }
         var searchResponse = openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
@@ -104,21 +94,21 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         return URI.create(personPreferencesEndpoint + "/" + URLEncoder.encode(contributorId, StandardCharsets.UTF_8));
     }
 
+    private List<String> fetchPromotedPublications(SearchDocumentsQuery query) {
+        return attempt(() -> extractContributorId(query))
+                   .map(SearchResourcesApiHandler::createFetchPromotedPublicationUri)
+                   .map(uri -> uriRetriever.getRawContent(uri, CONTENT_TYPE))
+                   .map(body -> dtoObjectMapper.readValue(body, PersonPreferencesResponse.class))
+                   .map(PersonPreferencesResponse::getPromotedPublications)
+                   .or(List::of)
+                   .get();
+    }
+
     private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
         return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2 && !query.getSearchTerm().contains("AND");
     }
 
-    private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
-        var uri = createFetchPromotedPublicationUri(contributorId);
-        logger.info("GET THE uri: {}", uri);
-        var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
-        logger.info("GET THE response: {}", response);
-        logger.info("GET THE promoted publications: {}",
-                    dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
-        return dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications();
-    }
-
-    private String extractId(SearchDocumentsQuery query) {
+    private String extractContributorId(SearchDocumentsQuery query) {
         return query.getSearchTerm().split(CONTRIBUTOR_ID)[1].replaceAll("[()\"]", StringUtils.EMPTY_STRING)
                    .split("&")[0];
     }

@@ -122,7 +122,8 @@
         "correspondingAuthor": false,
         "identity": {
           "type": "Identity",
-          "name": "Iametti, Stefania"
+          "name": "Iametti, Stefania",
+          "id": "1234"
         },
         "role": "Creator",
         "sequence": 7

@@ -2,8 +2,8 @@ package no.unit.nva.search.models;
 
 import java.net.URI;
 import java.util.List;
-
 import org.opensearch.action.search.SearchRequest;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -21,14 +21,9 @@ public class SearchDocumentsQuery {
     private final URI requestUri;
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
-    public SearchDocumentsQuery(
-            String searchTerm,
-            int results,
-            int from,
-            String orderBy,
-            SortOrder sortOrder,
-            URI requestUri,
-            List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+    public SearchDocumentsQuery(String searchTerm, int results, int from, String orderBy, SortOrder sortOrder,
+                                URI requestUri,
+                                List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;
@@ -50,14 +45,31 @@ public class SearchDocumentsQuery {
         return new SearchRequest(index).source(toSearchSourceBuilder());
     }
 
+    public SearchRequest toSearchRequestWithBoolQuery(String index, BoolQueryBuilder query) {
+        return new SearchRequest(index).source(toSearchSourceBuilderWithQuery(query));
+    }
+
+    private SearchSourceBuilder toSearchSourceBuilderWithQuery(BoolQueryBuilder query) {
+        var sourceBuilder = new SearchSourceBuilder().query(query)
+                                .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+                                .from(from)
+                                .size(results)
+                                .trackTotalHits(true);
+
+        if (aggregations != null) {
+            addAggregations(sourceBuilder);
+        }
+
+        return sourceBuilder;
+    }
+
     private SearchSourceBuilder toSearchSourceBuilder() {
 
-        var sourceBuilder = new SearchSourceBuilder()
-                .query(QueryBuilders.queryStringQuery(searchTerm))
-                .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
-                .from(from)
-                .size(results)
-                .trackTotalHits(true);
+        var sourceBuilder = new SearchSourceBuilder().query(QueryBuilders.queryStringQuery(searchTerm))
+                                .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+                                .from(from)
+                                .size(results)
+                                .trackTotalHits(true);
 
         if (aggregations != null) {
             addAggregations(sourceBuilder);

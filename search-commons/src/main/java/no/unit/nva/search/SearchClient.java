@@ -17,7 +17,6 @@ import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
 
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
@@ -35,6 +34,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String INCLUDED_VIEWING_SCOPES_QUERY_NAME = "IncludedViewingScopesQuery";
     public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
+    public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id";
 
     /**
      * Creates a new SearchClient.
@@ -74,18 +74,19 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         }
     }
 
-    public SearchResponseDto searchPromotedQuery(String owner, List<String> promotedPublications,
-                                                 SearchDocumentsQuery query, String index) throws ApiGatewayException {
+    public SearchResponseDto searchWithSearchPromotedPublicationsForContributorQuery(String owner,
+                                                                                     List<String> promotedPublications,
+                                                                                     SearchDocumentsQuery query,
+                                                                                     String index)
+        throws ApiGatewayException {
         try {
-            var queryBuilder = new BoolQueryBuilder().must(QueryBuilders.matchQuery("resourceOwner.owner", owner));
+            var queryBuilder = new BoolQueryBuilder().must(QueryBuilders.matchQuery(CONTRIBUTOR_ID_FIELD, owner));
             for (int i = 0; i < promotedPublications.size(); i++) {
                 queryBuilder.should(
                     QueryBuilders.matchQuery("id", promotedPublications.get(i)).boost(promotedPublications.size() - i));
             }
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().query(queryBuilder)
-                                                          .trackTotalHits(true);
 
-            var searchRequest = query.toSearchRequest(index).source(searchSourceBuilder);
+            var searchRequest = query.toSearchRequestWithBoolQuery(index, queryBuilder);
 
             return doSearch(searchRequest, query.getRequestUri(), query.getSearchTerm());
         } catch (IOException e) {
