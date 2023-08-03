@@ -50,8 +50,8 @@ public class SearchDocumentsQuery {
     }
 
     private SearchSourceBuilder toSearchSourceBuilderWithQuery(BoolQueryBuilder query) {
-        var sourceBuilder = new SearchSourceBuilder().query(query)
-                                .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+        var sourceBuilder = new SearchSourceBuilder()
+                                .query(query)
                                 .from(from)
                                 .size(results)
                                 .trackTotalHits(true);

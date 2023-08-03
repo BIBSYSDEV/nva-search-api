@@ -12,6 +12,7 @@ import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import no.unit.nva.search.model.PersonPreferencesResponse;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -100,12 +101,13 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
                    .map(uri -> uriRetriever.getRawContent(uri, CONTENT_TYPE))
                    .map(body -> dtoObjectMapper.readValue(body, PersonPreferencesResponse.class))
                    .map(PersonPreferencesResponse::getPromotedPublications)
-                   .or(List::of)
-                   .get();
+                   .orElse(failure -> Collections.<String>emptyList());
     }
 
     private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
-        return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2 && !query.getSearchTerm().contains("AND");
+        return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2
+               && !query.getSearchTerm().contains("AND")
+               && !query.getSearchTerm().contains("sortOrder");
     }
 
     private String extractContributorId(SearchDocumentsQuery query) {
