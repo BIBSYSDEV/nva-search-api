@@ -107,10 +107,11 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
             .addChild(URLDecoder.decode(contributorId, StandardCharsets.UTF_8))
             .getUri();
         logger.info("GET THE uri: {}", uri.toString().replace("https:/", "https://"));
+        logger.info("Create the uri: {}", URI.create(uri.toString().replace("https:/", "https://")));
         var response = uriRetriever.getRawContent(URI.create(uri.toString().replace("https:/", "https://")),
                                                   CONTENT_TYPE);
         logger.info("GET THE response: {}", response);
-        logger.info("GET THE prompoted publications: {}",
+        logger.info("GET THE promoted publications: {}",
                     dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications());
         return dtoObjectMapper.readValue(response, PersonPreferencesResponse.class).getPromotedPublications();
     }
