@@ -1,5 +1,6 @@
 package no.unit.nva.search.model;
 
+import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -17,7 +18,7 @@ public class PersonPreferencesResponse implements JsonSerializable {
     }
 
     public List<String> getPromotedPublications() {
-        return promotedPublications;
+        return nonNull(promotedPublications) ? promotedPublications : List.of();
     }
 
     @Override
