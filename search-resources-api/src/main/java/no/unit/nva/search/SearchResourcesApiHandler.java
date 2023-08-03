@@ -11,6 +11,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import com.google.common.util.concurrent.Callables;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import no.unit.nva.search.model.PersonPreferencesResponse;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -94,16 +97,20 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         return HttpStatus.SC_OK;
     }
 
+    private static URI createFetchPromotedPublicationUri(String contributorId) {
+        var personPreferencesEndpoint = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
+                                            .addChild("person-preferences")
+                                            .getUri();
+        return URI.create(personPreferencesEndpoint + "/" + URLEncoder.encode(contributorId, StandardCharsets.UTF_8));
+    }
+
     private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
         return query.getSearchTerm().split(CONTRIBUTOR_ID).length == 2 && !query.getSearchTerm().contains("AND");
     }
 
     private List<String> fetchPromotedPublications(String contributorId) throws IOException, InterruptedException {
-        var uri = UriWrapper.fromHost(new Environment().readEnv("API_HOST"))
-                      .addChild("person-preferences")
-                      .addChild(contributorId)
-                      .getUri();
-        logger.info("GET THE uri: {}", uri.toString());
+        var uri = createFetchPromotedPublicationUri(contributorId);
+        logger.info("GET THE uri: {}", uri);
         var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
         logger.info("GET THE response: {}", response);
         logger.info("GET THE promoted publications: {}",
