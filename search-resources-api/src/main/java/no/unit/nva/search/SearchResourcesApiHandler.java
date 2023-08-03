@@ -12,6 +12,7 @@ import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import no.unit.nva.search.model.PersonPreferencesResponse;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -68,18 +69,14 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws ApiGatewayException {
         var query = toQuery(requestInfo, RESOURCES_AGGREGATIONS);
         if (containsSingleContributorIdOnly(query)) {
-            var promotedPublications = attempt(() -> fetchPromotedPublications(query)).orElse(
-                failure -> List.<String>of());
-            if (promotedPublications.isEmpty()) {
-                var searchResponse = openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
-                return createResponse(requestInfo, searchResponse);
-            } else {
-                var searchResponse = openSearchClient.searchWithSearchPromotedPublicationsForContributorQuery(
-                    extractContributorId(query), promotedPublications, query, OPENSEARCH_ENDPOINT_INDEX);
-                return createResponse(requestInfo, searchResponse);
-            }
+            return attempt(() -> fetchPromotedPublications(query))
+                       .map(promotedPublications -> promotedPublications.isEmpty()
+                                                        ? searchWithSearchDocumentQuery(query)
+                                                        : searchWithPromotedPublications(promotedPublications, query))
+                       .map(searchResponseDto -> createResponse(requestInfo, searchResponseDto))
+                       .orElseThrow();
         }
-        var searchResponse = openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
+        var searchResponse = searchWithSearchDocumentQuery(query);
         return createResponse(requestInfo, searchResponse);
     }
 
@@ -102,23 +99,24 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
         return URI.create(personPreferencesEndpoint + "/" + URLEncoder.encode(contributorId, StandardCharsets.UTF_8));
     }
 
+    private SearchResponseDto searchWithPromotedPublications(List<String> promotedPublications,
+                                                             SearchDocumentsQuery query) throws ApiGatewayException {
+        return openSearchClient.searchWithSearchPromotedPublicationsForContributorQuery(extractContributorId(query),
+                                                                                        promotedPublications, query,
+                                                                                        OPENSEARCH_ENDPOINT_INDEX);
+    }
+
+    private SearchResponseDto searchWithSearchDocumentQuery(SearchDocumentsQuery query) throws ApiGatewayException {
+        return openSearchClient.searchWithSearchDocumentQuery(query, OPENSEARCH_ENDPOINT_INDEX);
+    }
+
     private List<String> fetchPromotedPublications(SearchDocumentsQuery query) {
-        try {
-            var contributorId = extractContributorId(query);
-            var uri = createFetchPromotedPublicationUri(contributorId);
-            var response = uriRetriever.getRawContent(uri, CONTENT_TYPE);
-            var preferences = dtoObjectMapper.readValue(response, PersonPreferencesResponse.class);
-            return preferences.getPromotedPublications();
-        } catch (Exception e) {
-            return List.of();
-        }
-        //        return attempt(() -> query)
-        //                   .map(this::extractContributorId)
-        //                   .map(SearchResourcesApiHandler::createFetchPromotedPublicationUri)
-        //                   .map(uri -> uriRetriever.getRawContent(uri, CONTENT_TYPE))
-        //                   .map(body -> dtoObjectMapper.readValue(body, PersonPreferencesResponse.class))
-        //                   .map(PersonPreferencesResponse::getPromotedPublications)
-        //                   .orElse(failure -> Collections.<String>emptyList());
+        return attempt(() -> query).map(this::extractContributorId)
+                   .map(SearchResourcesApiHandler::createFetchPromotedPublicationUri)
+                   .map(uri -> uriRetriever.getRawContent(uri, CONTENT_TYPE))
+                   .map(body -> dtoObjectMapper.readValue(body, PersonPreferencesResponse.class))
+                   .map(PersonPreferencesResponse::getPromotedPublications)
+                   .orElse(failure -> Collections.<String>emptyList());
     }
 
     private boolean containsSingleContributorIdOnly(SearchDocumentsQuery query) {
