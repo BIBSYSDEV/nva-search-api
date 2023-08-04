@@ -1,17 +1,18 @@
 [versions]
-junit = { strictly = '5.8.1' }
-jackson = { strictly = '2.14.1' }
-awsSdk2 = { strictly = '2.19.15' }
-nvaCommons = { strictly = '1.27.1' }
+junit = { strictly = '5.9.3' }
+jackson = { strictly = '2.15.2' }
+awsSdk2 = { strictly = '2.20.102' }
+nvaCommons = { strictly = '1.30.5' }
 opensearch = { strictly = '2.3.0' }
+opensearchTest = { strictly = '2.0.0' }
+
 slf4j = { strictly = '1.8.0-beta4' }
-testContainers = { strictly = '1.18.3' }
-opensearch-testcontainer = {strictly = '2.0.0'}
-zalandoProblem = { strictly = '0.26.0' }
+testContainers = { strictly = '1.17.5' }
+zalandoProblem = { strictly = '0.27.1' }
 log4j = { strictly = '2.17.2' }
 awsApacheInterceptor = { strictly = 'deb7941e85' }
-guava = { strictly = '31.1-jre' }
-javaFaker = { strictly = '1.0.2' }
+guava = { strictly = '32.0.0-jre' }
+#javaFaker = { strictly = '1.0.2' }
 hamcrest = { strictly = '2.2' }
 mockito = { strictly = '4.2.0' }
 xraySdk = { strictly = '2.10.0' }
@@ -63,6 +64,7 @@ opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content'
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
 opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
 opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch'}
+opensearch-testcontainers = { group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearchTest' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
@@ -71,11 +73,9 @@ problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProbl
 
 com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-auth0-jwt' }
 
-testcontainer-opensearch = {group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearch-testcontainer'}
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
-
-javafaker = { group = 'com.github.javafaker', name = 'javafaker', version.ref = 'javaFaker' }
+#javafaker = { group = 'com.github.javafaker', name = 'javafaker', version.ref = 'javaFaker' }
 hamcrest = { group = 'org.hamcrest', name = 'hamcrest', version.ref = 'hamcrest' }
 mockitocore = { group = 'org.mockito', name = 'mockito-core', version.ref = 'mockito' }
 junit-jupiter-engine = { group = 'org.junit.jupiter', name = 'junit-jupiter-engine', version.ref = 'junit' }
@@ -89,9 +89,9 @@ csv = {group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv'}
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
 jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
-testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainer-opensearch']
+testcontainers = ['testcontainers-core', 'testcontainers-junit' ]
 logging = ['slf4j', 'log4j-core', 'log4j-api']
-testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javafaker', 'javers',
+testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore',  'javers',
     'nva-testutils', 'nva-logutils','jackson-hamrest']
-opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content']
+opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content' ]
 aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']

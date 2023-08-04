@@ -45,7 +45,6 @@ import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.IndicesClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.indices.CreateIndexRequest;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -174,7 +173,6 @@ class IndexingClientTest {
                 any(RequestOptions.class));
     }
 
-    @NotNull
     private IndicesClientWrapper createMockIndicesClientWrapper() {
         IndicesClient indicesClient = mock(IndicesClient.class);
         return new IndicesClientWrapper(indicesClient);

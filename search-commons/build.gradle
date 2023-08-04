@@ -1,5 +1,5 @@
 plugins{
-    id 'nva.search.service.java-common-conventions'
+    id 'nva.search.service.java-conventions'
 }
 
 dependencies {
@@ -21,10 +21,9 @@ dependencies {
     implementation libs.guava
     implementation libs.com.auth0.jwt
 
+    implementation libs.opensearch.testcontainers
+    implementation libs.bundles.testcontainers
     testImplementation libs.bundles.testing
-
-
-    testImplementation libs.bundles.testcontainers
 
     testImplementation project(':search-testing')
 
