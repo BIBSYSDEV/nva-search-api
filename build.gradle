@@ -7,6 +7,9 @@ allprojects{
     apply plugin: 'nva.search.service.java-conventions'
 }
 
+tasks.withType(JavaCompile) {
+    options.release = 17
+}
 wrapper {
     gradleVersion = '8.2.1'
     distributionType = Wrapper.DistributionType.ALL
