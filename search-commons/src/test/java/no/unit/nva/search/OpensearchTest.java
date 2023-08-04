@@ -7,12 +7,14 @@ import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -340,6 +342,25 @@ public class OpensearchTest {
                            .size(),
                        is(equalTo(1))
             );
+        }
+
+        @Test
+        void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
+            addDocumentsToIndex("sample_publication.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json",
+                               "sample_publication_with_affiliations.json");
+            var mostBoostedPublication = "https://api.sandbox.nva.aws.unit"
+                                       + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df";
+            var secondBoostedPublication = "https://api.sandbox.nva.aws.unit"
+                        + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9";
+            var promotedPublications = List.of(mostBoostedPublication, secondBoostedPublication);
+            var contributor = "1234";
+            var query = queryWithTermAndAggregation("*", RESOURCES_AGGREGATIONS);
+            var response = searchClient.searchWithSearchPromotedPublicationsForContributorQuery(contributor, promotedPublications, query, indexName);
+            assertThat(response.getHits().get(0).toString(), containsString(mostBoostedPublication));
+            assertThat(response.getHits().get(1).toString(), containsString(secondBoostedPublication));
+            assertThat(response, notNullValue());
+            assertThat(response.getAggregations(), notNullValue());
         }
 
         @Test

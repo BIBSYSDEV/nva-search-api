@@ -4,7 +4,7 @@ jackson = { strictly = '2.15.2' }
 awsSdk2 = { strictly = '2.20.102' }
 nvaCommons = { strictly = '1.30.5' }
 opensearch = { strictly = '2.3.0' }
-opensearchTest = { strictly = '2.0.0' }
+opensearch-testcontainer  = { strictly = '2.0.0' }
 
 slf4j = { strictly = '1.8.0-beta4' }
 testContainers = { strictly = '1.17.5' }
@@ -64,7 +64,6 @@ opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content'
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
 opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
 opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch'}
-opensearch-testcontainers = { group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearchTest' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
@@ -73,6 +72,7 @@ problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProbl
 
 com-auth0-jwt = { group = 'com.auth0', name =  'java-jwt', version.ref = 'com-auth0-jwt' }
 
+testcontainer-opensearch = {group = 'org.opensearch', name = 'opensearch-testcontainers', version.ref = 'opensearch-testcontainer'}
 testcontainers-core = { group = 'org.testcontainers', name = 'testcontainers', version.ref = 'testContainers' }
 testcontainers-junit = { group = 'org.testcontainers', name = 'junit-jupiter', version.ref = 'testContainers' }
 #javafaker = { group = 'com.github.javafaker', name = 'javafaker', version.ref = 'javaFaker' }
@@ -89,7 +89,7 @@ csv = {group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv'}
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
 jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
-testcontainers = ['testcontainers-core', 'testcontainers-junit' ]
+testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainer-opensearch']
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore',  'javers',
     'nva-testutils', 'nva-logutils','jackson-hamrest']

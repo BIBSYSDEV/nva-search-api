@@ -213,7 +213,7 @@
       }
     }
   ],
-  "identifier": "0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9",
+  "identifier": "8c9f0155-bf95-4ba9-b291-0fdc2814f8df",
   "modelVersion": "0.19.33",
   "modifiedDate": "2023-02-08T09:21:22.370874Z",
   "publisher": {
@@ -222,7 +222,7 @@
     "labels": {}
   },
   "resourceOwner": {
-    "owner": "fredrikTest@unit.no",
+    "owner": "1136263@20754.0.0.0",
     "ownerAffiliation": "https://www.example.org"
   },
   "status": "PUBLISHED",
