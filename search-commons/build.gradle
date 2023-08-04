@@ -21,7 +21,6 @@ dependencies {
     implementation libs.guava
     implementation libs.com.auth0.jwt
 
-    implementation libs.opensearch.testcontainers
     implementation libs.bundles.testcontainers
     testImplementation libs.bundles.testing
 
