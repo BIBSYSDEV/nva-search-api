@@ -85,7 +85,7 @@ class IndexingClientTest {
                 .boxed()
                 .map(i -> randomJson())
                 .map(this::toIndexDocument)
-                .collect(Collectors.toList());
+                .toList();
         List<BulkResponse> provokeExecution = indexingClient.batchInsert(indexDocuments.stream())
             .collect(Collectors.toList());
         assertThat(provokeExecution, is(not(nullValue())));
