@@ -17,9 +17,12 @@ import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
+    private static final Logger logger = LoggerFactory.getLogger(SearchClient.class);
     public static final String NO_RESPONSE_FROM_INDEX = "No response from index";
     public static final String ORGANIZATION_IDS = "organizationIds";
     public static final String PUBLICATION_STATUS = "publication.status";
@@ -125,6 +128,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)
         throws IOException {
         var searchResponse = openSearchClient.search(searchRequest, getRequestOptions());
+        logger.info("Original search response: {}", searchResponse.toString());
         var id = createIdWithQuery(requestUri, searchTerm);
         return fromSearchResponse(searchResponse, id);
     }
