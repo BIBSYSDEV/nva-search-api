@@ -1,24 +1,22 @@
 package no.unit.nva.search.models;
 
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.action.search.SearchResponse;
 import org.opensearch.search.SearchHit;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static nva.commons.core.attempt.Try.attempt;
 
 public class SearchResponseDto {
 
@@ -26,10 +24,11 @@ public class SearchResponseDto {
     public static final String QUERY_PARAMETER = "query";
     public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
 
-    private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
-        "doc_count_error_upper_bound", "docCountErrorUpperBound",
-        "sum_other_doc_count", "sumOtherDocCount",
-        "doc_count", "docCount");
+    private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of("doc_count_error_upper_bound",
+                                                                                   "docCountErrorUpperBound",
+                                                                                   "sum_other_doc_count",
+                                                                                   "sumOtherDocCount", "doc_count",
+                                                                                   "docCount");
 
     @JsonProperty("@context")
     private URI context;
@@ -52,14 +51,15 @@ public class SearchResponseDto {
         long took = searchResponse.getTook().duration();
         var aggregations = extractAggregations(searchResponse);
 
-        return SearchResponseDto.builder()
-            .withContext(DEFAULT_SEARCH_CONTEXT)
-            .withId(id)
-            .withHits(sourcesList)
-            .withSize(total)
-            .withProcessingTime(took)
-            .withAggregations(aggregations)
-            .build();
+        return SearchResponseDto
+                   .builder()
+                   .withContext(DEFAULT_SEARCH_CONTEXT)
+                   .withId(id)
+                   .withHits(sourcesList)
+                   .withSize(total)
+                   .withProcessingTime(took)
+                   .withAggregations(aggregations)
+                   .build();
     }
 
     public static URI createIdWithQuery(URI requestUri, String searchTerm) {
@@ -119,10 +119,6 @@ public class SearchResponseDto {
         this.hits = hits;
     }
 
-    public void setAggregations(JsonNode aggregations) {
-        this.aggregations = aggregations;
-    }
-
     @JsonProperty("total")
     @Deprecated(forRemoval = true)
     @JacocoGenerated
@@ -169,18 +165,42 @@ public class SearchResponseDto {
         }
 
         SearchResponseDto that = (SearchResponseDto) o;
-        return processingTime == that.processingTime
-               && size == that.size
-               && Objects.equals(context, that.context)
-               && Objects.equals(id, that.id)
-               && Objects.equals(hits, that.hits);
+        return processingTime == that.processingTime && size == that.size && Objects.equals(context, that.context)
+               && Objects.equals(id, that.id) && Objects.equals(hits, that.hits);
+    }
+
+    public JsonNode getAggregations() {
+        return aggregations;
+    }
+
+    public void setAggregations(JsonNode aggregations) {
+        this.aggregations = aggregations;
     }
 
     private static List<JsonNode> extractSourcesList(SearchResponse searchResponse) {
-        return Arrays.stream(searchResponse.getHits().getHits())
-            .map(SearchHit::getSourceAsMap)
-            .map(source -> objectMapperWithEmpty.convertValue(source, JsonNode.class))
-            .collect(Collectors.toList());
+        return Arrays
+                   .stream(searchResponse.getHits().getHits())
+                   .map(SearchResponseDto::toHitWithSort)
+                   .collect(Collectors.toList());
+    }
+
+    private static JsonNode toHitWithSort(SearchHit searchHit) {
+        return attempt(() -> objectMapperWithEmpty.convertValue(searchHit.getSourceAsMap(), JsonNode.class))
+            .map(ObjectNode.class::cast)
+            .map(objectNode -> hasSortValue(searchHit)
+                                   ? injectSortValue(objectNode, searchHit)
+                                   : objectNode)
+            .map(object -> objectMapperWithEmpty.convertValue(object, JsonNode.class))
+            .orElseThrow();
+    }
+
+    private static boolean hasSortValue(SearchHit searchHit) {
+        return !Arrays.asList(searchHit.getSortValues()).isEmpty();
+    }
+
+    private static ObjectNode injectSortValue(ObjectNode objectNode, SearchHit searchHit) {
+        objectNode.put("sort", objectMapperWithEmpty.convertValue(searchHit.getSortValues(), JsonNode.class));
+        return objectNode;
     }
 
     private static JsonNode extractAggregations(SearchResponse searchResponse) {
@@ -221,10 +241,6 @@ public class SearchResponseDto {
         }
 
         return outputAggregationNode;
-    }
-
-    public JsonNode getAggregations() {
-        return aggregations;
     }
 
     public static final class Builder {
