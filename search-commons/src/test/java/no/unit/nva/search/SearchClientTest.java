@@ -437,6 +437,7 @@ class SearchClientTest {
                                         SAMPLE_ORDERBY,
                                         DESC,
                                         SAMPLE_REQUEST_URI,
+                                        null,
                                         SAMPLE_AGGREGATIONS);
     }
 

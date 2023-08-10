@@ -1,5 +1,6 @@
 package no.unit.nva.search.models;
 
+import static java.util.Objects.nonNull;
 import java.net.URI;
 import java.util.List;
 import org.opensearch.action.search.SearchRequest;
@@ -19,10 +20,11 @@ public class SearchDocumentsQuery {
     private final String orderBy;
     private final SortOrder sortOrder;
     private final URI requestUri;
+    private final String searchAfter;
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
     public SearchDocumentsQuery(String searchTerm, int results, int from, String orderBy, SortOrder sortOrder,
-                                URI requestUri,
+                                URI requestUri, String searchAfter,
                                 List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
@@ -30,6 +32,7 @@ public class SearchDocumentsQuery {
         this.orderBy = orderBy;
         this.sortOrder = sortOrder;
         this.requestUri = requestUri;
+        this.searchAfter = searchAfter;
         this.aggregations = aggregations;
     }
 
@@ -73,6 +76,10 @@ public class SearchDocumentsQuery {
 
         if (aggregations != null) {
             addAggregations(sourceBuilder);
+        }
+
+        if(nonNull(searchAfter)) {
+            sourceBuilder.searchAfter(new String[]{searchAfter});
         }
 
         return sourceBuilder;

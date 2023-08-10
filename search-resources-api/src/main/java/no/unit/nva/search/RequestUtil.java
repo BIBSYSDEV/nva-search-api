@@ -31,7 +31,7 @@ public class RequestUtil {
     public static final String DOMAIN_NAME = "domainName";
     public static final String HTTPS = "https";
     public static final Environment ENVIRONMENT = new Environment();
-    public static final String SEARCH_AFTER = "search-after";
+    public static final String SEARCH_AFTER = "searchAfter";
 
     /**
      * Get searchTerm from request query parameters.
@@ -44,7 +44,8 @@ public class RequestUtil {
     }
 
     public static String getSearchAfter(RequestInfo requestInfo) {
-        return requestInfo.getQueryParameters().getOrDefault(SEARCH_AFTER, SEARCH_ALL_PUBLICATIONS_DEFAULT_QUERY);
+        return requestInfo.getQueryParameters().getOrDefault(SEARCH_AFTER, null);
+
     }
 
     public static int getResults(RequestInfo requestInfo) {
@@ -95,7 +96,7 @@ public class RequestUtil {
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),
             getRequestUri(requestInfo),
-
+            getSearchAfter(requestInfo),
             aggregations
         );
     }
@@ -110,6 +111,7 @@ public class RequestUtil {
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),
             getRequestUri(requestInfo),
+            getSearchAfter(requestInfo),
             aggregations
         );
     }
@@ -124,6 +126,7 @@ public class RequestUtil {
             getOrderBy(requestInfo),
             getSortOrder(requestInfo),
             getRequestUri(requestInfo),
+            getSearchAfter(requestInfo),
             aggregations
         );
     }

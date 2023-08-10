@@ -488,6 +488,7 @@ public class OpensearchTest {
                 SAMPLE_ORDERBY,
                 DESC,
                 SAMPLE_REQUEST_URI,
+                null,
                 aggregations
             );
         }
