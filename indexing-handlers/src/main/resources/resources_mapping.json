@@ -67,17 +67,17 @@
           }
         }
       }
-    }
-  },
-  "projects": {
-    "type": "nested",
-    "include_in_parent": true,
-    "properties": {
-      "id": {
-        "type": "keyword"
-      },
-      "name": {
-        "type": "keyword"
+    },
+    "projects": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "name": {
+          "type": "keyword"
+        }
       }
     }
   }
