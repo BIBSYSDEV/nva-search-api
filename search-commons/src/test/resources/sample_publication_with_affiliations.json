@@ -235,5 +235,11 @@
         "en": "A larger university"
       }
     }
-  ]
+  ],
+  "projects" : [ {
+    "type" : "ResearchProject",
+    "id" : "https://api.dev.nva.aws.unit.no/cristin/project/14334813",
+    "name" : "Utvikling av osteloffen",
+    "approvals" : [ ]
+  } ]
 }
