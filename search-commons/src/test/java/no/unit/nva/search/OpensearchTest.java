@@ -437,6 +437,20 @@ public class OpensearchTest {
         }
 
         @Test
+        void shouldReturnPublicationWhenQueryingByTopLevelOrg() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json");
+
+            var query = queryWithTermAndAggregation(
+                "topLevelOrganization.id:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0\"",
+                ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+            assertThat(response.getHits(), hasSize(2));
+        }
+
+        @Test
         void shouldQueryingFundingSuccessfully() throws InterruptedException, ApiGatewayException {
             addDocumentsToIndex("sample_publication_with_affiliations.json",
                                 "sample_publication_with_several_of_the_same_affiliation.json");
