@@ -2,30 +2,13 @@
   "properties": {
     "topLevelOrganization": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
         "id": {
           "type": "keyword"
         },
         "labels": {
           "type": "nested"
-        }
-      }
-    },
-    "fundings": {
-      "type": "nested",
-      "include_in_parent": true,
-      "properties": {
-        "source": {
-          "type": "nested",
-          "include_in_parent": true,
-          "properties": {
-            "identifier": {
-              "type": "keyword"
-            },
-            "labels": {
-              "type": "nested"
-            }
-          }
         }
       }
     },
@@ -65,6 +48,36 @@
               }
             }
           }
+        }
+      }
+    },
+    "fundings": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "source": {
+          "type": "nested",
+          "include_in_parent": true,
+          "properties": {
+            "identifier": {
+              "type": "keyword"
+            },
+            "labels": {
+              "type": "nested"
+            }
+          }
+        }
+      }
+    },
+    "projects": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "name": {
+          "type": "keyword"
         }
       }
     }
