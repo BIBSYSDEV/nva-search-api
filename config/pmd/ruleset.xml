@@ -12,7 +12,6 @@
   <rule ref="category/java/errorprone.xml">
     <exclude name="DataflowAnomalyAnalysis"/>
     <exclude name="MissingSerialVersionUID"/>
-    <exclude name="BeanMembersShouldSerialize"/>
   </rule>
 
   <rule ref="category/java/multithreading.xml">
@@ -45,10 +44,6 @@
     <exclude name="CommentDefaultAccessModifier"/>
     <!-- Conflicts with the rule category/java/codestyle.xml/AvoidProtectedMethodInFinalClassNotExtending -->
     <exclude name="DefaultPackage"/>
-
-
-    <!--<exclude name="BeanMembersShouldSerialize"/>-->
-
     <exclude name="ConfusingTernary"/>
 
     <!-- printStackTrace is used in the Default Amazon handler in a static clause

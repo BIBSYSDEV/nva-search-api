@@ -16,6 +16,7 @@ dependencies {
     }
 }
 
+
 reporting {
     reports {
         testCodeCoverageReport(JacocoCoverageReport) {
@@ -31,3 +32,9 @@ tasks.named('check') {
     dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
     dependsOn tasks.named('integrationTestCodeCoverageReport', JacocoReport)
 }
+
+//check {
+//    dependsOn testCodeCoverageReport
+//    dependsOn integrationTestCodeCoverageReport
+////    dependsOn jacocoTestCoverageVerification
+//}

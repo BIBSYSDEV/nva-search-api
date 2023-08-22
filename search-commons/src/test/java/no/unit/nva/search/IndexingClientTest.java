@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
-import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.IndexingClient.BULK_SIZE;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;

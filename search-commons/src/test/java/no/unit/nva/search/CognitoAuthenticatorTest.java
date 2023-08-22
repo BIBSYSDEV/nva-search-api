@@ -19,8 +19,8 @@ import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_URLENCODED;
-import static no.unit.nva.indexing.testutils.TestConstants.TEST_SCOPE;
-import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
+import static no.unit.nva.indexing.testutils.Constants.TEST_SCOPE;
+import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
 import static no.unit.nva.search.CognitoAuthenticator.AUTHORIZATION_ERROR_MESSAGE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.apache.http.protocol.HTTP.CONTENT_TYPE;
@@ -34,6 +34,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings({"unchecked"})
 class CognitoAuthenticatorTest {
 
     private CognitoAuthenticator cognitoAuthenticator;
