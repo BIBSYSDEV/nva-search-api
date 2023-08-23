@@ -47,7 +47,8 @@ public class RequestUtil {
     }
 
     public static int getExportResults(RequestInfo requestInfo) {
-        return Integer.parseInt(requestInfo.getQueryParameters().getOrDefault(RESULTS_KEY, ENVIRONMENT.readEnv("EXPORT_SEARCH_RESULTS_SIZE")));
+        return Integer.parseInt(requestInfo.getQueryParameters()
+            .getOrDefault(RESULTS_KEY, ENVIRONMENT.readEnv("EXPORT_SEARCH_RESULTS_SIZE")));
     }
 
     public static int getFrom(RequestInfo requestInfo) {

@@ -65,7 +65,8 @@ public class SearchDocumentsQuery {
 
     private SearchSourceBuilder toSearchSourceBuilder() {
 
-        var sourceBuilder = new SearchSourceBuilder().query(QueryBuilders.queryStringQuery(searchTerm))
+        var sourceBuilder = new SearchSourceBuilder()
+                                .query(QueryBuilders.queryStringQuery(searchTerm))
                                 .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
                                 .from(from)
                                 .size(results)
