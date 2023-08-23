@@ -4,21 +4,17 @@ phases:
   install:
     runtime-versions:
       java: corretto17
-      python: 3.11
     commands:
-      - python3 -m venv /root/venv
-      - . /root/venv/bin/activate
-      - python3 -m pip install --upgrade pip
       - pip3 install aws-sam-cli -U
-  pre_build:
-    commands:
-      - export LC_ALL="en_US.UTF-8"
-      - locale-gen en_US en_US.UTF-8
-      - dpkg-reconfigure locales
   build:
     commands:
       - sam build
-      - sam package --s3-bucket $S3_BUCKET --output-template-file packaged.yaml
+      - sam package --s3-bucket $S3_BUCKET --output-template-file packaged_raw.yaml
+  post_build:
+    commands:
+      # Use timestamp to force update of ApiGatewayCreateDeploymentCustomResource
+      - BUILD_TIMESTAMP=$(date '+%s')
+      - envsubst '${BUILD_TIMESTAMP}' packaged_raw.yaml packaged.yaml
 artifacts:
   files:
     - packaged.yaml
