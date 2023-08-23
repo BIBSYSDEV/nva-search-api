@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
-import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.IndexingClient.BULK_SIZE;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -45,7 +45,6 @@ import org.opensearch.action.index.IndexResponse;
 import org.opensearch.client.IndicesClient;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.indices.CreateIndexRequest;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -86,7 +85,7 @@ class IndexingClientTest {
                 .boxed()
                 .map(i -> randomJson())
                 .map(this::toIndexDocument)
-                .collect(Collectors.toList());
+                .toList();
         List<BulkResponse> provokeExecution = indexingClient.batchInsert(indexDocuments.stream())
             .collect(Collectors.toList());
         assertThat(provokeExecution, is(not(nullValue())));
@@ -174,7 +173,6 @@ class IndexingClientTest {
                 any(RequestOptions.class));
     }
 
-    @NotNull
     private IndicesClientWrapper createMockIndicesClientWrapper() {
         IndicesClient indicesClient = mock(IndicesClient.class);
         return new IndicesClientWrapper(indicesClient);

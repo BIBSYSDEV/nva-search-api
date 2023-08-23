@@ -7,18 +7,19 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,7 +36,6 @@ import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
 import nva.commons.logutils.LogUtils;
-import org.javers.common.collections.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -75,15 +75,17 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         var importLocation = filesFailingToBeIndexed.get(0).getHost().toString();
         var request = new ImportDataRequestEvent(importLocation);
         indexer.handleRequest(eventStream(request), outputStream, CONTEXT);
+
         var actualIdentifiersOfNonIndexedEntries =
-            Arrays.asList(objectMapper.readValue(outputStream.toString(), String[].class));
-        var expectedIdentifiesOfNonIndexedEntries = extractIdentifiersFromFailingFiles(filesFailingToBeIndexed);
+            Arrays.stream(objectMapper.readValue(outputStream.toString(), String[].class)).toList();
+        var expectedIdentifiesOfNonIndexedEntries =
+            Arrays.stream(extractIdentifiersFromFailingFiles(filesFailingToBeIndexed)).toList();
 
-        assertThat(actualIdentifiersOfNonIndexedEntries, containsInAnyOrder(expectedIdentifiesOfNonIndexedEntries));
+        assertEquals(actualIdentifiersOfNonIndexedEntries, expectedIdentifiesOfNonIndexedEntries);
 
-        for (var expectedIdentifier : expectedIdentifiesOfNonIndexedEntries) {
-            assertThat(logger.getMessages(), containsString(expectedIdentifier));
-        }
+        expectedIdentifiesOfNonIndexedEntries
+            .forEach(expectedIdentifier -> assertThat(logger.getMessages(), containsString(expectedIdentifier)));
+
     }
 
     @Test

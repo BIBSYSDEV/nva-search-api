@@ -25,13 +25,10 @@ class CachedJwtTest {
     @BeforeEach
     void setup() {
 
-
         when(jwt1.getExpiresAt()).thenReturn(Date.from(TOKEN_EXPIRE_AT));
         when(jwt2.getExpiresAt()).thenReturn(Date.from(TOKEN_EXPIRE_AT));
 
         mockedClock = mock(Clock.class);
-
-
 
         var cognitoAuthenticator = mock(CognitoAuthenticator.class);
         when(cognitoAuthenticator.fetchBearerToken())

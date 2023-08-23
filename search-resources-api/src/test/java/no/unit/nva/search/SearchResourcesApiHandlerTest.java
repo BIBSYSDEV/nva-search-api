@@ -4,7 +4,7 @@ import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
-import static no.unit.nva.indexing.testutils.TestSetup.setupMockedCachedJwtProvider;
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
@@ -403,15 +403,15 @@ public class SearchResourcesApiHandlerTest {
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
-    private SearchResponse createSearchResponseWithHits(String json) throws IOException {
-        return getSearchResponseFromJson(json);
-    }
-
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         SearchResponse searchResponse = createSearchResponseWithHitsFromFile(
             SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
+    }
+
+    private SearchResponse createSearchResponseWithHits(String json) throws IOException {
+        return getSearchResponseFromJson(json);
     }
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {

@@ -1,5 +1,4 @@
 
-
 plugins {
     // Support convention plugins written in Groovy. Convention plugins are build scripts in 'src/main' that automatically become available as plugins in the main build.
     id 'groovy-gradle-plugin'
@@ -10,9 +9,18 @@ repositories {
     gradlePluginPortal()
 }
 
-
 dependencies {
-    implementation group: 'nebula.lint', name: 'nebula.lint.gradle.plugin', version: '17.2.3'
+    implementation group: 'nebula.lint', name: 'nebula.lint.gradle.plugin', version: '17.8.0'
     implementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.8.7'
     implementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.8.7'
+}
+
+group = 'com.github.bibsysdev'
+version '1.0-JDK17'
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
+
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = "8.2.1"
 }

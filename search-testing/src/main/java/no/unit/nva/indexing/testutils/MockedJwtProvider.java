@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.testutils;
 
-import static no.unit.nva.indexing.testutils.TestConstants.TEST_TOKEN;
+import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -10,7 +10,7 @@ import java.util.Date;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 
-public class TestSetup {
+public class MockedJwtProvider {
 
     public static CachedJwtProvider setupMockedCachedJwtProvider() {
         var jwt = mock(DecodedJWT.class);

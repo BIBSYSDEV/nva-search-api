@@ -4,8 +4,10 @@ dependencies {
     implementation libs.nva.core
     implementation libs.nva.json
     implementation libs.bundles.jackson
-    implementation libs.opensearch
+    implementation libs.bundles.opensearch
+
     implementation libs.bundles.testing
+    implementation libs.bundles.testcontainers
     implementation libs.com.auth0.jwt
     implementation libs.csv
 }

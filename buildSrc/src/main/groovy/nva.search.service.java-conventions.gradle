@@ -1,0 +1,86 @@
+plugins {
+    id 'java-library'
+    id 'pmd'
+    id 'checkstyle'
+    id 'jacoco-report-aggregation'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    testImplementation libs.bundles.testing
+}
+
+sourceSets {
+    test {
+        resources {
+            srcDir file('src/test/java')
+            exclude '**/*.java' , '*/*.xml'
+        }
+    }
+    check {
+        resources {
+            exclude '**/*.java' , '*/*.xml'
+        }
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
+    violationRules {
+        rule {
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 1.000
+            }
+        }
+        rule {
+            limit {
+                counter = 'CLASS'
+                value = 'COVEREDRATIO'
+                minimum = 1.000
+            }
+        }
+    }
+    dependsOn jacocoTestReport
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    testLogging {
+        events 'skipped', 'passed', 'failed'
+    }
+//    environment "ALLOWED_ORIGIN", "*"
+    finalizedBy jacocoTestReport
+}
+
+pmd {
+    toolVersion = '6.55.0'
+    ruleSetConfig = rootProject.resources.text.fromFile('config/pmd/ruleset.xml')
+    ruleSets = []
+    ignoreFailures = false
+}
+
+checkstyle {
+    configFile = rootProject.resources.text.fromFile('config/checkstyle/checkstyle.xml').asFile()
+
+    showViolations = true
+}
+
+tasks.withType(Checkstyle).configureEach{
+    reports {
+        xml.required
+        html.required
+        html.stylesheet rootProject.resources.text.fromFile('config/checkstyle/checkstyle-simple.xsl')
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'utf-8'
+}
+
+
+
