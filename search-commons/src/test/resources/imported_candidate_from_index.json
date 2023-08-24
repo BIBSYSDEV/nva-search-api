@@ -16,44 +16,6 @@
       "labels": {
         "nb": "Zhejiang University"
       }
-    },
-    {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7475.0.0.0",
-      "type": "Organization",
-      "labels": {
-        "nb": "Forsker",
-        "en": "Researcher"
-      }
-    },
-    {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/201.19.4.0",
-      "type": "Organization",
-      "labels": {
-        "nb": "Professor ii",
-        "en": "Professor ii"
-      }
-    },
-    {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7471.11.0.0",
-      "type": "Organization",
-      "labels": {
-        "nb": "Forsker",
-        "en": "Researcher"
-      }
-    },
-    {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/13900100.0.0.0",
-      "type": "Organization",
-      "labels": {
-        "nb": "University College London"
-      }
-    },
-    {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/48400680.0.0.0",
-      "type": "Organization",
-      "labels": {
-        "nb": "Sun Yat-sen University"
-      }
     }
   ],
   "additionalIdentifiers": [

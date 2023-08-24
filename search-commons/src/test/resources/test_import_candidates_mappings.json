@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "organizations": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "labels": {
+          "type": "nested"
+        }
+      }
+    }
+  }
+}
+
