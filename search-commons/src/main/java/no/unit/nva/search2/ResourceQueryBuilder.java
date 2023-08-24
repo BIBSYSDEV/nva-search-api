@@ -14,6 +14,7 @@ public class ResourceQueryBuilder extends QueryBuilder<ResourceKeys> {
 
     public ResourceQueryBuilder() {
         super(new ResourceQuery());
+        accessRights = "user";
     }
 
     @Override

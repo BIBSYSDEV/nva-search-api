@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 
 import no.unit.nva.search.models.SearchResponseDto;
+import nva.commons.apigateway.RequestInfo;
 import nva.commons.core.paths.UriWrapper;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.gateway.GatewayException;
@@ -165,6 +166,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         return new SearchRequest();
     }
 
+    protected abstract boolean userHasAccessRights(RequestInfo requestInfo);
 
     /**
      * Sample code for ignorePathParameters.

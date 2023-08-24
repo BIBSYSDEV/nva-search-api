@@ -23,6 +23,8 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
     protected final transient OpenSearchQuery<T> query;
     protected transient boolean notValidated = true;
+    protected String accessRights = EMPTY_STRING;
+    private boolean userIsNotAuthorized = false;
 
     /**
      * Constructor of CristinQuery.Builder.
@@ -53,6 +55,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
      * @throws BadRequestException if parameters are invalid or missing
      */
     public QueryBuilder<T> validate() throws BadRequestException {
+        userHasAccessRights();
         assignDefaultValues();
         for (var entry : query.pathParameters.entrySet()) {
             throwInvalidPathValue(entry);
@@ -70,12 +73,24 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
         return this;
     }
 
+    protected void userHasAccessRights() throws BadRequestException {
+        if (userIsNotAuthorized) {
+            throw new BadRequestException("User has no access rights");
+        }
+    }
+
     /**
      * Adds query and path parameters from requestInfo.
      */
     public final QueryBuilder<T> fromRequestInfo(RequestInfo requestInfo) {
         return fromPathParameters(requestInfo.getPathParameters())
-            .fromQueryParameters(requestInfo.getQueryParameters());
+            .fromQueryParameters(requestInfo.getQueryParameters())
+            .fromAccessRight(requestInfo.userIsAuthorized(accessRights));
+    }
+
+    private QueryBuilder<T> fromAccessRight(boolean userIsAuthorized) {
+        this.userIsNotAuthorized = !userIsAuthorized;
+        return this;
     }
 
     /**
