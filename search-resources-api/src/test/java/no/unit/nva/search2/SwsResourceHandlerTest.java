@@ -4,6 +4,7 @@ import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.FakeSearchResponse.COMMA_DELIMITER;
+import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
@@ -17,6 +18,7 @@ import static no.unit.nva.search.SearchResourcesApiHandlerTest.SAMPLE_PATH;
 import static no.unit.nva.search.SearchResourcesApiHandlerTest.SAMPLE_SEARCH_TERM;
 import static no.unit.nva.search.SearchResourcesApiHandlerTest.UTF8_BOM;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -32,6 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,6 +51,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.action.search.SearchResponse;
 import org.zalando.problem.Problem;
 
 class SwsResourceHandlerTest {
@@ -237,26 +241,6 @@ class SwsResourceHandlerTest {
         assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
     }
 
-    //    @ParameterizedTest(name = "should return text/csv for accept header {0}")
-    //    @MethodSource("acceptHeaderValuesProducingTextCsvProvider")
-    //    void shouldReturnTextCsvWithGivenAcceptHeader(String acceptHeaderValue) throws IOException {
-    //        prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
-    //        handler.handleRequest(getRequestInputStreamAccepting(acceptHeaderValue), outputStream, mock(Context.class));
-    //
-    //        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-    //        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
-    //    }
-
-    //    @Test
-    //    void textCsvShouldContainCorrectFormatting() throws IOException {
-    //        var csvLines = List.of(csvWithFullDate(), csvWithYearOnly());
-    //        prepareRestHighLevelClientOkResponse(csvLines);
-    //        handler.handleRequest(getRequestInputStreamAccepting("text/csv"), outputStream, mock(Context.class));
-    //
-    //        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-    //
-    //        assertCsvGeneratedCorrectly(gatewayResponse.getBody(), csvLines);
-    //    }
 
     private static ExportCsv csvWithFullDate() {
         var id = randomUri().toString();
@@ -359,19 +343,33 @@ class SwsResourceHandlerTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
+        var typeReference = new TypeReference<SearchResponseDto>() { };
+        var response = objectMapper.readValue(jsonResponse, SearchResponse.class);
+        var response2 = objectMapper.readValue(jsonResponse,typeReference);
+        var response3 = getSearchResponseFromJson(jsonResponse);
+
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(GatewayResponse.of(jsonResponse));
+            .thenReturn(response3);
     }
 
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        when(mockedSearchClient.doSearch(any())).thenReturn(GatewayResponse.of(jsonResponse));
+        var typeReference = new TypeReference<SearchResponseDto>() { };
+        var response = objectMapper.readValue(jsonResponse,typeReference);
+        when(mockedSearchClient.doSearch(any()))
+            .thenReturn(response);
     }
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        when(mockedSearchClient.doSearch(any())).thenReturn(GatewayResponse.of(jsonResponse));
+        var typeReference = new TypeReference<SearchResponse>() { };
+        var response = objectMapper.readValue(jsonResponse, SearchResponse.class);
+        var response2 = objectMapper.readValue(jsonResponse,typeReference);
+        var response3 = objectMapper.readValue(jsonResponse,SearchResponseDto.class);
+
+        when(mockedSearchClient.doSearch(any()))
+            .thenReturn(response3);
     }
 
     private SearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {

@@ -8,12 +8,13 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
+import org.opensearch.action.search.SearchResponse;
 
 import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
 import static no.unit.nva.search2.SwsOpenSearchClient.defaultSwsClient;
 
-public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponseDto> {
+public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponse> {
 
     private final SwsOpenSearchClient swsOpenSearchClient;
 
@@ -28,7 +29,7 @@ public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponseD
     }
 
     @Override
-    protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
+    protected SearchResponse processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
 
         return
@@ -41,7 +42,7 @@ public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponseD
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, SearchResponseDto output) {
+    protected Integer getSuccessStatusCode(Void input, SearchResponse output) {
         return HttpStatus.SC_OK;
     }
 

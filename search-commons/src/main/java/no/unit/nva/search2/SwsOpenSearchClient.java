@@ -2,15 +2,31 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
-import static nva.commons.core.attempt.Try.attempt;
+import static org.opensearch.common.xcontent.DeprecationHandler.IGNORE_DEPRECATIONS;
+import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
-import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
-import nva.commons.apigateway.GatewayResponse;
+import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.common.ParseField;
+import org.opensearch.common.xcontent.ContextParser;
+import org.opensearch.common.xcontent.NamedXContentRegistry;
+import org.opensearch.common.xcontent.NamedXContentRegistry.Entry;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.json.JsonXContent;
+import org.opensearch.search.aggregations.Aggregation;
+import org.opensearch.search.aggregations.bucket.terms.ParsedStringTerms;
+import org.opensearch.search.aggregations.bucket.terms.StringTerms;
+import org.opensearch.search.aggregations.metrics.ParsedTopHits;
+import org.opensearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 
 public class SwsOpenSearchClient {
 
@@ -35,7 +51,7 @@ public class SwsOpenSearchClient {
         return new SwsOpenSearchClient(createCognitoCredentials(secretReader));
     }
 
-    protected GatewayResponse<SearchResponseDto> doSearch(URI requestUri) {
+    protected SearchResponse doSearch(URI requestUri) throws BadGatewayException {
 
         var response =
             new AuthorizedBackendUriRetriever(
@@ -44,11 +60,35 @@ public class SwsOpenSearchClient {
             ).fetchResponse(requestUri, "application/json")
                 .orElseThrow();
 
+        var registry = new NamedXContentRegistry(getDefaultNamedXContents());
+        try (var parser = JsonXContent.jsonXContent.createParser(
+            registry, IGNORE_DEPRECATIONS, response.body())) {
+            return SearchResponse.fromXContent(parser);
+        } catch (IOException e) {
+            throw new BadGatewayException(e.getMessage());
+        }
+        //        var typeReference = new TypeReference<SearchResponseDto>() { };
+//        try {
+//            return objectMapper.readValue(response.body(),typeReference);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        return attempt(() -> GatewayResponse.<SearchResponseDto>of(response.toString()))
-                   .orElseThrow();
+        //        return attempt(() -> GatewayResponse.<SearchResponseDto>of(response.toString()))
+//                   .orElseThrow();
     }
 
+
+    private static List<Entry> getDefaultNamedXContents() {
+        Map<String, ContextParser<Object, ? extends Aggregation>> map = new HashMap<>();
+        map.put(TopHitsAggregationBuilder.NAME, (p, c) -> ParsedTopHits.fromXContent(p, (String) c));
+        map.put(StringTerms.NAME, (p, c) -> ParsedStringTerms.fromXContent(p, (String) c));
+        List<NamedXContentRegistry.Entry> entries = map.entrySet().stream()
+                                                        .map(entry -> new NamedXContentRegistry.Entry(
+                                                            Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
+                                                        .collect(Collectors.toList());
+        return entries;
+    }
 
     protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
         var credentials

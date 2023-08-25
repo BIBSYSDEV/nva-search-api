@@ -5,15 +5,14 @@ import static no.unit.nva.search2.ResourceParameter.ID;
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.constants.ErrorMessages.invalidQueryParametersMessage;
 import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
 import java.util.Map;
-import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.QueryBuilder;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.apigateway.exceptions.GatewayResponseSerializingException;
 import nva.commons.core.Environment;
+import org.opensearch.action.search.SearchResponse;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
@@ -25,12 +24,8 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
 
     @Override
-    public SearchResponseDto execute(SwsOpenSearchClient queryClient) throws ApiGatewayException {
-        try {
-            return queryClient.doSearch(this.toURI()).getBodyAsInstance();
-        } catch (JsonProcessingException e) {
-            throw new GatewayResponseSerializingException(e);
-        }
+    public SearchResponse execute(SwsOpenSearchClient queryClient) throws BadGatewayException {
+            return queryClient.doSearch(this.toURI());
     }
 
     public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter> {
