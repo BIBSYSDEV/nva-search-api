@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.common;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -13,18 +13,22 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.ResourceParameter.VALID_QUERY_PARAMETER_KEYS;
+import static no.unit.nva.search2.constants.ErrorMessages.invalidPathParameterMessage;
+import static no.unit.nva.search2.constants.ErrorMessages.invalidQueryParametersMessage;
+import static no.unit.nva.search2.constants.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.search2.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
 public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
-    protected static final String PARAMETER_PAGE_DEFAULT_VALUE = "1";
-    protected static final String PARAMETER_PER_PAGE_DEFAULT_VALUE = "5";
+    protected static final String DEFAULT_VALUE_PAGE = "1";
+    protected static final String DEFAULT_VALUE_PER_PAGE = "20";
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
     protected final transient OpenSearchQuery<T> query;
     protected transient boolean notValidated = true;
     protected String accessRights = EMPTY_STRING;
-    private boolean userIsNotAuthorized = false;
 
     /**
      * Constructor of CristinQuery.Builder.
@@ -55,13 +59,12 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
      * @throws BadRequestException if parameters are invalid or missing
      */
     public QueryBuilder<T> validate() throws BadRequestException {
-        userHasAccessRights();
         assignDefaultValues();
         for (var entry : query.pathParameters.entrySet()) {
             throwInvalidPathValue(entry);
         }
         for (var entry : query.queryParameters.entrySet()) {
-            throwInvalidParamererValue(entry);
+            throwInvalidParameterValue(entry);
         }
         if (!requiredMissing().isEmpty()) {
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
@@ -73,24 +76,12 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
         return this;
     }
 
-    protected void userHasAccessRights() throws BadRequestException {
-        if (userIsNotAuthorized) {
-            throw new BadRequestException("User has no access rights");
-        }
-    }
-
     /**
      * Adds query and path parameters from requestInfo.
      */
     public final QueryBuilder<T> fromRequestInfo(RequestInfo requestInfo) {
         return fromPathParameters(requestInfo.getPathParameters())
-            .fromQueryParameters(requestInfo.getQueryParameters())
-            .fromAccessRight(requestInfo.userIsAuthorized(accessRights));
-    }
-
-    private QueryBuilder<T> fromAccessRight(boolean userIsAuthorized) {
-        this.userIsNotAuthorized = !userIsAuthorized;
-        return this;
+            .fromQueryParameters(requestInfo.getQueryParameters());
     }
 
     /**
@@ -167,7 +158,9 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
     /**
      returns T.VALID_QUERY_PARAMETER_NVA_KEYS
      */
-    protected abstract Set<String> validKeys();
+    protected Set<String> validKeys() {
+        return VALID_QUERY_PARAMETER_KEYS;
+    }
 
     protected boolean invalidQueryParameter(T key, String value) {
         return isNull(value) || !value.matches(key.getPattern());
@@ -201,7 +194,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
                 .collect(Collectors.toSet());
     }
 
-    protected void throwInvalidParamererValue(Map.Entry<T, String> entry) throws BadRequestException {
+    protected void throwInvalidParameterValue(Map.Entry<T, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         if (invalidQueryParameter(key, entry.getValue())) {
             final var keyName = key.getKey();
@@ -215,6 +208,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
             throw new BadRequestException(errorMessage);
         }
     }
+
     protected void throwInvalidPathValue(Map.Entry<T, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         if (invalidPathParameter(key, entry.getValue())) {
@@ -229,22 +223,4 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
         }
     }
 
-
-    protected String validQueryParameterNamesMessage(Set<String> strings) {
-        return "";
-    }
-
-    protected String requiredMissingMessage(Set<String> missingKeys) {
-        return "";
-    }
-
-
-    protected String invalidQueryParametersMessage(String keyName, String emptyString) {
-        return "";
-    }
-
-
-    protected String invalidPathParameterMessage(String keyName) {
-        return "";
-    }
 }

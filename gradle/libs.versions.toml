@@ -2,8 +2,9 @@
 junit = { strictly = '5.9.3' }
 jackson = { strictly = '2.15.2' }
 awsSdk2 = { strictly = '2.20.102' }
-nvaCommons = { strictly = '1.30.5' }
-opensearch = { strictly = '2.3.0' }
+nvaCommons = { strictly = '1.31.5' }
+opensearch = { strictly = '2.6.0' }
+openSearchRestClient = { strictly = '2.9.0' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
 
 slf4j = { strictly = '1.8.0-beta4' }
@@ -22,6 +23,8 @@ javers = { strictly = '6.5.1' }
 hamcrestJackson = { strictly = '1.2.0' }
 com-auth0-jwt = { strictly = '3.18.3' }
 open-csv = { strictly = '5.7.1'}
+
+
 
 [libraries]
 nva-core = { group = 'com.github.bibsysdev', name = 'core', version.ref = 'nvaCommons' }
@@ -62,8 +65,10 @@ log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.re
 opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch' }
 opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch' }
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
-opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
+opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'openSearchRestClient' }
+opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch' }
 opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch'}
+
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }

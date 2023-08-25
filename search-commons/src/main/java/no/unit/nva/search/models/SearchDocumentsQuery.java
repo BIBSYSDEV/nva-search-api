@@ -21,9 +21,9 @@ public class SearchDocumentsQuery {
     private final URI requestUri;
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
 
-    public SearchDocumentsQuery(String searchTerm, int results, int from, String orderBy, SortOrder sortOrder,
-                                URI requestUri,
-                                List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+    public SearchDocumentsQuery(
+        String searchTerm, int results, int from, String orderBy, SortOrder sortOrder, URI requestUri,
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         this.searchTerm = searchTerm;
         this.results = results;
         this.from = from;

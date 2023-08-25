@@ -1,0 +1,163 @@
+package no.unit.nva.search2;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.common.IParameterKey;
+
+import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_BOOLEAN;
+import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_DATE;
+import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_NON_EMPTY;
+import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_NUMBER;
+import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_RANGE;
+import static no.unit.nva.search2.common.IParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.common.IParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.common.IParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.common.IParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
+import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_FIELD_VALUE;
+import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
+import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
+import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
+
+public enum ResourceParameter implements IParameterKey {
+    INVALID(STRING,null),
+    CATEGORY(STRING, "category","entityDescription.reference.publicationInstance"),
+    CONTRIBUTOR(STRING, "contributor","entityDescription.contributors[].identity.id|name"),
+    CREATED_BEFORE(DATE, "created_before"),
+    CREATED_SINCE(DATE,"created_since"),
+    DOI(CUSTOM,"doi"),
+    FUNDING(STRING,"funding","fundings[].identifier|source.identifier"),
+    FUNDING_SOURCE(STRING,"funding_source","fundings[].source.identifier"),
+    ID(STRING,"id", "identifier"),
+    INSTITUTION(STRING,"institution","entityDescription.contributors[].affiliation[].id|name"),
+    ISSN(STRING,"issn","entityDescription.reference.publicationContext.onlineIssn|printIssn"),
+    MODIFIED_BEFORE(DATE,"modified_before"),
+    MODIFIED_SINCE(DATE,"modified_since"),
+    PROJECT_CODE(CUSTOM,"project_code","fundings[].identifier", ".", null, KeyEncoding.NONE),
+    PUBLISHED_BEFORE(DATE,"published_before","entityDescription.publicationDate.year"),
+    PUBLISHED_SINCE(DATE,"published_since","entityDescription.publicationDate.year"),
+    TITLE(STRING,"title","entityDescription.mainTitle"),
+    UNIT(STRING,"unit","entityDescription.contributors[].affiliation[].id"),
+    QUERY(STRING,"query"),
+    USER(STRING,"user", "resourceOwner.owner"),
+    YEAR_REPORTED(NUMBER,"year_reported"),
+    LANG(CUSTOM,"lang",null,".","ignored", KeyEncoding.NONE),
+    PAGE(NUMBER,"page"),
+    PER_PAGE(NUMBER,"per_page"),
+    SORT(CUSTOM,"sort"),
+    FIELDS(CUSTOM,"fields",null,"all",ERROR_MESSAGE_INVALID_FIELD_VALUE, KeyEncoding.NONE);
+
+    public static final int IGNORE_PATH_PARAMETER_INDEX = 0;
+
+    public static final Set<ResourceParameter> VALID_QUERY_PARAMETERS =
+        Arrays.stream(ResourceParameter.values())
+            .filter(ResourceParameter::ignorePathKeys)
+            .collect(Collectors.toUnmodifiableSet());
+
+    public static final Set<String> VALID_QUERY_PARAMETER_KEYS =
+        VALID_QUERY_PARAMETERS.stream()
+            .sorted()
+            .map(ResourceParameter::getKey)
+            .collect(Collectors.toUnmodifiableSet());
+
+    //    public static final Set<String> VALID_QUERY_PARAMETER_SWS_KEYS =
+    //        VALID_QUERY_PARAMETERS.stream()
+    //            .sorted()
+    //            .map(ResourceParameter::getSwsKey)
+    //            .flatMap(Collection::stream)
+    //            .collect(Collectors.toUnmodifiableSet());
+
+    private final String key;
+    private final String[] swsKeys;
+    private final String errorMessage;
+    private final String pattern;
+
+    private final KeyEncoding encode;
+
+    ResourceParameter(ParamKind kind, String key) {
+        this(kind, key, null, null, null, KeyEncoding.NONE);
+    }
+
+    ResourceParameter(ParamKind kind, String key, String swsKey) {
+        this(kind, key, swsKey,null,null, KeyEncoding.NONE);
+    }
+
+    ResourceParameter(ParamKind kind, String key, String swsKey, String pattern, String errorMessage,
+                      KeyEncoding encode) {
+        this.key = key;
+        this.swsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
+        this.encode = encode;
+        this.pattern = switch (kind) {
+            case BOOLEAN -> PATTERN_IS_BOOLEAN;
+            case DATE -> PATTERN_IS_DATE;
+            case NUMBER -> PATTERN_IS_NUMBER;
+            case RANGE -> PATTERN_IS_RANGE;
+            case STRING -> PATTERN_IS_NON_EMPTY;
+            case CUSTOM -> pattern;
+        };
+        this.errorMessage = switch (kind) {
+            case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
+            case DATE -> ERROR_MESSAGE_INVALID_DATE;
+            case NUMBER -> ERROR_MESSAGE_INVALID_NUMBER;
+            case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
+            case STRING -> PATTERN_IS_NON_EMPTY;
+            case CUSTOM -> errorMessage;
+        };
+    }
+    
+    @Override
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public Collection<String> getSwsKey() {
+        return  Arrays.stream(swsKeys).toList();
+    }
+
+    @Override
+    public String getPattern() {
+        return pattern;
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    @Override
+    public KeyEncoding encoding() {
+        return encode;
+    }
+
+    @Override
+    public String toString() {
+        return
+            new StringJoiner(":", "Key[", "]")
+                .add(String.valueOf(ordinal()))
+                .add(name())
+                .toString();
+    }
+
+    public static ResourceParameter keyFromString(String paramName, String value) {
+        var result = Arrays.stream(ResourceParameter.values())
+            .filter(ResourceParameter::ignorePathKeys)
+            .filter(IParameterKey.equalTo(paramName))
+            .collect(Collectors.toSet());
+        return result.size() == 1
+            ? result.stream().findFirst().get()
+            : result.stream()
+            .filter(IParameterKey.hasValidValue(value))
+            .findFirst()
+            .orElse(INVALID);
+    }
+
+
+    private static boolean ignorePathKeys(ResourceParameter f) {
+        return f.ordinal() > IGNORE_PATH_PARAMETER_INDEX;
+    }
+
+}

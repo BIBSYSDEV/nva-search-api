@@ -1,5 +1,6 @@
 package no.unit.nva.indexing.testutils;
 
+@SuppressWarnings("ModifierOrder")
 public class Constants {
 
     public final static String TEST_TOKEN =

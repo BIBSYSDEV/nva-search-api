@@ -9,21 +9,22 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
 
-import static no.unit.nva.search2.SwsQueryClient.defaultSwsClient;
-
+import static no.unit.nva.search2.ResourceParameter.PAGE;
+import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
+import static no.unit.nva.search2.SwsOpenSearchClient.defaultSwsClient;
 
 public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponseDto> {
 
-    private final SwsQueryClient swsQueryClient;
+    private final SwsOpenSearchClient swsOpenSearchClient;
 
     @JacocoGenerated
     public SwsResourceHandler() {
         this(new Environment(), defaultSwsClient());
     }
 
-    public SwsResourceHandler(Environment environment, SwsQueryClient swsQueryClient) {
+    public SwsResourceHandler(Environment environment, SwsOpenSearchClient swsOpenSearchClient) {
         super(Void.class, environment);
-        this.swsQueryClient = swsQueryClient;
+        this.swsOpenSearchClient = swsOpenSearchClient;
     }
 
     @Override
@@ -33,9 +34,10 @@ public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponseD
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
+                .withRequiredParameters(PAGE, PER_PAGE)
                 .validate()
                 .build()
-                .execute(swsQueryClient);
+                .execute(swsOpenSearchClient);
     }
 
     @Override

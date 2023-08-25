@@ -1,12 +1,15 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.common;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.function.Predicate;
 
 public interface IParameterKey {
 
     String getKey();
+
+    Collection<String> getSwsKey();
 
     String getPattern();
 
@@ -31,4 +34,12 @@ public interface IParameterKey {
         NONE,DECODE,ENCODE_DECODE
     }
 
+    enum ParamKind {
+        BOOLEAN,
+        DATE,
+        NUMBER,
+        RANGE,
+        STRING,
+        CUSTOM
+    }
 }
