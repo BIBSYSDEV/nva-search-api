@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+    import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -40,9 +40,11 @@ public final class ApplicationConstants {
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
         generateSimpleAggregation("importStatus.candidateStatus",
                                   "importStatus.candidateStatus.keyword"),
-        generateSimpleAggregation("publicationYear", "publicationYear.keyword")
-
+        generateSimpleAggregation("publicationYear", "publicationYear.keyword"),
+        generateObjectLabelsAggregation("organizations"),
+        generateSimpleAggregation("collaborationType", "collaborationType.keyword")
     );
+
     public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION = generateSimpleAggregation("type",
                                                                                                    "type.keyword");
     public static final TermsAggregationBuilder STATUS_TERMS_AGGREGATION = generateSimpleAggregation("status",

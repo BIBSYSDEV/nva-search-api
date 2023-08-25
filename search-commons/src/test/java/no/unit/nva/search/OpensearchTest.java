@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.constants.ApplicationConstants;
@@ -68,6 +69,7 @@ public class OpensearchTest {
     public static final long NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
+    public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "test_import_candidates_mappings.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final int SAMPLE_FROM = 0;
@@ -168,6 +170,64 @@ public class OpensearchTest {
                                                        JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
+    }
+
+    private void addDocumentsToIndex(String... files) throws InterruptedException {
+        Stream.of(files)
+            .forEach(file -> attempt(
+                () -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
+        Thread.sleep(DELAY_AFTER_INDEXING);
+    }
+
+    private SearchDocumentsQuery queryWithTermAndAggregation(
+        String searchTerm, List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        return new SearchDocumentsQuery(
+            searchTerm,
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
+            aggregations
+        );
+    }
+
+    @Nested
+    class ImportCandidateIndexTest {
+
+        @BeforeEach
+        void beforeEachTest() throws IOException {
+            indexName = generateIndexName();
+
+            var mappingsJson = stringFromResources(Path.of(TEST_IMPORT_CANDIDATES_MAPPINGS));
+            var type = new TypeReference<Map<String, Object>>() {
+            };
+            var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
+            indexingClient.createIndex(indexName, mappings);
+        }
+
+        @Test
+        void shouldReturnCorrectAggregationsForImportCandidates()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getAggregations(), is(not(emptyIterable())));
+        }
+
+        @Test
+        void shouldQueryPublicationsWithMultipleOrganizations()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var searchTerm = "collaborationType:\"Collaborative\"";
+            var query = queryWithTermAndAggregation(searchTerm, IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(1));
+        }
     }
 
     @Nested
@@ -385,18 +445,6 @@ public class OpensearchTest {
         }
 
         @Test
-        void shouldReturnCorrectAggregationsForImportCandidates()
-            throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index");
-
-            var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
-
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-            assertThat(response.getAggregations(), is(not(emptyIterable())));
-        }
-
-        @Test
         void shouldReturnCorrectAggregations() throws InterruptedException, ApiGatewayException {
             addDocumentsToIndex("sample_publication_with_affiliations.json",
                                 "sample_publication_with_several_of_the_same_affiliation.json");
@@ -511,26 +559,6 @@ public class OpensearchTest {
             var statusAggregation = actualAggregations.at("/status/buckets");
             assertThat(statusAggregation.size(), greaterThan(0));
             assertAggregation(statusAggregation, "Pending", 2);
-        }
-
-        private SearchDocumentsQuery queryWithTermAndAggregation(
-            String searchTerm, List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
-            return new SearchDocumentsQuery(
-                searchTerm,
-                SAMPLE_NUMBER_OF_RESULTS,
-                SAMPLE_FROM,
-                SAMPLE_ORDERBY,
-                DESC,
-                SAMPLE_REQUEST_URI,
-                aggregations
-            );
-        }
-
-        private void addDocumentsToIndex(String... files) throws InterruptedException {
-            Arrays.asList(files)
-                .forEach(file -> attempt(
-                    () -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
-            Thread.sleep(DELAY_AFTER_INDEXING);
         }
     }
 }

@@ -3,6 +3,7 @@
     "candidateStatus": "NOT_IMPORTED",
     "modifiedDate": "2023-06-28T13:31:40.082626Z"
   },
+  "collaborationType": "Collaborative",
   "journal": {
     "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
     "type": "Journal"
