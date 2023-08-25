@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.constants.ApplicationConstants;
@@ -172,7 +173,7 @@ public class OpensearchTest {
     }
 
     private void addDocumentsToIndex(String... files) throws InterruptedException {
-        Arrays.asList(files)
+        Stream.of(files)
             .forEach(file -> attempt(
                 () -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
         Thread.sleep(DELAY_AFTER_INDEXING);
@@ -214,6 +215,18 @@ public class OpensearchTest {
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
             assertThat(response.getAggregations(), is(not(emptyIterable())));
+        }
+
+        @Test
+        void shouldQueryPublicationsWithMultipleOrganizations()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var searchTerm = "collaborationType:\"Collaborative\"";
+            var query = queryWithTermAndAggregation(searchTerm, IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(1));
         }
     }
 

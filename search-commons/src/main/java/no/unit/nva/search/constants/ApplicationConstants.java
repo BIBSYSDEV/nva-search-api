@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
-import org.opensearch.script.Script;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+    import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -29,7 +28,6 @@ public final class ApplicationConstants {
     public static final String SAMI_CODE = "sme";
     public static final String ID = "id";
     public static final String JSON_PATH_DELIMITER = ".";
-    public static final String ORGANIZATIONS_COUNT_LARGER_THEN_ONE = "params['_source'].organizations.length > 1";
     public static final List<String> ALL_INDICES = List.of(RESOURCES_INDEX, DOIREQUESTS_INDEX, MESSAGES_INDEX,
                                                            TICKETS_INDEX, PUBLISHING_REQUESTS_INDEX);
     public static final Environment ENVIRONMENT = new Environment();
@@ -44,7 +42,7 @@ public final class ApplicationConstants {
                                   "importStatus.candidateStatus.keyword"),
         generateSimpleAggregation("publicationYear", "publicationYear.keyword"),
         generateObjectLabelsAggregation("organizations"),
-        generateScriptAggregation("collaborativeOrganizations", ORGANIZATIONS_COUNT_LARGER_THEN_ONE)
+        generateSimpleAggregation("collaborationType", "collaborationType.keyword")
     );
 
     public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION = generateSimpleAggregation("type",
@@ -93,12 +91,6 @@ public final class ApplicationConstants {
         return AggregationBuilders
                    .terms(term)
                    .field(field)
-                   .size(DEFAULT_AGGREGATION_SIZE);
-    }
-
-    private static TermsAggregationBuilder generateScriptAggregation(String term, String script) {
-        return AggregationBuilders.terms(term)
-                   .script(new Script(script))
                    .size(DEFAULT_AGGREGATION_SIZE);
     }
 
