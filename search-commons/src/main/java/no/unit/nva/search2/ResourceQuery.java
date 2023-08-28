@@ -5,14 +5,13 @@ import static no.unit.nva.search2.ResourceParameter.ID;
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.constants.ErrorMessages.invalidQueryParametersMessage;
 import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
-import java.io.IOException;
 import java.util.Map;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.QueryBuilder;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
-import org.opensearch.action.search.SearchResponse;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
@@ -24,7 +23,7 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
 
     @Override
-    public SearchResponse execute(SwsOpenSearchClient queryClient) throws BadGatewayException {
+    public SearchResponseDto execute(SwsOpenSearchClient queryClient) throws BadGatewayException {
             return queryClient.doSearch(this.toURI());
     }
 

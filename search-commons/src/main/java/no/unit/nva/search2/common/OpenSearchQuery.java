@@ -2,7 +2,6 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.restclients.IdentityClientImpl.HTTPS_SCHEME;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -16,12 +15,12 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.SwsOpenSearchClient;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.paths.UriWrapper;
-import org.opensearch.action.search.SearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +102,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
             : entry.getValue();
     }
 
-    public abstract SearchResponse execute(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+    public abstract SearchResponseDto execute(SwsOpenSearchClient queryClient) throws ApiGatewayException;
 
 
     protected boolean userHasAccessRights(RequestInfo requestInfo) {

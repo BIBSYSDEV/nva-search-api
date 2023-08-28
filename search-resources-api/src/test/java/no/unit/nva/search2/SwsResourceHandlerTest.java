@@ -4,7 +4,6 @@ import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.FakeSearchResponse.COMMA_DELIMITER;
-import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
@@ -39,24 +38,25 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search2.common.OpenSearchResponseDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
+import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.action.search.SearchResponse;
 import org.zalando.problem.Problem;
 
 class SwsResourceHandlerTest {
 
-//    private UriRetriever uriRetriever;
     private SwsResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
@@ -66,7 +66,6 @@ class SwsResourceHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(SwsOpenSearchClient.class);
-//        uriRetriever = mock(UriRetriever.class);
         handler = new SwsResourceHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
@@ -78,8 +77,13 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody = gatewayResponse.getBodyAsInstance();
+        var gatewayResponse =
+            GatewayResponse.<SearchResponseDto>of(outputStream);
+
+
+        var actualBody =
+            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
         assertNotNull(gatewayResponse.getHeaders());
@@ -111,7 +115,8 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldNotReturnSortedSearchResultsWhenSendingMultipleContributorId() throws IOException, InterruptedException {
+    void shouldNotReturnSortedSearchResultsWhenSendingMultipleContributorId()
+        throws IOException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
@@ -123,13 +128,14 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
+    void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody = gatewayResponse.getBodyAsInstance();
+        var actualBody =
+            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         SearchResponseDto expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
@@ -141,13 +147,14 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException {
+    void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponse();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody = gatewayResponse.getBodyAsInstance();
+        var actualBody =
+            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -157,13 +164,14 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException {
+    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody = gatewayResponse.getBodyAsInstance();
+        var actualBody =
+            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -173,7 +181,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
+    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
         var queryParameters = Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "desc");
@@ -185,7 +193,8 @@ class SwsResourceHandlerTest {
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody = gatewayResponse.getBodyAsInstance();
+        var actualBody =
+            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -195,7 +204,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
+    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
 
         var queryParameters = Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "asc");
@@ -207,7 +216,8 @@ class SwsResourceHandlerTest {
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody = gatewayResponse.getBodyAsInstance();
+        var actualBody =
+            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -217,7 +227,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException {
+    void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponse();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -231,7 +241,8 @@ class SwsResourceHandlerTest {
 
     @ParameterizedTest(name = "should return application/json for accept header {0}")
     @MethodSource("acceptHeaderValuesProducingApplicationJsonProvider")
-    void shouldProduceApplicationJsonWithGivenAcceptHeader(String acceptHeaderValue) throws IOException {
+    void shouldProduceApplicationJsonWithGivenAcceptHeader(String acceptHeaderValue)
+        throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
         var requestInput =
             nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
@@ -343,37 +354,40 @@ class SwsResourceHandlerTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var typeReference = new TypeReference<SearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse, SearchResponse.class);
-        var response2 = objectMapper.readValue(jsonResponse,typeReference);
-        var response3 = getSearchResponseFromJson(jsonResponse);
+        var typeReference = new TypeReference<OpenSearchResponseDto>() { };
+        var response = objectMapper.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response3);
+            .thenReturn(response.toSearchResponseDto(getSearchURI()));
     }
 
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var typeReference = new TypeReference<SearchResponseDto>() { };
+        var typeReference = new TypeReference<OpenSearchResponseDto>() { };
         var response = objectMapper.readValue(jsonResponse,typeReference);
+
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response);
+            .thenReturn(response.toSearchResponseDto(getSearchURI()));
     }
 
-    private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
+    private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder)
+        throws IOException, BadGatewayException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var typeReference = new TypeReference<SearchResponse>() { };
-        var response = objectMapper.readValue(jsonResponse, SearchResponse.class);
-        var response2 = objectMapper.readValue(jsonResponse,typeReference);
-        var response3 = objectMapper.readValue(jsonResponse,SearchResponseDto.class);
+        var typeReference = new TypeReference<OpenSearchResponseDto>() { };
+        var response = objectMapper.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response3);
+            .thenReturn(response.toSearchResponseDto(getSearchURI()));
     }
 
     private SearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {
         return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
     }
+
+    private URI getSearchURI() {
+        return URI.create("https://localhost/search?query=searchTerm");
+    }
+
 
 }

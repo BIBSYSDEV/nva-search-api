@@ -1,5 +1,8 @@
 package no.unit.nva.search2;
 
+import static no.unit.nva.search2.ResourceParameter.PAGE;
+import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
+import static no.unit.nva.search2.SwsOpenSearchClient.defaultSwsClient;
 import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.search.models.SearchResponseDto;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -8,13 +11,8 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
-import org.opensearch.action.search.SearchResponse;
 
-import static no.unit.nva.search2.ResourceParameter.PAGE;
-import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
-import static no.unit.nva.search2.SwsOpenSearchClient.defaultSwsClient;
-
-public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponse> {
+public class SwsResourceHandler extends ApiGatewayHandler<Void, SearchResponseDto> {
 
     private final SwsOpenSearchClient swsOpenSearchClient;
 
@@ -29,7 +27,7 @@ public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponse>
     }
 
     @Override
-    protected SearchResponse processInput(Void input, RequestInfo requestInfo, Context context)
+    protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
 
         return
@@ -42,9 +40,8 @@ public class SwsResourceHandler  extends ApiGatewayHandler<Void, SearchResponse>
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, SearchResponse output) {
+    protected Integer getSuccessStatusCode(Void input, SearchResponseDto output) {
         return HttpStatus.SC_OK;
     }
-
 
 }

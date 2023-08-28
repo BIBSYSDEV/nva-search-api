@@ -2,8 +2,7 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
-import static org.opensearch.common.xcontent.DeprecationHandler.IGNORE_DEPRECATIONS;
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -11,17 +10,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
-import nva.commons.apigateway.exceptions.BadGatewayException;
+import no.unit.nva.search2.common.OpenSearchResponseDto;
+import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
-import org.opensearch.action.search.SearchResponse;
 import org.opensearch.common.ParseField;
 import org.opensearch.common.xcontent.ContextParser;
 import org.opensearch.common.xcontent.NamedXContentRegistry;
 import org.opensearch.common.xcontent.NamedXContentRegistry.Entry;
-import org.opensearch.common.xcontent.XContentParser;
-import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.search.aggregations.Aggregation;
 import org.opensearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.opensearch.search.aggregations.bucket.terms.StringTerms;
@@ -51,7 +49,7 @@ public class SwsOpenSearchClient {
         return new SwsOpenSearchClient(createCognitoCredentials(secretReader));
     }
 
-    protected SearchResponse doSearch(URI requestUri) throws BadGatewayException {
+    protected SearchResponseDto doSearch(URI requestUri) {
 
         var response =
             new AuthorizedBackendUriRetriever(
@@ -59,23 +57,15 @@ public class SwsOpenSearchClient {
                 cognito.getCognitoAppClientId()
             ).fetchResponse(requestUri, "application/json")
                 .orElseThrow();
+        try {
+            var gatewayResponse =
+                GatewayResponse.<OpenSearchResponseDto>of(response.toString());
 
-        var registry = new NamedXContentRegistry(getDefaultNamedXContents());
-        try (var parser = JsonXContent.jsonXContent.createParser(
-            registry, IGNORE_DEPRECATIONS, response.body())) {
-            return SearchResponse.fromXContent(parser);
-        } catch (IOException e) {
-            throw new BadGatewayException(e.getMessage());
+            return gatewayResponse.getBodyAsInstance().toSearchResponseDto(requestUri);
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-        //        var typeReference = new TypeReference<SearchResponseDto>() { };
-//        try {
-//            return objectMapper.readValue(response.body(),typeReference);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-
-        //        return attempt(() -> GatewayResponse.<SearchResponseDto>of(response.toString()))
-//                   .orElseThrow();
     }
 
 
