@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
-    import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
@@ -42,7 +44,8 @@ public final class ApplicationConstants {
                                   "importStatus.candidateStatus.keyword"),
         generateSimpleAggregation("publicationYear", "publicationYear.keyword"),
         generateObjectLabelsAggregation("organizations"),
-        generateSimpleAggregation("collaborationType", "collaborationType.keyword")
+        generateSimpleAggregation("collaborationType", "collaborationType.keyword"),
+        generateImportedByUserAggregation()
     );
 
     public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION = generateSimpleAggregation("type",
@@ -92,6 +95,15 @@ public final class ApplicationConstants {
                    .terms(term)
                    .field(field)
                    .size(DEFAULT_AGGREGATION_SIZE);
+    }
+
+    private static FilterAggregationBuilder generateImportedByUserAggregation() {
+        return new FilterAggregationBuilder("importedByUser",
+                                            new TermQueryBuilder("importStatus.candidateStatus.keyword", "IMPORTED"))
+            .subAggregation(AggregationBuilders
+                                .terms("importStatus.setBy")
+                                .field("importStatus.setBy.keyword")
+                                .size(DEFAULT_AGGREGATION_SIZE));
     }
 
     private static NestedAggregationBuilder generateTypeAggregation() {

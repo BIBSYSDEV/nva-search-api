@@ -209,7 +209,9 @@ public class OpensearchTest {
         @Test
         void shouldReturnCorrectAggregationsForImportCandidates()
             throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+            addDocumentsToIndex("imported_candidate_from_index.json",
+                                        "not_imported_candidate_from_index.json",
+                                       "not_applicable_import_candidate_from_index.json");
 
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
