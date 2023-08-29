@@ -129,7 +129,7 @@ class SwsResourceHandlerTest {
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
     }
 
-    @Test @Disabled
+    @Test
     void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
         prepareRestHighLevelClientOkResponse();
 

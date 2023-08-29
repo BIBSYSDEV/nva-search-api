@@ -4,10 +4,6 @@ import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTUR
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.search.models.SearchResponseDto;
@@ -16,19 +12,10 @@ import no.unit.nva.search2.common.OpenSearchResponseDto;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
-import org.opensearch.common.ParseField;
-import org.opensearch.common.xcontent.ContextParser;
-import org.opensearch.common.xcontent.NamedXContentRegistry;
-import org.opensearch.common.xcontent.NamedXContentRegistry.Entry;
-import org.opensearch.search.aggregations.Aggregation;
-import org.opensearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.opensearch.search.aggregations.bucket.terms.StringTerms;
-import org.opensearch.search.aggregations.metrics.ParsedTopHits;
-import org.opensearch.search.aggregations.metrics.TopHitsAggregationBuilder;
 
 public class SwsOpenSearchClient {
 
-    private CognitoCredentials cognito;
+    private final CognitoCredentials cognito;
 
     /**
      * Creates a new OpensearchClient.
@@ -69,7 +56,7 @@ public class SwsOpenSearchClient {
     }
 
 
-    private static List<Entry> getDefaultNamedXContents() {
+/*    private static List<Entry> getDefaultNamedXContents() {
         Map<String, ContextParser<Object, ? extends Aggregation>> map = new HashMap<>();
         map.put(TopHitsAggregationBuilder.NAME, (p, c) -> ParsedTopHits.fromXContent(p, (String) c));
         map.put(StringTerms.NAME, (p, c) -> ParsedStringTerms.fromXContent(p, (String) c));
@@ -78,7 +65,7 @@ public class SwsOpenSearchClient {
                                                             Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
                                                         .collect(Collectors.toList());
         return entries;
-    }
+    }*/
 
     protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
         var credentials

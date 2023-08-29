@@ -1,6 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static no.unit.nva.search.models.SearchResponseDto.DEFAULT_SEARCH_CONTEXT;
+import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
@@ -8,7 +9,7 @@ import java.util.List;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchResponseDto.HitsInfo.Hit;
 
-public record OpenSearchResponseDto(int took, boolean timed_out, ShardsInfo _shards, HitsInfo hits) {
+public record OpenSearchResponseDto(int took, boolean timed_out, ShardsInfo _shards, HitsInfo hits, JsonNode aggregations) {
 
     public record ShardsInfo(int total, int successful, int skipped, int failed) {}
 
@@ -31,7 +32,14 @@ public record OpenSearchResponseDto(int took, boolean timed_out, ShardsInfo _sha
                    .withHits(sourcesList)
                    .withSize(hits().total().value())
                    .withProcessingTime(took())
-                   //  .withAggregations(rawResponse.aggregations()))
+                   .withAggregations(extractAggregations(aggregations))
                    .build();
+    }
+
+    private static JsonNode extractAggregations(JsonNode aggregations) {
+        if (aggregations == null) {
+            return null;
+        }
+        return formatAggregations(aggregations);
     }
 }
