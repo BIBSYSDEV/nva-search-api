@@ -9,13 +9,9 @@ import java.util.Map;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.QueryBuilder;
-import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.Environment;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
-
-    public static final String API_HOST = new Environment().readEnv("API_HOST");
 
     public static ResourceQueryBuilder builder() {
         return new ResourceQueryBuilder();
@@ -23,15 +19,14 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
 
     @Override
-    public SearchResponseDto execute(SwsOpenSearchClient queryClient) throws BadGatewayException {
-            return queryClient.doSearch(this.toURI());
+    public SearchResponseDto execute(SwsOpenSearchClient queryClient) {
+        return queryClient.doSearch(this.toURI());
     }
 
     public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter> {
 
         public ResourceQueryBuilder() {
             super(new ResourceQuery());
-            accessRights = "user";
         }
 
         @Override

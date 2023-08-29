@@ -73,11 +73,11 @@ public class SwsOpenSearchClient {
         Map<String, ContextParser<Object, ? extends Aggregation>> map = new HashMap<>();
         map.put(TopHitsAggregationBuilder.NAME, (p, c) -> ParsedTopHits.fromXContent(p, (String) c));
         map.put(StringTerms.NAME, (p, c) -> ParsedStringTerms.fromXContent(p, (String) c));
-        List<NamedXContentRegistry.Entry> entries = map.entrySet().stream()
-                                                        .map(entry -> new NamedXContentRegistry.Entry(
-                                                            Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
-                                                        .collect(Collectors.toList());
-        return entries;
+        return
+            map.entrySet().stream()
+                .map(entry -> new NamedXContentRegistry.Entry(
+                    Aggregation.class, new ParseField(entry.getKey()), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {

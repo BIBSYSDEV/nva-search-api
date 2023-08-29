@@ -139,7 +139,7 @@ class SwsResourceHandlerTest {
         var actualBody =
             objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
-        SearchResponseDto expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
+        var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -182,7 +182,8 @@ class SwsResourceHandlerTest {
         assertDoesNotThrow(() -> actualBody.getId().normalize());
     }
 
-    @Test @Disabled
+    @Test
+    @Disabled
     void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
@@ -205,7 +206,8 @@ class SwsResourceHandlerTest {
         assertDoesNotThrow(() -> actualBody.getId().normalize());
     }
 
-    @Test @Disabled
+    @Test
+    @Disabled
     void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
 
@@ -228,7 +230,8 @@ class SwsResourceHandlerTest {
         assertDoesNotThrow(() -> actualBody.getId().normalize());
     }
 
-    @Test @Disabled
+    @Test
+    @Disabled
     void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponse();
 
@@ -390,6 +393,7 @@ class SwsResourceHandlerTest {
     private URI getSearchURI() {
         return URI.create("https://localhost/search?query=searchTerm");
     }
+
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {
         return Stream.of(null, "application/json");
     }

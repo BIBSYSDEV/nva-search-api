@@ -150,16 +150,16 @@ public final class ApplicationConstants {
         return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME));
     }
 
-    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
-        return new NestedAggregationBuilder(object, object)
-                   .subAggregation(generateIdAggregation(object));
-    }
-
     private static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
                    .field(jsonPath(object, ID))
                    .size(DEFAULT_AGGREGATION_SIZE)
                    .subAggregation(generateLabelsAggregation(object));
+    }
+
+    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
+        return new NestedAggregationBuilder(object, object)
+                   .subAggregation(generateIdAggregation(object));
     }
 
     private static NestedAggregationBuilder generateLabelsAggregation(String object) {

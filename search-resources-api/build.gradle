@@ -19,6 +19,7 @@ dependencies {
 
     implementation libs.problem
     testImplementation libs.bundles.testing
+    testImplementation libs.nva.datamodel.testutils
     testImplementation project(':search-testing')
 }
 
