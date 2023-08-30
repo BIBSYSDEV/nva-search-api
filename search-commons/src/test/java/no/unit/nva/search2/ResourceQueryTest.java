@@ -26,7 +26,7 @@ class ResourceQueryTest {
             .fromQueryParameters(parameters)
             .build();
 
-        var uri = test.toURI()
+//        var uri = test.toURI()
 
 
     }
