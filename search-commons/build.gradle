@@ -13,11 +13,6 @@ dependencies {
         implementation libs.jackson.databind
         implementation libs.nva.core
         implementation libs.nva.json
-        implementation libs.nva.datamodel.java
-
-//                {
-//            exclude group: 'com.github.bibsysdev', module: 'core'
-//        }
     //  old dependencies
     implementation libs.aws.apache.interceptor
     implementation libs.bundles.aws.xray
@@ -35,7 +30,6 @@ dependencies {
     implementation libs.opensearch.rest.highlevel.client
     implementation libs.slf4j
 
-    testImplementation libs.nva.datamodel.testutils
     testImplementation libs.bundles.testing
 
     // search2 test dependencies

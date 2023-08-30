@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@SuppressWarnings({"PMD.VariableDeclarationUsageDistance"})
 public class EventBasedBatchIndexerTest extends BatchIndexTest {
 
     private EventBasedBatchIndexer indexer;
@@ -183,7 +184,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         return filesFailingToBeIndexed
             .stream()
             .map(UriWrapper::getLastPathElement)
-            .collect(Collectors.toList())
+            .toList()
             .toArray(String[]::new);
     }
 

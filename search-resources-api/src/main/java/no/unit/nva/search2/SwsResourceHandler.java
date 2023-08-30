@@ -30,8 +30,6 @@ public class SwsResourceHandler extends ApiGatewayHandler<Void, SearchResponseDt
     protected SearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
 
-        requestInfo.getQueryParameters().forEach((key, value) -> logger.info("Query parameter: {} = {}", key, value));
-
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
