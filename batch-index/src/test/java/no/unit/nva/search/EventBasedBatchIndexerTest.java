@@ -69,7 +69,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     @ValueSource(ints = {1, 2, 5, 10, 100})
     public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(int numberOfFilesPerEvent)
         throws JsonProcessingException {
-        var logger = LogUtils.getTestingAppenderForRootLogger();
+        final var logger = LogUtils.getTestingAppenderForRootLogger();
         indexer = new EventBasedBatchIndexer(s3Client, failingOpenSearchClient(), eventBridgeClient,
                                              numberOfFilesPerEvent);
         var filesFailingToBeIndexed = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
