@@ -27,23 +27,32 @@ import java.util.stream.Stream;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.RequestUtil.*;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.*;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
+import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
+import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
+import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
+import static no.unit.nva.search.RequestUtil.PATH;
+import static no.unit.nva.search2.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class SwsResourceHandlerTest {
 
+    public static final String SAMPLE_PATH = "search";
+    public static final String SAMPLE_DOMAIN_NAME = "localhost";
+    public static final String SAMPLE_SEARCH_TERM = "searchTerm";
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
+    public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
+    public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     private SwsResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
@@ -69,7 +78,7 @@ class SwsResourceHandlerTest {
 
 
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
@@ -123,7 +132,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
@@ -142,7 +151,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -159,7 +168,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -183,7 +192,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -207,7 +216,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -286,7 +295,7 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse,typeReference);
+        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response.toSearchResponseDto(getSearchURI()));
@@ -296,7 +305,7 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse,typeReference);
+        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response.toSearchResponseDto(getSearchURI()));
@@ -306,7 +315,7 @@ class SwsResourceHandlerTest {
         throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse,typeReference);
+        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response.toSearchResponseDto(getSearchURI()));
