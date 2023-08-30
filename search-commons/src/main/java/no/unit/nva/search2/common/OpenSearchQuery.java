@@ -49,7 +49,8 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
 
         return
             new UriWrapper(HTTPS_SCHEME, API_HOST)
-                .addQueryParameters(toParameters())
+                .addChild()
+                .addQueryParameters(toLuceneParameter())
                 .getUri();
     }
 
@@ -65,6 +66,18 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(this::toQueryName, this::toQueryValue));
         return new TreeMap<>(results);
+    }
+
+    /**
+     * Query Parameters with string Keys.
+     *
+     * @return Map of String and String
+     */
+    public Map<String, String> toLuceneParameter() {
+        var query = queryParameters.entrySet().stream()
+                .map(this::apply)
+                .collect(Collectors.joining(" AND "));
+        return Map.of("q", query);
     }
 
     /**
@@ -114,4 +127,16 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace("%20", "+");
     }
 
+    private String apply(Entry<T, String> entry) {
+        return entry.getKey().getSwsKey().stream().map(swsKey -> {
+            var substring = switch (entry.getKey().getOperator()){
+                case EQUALS -> " %s:%s ".formatted(swsKey, entry.getValue());
+                case GREATER_THAN, GREATER_THAN_OR_EQUAL_TO -> " %s:>%s ".formatted(swsKey, entry.getValue());
+                case LESS_THAN, LESS_THAN_OR_EQUAL_TO -> " %s:<v ".formatted(swsKey, entry.getValue());
+            };
+            return substring;
+//            " {0}:[{1} TO {2}] " .formatted(swsKey, entry.getValue(), entry.getValue());
+
+        }).collect(Collectors.joining(" OR ", "(", ")"));
+    }
 }
