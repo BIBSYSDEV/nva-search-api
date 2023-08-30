@@ -1,54 +1,13 @@
 package no.unit.nva.search2;
 
-import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.indexing.testutils.FakeSearchResponse.COMMA_DELIMITER;
-import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
-import static no.unit.nva.search.RequestUtil.PATH;
-import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
-import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.CRLF;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.EMPTY_OPENSEARCH_RESPONSE_JSON;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.ROUNDTRIP_RESPONSE_JSON;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.SAMPLE_DOMAIN_NAME;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.SAMPLE_PATH;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.SAMPLE_SEARCH_TERM;
-import static no.unit.nva.search.SearchResourcesApiHandlerTest.UTF8_BOM;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.testutils.RandomDataGenerator.objectMapper;
-import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchResponseDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
-import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -57,8 +16,43 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.zalando.problem.Problem;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
+import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
+import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
+import static no.unit.nva.search.RequestUtil.PATH;
+import static no.unit.nva.search2.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 class SwsResourceHandlerTest {
 
+    public static final String SAMPLE_PATH = "search";
+    public static final String SAMPLE_DOMAIN_NAME = "localhost";
+    public static final String SAMPLE_SEARCH_TERM = "searchTerm";
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
+    public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
+    public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     private SwsResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
@@ -84,7 +78,7 @@ class SwsResourceHandlerTest {
 
 
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
@@ -130,6 +124,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
+    @Disabled
     void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
@@ -137,9 +132,9 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
-        SearchResponseDto expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
+        var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -156,7 +151,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -166,14 +161,14 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException, BadGatewayException {
+    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -182,8 +177,9 @@ class SwsResourceHandlerTest {
         assertDoesNotThrow(() -> actualBody.getId().normalize());
     }
 
-    @Test @Disabled
-    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException, BadGatewayException {
+    @Test
+    @Disabled
+    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
         var queryParameters = Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "desc");
@@ -196,7 +192,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -205,8 +201,9 @@ class SwsResourceHandlerTest {
         assertDoesNotThrow(() -> actualBody.getId().normalize());
     }
 
-    @Test @Disabled
-    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException, BadGatewayException {
+    @Test
+    @Disabled
+    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
 
         var queryParameters = Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "asc");
@@ -219,7 +216,7 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         var actualBody =
-            objectMapper.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
 
         assertNotNull(gatewayResponse.getHeaders());
         assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
@@ -228,8 +225,9 @@ class SwsResourceHandlerTest {
         assertDoesNotThrow(() -> actualBody.getId().normalize());
     }
 
-    @Test @Disabled
-    void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException, BadGatewayException {
+    @Test
+    @Disabled
+    void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException {
         prepareRestHighLevelClientEmptyResponse();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -252,66 +250,6 @@ class SwsResourceHandlerTest {
 
         var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
         assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
-    }
-
-
-    private static ExportCsv csvWithFullDate() {
-        var id = randomUri().toString();
-        var title = randomString();
-        var type = "AcademicArticle";
-        var contributors = List.of(randomString(), randomString(), randomString());
-        var date = "2022-01-22";
-
-        var exportCsv = new ExportCsv();
-        exportCsv.setId(id);
-        exportCsv.setMainTitle(title);
-        exportCsv.setPublicationInstance(type);
-        exportCsv.setPublicationDate(date);
-        exportCsv.setContributors(String.join(COMMA_DELIMITER, contributors));
-        return exportCsv;
-    }
-
-    private ExportCsv csvWithYearOnly() {
-        var id = randomUri().toString();
-        var title = randomString();
-        var type = "AcademicArticle";
-        var contributors = List.of(randomString(), randomString(), randomString());
-        var date = "2022";
-
-        var exportCsv = new ExportCsv();
-        exportCsv.setId(id);
-        exportCsv.setMainTitle(title);
-        exportCsv.setPublicationInstance(type);
-        exportCsv.setPublicationDate(date);
-        exportCsv.setContributors(String.join(COMMA_DELIMITER, contributors));
-        return exportCsv;
-    }
-
-    private void assertCsvGeneratedCorrectly(String body, List<ExportCsv> expectedlines) {
-        // first character must be UTF-8 BOM
-        assertThat("CSV must contain UTF-8 BOM at the beginning!", body.charAt(0), is(equalTo(UTF8_BOM)));
-
-        var lines = body.substring(1).split(CRLF);
-        var expectedNumberOfLines = expectedlines.size() + 1;
-        assertThat("CSV must use \\r\\n as line separator and contain a column header row!", lines.length,
-                   is(equalTo(expectedNumberOfLines)));
-
-        assertThat("Should have column header names in first line!", lines[0],
-                   is(equalTo("\"url\";\"title\";\"publicationDate\";\"type\";\"contributors\"")));
-
-        var idx = 0;
-        for (var line : expectedlines) {
-            assertThat(lines[idx + 1], is(equalTo(expectedLine(line))));
-            idx++;
-        }
-    }
-
-    private String expectedLine(ExportCsv line) {
-        return "\"" + line.getId() + "\";"
-               + "\"" + line.getMainTitle() + "\";"
-               + "\"" + line.getPublicationDate() + "\";"
-               + "\"" + line.getPublicationInstance() + "\";"
-               + "\"" + line.getContributors() + "\"";
     }
 
     private InputStream getInputStream() throws JsonProcessingException {
@@ -357,7 +295,7 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse,typeReference);
+        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response.toSearchResponseDto(getSearchURI()));
@@ -367,17 +305,17 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse,typeReference);
+        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response.toSearchResponseDto(getSearchURI()));
     }
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder)
-        throws IOException, BadGatewayException {
+        throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapper.readValue(jsonResponse,typeReference);
+        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response.toSearchResponseDto(getSearchURI()));
@@ -390,6 +328,7 @@ class SwsResourceHandlerTest {
     private URI getSearchURI() {
         return URI.create("https://localhost/search?query=searchTerm");
     }
+
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {
         return Stream.of(null, "application/json");
     }

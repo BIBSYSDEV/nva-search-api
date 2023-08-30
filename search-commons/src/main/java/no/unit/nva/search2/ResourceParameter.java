@@ -25,30 +25,36 @@ import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_TEMPLATE
 public enum ResourceParameter implements IParameterKey {
     INVALID(STRING,null),
     CATEGORY(STRING, "category","entityDescription.reference.publicationInstance"),
-    CONTRIBUTOR(STRING, "contributor","entityDescription.contributors[].identity.id|name"),
+    CONTRIBUTOR(STRING, "contributor","entityDescription.contributors.identity.id"
+                                      + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, "created_before"),
     CREATED_SINCE(DATE,"created_since"),
     DOI(CUSTOM,"doi"),
-    FUNDING(STRING,"funding","fundings[].identifier|source.identifier"),
-    FUNDING_SOURCE(STRING,"funding_source","fundings[].source.identifier"),
+    FUNDING(STRING,"funding","fundings.identifier|source.identifier"),
+    FUNDING_SOURCE(STRING,"funding_source","fundings.source.identifier"),
     ID(STRING,"id", "identifier"),
-    INSTITUTION(STRING,"institution","entityDescription.contributors[].affiliation[].id|name"),
-    ISSN(STRING,"issn","entityDescription.reference.publicationContext.onlineIssn|printIssn"),
+    INSTITUTION(STRING,"institution","entityDescription.contributors.affiliation.id"
+                                     + "|entityDescription.contributors.affiliation.name"),
+    ISSN(STRING,"issn","entityDescription.reference.publicationContext.onlineIssn"
+                       + "|entityDescription.reference.publicationContext.printIssn"),
     MODIFIED_BEFORE(DATE,"modified_before"),
     MODIFIED_SINCE(DATE,"modified_since"),
-    PROJECT_CODE(CUSTOM,"project_code","fundings[].identifier", ".", null, KeyEncoding.NONE),
-    PUBLISHED_BEFORE(DATE,"published_before","entityDescription.publicationDate.year"),
-    PUBLISHED_SINCE(DATE,"published_since","entityDescription.publicationDate.year"),
+    PROJECT_CODE(CUSTOM, "project_code", "fundings.identifier", ".", null, KeyEncoding.NONE, Operator.EQUALS),
+    PUBLISHED_BEFORE(DATE,"published_before","entityDescription.publicationDate.year", null, null, KeyEncoding.NONE,
+                     Operator.LESS_THAN),
+    PUBLISHED_SINCE(DATE,"published_since","entityDescription.publicationDate.year", null, null, KeyEncoding.NONE,
+                    Operator.GREATER_THAN_OR_EQUAL_TO),
     TITLE(STRING,"title","entityDescription.mainTitle"),
-    UNIT(STRING,"unit","entityDescription.contributors[].affiliation[].id"),
+    UNIT(STRING,"unit","entityDescription.contributors.affiliation.id"),
     QUERY(STRING,"query"),
     USER(STRING,"user", "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER,"year_reported"),
-    LANG(CUSTOM,"lang",null,".","ignored", KeyEncoding.NONE),
+    SEARCH_ALL(STRING,"q", ""),
+    LANG(CUSTOM, "lang", null, ".", "ignored", KeyEncoding.NONE, Operator.EQUALS),
     PAGE(NUMBER,"page"),
     PER_PAGE(NUMBER,"per_page"),
     SORT(CUSTOM,"sort"),
-    FIELDS(CUSTOM,"fields",null,"all",ERROR_MESSAGE_INVALID_FIELD_VALUE, KeyEncoding.NONE);
+    FIELDS(CUSTOM, "fields", null, "all", ERROR_MESSAGE_INVALID_FIELD_VALUE, KeyEncoding.NONE, Operator.EQUALS);
 
     public static final int IGNORE_PATH_PARAMETER_INDEX = 0;
 
@@ -63,12 +69,6 @@ public enum ResourceParameter implements IParameterKey {
             .map(ResourceParameter::getKey)
             .collect(Collectors.toUnmodifiableSet());
 
-    //    public static final Set<String> VALID_QUERY_PARAMETER_SWS_KEYS =
-    //        VALID_QUERY_PARAMETERS.stream()
-    //            .sorted()
-    //            .map(ResourceParameter::getSwsKey)
-    //            .flatMap(Collection::stream)
-    //            .collect(Collectors.toUnmodifiableSet());
 
     private final String key;
     private final String[] swsKeys;
@@ -76,18 +76,20 @@ public enum ResourceParameter implements IParameterKey {
     private final String pattern;
 
     private final KeyEncoding encode;
+    private final Operator operator;
 
     ResourceParameter(ParamKind kind, String key) {
-        this(kind, key, null, null, null, KeyEncoding.NONE);
+        this(kind, key, null, null, null, KeyEncoding.NONE, Operator.EQUALS);
     }
 
     ResourceParameter(ParamKind kind, String key, String swsKey) {
-        this(kind, key, swsKey,null,null, KeyEncoding.NONE);
+        this(kind, key, swsKey, null, null, KeyEncoding.NONE, Operator.EQUALS);
     }
 
     ResourceParameter(ParamKind kind, String key, String swsKey, String pattern, String errorMessage,
-                      KeyEncoding encode) {
+                      KeyEncoding encode, Operator operator) {
         this.key = key;
+        this.operator = operator;
         this.swsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
         this.encode = encode;
         this.pattern = switch (kind) {
@@ -107,7 +109,12 @@ public enum ResourceParameter implements IParameterKey {
             case CUSTOM -> errorMessage;
         };
     }
-    
+
+    @Override
+    public Operator getOperator() {
+        return operator;
+    }
+
     @Override
     public String getKey() {
         return key;

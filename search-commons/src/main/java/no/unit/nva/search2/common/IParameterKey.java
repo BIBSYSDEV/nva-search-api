@@ -7,6 +7,8 @@ import java.util.function.Predicate;
 
 public interface IParameterKey {
 
+    Operator getOperator();
+
     String getKey();
 
     Collection<String> getSwsKey();
@@ -41,5 +43,13 @@ public interface IParameterKey {
         RANGE,
         STRING,
         CUSTOM
+    }
+
+    enum Operator {
+        EQUALS,
+        GREATER_THAN,
+        GREATER_THAN_OR_EQUAL_TO,
+        LESS_THAN,
+        LESS_THAN_OR_EQUAL_TO,
     }
 }

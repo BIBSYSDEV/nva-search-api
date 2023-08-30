@@ -1,21 +1,15 @@
 package no.unit.nva.search2;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameter.ID;
-import static no.unit.nva.search2.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.constants.ErrorMessages.invalidQueryParametersMessage;
-import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
-import java.util.Map;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.QueryBuilder;
-import nva.commons.apigateway.exceptions.BadGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.Environment;
+
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.ResourceParameter.ID;
+import static no.unit.nva.search2.ResourceParameter.keyFromString;
+import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
-
-    public static final String API_HOST = new Environment().readEnv("API_HOST");
 
     public static ResourceQueryBuilder builder() {
         return new ResourceQueryBuilder();
@@ -23,15 +17,14 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
 
     @Override
-    public SearchResponseDto execute(SwsOpenSearchClient queryClient) throws BadGatewayException {
-            return queryClient.doSearch(this.toURI());
+    public SearchResponseDto execute(SwsOpenSearchClient queryClient) {
+        return queryClient.doSearch(this.toURI());
     }
 
     public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter> {
 
         public ResourceQueryBuilder() {
             super(new ResourceQuery());
-            accessRights = "user";
         }
 
         @Override
@@ -72,22 +65,6 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
                     // ignore and continue
                 }
                 default -> invalidKeys.add(key);
-            }
-        }
-
-        @Override
-        protected void throwInvalidParameterValue(Map.Entry<ResourceParameter, String> entry)
-            throws BadRequestException {
-            final var key = entry.getKey();
-            if (invalidQueryParameter(key, entry.getValue())) {
-                final var keyName =  key.getKey();
-                String errorMessage;
-                if (nonNull(key.getErrorMessage())) {
-                    errorMessage = String.format(key.getErrorMessage(), keyName);
-                } else {
-                    errorMessage = invalidQueryParametersMessage(keyName, EMPTY_STRING);
-                }
-                throw new BadRequestException(errorMessage);
             }
         }
     }

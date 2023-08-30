@@ -28,7 +28,6 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
     protected final transient OpenSearchQuery<T> query;
     protected transient boolean notValidated = true;
-    protected String accessRights = EMPTY_STRING;
 
     /**
      * Constructor of CristinQuery.Builder.
@@ -197,17 +196,17 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
     protected void throwInvalidParameterValue(Map.Entry<T, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         if (invalidQueryParameter(key, entry.getValue())) {
-            final var keyName = key.getKey();
+            final var keyName =  key.getKey();
             String errorMessage;
             if (nonNull(key.getErrorMessage())) {
                 errorMessage = String.format(key.getErrorMessage(), keyName);
             } else {
                 errorMessage = invalidQueryParametersMessage(keyName, EMPTY_STRING);
             }
-            logger.info("INVALID PARAMETER VALUE [" + entry.getValue() + "]");
             throw new BadRequestException(errorMessage);
         }
     }
+
 
     protected void throwInvalidPathValue(Map.Entry<T, String> entry) throws BadRequestException {
         final var key = entry.getKey();

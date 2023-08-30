@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.SwsOpenSearchClient;
-import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.paths.UriWrapper;
@@ -26,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({"Unused", "LooseCoupling"})
 public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
-
+    // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
 
     protected static final String API_HOST = new Environment().readEnv("API_HOST");
@@ -56,7 +55,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
 
 
     /**
-     * Cristin Query Parameters with string Keys.
+     * Query Parameters with string Keys.
      *
      * @return Map of String and String
      */
@@ -104,10 +103,6 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
 
     public abstract SearchResponseDto execute(SwsOpenSearchClient queryClient) throws ApiGatewayException;
 
-
-    protected boolean userHasAccessRights(RequestInfo requestInfo) {
-        return true;
-    }
 
     protected String decodeUTF(String encoded) {
         String decode = URLDecoder.decode(encoded, StandardCharsets.UTF_8);

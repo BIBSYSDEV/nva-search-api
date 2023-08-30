@@ -1,41 +1,53 @@
 plugins{
     id 'nva.search.service.java-conventions'
+    id 'nva.search.service2.dynamodblocal'
 }
 
 dependencies {
-
+    // search2 dependencies
+        implementation libs.aws.lambda.events
+        implementation libs.aws.lambda.java.core
+        implementation libs.aws.sdk2.sqs
+        implementation libs.bundles.logging
+        implementation libs.jackson.core
+        implementation libs.jackson.databind
+        implementation libs.nva.core
+        implementation libs.nva.json
+    //  old dependencies
+    implementation libs.aws.apache.interceptor
+    implementation libs.bundles.aws.xray
     implementation libs.bundles.jackson
     implementation libs.bundles.jacksonjr
-    implementation libs.slf4j
-    implementation libs.bundles.aws.xray
-
-    implementation libs.aws.apache.interceptor
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.auth
-    implementation libs.nva.secrets
+    implementation libs.bundles.testcontainers
+    implementation libs.com.auth0.jwt
+    implementation libs.csv
+    implementation libs.guava
     implementation libs.nva.apigateway
+    implementation libs.nva.auth
     implementation libs.nva.identifiers
-
+    implementation libs.nva.secrets
     implementation libs.opensearch.java
     implementation libs.opensearch.rest.highlevel.client
-    implementation libs.guava
-    implementation libs.com.auth0.jwt
+    implementation libs.slf4j
 
-    implementation libs.bundles.testcontainers
     testImplementation libs.bundles.testing
 
+    // search2 test dependencies
     testImplementation project(':search-testing')
-
-    implementation libs.csv
+    testImplementation(group: 'com.amazonaws', name: 'DynamoDBLocal', version: '1.19.0') {
+        exclude group: 'com.amazonaws', module: 'aws-java-sdk-dynamodb'
+        exclude group: 'com.amazonaws', module: 'aws-java-sdk-core'
+    }
 
 }
 
 test {
+    useJUnitPlatform()
+    environment "API_HOST", "localhost"
+    environment("SEARCH_INFRASTRUCTURE_API_HOST", "localhost")
+    environment("SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost")
+    environment("SEARCH_INFRASTRUCTURE_API_URI", "localhost")
     environment "IDENTITY_SERVICE_SECRET_NAME", "secretName"
     environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"
-    environment "API_HOST", "localhost"
-    environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
-    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
 }
 
