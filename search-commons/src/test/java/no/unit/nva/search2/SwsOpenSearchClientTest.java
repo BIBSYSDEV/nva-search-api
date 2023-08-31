@@ -14,13 +14,13 @@ class SwsOpenSearchClientTest {
     private SwsOpenSearchClient swsOpenSearchClient;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         swsOpenSearchClient = SwsOpenSearchClient.defaultSwsClient();
     }
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void testWithExplicitLocalMethodSource(URI uri) {
+    public void testWithExplicitLocalMethodSource(URI uri) {
         var response = swsOpenSearchClient.doSearch(uri);
         assertNotNull(response);
     }
