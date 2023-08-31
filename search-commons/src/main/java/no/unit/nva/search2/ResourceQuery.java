@@ -5,10 +5,10 @@ import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.QueryBuilder;
 
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.constants.ApplicationConstants.DEFAULT_VALUE_PAGE;
-import static no.unit.nva.search2.constants.ApplicationConstants.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.constants.ApplicationConstants.DEFAULT_VALUE_SORT;
-import static no.unit.nva.search2.constants.ApplicationConstants.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_PAGE;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_SORT;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_SORT_ORDER;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 

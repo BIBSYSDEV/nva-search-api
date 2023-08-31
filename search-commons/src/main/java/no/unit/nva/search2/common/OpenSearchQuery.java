@@ -1,7 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.restclients.IdentityClientImpl.HTTPS_SCHEME;
+import static no.unit.nva.search2.constants.Defaults.HTTPS_SCHEME;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

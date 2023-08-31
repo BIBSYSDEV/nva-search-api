@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search.models.SearchResponseDto.DEFAULT_SEARCH_CONTEXT;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_SEARCH_CONTEXT;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
