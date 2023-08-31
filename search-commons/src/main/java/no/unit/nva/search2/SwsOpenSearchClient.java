@@ -53,7 +53,7 @@ public class SwsOpenSearchClient {
                 .map(toInstance())
                 .map(instance -> instance.toSearchResponseDto(requestUri))
                 .findFirst()
-                .orElseThrow();
+                .orElse(new SearchResponseDto()); // return a default value if the Optional is empty
     }
 
     @NotNull
