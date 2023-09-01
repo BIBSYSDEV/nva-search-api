@@ -4,10 +4,11 @@ import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.QueryBuilder;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameter.ID;
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
-import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_PAGE;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_SORT;
+import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_SORT_ORDER;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
@@ -17,7 +18,7 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
 
     @Override
-    public SearchResponseDto execute(SwsOpenSearchClient queryClient) {
+    public SearchResponseDto apply(SwsOpenSearchClient queryClient) {
         return queryClient.doSearch(this.toURI());
     }
 
@@ -31,28 +32,23 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case PAGE -> query.setValue(key, DEFAULT_VALUE_PAGE);
-                    case PER_PAGE ->  query.setValue(key, DEFAULT_VALUE_PER_PAGE);
+                    case PAGE -> setValue(key.getKey(), DEFAULT_VALUE_PAGE);
+                    case PER_PAGE -> setValue(key.getKey(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.getKey(), DEFAULT_VALUE_SORT);
+                    case SORT_ORDER -> setValue(key.getKey(), DEFAULT_VALUE_SORT_ORDER);
                     default -> { }
                 }
             });
         }
 
-        @Override
-        protected void setPath(String key, String value) {
-            final var nonNullValue = nonNull(value) ? value : EMPTY_STRING;
-
-            if (key.equals(ID.getKey())) {
-                setValue(key,nonNullValue);
-            } else {
-                invalidKeys.add(key);
-            }
-        }
 
         @Override
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key,value);
             switch (qpKey) {
+                case FIELDS,
+                         SORT, SORT_ORDER,
+                         PER_PAGE, PAGE -> query.setQValue(qpKey, value);
                 case CATEGORY,CONTRIBUTOR,
                          CREATED_BEFORE,CREATED_SINCE,
                          DOI,FUNDING,FUNDING_SOURCE,ID,
@@ -60,7 +56,7 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
                          MODIFIED_BEFORE,MODIFIED_SINCE,
                          PROJECT_CODE,PUBLISHED_BEFORE,
                          PUBLISHED_SINCE,TITLE,
-                         UNIT,USER, YEAR_REPORTED, SORT, FIELDS, PER_PAGE, PAGE -> query.setValue(qpKey, value);
+                         UNIT,USER, YEAR_REPORTED -> query.setValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }

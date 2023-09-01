@@ -27,11 +27,9 @@ import java.util.stream.Stream;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
-import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
-import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
-import static no.unit.nva.search.RequestUtil.PATH;
-import static no.unit.nva.search2.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search2.ResourceParameter.QUERY;
+import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
+import static no.unit.nva.search2.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -182,7 +180,7 @@ class SwsResourceHandlerTest {
     void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
-        var queryParameters = Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "desc");
+        var queryParameters = Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "desc");
 
         var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(queryParameters)
                               .withRequestContext(getRequestContext())
@@ -206,7 +204,7 @@ class SwsResourceHandlerTest {
     void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
 
-        var queryParameters = Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM, SORTORDER_KEY, "asc");
+        var queryParameters = Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "asc");
 
         var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(queryParameters)
                               .withRequestContext(getRequestContext())
@@ -254,12 +252,12 @@ class SwsResourceHandlerTest {
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-            Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
+            Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_TERM_KEY, "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
+                Map.of(QUERY.getKey(), "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
@@ -269,7 +267,7 @@ class SwsResourceHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_TERM_KEY,
+                    Map.of(QUERY.getKey(),
                            "(entityDescription.contributors.identity.id:12345)"
                            + "+AND+"
                            + "(entityDescription.contributors.identity.id:54321)"))
@@ -280,14 +278,14 @@ class SwsResourceHandlerTest {
 
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
+                Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM))
                    .withHeaders(Map.of("Accept", contentType))
                    .withRequestContext(getRequestContext())
                    .build();
     }
 
     private ObjectNode getRequestContext() {
-        return objectMapperWithEmpty.convertValue(Map.of(PATH, SAMPLE_PATH, DOMAIN_NAME, SAMPLE_DOMAIN_NAME),
+        return objectMapperWithEmpty.convertValue(Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME),
                                                   ObjectNode.class);
     }
 

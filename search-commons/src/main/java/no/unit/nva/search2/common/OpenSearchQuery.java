@@ -1,12 +1,11 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.restclients.IdentityClientImpl.HTTPS_SCHEME;
+import static no.unit.nva.search2.constants.Defaults.HTTPS_SCHEME;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,7 +13,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.SwsOpenSearchClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -23,19 +21,19 @@ import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"Unused", "LooseCoupling"})
+@SuppressWarnings({"PMD.Unused", "PMD.LooseCoupling"})
 public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
     // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
 
     protected static final String API_HOST = new Environment().readEnv("API_HOST");
-    protected final transient Map<T, String> pathParameters;
     protected final transient Map<T, String> queryParameters;
+    protected final transient Map<T, String> luceneParameters;
     protected final transient Set<T> otherRequiredKeys;
 
     protected OpenSearchQuery() {
+        luceneParameters = new ConcurrentHashMap<>();
         queryParameters = new ConcurrentHashMap<>();
-        pathParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
     }
 
@@ -51,6 +49,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
             new UriWrapper(HTTPS_SCHEME, API_HOST)
                 .addChild()
                 .addQueryParameters(toLuceneParameter())
+                .addQueryParameters(toParameters())
                 .getUri();
     }
 
@@ -62,8 +61,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      */
     public Map<String, String> toParameters() {
         var results =
-            Stream.of(queryParameters.entrySet(), pathParameters.entrySet())
-                .flatMap(Collection::stream)
+            queryParameters.entrySet().stream()
                 .collect(Collectors.toMap(this::toQueryName, this::toQueryValue));
         return new TreeMap<>(results);
     }
@@ -74,10 +72,10 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      * @return Map of String and String
      */
     public Map<String, String> toLuceneParameter() {
-        var query = queryParameters.entrySet().stream()
+        var query = luceneParameters.entrySet().stream()
                 .map(this::apply)
-                .collect(Collectors.joining(" AND "));
-        return Map.of("q", query);
+                .collect(Collectors.joining("+AND+"));
+        return Map.of("query", query);
     }
 
     /**
@@ -87,9 +85,9 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      * @return String content raw
      */
     public String getValue(T key) {
-        return queryParameters.containsKey(key)
-            ? queryParameters.get(key)
-            : pathParameters.get(key);
+        return luceneParameters.containsKey(key)
+            ? luceneParameters.get(key)
+            : queryParameters.get(key);
     }
 
     /**
@@ -100,12 +98,25 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      */
     public void setValue(T key, String value) {
         if (nonNull(value)) {
+            luceneParameters.put(key, key.encoding() != IParameterKey.KeyEncoding.NONE ? decodeUTF(value) : value);
+        }
+    }
+
+    /**
+     * Add a key value pair to Query Parameter Map.
+     *
+     * @param key   to add to.
+     * @param value to assign
+     */
+    public void setQValue(T key, String value) {
+        if (nonNull(value)) {
             queryParameters.put(key, key.encoding() != IParameterKey.KeyEncoding.NONE ? decodeUTF(value) : value);
         }
     }
 
+
     protected String toQueryName(Entry<T, String> entry) {
-        return entry.getKey().getKey();
+        return entry.getKey().getSwsKey().stream().findFirst().orElseThrow();
     }
 
     protected String toQueryValue(Entry<T, String> entry) {
@@ -114,7 +125,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
             : entry.getValue();
     }
 
-    public abstract SearchResponseDto execute(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+    public abstract SearchResponseDto apply(SwsOpenSearchClient queryClient) throws ApiGatewayException;
 
 
     protected String decodeUTF(String encoded) {
@@ -128,15 +139,12 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
     }
 
     private String apply(Entry<T, String> entry) {
-        return entry.getKey().getSwsKey().stream().map(swsKey -> {
-            var substring = switch (entry.getKey().getOperator()){
-                case EQUALS -> " %s:%s ".formatted(swsKey, entry.getValue());
-                case GREATER_THAN, GREATER_THAN_OR_EQUAL_TO -> " %s:>%s ".formatted(swsKey, entry.getValue());
-                case LESS_THAN, LESS_THAN_OR_EQUAL_TO -> " %s:<v ".formatted(swsKey, entry.getValue());
-            };
-            return substring;
-//            " {0}:[{1} TO {2}] " .formatted(swsKey, entry.getValue(), entry.getValue());
-
-        }).collect(Collectors.joining(" OR ", "(", ")"));
+        return entry.getKey().getSwsKey().stream().map(swsKey -> switch (entry.getKey().getOperator()){
+            case EQUALS -> "%s:%s".formatted(swsKey, entry.getValue());
+            case GREATER_THAN -> "%s:>%s".formatted(swsKey, entry.getValue());
+            case GREATER_THAN_OR_EQUAL_TO -> "%s:>=%s".formatted(swsKey, entry.getValue());
+            case LESS_THAN -> "%s:<%s".formatted(swsKey, entry.getValue());
+            case LESS_THAN_OR_EQUAL_TO -> "%s:<=%s".formatted(swsKey, entry.getValue());
+        }).collect(Collectors.joining("+OR+", "(", ")"));
     }
 }
