@@ -5,8 +5,8 @@ import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
 import no.unit.nva.search.models.SearchResponseDto;
+import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search2.common.OpenSearchResponseDto;
-import no.unit.nva.search2.common.UsernamePasswordWrapper;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
@@ -71,7 +71,7 @@ public class SwsOpenSearchClient {
     private Function<String, GatewayResponse<OpenSearchResponseDto>> toGateWayResponse() {
         return jsonString -> {
             try {
-                return GatewayResponse.of(jsonString);
+                return GatewayResponse.<OpenSearchResponseDto>of(jsonString);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }

@@ -38,7 +38,7 @@ class SwsOpenSearchClientTest {
         swsOpenSearchClient = new SwsOpenSearchClient(contentRetriever, MEDIA_TYPE);
     }
 
-    @Test @Disabled
+    @Test
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
         var secretsReaderMock = mock(SecretsReader.class);
         var testCredentials = new UsernamePasswordWrapper("user", "password");
