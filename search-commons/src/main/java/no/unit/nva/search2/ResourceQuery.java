@@ -1,14 +1,9 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search.models.SearchResponseDto;
-import no.unit.nva.search2.common.OpenSearchQuery;
-import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.*;
 
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_PAGE;
-import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_SORT;
-import static no.unit.nva.search2.constants.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.constants.Defaults.*;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
@@ -18,8 +13,16 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
 
     @Override
-    public SearchResponseDto apply(SwsOpenSearchClient queryClient) {
-        return queryClient.doSearch(this.toURI());
+    public SwsOpenSearchResponse doSearch(SwsOpenSearchClient queryClient) {
+        var requestUri = this.toURI();
+        return queryClient.doSearch(requestUri).body();
+    }
+
+    @Override
+    public PagedSearchResponseDto doPagedSearch(SwsOpenSearchClient queryClient) {
+        var requestUri = this.toURI();
+        var result = queryClient.doSearch(requestUri);
+        return result.body().toPagedSearchResponseDto(requestUri);
     }
 
     public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter> {
@@ -40,7 +43,6 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
                 }
             });
         }
-
 
         @Override
         protected void setValue(String key, String value) {

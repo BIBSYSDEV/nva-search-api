@@ -4,10 +4,10 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search.models.SearchResponseDto;
-import no.unit.nva.search2.common.OpenSearchResponseDto;
+import no.unit.nva.search2.common.GatewayResponse;
+import no.unit.nva.search2.common.PagedSearchResponseDto;
+import no.unit.nva.search2.common.SwsOpenSearchResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -31,6 +31,7 @@ import static no.unit.nva.search2.ResourceParameter.QUERY;
 import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -72,16 +73,13 @@ class SwsResourceHandlerTest {
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
         var gatewayResponse =
-            GatewayResponse.<SearchResponseDto>of(outputStream);
+            GatewayResponse.ofPageable(outputStream);
 
-
-        var actualBody =
-            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
-
+        var actualBody = gatewayResponse.body();
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
         assertThat(actualBody, is(equalTo(expected)));
     }
 
@@ -90,10 +88,10 @@ class SwsResourceHandlerTest {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
     }
 
     @Test
@@ -102,10 +100,10 @@ class SwsResourceHandlerTest {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
     }
 
     @Test
@@ -115,10 +113,10 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
     }
 
     @Test
@@ -128,17 +126,16 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody =
-            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
-
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
+        var actualBody = gatewayResponse.body();
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
+        
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
-        assertThat(actualBody, is(equalTo(expected)));
-        assertNotNull(actualBody.getAggregations());
-        assertNotNull(actualBody.getAggregations().get("Bidragsyter"));
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        assertThat(gatewayResponse.body(), is(equalTo(expected)));
+        assertNotNull(actualBody.aggregations());
+        assertNotNull(actualBody.aggregations().get("Bidragsyter"));
     }
 
     @Test
@@ -147,15 +144,14 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody =
-            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
+        var actualBody = gatewayResponse.body();
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
-        assertThat(actualBody.getSize(), is(equalTo(0L)));
-        assertThat(actualBody.getHits(), is(empty()));
-        assertDoesNotThrow(() -> actualBody.getId().normalize());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        assertThat(actualBody.hits().total().value(), is(equalTo(0L)));
+        assertThat(actualBody.hits().hits(), is(empty()));
+        assertDoesNotThrow(() -> gatewayResponse.id().normalize());
     }
 
     @Test
@@ -164,15 +160,14 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody =
-            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
+        var actualBody = gatewayResponse.body();
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
-        assertThat(actualBody.getSize(), is(equalTo(0L)));
-        assertThat(actualBody.getHits(), is(empty()));
-        assertDoesNotThrow(() -> actualBody.getId().normalize());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        assertThat(actualBody.hits().total().value(), is(equalTo(0L)));
+        assertThat(actualBody.hits().hits(), is(empty()));
+        assertDoesNotThrow(() -> gatewayResponse.id().normalize());
     }
 
     @Test
@@ -188,15 +183,14 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody =
-            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
+        var paged = gatewayResponse.body().toPagedSearchResponseDto(gatewayResponse.id());
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
-        assertThat(actualBody.getSize(), is(equalTo(0L)));
-        assertThat(actualBody.getHits(), is(empty()));
-        assertDoesNotThrow(() -> actualBody.getId().normalize());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        assertThat(paged.size(), is(equalTo(0L)));
+        assertThat(paged.hits(), is(empty()));
+        assertDoesNotThrow(() -> gatewayResponse.id().normalize());
     }
 
     @Test
@@ -212,15 +206,13 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        var actualBody =
-            objectMapperWithEmpty.readValue(gatewayResponse.getBody(), new TypeReference<SearchResponseDto>() { });
-
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_OK, gatewayResponse.getStatusCode());
-        assertThat(actualBody.getSize(), is(equalTo(0L)));
-        assertThat(actualBody.getHits(), is(empty()));
-        assertDoesNotThrow(() -> actualBody.getId().normalize());
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
+        var paged = gatewayResponse.body().toPagedSearchResponseDto(gatewayResponse.id());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        assertThat(paged.size(), is(equalTo(0L)));
+        assertThat(paged.hits(), is(empty()));
+        assertDoesNotThrow(() -> gatewayResponse.id().normalize());
     }
 
     @Test
@@ -233,8 +225,8 @@ class SwsResourceHandlerTest {
         var gatewayResponse = GatewayResponse.<Problem>of(outputStream);
 
 
-        assertNotNull(gatewayResponse.getHeaders());
-        assertEquals(HTTP_BAD_GATEWAY, gatewayResponse.getStatusCode());
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_BAD_GATEWAY, gatewayResponse.statusCode());
     }
 
     @ParameterizedTest(name = "should return application/json for accept header {0}")
@@ -246,8 +238,8 @@ class SwsResourceHandlerTest {
             nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
         handler.handleRequest(requestInput, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<SearchResponseDto>of(outputStream);
-        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
+        var gatewayResponse = GatewayResponse.<SwsOpenSearchResponse>of(outputStream);
+        assertThat(gatewayResponse.headers().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
     }
 
     private InputStream getInputStream() throws JsonProcessingException {
@@ -292,35 +284,35 @@ class SwsResourceHandlerTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
+        var response = new GatewayResponse<SwsOpenSearchResponse>(body, HTTP_OK, Map.of( "Content-Type", "application/json"), randomUri());
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response.toSearchResponseDto(getSearchURI()));
+            .thenReturn(response);
     }
 
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
+        var response = new GatewayResponse<>(body, HTTP_OK, Map.of( "Content-Type", "application/json"), randomUri());
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response.toSearchResponseDto(getSearchURI()));
+            .thenReturn(response);
     }
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder)
         throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var typeReference = new TypeReference<OpenSearchResponseDto>() { };
-        var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
+        var response = new GatewayResponse<>(body, HTTP_OK, Map.of( "Content-Type", "application/json"), randomUri());
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response.toSearchResponseDto(getSearchURI()));
+            .thenReturn(response);
     }
 
-    private SearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), SearchResponseDto.class);
+    private PagedSearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {
+        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResponseDto.class);
     }
 
     private URI getSearchURI() {

@@ -1,23 +1,24 @@
 package no.unit.nva.search2;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
-import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
-import no.unit.nva.search2.common.OpenSearchResponseDto;
-import nva.commons.apigateway.GatewayResponse;
+import no.unit.nva.search2.common.GatewayResponse;
+import no.unit.nva.search2.common.SwsOpenSearchResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.function.Function;
 
 import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperNoEmpty;
+import static nva.commons.core.attempt.Try.attempt;
 
 public class SwsOpenSearchClient {
 
@@ -45,36 +46,23 @@ public class SwsOpenSearchClient {
     }
 
 
-    protected SearchResponseDto doSearch(URI requestUri) {
+    protected GatewayResponse<SwsOpenSearchResponse> doSearch(URI requestUri) {
         return
-            contentRetriever.fetchResponse(requestUri, mediaType).stream()
-                .map(HttpResponse::toString)
-                .map(toGateWayResponse())
-                .map(toInstance())
-                .map(instance -> instance.toSearchResponseDto(requestUri))
-                .findFirst()
-                .orElse(new SearchResponseDto()); // return a default value if the Optional is empty
+            contentRetriever.fetchResponse(requestUri, mediaType)
+                .map(toOpenSearchResponse())
+                .orElseThrow();
     }
 
     @NotNull
-    private Function<GatewayResponse<OpenSearchResponseDto>, OpenSearchResponseDto> toInstance() {
+    private Function<HttpResponse<String>, GatewayResponse<SwsOpenSearchResponse>> toOpenSearchResponse() {
         return response -> {
-            try {
-                return response.getBodyAsInstance();
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
+            var openSearchResponseDto =
+                attempt(()->objectMapperNoEmpty.readValue(response.body(), SwsOpenSearchResponse.class)).orElseThrow();
+            var statusCode = response.statusCode();
+            var headers = response.headers().map();
+            var requestUri = response.request().uri();
 
-    @NotNull
-    private Function<String, GatewayResponse<OpenSearchResponseDto>> toGateWayResponse() {
-        return jsonString -> {
-            try {
-                return GatewayResponse.<OpenSearchResponseDto>of(jsonString);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            return new GatewayResponse<>(openSearchResponseDto, statusCode, Map.of(), requestUri);
         };
     }
 

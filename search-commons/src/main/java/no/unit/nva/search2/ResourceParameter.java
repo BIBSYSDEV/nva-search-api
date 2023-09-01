@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.IParameterKey;
+import nva.commons.core.JacocoGenerated;
 
 import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
 import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_BOOLEAN;
@@ -71,12 +72,10 @@ public enum ResourceParameter implements IParameterKey {
             .map(ResourceParameter::getKey)
             .collect(Collectors.toUnmodifiableSet());
 
-
     private final String key;
     private final String[] swsKeys;
     private final String errorMessage;
     private final String pattern;
-
     private final KeyEncoding encode;
     private final Operator operator;
 
@@ -143,6 +142,7 @@ public enum ResourceParameter implements IParameterKey {
     }
 
     @Override
+    @JacocoGenerated
     public String toString() {
         return
             new StringJoiner(":", "Key[", "]")

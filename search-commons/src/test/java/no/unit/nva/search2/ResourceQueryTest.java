@@ -1,17 +1,16 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.ResourceParameter.PAGE;
-import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.net.URI;
+import java.util.stream.Stream;
+
+import static no.unit.nva.search2.ResourceParameter.PAGE;
+import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
+import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ResourceQueryTest {
 
@@ -29,13 +28,7 @@ class ResourceQueryTest {
         assertNotEquals(uri,uri2);
     }
 
-    @NotNull
-    private static Map<String, String> queryToMap(URI uri) {
-        return Arrays
-                   .stream(uri.getQuery().split("&"))
-                   .map(s -> s.split("="))
-                   .collect(Collectors.toMap(strings -> strings[0], strings -> strings[1]));
-    }
+
 
     static Stream<URI> uriProvider() {
         return Stream.of(

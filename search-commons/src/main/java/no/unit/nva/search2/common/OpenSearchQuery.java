@@ -6,14 +6,11 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import no.unit.nva.search.models.SearchResponseDto;
+
 import no.unit.nva.search2.SwsOpenSearchClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
@@ -44,7 +41,6 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      * @return an URI to NVA (default) Projects with parameters.
      */
     public URI toURI() {
-
         return
             new UriWrapper(HTTPS_SCHEME, API_HOST)
                 .addChild()
@@ -73,7 +69,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      */
     public Map<String, String> toLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-                .map(this::apply)
+                .map(this::doSearch)
                 .collect(Collectors.joining("+AND+"));
         return Map.of("query", query);
     }
@@ -114,6 +110,16 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         }
     }
 
+    public abstract SwsOpenSearchResponse doSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+
+    public abstract PagedSearchResponseDto doPagedSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+
+    public static Map<String, String> queryToMap(URI uri) {
+        return Arrays
+            .stream(uri.getQuery().split("&"))
+            .map(s -> s.split("="))
+            .collect(Collectors.toMap(strings -> strings[0], strings -> strings[1]));
+    }
 
     protected String toQueryName(Entry<T, String> entry) {
         return entry.getKey().getSwsKey().stream().findFirst().orElseThrow();
@@ -125,9 +131,6 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
             : entry.getValue();
     }
 
-    public abstract SearchResponseDto apply(SwsOpenSearchClient queryClient) throws ApiGatewayException;
-
-
     protected String decodeUTF(String encoded) {
         String decode = URLDecoder.decode(encoded, StandardCharsets.UTF_8);
         logger.info("decoded " + decode);
@@ -138,7 +141,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace("%20", "+");
     }
 
-    private String apply(Entry<T, String> entry) {
+    private String doSearch(Entry<T, String> entry) {
         return entry.getKey().getSwsKey().stream().map(swsKey -> switch (entry.getKey().getOperator()){
             case EQUALS -> "%s:%s".formatted(swsKey, entry.getValue());
             case GREATER_THAN -> "%s:>%s".formatted(swsKey, entry.getValue());
