@@ -6,18 +6,13 @@ import java.nio.file.Path;
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search2.common.OpenSearchResponseDto;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.secrets.SecretsReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import java.net.URI;
 import java.util.stream.Stream;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import static no.unit.nva.search2.SwsOpenSearchClient.prepareWithSecretReader;
 import static no.unit.nva.search2.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -32,17 +27,13 @@ class SwsOpenSearchClientTest {
 
     private SwsOpenSearchClient swsOpenSearchClient;
     private static final String MEDIA_TYPE = "application/json";
-    private static final URI REQUEST_URI = URI.create("https://example.com/?name=hello+world&lang=en");
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
 
-    @Mock
     private RawContentRetriever contentRetriever;
 
-
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        //swsOpenSearchClient = SwsOpenSearchClient.defaultSwsClient();
+    public void setUp() {
+        contentRetriever = mock(RawContentRetriever.class);
         swsOpenSearchClient = new SwsOpenSearchClient(contentRetriever, MEDIA_TYPE);
     }
 
@@ -52,21 +43,22 @@ class SwsOpenSearchClientTest {
         var testCredentials = new UsernamePasswordWrapper("user", "password");
         when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
             .thenReturn(testCredentials);
-        var searchClient = prepareWithSecretReader(secretsReaderMock);
-        assertNotNull(searchClient);
+        var swsOpenSearchClient = prepareWithSecretReader(secretsReaderMock);
+        assertNotNull(swsOpenSearchClient);
     }
 
-    @Test
-    void searchSingleTermReturnsResponse() throws IOException {
+    @ParameterizedTest
+    @MethodSource("uriProvider")
+    void searchSingleTermReturnsResponse(URI uri) throws IOException {
         var swsOpenSearchClient = mock(SwsOpenSearchClient.class);
         var jsonResponse = stringFromResources(Path.of(NO_HITS_RESPONSE_JSON));
         var typeReference = new TypeReference<OpenSearchResponseDto>() { };
         var response = objectMapperWithEmpty.readValue(jsonResponse,typeReference);
 
-        when(swsOpenSearchClient.doSearch(any())).thenReturn(response.toSearchResponseDto(REQUEST_URI));
+        when(swsOpenSearchClient.doSearch(any())).thenReturn(response.toSearchResponseDto(uri));
 
         var searchResponseDto =
-            swsOpenSearchClient.doSearch(REQUEST_URI);
+            swsOpenSearchClient.doSearch(uri);
 
         assertNotNull(searchResponseDto);
     }
