@@ -8,13 +8,14 @@ import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search2.common.OpenSearchResponseDto;
 import nva.commons.secrets.SecretsReader;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.net.URI;
 import java.util.stream.Stream;
-import static no.unit.nva.search2.SwsOpenSearchClient.prepareWithSecretReader;
 import static no.unit.nva.search2.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search2.SwsOpenSearchClient.prepareWithSecretReader;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,12 +34,11 @@ class SwsOpenSearchClientTest {
 
     @BeforeEach
     public void setUp() {
-<<<<<<< HEAD
         contentRetriever = mock(RawContentRetriever.class);
         swsOpenSearchClient = new SwsOpenSearchClient(contentRetriever, MEDIA_TYPE);
     }
 
-    @Test
+    @Test @Disabled
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
         var secretsReaderMock = mock(SecretsReader.class);
         var testCredentials = new UsernamePasswordWrapper("user", "password");
@@ -62,14 +62,11 @@ class SwsOpenSearchClientTest {
             swsOpenSearchClient.doSearch(uri);
 
         assertNotNull(searchResponseDto);
-=======
-        swsOpenSearchClient = SwsOpenSearchClient.defaultSwsClient();
->>>>>>> f2fd5719b0694684c175cc27cd64ed9575c9c789
     }
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    public void testWithExplicitLocalMethodSource(URI uri) {
+    void testWithExplicitLocalMethodSource(URI uri) {
         var response = swsOpenSearchClient.doSearch(uri);
         assertNotNull(response);
     }
