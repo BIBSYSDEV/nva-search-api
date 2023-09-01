@@ -33,6 +33,7 @@ class SwsOpenSearchClientTest {
 
     @BeforeEach
     public void setUp() {
+<<<<<<< HEAD
         contentRetriever = mock(RawContentRetriever.class);
         swsOpenSearchClient = new SwsOpenSearchClient(contentRetriever, MEDIA_TYPE);
     }
@@ -61,11 +62,14 @@ class SwsOpenSearchClientTest {
             swsOpenSearchClient.doSearch(uri);
 
         assertNotNull(searchResponseDto);
+=======
+        swsOpenSearchClient = SwsOpenSearchClient.defaultSwsClient();
+>>>>>>> f2fd5719b0694684c175cc27cd64ed9575c9c789
     }
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void testWithExplicitLocalMethodSource(URI uri) {
+    public void testWithExplicitLocalMethodSource(URI uri) {
         var response = swsOpenSearchClient.doSearch(uri);
         assertNotNull(response);
     }

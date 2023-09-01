@@ -36,7 +36,7 @@ public class SwsResourceHandler extends ApiGatewayHandler<Void, SearchResponseDt
                 .withRequiredParameters(PAGE, PER_PAGE)
                 .validate()
                 .build()
-                .execute(swsOpenSearchClient);
+                .apply(swsOpenSearchClient);
     }
 
     @Override
