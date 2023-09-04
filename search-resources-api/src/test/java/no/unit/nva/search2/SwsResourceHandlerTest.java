@@ -2,10 +2,8 @@ package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search2.common.GatewayResponse;
-import no.unit.nva.search2.common.PagedSearchResponseDto;
 import no.unit.nva.search2.common.PagedSearchResponseDto;
 import no.unit.nva.search2.common.SwsOpenSearchResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
@@ -32,7 +30,6 @@ import static no.unit.nva.search2.ResourceParameter.QUERY;
 import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -89,7 +86,7 @@ class SwsResourceHandlerTest {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -101,7 +98,7 @@ class SwsResourceHandlerTest {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -114,7 +111,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -127,7 +124,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
         
@@ -145,7 +142,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
 
         assertNotNull(gatewayResponse.headers());
@@ -161,7 +158,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
 
         assertNotNull(gatewayResponse.headers());
@@ -207,7 +204,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
         var paged = gatewayResponse.body();
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -223,7 +220,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<Problem>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
 
 
         assertNotNull(gatewayResponse.headers());
@@ -239,7 +236,7 @@ class SwsResourceHandlerTest {
             nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
         handler.handleRequest(requestInput, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.<PagedSearchResponseDto>of(outputStream);
+        var gatewayResponse = GatewayResponse.of(outputStream);
         assertThat(gatewayResponse.headers().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
     }
 

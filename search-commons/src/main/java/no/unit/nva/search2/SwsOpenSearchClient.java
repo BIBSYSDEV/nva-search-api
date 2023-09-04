@@ -17,7 +17,6 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperNoEmpty;
