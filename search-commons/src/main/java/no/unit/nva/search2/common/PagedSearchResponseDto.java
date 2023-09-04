@@ -25,28 +25,35 @@ public record PagedSearchResponseDto (
         return URI.create(PAGINATED_SEARCH_RESULT_CONTEXT);
     }
 
-    @Override
-    public URI nextResults() {
-        var params = queryToMap(id());
+    public static URI nextResults(URI id) {
+        var params = queryToMap(id);
+        if (!params.containsKey(PAGE.getKey())) {
+            return null;
+        }
         var page = Integer.parseInt(params.get(PAGE.getKey()));
         params.put(PAGE.getKey(),  String.valueOf(++page));
-        return UriWrapper.fromUri(id())
+        return UriWrapper.fromUri(id)
             .addQueryParameters(params)
             .getUri();
     }
 
-    @Override
-    public URI previousResults() {
-        var params = queryToMap(id());
+    public static URI previousResults(URI id) {
+        var params = queryToMap(id);
+        if (!params.containsKey(PAGE.getKey())) {
+            return null;
+        }
         var page = Integer.parseInt(params.get(PAGE.getKey()));
-        if (page <= 0) return null;
+        if (page <= 0) {
+            return null;
+        }
         params.put(PAGE.getKey(),String.valueOf(--page));
-        return UriWrapper.fromUri(id())
+        return UriWrapper.fromUri(id)
             .addQueryParameters(params)
             .getUri();
     }
 
 
     private static final String PAGINATED_SEARCH_RESULT_CONTEXT
-        = "https://bibsysdev.github.io/src/search/paginated-search-result.json";
+        ="https://api.nva.unit.no/resources/search";
+//        = "https://bibsysdev.github.io/src/search/paginated-search-result.json";
 }

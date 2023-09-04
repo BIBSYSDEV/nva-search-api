@@ -35,7 +35,7 @@ public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, PagedSearch
                 .withRequiredParameters(PAGE, PER_PAGE,SORT,SORT_ORDER)
                 .validate()
                 .build()
-                .doPagedSearch(swsOpenSearchClient);
+                .doSearch(swsOpenSearchClient);
     }
 
     @Override

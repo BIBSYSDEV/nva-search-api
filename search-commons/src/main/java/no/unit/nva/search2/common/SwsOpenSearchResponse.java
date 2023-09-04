@@ -63,15 +63,17 @@ public record SwsOpenSearchResponse(
 
     @JsonIgnore
     public PagedSearchResponseDto toPagedSearchResponseDto(URI requestUri) {
-
+        var sourcesList =
+            hits().hits().stream()
+                .map(Hit::_source).toList();
         return new PagedSearchResponseDto(
             DEFAULT_SEARCH_CONTEXT,
             requestUri,
-            null,
-            null,
+            PagedSearchResponseDto.nextResults(requestUri),
+            PagedSearchResponseDto.previousResults(requestUri),
             took(),
             hits().total().value(),
-            hits().hits().stream().map(Hit::_source).toList(),
+            sourcesList,
             extractAggregations(aggregations));
     }
 

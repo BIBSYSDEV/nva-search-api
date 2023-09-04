@@ -6,8 +6,12 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -18,7 +22,7 @@ import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"PMD.Unused", "PMD.LooseCoupling"})
+@SuppressWarnings({"PMD.Unused", "PMD.LooseCoupling", "PMD.LineLength"})
 public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
     // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
@@ -110,9 +114,8 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         }
     }
 
-    public abstract SwsOpenSearchResponse doSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+    public abstract PagedSearchResponseDto doSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
 
-    public abstract PagedSearchResponseDto doPagedSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
 
     public static Map<String, String> queryToMap(URI uri) {
         return Arrays

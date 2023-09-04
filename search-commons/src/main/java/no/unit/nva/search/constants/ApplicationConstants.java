@@ -63,7 +63,6 @@ public final class ApplicationConstants {
     public static final String TYPE = "type";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-
         generateSimpleAggregation("resourceOwner.owner",
                                   "resourceOwner.owner.keyword"),
         generateSimpleAggregation("resourceOwner.ownerAffiliation",
