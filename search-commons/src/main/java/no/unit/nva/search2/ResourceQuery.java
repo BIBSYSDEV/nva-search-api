@@ -34,10 +34,10 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case PAGE -> setValue(key.getKey(), DEFAULT_VALUE_PAGE);
-                    case PER_PAGE -> setValue(key.getKey(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.getKey(), DEFAULT_VALUE_SORT);
-                    case SORT_ORDER -> setValue(key.getKey(), DEFAULT_VALUE_SORT_ORDER);
+                    case PAGE -> setValue(key.key(), DEFAULT_VALUE_PAGE);
+                    case PER_PAGE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT);
+                    case SORT_ORDER -> setValue(key.key(), DEFAULT_VALUE_SORT_ORDER);
                     default -> { }
                 }
             });
@@ -56,7 +56,7 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
                          INSTITUTION,ISSN,
                          MODIFIED_BEFORE,MODIFIED_SINCE,
                          PROJECT_CODE,PUBLISHED_BEFORE,
-                         PUBLISHED_SINCE,TITLE,
+                         PUBLISHED_SINCE, SEARCH_ALL, TITLE,
                          UNIT,USER, YEAR_REPORTED -> query.setValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue

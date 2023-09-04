@@ -28,7 +28,7 @@ class ResourceQueryTest {
                 .build();
         assertNotNull(resourceParameters.getValue(ResourceParameter.PAGE));
         assertNotNull(resourceParameters.getValue(ResourceParameter.USER));
-        System.out.println(resourceParameters);
+        System.out.println(resourceParameters.toURI());
         assertNotEquals(uri, resourceParameters.toURI());
     }
 

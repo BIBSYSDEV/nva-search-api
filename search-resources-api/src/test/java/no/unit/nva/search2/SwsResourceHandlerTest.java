@@ -174,7 +174,7 @@ class SwsResourceHandlerTest {
     void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
-        var queryParameters = Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "desc");
+        var queryParameters = Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM, SORT_ORDER.key(), "desc");
 
         var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(queryParameters)
                               .withRequestContext(getRequestContext())
@@ -197,7 +197,7 @@ class SwsResourceHandlerTest {
     void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
 
-        var queryParameters = Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "asc");
+        var queryParameters = Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM, SORT_ORDER.key(), "asc");
 
         var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(queryParameters)
                               .withRequestContext(getRequestContext())
@@ -243,12 +243,12 @@ class SwsResourceHandlerTest {
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-            Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
+            Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.getKey(), "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
+                Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
@@ -258,7 +258,7 @@ class SwsResourceHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_ALL.getKey(),
+                    Map.of(SEARCH_ALL.key(),
                            "(entityDescription.contributors.identity.id:12345)"
                            + "+AND+"
                            + "(entityDescription.contributors.identity.id:54321)"))
@@ -269,7 +269,7 @@ class SwsResourceHandlerTest {
 
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM))
+                Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
                    .withHeaders(Map.of("Accept", contentType))
                    .withRequestContext(getRequestContext())
                    .build();

@@ -28,11 +28,11 @@ public record PagedSearchResponseDto (
 
     public static URI nextResults(URI id) {
         var params = queryToMap(id);
-        if (!params.containsKey(PAGE.getKey())) {
+        if (!params.containsKey(PAGE.key())) {
             return null;
         }
-        var page = Integer.parseInt(params.get(PAGE.getKey()));
-        params.put(PAGE.getKey(),  String.valueOf(++page));
+        var page = Integer.parseInt(params.get(PAGE.key()));
+        params.put(PAGE.key(), String.valueOf(++page));
         return UriWrapper.fromUri(id)
             .addQueryParameters(params)
             .getUri();
@@ -40,14 +40,14 @@ public record PagedSearchResponseDto (
 
     public static URI previousResults(URI id) {
         var params = queryToMap(id);
-        if (!params.containsKey(PAGE.getKey())) {
+        if (!params.containsKey(PAGE.key())) {
             return null;
         }
-        var page = Integer.parseInt(params.get(PAGE.getKey()));
+        var page = Integer.parseInt(params.get(PAGE.key()));
         if (page <= 0) {
             return null;
         }
-        params.put(PAGE.getKey(),String.valueOf(--page));
+        params.put(PAGE.key(), String.valueOf(--page));
         return UriWrapper.fromUri(id)
             .addQueryParameters(params)
             .getUri();

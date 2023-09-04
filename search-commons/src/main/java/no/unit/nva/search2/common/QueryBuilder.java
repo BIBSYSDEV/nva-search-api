@@ -66,7 +66,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
         }
         if (!invalidKeys.isEmpty()) {
-            throw new BadRequestException(validQueryParameterNamesMessage(validKeys()));
+            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
         }
         notValidated = false;
         return this;
@@ -136,7 +136,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
     }
 
     protected boolean invalidQueryParameter(T key, String value) {
-        return isNull(value) || !value.matches(key.getPattern());
+        return isNull(value) || !value.matches(key.pattern());
     }
 
 
@@ -144,7 +144,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
         return
             requiredMissing()
                 .stream()
-                .map(IParameterKey::getKey)
+                .map(IParameterKey::key)
                 .collect(Collectors.toSet());
     }
 
@@ -164,10 +164,10 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {
     protected void throwInvalidParameterValue(Map.Entry<T, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         if (invalidQueryParameter(key, entry.getValue())) {
-            final var keyName =  key.getKey();
+            final var keyName =  key.key();
             String errorMessage;
-            if (nonNull(key.getErrorMessage())) {
-                errorMessage = String.format(key.getErrorMessage(), keyName);
+            if (nonNull(key.errorMessage())) {
+                errorMessage = String.format(key.errorMessage(), keyName);
             } else {
                 errorMessage = invalidQueryParametersMessage(keyName, EMPTY_STRING);
             }

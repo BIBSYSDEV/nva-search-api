@@ -19,7 +19,7 @@ public class ErrorMessages {
     public static final String ERROR_MESSAGE_PAGE_OUT_OF_SCOPE =
         "Page requested is out of scope. Query contains %s results";
     public static final String ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS =
-        "Invalid query parameter supplied. Valid parameters: %s";
+        "Invalid query parameter supplied %s. Valid parameters: %s";
 
     public static final String ERROR_MESSAGE_INVALID_PATH_PARAMETER = "Invalid path parameter for '%s'";
     public static final String INVALID_URI_MESSAGE = "Must be valid URI";
@@ -29,11 +29,13 @@ public class ErrorMessages {
     /**
      * Formats and emits a message with valid parameter names.
      *
+     * @param invalidkeys     list of invalid parameter names
      * @param queryParameters list of valid parameter names
      * @return formatted string containing a list of valid parameters
      */
-    public static String validQueryParameterNamesMessage(Set<String> queryParameters) {
-        return String.format(ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS, prettifyList(queryParameters));
+    public static String validQueryParameterNamesMessage(Set<String> invalidkeys,Set<String> queryParameters) {
+        return String.format(ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS, invalidkeys,
+                             prettifyList(queryParameters));
     }
 
     /**

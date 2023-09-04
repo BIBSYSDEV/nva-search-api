@@ -48,10 +48,10 @@ public enum ResourceParameter implements IParameterKey {
                        + "|entityDescription.reference.publicationContext.printIssn"),
     MODIFIED_BEFORE(DATE,"modified_before"),
     MODIFIED_SINCE(DATE,"modified_since"),
-    PROJECT_CODE(CUSTOM, "project_code", "fundings.identifier", Operator.EQUALS, ".", null, KeyEncoding.NONE),
+    PROJECT_CODE(CUSTOM, "project_code", "fundings.identifier", Operator.EQUALS, ".", null, null),
     PUBLISHED_BEFORE(NUMBER,"published_before","entityDescription.publicationDate.year",Operator.LESS_THAN),
     PUBLISHED_SINCE(NUMBER,"published_since","entityDescription.publicationDate.year",
-                    Operator.GREATER_THAN_OR_EQUAL_TO,null, null, KeyEncoding.NONE),
+                    Operator.GREATER_THAN_OR_EQUAL_TO),
     TITLE(STRING,"title","entityDescription.mainTitle"),
     UNIT(STRING,"unit","entityDescription.contributors.affiliation.id"),
     USER(STRING,"user", "resourceOwner.owner"),
@@ -69,15 +69,15 @@ public enum ResourceParameter implements IParameterKey {
     public static final Set<String> VALID_LUCENE_PARAMETER_KEYS =
         VALID_LUCENE_PARAMETERS.stream()
             .sorted()
-            .map(ResourceParameter::getKey)
+            .map(ResourceParameter::key)
             .collect(Collectors.toUnmodifiableSet());
 
-    private final String key;
-    private final String[] swsKeys;
-    private final String errorMessage;
-    private final String pattern;
-    private final KeyEncoding encode;
-    private final Operator operator;
+    private final String _key;
+    private final String[] _swsKeys;
+    private final String _errorMessage;
+    private final String _pattern;
+    private final KeyEncoding _encode;
+    private final Operator _operator;
 
     ResourceParameter(ParamKind kind, String key) {
         this(kind, key, null, Operator.EQUALS, null, null, null);
@@ -93,12 +93,12 @@ public enum ResourceParameter implements IParameterKey {
 
     ResourceParameter(ParamKind kind, String key, String swsKey, Operator operator, String pattern, String errorMessage,
                       KeyEncoding encode) {
-        this.key = key;
-        this.operator = operator;
-        this.swsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
-        this.pattern = getPattern(kind, pattern);
-        this.errorMessage = getErrorMessage(kind, errorMessage);
-        this.encode = getEncoding(kind, encode);
+        this._key = key;
+        this._operator = operator;
+        this._swsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
+        this._pattern = getPattern(kind, pattern);
+        this._errorMessage = getErrorMessage(kind, errorMessage);
+        this._encode = getEncoding(kind, encode);
     }
 
 
@@ -134,33 +134,33 @@ public enum ResourceParameter implements IParameterKey {
     }
 
     @Override
-    public Operator getOperator() {
-        return operator;
+    public Operator operator() {
+        return _operator;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String key() {
+        return _key;
     }
 
     @Override
-    public Collection<String> getSwsKey() {
-        return  Arrays.stream(swsKeys).toList();
+    public Collection<String> swsKey() {
+        return  Arrays.stream(_swsKeys).toList();
     }
 
     @Override
-    public String getPattern() {
-        return pattern;
+    public String pattern() {
+        return _pattern;
     }
 
     @Override
-    public String getErrorMessage() {
-        return errorMessage;
+    public String errorMessage() {
+        return _errorMessage;
     }
 
     @Override
     public KeyEncoding encoding() {
-        return encode;
+        return _encode;
     }
 
     @Override

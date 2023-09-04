@@ -7,15 +7,15 @@ import java.util.function.Predicate;
 
 public interface IParameterKey {
 
-    Operator getOperator();
+    Operator operator();
 
-    String getKey();
+    String key();
 
-    Collection<String> getSwsKey();
+    Collection<String> swsKey();
 
-    String getPattern();
+    String pattern();
 
-    String getErrorMessage();
+    String errorMessage();
 
     KeyEncoding encoding();
 
@@ -24,12 +24,12 @@ public interface IParameterKey {
             var encoded = f.encoding() == KeyEncoding.ENCODE_DECODE
                 ? URLDecoder.decode(value, StandardCharsets.UTF_8)
                 : value;
-            return encoded.matches(f.getPattern());
+            return encoded.matches(f.pattern());
         };
     }
 
     static Predicate<IParameterKey> equalTo(String name) {
-        return key -> name.equals(key.getKey());
+        return key -> name.equals(key.key());
     }
 
     enum KeyEncoding {
@@ -37,19 +37,26 @@ public interface IParameterKey {
     }
 
     enum ParamKind {
-        BOOLEAN,
-        DATE,
-        NUMBER,
-        RANGE,
-        STRING,
-        CUSTOM
+        BOOLEAN, DATE, NUMBER, RANGE, STRING, CUSTOM
     }
 
     enum Operator {
-        EQUALS,
-        GREATER_THAN,
-        GREATER_THAN_OR_EQUAL_TO,
-        LESS_THAN,
-        LESS_THAN_OR_EQUAL_TO,
+        EQUALS("%s:%s"),
+        GREATER_THAN("%s:>%s"),
+        GREATER_THAN_OR_EQUAL_TO("%s:>=%s"),
+        LESS_THAN("%s:<%s"),
+        LESS_THAN_OR_EQUAL_TO("%s:<=%s"),
+        ;
+
+        private final String format;
+
+        Operator(String format) {
+            this.format = format;
+        }
+
+        public String format() {
+            return format;
+        }
     }
+
 }

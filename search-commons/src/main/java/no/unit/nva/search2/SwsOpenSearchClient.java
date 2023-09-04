@@ -58,20 +58,20 @@ public class SwsOpenSearchClient {
     @NotNull
     private Function<HttpResponse<String>, GatewayResponse<PagedSearchResponseDto>>
         toOpenSearchResponse(URI requestUri) {
-            return response -> {
-                var openSearchResponseDto =
-                    attempt(() -> objectMapperNoEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
-                        .orElseThrow();
-                var statusCode = response.statusCode();
-                var headers =
-                    response.headers().map().entrySet().stream()
-                        .map(SwsOpenSearchClient::getStringEntry)
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                var pagedSearchResponseDto =
-                    openSearchResponseDto.toPagedSearchResponseDto(requestUri);
+        return response -> {
+            var openSearchResponseDto =
+                attempt(() -> objectMapperNoEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
+                    .orElseThrow();
+            var statusCode = response.statusCode();
+            var headers =
+                response.headers().map().entrySet().stream()
+                    .map(SwsOpenSearchClient::getStringEntry)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            var pagedSearchResponseDto =
+                openSearchResponseDto.toPagedSearchResponseDto(requestUri);
 
-                return new GatewayResponse<>(pagedSearchResponseDto, statusCode, headers);
-            };
+            return new GatewayResponse<>(pagedSearchResponseDto, statusCode, headers);
+        };
     }
 
     @NotNull

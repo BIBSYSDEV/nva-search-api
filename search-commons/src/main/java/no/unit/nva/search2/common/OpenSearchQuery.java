@@ -126,7 +126,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
     }
 
     protected String toQueryName(Entry<T, String> entry) {
-        return entry.getKey().getSwsKey().stream().findFirst().orElseThrow();
+        return entry.getKey().swsKey().stream().findFirst().orElseThrow();
     }
 
     protected String toQueryValue(Entry<T, String> entry) {
@@ -147,14 +147,9 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
 
     private String toLuceneParameter(Entry<T, String> entry) {
         return
-            entry.getKey().getSwsKey().stream()
-                .map(swsKey -> switch (entry.getKey().getOperator()) {
-                    case EQUALS -> "%s:%s".formatted(swsKey, entry.getValue());
-                    case GREATER_THAN -> "%s:>%s".formatted(swsKey, entry.getValue());
-                    case GREATER_THAN_OR_EQUAL_TO -> "%s:>=%s".formatted(swsKey, entry.getValue());
-                    case LESS_THAN -> "%s:<%s".formatted(swsKey, entry.getValue());
-                    case LESS_THAN_OR_EQUAL_TO -> "%s:<=%s".formatted(swsKey, entry.getValue());
-                }).collect(Collectors.joining("+OR+", "(", ")"));
+            entry.getKey().swsKey().stream()
+                .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
+                .collect(Collectors.joining("+OR+", "(", ")"));
     }
 
     private static String valueOrEmpty(String... strings) {
