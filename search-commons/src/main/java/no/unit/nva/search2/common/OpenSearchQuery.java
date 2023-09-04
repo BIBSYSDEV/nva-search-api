@@ -43,7 +43,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
     public URI toURI() {
         return
             new UriWrapper(HTTPS_SCHEME, API_HOST)
-                .addChild()
+                .addChild("_search")
                 .addQueryParameters(toLuceneParameter())
                 .addQueryParameters(toParameters())
                 .getUri();
@@ -69,9 +69,9 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      */
     public Map<String, String> toLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-                .map(this::doSearch)
+                .map(this::toLuceneParameter)
                 .collect(Collectors.joining("+AND+"));
-        return Map.of("query", query);
+        return Map.of("q", query);
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace("%20", "+");
     }
 
-    private String doSearch(Entry<T, String> entry) {
+    private String toLuceneParameter(Entry<T, String> entry) {
         return entry.getKey().getSwsKey().stream().map(swsKey -> switch (entry.getKey().getOperator()){
             case EQUALS -> "%s:%s".formatted(swsKey, entry.getValue());
             case GREATER_THAN -> "%s:>%s".formatted(swsKey, entry.getValue());

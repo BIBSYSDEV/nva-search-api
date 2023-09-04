@@ -127,8 +127,8 @@ class SwsOpenSearchClientTest {
     }
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/?name=hello+world&lang=en"),
-            URI.create("https://example.com/?q=hello+world&lang=en"),
-            URI.create("https://example.com/?q=hello+world&lang=en"));
+            URI.create("https://example.com/_search?q=name:hello+world&lang=en"),
+            URI.create("https://example.com/_search?q=name:hello+world&lang=en"),
+            URI.create("https://example.com/_search?q=name:hello+world&lang=en"));
     }
 }

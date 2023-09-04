@@ -53,10 +53,10 @@ public enum ResourceParameter implements IParameterKey {
                     Operator.GREATER_THAN_OR_EQUAL_TO),
     TITLE(STRING,"title","entityDescription.mainTitle"),
     UNIT(STRING,"unit","entityDescription.contributors.affiliation.id"),
-    QUERY(STRING,"q","query"),
+    QUERY(STRING,"query","q"),
     USER(STRING,"user", "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER,"year_reported","entityDescription.publicationDate.year"),
-    SEARCH_ALL(STRING,"query", ""),
+    SEARCH_ALL(STRING,"all", ""),
     LANG(CUSTOM, "lang", null, ".", "ignored", KeyEncoding.NONE, Operator.EQUALS);
 
     public static final int IGNORE_PATH_PARAMETER_INDEX = 0;
