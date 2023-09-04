@@ -37,7 +37,7 @@ public interface IParameterKey {
     }
 
     enum ParamKind {
-        BOOLEAN, DATE, NUMBER, RANGE, STRING, CUSTOM
+        DATE, NUMBER, STRING, CUSTOM
     }
 
     enum Operator {

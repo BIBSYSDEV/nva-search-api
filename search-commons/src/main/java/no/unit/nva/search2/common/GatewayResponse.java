@@ -16,8 +16,8 @@ public record GatewayResponse<T>(
     int statusCode,
     Map<String, String> headers) {
 
-    public static <T> GatewayResponse<T> of(InputStream inputStream) throws IOException {
-        var typeReference = new TypeReference<GatewayResponse<T>>() {
+    public static GatewayResponse<SwsOpenSearchResponse> of(InputStream inputStream) throws IOException {
+        var typeReference = new TypeReference<GatewayResponse<SwsOpenSearchResponse>>() {
         };
         return dtoObjectMapper.readValue(inputStream, typeReference);
     }

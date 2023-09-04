@@ -11,11 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
-import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_BOOLEAN;
 import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_RANGE;
 import static no.unit.nva.search2.common.IParameterKey.ParamKind.CUSTOM;
 import static no.unit.nva.search2.common.IParameterKey.ParamKind.DATE;
 import static no.unit.nva.search2.common.IParameterKey.ParamKind.NUMBER;
@@ -23,8 +21,6 @@ import static no.unit.nva.search2.common.IParameterKey.ParamKind.STRING;
 import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
 import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_FIELD_VALUE;
 import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
-import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
-import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
 
 public enum ResourceParameter implements IParameterKey {
     INVALID(STRING,null),
@@ -72,12 +68,12 @@ public enum ResourceParameter implements IParameterKey {
             .map(ResourceParameter::key)
             .collect(Collectors.toUnmodifiableSet());
 
-    private final String _key;
-    private final String[] _swsKeys;
-    private final String _errorMessage;
-    private final String _pattern;
-    private final KeyEncoding _encode;
-    private final Operator _operator;
+    private final String aKey;
+    private final String[] theSwsKeys;
+    private final String anErrorMessage;
+    private final String aPattern;
+    private final KeyEncoding anEncode;
+    private final Operator anOperator;
 
     ResourceParameter(ParamKind kind, String key) {
         this(kind, key, null, Operator.EQUALS, null, null, null);
@@ -93,19 +89,19 @@ public enum ResourceParameter implements IParameterKey {
 
     ResourceParameter(ParamKind kind, String key, String swsKey, Operator operator, String pattern, String errorMessage,
                       KeyEncoding encode) {
-        this._key = key;
-        this._operator = operator;
-        this._swsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
-        this._pattern = getPattern(kind, pattern);
-        this._errorMessage = getErrorMessage(kind, errorMessage);
-        this._encode = getEncoding(kind, encode);
+        this.aKey = key;
+        this.anOperator = operator;
+        this.theSwsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
+        this.aPattern = getPattern(kind, pattern);
+        this.anErrorMessage = getErrorMessage(kind, errorMessage);
+        this.anEncode = getEncoding(kind, encode);
     }
 
 
     @NotNull
     private static KeyEncoding getEncoding(ParamKind kind, KeyEncoding encode) {
         return switch (kind) {
-            case BOOLEAN, NUMBER, RANGE -> KeyEncoding.NONE;
+            case NUMBER -> KeyEncoding.NONE;
             case DATE, STRING -> KeyEncoding.ENCODE_DECODE;
             case CUSTOM -> nonNull(encode) ? encode : KeyEncoding.NONE;
         };
@@ -113,10 +109,10 @@ public enum ResourceParameter implements IParameterKey {
 
     private static String getErrorMessage(ParamKind kind, String errorMessage) {
         return switch (kind) {
-            case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
+            // case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
             case DATE -> ERROR_MESSAGE_INVALID_DATE;
             case NUMBER -> ERROR_MESSAGE_INVALID_NUMBER;
-            case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
+            // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case STRING -> ERROR_MESSAGE_INVALID_VALUE;
             case CUSTOM -> errorMessage;
         };
@@ -124,10 +120,10 @@ public enum ResourceParameter implements IParameterKey {
 
     private static String getPattern(ParamKind kind, String pattern) {
         return switch (kind) {
-            case BOOLEAN -> PATTERN_IS_BOOLEAN;
+            // case BOOLEAN -> PATTERN_IS_BOOLEAN;
             case DATE -> PATTERN_IS_DATE;
             case NUMBER -> PATTERN_IS_NUMBER;
-            case RANGE -> PATTERN_IS_RANGE;
+            // case RANGE -> PATTERN_IS_RANGE;
             case STRING -> PATTERN_IS_NON_EMPTY;
             case CUSTOM -> pattern;
         };
@@ -135,32 +131,32 @@ public enum ResourceParameter implements IParameterKey {
 
     @Override
     public Operator operator() {
-        return _operator;
+        return anOperator;
     }
 
     @Override
     public String key() {
-        return _key;
+        return aKey;
     }
 
     @Override
     public Collection<String> swsKey() {
-        return  Arrays.stream(_swsKeys).toList();
+        return  Arrays.stream(theSwsKeys).toList();
     }
 
     @Override
     public String pattern() {
-        return _pattern;
+        return aPattern;
     }
 
     @Override
     public String errorMessage() {
-        return _errorMessage;
+        return anErrorMessage;
     }
 
     @Override
     public KeyEncoding encoding() {
-        return _encode;
+        return anEncode;
     }
 
     @Override

@@ -145,15 +145,15 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace("%20", "+");
     }
 
+    private static String valueOrEmpty(String... strings) {
+        return attempt(() -> strings[1]).orElse((f) -> "");
+    }
+
     private String toLuceneParameter(Entry<T, String> entry) {
         return
             entry.getKey().swsKey().stream()
                 .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
                 .collect(Collectors.joining("+OR+", "(", ")"));
-    }
-
-    private static String valueOrEmpty(String... strings) {
-        return attempt(() -> strings[1]).orElse((f) -> "");
     }
 
 }

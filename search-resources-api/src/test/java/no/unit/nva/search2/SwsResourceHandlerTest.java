@@ -71,9 +71,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse =
-            GatewayResponse.of(outputStream);
-
+        var gatewayResponse = GatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
