@@ -2,6 +2,7 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constants.Defaults.HTTPS_SCHEME;
+import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -121,7 +122,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         return Arrays
             .stream(uri.getQuery().split("&"))
             .map(s -> s.split("="))
-            .collect(Collectors.toMap(strings -> strings[0], strings -> strings[1]));
+            .collect(Collectors.toMap(strings -> strings[0], OpenSearchQuery::valueOrEmpty));
     }
 
     protected String toQueryName(Entry<T, String> entry) {
@@ -155,4 +156,9 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
                     case LESS_THAN_OR_EQUAL_TO -> "%s:<=%s".formatted(swsKey, entry.getValue());
                 }).collect(Collectors.joining("+OR+", "(", ")"));
     }
+
+    private static String valueOrEmpty(String... strings) {
+        return attempt(() -> strings[1]).orElse((f) -> "");
+    }
+
 }

@@ -7,13 +7,14 @@ import no.unit.nva.search2.common.GatewayResponse;
 import no.unit.nva.search2.common.PagedSearchResponseDto;
 import no.unit.nva.search2.common.SwsOpenSearchResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.zalando.problem.Problem;
+//import org.zalando.problem.Problem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameter.QUERY;
+import static no.unit.nva.search2.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -173,7 +174,7 @@ class SwsResourceHandlerTest {
     void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
 
-        var queryParameters = Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "desc");
+        var queryParameters = Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "desc");
 
         var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(queryParameters)
                               .withRequestContext(getRequestContext())
@@ -196,7 +197,7 @@ class SwsResourceHandlerTest {
     void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
 
-        var queryParameters = Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "asc");
+        var queryParameters = Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM, SORT_ORDER.getKey(), "asc");
 
         var inputStream = new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(queryParameters)
                               .withRequestContext(getRequestContext())
@@ -242,12 +243,12 @@ class SwsResourceHandlerTest {
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-            Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
+            Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(QUERY.getKey(), "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
+                Map.of(SEARCH_ALL.getKey(), "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
@@ -257,7 +258,7 @@ class SwsResourceHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(QUERY.getKey(),
+                    Map.of(SEARCH_ALL.getKey(),
                            "(entityDescription.contributors.identity.id:12345)"
                            + "+AND+"
                            + "(entityDescription.contributors.identity.id:54321)"))
@@ -268,15 +269,15 @@ class SwsResourceHandlerTest {
 
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(QUERY.getKey(), SAMPLE_SEARCH_TERM))
+                Map.of(SEARCH_ALL.getKey(), SAMPLE_SEARCH_TERM))
                    .withHeaders(Map.of("Accept", contentType))
                    .withRequestContext(getRequestContext())
                    .build();
     }
 
     private ObjectNode getRequestContext() {
-        return objectMapperWithEmpty.convertValue(Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME),
-                                                  ObjectNode.class);
+        return objectMapperWithEmpty.convertValue(
+            Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
     }
 
 
@@ -302,8 +303,7 @@ class SwsResourceHandlerTest {
             .thenReturn(response);
     }
 
-    private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder)
-        throws IOException {
+    private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class)
                        .toPagedSearchResponseDto(getSearchURI());
@@ -318,7 +318,17 @@ class SwsResourceHandlerTest {
     }
 
     private URI getSearchURI() {
-        return URI.create("https://localhost/search?query=searchTerm");
+        var resourceParameters =
+            ResourceQuery.queryToMap(URI.create("https://localhost/search?query=searchTerm"));
+        try {
+            return
+                ResourceQuery.builder()
+                    .fromQueryParameters(resourceParameters)
+                    .withRequiredParameters(ResourceParameter.PAGE, ResourceParameter.PER_PAGE)
+                    .build().toURI();
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {

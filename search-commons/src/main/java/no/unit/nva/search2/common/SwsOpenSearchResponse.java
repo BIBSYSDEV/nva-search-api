@@ -3,7 +3,6 @@ package no.unit.nva.search2.common;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search2.common.SwsOpenSearchResponse.HitsInfo.Hit;
 
 import java.net.URI;
@@ -43,22 +42,6 @@ public record SwsOpenSearchResponse(
             JsonNode _source,
             Long[] sort) {
         }
-    }
-
-    @JsonIgnore
-    public  SearchResponseDto toSearchResponseDto(URI requestUri) {
-        var sourcesList =
-            hits().hits().stream()
-                .map(Hit::_source).toList();
-
-        return SearchResponseDto.builder()
-                   .withContext(DEFAULT_SEARCH_CONTEXT)
-                   .withId(requestUri)
-                   .withHits(sourcesList)
-                   .withSize(hits().total().value())
-                   .withProcessingTime(took())
-                   .withAggregations(extractAggregations(aggregations))
-                   .build();
     }
 
     @JsonIgnore

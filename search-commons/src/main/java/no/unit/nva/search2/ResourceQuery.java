@@ -53,7 +53,7 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
                 case CATEGORY,CONTRIBUTOR,
                          CREATED_BEFORE,CREATED_SINCE,
                          DOI,FUNDING,FUNDING_SOURCE,ID,
-                         INSTITUTION,ISSN, QUERY,
+                         INSTITUTION,ISSN,
                          MODIFIED_BEFORE,MODIFIED_SINCE,
                          PROJECT_CODE,PUBLISHED_BEFORE,
                          PUBLISHED_SINCE,TITLE,

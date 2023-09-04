@@ -59,16 +59,17 @@ class ResourceQueryTest {
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/?category=hello+world&page=0&user=123"),
-            URI.create("https://example.com/?published_before=2020&lang=en&user=123"),
-            URI.create("https://example.com/?published_since=2019&institution=uib&funding=NFR&user=123"));
+            URI.create("https://example.com/?category=hello+world&page=0&user=12%203"),
+            URI.create("https://example.com/?published_before=2020&lang=en&user=1%2023"),
+            URI.create("https://example.com/?published_since=2019&institution=uib&funding=NFR&user=Per%20Eplekjekk"));
     }
 
 
     static Stream<URI> invalidUriProvider() {
         return Stream.of(
             URI.create("https://example.com/?dcategory=hello+world&page=0"),
-            URI.create("https://example.com/?publishedbefore=202t0&lang=en"),
+            URI.create("https://example.com/?publishedbefore=202t0&lang=en&user="),
+            URI.create("https://example.com/?publishedbefore=202t0&lang=en&"),
             URI.create("https://example.com/?institutions=uib&funding=NFR&lang=en"));
     }
 }
