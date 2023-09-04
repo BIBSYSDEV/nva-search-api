@@ -9,6 +9,7 @@ import java.util.List;
 
 import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
+import static no.unit.nva.search2.constants.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 
 public record PagedSearchResponseDto (
     @JsonProperty("@context")URI context,
@@ -52,8 +53,4 @@ public record PagedSearchResponseDto (
             .getUri();
     }
 
-
-    private static final String PAGINATED_SEARCH_RESULT_CONTEXT
-        ="https://api.nva.unit.no/resources/search";
-//        = "https://bibsysdev.github.io/src/search/paginated-search-result.json";
 }

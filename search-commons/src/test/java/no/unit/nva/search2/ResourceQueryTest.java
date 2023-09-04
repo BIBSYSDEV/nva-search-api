@@ -11,6 +11,7 @@ import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ResourceQueryTest {
@@ -25,7 +26,9 @@ class ResourceQueryTest {
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(PAGE, PER_PAGE)
                 .build();
-        System.out.println(resourceParameters.toString());
+        assertNotNull(resourceParameters.getValue(ResourceParameter.PAGE));
+        assertNotNull(resourceParameters.getValue(ResourceParameter.USER));
+        System.out.println(resourceParameters);
         assertNotEquals(uri, resourceParameters.toURI());
     }
 
@@ -33,7 +36,6 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("invalidUriProvider")
     void buildUriFromInvalidUri(URI uri) {
-
         assertThrows(BadRequestException.class,
                      () -> ResourceQuery
                                .builder()
@@ -43,12 +45,23 @@ class ResourceQueryTest {
                                .toURI());
     }
 
+    @ParameterizedTest
+    @MethodSource("uriProvider")
+    void buildUriWithMissingUriParams(URI uri) {
+        assertThrows(BadRequestException.class,
+                     () -> ResourceQuery
+                               .builder()
+                               .fromQueryParameters(queryToMap(uri))
+                               .withRequiredParameters(PAGE, PER_PAGE, ResourceParameter.DOI)
+                               .build()
+                               .toURI());
+    }
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/?category=hello+world&page=0"),
-            URI.create("https://example.com/?published_before=2020&lang=en"),
-            URI.create("https://example.com/?institution=uib&funding=NFR&lang=en"));
+            URI.create("https://example.com/?category=hello+world&page=0&user=123"),
+            URI.create("https://example.com/?published_before=2020&lang=en&user=123"),
+            URI.create("https://example.com/?published_since=2019&institution=uib&funding=NFR&user=123"));
     }
 
 

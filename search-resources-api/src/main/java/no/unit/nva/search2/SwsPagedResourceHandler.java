@@ -9,7 +9,10 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
 
-import static no.unit.nva.search2.ResourceParameter.*;
+import static no.unit.nva.search2.ResourceParameter.PAGE;
+import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameter.SORT;
+import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.SwsOpenSearchClient.defaultSwsClient;
 
 public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, PagedSearchResponseDto> {

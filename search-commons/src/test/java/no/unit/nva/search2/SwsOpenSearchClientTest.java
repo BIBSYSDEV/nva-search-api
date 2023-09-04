@@ -1,7 +1,6 @@
 package no.unit.nva.search2;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
 import nva.commons.secrets.SecretsReader;
@@ -12,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.net.ssl.SSLSession;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -27,7 +25,9 @@ import java.util.stream.Stream;
 import static no.unit.nva.search2.SwsOpenSearchClient.prepareWithSecretReader;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,12 +39,11 @@ class SwsOpenSearchClientTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response_export.json";
 
-    private RawContentRetriever contentRetriever;
 
     @BeforeEach
-    public void setUp() throws JsonProcessingException {
-        contentRetriever = mock(RawContentRetriever.class);
-        var mockedResponse = MockedHttpResponse();
+    public void setUp() {
+        var contentRetriever = mock(RawContentRetriever.class);
+        var mockedResponse = mockedHttpResponse();
 
         // Use the mocked response in your test code
         when(contentRetriever.fetchResponse(any(URI.class), anyString()))
@@ -54,8 +53,8 @@ class SwsOpenSearchClientTest {
     }
 
     @NotNull
-    private HttpResponse<String> MockedHttpResponse() {
-        return new HttpResponse<String>() {
+    private HttpResponse<String> mockedHttpResponse() {
+        return new HttpResponse<>() {
             @Override
             public int statusCode() {
                 return 200;
@@ -74,7 +73,7 @@ class SwsOpenSearchClientTest {
             @Override
             public HttpHeaders headers() {
                 return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
-                    (s, s2) -> true);
+                                      (s, s2) -> true);
             }
 
             @Override
@@ -111,7 +110,7 @@ class SwsOpenSearchClientTest {
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchSingleTermReturnsPagedResponse(URI uri) throws IOException {
+    void searchSingleTermReturnsPagedResponse(URI uri) {
         var searchResponseDto =
             swsOpenSearchClient.doSearch(uri).body();
         assertNotNull(searchResponseDto);
@@ -119,16 +118,17 @@ class SwsOpenSearchClientTest {
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchSingleTermReturnsResponse(URI uri) throws IOException {
+    void searchSingleTermReturnsResponse(URI uri) {
         var searchResponseDto =
             swsOpenSearchClient.doSearch(uri);
 
         assertNotNull(searchResponseDto);
     }
+
     static Stream<URI> uriProvider() {
         return Stream.of(
             URI.create("https://example.com/_search?q=name:hello+world&lang=en"),
-            URI.create("https://example.com/_search?q=name:hello+world&lang=en"),
+            URI.create("https://example.com/_search?q=contributor:hello+world&lang=en"),
             URI.create("https://example.com/_search?q=name:hello+world&lang=en"));
     }
 }

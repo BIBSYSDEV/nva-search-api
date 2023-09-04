@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import no.unit.nva.search2.common.IParameterKey;
 import nva.commons.core.JacocoGenerated;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
 import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_BOOLEAN;
 import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_DATE;
@@ -80,11 +81,11 @@ public enum ResourceParameter implements IParameterKey {
     private final Operator operator;
 
     ResourceParameter(ParamKind kind, String key) {
-        this(kind, key, null, null, null, KeyEncoding.NONE, Operator.EQUALS);
+        this(kind, key, null, null, null, null, Operator.EQUALS);
     }
 
     ResourceParameter(ParamKind kind, String key, String swsKey) {
-        this(kind, key, swsKey, null, null, KeyEncoding.NONE, Operator.EQUALS);
+        this(kind, key, swsKey, null, null, null, Operator.EQUALS);
     }
 
     ResourceParameter(ParamKind kind, String key, String swsKey, String pattern, String errorMessage,
@@ -92,7 +93,11 @@ public enum ResourceParameter implements IParameterKey {
         this.key = key;
         this.operator = operator;
         this.swsKeys = (swsKey != null) ? swsKey.split("\\|") : new String[]{key};
-        this.encode = encode;
+        this.encode = switch (kind) {
+            case BOOLEAN, NUMBER, RANGE -> KeyEncoding.NONE;
+            case DATE, STRING -> KeyEncoding.ENCODE_DECODE;
+            case CUSTOM -> nonNull(encode) ? encode : KeyEncoding.NONE;
+        };
         this.pattern = switch (kind) {
             case BOOLEAN -> PATTERN_IS_BOOLEAN;
             case DATE -> PATTERN_IS_DATE;

@@ -1,5 +1,7 @@
 package no.unit.nva.search2;
 
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
@@ -54,21 +56,27 @@ public class SwsOpenSearchClient {
     }
 
     @NotNull
-    private Function<HttpResponse<String>, GatewayResponse<PagedSearchResponseDto>> toOpenSearchResponse(URI requestUri) {
-        return response -> {
-            var openSearchResponseDto =
-                attempt(() -> objectMapperNoEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
-                    .orElseThrow();
-            var statusCode = response.statusCode();
-            var headers =
-                response.headers().map().entrySet().stream()
-                    .map(entry -> Map.entry(entry.getKey(), String.join(";", entry.getValue())))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            var pagedSearchResponseDto =
-                openSearchResponseDto.toPagedSearchResponseDto(requestUri);
+    private Function<HttpResponse<String>, GatewayResponse<PagedSearchResponseDto>>
+        toOpenSearchResponse(URI requestUri) {
+            return response -> {
+                var openSearchResponseDto =
+                    attempt(() -> objectMapperNoEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
+                        .orElseThrow();
+                var statusCode = response.statusCode();
+                var headers =
+                    response.headers().map().entrySet().stream()
+                        .map(SwsOpenSearchClient::getStringEntry)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                var pagedSearchResponseDto =
+                    openSearchResponseDto.toPagedSearchResponseDto(requestUri);
 
-            return new GatewayResponse<>(pagedSearchResponseDto, statusCode, headers);
-        };
+                return new GatewayResponse<>(pagedSearchResponseDto, statusCode, headers);
+            };
+    }
+
+    @NotNull
+    private static Map.Entry<String, String> getStringEntry(Entry<String, List<String>> entry) {
+        return Map.entry(entry.getKey(), String.join(";", entry.getValue()));
     }
 
     protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {

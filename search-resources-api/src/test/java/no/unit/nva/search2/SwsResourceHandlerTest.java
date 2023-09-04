@@ -125,13 +125,13 @@ class SwsResourceHandlerTest {
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
         var gatewayResponse = GatewayResponse.of(outputStream);
-        var actualBody = gatewayResponse.body();
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
-        
+        var actualBody = gatewayResponse.body();
+
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertThat(gatewayResponse.body(), is(equalTo(expected)));
+        assertThat(actualBody, is(equalTo(expected)));
         assertNotNull(actualBody.aggregations());
         assertNotNull(actualBody.aggregations().get("Bidragsyter"));
     }
@@ -296,7 +296,7 @@ class SwsResourceHandlerTest {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class)
                        .toPagedSearchResponseDto(getSearchURI());
-        var response = new GatewayResponse<>(body, HTTP_OK, Map.of( "Content-Type", "application/json"));
+        var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response);
@@ -307,7 +307,7 @@ class SwsResourceHandlerTest {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class)
                        .toPagedSearchResponseDto(getSearchURI());
-        var response = new GatewayResponse<>(body, HTTP_OK, Map.of( "Content-Type", "application/json"));
+        var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(response);
