@@ -3,10 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   NVA Search Resources API and Handler
 
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 60
     MemorySize: 1800
+    Runtime: java17
+    Architectures:
+      - arm64
     Environment:
       Variables:
         SEARCH_INFRASTRUCTURE_API_URI: !Ref SearchInfrastructureApiUri
