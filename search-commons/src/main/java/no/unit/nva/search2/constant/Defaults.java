@@ -1,4 +1,4 @@
-package no.unit.nva.search2.constants;
+package no.unit.nva.search2.constant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;

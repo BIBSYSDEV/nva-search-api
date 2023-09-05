@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

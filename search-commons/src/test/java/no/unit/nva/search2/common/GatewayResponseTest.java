@@ -3,6 +3,7 @@ package no.unit.nva.search2.common;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
+import no.unit.nva.search2.model.GatewayResponse;
 import org.junit.jupiter.api.Test;
 
 class GatewayResponseTest {

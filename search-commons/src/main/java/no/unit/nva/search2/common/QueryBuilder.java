@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import no.unit.nva.search2.model.IParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.slf4j.Logger;
@@ -13,9 +14,9 @@ import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.ResourceParameter.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.constants.ErrorMessages.invalidQueryParametersMessage;
-import static no.unit.nva.search2.constants.ErrorMessages.requiredMissingMessage;
-import static no.unit.nva.search2.constants.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
+import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
 public abstract class QueryBuilder<T extends Enum<T> & IParameterKey> {

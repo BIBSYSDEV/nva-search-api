@@ -1,7 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constants.Defaults.HTTPS_SCHEME;
+import static no.unit.nva.search2.constant.Defaults.HTTPS_SCHEME;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import no.unit.nva.search2.SwsOpenSearchClient;
+import no.unit.nva.search2.model.IParameterKey;
+import no.unit.nva.search2.model.PagedSearchResponseDto;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.paths.UriWrapper;

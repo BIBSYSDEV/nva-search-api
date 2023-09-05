@@ -3,15 +3,12 @@ package no.unit.nva.search2;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
-import no.unit.nva.search2.common.GatewayResponse;
-import no.unit.nva.search2.common.PagedSearchResponseDto;
-import no.unit.nva.search2.common.SwsOpenSearchResponse;
+import no.unit.nva.search2.model.GatewayResponse;
+import no.unit.nva.search2.model.PagedSearchResponseDto;
+import no.unit.nva.search2.model.SwsOpenSearchResponse;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
@@ -19,9 +16,9 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.function.Function;
 
-import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
-import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperNoEmpty;
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
 import static nva.commons.core.attempt.Try.attempt;
 
 public class SwsOpenSearchClient {
@@ -36,14 +33,8 @@ public class SwsOpenSearchClient {
 
     @JacocoGenerated
     public static SwsOpenSearchClient defaultSwsClient() {
-        return prepareWithSecretReader(new SecretsReader());
-    }
-
-    public static SwsOpenSearchClient prepareWithSecretReader(SecretsReader secretReader) {
-        var cognito = createCognitoCredentials(secretReader);
-        var retriver = new AuthorizedBackendUriRetriever(
-            cognito.getCognitoOAuthServerUri().toString(),
-            cognito.getCognitoAppClientId());
+        var uri = URI.create(readSearchInfrastructureAuthUri()).toString();
+        var retriver = new AuthorizedBackendUriRetriever(uri,SEARCH_INFRASTRUCTURE_CREDENTIALS);
 
         return new SwsOpenSearchClient(retriver, "application/json");
     }
@@ -60,12 +51,12 @@ public class SwsOpenSearchClient {
         toOpenSearchResponse(URI requestUri) {
         return response -> {
             var openSearchResponseDto =
-                attempt(() -> objectMapperNoEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
+                attempt(() -> objectMapperWithEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
                     .orElseThrow();
             var statusCode = response.statusCode();
             var headers =
                 response.headers().map().entrySet().stream()
-                    .map(SwsOpenSearchClient::getStringEntry)
+                    .map(SwsOpenSearchClient::mapListToString)
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             var pagedSearchResponseDto =
                 openSearchResponseDto.toPagedSearchResponseDto(requestUri);
@@ -75,15 +66,8 @@ public class SwsOpenSearchClient {
     }
 
     @NotNull
-    private static Map.Entry<String, String> getStringEntry(Entry<String, List<String>> entry) {
+    private static Map.Entry<String, String> mapListToString(Entry<String, List<String>> entry) {
         return Map.entry(entry.getKey(), String.join(";", entry.getValue()));
     }
 
-    protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
-        var credentials
-            = secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class);
-        var uri = URI.create(SEARCH_INFRASTRUCTURE_AUTH_URI);
-
-        return new CognitoCredentials(credentials::getUsername, credentials::getPassword, uri);
-    }
 }
