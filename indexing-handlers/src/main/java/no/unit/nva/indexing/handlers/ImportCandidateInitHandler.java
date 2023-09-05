@@ -20,9 +20,9 @@ public class ImportCandidateInitHandler implements RequestHandler<Object, String
 
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED. See logs";
-    public static final String RESOURCES_MAPPING_JSON = "resources_mapping.json";
+    public static final String IMPORT_CANDIDATES_MAPPING_JSON = "import_candidates_mappings.json";
     private static final String IMPORT_CANDIDATE_MAPPINGS =
-            IoUtils.stringFromResources(Path.of(RESOURCES_MAPPING_JSON));
+            IoUtils.stringFromResources(Path.of(IMPORT_CANDIDATES_MAPPING_JSON));
     private static final IndexRequest INDEX = new IndexRequest(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPINGS);
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
     private final IndexingClient indexingClient;

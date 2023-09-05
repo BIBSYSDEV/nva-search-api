@@ -188,7 +188,7 @@ Resources:
       Description: Lambda for searching Tickets
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchTicketsHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -215,7 +215,7 @@ Resources:
       Description: Lambda for searching Resources
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchResourcesApiHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -240,7 +240,7 @@ Resources:
     Properties:
       CodeUri: search-resources-api
       Handler: no.unit.nva.search.SearchImportCandidatesApiHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
@@ -387,7 +387,7 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.IndexResourceHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -415,7 +415,7 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.IndexImportCandidateHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -443,7 +443,7 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteResourceFromIndexHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -468,7 +468,7 @@ Resources:
     Properties:
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateFromIndexHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       ReservedConcurrentExecutions: 32
       Role: !GetAtt TriggerExecutionRole.Arn
       MemorySize: 1408
@@ -494,7 +494,7 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.EventBasedBatchIndexer::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 10240
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -516,7 +516,7 @@ Resources:
     Properties:
       CodeUri: batch-index
       Handler: no.unit.nva.search.StartBatchIndexingHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
@@ -540,7 +540,7 @@ Resources:
       Description: Lambda that creates all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.InitHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
@@ -550,7 +550,7 @@ Resources:
       Description: Lambda that creates importCandidates index. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.ImportCandidateInitHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
@@ -560,7 +560,7 @@ Resources:
       Description: Lambda that deletes all indices. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteIndicesHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
 
@@ -570,6 +570,6 @@ Resources:
       Description: Lambda that deletes import candidates index. Needs to be run manually from Test
       CodeUri: indexing-handlers
       Handler: no.unit.nva.indexing.handlers.DeleteImportCandidateIndexHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
