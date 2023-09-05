@@ -2,7 +2,7 @@
 junit = { strictly = '5.9.3' }
 jackson = { strictly = '2.15.2' }
 awsSdk2 = { strictly = '2.20.102' }
-nvaCommons = { strictly = '1.30.5' }
+nvaCommons = { strictly = '1.31.9' }
 opensearch = { strictly = '2.3.0' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
 
