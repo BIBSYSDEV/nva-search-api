@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
-import static no.unit.nva.search2.constants.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 
 public record PagedSearchResponseDto (
     @JsonProperty("@context")URI context,

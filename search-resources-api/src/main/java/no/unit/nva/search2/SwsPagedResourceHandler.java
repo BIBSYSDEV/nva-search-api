@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.nva.search2.common.PagedSearchResponseDto;
+import no.unit.nva.search2.model.PagedSearchResponseDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;

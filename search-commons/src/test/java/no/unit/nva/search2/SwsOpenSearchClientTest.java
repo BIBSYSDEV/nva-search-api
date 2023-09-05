@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static no.unit.nva.search2.SwsOpenSearchClient.prepareWithSecretReader;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -100,11 +99,8 @@ class SwsOpenSearchClientTest {
 
     @Test
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
-        var secretsReaderMock = mock(SecretsReader.class);
-        var testCredentials = new UsernamePasswordWrapper("user", "password");
-        when(secretsReaderMock.fetchClassSecret(anyString(), eq(UsernamePasswordWrapper.class)))
-            .thenReturn(testCredentials);
-        var swsOpenSearchClient = prepareWithSecretReader(secretsReaderMock);
+        var secretsReaderMock = mock(RawContentRetriever.class);
+        var swsOpenSearchClient =  new SwsOpenSearchClient(secretsReaderMock, MEDIA_TYPE);
         assertNotNull(swsOpenSearchClient);
     }
 

@@ -1,4 +1,4 @@
-package no.unit.nva.search2.constants;
+package no.unit.nva.search2.constant;
 
 import java.util.Set;
 import java.util.stream.Collectors;

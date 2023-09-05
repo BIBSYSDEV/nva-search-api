@@ -1,15 +1,15 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search2.common.SwsOpenSearchResponse.HitsInfo.Hit;
+import no.unit.nva.search2.model.SwsOpenSearchResponse.HitsInfo.Hit;
 
 import java.net.URI;
 import java.util.List;
 
 import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
-import static no.unit.nva.search2.constants.Defaults.DEFAULT_SEARCH_CONTEXT;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_SEARCH_CONTEXT;
 
 public record SwsOpenSearchResponse(
     int took,

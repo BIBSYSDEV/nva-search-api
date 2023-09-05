@@ -5,22 +5,22 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.common.IParameterKey;
+import no.unit.nva.search2.model.IParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
-import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_DATE;
-import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_NON_EMPTY;
-import static no.unit.nva.search2.constants.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search2.common.IParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.common.IParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.common.IParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.common.IParameterKey.ParamKind.STRING;
-import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
-import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_FIELD_VALUE;
-import static no.unit.nva.search2.constants.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
+import static no.unit.nva.search2.model.IParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.IParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.IParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.IParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_FIELD_VALUE;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
 
 public enum ResourceParameter implements IParameterKey {
     INVALID(STRING,null),
