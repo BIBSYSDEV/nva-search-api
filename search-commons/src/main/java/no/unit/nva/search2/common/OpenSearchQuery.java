@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -122,8 +123,12 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
 
 
     public static Map<String, String> queryToMap(URI uri) {
+        String query = uri.getQuery();
+        if (query == null) {
+            return Collections.emptyMap();
+        }
         return Arrays
-            .stream(uri.getQuery().split("&"))
+            .stream(query.split("&"))
             .map(s -> s.split("="))
             .collect(Collectors.toMap(strings -> strings[0], OpenSearchQuery::valueOrEmpty));
     }
