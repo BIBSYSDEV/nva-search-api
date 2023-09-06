@@ -21,6 +21,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRU
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
 import static nva.commons.core.attempt.Try.attempt;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 public class SwsOpenSearchClient {
 
@@ -36,9 +37,9 @@ public class SwsOpenSearchClient {
     @JacocoGenerated
     public static SwsOpenSearchClient defaultSwsClient() {
         var uri = URI.create(readSearchInfrastructureAuthUri()).toString();
-        var retriver = new AuthorizedBackendUriRetriever(uri,SEARCH_INFRASTRUCTURE_CREDENTIALS);
+        var retriever = new AuthorizedBackendUriRetriever(uri,SEARCH_INFRASTRUCTURE_CREDENTIALS);
 
-        return new SwsOpenSearchClient(retriver, "application/json");
+        return new SwsOpenSearchClient(retriever, APPLICATION_JSON.toString());
     }
 
     protected GatewayResponse<SwsOpenSearchResponse> doSearch(URI requestUri) {
@@ -55,7 +56,7 @@ public class SwsOpenSearchClient {
         return response -> {
             var openSearchResponseDto = attempt(
                 () -> objectMapperWithEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
-                    .orElseThrow();
+                .orElseThrow();
             var statusCode = response.statusCode();
             var headers =
                 response.headers().map().entrySet().stream()

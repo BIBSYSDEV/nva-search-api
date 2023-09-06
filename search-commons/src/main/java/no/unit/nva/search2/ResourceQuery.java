@@ -69,28 +69,6 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearch
             .getUri();
     }
 
-//    private Integer getSize() {
-//        return nonNull(hits)
-//                   ? hits.total.value
-//                   : 0;
-//    }
-//
-//    private List<JsonNode> getHits() {
-//        return nonNull(hits)
-//                   ? hits.hits()
-//                         .stream()
-//                         .map(Hit::_source)
-//                         .toList()
-//                   : List.of();
-//    }
-//
-//    private JsonNode getAggregations() {
-//        return nonNull(aggregations)
-//                   ? formatAggregations(aggregations)
-//                   : null;
-//    }
-
-
     public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, PagedSearchResponseDto> {
 
         public ResourceQueryBuilder() {
