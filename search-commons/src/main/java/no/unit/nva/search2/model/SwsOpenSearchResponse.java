@@ -1,6 +1,5 @@
 package no.unit.nva.search2.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.search2.model.SwsOpenSearchResponse.HitsInfo.Hit;
@@ -52,8 +51,7 @@ public record SwsOpenSearchResponse(
 
     @NotNull
     @Transient
-    @JsonIgnore
-    public Integer getSize() {
+    public Integer getTotalSize() {
         return nonNull(hits)
                    ? hits.total.value
                    : 0;
@@ -61,8 +59,7 @@ public record SwsOpenSearchResponse(
 
     @NotNull
     @Transient
-    @JsonIgnore
-    public List<JsonNode> getHits() {
+    public List<JsonNode> getSearchHits() {
         return nonNull(hits)
                    ? hits.hits()
                          .stream()
@@ -72,8 +69,7 @@ public record SwsOpenSearchResponse(
     }
 
     @Transient
-    @JsonIgnore
-    public JsonNode getAggregations() {
+    public JsonNode getAggregationsStructured() {
         return nonNull(aggregations)
                    ? formatAggregations(aggregations)
                    : null;

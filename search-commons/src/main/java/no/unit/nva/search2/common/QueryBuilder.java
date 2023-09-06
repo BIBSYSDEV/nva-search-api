@@ -6,7 +6,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +26,6 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
     protected final transient OpenSearchQuery<T, U> query;
     protected transient boolean notValidated = true;
-    protected transient URI gatewayUri;
 
     /**
      * Constructor of CristinQuery.Builder.
@@ -79,7 +77,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
      * Adds query and path parameters from requestInfo.
      */
     public final QueryBuilder<T, U> fromRequestInfo(RequestInfo requestInfo) {
-        gatewayUri = requestInfo.getRequestUri();
+        query.gatewayUri = requestInfo.getRequestUri();
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
 
