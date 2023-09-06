@@ -2,8 +2,6 @@ package no.unit.nva.search2;
 
 
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
-import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +24,6 @@ import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +33,7 @@ class SwsOpenSearchClientTest {
     private static final String MEDIA_TYPE = "application/json";
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
-        = "sample_opensearch_response_export.json";
+        = "sample_opensearch_response.json";
 
 
     @BeforeEach

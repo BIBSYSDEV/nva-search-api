@@ -280,8 +280,6 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
-//                       .toPagedSearchResponseDto(getSearchURI());
-
         var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))
@@ -292,7 +290,6 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
-//                       .toPagedSearchResponseDto(getSearchURI());
         var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))
@@ -302,7 +299,6 @@ class SwsResourceHandlerTest {
     private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
-//                       .toPagedSearchResponseDto(getSearchURI());
         var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))

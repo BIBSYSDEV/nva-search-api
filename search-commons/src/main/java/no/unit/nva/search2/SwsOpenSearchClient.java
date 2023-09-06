@@ -9,6 +9,8 @@ import no.unit.nva.search2.model.GatewayResponse;
 import no.unit.nva.search2.model.SwsOpenSearchResponse;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpResponse;
@@ -22,6 +24,7 @@ import static nva.commons.core.attempt.Try.attempt;
 
 public class SwsOpenSearchClient {
 
+    private static final Logger logger = LoggerFactory.getLogger(SwsOpenSearchClient.class);
     private final RawContentRetriever contentRetriever;
     private final String mediaType;
 
@@ -39,6 +42,7 @@ public class SwsOpenSearchClient {
     }
 
     protected GatewayResponse<SwsOpenSearchResponse> doSearch(URI requestUri) {
+        logger.info("Requesting search from {}", requestUri);
         return
             contentRetriever.fetchResponse(requestUri, mediaType)
                 .map(toOpenSearchResponse())
@@ -49,8 +53,8 @@ public class SwsOpenSearchClient {
     private Function<HttpResponse<String>, GatewayResponse<SwsOpenSearchResponse>>
         toOpenSearchResponse() {
         return response -> {
-            var openSearchResponseDto =
-                attempt(() -> objectMapperWithEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
+            var openSearchResponseDto = attempt(
+                () -> objectMapperWithEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
                     .orElseThrow();
             var statusCode = response.statusCode();
             var headers =
