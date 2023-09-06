@@ -5,15 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.search2.model.SwsOpenSearchResponse.HitsInfo.Hit;
 
-import java.net.URI;
+import java.beans.Transient;
 import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_SEARCH_CONTEXT;
-import static no.unit.nva.search2.model.PagedSearchResponseDto.nextResults;
-import static no.unit.nva.search2.model.PagedSearchResponseDto.previousResults;
 
 public record SwsOpenSearchResponse(
     int took,
@@ -34,7 +32,6 @@ public record SwsOpenSearchResponse(
         TotalInfo total,
         double max_score,
         List<Hit> hits) {
-
         public record TotalInfo(
             int value,
             String relation) {
@@ -53,29 +50,19 @@ public record SwsOpenSearchResponse(
         }
     }
 
-    @JsonIgnore
-    public PagedSearchResponseDto toPagedSearchResponseDto(URI requestUri) {
-
-        return new PagedSearchResponseDto(
-            DEFAULT_SEARCH_CONTEXT,
-            requestUri,
-            nextResults(requestUri),
-            previousResults(requestUri),
-            took(),
-            getSize(),
-            getHits(),
-            getAggregations());
-    }
-
     @NotNull
-    private Integer getSize() {
+    @Transient
+    @JsonIgnore
+    public Integer getSize() {
         return nonNull(hits)
-                   ? hits.hits().size()
+                   ? hits.total.value
                    : 0;
     }
 
     @NotNull
-    private List<JsonNode> getHits() {
+    @Transient
+    @JsonIgnore
+    public List<JsonNode> getHits() {
         return nonNull(hits)
                    ? hits.hits()
                          .stream()
@@ -84,7 +71,9 @@ public record SwsOpenSearchResponse(
                    : List.of();
     }
 
-    private JsonNode getAggregations() {
+    @Transient
+    @JsonIgnore
+    public JsonNode getAggregations() {
         return nonNull(aggregations)
                    ? formatAggregations(aggregations)
                    : null;

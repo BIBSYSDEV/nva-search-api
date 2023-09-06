@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
 import no.unit.nva.search2.model.GatewayResponse;
-import no.unit.nva.search2.model.PagedSearchResponseDto;
 import no.unit.nva.search2.model.SwsOpenSearchResponse;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
@@ -39,16 +38,16 @@ public class SwsOpenSearchClient {
         return new SwsOpenSearchClient(retriver, "application/json");
     }
 
-    protected GatewayResponse<PagedSearchResponseDto> doSearch(URI requestUri) {
+    protected GatewayResponse<SwsOpenSearchResponse> doSearch(URI requestUri) {
         return
             contentRetriever.fetchResponse(requestUri, mediaType)
-                .map(toOpenSearchResponse(requestUri))
+                .map(toOpenSearchResponse())
                 .orElseThrow();
     }
 
     @NotNull
-    private Function<HttpResponse<String>, GatewayResponse<PagedSearchResponseDto>>
-        toOpenSearchResponse(URI requestUri) {
+    private Function<HttpResponse<String>, GatewayResponse<SwsOpenSearchResponse>>
+        toOpenSearchResponse() {
         return response -> {
             var openSearchResponseDto =
                 attempt(() -> objectMapperWithEmpty.readValue(response.body(), SwsOpenSearchResponse.class))
@@ -58,10 +57,8 @@ public class SwsOpenSearchClient {
                 response.headers().map().entrySet().stream()
                     .map(SwsOpenSearchClient::mapListToString)
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            var pagedSearchResponseDto =
-                openSearchResponseDto.toPagedSearchResponseDto(requestUri);
 
-            return new GatewayResponse<>(pagedSearchResponseDto, statusCode, headers);
+            return new GatewayResponse<>(openSearchResponseDto, statusCode, headers);
         };
     }
 

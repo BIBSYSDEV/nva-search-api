@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import no.unit.nva.search2.SwsOpenSearchClient;
 import no.unit.nva.search2.model.IParameterKey;
-import no.unit.nva.search2.model.PagedSearchResponseDto;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.paths.UriWrapper;
@@ -26,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({"PMD.Unused", "PMD.LooseCoupling", "PMD.LineLength"})
-public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
+public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
     // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
 
@@ -34,6 +33,8 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
     protected final transient Map<T, String> queryParameters;
     protected final transient Map<T, String> luceneParameters;
     protected final transient Set<T> otherRequiredKeys;
+    protected transient URI gatewayUri;
+
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -47,7 +48,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
      *
      * @return an URI to NVA (default) Projects with parameters.
      */
-    public URI toURI() {
+    public URI openSearchUri() {
         return
             new UriWrapper(HTTPS_SCHEME, API_HOST)
                 .addChild("_search")
@@ -117,7 +118,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey> {
         }
     }
 
-    public abstract PagedSearchResponseDto doSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+    public abstract U doSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
 
 
     public static Map<String, String> queryToMap(URI uri) {

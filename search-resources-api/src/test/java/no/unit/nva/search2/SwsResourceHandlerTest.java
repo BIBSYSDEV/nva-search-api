@@ -7,7 +7,6 @@ import no.unit.nva.search2.model.GatewayResponse;
 import no.unit.nva.search2.model.PagedSearchResponseDto;
 import no.unit.nva.search2.model.SwsOpenSearchResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -19,7 +18,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -281,8 +279,8 @@ class SwsResourceHandlerTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class)
-                       .toPagedSearchResponseDto(getSearchURI());
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
+//                       .toPagedSearchResponseDto(getSearchURI());
 
         var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
@@ -293,8 +291,8 @@ class SwsResourceHandlerTest {
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class)
-                       .toPagedSearchResponseDto(getSearchURI());
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
+//                       .toPagedSearchResponseDto(getSearchURI());
         var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))
@@ -303,8 +301,8 @@ class SwsResourceHandlerTest {
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class)
-                       .toPagedSearchResponseDto(getSearchURI());
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
+//                       .toPagedSearchResponseDto(getSearchURI());
         var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
 
         when(mockedSearchClient.doSearch(any()))
@@ -313,20 +311,6 @@ class SwsResourceHandlerTest {
 
     private PagedSearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {
         return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResponseDto.class);
-    }
-
-    private URI getSearchURI() {
-        var resourceParameters =
-            ResourceQuery.queryToMap(URI.create("https://localhost/search?query=searchTerm"));
-        try {
-            return
-                ResourceQuery.builder()
-                    .fromQueryParameters(resourceParameters)
-                    .withRequiredParameters(ResourceParameter.PAGE, ResourceParameter.PER_PAGE)
-                    .build().toURI();
-        } catch (BadRequestException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {

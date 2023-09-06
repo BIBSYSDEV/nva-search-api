@@ -28,8 +28,8 @@ class ResourceQueryTest {
                 .build();
         assertNotNull(resourceParameters.getValue(ResourceParameter.PAGE));
         assertNotNull(resourceParameters.getValue(ResourceParameter.USER));
-        System.out.println(resourceParameters.toURI());
-        assertNotEquals(uri, resourceParameters.toURI());
+        System.out.println(resourceParameters.openSearchUri());
+        assertNotEquals(uri, resourceParameters.openSearchUri());
     }
 
 
@@ -42,7 +42,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(PAGE, PER_PAGE)
                                .build()
-                               .toURI());
+                               .openSearchUri());
     }
 
     @ParameterizedTest
@@ -54,7 +54,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(PAGE, PER_PAGE, ResourceParameter.DOI)
                                .build()
-                               .toURI());
+                               .openSearchUri());
     }
 
     static Stream<URI> uriProvider() {

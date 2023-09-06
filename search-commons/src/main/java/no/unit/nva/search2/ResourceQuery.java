@@ -1,16 +1,20 @@
 package no.unit.nva.search2;
 
 
+import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PAGE;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.constant.Defaults.*;
+
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.model.PagedSearchResponseDto;
 import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.model.SwsOpenSearchResponse;
+import nva.commons.core.paths.UriWrapper;
 
-public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
+import java.net.URI;
+import java.util.stream.Stream;
+
+public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearchResponseDto> {
 
     public static ResourceQueryBuilder builder() {
         return new ResourceQueryBuilder();
@@ -19,12 +23,52 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter> {
 
     @Override
     public PagedSearchResponseDto doSearch(SwsOpenSearchClient queryClient) {
-        var requestUri = this.toURI();
-        return queryClient.doSearch(requestUri).body();
+        return
+            Stream.of(queryClient.doSearch(openSearchUri()).body())
+                .map(this::toPagedSearchResponseDto)
+                .findFirst().orElseThrow();
     }
 
+    private PagedSearchResponseDto toPagedSearchResponseDto(SwsOpenSearchResponse response) {
+        return new PagedSearchResponseDto(
+            DEFAULT_SEARCH_CONTEXT,
+            gatewayUri,
+            nextResults(gatewayUri),
+            previousResults(gatewayUri),
+            response.took(),
+            response.getSize(),
+            response.getHits(),
+            response.getAggregations());
+    }
 
-    public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter> {
+    private URI nextResults(URI id) {
+        var params = queryToMap(id);
+        if (!params.containsKey(PAGE.key())) {
+            return null;
+        }
+        var page = Integer.parseInt(params.get(PAGE.key()));
+        params.put(PAGE.key(), String.valueOf(++page));
+        return UriWrapper.fromUri(id)
+            .addQueryParameters(params)
+            .getUri();
+    }
+
+    private URI previousResults(URI id) {
+        var params = queryToMap(id);
+        if (!params.containsKey(PAGE.key())) {
+            return null;
+        }
+        var page = Integer.parseInt(params.get(PAGE.key()));
+        if (page <= 0) {
+            return null;
+        }
+        params.put(PAGE.key(), String.valueOf(--page));
+        return UriWrapper.fromUri(id)
+            .addQueryParameters(params)
+            .getUri();
+    }
+
+    public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, PagedSearchResponseDto> {
 
         public ResourceQueryBuilder() {
             super(new ResourceQuery());
