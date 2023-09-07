@@ -244,7 +244,7 @@ class SwsResourceHandlerTest {
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity" + ".id:12345&results=10&from=0"))
+                Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity.id:12345&results=10&from=0"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
@@ -255,9 +255,9 @@ class SwsResourceHandlerTest {
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
                     Map.of(SEARCH_ALL.key(),
-                           "(entityDescription.contributors.identity.id:12345)"
-                           + "+AND+"
-                           + "(entityDescription.contributors.identity.id:54321)"))
+                           "((entityDescription.contributors.identity.id:12345)"
+                           + "+OR+"
+                           + "(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
                 .withUserName(randomString())
                 .build();

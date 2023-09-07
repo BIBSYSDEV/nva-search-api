@@ -15,6 +15,8 @@ public interface IParameterKey {
 
     String pattern();
 
+    String keyPattern();
+
     String errorMessage();
 
     KeyEncoding encoding();
@@ -29,7 +31,7 @@ public interface IParameterKey {
     }
 
     static Predicate<IParameterKey> equalTo(String name) {
-        return key -> name.equals(key.key());
+        return key -> name.matches(key.keyPattern());
     }
 
     enum KeyEncoding {
@@ -37,10 +39,11 @@ public interface IParameterKey {
     }
 
     enum ParamKind {
-        DATE, NUMBER, STRING, CUSTOM
+        DATE, SHORT_DATE, NUMBER, STRING, CUSTOM
     }
 
     enum Operator {
+        NONE("%s%s"),
         EQUALS("%s:%s"),
         GREATER_THAN("%s:>%s"),
         GREATER_THAN_OR_EQUAL_TO("%s:>=%s"),
