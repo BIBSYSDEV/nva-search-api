@@ -68,6 +68,18 @@ public record SwsOpenSearchResponse(
                    : List.of();
     }
 
+    @NotNull
+    @Transient
+    public List<List<Long>> getSort() {
+        return nonNull(hits)
+                   ? hits.hits()
+                         .stream()
+                         .map(Hit::sort)
+                         .map(some -> nonNull(some) ? List.of(some) : List.<Long>of())
+                         .toList()
+                   : List.of();
+    }
+
     @Transient
     public JsonNode getAggregationsStructured() {
         return nonNull(aggregations)

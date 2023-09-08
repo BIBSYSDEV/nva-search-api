@@ -69,6 +69,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
         if (!invalidKeys.isEmpty()) {
             throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
         }
+        applyRules();
         notValidated = false;
         return this;
     }
@@ -129,6 +130,9 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
      * </samp>
      */
     protected abstract void setValue(String key, String value);
+
+    protected abstract void applyRules();
+
 
     /**
      returns T.VALID_QUERY_PARAMETER_NVA_KEYS

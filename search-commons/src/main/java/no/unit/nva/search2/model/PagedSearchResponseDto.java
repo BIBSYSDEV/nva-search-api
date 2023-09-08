@@ -10,12 +10,12 @@ import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONT
 
 public record PagedSearchResponseDto (
     @JsonProperty("@context")URI context,
-    URI previousResults,
     URI id,
     URI nextResults,
-    long processingTime,
-    long size,
+    URI previousResults,
+    long totalHits,
     List<JsonNode> hits,
+    List<List<Long>> sort,
     JsonNode aggregations)  {
 
     @Override

@@ -120,13 +120,19 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
                    : queryParameters.get(key);
     }
 
+    public String removeValue(T key) {
+        return luceneParameters.containsKey(key)
+                   ? luceneParameters.remove(key)
+                   : queryParameters.remove(key);
+    }
+
     /**
      * Add a key value pair to Query Parameter Map.
      *
      * @param key   to add to.
      * @param value to assign
      */
-    public void setValue(T key, String value) {
+    public void setLucineValue(T key, String value) {
         if (nonNull(value)) {
             luceneParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
         }
@@ -138,7 +144,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
      * @param key   to add to.
      * @param value to assign
      */
-    public void setQValue(T key, String value) {
+    public void setQueryValue(T key, String value) {
         if (nonNull(value)) {
             queryParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
         }
