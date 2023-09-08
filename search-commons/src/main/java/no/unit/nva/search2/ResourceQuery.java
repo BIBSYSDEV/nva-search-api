@@ -37,6 +37,7 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearch
                 .findFirst().orElseThrow();
     }
 
+    @SuppressWarnings("PMD.NullAssignment")
     private PagedSearchResponseDto toPagedSearchResponseDto(SwsOpenSearchResponse response) {
         var requestParameter = toGateWayRequestParameter();
         var currentOrFirstPage = getCurrentOrFirstPage();

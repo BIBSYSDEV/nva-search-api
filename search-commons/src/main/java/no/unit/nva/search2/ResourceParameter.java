@@ -34,8 +34,8 @@ public enum ResourceParameter implements IParameterKey {
     CATEGORY(STRING, "category", "entityDescription.reference.publicationInstance"),
     CONTRIBUTOR(STRING, "contributor", "entityDescription.contributors.identity.id"
                                        + "|entityDescription.contributors.identity.name"),
-    CREATED_BEFORE(DATE, "created_before"),
-    CREATED_SINCE(DATE, "created_since"),
+    CREATED_BEFORE(DATE, LESS_THAN, "created_before", "created"),
+    CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "created_since", "created"),
     DOI(CUSTOM, "doi"),
     FUNDING(STRING, "funding", "fundings.identifier|source.identifier"),
     FUNDING_SOURCE(STRING, "funding_source", "fundings.source.identifier"),
@@ -48,8 +48,7 @@ public enum ResourceParameter implements IParameterKey {
     MODIFIED_SINCE(SHORT_DATE, GREATER_THAN_OR_EQUAL_TO, "modified_since", "modified"),
     PROJECT_CODE(STRING, "project_code", "fundings.identifier"),
     PUBLISHED_BEFORE(NUMBER, LESS_THAN, "published_before", "entityDescription.publicationDate.year"),
-    PUBLISHED_SINCE(NUMBER, GREATER_THAN, "published_since", "entityDescription.publicationDate.year"
-    ),
+    PUBLISHED_SINCE(NUMBER, GREATER_THAN, "published_since", "entityDescription.publicationDate.year"),
     TITLE(STRING, "title", "entityDescription.mainTitle"),
     UNIT(STRING, "unit", "entityDescription.contributors.affiliation.id"),
     USER(STRING, "user", "resourceOwner.owner"),
@@ -75,12 +74,12 @@ public enum ResourceParameter implements IParameterKey {
             .map(ResourceParameter::key)
             .collect(Collectors.toUnmodifiableSet());
 
-    private final String qKey;
+    private final String queryKey;
     private final String patternOfKey;
     private final String[] theSwsKeys;
     private final String theErrorMessage;
     private final String valuePattern;
-    private final KeyEncoding encoding;
+    private final KeyEncoding keyEncoding;
     private final Operator theOperator;
 
     ResourceParameter(ParamKind kind, String key) {
@@ -97,12 +96,12 @@ public enum ResourceParameter implements IParameterKey {
 
     ResourceParameter(ParamKind kind, Operator operator, String key, String swsKey, String keyPattern,
                       String valuePattern) {
-        this.qKey = key;
+        this.queryKey = key;
         this.theOperator = operator;
         this.theSwsKeys = nonNull(swsKey) ? swsKey.split("\\|") : new String[]{key};
         this.valuePattern = getPattern(kind, valuePattern);
         this.theErrorMessage = getErrorMessage(kind);
-        this.encoding = getEncoding(kind, null);
+        this.keyEncoding = getEncoding(kind, null);
         this.patternOfKey = nonNull(keyPattern) ? keyPattern : key;
     }
 
@@ -113,7 +112,7 @@ public enum ResourceParameter implements IParameterKey {
 
     @Override
     public String key() {
-        return qKey;
+        return queryKey;
     }
 
     @Override
@@ -138,7 +137,7 @@ public enum ResourceParameter implements IParameterKey {
 
     @Override
     public KeyEncoding encoding() {
-        return encoding;
+        return keyEncoding;
     }
 
     @Override

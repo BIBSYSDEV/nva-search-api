@@ -1,7 +1,11 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ApplicationConstants.AND;
+import static no.unit.nva.search2.constant.ApplicationConstants.OR;
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.Defaults.HTTPS_SCHEME;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -32,7 +36,8 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings({"PMD.Unused", "PMD.LooseCoupling", "PMD.LineLength"})
 public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
 
-    // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax
+    // https://www.elastic.co/guide/en/elasticsearch/reference/current/
+    // query-dsl-query-string-query.html#query-string-syntax
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
 
     protected static final String API_HOST = new Environment().readEnv("API_HOST");
@@ -40,6 +45,10 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
     protected final transient Map<T, String> luceneParameters;
     protected final transient Set<T> otherRequiredKeys;
     protected transient URI gatewayUri;
+    protected static final String PREFIX = "(";
+    protected static final String SUFFIX = ")";
+    protected static final String PLUS = "+";
+    protected static final String ENCODED_SPACE = "%20";
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -55,7 +64,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
     public URI openSearchUri() {
         return
             new UriWrapper(HTTPS_SCHEME, API_HOST)
-                .addChild("_search")
+                .addChild(SEARCH)
                 .addQueryParameters(toLuceneParameter())
                 .addQueryParameters(toParameters())
                 .getUri();
@@ -81,7 +90,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
     public Map<String, String> toLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
                         .map(this::toLuceneParameter)
-                        .collect(Collectors.joining("+AND+"));
+                        .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
 
@@ -92,10 +101,10 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
      */
     public Map<String, String> toGateWayRequestParameter() {
         var results = new LinkedHashMap<String, String>();
-            Stream.of(luceneParameters.entrySet(), queryParameters.entrySet())
-                .flatMap(Set::stream)
-                .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-                .forEach(entry -> results.put(toGatewayKey(entry), toQueryValue(entry)));
+        Stream.of(luceneParameters.entrySet(), queryParameters.entrySet())
+            .flatMap(Set::stream)
+            .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
+            .forEach(entry -> results.put(toGatewayKey(entry), toQueryValue(entry)));
         return results;
     }
 
@@ -143,9 +152,8 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
 
     public static Map<String, String> queryToMap(String query) {
         return
-            (nonNull(query))
-                ? Arrays
-                      .stream(query.split("&"))
+            nonNull(query)
+                ? Arrays.stream(query.split("&"))
                       .map(s -> s.split("="))
                       .collect(Collectors.toMap(strings -> strings[0], OpenSearchQuery::valueOrEmpty))
                 : Collections.emptyMap();
@@ -170,18 +178,17 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
     }
 
     protected String encodeUTF(String unencoded) {
-        return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace("%20", "+");
+        return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace(ENCODED_SPACE, PLUS);
     }
 
+    private static String valueOrEmpty(String... strings) {
+        return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
+    }
 
     private String toLuceneParameter(Entry<T, String> entry) {
         return
             entry.getKey().swsKey().stream()
                 .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
-                .collect(Collectors.joining("+OR+", "(", ")"));
-    }
-
-    private static String valueOrEmpty(String... strings) {
-        return attempt(() -> strings[1]).orElse((f) -> "");
+                .collect(Collectors.joining(OR, PREFIX, SUFFIX));
     }
 }
