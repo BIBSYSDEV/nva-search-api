@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 
 import static no.unit.nva.search2.ResourceParameter.PAGE;
+import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SEARCH_CONTEXT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PAGE;
@@ -18,6 +19,7 @@ import nva.commons.core.paths.UriWrapper;
 
 import java.net.URI;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
 public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearchResponseDto> {
 
@@ -28,21 +30,24 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearch
     @Override
     public PagedSearchResponseDto doSearch(SwsOpenSearchClient queryClient) {
         logger.info("Requesting search from {}", openSearchUri());
+
         return
             Stream.of(queryClient.doSearch(openSearchUri()).body())
                 .map(this::toPagedSearchResponseDto)
+                .peek(response -> logger.info("Search response: {}", response))
                 .findFirst().orElseThrow();
     }
 
     private PagedSearchResponseDto toPagedSearchResponseDto(SwsOpenSearchResponse response) {
-        var gwparams = toGateWayRequestParameter();
-        var page = Integer.getInteger(gwparams.get(PAGE.key()), 0);
-        var source = gatewayUri.toString().split("\\?")[0];
+        var requestParameter = toGateWayRequestParameter();
+        var currentOrFirstPage = getCurrentOrFirstPage();
+        var hasMorePages =  getPageSize() * (currentOrFirstPage + 1) < response.getTotalSize();
+        var url = gatewayUri.toString().split("\\?")[0];
         return new PagedSearchResponseDto(
             DEFAULT_SEARCH_CONTEXT,
-            uriPage(source, gwparams, --page),
-            uriPage(source, gwparams, ++page),
-            uriPage(source, gwparams, ++page),
+            createUriPageRef(url, requestParameter, --currentOrFirstPage),
+            createUriPageRef(url, requestParameter, ++currentOrFirstPage),
+            hasMorePages ? createUriPageRef(url, requestParameter, ++currentOrFirstPage) : null,
             response.took(),
             response.getTotalSize(),
             response.getSearchHits(),
@@ -50,7 +55,21 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearch
         );
     }
 
-    private URI uriPage(String source, Map<String, String> params, Integer page) {
+    @NotNull
+    private Integer getCurrentOrFirstPage() {
+        return Stream.of(this.getValue(PAGE))
+                   .map(Integer::parseInt).findFirst()
+                   .orElse(0);
+    }
+
+    @NotNull
+    private Integer getPageSize() {
+        return Stream.of(this.getValue(PER_PAGE))
+                   .map(Integer::parseInt).findFirst()
+                   .orElse(Integer.valueOf(DEFAULT_VALUE_PER_PAGE));
+    }
+
+    private URI createUriPageRef(String source, Map<String, String> params, Integer page) {
         if (page < 0) {
             return null;
         }
