@@ -34,7 +34,6 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearch
         return
             Stream.of(queryClient.doSearch(openSearchUri()).body())
                 .map(this::toPagedSearchResponseDto)
-                .peek(response -> logger.info("Search response: {}", response))
                 .findFirst().orElseThrow();
     }
 
