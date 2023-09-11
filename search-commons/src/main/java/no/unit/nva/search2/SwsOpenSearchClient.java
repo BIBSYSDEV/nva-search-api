@@ -6,14 +6,10 @@ import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.net.http.HttpResponse;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
