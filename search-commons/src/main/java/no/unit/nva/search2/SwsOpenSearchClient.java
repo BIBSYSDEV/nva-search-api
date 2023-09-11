@@ -42,7 +42,10 @@ public class SwsOpenSearchClient {
         logger.info(REQUESTING_SEARCH_FROM, requestUri);
         return
             contentRetriever.fetchResponse(requestUri, mediaType)
+                .stream().peek(response -> logger.info("Response status: {}", response.statusCode()))
+                .peek(response -> logger.info("Response headers: {}", response.body()))
                 .map(toOpenSearchResponse())
+                .findFirst()
                 .orElseThrow();
     }
 
