@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 
-import no.unit.nva.auth.uriretriever.RawContentRetriever;
+import no.unit.nva.auth.AuthorizedBackendClient;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.net.ssl.SSLSession;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -24,7 +25,6 @@ import java.util.stream.Stream;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,25 +32,24 @@ class SwsOpenSearchClientTest {
 
     private SwsOpenSearchClient swsOpenSearchClient;
     private static final String MEDIA_TYPE = "application/json";
-    private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
 
 
     @BeforeEach
-    public void setUp() {
-        var contentRetriever = mock(RawContentRetriever.class);
+    public void setUp() throws IOException, InterruptedException {
+        var contentRetriever = mock(AuthorizedBackendClient.class);
         var mockedResponse = mockedHttpResponse();
 
         // Use the mocked response in your test code
-        when(contentRetriever.fetchResponse(any(URI.class), anyString()))
-            .thenReturn(Optional.of(mockedResponse));
+        when(contentRetriever.send(any(), any()))
+            .thenReturn(mockedResponse);
 
         swsOpenSearchClient = new SwsOpenSearchClient(contentRetriever, MEDIA_TYPE);
     }
 
     @NotNull
-    private HttpResponse<String> mockedHttpResponse() {
+    private HttpResponse<Object> mockedHttpResponse() {
         return new HttpResponse<>() {
             @Override
             public int statusCode() {
@@ -63,7 +62,7 @@ class SwsOpenSearchClientTest {
             }
 
             @Override
-            public Optional<HttpResponse<String>> previousResponse() {
+            public Optional<HttpResponse<Object>> previousResponse() {
                 return Optional.empty();
             }
 
@@ -97,7 +96,7 @@ class SwsOpenSearchClientTest {
 
     @Test
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
-        var secretsReaderMock = mock(RawContentRetriever.class);
+        var secretsReaderMock = mock(AuthorizedBackendClient.class);
         var swsOpenSearchClient =  new SwsOpenSearchClient(secretsReaderMock, MEDIA_TYPE);
         assertNotNull(swsOpenSearchClient);
     }
@@ -107,15 +106,6 @@ class SwsOpenSearchClientTest {
     void searchSingleTermReturnsPagedResponse(URI uri) throws BadGatewayException {
         var searchResponseDto =
             swsOpenSearchClient.doSearch(uri);
-        assertNotNull(searchResponseDto);
-    }
-
-    @ParameterizedTest
-    @MethodSource("uriProvider")
-    void searchSingleTermReturnsResponse(URI uri) throws BadGatewayException {
-        var searchResponseDto =
-            swsOpenSearchClient.doSearch(uri);
-
         assertNotNull(searchResponseDto);
     }
 
