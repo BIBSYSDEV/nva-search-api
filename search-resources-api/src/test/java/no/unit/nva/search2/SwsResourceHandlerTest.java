@@ -7,6 +7,7 @@ import no.unit.nva.search2.model.TestGatewayResponse;
 import no.unit.nva.search2.model.PagedSearchResponseDto;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -63,7 +64,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
+    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
@@ -78,7 +79,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException {
+    void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
@@ -90,7 +91,7 @@ class SwsResourceHandlerTest {
 
     @Test
     void shouldSearchResultsWhenSendingContributorIdAndBadResponseFromPreferencesApi()
-        throws IOException {
+        throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
@@ -102,7 +103,7 @@ class SwsResourceHandlerTest {
 
     @Test
     void shouldNotReturnSortedSearchResultsWhenSendingMultipleContributorId()
-        throws IOException {
+        throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
@@ -115,7 +116,7 @@ class SwsResourceHandlerTest {
 
     @Test
     @Disabled
-    void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException {
+    void shouldReturnAggregationAsPartOfResponseWhenDoingASearch() throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
@@ -133,7 +134,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException {
+    void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponse();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -149,7 +150,7 @@ class SwsResourceHandlerTest {
     }
 
     @Test
-    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException {
+    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -166,7 +167,7 @@ class SwsResourceHandlerTest {
 
     @Test
     @Disabled
-    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
+    void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         var queryParameters = Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM, SORT_ORDER.key(), "desc");
@@ -189,7 +190,7 @@ class SwsResourceHandlerTest {
 
     @Test
     @Disabled
-    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
+    void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         var queryParameters = Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM, SORT_ORDER.key(), "asc");
@@ -211,7 +212,7 @@ class SwsResourceHandlerTest {
 
     @Test
     @Disabled
-    void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException {
+    void shouldReturnBadGatewayResponseWhenNoResponseFromService() throws IOException, BadGatewayException {
         prepareRestHighLevelClientEmptyResponse();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -226,7 +227,7 @@ class SwsResourceHandlerTest {
     @ParameterizedTest(name = "should return application/json for accept header {0}")
     @MethodSource("acceptHeaderValuesProducingApplicationJsonProvider")
     void shouldProduceApplicationJsonWithGivenAcceptHeader(String acceptHeaderValue)
-        throws IOException {
+        throws IOException, BadGatewayException {
         prepareRestHighLevelClientOkResponse();
         var requestInput =
             nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
@@ -276,7 +277,7 @@ class SwsResourceHandlerTest {
             Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
     }
 
-    private void prepareRestHighLevelClientOkResponse() throws IOException {
+    private void prepareRestHighLevelClientOkResponse() throws IOException, BadGatewayException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
@@ -284,7 +285,7 @@ class SwsResourceHandlerTest {
             .thenReturn(body);
     }
 
-    private void prepareRestHighLevelClientEmptyResponse() throws IOException {
+    private void prepareRestHighLevelClientEmptyResponse() throws IOException, BadGatewayException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
@@ -292,7 +293,7 @@ class SwsResourceHandlerTest {
             .thenReturn(body);
     }
 
-    private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
+    private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException, BadGatewayException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 

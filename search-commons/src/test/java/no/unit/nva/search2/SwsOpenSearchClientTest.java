@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 
 import no.unit.nva.auth.uriretriever.RawContentRetriever;
+import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -103,7 +104,7 @@ class SwsOpenSearchClientTest {
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchSingleTermReturnsPagedResponse(URI uri) {
+    void searchSingleTermReturnsPagedResponse(URI uri) throws BadGatewayException {
         var searchResponseDto =
             swsOpenSearchClient.doSearch(uri);
         assertNotNull(searchResponseDto);
@@ -111,7 +112,7 @@ class SwsOpenSearchClientTest {
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchSingleTermReturnsResponse(URI uri) {
+    void searchSingleTermReturnsResponse(URI uri) throws BadGatewayException {
         var searchResponseDto =
             swsOpenSearchClient.doSearch(uri);
 
