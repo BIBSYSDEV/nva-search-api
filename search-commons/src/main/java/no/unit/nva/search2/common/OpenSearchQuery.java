@@ -25,30 +25,26 @@ import java.util.stream.Collectors;
 
 import java.util.stream.Stream;
 import no.unit.nva.search2.SwsOpenSearchClient;
-import no.unit.nva.search2.model.IParameterKey;
-import no.unit.nva.search2.model.IParameterKey.KeyEncoding;
+import no.unit.nva.search2.model.ParameterKey;
+import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"PMD.Unused", "PMD.LooseCoupling", "PMD.LineLength"})
-public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
+public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
 
-    // https://www.elastic.co/guide/en/elasticsearch/reference/current/
-    // query-dsl-query-string-query.html#query-string-syntax
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-
     protected static final String API_HOST = new Environment().readEnv("API_HOST");
-    protected final transient Map<T, String> queryParameters;
-    protected final transient Map<T, String> luceneParameters;
-    protected final transient Set<T> otherRequiredKeys;
-    protected transient URI gatewayUri;
     protected static final String PREFIX = "(";
     protected static final String SUFFIX = ")";
     protected static final String PLUS = "+";
     protected static final String ENCODED_SPACE = "%20";
+    protected final transient Map<T, String> queryParameters;
+    protected final transient Map<T, String> luceneParameters;
+    protected final transient Set<T> otherRequiredKeys;
+    protected transient URI gatewayUri;
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -89,7 +85,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
      */
     public Map<String, String> toLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-                        .map(this::toLuceneParameter)
+                        .map(this::toLuceneEntryToString)
                         .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
@@ -187,14 +183,15 @@ public abstract class OpenSearchQuery<T extends Enum<T> & IParameterKey, U> {
         return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace(ENCODED_SPACE, PLUS);
     }
 
-    private static String valueOrEmpty(String... strings) {
-        return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
-    }
-
-    private String toLuceneParameter(Entry<T, String> entry) {
+    private String toLuceneEntryToString(Entry<T, String> entry) {
         return
             entry.getKey().swsKey().stream()
                 .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
                 .collect(Collectors.joining(OR, PREFIX, SUFFIX));
     }
+
+    private static String valueOrEmpty(String... strings) {
+        return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
+    }
+
 }

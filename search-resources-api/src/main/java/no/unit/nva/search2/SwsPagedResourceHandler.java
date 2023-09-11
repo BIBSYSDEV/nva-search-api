@@ -33,7 +33,7 @@ public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, PagedSearch
     protected PagedSearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
         return
-            new ResourceQuery().builder()
+            ResourceQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(PAGE, PER_PAGE,SORT,SORT_ORDER)
                 .validate()

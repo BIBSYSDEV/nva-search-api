@@ -3,9 +3,9 @@ package no.unit.nva.search2;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search2.model.GatewayResponse;
+import no.unit.nva.search2.model.TestGatewayResponse;
 import no.unit.nva.search2.model.PagedSearchResponseDto;
-import no.unit.nva.search2.model.SwsOpenSearchResponse;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-//import org.zalando.problem.Problem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,7 +68,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
@@ -83,7 +82,7 @@ class SwsResourceHandlerTest {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -95,7 +94,7 @@ class SwsResourceHandlerTest {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -108,7 +107,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -121,7 +120,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         var expected = getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
         var actualBody = gatewayResponse.body();
 
@@ -139,7 +138,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
 
         assertNotNull(gatewayResponse.headers());
@@ -151,11 +150,11 @@ class SwsResourceHandlerTest {
 
     @Test
     void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException {
-        prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
+        prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
 
         assertNotNull(gatewayResponse.headers());
@@ -168,7 +167,7 @@ class SwsResourceHandlerTest {
     @Test
     @Disabled
     void shouldReturn200WhenSortOrderIsDescInQueryParameters() throws IOException {
-        prepareRestHighLevelClientEmptyResponseForSortOrder("desc");
+        prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         var queryParameters = Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM, SORT_ORDER.key(), "desc");
 
@@ -178,7 +177,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         var paged = gatewayResponse.body();
 
         assertNotNull(gatewayResponse.headers());
@@ -191,7 +190,7 @@ class SwsResourceHandlerTest {
     @Test
     @Disabled
     void shouldReturn200WhenSortOrderIsAscInQueryParameters() throws IOException {
-        prepareRestHighLevelClientEmptyResponseForSortOrder("asc");
+        prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         var queryParameters = Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM, SORT_ORDER.key(), "asc");
 
@@ -201,7 +200,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(inputStream, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         var paged = gatewayResponse.body();
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
@@ -217,7 +216,7 @@ class SwsResourceHandlerTest {
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
 
 
         assertNotNull(gatewayResponse.headers());
@@ -233,7 +232,7 @@ class SwsResourceHandlerTest {
             nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
         handler.handleRequest(requestInput, outputStream, mock(Context.class));
 
-        var gatewayResponse = GatewayResponse.of(outputStream);
+        var gatewayResponse = TestGatewayResponse.of(outputStream);
         assertThat(gatewayResponse.headers().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
     }
 
@@ -277,33 +276,28 @@ class SwsResourceHandlerTest {
             Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
     }
 
-
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
-        var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response);
+            .thenReturn(body);
     }
-
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
-        var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response);
+            .thenReturn(body);
     }
 
-    private void prepareRestHighLevelClientEmptyResponseForSortOrder(String sortOrder) throws IOException {
+    private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsOpenSearchResponse.class);
-        var response = new GatewayResponse<>(body, HTTP_OK, Map.of("Content-Type", "application/json"));
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any()))
-            .thenReturn(response);
+            .thenReturn(body);
     }
 
     private PagedSearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {

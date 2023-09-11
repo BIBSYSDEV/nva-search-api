@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common;
 
-import no.unit.nva.search2.model.IParameterKey;
+import no.unit.nva.search2.model.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
-public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
+public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
 
     protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
 
@@ -58,10 +58,10 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
     public QueryBuilder<T, U> validate() throws BadRequestException {
         assignDefaultValues();
         for (var entry : query.queryParameters.entrySet()) {
-            throwInvalidParameterValue(entry);
+            validatesEntrySet(entry);
         }
         for (var entry : query.luceneParameters.entrySet()) {
-            throwInvalidParameterValue(entry);
+            validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
@@ -69,7 +69,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
         if (!invalidKeys.isEmpty()) {
             throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
         }
-        applyRules();
+        applyRulesAfterValidation();
         notValidated = false;
         return this;
     }
@@ -131,7 +131,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
      */
     protected abstract void setValue(String key, String value);
 
-    protected abstract void applyRules();
+    protected abstract void applyRulesAfterValidation();
 
 
     /**
@@ -150,7 +150,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
         return
             requiredMissing()
                 .stream()
-                .map(IParameterKey::key)
+                .map(ParameterKey::key)
                 .collect(Collectors.toSet());
     }
 
@@ -167,7 +167,7 @@ public abstract class QueryBuilder<T extends Enum<T> & IParameterKey, U> {
                 .collect(Collectors.toSet());
     }
 
-    protected void throwInvalidParameterValue(Map.Entry<T, String> entry) throws BadRequestException {
+    protected void validatesEntrySet(Map.Entry<T, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         if (invalidQueryParameter(key, entry.getValue())) {
             final var keyName =  key.key();

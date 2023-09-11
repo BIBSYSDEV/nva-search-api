@@ -11,30 +11,31 @@ import java.util.Map;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 
 @SuppressWarnings("PMD.ShortMethodName")
-public record GatewayResponse<T>(
+public record TestGatewayResponse<T>(
     T body,
     int statusCode,
     Map<String, String> headers) {
 
-    public static GatewayResponse<SwsOpenSearchResponse> of(InputStream inputStream) throws IOException {
-        var typeReference = new TypeReference<GatewayResponse<SwsOpenSearchResponse>>() {
+    public static TestGatewayResponse<OpenSearchSwsResponse> ofSwsGatewayResponse(InputStream inputStream)
+        throws IOException {
+        var typeReference = new TypeReference<TestGatewayResponse<OpenSearchSwsResponse>>() {
         };
         return dtoObjectMapper.readValue(inputStream, typeReference);
     }
 
-    public static GatewayResponse<PagedSearchResponseDto> of(OutputStream outputStream) throws IOException {
+    public static TestGatewayResponse<PagedSearchResponseDto> of(OutputStream outputStream) throws IOException {
         var response = ofString(outputStream);
         var typeReference2 = new TypeReference<PagedSearchResponseDto>() {
         };
         var body = dtoObjectMapper.readValue(response.body(), typeReference2);
-        return new GatewayResponse<>(
+        return new TestGatewayResponse<>(
             body,
             response.statusCode(),
             response.headers());
     }
 
-    private static GatewayResponse<String> ofString(OutputStream outputStream) throws JsonProcessingException {
-        var typeReference = new TypeReference<GatewayResponse<String>>() {
+    private static TestGatewayResponse<String> ofString(OutputStream outputStream) throws JsonProcessingException {
+        var typeReference = new TypeReference<TestGatewayResponse<String>>() {
         };
         return dtoObjectMapper.readValue(outputStream.toString(), typeReference);
     }

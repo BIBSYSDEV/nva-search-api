@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.model.IParameterKey;
+import no.unit.nva.search2.model.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,18 +18,18 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SHORT_DATE;
-import static no.unit.nva.search2.model.IParameterKey.Operator.EQUALS;
-import static no.unit.nva.search2.model.IParameterKey.Operator.GREATER_THAN;
-import static no.unit.nva.search2.model.IParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.IParameterKey.Operator.LESS_THAN;
-import static no.unit.nva.search2.model.IParameterKey.Operator.NONE;
-import static no.unit.nva.search2.model.IParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.IParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.model.IParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.IParameterKey.ParamKind.SHORT_DATE;
-import static no.unit.nva.search2.model.IParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
+import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN;
+import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
+import static no.unit.nva.search2.model.ParameterKey.Operator.NONE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.SHORT_DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
 
-public enum ResourceParameter implements IParameterKey {
+public enum ResourceParameter implements ParameterKey {
     INVALID(STRING, null),
     CATEGORY(STRING, "category", "entityDescription.reference.publicationInstance"),
     CONTRIBUTOR(STRING, "contributor", "entityDescription.contributors.identity.id"
@@ -189,12 +189,12 @@ public enum ResourceParameter implements IParameterKey {
     public static ResourceParameter keyFromString(String paramName, String value) {
         var result = Arrays.stream(ResourceParameter.values())
                          .filter(ResourceParameter::ignorePathKeys)
-                         .filter(IParameterKey.equalTo(paramName))
+                         .filter(ParameterKey.equalTo(paramName))
                          .collect(Collectors.toSet());
         return result.size() == 1
                    ? result.stream().findFirst().get()
                    : result.stream()
-                         .filter(IParameterKey.hasValidValue(value))
+                         .filter(ParameterKey.hasValidValue(value))
                          .findFirst()
                          .orElse(INVALID);
     }

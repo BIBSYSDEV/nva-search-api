@@ -2,17 +2,18 @@ package no.unit.nva.search2.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search2.model.SwsOpenSearchResponse.HitsInfo.Hit;
+import no.unit.nva.search2.model.OpenSearchSwsResponse.HitsInfo.Hit;
 
 import java.beans.Transient;
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
 
-public record SwsOpenSearchResponse(
+public record OpenSearchSwsResponse(
     int took,
     boolean timed_out,
     ShardsInfo _shards,
@@ -44,7 +45,7 @@ public record SwsOpenSearchResponse(
             String _id,
             double _score,
             JsonNode _source,
-            Long[] sort) {
+            List<Long> sort) {
 
         }
     }
@@ -60,25 +61,22 @@ public record SwsOpenSearchResponse(
     @NotNull
     @Transient
     public List<JsonNode> getSearchHits() {
-        return nonNull(hits)
-                   ? hits.hits()
-                         .stream()
-                         .map(Hit::_source)
-                         .toList()
-                   : List.of();
+        return
+            nonNull(hits) && nonNull(hits.hits)
+                ? hits.hits().stream().map(Hit::_source).toList()
+                : List.of();
     }
 
     @NotNull
     @Transient
-    public List<List<Long>> getSort() {
-        return nonNull(hits)
-                   ? hits.hits()
-                         .stream()
-                         .map(Hit::sort)
-                         .map(some -> nonNull(some) ? List.of(some) : List.<Long>of())
-                         .toList()
-                   : List.of();
+    public List<Long> getSort() {
+        return
+            nonNull(hits) && nonNull(hits.hits) && hits.hits.size() > 0
+                ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort())
+                    .orElse(List.of())
+                : List.of();
     }
+
 
     @Transient
     public JsonNode getAggregationsStructured() {

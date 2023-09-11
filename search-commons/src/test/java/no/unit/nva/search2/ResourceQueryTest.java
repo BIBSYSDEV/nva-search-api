@@ -23,8 +23,8 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildUriFromValidUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            new ResourceQuery()
-                .builder()
+            ResourceQuery.Builder
+                .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(PAGE, PER_PAGE)
                 .build();
@@ -43,8 +43,8 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void buildUriFromInvalidUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> new ResourceQuery()
-                               .builder()
+                     () -> ResourceQuery.Builder
+                               .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(OFFSET, PER_PAGE)
                                .build()
@@ -55,8 +55,8 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildUriWithMissingUriParams(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> new ResourceQuery()
-                               .builder()
+                     () -> ResourceQuery.Builder
+                               .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(PAGE, PER_PAGE, ResourceParameter.DOI)
                                .build()

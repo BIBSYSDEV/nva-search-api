@@ -7,89 +7,79 @@ import static no.unit.nva.search2.ResourceParameter.OFFSET;
 import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_SEARCH_CONTEXT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 
-import java.util.Map;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.model.PagedSearchResponseDto;
 import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.model.SwsOpenSearchResponse;
-import nva.commons.core.paths.UriWrapper;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
 
-import java.net.URI;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
-public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearchResponseDto> {
-
-    public ResourceQueryBuilder builder() {
-        return new ResourceQueryBuilder();
-    }
+public final class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearchResponseDto> {
 
     @Override
-    public PagedSearchResponseDto doSearch(SwsOpenSearchClient queryClient) {
+    public PagedSearchResponseDto doSearch(@NotNull SwsOpenSearchClient queryClient) {
         logger.info("Requesting search from {}", openSearchUri());
 
         return
-            Stream.of(queryClient.doSearch(openSearchUri()).body())
+            Stream.of(queryClient.doSearch(openSearchUri()))
                 .map(this::toPagedSearchResponseDto)
                 .findFirst().orElseThrow();
     }
 
+    private ResourceQuery() {
+        super();
+    }
+
     @SuppressWarnings("PMD.NullAssignment")
-    private PagedSearchResponseDto toPagedSearchResponseDto(SwsOpenSearchResponse response) {
-        var requestParameter = toGateWayRequestParameter();
+    @NotNull
+    private PagedSearchResponseDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
 
         var offset = getOffset();
-        var hasMoreResults =  offset < response.getTotalSize();
         var url = gatewayUri.toString().split("\\?")[0];
-        return new PagedSearchResponseDto(
-            DEFAULT_SEARCH_CONTEXT,
-            createUriOffsetRef(url, requestParameter, offset),
-            hasMoreResults ? createUriOffsetRef(url, requestParameter, offset + getPageSize()) : null,
-            createUriOffsetRef(url, requestParameter, offset - getPageSize()),
-            response.getTotalSize(),
-            response.getSearchHits(),
-            response.getSort(),
-            response.getAggregationsStructured()
-        );
+
+        return PagedSearchResponseDto.Builder.builder()
+            .withTotalHits(response.getTotalSize())
+            .withHits(response.getSearchHits())
+            .withSort(response.getSort())
+            .withAggregations(response.getAggregationsStructured())
+            .withRootUrl(url)
+            .withRequestParameters(toGateWayRequestParameter())
+            .withOffset(offset)
+            .withNextOffset(offset + getPageSize())
+            .withPreviousOffset(offset - getPageSize())
+            .build();
     }
 
     @NotNull
-    private Integer getOffset() {
+    private Long getOffset() {
         return Stream.of(this.getValue(OFFSET))
-                   .map(Integer::parseInt).findFirst()
+                   .map(Long::parseLong).findFirst()
                    .orElse(getPage() * getPageSize());
     }
 
     @NotNull
-    private Integer getPage() {
-        return  Integer.getInteger(getValue(PAGE), 0);
+    private Long getPage() {
+        return Long.getLong(getValue(PAGE), 0);
     }
 
     @NotNull
-    private Integer getPageSize() {
-        return Integer.getInteger(getValue(PER_PAGE), Integer.parseInt(DEFAULT_VALUE_PER_PAGE));
+    private Long getPageSize() {
+        return Long.getLong(getValue(PER_PAGE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
-    private URI createUriOffsetRef(String source, Map<String, String> params, Integer offset) {
-        if (offset < 0) {
-            return null;
-        }
-        params.put(OFFSET.key(), String.valueOf(offset));
-        return UriWrapper.fromUri(source)
-                   .addQueryParameters(params)
-                   .getUri();
-    }
-
-    public class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, PagedSearchResponseDto> {
-
-        public ResourceQueryBuilder() {
+    public static final class Builder extends QueryBuilder<ResourceParameter, PagedSearchResponseDto> {
+        private Builder() {
             super(new ResourceQuery());
+        }
+
+        public static Builder queryBuilder() {
+            return new Builder();
         }
 
         @Override
@@ -129,14 +119,14 @@ public class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearch
         }
 
         @Override
-        protected void applyRules() {
+        protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
             if (isNull(query.getValue(OFFSET)) && nonNull(query.getValue(PAGE))) {
                 var page = Integer.parseInt(query.getValue(PAGE));
                 var perPage = Integer.parseInt(query.getValue(PER_PAGE));
                 query.setQueryValue(OFFSET, String.valueOf(page * perPage));
+                query.removeValue(PAGE);
             }
-            query.removeValue(PAGE);
         }
     }
 }

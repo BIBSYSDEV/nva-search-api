@@ -10,10 +10,8 @@ public final class Defaults {
     public static final String DEFAULT_VALUE_PER_PAGE = "20";
     public static final String DEFAULT_VALUE_SORT = "publishedDate";
     public static final String DEFAULT_VALUE_SORT_ORDER = "desc";
-    public static final URI DEFAULT_SEARCH_CONTEXT = URI.create("https://api.nva.unit.no/resources/search");
     public static final String HTTPS_SCHEME = "https";
-    public static final String PAGINATED_SEARCH_RESULT_CONTEXT
-        = "https://api.nva.unit.no/resources/search";
-        // = "https://bibsysdev.github.io/src/search/paginated-search-result.json";
+    public static final URI PAGINATED_SEARCH_RESULT_CONTEXT
+         = URI.create("https://bibsysdev.github.io/src/search/paginated-search-result.json");
 
 }

@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public interface IParameterKey {
+public interface ParameterKey {
 
     Operator operator();
 
@@ -21,7 +21,7 @@ public interface IParameterKey {
 
     KeyEncoding encoding();
 
-    static Predicate<IParameterKey> hasValidValue(String value) {
+    static Predicate<ParameterKey> hasValidValue(String value) {
         return f -> {
             var encoded = f.encoding() == KeyEncoding.ENCODE_DECODE
                 ? URLDecoder.decode(value, StandardCharsets.UTF_8)
@@ -30,7 +30,7 @@ public interface IParameterKey {
         };
     }
 
-    static Predicate<IParameterKey> equalTo(String name) {
+    static Predicate<ParameterKey> equalTo(String name) {
         return key -> name.matches(key.keyPattern());
     }
 

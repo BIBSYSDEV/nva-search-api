@@ -105,7 +105,7 @@ class SwsOpenSearchClientTest {
     @MethodSource("uriProvider")
     void searchSingleTermReturnsPagedResponse(URI uri) {
         var searchResponseDto =
-            swsOpenSearchClient.doSearch(uri).body();
+            swsOpenSearchClient.doSearch(uri);
         assertNotNull(searchResponseDto);
     }
 
