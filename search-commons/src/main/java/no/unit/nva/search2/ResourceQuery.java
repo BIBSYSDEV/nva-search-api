@@ -18,13 +18,14 @@ import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 
 import java.util.stream.Stream;
+
+import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.jetbrains.annotations.NotNull;
 
 public final class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearchResponseDto> {
 
     @Override
-    public PagedSearchResponseDto doSearch(@NotNull SwsOpenSearchClient queryClient) {
-        logger.info("Requesting search from {}", openSearchUri());
+    public PagedSearchResponseDto doSearch(@NotNull SwsOpenSearchClient queryClient) throws BadGatewayException {
 
         return
             Stream.of(queryClient.doSearch(openSearchUri()))

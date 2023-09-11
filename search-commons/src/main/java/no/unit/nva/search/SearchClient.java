@@ -36,6 +36,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String TICKET_STATUS = "status";
     public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id";
 
+
     /**
      * Creates a new SearchClient.
      *
