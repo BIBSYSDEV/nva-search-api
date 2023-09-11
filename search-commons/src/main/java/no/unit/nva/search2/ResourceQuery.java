@@ -22,9 +22,11 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ResourceQuery extends OpenSearchQuery<ResourceParameter,PagedSearchResponseDto> {
 
+    private static final String RESOURCE_QUERY_URI = "ResourceQuery URI {}";
+
     @Override
     public PagedSearchResponseDto doSearch(@NotNull SwsOpenSearchClient queryClient) {
-        logger.info("Requesting search from {}", openSearchUri());
+        logger.info(RESOURCE_QUERY_URI, openSearchUri());
 
         return
             Stream.of(queryClient.doSearch(openSearchUri()))

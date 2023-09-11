@@ -21,7 +21,7 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 public class SwsOpenSearchClient {
 
     private static final Logger logger = LoggerFactory.getLogger(SwsOpenSearchClient.class);
-    private static final String REQUESTING_SEARCH_FROM = "Requesting search from {}";
+    private static final String REQUESTING_SEARCH_FROM = "SwsOpenSearchClient search from {}";
     private final RawContentRetriever contentRetriever;
     private final String mediaType;
 

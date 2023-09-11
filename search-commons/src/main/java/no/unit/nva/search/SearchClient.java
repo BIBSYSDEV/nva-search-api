@@ -17,6 +17,8 @@ import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
@@ -35,6 +37,8 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
     public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id";
+
+    private static final Logger logger = LoggerFactory.getLogger(SearchClient.class);
 
     /**
      * Creates a new SearchClient.
@@ -124,8 +128,10 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
     private SearchResponseDto doSearch(SearchRequest searchRequest, URI requestUri, String searchTerm)
         throws IOException {
+        logger.info("SearchRequest: {}", searchRequest.toString());
         var searchResponse = openSearchClient.search(searchRequest, getRequestOptions());
         var id = createIdWithQuery(requestUri, searchTerm);
+        logger.info("request uri: {}", id );
         return fromSearchResponse(searchResponse, id);
     }
 }

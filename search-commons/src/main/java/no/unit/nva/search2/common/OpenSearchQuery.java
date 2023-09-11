@@ -1,12 +1,15 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
+import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
-import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
-import static no.unit.nva.search2.constant.Defaults.HTTPS_SCHEME;
+import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
+
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -28,15 +31,12 @@ import no.unit.nva.search2.SwsOpenSearchClient;
 import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.core.Environment;
-import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-    protected static final String API_HOST = new Environment().readEnv("API_HOST");
     protected static final String PREFIX = "(";
     protected static final String SUFFIX = ")";
     protected static final String PLUS = "+";
@@ -59,8 +59,8 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
      */
     public URI openSearchUri() {
         return
-            new UriWrapper(HTTPS_SCHEME, API_HOST)
-                .addChild(SEARCH)
+            fromUri(readSearchInfrastructureApiUri())
+                .addChild(RESOURCES, SEARCH)
                 .addQueryParameters(toLuceneParameter())
                 .addQueryParameters(toParameters())
                 .getUri();
