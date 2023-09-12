@@ -12,7 +12,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.ResourceParameter.OFFSET;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 
-public record PagedSearchResponseDto (
+public record ResourcePagedSearchResponseDto(
     URI id,
     URI nextResults,
     URI previousResults,
@@ -26,7 +26,7 @@ public record PagedSearchResponseDto (
         return PAGINATED_SEARCH_RESULT_CONTEXT;
     }
 
-    private PagedSearchResponseDto(Builder builder) {
+    private ResourcePagedSearchResponseDto(Builder builder) {
         this(builder.id,
             builder.nextResults,
             builder.previousResults,
@@ -116,7 +116,7 @@ public record PagedSearchResponseDto (
                 .getUri();
         }
 
-        public PagedSearchResponseDto build() {
+        public ResourcePagedSearchResponseDto build() {
             if (nonNull(totalHits)) {
                 if (nonNull(offset)) {
                     this.id = createUriOffsetRef(offset);
@@ -128,7 +128,7 @@ public record PagedSearchResponseDto (
                     this.previousResults = createUriOffsetRef(previousOffset);
                 }
             }
-            return new PagedSearchResponseDto(this);
+            return new ResourcePagedSearchResponseDto(this);
         }
     }
 }

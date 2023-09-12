@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search2.model.TestGatewayResponse;
-import no.unit.nva.search2.model.PagedSearchResponseDto;
+import no.unit.nva.search2.model.ResourcePagedSearchResponseDto;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.exceptions.BadGatewayException;
@@ -52,12 +52,12 @@ class SwsResourceHandlerTest {
     private SwsPagedResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
-    private SwsOpenSearchClient mockedSearchClient;
+    private OpenSearchSwsClient mockedSearchClient;
 
     @BeforeEach
     void setUp() {
 
-        mockedSearchClient = mock(SwsOpenSearchClient.class);
+        mockedSearchClient = mock(OpenSearchSwsClient.class);
         handler = new SwsPagedResourceHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
@@ -301,8 +301,8 @@ class SwsResourceHandlerTest {
             .thenReturn(body);
     }
 
-    private PagedSearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResponseDto.class);
+    private ResourcePagedSearchResponseDto getSearchResourcesResponseFromFile(String filename) throws JsonProcessingException {
+        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), ResourcePagedSearchResponseDto.class);
     }
 
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {

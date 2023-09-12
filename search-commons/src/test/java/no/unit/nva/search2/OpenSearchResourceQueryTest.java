@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ResourceQueryTest {
+class OpenSearchResourceQueryTest {
 
 
     @ParameterizedTest
     @MethodSource("uriProvider")
     void buildUriFromValidUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceQuery.Builder
+            OpenSearchResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(PAGE, PER_PAGE)
@@ -43,7 +43,7 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void buildUriFromInvalidUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceQuery.Builder
+                     () -> OpenSearchResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(OFFSET, PER_PAGE)
@@ -55,7 +55,7 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildUriWithMissingUriParams(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceQuery.Builder
+                     () -> OpenSearchResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(PAGE, PER_PAGE, ResourceParameter.DOI)

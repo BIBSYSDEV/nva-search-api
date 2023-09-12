@@ -25,20 +25,20 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
-public class SwsOpenSearchClient {
+public class OpenSearchSwsClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(SwsOpenSearchClient.class);
-    private static final String REQUESTING_SEARCH_FROM = "SwsOpenSearchClient url -> {}";
+    private static final Logger logger = LoggerFactory.getLogger(OpenSearchSwsClient.class);
+    private static final String REQUESTING_SEARCH_FROM = "OpenSearchSwsClient url -> {}";
     private final AuthorizedBackendClient contentRetriever;
     private final String mediaType;
 
-    public SwsOpenSearchClient(AuthorizedBackendClient contentRetriever, String mediaType) {
+    public OpenSearchSwsClient(AuthorizedBackendClient contentRetriever, String mediaType) {
         this.contentRetriever = contentRetriever;
         this.mediaType = mediaType;
     }
 
     @JacocoGenerated
-    public static SwsOpenSearchClient defaultSwsClient() {
+    public static OpenSearchSwsClient defaultSwsClient() {
         var uri = URI.create(readSearchInfrastructureAuthUri());
         var credentials
             = new SecretsReader()
@@ -49,7 +49,7 @@ public class SwsOpenSearchClient {
         var cachedJwtProvider = CachedJwtProvider.prepareWithAuthenticator(cognitoAuthenticator);
         var retriever = AuthorizedBackendClient.prepareWithBearerToken(cachedJwtProvider.getValue().getToken());
 
-        return new SwsOpenSearchClient(retriever, APPLICATION_JSON.toString());
+        return new OpenSearchSwsClient(retriever, APPLICATION_JSON.toString());
     }
 
     protected OpenSearchSwsResponse doSearch(URI requestUri)

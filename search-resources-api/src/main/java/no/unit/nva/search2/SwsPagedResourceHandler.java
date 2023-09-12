@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.nva.search2.model.PagedSearchResponseDto;
+import no.unit.nva.search2.model.ResourcePagedSearchResponseDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -13,36 +13,36 @@ import static no.unit.nva.search2.ResourceParameter.PAGE;
 import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameter.SORT;
 import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search2.SwsOpenSearchClient.defaultSwsClient;
+import static no.unit.nva.search2.OpenSearchSwsClient.defaultSwsClient;
 
-public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, PagedSearchResponseDto> {
+public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, ResourcePagedSearchResponseDto> {
 
-    private final SwsOpenSearchClient swsOpenSearchClient;
+    private final OpenSearchSwsClient openSearchSwsClient;
 
     @JacocoGenerated
     public SwsPagedResourceHandler() {
         this(new Environment(), defaultSwsClient());
     }
 
-    public SwsPagedResourceHandler(Environment environment, SwsOpenSearchClient swsOpenSearchClient) {
+    public SwsPagedResourceHandler(Environment environment, OpenSearchSwsClient openSearchSwsClient) {
         super(Void.class, environment);
-        this.swsOpenSearchClient = swsOpenSearchClient;
+        this.openSearchSwsClient = openSearchSwsClient;
     }
 
     @Override
-    protected PagedSearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
+    protected ResourcePagedSearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
         return
-            ResourceQuery.Builder.queryBuilder()
+            OpenSearchResourceQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(PAGE, PER_PAGE,SORT,SORT_ORDER)
                 .validate()
                 .build()
-                .doSearch(swsOpenSearchClient);
+                .doSearch(openSearchSwsClient);
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, PagedSearchResponseDto output) {
+    protected Integer getSuccessStatusCode(Void input, ResourcePagedSearchResponseDto output) {
         return HttpStatus.SC_OK;
     }
 }

@@ -23,9 +23,9 @@ public record TestGatewayResponse<T>(
         return dtoObjectMapper.readValue(inputStream, typeReference);
     }
 
-    public static TestGatewayResponse<PagedSearchResponseDto> of(OutputStream outputStream) throws IOException {
+    public static TestGatewayResponse<ResourcePagedSearchResponseDto> of(OutputStream outputStream) throws IOException {
         var response = ofString(outputStream);
-        var typeReference2 = new TypeReference<PagedSearchResponseDto>() {
+        var typeReference2 = new TypeReference<ResourcePagedSearchResponseDto>() {
         };
         var body = dtoObjectMapper.readValue(response.body(), typeReference2);
         return new TestGatewayResponse<>(

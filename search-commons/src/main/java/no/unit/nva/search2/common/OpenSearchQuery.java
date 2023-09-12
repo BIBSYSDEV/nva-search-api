@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import java.util.stream.Stream;
-import no.unit.nva.search2.SwsOpenSearchClient;
+import no.unit.nva.search2.OpenSearchSwsClient;
 import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -146,7 +146,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
         }
     }
 
-    public abstract U doSearch(SwsOpenSearchClient queryClient) throws ApiGatewayException;
+    public abstract U doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException;
 
     public static Map<String, String> queryToMap(URI uri) {
         return queryToMap(uri.getQuery());

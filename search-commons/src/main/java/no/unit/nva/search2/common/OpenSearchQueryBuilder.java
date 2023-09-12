@@ -19,12 +19,12 @@ import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
-public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
+public abstract class OpenSearchQueryBuilder<T extends Enum<T> & ParameterKey, Dto> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
+    protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQueryBuilder.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient OpenSearchQuery<T, U> query;
+    protected final transient OpenSearchQuery<T, Dto> query;
     protected transient boolean notValidated = true;
 
     /**
@@ -36,7 +36,7 @@ public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
      * .build()
      * </samp>
      */
-    public QueryBuilder(OpenSearchQuery<T, U> query) {
+    public OpenSearchQueryBuilder(OpenSearchQuery<T, Dto> query) {
         this.query = query;
     }
 
@@ -44,7 +44,7 @@ public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
      * Builder of CristinQuery.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public OpenSearchQuery<T, U>  build() throws BadRequestException {
+    public OpenSearchQuery<T, Dto>  build() throws BadRequestException {
         if (notValidated) {
             validate();
         }
@@ -55,7 +55,7 @@ public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
      * Validator of CristinQuery.Builder.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public QueryBuilder<T, U> validate() throws BadRequestException {
+    public OpenSearchQueryBuilder<T, Dto> validate() throws BadRequestException {
         assignDefaultValues();
         for (var entry : query.queryParameters.entrySet()) {
             validatesEntrySet(entry);
@@ -77,7 +77,7 @@ public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
     /**
      * Adds query and path parameters from requestInfo.
      */
-    public final QueryBuilder<T, U> fromRequestInfo(RequestInfo requestInfo) {
+    public final OpenSearchQueryBuilder<T, Dto> fromRequestInfo(RequestInfo requestInfo) {
         query.gatewayUri = requestInfo.getRequestUri();
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
@@ -86,7 +86,7 @@ public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
     /**
      * Adds parameters from query.
      */
-    public QueryBuilder<T, U> fromQueryParameters(Map<String, String> parameters) {
+    public OpenSearchQueryBuilder<T, Dto> fromQueryParameters(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
@@ -97,7 +97,7 @@ public abstract class QueryBuilder<T extends Enum<T> & ParameterKey, U> {
      * @param requiredParameters comma seperated QueryParameterKeys
      */
     @SafeVarargs
-    public final QueryBuilder<T, U> withRequiredParameters(T... requiredParameters) {
+    public final OpenSearchQueryBuilder<T, Dto> withRequiredParameters(T... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
         query.otherRequiredKeys.addAll(tmpSet);
         return this;

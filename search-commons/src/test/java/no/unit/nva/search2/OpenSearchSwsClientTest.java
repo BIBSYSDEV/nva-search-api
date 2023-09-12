@@ -28,9 +28,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SwsOpenSearchClientTest {
+class OpenSearchSwsClientTest {
 
-    private SwsOpenSearchClient swsOpenSearchClient;
+    private OpenSearchSwsClient openSearchSwsClient;
     private static final String MEDIA_TYPE = "application/json";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
@@ -45,7 +45,7 @@ class SwsOpenSearchClientTest {
         when(contentRetriever.send(any(), any()))
             .thenReturn(mockedResponse);
 
-        swsOpenSearchClient = new SwsOpenSearchClient(contentRetriever, MEDIA_TYPE);
+        openSearchSwsClient = new OpenSearchSwsClient(contentRetriever, MEDIA_TYPE);
     }
 
     @NotNull
@@ -97,7 +97,7 @@ class SwsOpenSearchClientTest {
     @Test
     void constructorWithSecretsReaderDefinedShouldCreateInstance() {
         var secretsReaderMock = mock(AuthorizedBackendClient.class);
-        var swsOpenSearchClient =  new SwsOpenSearchClient(secretsReaderMock, MEDIA_TYPE);
+        var swsOpenSearchClient =  new OpenSearchSwsClient(secretsReaderMock, MEDIA_TYPE);
         assertNotNull(swsOpenSearchClient);
     }
 
@@ -105,7 +105,7 @@ class SwsOpenSearchClientTest {
     @MethodSource("uriProvider")
     void searchSingleTermReturnsPagedResponse(URI uri) throws BadGatewayException {
         var searchResponseDto =
-            swsOpenSearchClient.doSearch(uri);
+            openSearchSwsClient.doSearch(uri);
         assertNotNull(searchResponseDto);
     }
 
