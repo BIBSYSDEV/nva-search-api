@@ -244,7 +244,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.SwsPagedResourceHandler::handleRequest
+      Handler: no.unit.nva.search2.ResourcePagedSearchHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
