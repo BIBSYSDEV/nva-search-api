@@ -58,9 +58,9 @@ public class SearchResourcesApiHandlerTest {
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
-    private static final char UTF8_BOM = '\ufeff';
-    private static final String CRLF = "\r\n";
-    private static final CharSequence COMMA_DELIMITER = ",";
+    public static final char UTF8_BOM = '\ufeff';
+    public static final String CRLF = "\r\n";
+    public static final CharSequence COMMA_DELIMITER = ",";
 
     private RestHighLevelClient restHighLevelClientMock;
     private SearchResourcesApiHandler handler;

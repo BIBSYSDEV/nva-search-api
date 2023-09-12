@@ -98,7 +98,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
             assertCuratorHasAppropriateAccessRights(requestInfo);
             return handleCuratorSearch(requestInfo, indexName);
         } else {
-        return handleCreatorSearch(requestInfo, indexName);
+            return handleCreatorSearch(requestInfo, indexName);
         }
     }
 

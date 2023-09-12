@@ -1,0 +1,25 @@
+package no.unit.nva.search2.constant;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import no.unit.nva.commons.json.JsonUtils;
+import nva.commons.core.Environment;
+
+public final class ApplicationConstants {
+
+    public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
+
+    public static final String AND = "+AND+";
+    public static final String OR = "+OR+";
+    public static final String RESOURCES = "resources";
+    public static final String SEARCH = "_search";
+
+    public static final Environment ENVIRONMENT = new Environment();
+
+    public static String readSearchInfrastructureAuthUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
+    }
+
+    public static String readSearchInfrastructureApiUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
+    }
+}

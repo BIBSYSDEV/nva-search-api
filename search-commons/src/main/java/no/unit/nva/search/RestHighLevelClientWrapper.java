@@ -41,6 +41,7 @@ public class RestHighLevelClientWrapper {
 
     public RestHighLevelClientWrapper(RestClientBuilder clientBuilder) {
         this.client = new RestHighLevelClient(clientBuilder);
+        logger.info(INITIAL_LOG_MESSAGE, clientBuilder);
     }
 
     /**
@@ -93,6 +94,7 @@ public class RestHighLevelClientWrapper {
 
         RestClientBuilder clientBuilder = RestClient
                 .builder(HttpHost.create(address));
+
         return new RestHighLevelClientWrapper(clientBuilder);
     }
 }

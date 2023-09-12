@@ -68,7 +68,6 @@ public final class ApplicationConstants {
     public static final String TYPE = "type";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-
         generateSimpleAggregation("resourceOwner.owner",
                                   "resourceOwner.owner.keyword"),
         generateSimpleAggregation("resourceOwner.ownerAffiliation",
@@ -160,20 +159,21 @@ public final class ApplicationConstants {
         return generateSimpleAggregation(ID, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID));
     }
 
-    private static TermsAggregationBuilder generateNameAggregation() {
-        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME));
-    }
-
-    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
-        return new NestedAggregationBuilder(object, object)
-                   .subAggregation(generateIdAggregation(object));
-    }
-
     private static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
                    .field(jsonPath(object, ID))
                    .size(DEFAULT_AGGREGATION_SIZE)
                    .subAggregation(generateLabelsAggregation(object));
+    }
+
+    private static TermsAggregationBuilder generateNameAggregation() {
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME));
+    }
+
+
+    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
+        return new NestedAggregationBuilder(object, object)
+                   .subAggregation(generateIdAggregation(object));
     }
 
     private static NestedAggregationBuilder generateLabelsAggregation(String object) {

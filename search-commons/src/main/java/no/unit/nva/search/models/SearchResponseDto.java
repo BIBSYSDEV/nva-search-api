@@ -195,7 +195,7 @@ public class SearchResponseDto {
         return formatAggregations(aggregations);
     }
 
-    private static JsonNode formatAggregations(JsonNode aggregations) {
+    public static JsonNode formatAggregations(JsonNode aggregations) {
         var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
 
         var iterator = aggregations.fields();

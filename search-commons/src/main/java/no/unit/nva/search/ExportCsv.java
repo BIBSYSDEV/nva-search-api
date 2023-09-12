@@ -129,12 +129,7 @@ public class ExportCsv {
     @Override
     @JacocoGenerated
     public String toString() {
-        return "ExportCsv{" +
-               "id='" + id + '\'' +
-               ", mainTitle='" + mainTitle + '\'' +
-               ", publicationDate='" + publicationDate + '\'' +
-               ", publicationInstance='" + publicationInstance + '\'' +
-               ", contributors='" + contributors + '\'' +
-               '}';
+        return "ExportCsv{id='%s', mainTitle='%s', publicationDate='%s', publicationInstance='%s', contributors='%s'}"
+                   .formatted(id, mainTitle, publicationDate, publicationInstance, contributors);
     }
 }

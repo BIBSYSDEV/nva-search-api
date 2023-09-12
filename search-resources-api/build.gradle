@@ -12,6 +12,7 @@ dependencies {
     implementation libs.nva.apigateway
     implementation libs.bundles.logging
     implementation libs.guava
+    implementation libs.opensearch.java
 
     testImplementation libs.opensearch.rest.highlevel.client
     implementation libs.com.auth0.jwt
@@ -19,6 +20,7 @@ dependencies {
     implementation libs.problem
     testImplementation libs.bundles.testing
     testImplementation project(':search-testing')
+    testImplementation project(':search-commons')
 }
 
 test{
