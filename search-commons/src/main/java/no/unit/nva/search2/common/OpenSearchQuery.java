@@ -27,23 +27,25 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import java.util.stream.Stream;
-import no.unit.nva.search2.OpenSearchSwsClient;
 import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
+
+public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extends Record> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-    protected static final String PREFIX = "(";
-    protected static final String SUFFIX = ")";
+    protected static final String AMPERSAND = "&";
+    protected static final String EQUAL = "=";
     protected static final String PLUS = "+";
-    protected static final String ENCODED_SPACE = "%20";
-    protected final transient Map<T, String> queryParameters;
-    protected final transient Map<T, String> luceneParameters;
-    protected final transient Set<T> otherRequiredKeys;
+    protected static final String PREFIX = "(";
+    protected static final String SPACE_ENCODED = "%20";
+    protected static final String SUFFIX = ")";
+    protected final transient Map<K, String> queryParameters;
+    protected final transient Map<K, String> luceneParameters;
+    protected final transient Set<K> otherRequiredKeys;
     protected transient URI gatewayUri;
 
     protected OpenSearchQuery() {
@@ -110,13 +112,13 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
      * @param key to look up.
      * @return String content raw
      */
-    public String getValue(T key) {
+    public String getValue(K key) {
         return luceneParameters.containsKey(key)
                    ? luceneParameters.get(key)
                    : queryParameters.get(key);
     }
 
-    public String removeValue(T key) {
+    public String removeValue(K key) {
         return luceneParameters.containsKey(key)
                    ? luceneParameters.remove(key)
                    : queryParameters.remove(key);
@@ -128,7 +130,7 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
      * @param key   to add to.
      * @param value to assign
      */
-    public void setLucineValue(T key, String value) {
+    public void setLucineValue(K key, String value) {
         if (nonNull(value)) {
             luceneParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
         }
@@ -140,13 +142,13 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
      * @param key   to add to.
      * @param value to assign
      */
-    public void setQueryValue(T key, String value) {
+    public void setQueryValue(K key, String value) {
         if (nonNull(value)) {
             queryParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
         }
     }
 
-    public abstract U doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException;
+    public abstract R doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException;
 
     public static Map<String, String> queryToMap(URI uri) {
         return queryToMap(uri.getQuery());
@@ -155,21 +157,21 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
     public static Map<String, String> queryToMap(String query) {
         return
             nonNull(query)
-                ? Arrays.stream(query.split("&"))
-                      .map(s -> s.split("="))
+                ? Arrays.stream(query.split(AMPERSAND))
+                      .map(s -> s.split(EQUAL))
                       .collect(Collectors.toMap(strings -> strings[0], OpenSearchQuery::valueOrEmpty))
                 : Collections.emptyMap();
     }
 
-    protected String toQueryName(Entry<T, String> entry) {
+    protected String toQueryName(Entry<K, String> entry) {
         return entry.getKey().swsKey().stream().findFirst().orElseThrow();
     }
 
-    protected String toGatewayKey(Entry<T, String> entry) {
+    protected String toGatewayKey(Entry<K, String> entry) {
         return entry.getKey().key();
     }
 
-    protected String toQueryValue(Entry<T, String> entry) {
+    protected String toQueryValue(Entry<K, String> entry) {
         return entry.getKey().encoding() == KeyEncoding.ENCODE_DECODE
                    ? encodeUTF(entry.getValue())
                    : entry.getValue();
@@ -180,10 +182,10 @@ public abstract class OpenSearchQuery<T extends Enum<T> & ParameterKey, U> {
     }
 
     protected String encodeUTF(String unencoded) {
-        return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace(ENCODED_SPACE, PLUS);
+        return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace(SPACE_ENCODED, PLUS);
     }
 
-    private String toLuceneEntryToString(Entry<T, String> entry) {
+    private String toLuceneEntryToString(Entry<K, String> entry) {
         return
             entry.getKey().swsKey().stream()
                 .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))

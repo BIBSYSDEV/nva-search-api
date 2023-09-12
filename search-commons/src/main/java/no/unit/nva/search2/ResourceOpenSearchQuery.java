@@ -3,17 +3,18 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameter.OFFSET;
-import static no.unit.nva.search2.ResourceParameter.PAGE;
-import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
-import static no.unit.nva.search2.ResourceParameter.keyFromString;
+import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
+import static no.unit.nva.search2.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 
 import no.unit.nva.search2.common.OpenSearchQuery;
-import no.unit.nva.search2.model.ResourcePagedSearchResponseDto;
+import no.unit.nva.search2.common.OpenSearchSwsClient;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.common.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 
@@ -22,28 +23,29 @@ import java.util.stream.Stream;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.jetbrains.annotations.NotNull;
 
-public final class OpenSearchResourceQuery extends OpenSearchQuery<ResourceParameter, ResourcePagedSearchResponseDto> {
+public final class ResourceOpenSearchQuery extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
 
     @Override
-    public ResourcePagedSearchResponseDto doSearch(@NotNull OpenSearchSwsClient queryClient) throws BadGatewayException {
+    public PagedSearchResourceDto doSearch(@NotNull OpenSearchSwsClient queryClient)
+        throws BadGatewayException {
         return
             Stream.of(queryClient.doSearch(openSearchUri()))
                 .map(this::toPagedSearchResponseDto)
                 .findFirst().orElseThrow();
     }
 
-    private OpenSearchResourceQuery() {
+    private ResourceOpenSearchQuery() {
         super();
     }
 
     @SuppressWarnings("PMD.NullAssignment")
     @NotNull
-    private ResourcePagedSearchResponseDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
+    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
 
         var offset = getQueryOffset();
         var url = gatewayUri.toString().split("\\?")[0];
 
-        return ResourcePagedSearchResponseDto.Builder.builder()
+        return PagedSearchResourceDto.Builder.builder()
             .withTotalHits(response.getTotalSize())
             .withHits(response.getSearchHits())
             .withSort(response.getSort())
@@ -73,9 +75,10 @@ public final class OpenSearchResourceQuery extends OpenSearchQuery<ResourceParam
         return Long.getLong(getValue(PER_PAGE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
-    public static final class Builder extends OpenSearchQueryBuilder<ResourceParameter, ResourcePagedSearchResponseDto> {
+    public static final class Builder
+        extends OpenSearchQueryBuilder<ResourceParameterKey, PagedSearchResourceDto> {
         private Builder() {
-            super(new OpenSearchResourceQuery());
+            super(new ResourceOpenSearchQuery());
         }
 
         public static Builder queryBuilder() {

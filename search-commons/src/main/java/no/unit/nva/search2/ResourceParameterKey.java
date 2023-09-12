@@ -29,7 +29,7 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SHORT_DATE;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
 
-public enum ResourceParameter implements ParameterKey {
+public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING, null),
     CATEGORY(STRING, "category", "entityDescription.reference.publicationInstance"),
     CONTRIBUTOR(STRING, "contributor", "entityDescription.contributors.identity.id"
@@ -65,15 +65,15 @@ public enum ResourceParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ResourceParameter> VALID_LUCENE_PARAMETERS =
-        Arrays.stream(ResourceParameter.values())
-            .filter(ResourceParameter::ignorePathKeys)
+    public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETERS =
+        Arrays.stream(ResourceParameterKey.values())
+            .filter(ResourceParameterKey::ignorePathKeys)
             .collect(Collectors.toUnmodifiableSet());
 
     public static final Set<String> VALID_LUCENE_PARAMETER_KEYS =
         VALID_LUCENE_PARAMETERS.stream()
             .sorted()
-            .map(ResourceParameter::key)
+            .map(ResourceParameterKey::key)
             .collect(Collectors.toUnmodifiableSet());
 
     private final String queryKey;
@@ -84,20 +84,20 @@ public enum ResourceParameter implements ParameterKey {
     private final KeyEncoding keyEncoding;
     private final Operator theOperator;
 
-    ResourceParameter(ParamKind kind, String key) {
+    ResourceParameterKey(ParamKind kind, String key) {
         this(kind, EQUALS, key, null, null, null);
     }
 
-    ResourceParameter(ParamKind kind, String key, String swsKey) {
+    ResourceParameterKey(ParamKind kind, String key, String swsKey) {
         this(kind, EQUALS, key, swsKey, null, null);
     }
 
-    ResourceParameter(ParamKind paramKind, Operator operator, String key, String swsKey) {
+    ResourceParameterKey(ParamKind paramKind, Operator operator, String key, String swsKey) {
         this(paramKind, operator, key, swsKey, null, null);
     }
 
-    ResourceParameter(ParamKind kind, Operator operator, String key, String swsKey, String keyPattern,
-                      String valuePattern) {
+    ResourceParameterKey(ParamKind kind, Operator operator, String key, String swsKey, String keyPattern,
+                         String valuePattern) {
         this.queryKey = key;
         this.theOperator = operator;
         this.theSwsKeys = nonNull(swsKey) ? swsKey.split("\\|") : new String[]{key};
@@ -186,9 +186,9 @@ public enum ResourceParameter implements ParameterKey {
         };
     }
 
-    public static ResourceParameter keyFromString(String paramName, String value) {
-        var result = Arrays.stream(ResourceParameter.values())
-                         .filter(ResourceParameter::ignorePathKeys)
+    public static ResourceParameterKey keyFromString(String paramName, String value) {
+        var result = Arrays.stream(ResourceParameterKey.values())
+                         .filter(ResourceParameterKey::ignorePathKeys)
                          .filter(ParameterKey.equalTo(paramName))
                          .collect(Collectors.toSet());
         return result.size() == 1
@@ -199,7 +199,7 @@ public enum ResourceParameter implements ParameterKey {
                          .orElse(INVALID);
     }
 
-    private static boolean ignorePathKeys(ResourceParameter f) {
+    private static boolean ignorePathKeys(ResourceParameterKey f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
 }

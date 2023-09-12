@@ -13,7 +13,6 @@ public final class ApplicationConstants {
     public static final String RESOURCES = "resources";
     public static final String SEARCH = "_search";
 
-    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final Environment ENVIRONMENT = new Environment();
 
     public static String readSearchInfrastructureAuthUri() {

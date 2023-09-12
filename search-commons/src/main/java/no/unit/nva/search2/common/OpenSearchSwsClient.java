@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.common;
 
 import no.unit.nva.auth.AuthorizedBackendClient;
 import no.unit.nva.auth.CognitoCredentials;
@@ -52,7 +52,7 @@ public class OpenSearchSwsClient {
         return new OpenSearchSwsClient(retriever, APPLICATION_JSON.toString());
     }
 
-    protected OpenSearchSwsResponse doSearch(URI requestUri)
+    public OpenSearchSwsResponse doSearch(URI requestUri)
         throws BadGatewayException {
         logger.info(REQUESTING_SEARCH_FROM, requestUri);
         var request = HttpRequest.newBuilder(requestUri).headers(ACCEPT, mediaType).GET();

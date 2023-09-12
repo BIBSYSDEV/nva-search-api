@@ -4,15 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 
-import no.unit.nva.search2.model.TestGatewayResponse;
+import no.unit.nva.search.common.FakeGatewayResponse;
 import org.junit.jupiter.api.Test;
 
-class GatewayResponseTest {
+class FakeGatewayResponseTest {
 
     @Test
-    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
+    void shouldReturnGatewayResponseWithSwsResponse() throws IOException {
         var response =
-            TestGatewayResponse.ofSwsGatewayResponse(
+            FakeGatewayResponse.ofSwsGatewayResponse(
                 getClass().getResourceAsStream("/sample_gateway_opensearch_response.json"));
         assertNotNull(response);
         assertEquals(200, response.statusCode());
@@ -22,9 +22,9 @@ class GatewayResponseTest {
 
 
     @Test
-    void shouldReturnSearchResultsWhenQu22eryIsSingleTerm() throws IOException {
+    void shouldReturnGatewayResponseWithErrorCode() throws IOException {
         var response =
-            TestGatewayResponse.ofSwsGatewayResponse(
+            FakeGatewayResponse.ofSwsGatewayResponse(
                 getClass().getResourceAsStream("/sample_invalid_gateway_opensearch_response.json"));
         assertNotNull(response);
         assertEquals(400, response.statusCode());

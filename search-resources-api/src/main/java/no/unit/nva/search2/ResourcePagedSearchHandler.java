@@ -1,7 +1,8 @@
 package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.nva.search2.model.ResourcePagedSearchResponseDto;
+import no.unit.nva.search2.common.OpenSearchSwsClient;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -9,31 +10,31 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
 
-import static no.unit.nva.search2.ResourceParameter.PAGE;
-import static no.unit.nva.search2.ResourceParameter.PER_PAGE;
-import static no.unit.nva.search2.ResourceParameter.SORT;
-import static no.unit.nva.search2.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search2.OpenSearchSwsClient.defaultSwsClient;
+import static no.unit.nva.search2.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.ResourceParameterKey.SORT_ORDER;
+import static no.unit.nva.search2.common.OpenSearchSwsClient.defaultSwsClient;
 
-public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, ResourcePagedSearchResponseDto> {
+public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSearchResourceDto> {
 
     private final OpenSearchSwsClient openSearchSwsClient;
 
     @JacocoGenerated
-    public SwsPagedResourceHandler() {
+    public ResourcePagedSearchHandler() {
         this(new Environment(), defaultSwsClient());
     }
 
-    public SwsPagedResourceHandler(Environment environment, OpenSearchSwsClient openSearchSwsClient) {
+    public ResourcePagedSearchHandler(Environment environment, OpenSearchSwsClient openSearchSwsClient) {
         super(Void.class, environment);
         this.openSearchSwsClient = openSearchSwsClient;
     }
 
     @Override
-    protected ResourcePagedSearchResponseDto processInput(Void input, RequestInfo requestInfo, Context context)
+    protected PagedSearchResourceDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
         return
-            OpenSearchResourceQuery.Builder.queryBuilder()
+            ResourceOpenSearchQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(PAGE, PER_PAGE,SORT,SORT_ORDER)
                 .validate()
@@ -42,7 +43,7 @@ public class SwsPagedResourceHandler extends ApiGatewayHandler<Void, ResourcePag
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, ResourcePagedSearchResponseDto output) {
+    protected Integer getSuccessStatusCode(Void input, PagedSearchResourceDto output) {
         return HttpStatus.SC_OK;
     }
 }

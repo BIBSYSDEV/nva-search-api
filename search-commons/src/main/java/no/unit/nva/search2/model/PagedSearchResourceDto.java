@@ -9,16 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameter.OFFSET;
+import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
+import static no.unit.nva.search2.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 
-public record ResourcePagedSearchResponseDto(
+public record PagedSearchResourceDto(
     URI id,
     URI nextResults,
     URI previousResults,
     long totalHits,
     List<JsonNode> hits,
-    List<Long> lastSortKeyIndex,
+    URI nextResultsBySortKey,
     JsonNode aggregations) {
 
     @JsonProperty("@context")
@@ -26,13 +27,13 @@ public record ResourcePagedSearchResponseDto(
         return PAGINATED_SEARCH_RESULT_CONTEXT;
     }
 
-    private ResourcePagedSearchResponseDto(Builder builder) {
+    private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
             builder.nextResults,
             builder.previousResults,
             builder.totalHits,
             builder.hits,
-            builder.lastSortKeyIndex,
+            builder.nextResultsBySortKey,
             builder.aggregations
         );
     }
@@ -44,7 +45,7 @@ public record ResourcePagedSearchResponseDto(
         private URI previousResults;
         private long totalHits;
         private List<JsonNode> hits;
-        private List<Long> lastSortKeyIndex;
+        private URI nextResultsBySortKey;
         private JsonNode aggregations;
         private String rootUrl;
         private Long offset;
@@ -96,7 +97,16 @@ public record ResourcePagedSearchResponseDto(
         }
 
         public Builder withSort(List<Long> sort) {
-            this.lastSortKeyIndex = sort;
+            if (sort.isEmpty()) {
+                return this;
+            }
+            var sortedP = String.join(",", sort.stream().map(Object::toString).toList());
+            parameters.put(SEARCH_AFTER.key(), sortedP);
+
+            this.nextResultsBySortKey =
+                UriWrapper.fromUri(rootUrl)
+                    .addQueryParameters(parameters)
+                    .getUri();
             return this;
         }
 
@@ -116,7 +126,7 @@ public record ResourcePagedSearchResponseDto(
                 .getUri();
         }
 
-        public ResourcePagedSearchResponseDto build() {
+        public PagedSearchResourceDto build() {
             if (nonNull(totalHits)) {
                 if (nonNull(offset)) {
                     this.id = createUriOffsetRef(offset);
@@ -128,7 +138,7 @@ public record ResourcePagedSearchResponseDto(
                     this.previousResults = createUriOffsetRef(previousOffset);
                 }
             }
-            return new ResourcePagedSearchResponseDto(this);
+            return new PagedSearchResourceDto(this);
         }
     }
 }
