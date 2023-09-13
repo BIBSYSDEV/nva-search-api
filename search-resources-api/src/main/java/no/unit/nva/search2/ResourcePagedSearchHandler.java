@@ -34,7 +34,7 @@ public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSea
     protected PagedSearchResourceDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
         return
-            ResourceOpenSearchQuery.Builder.queryBuilder()
+            ResourceQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(PAGE, PER_PAGE,SORT,SORT_ORDER)
                 .validate()

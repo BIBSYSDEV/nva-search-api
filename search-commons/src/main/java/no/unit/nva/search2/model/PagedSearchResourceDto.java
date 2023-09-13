@@ -70,12 +70,12 @@ public record PagedSearchResourceDto(
             return this;
         }
 
-        public Builder withNextOffset(Long offset) {
+        public Builder withOffsetNext(Long offset) {
             this.nextOffset = offset;
             return this;
         }
 
-        public Builder withPreviousOffset(Long offset) {
+        public Builder withOffsetPrevious(Long offset) {
             this.previousOffset = offset;
             return this;
         }

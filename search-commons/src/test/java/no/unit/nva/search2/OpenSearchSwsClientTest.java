@@ -1,12 +1,9 @@
 package no.unit.nva.search2;
 
 
-import no.unit.nva.auth.AuthorizedBackendClient;
 import no.unit.nva.search2.common.OpenSearchSwsClient;
-import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -23,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,17 +34,15 @@ class OpenSearchSwsClientTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
 
-
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
-        var contentRetriever = mock(AuthorizedBackendClient.class);
+        var httpClient = mock(HttpClient.class);
         var mockedResponse = mockedHttpResponse();
+        var cachedJwtProvider = setupMockedCachedJwtProvider();
 
-        // Use the mocked response in your test code
-        when(contentRetriever.send(any(), any()))
-            .thenReturn(mockedResponse);
+        when(httpClient.send(any(), any())).thenReturn(mockedResponse);
 
-        openSearchSwsClient = new OpenSearchSwsClient(contentRetriever, MEDIA_TYPE);
+        openSearchSwsClient = new OpenSearchSwsClient(cachedJwtProvider, httpClient);
     }
 
     @NotNull
@@ -95,18 +91,10 @@ class OpenSearchSwsClientTest {
         };
     }
 
-    @Test
-    void constructorWithSecretsReaderDefinedShouldCreateInstance() {
-        var secretsReaderMock = mock(AuthorizedBackendClient.class);
-        var swsOpenSearchClient =  new OpenSearchSwsClient(secretsReaderMock, MEDIA_TYPE);
-        assertNotNull(swsOpenSearchClient);
-    }
-
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) throws BadGatewayException {
-        var searchResponseDto =
-            openSearchSwsClient.doSearch(uri);
+    void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) {
+        var searchResponseDto = openSearchSwsClient.doSearch(uri, MEDIA_TYPE);
         assertNotNull(searchResponseDto);
     }
 

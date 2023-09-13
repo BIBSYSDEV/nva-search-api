@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.net.URI;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
@@ -16,25 +18,26 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ResourceOpenSearchQueryTest {
+class ResourceQueryTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
 
     @ParameterizedTest
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceOpenSearchQuery.Builder
+            ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(PAGE, PER_PAGE)
                 .build();
         assertNotNull(resourceParameters.getValue(OFFSET));
         assertNotNull(resourceParameters.getValue(ResourceParameterKey.USER));
-        System.out.println(resourceParameters
-                               .toGateWayRequestParameter()
-                               .entrySet().stream()
-                                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                               .collect(Collectors.joining(" & ")));
+        logger.info(resourceParameters
+                        .toGateWayRequestParameter()
+                        .entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + entry.getValue())
+                        .collect(Collectors.joining(" & ")));
         assertNotEquals(uri, resourceParameters.openSearchUri());
     }
 
@@ -42,7 +45,7 @@ class ResourceOpenSearchQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceOpenSearchQuery.Builder
+                     () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(PAGE, PER_PAGE, ResourceParameterKey.DOI)
@@ -54,7 +57,7 @@ class ResourceOpenSearchQueryTest {
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceOpenSearchQuery.Builder
+                     () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(OFFSET, PER_PAGE)

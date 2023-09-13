@@ -8,7 +8,6 @@ import no.unit.nva.search2.common.OpenSearchSwsClient;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -62,7 +62,7 @@ class ResourcePagedSearchHandlerTest {
     }
 
     @Test
-    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException, BadGatewayException {
+    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStream(), outputStream, contextMock);
@@ -80,7 +80,7 @@ class ResourcePagedSearchHandlerTest {
     }
 
     @Test
-    void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException, BadGatewayException {
+    void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException {
         prepareRestHighLevelClientOkResponse();
         handler.handleRequest(getInputStreamWithContributorId(), outputStream, contextMock);
 
@@ -93,7 +93,7 @@ class ResourcePagedSearchHandlerTest {
 
     @Test
     void shouldNotReturnSortedSearchResultsWhenSendingMultipleContributorId()
-        throws IOException, BadGatewayException {
+        throws IOException {
         prepareRestHighLevelClientOkResponse();
 
         handler.handleRequest(getInputStreamWithMultipleContributorId(), outputStream, contextMock);
@@ -106,7 +106,7 @@ class ResourcePagedSearchHandlerTest {
     }
 
     @Test
-    void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException, BadGatewayException {
+    void shouldReturnSearchResultsWithEmptyHitsWhenQueryResultIsEmpty() throws IOException {
         prepareRestHighLevelClientEmptyResponse();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -123,7 +123,7 @@ class ResourcePagedSearchHandlerTest {
     }
 
     @Test
-    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException, BadGatewayException {
+    void shouldReturn200WhenSortOrderIsNotSpecified() throws IOException {
         prepareRestHighLevelClientEmptyResponseForSortOrder();
 
         handler.handleRequest(getInputStream(), outputStream, mock(Context.class));
@@ -143,7 +143,7 @@ class ResourcePagedSearchHandlerTest {
     @ParameterizedTest(name = "Should return application/json for accept header {0}")
     @MethodSource("acceptHeaderValuesProducingApplicationJsonProvider")
     void shouldProduceWithHeader(String acceptHeaderValue)
-        throws IOException, BadGatewayException {
+        throws IOException {
         prepareRestHighLevelClientOkResponse();
         var requestInput =
             nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
@@ -194,27 +194,27 @@ class ResourcePagedSearchHandlerTest {
             Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
     }
 
-    private void prepareRestHighLevelClientOkResponse() throws IOException, BadGatewayException {
+    private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any()))
+        when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
     }
 
-    private void prepareRestHighLevelClientEmptyResponse() throws IOException, BadGatewayException {
+    private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any()))
+        when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
     }
 
-    private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException, BadGatewayException {
+    private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any()))
+        when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
     }
 

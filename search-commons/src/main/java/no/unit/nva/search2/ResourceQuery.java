@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.OpenSearchSwsClient;
@@ -20,21 +21,19 @@ import no.unit.nva.search2.model.OpenSearchSwsResponse;
 
 import java.util.stream.Stream;
 
-import nva.commons.apigateway.exceptions.BadGatewayException;
 import org.jetbrains.annotations.NotNull;
 
-public final class ResourceOpenSearchQuery extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
+public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
 
     @Override
-    public PagedSearchResourceDto doSearch(@NotNull OpenSearchSwsClient queryClient)
-        throws BadGatewayException {
+    public PagedSearchResourceDto doSearch(@NotNull OpenSearchSwsClient queryClient) {
         return
-            Stream.of(queryClient.doSearch(openSearchUri()))
+            Stream.of(queryClient.doSearch(openSearchUri(),APPLICATION_JSON.toString()))
                 .map(this::toPagedSearchResponseDto)
                 .findFirst().orElseThrow();
     }
 
-    private ResourceOpenSearchQuery() {
+    private ResourceQuery() {
         super();
     }
 
@@ -53,8 +52,8 @@ public final class ResourceOpenSearchQuery extends OpenSearchQuery<ResourceParam
             .withRootUrl(url)
             .withRequestParameters(toGateWayRequestParameter())
             .withOffset(offset)
-            .withNextOffset(offset + getQueryPageSize())
-            .withPreviousOffset(offset - getQueryPageSize())
+            .withOffsetNext(offset + getQueryPageSize())
+            .withOffsetPrevious(offset - getQueryPageSize())
             .build();
     }
 
@@ -78,7 +77,7 @@ public final class ResourceOpenSearchQuery extends OpenSearchQuery<ResourceParam
     public static final class Builder
         extends OpenSearchQueryBuilder<ResourceParameterKey, PagedSearchResourceDto> {
         private Builder() {
-            super(new ResourceOpenSearchQuery());
+            super(new ResourceQuery());
         }
 
         public static Builder queryBuilder() {
