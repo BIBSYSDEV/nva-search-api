@@ -78,157 +78,163 @@ paths:
       parameters:
       - in: query
         name: category
-        description: "Term to search for in resource."
+        description: "Result category code, category codes are defined in the Cristin API documentation."
         required: false
         schema:
           type: string
       - in: query
         name: contributor
-        description: "Term to search for in resource."
+        description: "Author's name or Cristin person id."
         required: false
         schema:
           type: string
       - in: query
         name: created_before
-        description: "Term to search for in resource."
+        description: "Results created before and inclusive the given date, (yyyy-mm-dd), e.g: 2005-03-17"
         required: false
         schema:
           type: string
       - in: query
         name: created_since
-        description: "Term to search for in resource."
+        description: "Results created since and inclusive the given date, (yyyy-mm-dd), e.g: 2005-03-17"
         required: false
         schema:
           type: string
       - in: query
         name: doi
-        description: "Term to search for in resource."
+        description: "DOI name (e.g. doi=10.1000/123456)"
         required: false
         schema:
           type: string
       - in: query
         name: fields
-        description: "Term to search for in resource."
+        description: "'fields=all' gives a list of result objects with all available fields. If this parameter is omitted, a list of result summaries with fewer fields will be returned."
         required: false
         schema:
           type: string
       - in: query
         name: funding
-        description: "Term to search for in resource."
+        description: "Funding source code e.g: NFR, and project_code together separated by ':' 'NFR:1234' means 'funding_source': 'NFR' with 'project_code': '1234'"
         required: false
         schema:
           type: string
       - in: query
         name: funding_source
-        description: "Term to search for in resource."
+        description: "Funding source code e.g: NFR"
         required: false
         schema:
           type: string
       - in: query
         name: id
-        description: "Term to search for in resource."
+        description: "The Cristin id of the result"
         required: false
         schema:
           type: string
       - in: query
         name: institution
-        description: "Term to search for in resource."
+        description: "Id (one number, e.g. institution=185), name or acronym of the institution the contributors belong to"
         required: false
         schema:
           type: string
       - in: query
         name: issn
-        description: "Term to search for in resource."
+        description: "The issn of the result"
         required: false
         schema:
           type: string
       - in: query
         name: lang
-        description: "Term to search for in resource."
+        description: "Two letter language code. Using the 'lang' parameter, this is no longer in use, and are ignored"
         required: false
         schema:
           type: string
       - in: query
         name: modified_before
-        description: "Term to search for in resource."
+        description: "Results modified before and inclusive the given date, (yyyy-mm-dd), e.g: 2005-03-17"
         required: false
         schema:
           type: string
       - in: query
         name: modified_since
-        description: "Term to search for in resource."
+        description: "Results modified since and inclusive the given date, (yyyy-mm-dd), e.g: 2005-03-17"
         required: false
         schema:
           type: string
       - in: query
         name: order
-        description: "Term to search for in resource."
+        description: "SortOrder is either 'asc' or 'desc'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
         required: false
         schema:
           type: string
       - in: query
         name: page
-        description: "Term to search for in resource."
+        description: "Page number. See Pagination https://api.cristin.no/v2/doc/index.html#pagination"
         required: false
         schema:
-          type: string
+          type: number
+      - in: query
+        name: offset
+        description: "Start result from item no. See Pagination"
+        required: false
+        schema:
+          type: number
       - in: query
         name: per_page
-        description: "Term to search for in resource."
+        description: "Number of items per page. See Pagination"
         required: false
         schema:
-          type: string
+          type: number
       - in: query
         name: project_code
-        description: "Term to search for in resource."
+        description: "Project code is the internal reference number used by funding source"
         required: false
         schema:
           type: string
       - in: query
         name: published_before
-        description: "Term to search for in resource."
+        description: "Results published before and inclusive the given year, (yyyy), e.g: 2017"
         required: false
         schema:
           type: string
       - in: query
         name: published_since
-        description: "Term to search for in resource."
+        description: "Results published since and inclusive the given year, (yyyy), e.g: 2005"
         required: false
         schema:
           type: string
       - in: query
         name: query
-        description: "Term to search for in resource."
+        description: "expected to be a lucene query string, e.g: '(title:my title)'"
         required: false
         schema:
           type: string
       - in: query
         name: sort
-        description: "Term to search for in resource."
+        description: "Sorts on 'category' and/or 'year_published'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
         required: false
         schema:
           type: string
       - in: query
         name: title
-        description: "Term to search for in resource."
+        description: "The title of the result"
         required: false
         schema:
           type: string
       - in: query
         name: unit
-        description: "Term to search for in resource."
+        description: "Id (e.g. unit=185.53.18.10)"
         required: false
         schema:
           type: string
       - in: query
         name: user
-        description: "Term to search for in resource."
+        description: "A person's username in Cristin together with the institution id separated by ':' 'askeladd:185' means Cristin user 'askeladd' from the institution '185'"
         required: false
         schema:
           type: string
       - in: query
         name: year_reported
-        description: "Term to search for in resource."
+        description: "The year a result was reported"
         required: false
         schema:
           type: string
