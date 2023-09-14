@@ -8,7 +8,7 @@ import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.Problem;
+import no.unit.nva.search2.model.ProblemResponse;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
@@ -64,9 +64,12 @@ public class OpenSearchSwsClient {
 
     private OpenSearchSwsResponse handleResponse(HttpResponse<String> response) throws BadGatewayException {
         if (response.statusCode() != HttpStatus.SC_OK) {
-            var problem = getResponseBodyAs(response, Problem.class);
-            logger.error(problem.message());
-            throw new BadGatewayException(problem.message());
+            logger.error(response.body());
+            var problem =
+                attempt(() -> getResponseBodyAs(response, ProblemResponse.class))
+                    .or(() -> new ProblemResponse(response.body(),null,null,null,null, null))
+                    .get();
+            throw new BadGatewayException(problem.detail());
         }
         return getResponseBodyAs(response, OpenSearchSwsResponse.class);
     }
