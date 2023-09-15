@@ -23,7 +23,12 @@ import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN;
 import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
 import static no.unit.nva.search2.model.ParameterKey.Operator.NONE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.*;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.SHORT_DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING_DECODE;
 
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING, null),

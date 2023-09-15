@@ -92,7 +92,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
      * Adds parameters from query.
      */
     public OpenSearchQueryBuilder<K, R> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
-        parameters.forEach(this::setValue);
+        parameters.forEach(this::setEntryValue);
         return this;
     }
 
@@ -103,11 +103,6 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
         parameters.forEach(this::setValue);
         return this;
     }
-
-    private void setValue(Map.Entry<String, String> entry) {
-        setValue(entry.getKey(), entry.getValue());
-    }
-
 
     /**
      * Defines which parameters are required.
@@ -196,6 +191,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
         }
     }
 
-
-
+    private void setEntryValue(Map.Entry<String, String> entry) {
+        setValue(entry.getKey(), entry.getValue());
+    }
 }

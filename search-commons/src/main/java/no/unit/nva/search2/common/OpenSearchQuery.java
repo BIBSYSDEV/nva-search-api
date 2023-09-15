@@ -20,8 +20,16 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -160,7 +168,7 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
     }
 
     @NotNull
-    private static Entry<String, String> stringsToEntry(String[] strings) {
+    private static Entry<String, String> stringsToEntry(String... strings) {
         return new Entry<>() {
             @Override
             public String getKey() {

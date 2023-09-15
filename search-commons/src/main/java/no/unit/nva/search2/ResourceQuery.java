@@ -91,7 +91,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
                 switch (key) {
                     case PAGE, OFFSET -> setValue(key.key(), DEFAULT_OFFSET);
                     case RESULTS -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT+ ":" + DEFAULT_VALUE_SORT_ORDER);
+                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + ":" + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
                 }
