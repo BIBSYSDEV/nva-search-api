@@ -57,7 +57,7 @@ public enum ResourceParameterKey implements ParameterKey {
     SEARCH_ALL(CUSTOM, NONE, "query", ""),
     PAGE(NUMBER,"page"),
     OFFSET(NUMBER, EQUALS, "offset", "from", "offset|from", null),
-    RESULTS(NUMBER, EQUALS, "results", "size", "per.page|results|limit", null),
+    PER_PAGE(NUMBER, EQUALS, "results", "size", "per.page|results|limit", null),
     SORT(STRING_DECODE, EQUALS,"sort", null, "(?i)orderBy|sort", PATTERN_IS_NON_EMPTY),
     SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)order|sortOrder", "asc|desc"),
     SEARCH_AFTER(CUSTOM, "search_after"),

@@ -5,7 +5,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.RESULTS;
+import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
@@ -72,7 +72,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
 
     @NotNull
     private Long getQueryPageSize() {
-        return Long.getLong(getValue(RESULTS), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
+        return Long.getLong(getValue(PER_PAGE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
     public static final class Builder
@@ -90,7 +90,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             requiredMissing().forEach(key -> {
                 switch (key) {
                     case PAGE, OFFSET -> setValue(key.key(), DEFAULT_OFFSET);
-                    case RESULTS -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
+                    case PER_PAGE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + ":" + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
@@ -103,7 +103,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             var qpKey = keyFromString(key, value);
             switch (qpKey) {
                 case SEARCH_AFTER, OFFSET,
-                    RESULTS, PAGE -> query.setQueryValue(qpKey, value);
+                    PER_PAGE, PAGE -> query.setQueryValue(qpKey, value);
                 case SORT -> {
                     var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
                     query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey),validFieldValue));
@@ -130,7 +130,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             // convert page to offset if offset is not set
             if (isNull(query.getValue(OFFSET)) && nonNull(query.getValue(PAGE))) {
                 var page = Integer.parseInt(query.getValue(PAGE));
-                var perPage = Integer.parseInt(query.getValue(RESULTS));
+                var perPage = Integer.parseInt(query.getValue(PER_PAGE));
                 query.setQueryValue(OFFSET, String.valueOf(page * perPage));
                 query.removeValue(PAGE);
             }

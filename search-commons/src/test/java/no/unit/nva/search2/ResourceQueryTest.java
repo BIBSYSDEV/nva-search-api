@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.RESULTS;
+import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,7 +30,7 @@ class ResourceQueryTest {
             ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, RESULTS)
+                .withRequiredParameters(PAGE, PER_PAGE)
                 .build();
         assertNotNull(resourceParameters.getValue(OFFSET));
         assertNotNull(resourceParameters.getValue(ResourceParameterKey.USER));
@@ -49,7 +49,7 @@ class ResourceQueryTest {
             ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, RESULTS, SORT)
+                .withRequiredParameters(PAGE, PER_PAGE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(SORT));
         logger.info(resourceParameters
@@ -66,7 +66,7 @@ class ResourceQueryTest {
                      () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(PAGE, RESULTS, ResourceParameterKey.DOI)
+                               .withRequiredParameters(PAGE, PER_PAGE, ResourceParameterKey.DOI)
                                .build()
                                .openSearchUri());
     }
@@ -78,7 +78,7 @@ class ResourceQueryTest {
                      () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(OFFSET, RESULTS)
+                               .withRequiredParameters(OFFSET, PER_PAGE)
                                .build()
                                .openSearchUri());
     }
