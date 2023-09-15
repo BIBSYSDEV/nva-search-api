@@ -18,6 +18,7 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SHORT_DATE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOI_URL;
 import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
 import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN;
 import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
@@ -36,7 +37,7 @@ public enum ResourceParameterKey implements ParameterKey {
                                        + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "created_before", "created"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "created_since", "created"),
-    DOI(CUSTOM, "doi"),
+    DOI(CUSTOM, EQUALS, "doi", "entityDescription.reference.doi", null,PATTERN_IS_DOI_URL),
     FUNDING(STRING, "funding", "fundings.identifier|source.identifier"),
     FUNDING_SOURCE(STRING, "funding_source", "fundings.source.identifier"),
     ID(STRING, "id", "identifier"),
@@ -54,13 +55,13 @@ public enum ResourceParameterKey implements ParameterKey {
     USER(STRING, "user", "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER, "year_reported", "entityDescription.publicationDate.year"),
     SEARCH_ALL(CUSTOM, NONE, "query", ""),
-    SEARCH_AFTER(CUSTOM, "search_after"),
-    FIELDS(CUSTOM, EQUALS, "fields", null, null, "all"),
     PAGE(NUMBER,"page"),
     OFFSET(NUMBER, EQUALS, "offset", "from", "offset|from", null),
-    PER_PAGE(NUMBER, EQUALS, "per_page", "results", "per_page|results", null),
-    SORT(CUSTOM, "sort", "orderBy"),
-    SORT_ORDER(CUSTOM, EQUALS, "order", "sortOrder", null, "asc|desc"),
+    PER_PAGE(NUMBER, EQUALS, "per_page", "results", "per_page|results|limit", null),
+    SORT(STRING, "sort"),
+    SORT_ORDER(CUSTOM, EQUALS, "order", null, "(?i)[order|sortOrder]", "asc|desc"),
+    SEARCH_AFTER(CUSTOM, "search_after"),
+    FIELDS(CUSTOM, EQUALS, "fields", null, null, "all"),
     LANG(STRING, "lang");
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
