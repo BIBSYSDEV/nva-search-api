@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,6 +40,23 @@ class ResourceQueryTest {
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
                         .collect(Collectors.joining(" & ")));
         assertNotEquals(uri, resourceParameters.openSearchUri());
+    }
+
+    @ParameterizedTest
+    @MethodSource("uriSortingProvider")
+    void uriParamsToResourceParams(URI uri) throws BadRequestException {
+        var resourceParameters =
+            ResourceQuery.Builder
+                .queryBuilder()
+                .fromQueryParameters(queryToMap(uri))
+                .withRequiredParameters(PAGE, PER_PAGE, SORT)
+                .build();
+        assertNotNull(resourceParameters.getValue(SORT));
+        logger.info(resourceParameters
+                        .toGateWayRequestParameter()
+                        .entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + entry.getValue())
+                        .collect(Collectors.joining(" & ")));
     }
 
     @ParameterizedTest
@@ -74,6 +92,13 @@ class ResourceQueryTest {
             URI.create("https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
             URI.create("https://example.com/?published_before=2020&lang=en&user=1%2023"),
             URI.create("https://example.com/?published_since=2019&institution=uib&funding=NFR&user=Per%20Eplekjekk"));
+    }
+
+    static Stream<URI> uriSortingProvider() {
+        return Stream.of(
+            URI.create("https://example.com/?sort=fieldName1&sortOrder=asc&sort=fieldName2&order=desc"),
+            URI.create("https://example.com/?sort=fieldName1:asc,fieldName2:desc"),
+            URI.create("https://example.com/?sort=fieldName1+asc&sort=fieldName2+desc"));
     }
 
 

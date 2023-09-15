@@ -1,10 +1,16 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
+import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
+import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
+import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
+import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
+import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
+
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
@@ -15,6 +21,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -30,6 +37,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +45,7 @@ import org.slf4j.LoggerFactory;
 public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extends Record> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-    protected static final String AMPERSAND = "&";
-    protected static final String EQUAL = "=";
-    protected static final String PLUS = "+";
-    protected static final String PREFIX = "(";
     protected static final String SPACE_ENCODED = "%20";
-    protected static final String SUFFIX = ")";
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
@@ -87,8 +90,8 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
      */
     public Map<String, String> toLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-                        .map(this::toLuceneEntryToString)
-                        .collect(Collectors.joining(AND));
+            .map(this::toLuceneEntryToString)
+            .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
 
@@ -114,14 +117,14 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
      */
     public String getValue(K key) {
         return luceneParameters.containsKey(key)
-                   ? luceneParameters.get(key)
-                   : queryParameters.get(key);
+            ? luceneParameters.get(key)
+            : queryParameters.get(key);
     }
 
     public String removeValue(K key) {
         return luceneParameters.containsKey(key)
-                   ? luceneParameters.remove(key)
-                   : queryParameters.remove(key);
+            ? luceneParameters.remove(key)
+            : queryParameters.remove(key);
     }
 
     /**
@@ -150,17 +153,38 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
 
     public abstract R doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException;
 
-    public static Map<String, String> queryToMap(URI uri) {
+    public static Collection<Entry<String, String>> queryToMap(URI uri) {
         return queryToMap(uri.getQuery());
     }
 
-    public static Map<String, String> queryToMap(String query) {
+    public static Collection<Entry<String, String>> queryToMap(String query) {
         return
             nonNull(query)
                 ? Arrays.stream(query.split(AMPERSAND))
-                      .map(s -> s.split(EQUAL))
-                      .collect(Collectors.toMap(strings -> strings[0], OpenSearchQuery::valueOrEmpty))
-                : Collections.emptyMap();
+                .map(s -> s.split(EQUAL))
+                .map(OpenSearchQuery::stringsToEntry)
+                .toList()
+                : Collections.emptyList();
+    }
+
+    @NotNull
+    private static Entry<String, String> stringsToEntry(String... strings) {
+        return new Entry<>() {
+            @Override
+            public String getKey() {
+                return strings[0];
+            }
+
+            @Override
+            public String getValue() {
+                return valueOrEmpty(strings);
+            }
+
+            @Override
+            public String setValue(String value) {
+                return null;
+            }
+        };
     }
 
     protected String toQueryName(Entry<K, String> entry) {
@@ -173,11 +197,21 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
 
     protected String toQueryValue(Entry<K, String> entry) {
         return entry.getKey().encoding() == KeyEncoding.ENCODE_DECODE
-                   ? encodeUTF(entry.getValue())
-                   : entry.getValue();
+            ? encodeUTF(entry.getValue())
+            : entry.getValue();
     }
 
-    protected String decodeUTF(String encoded) {
+    protected static String mergeParameters(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches("asc|desc") ? ":" : ",";
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
+    }
+
+
+    protected static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
@@ -195,5 +229,4 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
     private static String valueOrEmpty(String... strings) {
         return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
     }
-
 }

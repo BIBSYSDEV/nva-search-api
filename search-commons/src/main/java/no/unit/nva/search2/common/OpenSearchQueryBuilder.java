@@ -6,6 +6,7 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,6 @@ import static no.unit.nva.search2.ResourceParameterKey.VALID_LUCENE_PARAMETER_KE
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
 /**
  * Builder for OpenSearchQuery.
@@ -91,11 +91,18 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
     /**
      * Adds parameters from query.
      */
+    public OpenSearchQueryBuilder<K, R> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
+        parameters.forEach(this::setEntryValue);
+        return this;
+    }
+
+    /**
+     * Adds parameters from query.
+     */
     public OpenSearchQueryBuilder<K, R> fromQueryParameters(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
-
 
     /**
      * Defines which parameters are required.
@@ -174,18 +181,17 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
         final var key = entry.getKey();
-        if (invalidQueryParameter(key, entry.getValue())) {
+        final var value = entry.getValue();
+        if (invalidQueryParameter(key, value)) {
             final var keyName =  key.key();
-            String errorMessage;
-            if (nonNull(key.errorMessage())) {
-                errorMessage = String.format(key.errorMessage(), keyName);
-            } else {
-                errorMessage = invalidQueryParametersMessage(keyName, EMPTY_STRING);
-            }
+            final var errorMessage = nonNull(key.errorMessage())
+                ? key.errorMessage().formatted(keyName, value)
+                : invalidQueryParametersMessage(keyName, value);
             throw new BadRequestException(errorMessage);
         }
     }
 
-
-
+    private void setEntryValue(Map.Entry<String, String> entry) {
+        setValue(entry.getKey(), entry.getValue());
+    }
 }
