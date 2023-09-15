@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.RESULTS;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,7 +30,7 @@ class ResourceQueryTest {
             ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, PER_PAGE)
+                .withRequiredParameters(PAGE, RESULTS)
                 .build();
         assertNotNull(resourceParameters.getValue(OFFSET));
         assertNotNull(resourceParameters.getValue(ResourceParameterKey.USER));
@@ -44,12 +44,12 @@ class ResourceQueryTest {
 
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
-    void buildOpenSearchSwsUriFromSortingParams(URI uri) throws BadRequestException {
+    void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
             ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, PER_PAGE, SORT)
+                .withRequiredParameters(PAGE, RESULTS, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(SORT));
         logger.info(resourceParameters
@@ -66,7 +66,7 @@ class ResourceQueryTest {
                      () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(PAGE, PER_PAGE, ResourceParameterKey.DOI)
+                               .withRequiredParameters(PAGE, RESULTS, ResourceParameterKey.DOI)
                                .build()
                                .openSearchUri());
     }
@@ -78,7 +78,7 @@ class ResourceQueryTest {
                      () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(OFFSET, PER_PAGE)
+                               .withRequiredParameters(OFFSET, RESULTS)
                                .build()
                                .openSearchUri());
     }
@@ -96,7 +96,7 @@ class ResourceQueryTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?sort=fieldName1&order=asc&sort=fieldName2&order=desc"),
+            URI.create("https://example.com/?sort=fieldName1&sortOrder=asc&sort=fieldName2&order=desc"),
             URI.create("https://example.com/?sort=fieldName1:asc,fieldName2:desc"),
             URI.create("https://example.com/?sort=fieldName1+asc&sort=fieldName2+desc"));
     }

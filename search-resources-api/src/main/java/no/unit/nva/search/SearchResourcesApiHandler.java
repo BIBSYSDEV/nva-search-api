@@ -25,7 +25,6 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.UnsupportedAcceptHeaderException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.StringUtils;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.http.HttpStatus;
 
@@ -126,7 +125,7 @@ public class SearchResourcesApiHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private String extractContributorId(SearchDocumentsQuery query) {
-        return query.getSearchTerm().split(CONTRIBUTOR_ID)[1].replaceAll("[()\"]", StringUtils.EMPTY_STRING)
+        return query.getSearchTerm().split(CONTRIBUTOR_ID)[1].replaceAll("[()\"]", EMPTY_STRING)
                    .split("&")[0];
     }
 

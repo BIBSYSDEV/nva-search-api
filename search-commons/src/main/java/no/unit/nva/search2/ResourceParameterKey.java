@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_FIELD_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
@@ -24,11 +23,7 @@ import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN;
 import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
 import static no.unit.nva.search2.model.ParameterKey.Operator.NONE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SHORT_DATE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.*;
 
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING, null),
@@ -57,9 +52,9 @@ public enum ResourceParameterKey implements ParameterKey {
     SEARCH_ALL(CUSTOM, NONE, "query", ""),
     PAGE(NUMBER,"page"),
     OFFSET(NUMBER, EQUALS, "offset", "from", "offset|from", null),
-    PER_PAGE(NUMBER, EQUALS, "per_page", "results", "per_page|results|limit", null),
-    SORT(STRING, "sort"),
-    SORT_ORDER(CUSTOM, EQUALS, "order", null, "(?i)[order|sortOrder]", "asc|desc"),
+    RESULTS(NUMBER, EQUALS, "results", "size", "per.page|results|limit", null),
+    SORT(STRING_DECODE, EQUALS,"sort", null, "(?i)orderBy|sort", PATTERN_IS_NON_EMPTY),
+    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)order|sortOrder", "asc|desc"),
     SEARCH_AFTER(CUSTOM, "search_after"),
     FIELDS(CUSTOM, EQUALS, "fields", null, null, "all"),
     LANG(STRING, "lang");
@@ -158,7 +153,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private KeyEncoding getEncoding(ParamKind kind, KeyEncoding encode) {
         return switch (kind) {
             case SHORT_DATE, NUMBER -> KeyEncoding.NONE;
-            case DATE -> KeyEncoding.DECODE;
+            case DATE, STRING_DECODE -> KeyEncoding.DECODE;
             case STRING -> nonNull(encode) ? encode : KeyEncoding.ENCODE_DECODE;
             case CUSTOM -> nonNull(encode) ? encode : KeyEncoding.NONE;
         };
@@ -170,8 +165,7 @@ public enum ResourceParameterKey implements ParameterKey {
             case DATE, SHORT_DATE -> ERROR_MESSAGE_INVALID_DATE;
             case NUMBER -> ERROR_MESSAGE_INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
-            case STRING -> ERROR_MESSAGE_INVALID_VALUE;
-            case CUSTOM -> ERROR_MESSAGE_INVALID_FIELD_VALUE;
+            case STRING, STRING_DECODE, CUSTOM -> ERROR_MESSAGE_INVALID_VALUE;
         };
     }
 
@@ -182,7 +176,7 @@ public enum ResourceParameterKey implements ParameterKey {
             case SHORT_DATE -> PATTERN_IS_SHORT_DATE;
             case NUMBER -> PATTERN_IS_NUMBER;
             // case RANGE -> PATTERN_IS_RANGE;
-            case STRING -> PATTERN_IS_NON_EMPTY;
+            case STRING, STRING_DECODE -> PATTERN_IS_NON_EMPTY;
             case CUSTOM -> nonNull(pattern) ? pattern : PATTERN_IS_NON_EMPTY;
         };
     }

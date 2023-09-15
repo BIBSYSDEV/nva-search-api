@@ -5,9 +5,8 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.RESULTS;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.ResourceParameterKey.SORT_ORDER;
 import static no.unit.nva.search2.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -73,7 +72,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
 
     @NotNull
     private Long getQueryPageSize() {
-        return Long.getLong(getValue(PER_PAGE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
+        return Long.getLong(getValue(RESULTS), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
     public static final class Builder
@@ -91,9 +90,8 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             requiredMissing().forEach(key -> {
                 switch (key) {
                     case PAGE, OFFSET -> setValue(key.key(), DEFAULT_OFFSET);
-                    case PER_PAGE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT);
-                    case SORT_ORDER -> setValue(key.key(), DEFAULT_VALUE_SORT_ORDER);
+                    case RESULTS -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT+ ":" + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -105,12 +103,12 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             var qpKey = keyFromString(key, value);
             switch (qpKey) {
                 case SEARCH_AFTER, OFFSET,
-                         PER_PAGE, PAGE -> query.setQueryValue(qpKey, value);
-                case SORT, SORT_ORDER -> {
-                    // sort and sort_order can be called multiple times (merging values).
-                    var merged = String.join(",", query.getValue(qpKey), value);
-                    query.setQueryValue(qpKey, merged);
+                    RESULTS, PAGE -> query.setQueryValue(qpKey, value);
+                case SORT -> {
+                    var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
+                    query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey),validFieldValue));
                 }
+                case SORT_ORDER -> query.setQueryValue(SORT, mergeParameters(query.getValue(SORT),value));
                 case CATEGORY, CONTRIBUTOR,
                          CREATED_BEFORE, CREATED_SINCE,
                          DOI, FUNDING, FUNDING_SOURCE, ID,
@@ -132,17 +130,11 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             // convert page to offset if offset is not set
             if (isNull(query.getValue(OFFSET)) && nonNull(query.getValue(PAGE))) {
                 var page = Integer.parseInt(query.getValue(PAGE));
-                var perPage = Integer.parseInt(query.getValue(PER_PAGE));
+                var perPage = Integer.parseInt(query.getValue(RESULTS));
                 query.setQueryValue(OFFSET, String.valueOf(page * perPage));
                 query.removeValue(PAGE);
             }
-            // convert different sort to &sort=fieldName:asc|desc,...
-            if (nonNull(query.getValue(SORT)) && nonNull(query.getValue(SORT_ORDER))) {
-                var sort = query.getValue(SORT);
-                var sortOrder = query.getValue(SORT_ORDER);
-                query.setQueryValue(SORT, sort + ":" + sortOrder);
-                query.removeValue(SORT_ORDER);
-            }
         }
     }
+
 }
