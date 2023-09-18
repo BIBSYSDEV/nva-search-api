@@ -7,5 +7,4 @@ public class Patterns {
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
     public static final String PATTERN_IS_DOI_URL = "10.\\d{4,9}/[-._;()/:a-z0-9A-Z]+";
-    public static final String PATTERN_IS_ORDER_KEY = "(?i)^(sortOrder|order).(asc|desc)";
 }

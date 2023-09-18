@@ -72,7 +72,10 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
         }
         if (!invalidKeys.isEmpty()) {
-            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
+            throw new BadRequestException(
+                validQueryParameterNamesMessage(
+                    invalidKeys,
+                    validKeys()));
         }
         applyRulesAfterValidation();
         notValidated = false;
@@ -147,10 +150,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
 
 
     /**
-     returns T.VALID_QUERY_PARAMETER_NVA_KEYS
+     * returns T.VALID_QUERY_PARAMETER_NVA_KEYS
      */
-    protected Set<String> validKeys() {
-        return VALID_LUCENE_PARAMETER_KEYS;
+    protected Collection<String> validKeys() {
+        return VALID_LUCENE_PARAMETER_KEYS.stream()
+                   .map(ParameterKey::key)
+                   .toList();
     }
 
     protected boolean invalidQueryParameter(K key, String value) {

@@ -8,6 +8,7 @@ import static no.unit.nva.search2.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -78,6 +79,11 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
                    .build();
     }
 
+    public static int compareParameterKey(ResourceParameterKey resourceParameterKey,
+                                          ResourceParameterKey resourceParameterKey1) {
+        return resourceParameterKey.ordinal() - resourceParameterKey1.ordinal();
+    }
+
     private URI getNextResultsBySortKey(
         @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, String url
     ) {
@@ -120,6 +126,9 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
 
     public static final class Builder
         extends OpenSearchQueryBuilder<ResourceParameterKey, PagedSearchResourceDto> {
+
+        public static final String ALL = "all";
+
         private Builder() {
             super(new ResourceQuery());
         }
@@ -147,6 +156,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             switch (qpKey) {
                 case SEARCH_AFTER, OFFSET,
                     PER_PAGE, PAGE -> query.setQueryValue(qpKey, value);
+                case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> {
                     var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
                     query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey),validFieldValue));
@@ -160,9 +170,8 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
                          PROJECT_CODE, PUBLISHED_BEFORE,
                          PUBLISHED_SINCE, SEARCH_ALL, TITLE,
                          UNIT, USER, YEAR_REPORTED -> query.setLucineValue(qpKey, value);
-                case FIELDS, LANG -> {
+                case LANG -> {
                     // ignore and continue
-                    // TODO -> fields, when we have defined a simple search response, we can implement this
                 }
                 default -> invalidKeys.add(key);
             }
@@ -177,7 +186,15 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
                 query.setQueryValue(OFFSET, String.valueOf(page * perPage));
                 query.removeValue(PAGE);
             }
+            // TODO check if field is set and has value 'all' then populate with all fields
         }
+
+        private String expandFields(String value) {
+            return ALL.equals(value)
+                       ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
+                       : value;
+        }
+
     }
 
 }

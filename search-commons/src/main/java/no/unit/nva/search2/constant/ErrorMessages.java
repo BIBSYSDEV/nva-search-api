@@ -1,13 +1,14 @@
 package no.unit.nva.search2.constant;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nva.commons.core.JacocoGenerated;
 
 import static no.unit.nva.search2.constant.ApplicationConstants.QUOTE;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
+import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static org.testcontainers.shaded.org.yaml.snakeyaml.nodes.Tag.PREFIX;
 
 @JacocoGenerated
 public class ErrorMessages {
@@ -15,7 +16,10 @@ public class ErrorMessages {
     public static final String ERROR_MESSAGE_INVALID_NUMBER = "Parameter '%s' has invalid value. Must be a number.";
     public static final String ERROR_MESSAGE_INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
     public static final String ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS =
-        "Invalid query parameter supplied %s. Valid parameters: %s";
+        """
+            Invalid query parameter supplied %s.
+            \rValid parameters: %s\s
+            \rAlso pass through to OpenSearch:[page & per_page | offset & results, sort(/sortOrder), fields, search_after]""";
     public static final String ERROR_MESSAGE_MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
 
 
@@ -26,9 +30,9 @@ public class ErrorMessages {
      * @param queryParameters list of valid parameter names
      * @return formatted string containing a list of valid parameters
      */
-    public static String validQueryParameterNamesMessage(Set<String> invalidKeys, Set<String> queryParameters) {
-        return String.format(ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS, invalidKeys,
-                             prettifyList(queryParameters));
+    public static String validQueryParameterNamesMessage(Set<String> invalidKeys,
+                                                         Collection<String> queryParameters) {
+        return ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS.formatted(invalidKeys,queryParameters);
     }
 
     /**
@@ -49,7 +53,7 @@ public class ErrorMessages {
 
     private static String prettifyList(Set<String> queryParameters) {
         return queryParameters.size() > 1
-                   ? queryParameters.stream().sorted()
+                   ? queryParameters.stream()
                          .map(parameterName -> QUOTE + parameterName + QUOTE)
                          .collect(Collectors.joining(", ", PREFIX, SUFFIX))
                    : queryParameters.stream()
