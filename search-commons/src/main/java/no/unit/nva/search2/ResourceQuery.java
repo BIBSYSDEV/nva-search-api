@@ -6,6 +6,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
@@ -14,6 +15,8 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
+import java.net.URI;
+import java.util.Map;
 import no.unit.nva.search2.common.OpenSearchQuery;
 import no.unit.nva.search2.common.OpenSearchSwsClient;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
@@ -22,6 +25,7 @@ import no.unit.nva.search2.model.OpenSearchSwsResponse;
 
 import java.util.stream.Stream;
 
+import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
@@ -40,23 +44,62 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
 
     @SuppressWarnings("PMD.NullAssignment")
     @NotNull
-    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
+    public PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
 
         var offset = getQueryOffset();
         var url = gatewayUri.toString().split("\\?")[0];
+        var requestParameter = toGateWayRequestParameter();
+        var id = createUriOffsetRef(url, requestParameter, offset);
+
+        var hasMoreResults = offset < response.getTotalSize();
+        var nextResults
+            = hasMoreResults
+                  ? createUriOffsetRef(url, requestParameter, offset + getQueryPageSize())
+                  : null;
+        var nextResultsBySortKey
+            = hasMoreResults
+                  ? getNextResultsBySortKey(response, requestParameter, url)
+                  : null;
+
+        var hasPreviousResults = offset > 0;
+        var previousResults
+            = hasPreviousResults
+                  ? createUriOffsetRef(url, requestParameter, offset - getQueryPageSize())
+                  : null;
 
         return PagedSearchResourceDto.Builder.builder()
-            .withTotalHits(response.getTotalSize())
-            .withHits(response.getSearchHits())
-            .withSort(response.getSort())
-            .withAggregations(response.getAggregationsStructured())
-            .withRootUrl(url)
-            .withRequestParameters(toGateWayRequestParameter())
-            .withOffset(offset)
-            .withOffsetNext(offset + getQueryPageSize())
-            .withOffsetPrevious(offset - getQueryPageSize())
-            .build();
+                   .withTotalHits(response.getTotalSize())
+                   .withHits(response.getSearchHits())
+                   .withAggregations(response.getAggregationsStructured())
+                   .withId(id)
+                   .withNextResults(nextResults)
+                   .withPreviousResults(previousResults)
+                   .withNextResultsBySortKey(nextResultsBySortKey)
+                   .build();
     }
+
+    private URI getNextResultsBySortKey(
+        @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, String url
+    ) {
+        requestParameter.remove(OFFSET.key());
+        var sortedP = String.join(",", response.getSort().stream().map(Object::toString).toList());
+        requestParameter.put(SEARCH_AFTER.key(), sortedP);
+        return UriWrapper.fromUri(url)
+                   .addQueryParameters(requestParameter)
+                   .getUri();
+    }
+
+
+    private URI createUriOffsetRef(String source, Map<String, String> params, Long offset) {
+        if (offset < 0) {
+            return null;
+        }
+        params.put(OFFSET.key(), String.valueOf(offset));
+        return UriWrapper.fromUri(source)
+                   .addQueryParameters(params)
+                   .getUri();
+    }
+
 
     @NotNull
     private Long getQueryOffset() {
