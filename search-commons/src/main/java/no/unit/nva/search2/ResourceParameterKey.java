@@ -16,6 +16,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_N
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ORDER_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SHORT_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOI_URL;
 import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
@@ -59,7 +60,7 @@ public enum ResourceParameterKey implements ParameterKey {
     OFFSET(NUMBER, EQUALS, "offset", "from", "offset|from", null),
     PER_PAGE(NUMBER, EQUALS, "results", "size", "per.page|results|limit", null),
     SORT(STRING_DECODE, EQUALS,"sort", null, "(?i)orderBy|sort", PATTERN_IS_NON_EMPTY),
-    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)order.*|sortOrder.*", "asc|desc"),
+    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, PATTERN_IS_ORDER_KEY, "asc|desc"),
     SEARCH_AFTER(CUSTOM, "search_after"),
     FIELDS(CUSTOM, EQUALS, "fields", null, null, "all"),
     LANG(STRING, "lang");
@@ -202,4 +203,6 @@ public enum ResourceParameterKey implements ParameterKey {
     private static boolean ignorePathKeys(ResourceParameterKey f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
+
+
 }
