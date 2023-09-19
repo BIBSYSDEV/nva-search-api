@@ -35,7 +35,7 @@ public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSea
         return
             ResourceQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(OFFSET, PER_PAGE,SORT)
+                .withRequiredParameters(OFFSET, PER_PAGE, SORT)
                 .validate()
                 .build()
                 .doSearch(openSearchSwsClient);
