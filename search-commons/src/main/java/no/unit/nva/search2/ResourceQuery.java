@@ -45,14 +45,13 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
 
     @SuppressWarnings("PMD.NullAssignment")
     @NotNull
-    public PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
+    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
 
-        var offset = getQueryOffset();
-        var url = gatewayUri.toString().split("\\?")[0];
-        var requestParameter = toGateWayRequestParameter();
-        var id = createUriOffsetRef(url, requestParameter, offset);
-
-        var hasMoreResults = offset < response.getTotalSize();
+        final var offset = getQueryOffset();
+        final var url = gatewayUri.toString().split("\\?")[0];
+        final var requestParameter = toGateWayRequestParameter();
+        final var id = createUriOffsetRef(url, requestParameter, offset);
+        final var hasMoreResults = offset < response.getTotalSize();
         var nextResults
             = hasMoreResults
                   ? createUriOffsetRef(url, requestParameter, offset + getQueryPageSize())
@@ -154,14 +153,13 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key, value);
             switch (qpKey) {
-                case SEARCH_AFTER, OFFSET,
-                    PER_PAGE, PAGE -> query.setQueryValue(qpKey, value);
+                case SEARCH_AFTER,
+                         OFFSET,
+                         PER_PAGE,
+                         PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
-                case SORT -> {
-                    var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
-                    query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey),validFieldValue));
-                }
-                case SORT_ORDER -> query.setQueryValue(SORT, mergeParameters(query.getValue(SORT),value));
+                case SORT -> setSortQuery(qpKey, value);
+                case SORT_ORDER -> addSortOrderToSortQuery(value);
                 case CATEGORY, CONTRIBUTOR,
                          CREATED_BEFORE, CREATED_SINCE,
                          DOI, FUNDING, FUNDING_SOURCE, ID,
@@ -177,13 +175,19 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             }
         }
 
+        private void addSortOrderToSortQuery(String value) {
+            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT), value));
+        }
+
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (isNull(query.getValue(OFFSET)) && nonNull(query.getValue(PAGE))) {
-                var page = Integer.parseInt(query.getValue(PAGE));
-                var perPage = Integer.parseInt(query.getValue(PER_PAGE));
-                query.setQueryValue(OFFSET, String.valueOf(page * perPage));
+            if (nonNull(query.getValue(PAGE))) {
+                if (isNull(query.getValue(OFFSET))) {
+                    var page = Integer.parseInt(query.getValue(PAGE));
+                    var perPage = Integer.parseInt(query.getValue(PER_PAGE));
+                    query.setQueryValue(OFFSET, String.valueOf(page * perPage));
+                }
                 query.removeValue(PAGE);
             }
             // TODO check if field is set and has value 'all' then populate with all fields
@@ -195,6 +199,10 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
                        : value;
         }
 
+        private  void setSortQuery(ResourceParameterKey qpKey, String value) {
+            var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
+            query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey), validFieldValue));
+        }
     }
 
 }

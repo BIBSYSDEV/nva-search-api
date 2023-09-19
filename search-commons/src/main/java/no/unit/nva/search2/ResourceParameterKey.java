@@ -78,13 +78,6 @@ public enum ResourceParameterKey implements ParameterKey {
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
 
-
-    public static final Set<ResourceParameterKey> VALID_OPENSEARCH_PARAMETER_KEYS =
-        Arrays.stream(ResourceParameterKey.values())
-            .filter(ResourceParameterKey::isOpenSearchParam)
-            .sorted(ResourceQuery::compareParameterKey)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-
     private final String queryKey;
     private final String patternOfKey;
     private final String[] theSwsKeys;
@@ -216,7 +209,4 @@ public enum ResourceParameterKey implements ParameterKey {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
-    private static boolean isOpenSearchParam(ResourceParameterKey f) {
-        return f.ordinal() >= SEARCH_ALL.ordinal() && f.ordinal() < LANG.ordinal();
-    }
 }
