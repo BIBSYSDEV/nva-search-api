@@ -17,6 +17,7 @@ import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ResourceQueryTest {
@@ -51,6 +52,8 @@ class ResourceQueryTest {
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(PAGE, PER_PAGE, SORT)
                 .build();
+        assertNotNull(resourceParameters.getValue(OFFSET));
+        assertNull(resourceParameters.getValue(PAGE));
         assertNotNull(resourceParameters.getValue(SORT));
     }
 
