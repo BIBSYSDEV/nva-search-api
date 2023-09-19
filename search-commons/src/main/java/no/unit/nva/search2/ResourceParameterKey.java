@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -32,12 +33,13 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING_DECODE;
 
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING, null),
+    // Parameters converted to Lucene query
     CATEGORY(STRING, "category", "entityDescription.reference.publicationInstance"),
     CONTRIBUTOR(STRING, "contributor", "entityDescription.contributors.identity.id"
                                        + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "created_before", "created"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "created_since", "created"),
-    DOI(CUSTOM, EQUALS, "doi", "entityDescription.reference.doi", null,PATTERN_IS_DOI_URL),
+    DOI(CUSTOM, EQUALS, "doi", "entityDescription.reference.doi", null, PATTERN_IS_DOI_URL),
     FUNDING(STRING, "funding", "fundings.identifier|source.identifier"),
     FUNDING_SOURCE(STRING, "funding_source", "fundings.source.identifier"),
     ID(STRING, "id", "identifier"),
@@ -54,28 +56,34 @@ public enum ResourceParameterKey implements ParameterKey {
     UNIT(STRING, "unit", "entityDescription.contributors.affiliation.id"),
     USER(STRING, "user", "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER, "year_reported", "entityDescription.publicationDate.year"),
-    SEARCH_ALL(CUSTOM, NONE, "query", ""),
-    PAGE(NUMBER,"page"),
+    // Query parameters passed to SWS/Opensearch
+    SEARCH_ALL(CUSTOM, NONE, "query", "q"),
+    FIELDS(STRING, EQUALS,"fields",null, null,PATTERN_IS_NON_EMPTY),
+    // Pagination parameters
+    PAGE(NUMBER, "page"),
     OFFSET(NUMBER, EQUALS, "offset", "from", "offset|from", null),
-    PER_PAGE(NUMBER, EQUALS, "results", "size", "per.page|results|limit", null),
-    SORT(STRING_DECODE, EQUALS,"sort", null, "(?i)orderBy|sort", PATTERN_IS_NON_EMPTY),
-    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)order|sortOrder", "asc|desc"),
+    PER_PAGE(NUMBER, EQUALS, "results", "size", "per.page|results|limit|size", null),
+    SORT(STRING_DECODE, EQUALS, "sort", null, "(?i)orderBy|sort", PATTERN_IS_NON_EMPTY),
+    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)sortOrder|order", "asc|desc"),
     SEARCH_AFTER(CUSTOM, "search_after"),
-    FIELDS(CUSTOM, EQUALS, "fields", null, null, "all"),
+    // ignored parameter
     LANG(STRING, "lang");
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETERS =
+    public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETER_KEYS =
         Arrays.stream(ResourceParameterKey.values())
-            .filter(ResourceParameterKey::ignorePathKeys)
-            .collect(Collectors.toUnmodifiableSet());
+            .filter(ResourceParameterKey::isLucene)
+            .sorted(ResourceQuery::compareParameterKey)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    public static final Set<String> VALID_LUCENE_PARAMETER_KEYS =
-        VALID_LUCENE_PARAMETERS.stream()
-            .sorted()
-            .map(ResourceParameterKey::key)
-            .collect(Collectors.toUnmodifiableSet());
+
+
+    public static final Set<ResourceParameterKey> VALID_OPENSEARCH_PARAMETER_KEYS =
+        Arrays.stream(ResourceParameterKey.values())
+            .filter(ResourceParameterKey::isOpenSearchParam)
+            .sorted(ResourceQuery::compareParameterKey)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String queryKey;
     private final String patternOfKey;
@@ -201,5 +209,14 @@ public enum ResourceParameterKey implements ParameterKey {
 
     private static boolean ignorePathKeys(ResourceParameterKey f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+
+    private static boolean isLucene(ResourceParameterKey f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
+    }
+
+    private static boolean isOpenSearchParam(ResourceParameterKey f) {
+        return f.ordinal() >= SEARCH_ALL.ordinal() && f.ordinal() < LANG.ordinal();
     }
 }

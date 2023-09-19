@@ -52,11 +52,6 @@ class ResourceQueryTest {
                 .withRequiredParameters(PAGE, PER_PAGE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(SORT));
-        logger.info(resourceParameters
-                        .toGateWayRequestParameter()
-                        .entrySet().stream()
-                        .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(" & ")));
     }
 
     @ParameterizedTest
@@ -97,7 +92,7 @@ class ResourceQueryTest {
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
             URI.create("https://example.com/?sort=fieldName1&sortOrder=asc&sort=fieldName2&order=desc"),
-            URI.create("https://example.com/?sort=fieldName1:asc,fieldName2:desc"),
+            URI.create("https://example.com/?orderBy=fieldName1:asc,fieldName2:desc"),
             URI.create("https://example.com/?sort=fieldName1+asc&sort=fieldName2+desc"));
     }
 

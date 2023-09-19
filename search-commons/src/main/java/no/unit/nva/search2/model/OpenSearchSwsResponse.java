@@ -71,7 +71,7 @@ public record OpenSearchSwsResponse(
     @Transient
     public List<Long> getSort() {
         return
-            nonNull(hits) && nonNull(hits.hits) && hits.hits.size() > 0
+            nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
                 ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort())
                     .orElse(List.of())
                 : List.of();
