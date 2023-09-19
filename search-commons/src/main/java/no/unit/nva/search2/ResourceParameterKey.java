@@ -34,7 +34,7 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING_DECODE;
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING, null),
     // Parameters converted to Lucene query
-    CATEGORY(STRING, "category", "entityDescription.reference.publicationInstance"),
+    CATEGORY(STRING, "category", "entityDescription.reference.publicationInstance.type"),
     CONTRIBUTOR(STRING, "contributor", "entityDescription.contributors.identity.id"
                                        + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "created_before", "created"),
@@ -57,7 +57,7 @@ public enum ResourceParameterKey implements ParameterKey {
     USER(STRING, "user", "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER, "year_reported", "entityDescription.publicationDate.year"),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(CUSTOM, NONE, "query", "q"),
+    SEARCH_ALL(CUSTOM, NONE, "query", ""),
     FIELDS(STRING, EQUALS,"fields",null, null,PATTERN_IS_NON_EMPTY),
     // Pagination parameters
     PAGE(NUMBER, "page"),
