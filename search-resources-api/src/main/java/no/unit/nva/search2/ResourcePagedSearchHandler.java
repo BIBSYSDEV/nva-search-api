@@ -10,7 +10,7 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
 
-import static no.unit.nva.search2.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
 import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
 import static no.unit.nva.search2.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.common.OpenSearchSwsClient.defaultSwsClient;
@@ -35,7 +35,7 @@ public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSea
         return
             ResourceQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(PAGE, PER_PAGE,SORT)
+                .withRequiredParameters(OFFSET, PER_PAGE,SORT)
                 .validate()
                 .build()
                 .doSearch(openSearchSwsClient);

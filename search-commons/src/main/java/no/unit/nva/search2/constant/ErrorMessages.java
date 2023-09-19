@@ -17,9 +17,9 @@ public class ErrorMessages {
     public static final String ERROR_MESSAGE_INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
     public static final String ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS =
         """
-            Invalid query parameter supplied %s.
-            \rValid parameters: %s\s
-            \rAlso pass through to OpenSearch:[page & per_page | offset & results, sort(/sortOrder), fields, search_after]""";
+            Invalid query parameter supplied %s.\s
+            Valid parameters: %s
+            Also pass through to OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, search_after]""";
     public static final String ERROR_MESSAGE_MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
 
 
@@ -30,9 +30,9 @@ public class ErrorMessages {
      * @param queryParameters list of valid parameter names
      * @return formatted string containing a list of valid parameters
      */
-    public static String validQueryParameterNamesMessage(Set<String> invalidKeys,
-                                                         Collection<String> queryParameters) {
-        return ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS.formatted(invalidKeys,queryParameters);
+    public static String validQueryParameterNamesMessage(Set<String> invalidKeys, Collection<String> queryParameters) {
+        return ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS
+                   .formatted(invalidKeys,queryParameters);
     }
 
     /**
