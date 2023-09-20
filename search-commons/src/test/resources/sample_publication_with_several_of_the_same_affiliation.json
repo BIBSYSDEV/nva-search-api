@@ -226,7 +226,7 @@
     "ownerAffiliation": "https://www.example.org"
   },
   "status": "PUBLISHED",
-  "topLevelOrganization": [
+  "topLevelOrganizations": [
     {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0",
       "labels": {
