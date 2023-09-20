@@ -121,7 +121,7 @@ public class OpensearchTest {
 
         var mapping = indexingClient.getMapping(indexName);
         assertThat(mapping, is(notNullValue()));
-        var topLevelOrgType = mapping.path("properties").path("topLevelOrganization").path("type").textValue();
+        var topLevelOrgType = mapping.path("properties").path("topLevelOrganizations").path("type").textValue();
         assertThat(topLevelOrgType, is(equalTo("nested")));
     }
 
@@ -460,7 +460,7 @@ public class OpensearchTest {
 
             var actualAggregations = response.getAggregations();
             var topOrgAggregation = actualAggregations.at(
-                "/entityDescription.contributors.affiliations.topLevelOrganization.id/buckets");
+                "/entityDescription.contributors.affiliations.topLevelOrganizations.id/buckets");
             assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
             var typeAggregation = actualAggregations.at(
@@ -498,7 +498,7 @@ public class OpensearchTest {
                                 "sample_publication_with_several_of_the_same_affiliation.json");
 
             var query = queryWithTermAndAggregation(
-                "topLevelOrganization.id:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0\"",
+                "topLevelOrganizations.id:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0\"",
                 ApplicationConstants.RESOURCES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
