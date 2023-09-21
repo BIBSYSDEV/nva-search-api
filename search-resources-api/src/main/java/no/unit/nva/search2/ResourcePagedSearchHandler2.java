@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.nva.search2.sws.OpenSearchSwsClient;
+import no.unit.nva.search2.aws.OpenSearchAwsClient;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.sws.ResourceQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -14,20 +14,20 @@ import org.apache.http.HttpStatus;
 import static no.unit.nva.search2.common.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.common.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.common.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.sws.OpenSearchSwsClient.defaultClient;
+import static no.unit.nva.search2.aws.OpenSearchAwsClient.defaultClient;
 
-public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSearchResourceDto> {
+public class ResourcePagedSearchHandler2 extends ApiGatewayHandler<Void, PagedSearchResourceDto> {
 
-    private final OpenSearchSwsClient openSearchSwsClient;
+    private final OpenSearchAwsClient openSearchAwsClient;
 
     @JacocoGenerated
-    public ResourcePagedSearchHandler() {
+    public ResourcePagedSearchHandler2() {
         this(new Environment(), defaultClient());
     }
 
-    public ResourcePagedSearchHandler(Environment environment, OpenSearchSwsClient openSearchSwsClient) {
+    public ResourcePagedSearchHandler2(Environment environment, OpenSearchAwsClient openSearchAwsClient) {
         super(Void.class, environment);
-        this.openSearchSwsClient = openSearchSwsClient;
+        this.openSearchAwsClient = openSearchAwsClient;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSea
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .validate()
                 .build()
-                .doSearch(openSearchSwsClient);
+                .doSearch(openSearchAwsClient);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
@@ -34,7 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey;
+
+import no.unit.nva.search2.common.ResourceParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extends Record> {
+public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
     protected static final String SPACE_ENCODED = "%20";
@@ -50,6 +51,8 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
     protected transient URI gatewayUri;
+
+    public abstract R doSearch(OpenSearchClient<?,?> queryClient) throws ApiGatewayException;
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -151,7 +154,6 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
         }
     }
 
-    public abstract R doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException;
 
     public static Collection<Entry<String, String>> queryToMap(URI uri) {
         return queryToMap(uri.getQuery());

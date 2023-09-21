@@ -1,60 +1,104 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.aws;
 
+
+import no.unit.nva.search2.common.ResourceParameterKey;
+import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.sws.OpenSearchSwsClient;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.opensearch.action.search.SearchResponse;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
-import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.SEARCH_AFTER;
-import static no.unit.nva.search2.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.ResourceParameterKey.keyFromString;
+import static no.unit.nva.search2.common.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.common.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.common.ResourceParameterKey.SEARCH_AFTER;
+import static no.unit.nva.search2.common.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.common.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.common.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.common.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
-import java.net.URI;
-import java.util.Map;
-import no.unit.nva.search2.common.OpenSearchQuery;
-import no.unit.nva.search2.common.OpenSearchSwsClient;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.search2.common.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
+public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
 
-import java.util.stream.Stream;
+//    @Override
+    public PagedSearchResourceDto doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException {
+        return
+            Stream.of(queryClient.doSearch(queryClient))
+                .map(this::toPagedSearchResponseDto)
+            .findFirst().orElseThrow();
+    }
 
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-
-public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
 
     @Override
-    public PagedSearchResourceDto doSearch(@NotNull OpenSearchSwsClient queryClient) {
-        return
-            Stream.of(queryClient.doSearch(openSearchUri(),APPLICATION_JSON.toString()))
-                .map(this::toPagedSearchResponseDto)
-                .findFirst().orElseThrow();
+    public PagedSearchResourceDto doSearch(OpenSearchClient<?, ?> queryClient) throws ApiGatewayException {
+        return null;
     }
 
-    private ResourceQuery() {
+    private ResourceQuery2() {
         super();
     }
+
+
+    @NotNull
+    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull SearchResponse response) {
+
+        final var offset = getQueryFrom();
+        final var url = gatewayUri.toString().split("\\?")[0];
+        final var requestParameter = toGateWayRequestParameter();
+        final var id = createUriOffsetRef(url, requestParameter, offset);
+        final var hasMoreResults = offset < response.getHits().getTotalHits().value;
+        var nextResults
+            = hasMoreResults
+            ? createUriOffsetRef(url, requestParameter, offset + getQuerySize())
+            : null;
+        var nextResultsBySortKey
+            = hasMoreResults
+            ? getNextResultsBySortKey(response, requestParameter, url)
+            : null;
+
+        var hasPreviousResults = offset > 0;
+        var previousResults
+            = hasPreviousResults
+            ? createUriOffsetRef(url, requestParameter, offset - getQuerySize())
+            : null;
+
+        return PagedSearchResourceDto.Builder.builder()
+            .withTotalHits(response.getTotalSize())
+            .withHits(response.getSearchHits())
+            .withAggregations(response.getAggregationsStructured())
+            .withId(id)
+            .withNextResults(nextResults)
+            .withPreviousResults(previousResults)
+            .withNextResultsBySortKey(nextResultsBySortKey)
+            .build();
+    }
+
 
     @SuppressWarnings("PMD.NullAssignment")
     @NotNull
     private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
 
-        final var offset = getQueryOffset();
+        final var offset = getQueryFrom();
         final var url = gatewayUri.toString().split("\\?")[0];
         final var requestParameter = toGateWayRequestParameter();
         final var id = createUriOffsetRef(url, requestParameter, offset);
         final var hasMoreResults = offset < response.getTotalSize();
         var nextResults
             = hasMoreResults
-                  ? createUriOffsetRef(url, requestParameter, offset + getQueryPageSize())
+                  ? createUriOffsetRef(url, requestParameter, offset + getQuerySize())
                   : null;
         var nextResultsBySortKey
             = hasMoreResults
@@ -64,7 +108,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
         var hasPreviousResults = offset > 0;
         var previousResults
             = hasPreviousResults
-                  ? createUriOffsetRef(url, requestParameter, offset - getQueryPageSize())
+                  ? createUriOffsetRef(url, requestParameter, offset - getQuerySize())
                   : null;
 
         return PagedSearchResourceDto.Builder.builder()
@@ -86,7 +130,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
     private URI getNextResultsBySortKey(
         @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, String url
     ) {
-        requestParameter.remove(OFFSET.key());
+        requestParameter.remove(FROM.key());
         var sortedP = String.join(",", response.getSort().stream().map(Object::toString).toList());
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
         return UriWrapper.fromUri(url)
@@ -99,7 +143,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
         if (offset < 0) {
             return null;
         }
-        params.put(OFFSET.key(), String.valueOf(offset));
+        params.put(FROM.key(), String.valueOf(offset));
         return UriWrapper.fromUri(source)
                    .addQueryParameters(params)
                    .getUri();
@@ -107,20 +151,16 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
 
 
     @NotNull
-    private Long getQueryOffset() {
-        return Stream.of(this.getValue(OFFSET))
+    private Long getQueryFrom() {
+        return Stream.of(this.getValue(FROM))
                    .map(Long::parseLong).findFirst()
-                   .orElse(getQueryPage() * getQueryPageSize());
+                   .orElse(0L);
     }
 
-    @NotNull
-    private Long getQueryPage() {
-        return Long.getLong(getValue(PAGE), 0);
-    }
 
     @NotNull
-    private Long getQueryPageSize() {
-        return Long.getLong(getValue(PER_PAGE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
+    private Long getQuerySize() {
+        return Long.getLong(getValue(SIZE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
     public static final class Builder
@@ -129,7 +169,7 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
         public static final String ALL = "all";
 
         private Builder() {
-            super(new ResourceQuery());
+            super(new ResourceQuery2());
         }
 
         public static Builder queryBuilder() {
@@ -140,8 +180,8 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case PAGE, OFFSET -> setValue(key.key(), DEFAULT_OFFSET);
-                    case PER_PAGE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
+                    case FROM -> setValue(key.key(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + ":" + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
@@ -154,8 +194,8 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
             var qpKey = keyFromString(key, value);
             switch (qpKey) {
                 case SEARCH_AFTER,
-                         OFFSET,
-                         PER_PAGE,
+                    FROM,
+                    SIZE,
                          PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> setSortQuery(qpKey, value);
@@ -183,10 +223,10 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
             if (nonNull(query.getValue(PAGE))) {
-                if (isNull(query.getValue(OFFSET))) {
+                if (isNull(query.getValue(FROM))) {
                     var page = Integer.parseInt(query.getValue(PAGE));
-                    var perPage = Integer.parseInt(query.getValue(PER_PAGE));
-                    query.setQueryValue(OFFSET, String.valueOf(page * perPage));
+                    var perPage = Integer.parseInt(query.getValue(SIZE));
+                    query.setQueryValue(FROM, String.valueOf(page * perPage));
                 }
                 query.removeValue(PAGE);
             }

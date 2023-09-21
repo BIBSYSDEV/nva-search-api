@@ -1,34 +1,29 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.sws;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse.BodyHandler;
-import java.util.stream.Stream;
-import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever.ACCEPT;
-import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
 import static nva.commons.core.attempt.Try.attempt;
 
-public class OpenSearchSwsClient {
+public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenSearchSwsClient.class);
     private static final String REQUESTING_SEARCH_FROM = "OpenSearchSwsClient url -> {}";
@@ -43,17 +38,19 @@ public class OpenSearchSwsClient {
     }
 
     @JacocoGenerated
-    public static OpenSearchSwsClient defaultSwsClient() {
+    public static OpenSearchSwsClient defaultClient() {
         var cachedJwtProvider =
-            getUsernamePasswordStream(new SecretsReader())
-                .map(OpenSearchSwsClient::getCognitoCredentials)
+            OpenSearchClient.getUsernamePasswordStream(new SecretsReader())
+                .map(OpenSearchClient::getCognitoCredentials)
                 .map(CognitoAuthenticator::prepareWithCognitoCredentials)
                 .map(CachedJwtProvider::prepareWithAuthenticator)
                 .findFirst().orElseThrow();
         return new OpenSearchSwsClient(cachedJwtProvider, HttpClient.newHttpClient());
     }
 
-    public OpenSearchSwsResponse doSearch(URI requestUri, String mediaType)  {
+    @Override
+    public OpenSearchSwsResponse doSearch(ResourceQuery query, String mediaType) {
+        var requestUri = query.openSearchUri();
         var httpRequest = getHttpRequest(requestUri, mediaType);
         return
             attempt(() -> httpClient.send(httpRequest, bodyHandler))
@@ -79,17 +76,5 @@ public class OpenSearchSwsClient {
 
     private static <T> T getResponseBodyAs(HttpResponse<String> response, Class<T> valueType) {
         return attempt(() -> objectMapperWithEmpty.readValue(response.body(), valueType)).orElseThrow();
-    }
-
-    @NotNull
-    private static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
-        var uri = URI.create(readSearchInfrastructureAuthUri());
-        return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
-    }
-
-    @NotNull
-    private static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
-        return Stream.of(
-            secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
     }
 }

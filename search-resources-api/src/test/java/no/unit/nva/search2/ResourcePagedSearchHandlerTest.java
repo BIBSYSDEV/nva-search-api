@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.common.OpenSearchSwsClient;
+import no.unit.nva.search2.sws.OpenSearchSwsClient;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameterKey.SEARCH_ALL;
+import static no.unit.nva.search2.common.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;

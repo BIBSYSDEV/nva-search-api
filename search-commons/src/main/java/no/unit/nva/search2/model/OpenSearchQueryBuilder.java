@@ -1,6 +1,5 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
-import no.unit.nva.search2.model.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.common.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;

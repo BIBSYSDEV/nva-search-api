@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 
-import no.unit.nva.search2.common.OpenSearchSwsClient;
+import no.unit.nva.search2.sws.OpenSearchSwsClient;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -1,6 +1,9 @@
 package no.unit.nva.search2;
 
 import java.util.stream.Collectors;
+
+import no.unit.nva.search2.common.ResourceParameterKey;
+import no.unit.nva.search2.sws.ResourceQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -10,11 +13,11 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
-import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.common.OpenSearchQuery.queryToMap;
+import static no.unit.nva.search2.common.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.common.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.common.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.common.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,9 +34,9 @@ class ResourceQueryTest {
             ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, PER_PAGE)
+                .withRequiredParameters(PAGE, SIZE)
                 .build();
-        assertNotNull(resourceParameters.getValue(OFFSET));
+        assertNotNull(resourceParameters.getValue(FROM));
         assertNotNull(resourceParameters.getValue(ResourceParameterKey.USER));
         logger.info(resourceParameters
                         .toGateWayRequestParameter()
@@ -50,9 +53,9 @@ class ResourceQueryTest {
             ResourceQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, PER_PAGE, SORT)
+                .withRequiredParameters(PAGE, SIZE, SORT)
                 .build();
-        assertNotNull(resourceParameters.getValue(OFFSET));
+        assertNotNull(resourceParameters.getValue(FROM));
         assertNull(resourceParameters.getValue(PAGE));
         assertNotNull(resourceParameters.getValue(SORT));
     }
@@ -64,7 +67,7 @@ class ResourceQueryTest {
                      () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(PAGE, PER_PAGE, ResourceParameterKey.DOI)
+                               .withRequiredParameters(PAGE, SIZE, ResourceParameterKey.DOI)
                                .build()
                                .openSearchUri());
     }
@@ -76,7 +79,7 @@ class ResourceQueryTest {
                      () -> ResourceQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(OFFSET, PER_PAGE)
+                               .withRequiredParameters(FROM, SIZE)
                                .build()
                                .openSearchUri());
     }
