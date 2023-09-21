@@ -1,7 +1,5 @@
 package no.unit.nva.search2.model;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -20,15 +18,6 @@ public interface ParameterKey {
     String errorMessage();
 
     KeyEncoding encoding();
-
-    static Predicate<ParameterKey> hasValidValue(String value) {
-        return f -> {
-            var encoded = f.encoding() == KeyEncoding.ENCODE_DECODE
-                ? URLDecoder.decode(value, StandardCharsets.UTF_8)
-                : value;
-            return encoded.matches(f.pattern());
-        };
-    }
 
     static Predicate<ParameterKey> equalTo(String name) {
         return key -> name.matches(key.keyPattern());

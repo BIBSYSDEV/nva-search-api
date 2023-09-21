@@ -1,0 +1,94 @@
+package no.unit.nva.search2;
+
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
+import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
+import static no.unit.nva.search2.model.OpenSearchQuery.queryToMap;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class OpenSearchAwsClientTest {
+
+    private OpenSearchAwsClient openSearchAwsClient;
+
+    public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
+        = "sample_opensearch_response.json";
+
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        openSearchAwsClient =  mock(OpenSearchAwsClient.class);
+        var mockedResponse = generateMockSearchResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT);
+        when(openSearchAwsClient.doSearch(any(), any()))
+            .thenReturn(mockedResponse);
+
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("uriProvider")
+    void searchSingleTermReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
+        var pagedSearchResourceDto =
+            ResourceAwsQuery.Builder
+                .queryBuilder()
+                .fromQueryParameters(queryToMap(uri))
+                .withRequiredParameters(FROM, SIZE, SORT)
+                .build()
+                .doSearch(openSearchAwsClient);
+
+        assertNotNull(pagedSearchResourceDto);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("uriSortingProvider")
+    void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
+        var pagedSearchResourceDto =
+            ResourceAwsQuery.Builder
+                .queryBuilder()
+                .fromQueryParameters(queryToMap(uri))
+                .withRequiredParameters(FROM, SIZE, SORT)
+                .build()
+                .doSearch(openSearchAwsClient);
+        assertNotNull(pagedSearchResourceDto.id());
+        assertNotNull(pagedSearchResourceDto.context());
+    }
+
+
+    static Stream<URI> uriSortingProvider() {
+        return Stream.of(
+            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1&sortOrder=asc&sort=fieldName2&order"
+                       + "=desc"),
+            URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=fieldName1:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc"),
+            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1+asc&sort=fieldName2+desc"));
+    }
+
+    static Stream<URI> uriProvider() {
+        return Stream.of(
+            URI.create("https://example.com/testsearch?category=hello+world&lang=en"),
+            URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
+            URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020"),
+            URI.create("https://example.com/testsearch?user=hello+world&lang=en"));
+    }
+
+
+    private org.opensearch.action.search.SearchResponse generateMockSearchResponse(String filename) throws IOException {
+        var json = stringFromResources(Path.of(filename));
+        return getSearchResponseFromJson(json);
+    }
+}

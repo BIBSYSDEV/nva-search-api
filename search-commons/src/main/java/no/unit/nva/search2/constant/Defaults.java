@@ -7,7 +7,7 @@ import no.unit.nva.commons.json.JsonUtils;
 public final class Defaults {
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final String DEFAULT_OFFSET = "0";
-    public static final String DEFAULT_VALUE_PER_PAGE = "20";
+    public static final String DEFAULT_VALUE_PER_PAGE = "15";
     public static final String DEFAULT_VALUE_SORT = "publishedDate";
     public static final String DEFAULT_VALUE_SORT_ORDER = "desc";
     public static final URI PAGINATED_SEARCH_RESULT_CONTEXT
