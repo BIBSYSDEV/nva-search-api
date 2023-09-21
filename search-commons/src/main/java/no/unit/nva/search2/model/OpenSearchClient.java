@@ -1,23 +1,19 @@
 package no.unit.nva.search2.model;
 
-
-import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
-import nva.commons.secrets.SecretsReader;
-import org.checkerframework.checker.units.qual.K;
-import org.jetbrains.annotations.NotNull;
-
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
 import java.net.URI;
 import java.util.stream.Stream;
+import no.unit.nva.auth.CognitoCredentials;
+import no.unit.nva.search.CachedJwtProvider;
+import no.unit.nva.search.CognitoAuthenticator;
+import no.unit.nva.search.models.UsernamePasswordWrapper;
+import nva.commons.secrets.SecretsReader;
+import org.jetbrains.annotations.NotNull;
 
-import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
-import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
+public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>>   {
 
-public interface OpenSearchClient<R,Q extends OpenSearchQuery<K extends Enum<K> & ParameterKey,R>>   {
-
-    static OpenSearchClient<R, Q> defaultClient(){
-        return null;
-    }
+    R doSearch(Q query, String mediaType);
 
     @NotNull
     static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
@@ -30,8 +26,13 @@ public interface OpenSearchClient<R,Q extends OpenSearchQuery<K extends Enum<K> 
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
 
-    R doSearch(Q query, String mediaType);
-
-
-
+    @NotNull
+    static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
+        return
+            OpenSearchClient.getUsernamePasswordStream(reader)
+                .map(OpenSearchClient::getCognitoCredentials)
+                .map(CognitoAuthenticator::prepareWithCognitoCredentials)
+                .map(CachedJwtProvider::prepareWithAuthenticator)
+                .findFirst().orElseThrow();
+    }
 }

@@ -1,59 +1,60 @@
-package no.unit.nva.search2.aws;
-
-
-import no.unit.nva.search2.common.ResourceParameterKey;
-import no.unit.nva.search2.model.OpenSearchClient;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.sws.OpenSearchSwsClient;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.opensearch.action.search.SearchResponse;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.stream.Stream;
+package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.common.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.common.ResourceParameterKey.SEARCH_AFTER;
-import static no.unit.nva.search2.common.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.common.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.common.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.common.ResourceParameterKey.keyFromString;
+import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
+import static nva.commons.core.attempt.Try.attempt;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.search.SearchHit;
 
-public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
+public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
 
-//    @Override
-    public PagedSearchResourceDto doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException {
-        return
-            Stream.of(queryClient.doSearch(queryClient))
-                .map(this::toPagedSearchResponseDto)
-            .findFirst().orElseThrow();
-    }
-
-
-    @Override
-    public PagedSearchResourceDto doSearch(OpenSearchClient<?, ?> queryClient) throws ApiGatewayException {
-        return null;
-    }
-
-    private ResourceQuery2() {
+    private ResourceAwsQuery() {
         super();
     }
 
+    public PagedSearchResourceDto doSearch(OpenSearchAwsClient queryClient) throws ApiGatewayException {
+        return
+            Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
+                .map(this::toResponse)
+                .findFirst().orElseThrow();
+    }
 
     @NotNull
-    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull SearchResponse response) {
+    private PagedSearchResourceDto toResponse(@NotNull SearchResponse response) {
 
         final var offset = getQueryFrom();
         final var url = gatewayUri.toString().split("\\?")[0];
@@ -75,10 +76,16 @@ public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, 
             ? createUriOffsetRef(url, requestParameter, offset - getQuerySize())
             : null;
 
+        var hits = Arrays.stream(response.getHits().getHits())
+                       .map(hitsToJsonString())
+                       .map(jsonToNode())
+                       .toList();
+        var aggregations = extractAggregations(response);
+
         return PagedSearchResourceDto.Builder.builder()
-            .withTotalHits(response.getTotalSize())
-            .withHits(response.getSearchHits())
-            .withAggregations(response.getAggregationsStructured())
+            .withTotalHits(response.getHits().getTotalHits().value)
+            .withHits(hits)
+            .withAggregations(aggregations)
             .withId(id)
             .withNextResults(nextResults)
             .withPreviousResults(previousResults)
@@ -86,52 +93,54 @@ public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, 
             .build();
     }
 
-
-    @SuppressWarnings("PMD.NullAssignment")
     @NotNull
-    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
-
-        final var offset = getQueryFrom();
-        final var url = gatewayUri.toString().split("\\?")[0];
-        final var requestParameter = toGateWayRequestParameter();
-        final var id = createUriOffsetRef(url, requestParameter, offset);
-        final var hasMoreResults = offset < response.getTotalSize();
-        var nextResults
-            = hasMoreResults
-                  ? createUriOffsetRef(url, requestParameter, offset + getQuerySize())
-                  : null;
-        var nextResultsBySortKey
-            = hasMoreResults
-                  ? getNextResultsBySortKey(response, requestParameter, url)
-                  : null;
-
-        var hasPreviousResults = offset > 0;
-        var previousResults
-            = hasPreviousResults
-                  ? createUriOffsetRef(url, requestParameter, offset - getQuerySize())
-                  : null;
-
-        return PagedSearchResourceDto.Builder.builder()
-                   .withTotalHits(response.getTotalSize())
-                   .withHits(response.getSearchHits())
-                   .withAggregations(response.getAggregationsStructured())
-                   .withId(id)
-                   .withNextResults(nextResults)
-                   .withPreviousResults(previousResults)
-                   .withNextResultsBySortKey(nextResultsBySortKey)
-                   .build();
+    private static Function<String, JsonNode> jsonToNode() {
+        return content -> {
+            try {
+                return dtoObjectMapper.readTree(content);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
-    public static int compareParameterKey(ResourceParameterKey resourceParameterKey,
-                                          ResourceParameterKey resourceParameterKey1) {
-        return resourceParameterKey.ordinal() - resourceParameterKey1.ordinal();
+    private static Function<SearchHit,String> hitsToJsonString() {
+        return hit -> {
+            try {
+                return XContentHelper
+                           .convertToJson(
+                               hit.getSourceRef(),
+                               true,
+                               false,
+                               XContentType.JSON);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+    private static JsonNode extractAggregations(SearchResponse searchResponse) {
+        JsonNode json = attempt(() -> objectMapperWithEmpty.readTree(searchResponse.toString())).orElseThrow();
+
+        ObjectNode aggregations = (ObjectNode) json.get("aggregations");
+
+        if (aggregations == null) {
+            return null;
+        }
+
+        return formatAggregations(aggregations);
     }
 
     private URI getNextResultsBySortKey(
-        @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, String url
+        @NotNull SearchResponse response, Map<String, String> requestParameter, String url
     ) {
         requestParameter.remove(FROM.key());
-        var sortedP = String.join(",", response.getSort().stream().map(Object::toString).toList());
+        var lastIndex = response.getHits().getHits().length - 1;
+        var sortedP =
+            Arrays.stream(response.getHits().getHits()[lastIndex].getSortValues())
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
         return UriWrapper.fromUri(url)
                    .addQueryParameters(requestParameter)
@@ -149,7 +158,6 @@ public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, 
                    .getUri();
     }
 
-
     @NotNull
     private Long getQueryFrom() {
         return Stream.of(this.getValue(FROM))
@@ -157,22 +165,21 @@ public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, 
                    .orElse(0L);
     }
 
-
     @NotNull
     private Long getQuerySize() {
         return Long.getLong(getValue(SIZE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
     public static final class Builder
-        extends OpenSearchQueryBuilder<ResourceParameterKey, PagedSearchResourceDto> {
+        extends OpenSearchQueryBuilder<ResourceParameterKey,ResourceAwsQuery> {
 
         public static final String ALL = "all";
 
         private Builder() {
-            super(new ResourceQuery2());
+            super(new ResourceAwsQuery());
         }
 
-        public static Builder queryBuilder() {
+        public static ResourceAwsQuery.Builder queryBuilder() {
             return new Builder();
         }
 
@@ -194,8 +201,8 @@ public final class ResourceQuery2 extends OpenSearchQuery<ResourceParameterKey, 
             var qpKey = keyFromString(key, value);
             switch (qpKey) {
                 case SEARCH_AFTER,
-                    FROM,
-                    SIZE,
+                         FROM,
+                         SIZE,
                          PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> setSortQuery(qpKey, value);

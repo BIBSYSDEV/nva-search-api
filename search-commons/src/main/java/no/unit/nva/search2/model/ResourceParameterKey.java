@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -7,8 +7,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import no.unit.nva.search2.sws.ResourceQuery;
-import no.unit.nva.search2.model.ParameterKey;
+import no.unit.nva.search2.ResourceSwsQuery;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +75,7 @@ public enum ResourceParameterKey implements ParameterKey {
     public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETER_KEYS =
         Arrays.stream(ResourceParameterKey.values())
             .filter(ResourceParameterKey::isLucene)
-            .sorted(ResourceQuery::compareParameterKey)
+            .sorted(ResourceSwsQuery::compareParameterKey)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
 

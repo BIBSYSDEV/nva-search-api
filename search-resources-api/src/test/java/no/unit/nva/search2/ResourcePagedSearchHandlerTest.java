@@ -4,7 +4,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.sws.OpenSearchSwsClient;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
@@ -23,7 +22,7 @@ import java.util.stream.Stream;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ResourceParameterKey.SEARCH_ALL;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -47,7 +46,7 @@ class ResourcePagedSearchHandlerTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private ResourcePagedSearchHandler handler;
+    private ResourcePagedSearchHandlerSws handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private OpenSearchSwsClient mockedSearchClient;
@@ -56,7 +55,7 @@ class ResourcePagedSearchHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(OpenSearchSwsClient.class);
-        handler = new ResourcePagedSearchHandler(new Environment(), mockedSearchClient);
+        handler = new ResourcePagedSearchHandlerSws(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }

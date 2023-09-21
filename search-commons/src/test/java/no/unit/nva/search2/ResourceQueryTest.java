@@ -2,8 +2,6 @@ package no.unit.nva.search2;
 
 import java.util.stream.Collectors;
 
-import no.unit.nva.search2.common.ResourceParameterKey;
-import no.unit.nva.search2.sws.ResourceQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,10 +11,11 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static no.unit.nva.search2.common.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.common.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.common.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.common.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ResourceParameterKey.DOI;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.model.OpenSearchQuery.queryToMap;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,13 +30,13 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceQuery.Builder
+            ResourceSwsQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, SIZE)
+                .withRequiredParameters(FROM, SIZE)
                 .build();
         assertNotNull(resourceParameters.getValue(FROM));
-        assertNotNull(resourceParameters.getValue(ResourceParameterKey.USER));
+        assertNotNull(resourceParameters.getValue(SIZE));
         logger.info(resourceParameters
                         .toGateWayRequestParameter()
                         .entrySet().stream()
@@ -50,10 +49,10 @@ class ResourceQueryTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceQuery.Builder
+            ResourceSwsQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(queryToMap(uri))
-                .withRequiredParameters(PAGE, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(FROM));
         assertNull(resourceParameters.getValue(PAGE));
@@ -64,10 +63,10 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceQuery.Builder
+                     () -> ResourceSwsQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
-                               .withRequiredParameters(PAGE, SIZE, ResourceParameterKey.DOI)
+                               .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
                                .openSearchUri());
     }
@@ -76,7 +75,7 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceQuery.Builder
+                     () -> ResourceSwsQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(queryToMap(uri))
                                .withRequiredParameters(FROM, SIZE)
@@ -87,6 +86,9 @@ class ResourceQueryTest {
 
     static Stream<URI> uriProvider() {
         return Stream.of(
+            URI.create("https://example.com/"),
+            URI.create("https://example.com/?fields=value1,value2"),
+            URI.create("https://example.com/?fields=all"),
             URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
             URI.create("https://example.com/?category=hello+world&user=12%203&page=2"),
             URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
@@ -98,6 +100,7 @@ class ResourceQueryTest {
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
             URI.create("https://example.com/?sort=fieldName1&sortOrder=asc&sort=fieldName2&order=desc"),
+            URI.create("https://example.com/"),
             URI.create("https://example.com/?orderBy=fieldName1:asc,fieldName2:desc"),
             URI.create("https://example.com/?sort=fieldName1+asc&sort=fieldName2+desc"));
     }

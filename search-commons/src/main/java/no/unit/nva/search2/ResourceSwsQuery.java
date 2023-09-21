@@ -1,58 +1,47 @@
-package no.unit.nva.search2.sws;
-
-
-import no.unit.nva.search2.common.ResourceParameterKey;
-import no.unit.nva.search2.model.OpenSearchClient;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.stream.Stream;
+package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.common.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.common.ResourceParameterKey.SEARCH_AFTER;
-import static no.unit.nva.search2.common.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.common.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.common.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.common.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import java.net.URI;
+import java.util.Map;
+import java.util.stream.Stream;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
 
-public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, PagedSearchResourceDto> {
+public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey>  {
 
-    @Override
-    public PagedSearchResourceDto doSearch(OpenSearchClient<?, ?> queryClient) throws ApiGatewayException {
-        return null;
-    }
-
-    private ResourceQuery() {
+    private ResourceSwsQuery() {
         super();
     }
 
-    @Override
+
     public PagedSearchResourceDto doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException {
         return
-            Stream.of(queryClient.doSearch(this,APPLICATION_JSON.toString()))
-                .map(this::toPagedSearchResponseDto)
+            Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
+                .map(this::toResponse)
                 .findFirst().orElseThrow();
     }
 
-
-    @SuppressWarnings("PMD.NullAssignment")
     @NotNull
-    private PagedSearchResourceDto toPagedSearchResponseDto(@NotNull OpenSearchSwsResponse response) {
+    private PagedSearchResourceDto toResponse(@NotNull OpenSearchSwsResponse response) {
 
         final var offset = getQueryOffset();
         final var url = gatewayUri.toString().split("\\?")[0];
@@ -85,9 +74,9 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
                    .build();
     }
 
-    public static int compareParameterKey(ResourceParameterKey resourceParameterKey,
-                                          ResourceParameterKey resourceParameterKey1) {
-        return resourceParameterKey.ordinal() - resourceParameterKey1.ordinal();
+    public static int compareParameterKey(ResourceParameterKey key1,
+                                          ResourceParameterKey key2) {
+        return key1.ordinal() - key2.ordinal();
     }
 
     private URI getNextResultsBySortKey(
@@ -127,12 +116,12 @@ public final class ResourceQuery extends OpenSearchQuery<ResourceParameterKey, P
     }
 
     public static final class Builder
-        extends OpenSearchQueryBuilder<ResourceParameterKey, PagedSearchResourceDto> {
+        extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceSwsQuery> {
 
         public static final String ALL = "all";
 
         private Builder() {
-            super(new ResourceQuery());
+            super(new ResourceSwsQuery());
         }
 
         public static Builder queryBuilder() {

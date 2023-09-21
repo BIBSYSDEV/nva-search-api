@@ -1,7 +1,16 @@
-package no.unit.nva.search2.sws;
+package no.unit.nva.search2;
 
+import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
+import static no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever.ACCEPT;
+import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
+import static nva.commons.core.attempt.Try.attempt;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandler;
+import java.nio.charset.StandardCharsets;
 import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import nva.commons.apigateway.exceptions.BadGatewayException;
@@ -11,19 +20,7 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandler;
-import java.nio.charset.StandardCharsets;
-
-import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
-import static nva.commons.core.attempt.Try.attempt;
-
-public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceQuery> {
+public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceSwsQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenSearchSwsClient.class);
     private static final String REQUESTING_SEARCH_FROM = "OpenSearchSwsClient url -> {}";
@@ -32,6 +29,7 @@ public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsRespon
     private final BodyHandler<String> bodyHandler;
 
     public OpenSearchSwsClient(CachedJwtProvider jwtProvider, HttpClient client) {
+        super();
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
         this.jwtProvider = jwtProvider;
         this.httpClient = client;
@@ -40,16 +38,12 @@ public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsRespon
     @JacocoGenerated
     public static OpenSearchSwsClient defaultClient() {
         var cachedJwtProvider =
-            OpenSearchClient.getUsernamePasswordStream(new SecretsReader())
-                .map(OpenSearchClient::getCognitoCredentials)
-                .map(CognitoAuthenticator::prepareWithCognitoCredentials)
-                .map(CachedJwtProvider::prepareWithAuthenticator)
-                .findFirst().orElseThrow();
+            OpenSearchClient.getCachedJwtProvider(new SecretsReader());
         return new OpenSearchSwsClient(cachedJwtProvider, HttpClient.newHttpClient());
     }
 
     @Override
-    public OpenSearchSwsResponse doSearch(ResourceQuery query, String mediaType) {
+    public OpenSearchSwsResponse doSearch(ResourceSwsQuery query, String mediaType) {
         var requestUri = query.openSearchUri();
         var httpRequest = getHttpRequest(requestUri, mediaType);
         return

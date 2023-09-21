@@ -1,21 +1,19 @@
 package no.unit.nva.search2.model;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
+import static no.unit.nva.search2.constant.ApplicationConstants.AND;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
+import static no.unit.nva.search2.constant.ApplicationConstants.OR;
+import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
+import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
-import static no.unit.nva.search2.constant.ApplicationConstants.AND;
-import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
-import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
-import static no.unit.nva.search2.constant.ApplicationConstants.OR;
-import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
-
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -32,33 +30,29 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
 import java.util.stream.Stream;
-
-import no.unit.nva.search2.common.ResourceParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R> {
+public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
     protected static final String SPACE_ENCODED = "%20";
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected transient URI gatewayUri;
+    protected transient URI gatewayUri = URI.create("https://localhost/resource/search");
 
-    public abstract R doSearch(OpenSearchClient<?,?> queryClient) throws ApiGatewayException;
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
         queryParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
     }
+
 
     /**
      * Builds URI to query SWS based on parameters supplied to the builder methods.
@@ -168,6 +162,7 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R> {
                 .toList()
                 : Collections.emptyList();
     }
+
 
     @NotNull
     private static Entry<String, String> stringsToEntry(String... strings) {

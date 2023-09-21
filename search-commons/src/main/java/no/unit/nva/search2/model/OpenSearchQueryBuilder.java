@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
@@ -21,14 +21,14 @@ import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterName
 /**
  * Builder for OpenSearchQuery.
  * @param <K> Enum of QueryParameterKeys
- * @param <R> Immutable Dto Record
+ * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R extends Record> {
+public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q extends OpenSearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQueryBuilder.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient OpenSearchQuery<K, R> query;
+    protected final transient OpenSearchQuery<K> query;
     protected transient boolean notValidated = true;
 
     /**
@@ -40,26 +40,27 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
      * .build()
      * </samp>
      */
-    public OpenSearchQueryBuilder(OpenSearchQuery<K, R> query) {
+    public OpenSearchQueryBuilder(OpenSearchQuery<K> query) {
         this.query = query;
     }
 
     /**
-     * Builder of CristinQuery.
+     * Builder of Query.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public OpenSearchQuery<K, R>  build() throws BadRequestException {
+    @SuppressWarnings("unchecked")
+    public Q build() throws BadRequestException {
         if (notValidated) {
             validate();
         }
-        return query;
+        return (Q) query;
     }
 
     /**
      * Validator of CristinQuery.Builder.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public OpenSearchQueryBuilder<K, R> validate() throws BadRequestException {
+    public OpenSearchQueryBuilder<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
         for (var entry : query.queryParameters.entrySet()) {
             validatesEntrySet(entry);
@@ -84,7 +85,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
     /**
      * Adds query and path parameters from requestInfo.
      */
-    public final OpenSearchQueryBuilder<K, R> fromRequestInfo(RequestInfo requestInfo) {
+    public final OpenSearchQueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.gatewayUri = requestInfo.getRequestUri();
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
@@ -93,7 +94,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
     /**
      * Adds parameters from query.
      */
-    public OpenSearchQueryBuilder<K, R> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
+    public OpenSearchQueryBuilder<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
         parameters.forEach(this::setEntryValue);
         return this;
     }
@@ -101,7 +102,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
     /**
      * Adds parameters from query.
      */
-    public OpenSearchQueryBuilder<K, R> fromQueryParameters(Map<String, String> parameters) {
+    public OpenSearchQueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
@@ -111,7 +112,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
      * @param requiredParameters comma seperated QueryParameterKeys
      */
     @SafeVarargs
-    public final OpenSearchQueryBuilder<K, R> withRequiredParameters(K... requiredParameters) {
+    public final OpenSearchQueryBuilder<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
         query.otherRequiredKeys.addAll(tmpSet);
         return this;
