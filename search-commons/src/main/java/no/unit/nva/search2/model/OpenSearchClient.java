@@ -11,7 +11,7 @@ import no.unit.nva.search.models.UsernamePasswordWrapper;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 
-public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>>   {
+public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>> {
 
     R doSearch(Q query, String mediaType);
 
@@ -20,6 +20,7 @@ public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>>   {
         return Stream.of(
             secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
     }
+
     @NotNull
     static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
         var uri = URI.create(readSearchInfrastructureAuthUri());
@@ -29,7 +30,7 @@ public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>>   {
     @NotNull
     static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
         return
-            OpenSearchClient.getUsernamePasswordStream(reader)
+            getUsernamePasswordStream(reader)
                 .map(OpenSearchClient::getCognitoCredentials)
                 .map(CognitoAuthenticator::prepareWithCognitoCredentials)
                 .map(CachedJwtProvider::prepareWithAuthenticator)
