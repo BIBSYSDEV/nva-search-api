@@ -145,6 +145,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return keyEncoding;
     }
 
+
     @Override
     @JacocoGenerated
     public String toString() {
@@ -188,20 +189,17 @@ public enum ResourceParameterKey implements ParameterKey {
         };
     }
 
-    public static ResourceParameterKey keyFromString(String paramName, String value) {
+    public static ResourceParameterKey keyFromString(String paramName) {
         var result = Arrays.stream(ResourceParameterKey.values())
-                         .filter(ResourceParameterKey::ignorePathKeys)
+                         .filter(ResourceParameterKey::ignoreInvalidKey)
                          .filter(ParameterKey.equalTo(paramName))
                          .collect(Collectors.toSet());
         return result.size() == 1
                    ? result.stream().findFirst().get()
-                   : result.stream()
-                         .filter(ParameterKey.hasValidValue(value))
-                         .findFirst()
-                         .orElse(INVALID);
+                   : INVALID;
     }
 
-    private static boolean ignorePathKeys(ResourceParameterKey f) {
+    private static boolean ignoreInvalidKey(ResourceParameterKey f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
 

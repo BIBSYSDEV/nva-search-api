@@ -56,17 +56,16 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     @NotNull
     private PagedSearchResourceDto toResponse(@NotNull SearchResponse response) {
 
-        final var offset = getQueryFrom();
+        final var offset = this.getValue(FROM).as(Long.class);
         final var url = gatewayUri.toString().split("\\?")[0];
         final var requestParameter = toGateWayRequestParameter();
         final var id = createUriOffsetRef(url, requestParameter, offset);
-        final var hasMoreResults = offset < response.getHits().getTotalHits().value;
         var nextResults
-            = hasMoreResults
+            = hasMoreResults(response)
             ? createUriOffsetRef(url, requestParameter, offset + getQuerySize())
             : null;
         var nextResultsBySortKey
-            = hasMoreResults
+            = hasMoreResults(response)
             ? getNextResultsBySortKey(response, requestParameter, url)
             : null;
 
@@ -91,6 +90,11 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             .withPreviousResults(previousResults)
             .withNextResultsBySortKey(nextResultsBySortKey)
             .build();
+    }
+
+    private boolean hasMoreResults(@NotNull SearchResponse response) {
+        final var offset = this.getValue(FROM).as(Long.class);
+        return offset < response.getHits().getTotalHits().value;
     }
 
     @NotNull
@@ -120,15 +124,9 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     private static JsonNode extractAggregations(SearchResponse searchResponse) {
-        JsonNode json = attempt(() -> objectMapperWithEmpty.readTree(searchResponse.toString())).orElseThrow();
-
-        ObjectNode aggregations = (ObjectNode) json.get("aggregations");
-
-        if (aggregations == null) {
-            return null;
-        }
-
-        return formatAggregations(aggregations);
+        var json = attempt(() -> objectMapperWithEmpty.readTree(searchResponse.toString())).orElseThrow();
+        var aggregations = (ObjectNode) json.get("aggregations");
+        return  nonNull(aggregations) ? formatAggregations(aggregations) : null;
     }
 
     private URI getNextResultsBySortKey(
@@ -158,17 +156,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                    .getUri();
     }
 
-    @NotNull
-    private Long getQueryFrom() {
-        return Stream.of(this.getValue(FROM))
-                   .map(Long::parseLong).findFirst()
-                   .orElse(0L);
+
+
+    Long getQuerySize() {
+        return getValue(SIZE).as(Long.class);
     }
 
-    @NotNull
-    private Long getQuerySize() {
-        return Long.getLong(getValue(SIZE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
-    }
 
     public static final class Builder
         extends OpenSearchQueryBuilder<ResourceParameterKey,ResourceAwsQuery> {
@@ -198,7 +191,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key, value);
+            var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER,
                          FROM,
@@ -223,7 +216,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
 
         private void addSortOrderToSortQuery(String value) {
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT), value));
+            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).toString(), value));
         }
 
         @Override
@@ -231,8 +224,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             // convert page to offset if offset is not set
             if (nonNull(query.getValue(PAGE))) {
                 if (isNull(query.getValue(FROM))) {
-                    var page = Integer.parseInt(query.getValue(PAGE));
-                    var perPage = Integer.parseInt(query.getValue(SIZE));
+                    var page = query.getValue(PAGE).as(Integer.TYPE);
+                    var perPage = query.getValue(SIZE).as(Integer.TYPE);
                     query.setQueryValue(FROM, String.valueOf(page * perPage));
                 }
                 query.removeValue(PAGE);
@@ -248,7 +241,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private  void setSortQuery(ResourceParameterKey qpKey, String value) {
             var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
-            query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey), validFieldValue));
+            query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validFieldValue));
         }
     }
 

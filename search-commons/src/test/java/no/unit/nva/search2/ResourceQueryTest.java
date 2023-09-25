@@ -35,8 +35,8 @@ class ResourceQueryTest {
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(FROM, SIZE)
                 .build();
-        assertNotNull(resourceParameters.getValue(FROM));
-        assertNotNull(resourceParameters.getValue(SIZE));
+        assertNotNull(resourceParameters.getValue(FROM).as());
+        assertNotNull(resourceParameters.getValue(SIZE).as());
         logger.info(resourceParameters
                         .toGateWayRequestParameter()
                         .entrySet().stream()
@@ -54,9 +54,9 @@ class ResourceQueryTest {
                 .fromQueryParameters(queryToMap(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        assertNotNull(resourceParameters.getValue(FROM));
-        assertNull(resourceParameters.getValue(PAGE));
-        assertNotNull(resourceParameters.getValue(SORT));
+        assertNotNull(resourceParameters.getValue(FROM).as());
+        assertNull(resourceParameters.getValue(PAGE).as());
+        assertNotNull(resourceParameters.getValue(SORT).as());
     }
 
     @ParameterizedTest

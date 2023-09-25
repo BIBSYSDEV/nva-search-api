@@ -25,6 +25,7 @@ import no.unit.nva.search2.model.ResourceParameterKey;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey>  {
 
@@ -43,25 +44,15 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
     @NotNull
     private PagedSearchResourceDto toResponse(@NotNull OpenSearchSwsResponse response) {
 
-        final var offset = getQueryOffset();
-        final var url = gatewayUri.toString().split("\\?")[0];
+        final var offset = getValue(FROM).as(Long.class);
+        final var size = getValue(SIZE).as(Long.class);
         final var requestParameter = toGateWayRequestParameter();
-        final var id = createUriOffsetRef(url, requestParameter, offset);
-        final var hasMoreResults = offset < response.getTotalSize();
-        var nextResults
-            = hasMoreResults
-                  ? createUriOffsetRef(url, requestParameter, offset + getQueryPageSize())
-                  : null;
-        var nextResultsBySortKey
-            = hasMoreResults
-                  ? getNextResultsBySortKey(response, requestParameter, url)
-                  : null;
 
-        var hasPreviousResults = offset > 0;
-        var previousResults
-            = hasPreviousResults
-                  ? createUriOffsetRef(url, requestParameter, offset - getQueryPageSize())
-                  : null;
+        final var id = createUriOffsetRef(requestParameter, offset);
+        final var previousResults = createUriOffsetRef(requestParameter, offset - size);
+
+        final var nextResults = nextResults(requestParameter, offset + size, response.getTotalSize());
+        final var nextResultsBySortKey = nextResultsBySortKey(response, requestParameter);
 
         return PagedSearchResourceDto.Builder.builder()
                    .withTotalHits(response.getTotalSize())
@@ -74,45 +65,39 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
                    .build();
     }
 
-    public static int compareParameterKey(ResourceParameterKey key1,
-                                          ResourceParameterKey key2) {
+    @Nullable
+    private URI nextResults(Map<String, String> requestParameter, Long offset, Long totalSize) {
+        return offset < totalSize
+                  ? createUriOffsetRef(requestParameter, offset)
+                  : null;
+    }
+
+    public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
         return key1.ordinal() - key2.ordinal();
     }
 
-    private URI getNextResultsBySortKey(
-        @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, String url
+    private URI nextResultsBySortKey(
+        @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter
     ) {
         requestParameter.remove(FROM.key());
         var sortedP = String.join(",", response.getSort().stream().map(Object::toString).toList());
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
-        return UriWrapper.fromUri(url)
+        final var source = gatewayUri.toString().split("\\?")[0];
+        return UriWrapper.fromUri(source)
                    .addQueryParameters(requestParameter)
                    .getUri();
     }
 
 
-    private URI createUriOffsetRef(String source, Map<String, String> params, Long offset) {
-        if (offset < 0) {
+    private URI createUriOffsetRef(Map<String, String> params, Long offset) {
+        if (offset < 0 ) {
             return null;
         }
+        final var source = gatewayUri.toString().split("\\?")[0];
         params.put(FROM.key(), String.valueOf(offset));
         return UriWrapper.fromUri(source)
                    .addQueryParameters(params)
                    .getUri();
-    }
-
-
-    @NotNull
-    private Long getQueryOffset() {
-        return Stream.of(this.getValue(FROM))
-                   .map(Long::parseLong).findFirst()
-                   .orElse(0L);
-    }
-
-
-    @NotNull
-    private Long getQueryPageSize() {
-        return Long.getLong(getValue(SIZE), Long.parseLong(DEFAULT_VALUE_PER_PAGE));
     }
 
     public static final class Builder
@@ -143,7 +128,7 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key, value);
+            var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER,
                     FROM,
@@ -168,7 +153,7 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
 
         private void addSortOrderToSortQuery(String value) {
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT), value));
+            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
         }
 
         @Override
@@ -176,8 +161,8 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
             // convert page to offset if offset is not set
             if (nonNull(query.getValue(PAGE))) {
                 if (isNull(query.getValue(FROM))) {
-                    var page = Integer.parseInt(query.getValue(PAGE));
-                    var perPage = Integer.parseInt(query.getValue(SIZE));
+                    var page = query.getValue(PAGE).as(Integer.TYPE);
+                    var perPage = query.getValue(SIZE).as(Integer.TYPE);
                     query.setQueryValue(FROM, String.valueOf(page * perPage));
                 }
                 query.removeValue(PAGE);
@@ -193,7 +178,7 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private  void setSortQuery(ResourceParameterKey qpKey, String value) {
             var validFieldValue =  decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
-            query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey), validFieldValue));
+            query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validFieldValue));
         }
     }
 

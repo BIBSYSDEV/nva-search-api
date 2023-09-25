@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,23 +21,24 @@ import java.util.stream.Stream;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
+import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ResourcePagedSearchHandlerTest {
+class ResourcePagedSearchHandlerAwsTest {
 
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -46,16 +46,16 @@ class ResourcePagedSearchHandlerTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private ResourcePagedSearchHandlerSws handler;
+    private ResourcePagedSearchHandlerAws handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
-    private OpenSearchSwsClient mockedSearchClient;
+    private OpenSearchAwsClient mockedSearchClient;
 
     @BeforeEach
     void setUp() {
 
-        mockedSearchClient = mock(OpenSearchSwsClient.class);
-        handler = new ResourcePagedSearchHandlerSws(new Environment(), mockedSearchClient);
+        mockedSearchClient = mock(OpenSearchAwsClient.class);
+        handler = new ResourcePagedSearchHandlerAws(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -195,7 +195,8 @@ class ResourcePagedSearchHandlerTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+
+        var body =  getSearchResponseFromJson(jsonResponse);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -203,7 +204,7 @@ class ResourcePagedSearchHandlerTest {
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body =  getSearchResponseFromJson(jsonResponse);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -211,7 +212,7 @@ class ResourcePagedSearchHandlerTest {
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body =  getSearchResponseFromJson(jsonResponse);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);

@@ -1,5 +1,33 @@
 package no.unit.nva.search2.model;
 
+import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Try;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
@@ -14,27 +42,6 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
@@ -112,10 +119,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      * @param key to look up.
      * @return String content raw
      */
-    public String getValue(K key) {
-        return luceneParameters.containsKey(key)
-            ? luceneParameters.get(key)
-            : queryParameters.get(key);
+    public AsType getValue(K key) {
+        return new AsType(
+            luceneParameters.containsKey(key)
+                ? luceneParameters.get(key)
+                : queryParameters.get(key)
+        );
     }
 
     public String removeValue(K key) {
@@ -164,26 +173,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
 
-    @NotNull
-    private static Entry<String, String> stringsToEntry(String... strings) {
-        return new Entry<>() {
-            @Override
-            public String getKey() {
-                return strings[0];
-            }
-
-            @Override
-            public String getValue() {
-                return valueOrEmpty(strings);
-            }
-
-            @Override
-            public String setValue(String value) {
-                return null;
-            }
-        };
-    }
-
     protected String toQueryName(Entry<K, String> entry) {
         return entry.getKey().swsKey().stream().findFirst().orElseThrow();
     }
@@ -207,7 +196,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         }
     }
 
-
     protected static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
@@ -223,7 +211,58 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 .collect(Collectors.joining(OR, PREFIX, SUFFIX));
     }
 
+    @NotNull
+    private static Entry<String, String> stringsToEntry(String... strings) {
+        return new Entry<>() {
+            @Override
+            public String getKey() {
+                return strings[0];
+            }
+
+            @Override
+            public String getValue() {
+                return valueOrEmpty(strings);
+            }
+
+            @Override
+            @JacocoGenerated
+            public String setValue(String value) {
+                return null;
+            }
+        };
+    }
+
     private static String valueOrEmpty(String... strings) {
         return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
+    }
+
+    public static class AsType {
+
+        private final String value;
+
+        public AsType(String value) {
+            this.value = value;
+        }
+
+        public <T> T as(Class<T> targetType) {
+            return convert(targetType).or(() -> null).get();
+        }
+
+        public String as() {
+            return value;
+        }
+
+
+        private <T> Try<T> convert(Class<T> clazz) {
+            return attempt(
+                () -> clazz == Integer.class ? clazz.cast(Integer.parseInt(value))
+                    : clazz == Long.class ? clazz.cast(Long.parseLong(value))
+//                    : clazz == Double.class ? clazz.cast(Double.parseDouble(value))
+//                    : clazz == Boolean.class ? clazz.cast(Boolean.parseBoolean(value))
+                    : clazz == Date.class ? clazz.cast(new SimpleDateFormat("yyyy-MM-dd").parse(value))
+                    : clazz == DateTime.class ? clazz.cast(DateTime.parse(value))
+                    : clazz == String.class ? clazz.cast(value)
+                    : null);
+        }
     }
 }
