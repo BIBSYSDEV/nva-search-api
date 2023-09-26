@@ -118,6 +118,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         return this;
     }
 
+
     /**
      * Sample code for assignDefaultValues.
      * <p>Usage:</p>

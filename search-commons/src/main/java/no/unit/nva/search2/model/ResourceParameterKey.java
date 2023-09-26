@@ -86,6 +86,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private final String valuePattern;
     private final KeyEncoding keyEncoding;
     private final Operator theOperator;
+    private final ParamKind paramkind;
 
     ResourceParameterKey(ParamKind kind, String key) {
         this(kind, EQUALS, key, null, null, null);
@@ -106,8 +107,9 @@ public enum ResourceParameterKey implements ParameterKey {
         this.theSwsKeys = nonNull(swsKey) ? swsKey.split("\\|") : new String[]{key};
         this.valuePattern = getPattern(kind, valuePattern);
         this.theErrorMessage = getErrorMessage(kind);
-        this.keyEncoding = getEncoding(kind, null);
+        this.keyEncoding = getEncoding(kind);
         this.patternOfKey = nonNull(keyPattern) ? keyPattern : key;
+        this.paramkind = kind;
     }
 
     @Override
@@ -145,6 +147,10 @@ public enum ResourceParameterKey implements ParameterKey {
         return keyEncoding;
     }
 
+    @Override
+    public ParamKind kind() {
+        return paramkind;
+    }
 
     @Override
     @JacocoGenerated
@@ -158,12 +164,12 @@ public enum ResourceParameterKey implements ParameterKey {
 
 
     @NotNull
-    private KeyEncoding getEncoding(ParamKind kind, KeyEncoding encode) {
+    private KeyEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case SHORT_DATE, NUMBER -> KeyEncoding.NONE;
             case DATE, STRING_DECODE -> KeyEncoding.DECODE;
-            case STRING -> nonNull(encode) ? encode : KeyEncoding.ENCODE_DECODE;
-            case CUSTOM -> nonNull(encode) ? encode : KeyEncoding.NONE;
+            case STRING -> KeyEncoding.ENCODE_DECODE;
+            case CUSTOM -> KeyEncoding.NONE;
         };
     }
 

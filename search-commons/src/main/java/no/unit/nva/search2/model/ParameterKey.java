@@ -19,9 +19,12 @@ public interface ParameterKey {
 
     KeyEncoding encoding();
 
+    ParamKind kind();
+
     static Predicate<ParameterKey> equalTo(String name) {
         return key -> name.matches(key.keyPattern());
     }
+
 
     enum KeyEncoding {
         NONE,DECODE,ENCODE_DECODE

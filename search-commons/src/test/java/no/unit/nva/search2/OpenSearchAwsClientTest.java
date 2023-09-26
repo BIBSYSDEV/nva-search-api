@@ -1,25 +1,27 @@
 package no.unit.nva.search2;
 
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Path;
-import java.util.stream.Stream;
-
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
-import static no.unit.nva.search2.model.OpenSearchQuery.queryToMap;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.client.RestHighLevelClient;
 
 class OpenSearchAwsClientTest {
 
@@ -31,11 +33,11 @@ class OpenSearchAwsClientTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        openSearchAwsClient =  mock(OpenSearchAwsClient.class);
+        var mockedOpenSearchClient = mock(RestHighLevelClient.class);
         var mockedResponse = generateMockSearchResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT);
-        when(openSearchAwsClient.doSearch(any(), any()))
+        openSearchAwsClient = new OpenSearchAwsClient(setupMockedCachedJwtProvider(), mockedOpenSearchClient);
+        when(mockedOpenSearchClient.search(any(), any()))
             .thenReturn(mockedResponse);
-
     }
 
 
@@ -45,7 +47,7 @@ class OpenSearchAwsClientTest {
         var pagedSearchResourceDto =
             ResourceAwsQuery.Builder
                 .queryBuilder()
-                .fromQueryParameters(queryToMap(uri))
+                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
                 .doSearch(openSearchAwsClient);
@@ -60,7 +62,7 @@ class OpenSearchAwsClientTest {
         var pagedSearchResourceDto =
             ResourceAwsQuery.Builder
                 .queryBuilder()
-                .fromQueryParameters(queryToMap(uri))
+                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
                 .doSearch(openSearchAwsClient);
@@ -68,6 +70,18 @@ class OpenSearchAwsClientTest {
         assertNotNull(pagedSearchResourceDto.context());
     }
 
+
+    @ParameterizedTest
+    @MethodSource("uriInvalidProvider")
+    void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
+        assertThrows(BadRequestException.class,
+                     () -> ResourceAwsQuery.Builder
+                               .queryBuilder()
+                               .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                               .withRequiredParameters(FROM, SIZE)
+                               .build()
+                               .doSearch(openSearchAwsClient));
+    }
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
@@ -84,6 +98,14 @@ class OpenSearchAwsClientTest {
             URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020"),
             URI.create("https://example.com/testsearch?user=hello+world&lang=en"));
+    }
+
+    static Stream<URI> uriInvalidProvider() {
+        return Stream.of(
+            URI.create("https://example.com/testsearch?categories=hello+world&lang=en"),
+            URI.create("https://example.com/testsearch?tittles=hello+world&modified_before=2019-01-01"),
+            URI.create("https://example.com/testsearch?conttributors=hello+world&published_before=2020"),
+            URI.create("https://example.com/testsearch?useers=hello+world&lang=en"));
     }
 
 

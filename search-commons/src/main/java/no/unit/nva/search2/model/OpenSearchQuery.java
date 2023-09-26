@@ -2,7 +2,6 @@ package no.unit.nva.search2.model;
 
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.attempt.Try;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
@@ -53,13 +53,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected final transient Set<K> otherRequiredKeys;
     protected transient URI gatewayUri = URI.create("https://localhost/resource/search");
 
-
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
         queryParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
     }
-
 
     /**
      * Builds URI to query SWS based on parameters supplied to the builder methods.
@@ -124,6 +122,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             luceneParameters.containsKey(key)
                 ? luceneParameters.get(key)
                 : queryParameters.get(key)
+            , key
         );
     }
 
@@ -158,11 +157,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
 
-    public static Collection<Entry<String, String>> queryToMap(URI uri) {
-        return queryToMap(uri.getQuery());
+    public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
+        return queryToMapEntries(uri.getQuery());
     }
 
-    public static Collection<Entry<String, String>> queryToMap(String query) {
+    public static Collection<Entry<String, String>> queryToMapEntries(String query) {
         return
             nonNull(query)
                 ? Arrays.stream(query.split(AMPERSAND))
@@ -236,33 +235,46 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
     }
 
+    public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
+        return key1.ordinal() - key2.ordinal();
+    }
     public static class AsType {
 
         private final String value;
+        private final ParameterKey key;
 
-        public AsType(String value) {
+        public AsType(String value, ParameterKey key) {
             this.value = value;
+            this.key = key;
         }
 
-        public <T> T as(Class<T> targetType) {
-            return convert(targetType).or(() -> null).get();
+        public <T> T as()  {
+            if (isNull(value)) {
+                return null;
+            }
+            return (T) switch (key.kind()) {
+                case DATE -> castDateTime();
+                case SHORT_DATE -> castDate();
+                case NUMBER -> castNumber();
+                default -> value;
+            };
         }
 
-        public String as() {
-            return value;
+        private <T> T castDateTime() {
+            return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
 
-
-        private <T> Try<T> convert(Class<T> clazz) {
+        private <T> T castDate() {
             return attempt(
-                () -> clazz == Integer.class ? clazz.cast(Integer.parseInt(value))
-                    : clazz == Long.class ? clazz.cast(Long.parseLong(value))
-//                    : clazz == Double.class ? clazz.cast(Double.parseDouble(value))
-//                    : clazz == Boolean.class ? clazz.cast(Boolean.parseBoolean(value))
-                    : clazz == Date.class ? clazz.cast(new SimpleDateFormat("yyyy-MM-dd").parse(value))
-                    : clazz == DateTime.class ? clazz.cast(DateTime.parse(value))
-                    : clazz == String.class ? clazz.cast(value)
-                    : null);
+                () -> ((Class<T>) Date.class).cast(new SimpleDateFormat("yyyy-MM-dd").parse(value)))
+                       .orElseThrow();
         }
+
+        @NotNull
+        private <T extends Number> T castNumber() {
+            return (T) attempt(() -> Integer.parseInt(value))
+                       .orElseThrow();
+        }
+
     }
 }

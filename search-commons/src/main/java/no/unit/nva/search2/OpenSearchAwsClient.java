@@ -1,5 +1,14 @@
 package no.unit.nva.search2;
 
+import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
+import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static nva.commons.core.attempt.Try.attempt;
+import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
 import nva.commons.core.JacocoGenerated;
@@ -14,34 +23,28 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.QueryStringQueryBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 
-import java.io.IOException;
-import java.util.stream.Stream;
-
-import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
-import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
-import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
-
 public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, ResourceAwsQuery> {
 
     private final CachedJwtProvider jwtProvider;
-    private final HttpHost httpHost;
+    private static final HttpHost httpHost = HttpHost.create(SEARCH_INFRASTRUCTURE_API_URI);
+    private final RestHighLevelClient client;
 
-    public OpenSearchAwsClient(CachedJwtProvider cachedJwtProvider, HttpHost httpHost) {
+    public OpenSearchAwsClient(CachedJwtProvider cachedJwtProvider, RestHighLevelClient client) {
         super();
         this.jwtProvider = cachedJwtProvider;
-        this.httpHost = httpHost;
+        this.client = client;
     }
 
     @JacocoGenerated
     public static OpenSearchAwsClient defaultClient() {
         var cachedJwtProvider =
-            OpenSearchClient.getCachedJwtProvider(new SecretsReader());
-        var host = HttpHost.create(SEARCH_INFRASTRUCTURE_API_URI);
-        return new OpenSearchAwsClient(cachedJwtProvider, host);
+            OpenSearchClient
+                .getCachedJwtProvider(new SecretsReader());
+        var client = new RestHighLevelClient(
+            RestClient.builder(httpHost)
+        );
+
+        return new OpenSearchAwsClient(cachedJwtProvider, client);
     }
 
     @Override
@@ -51,9 +54,9 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
             Stream.of(QueryBuilders.queryStringQuery(luceneParameters))
                 .map(this::searchSource)
                 .map(searchSource -> searchSource
-                    .size(query.getValue(SIZE).as(Integer.class))
-                    .from(query.getValue(FROM).as(Integer.class))
-                    .sort(query.getValue(SORT).as()))
+                    .size(query.getValue(SIZE).as())
+                    .from(query.getValue(FROM).as())
+                    .sort(query.getValue(SORT).<String>as()))
                 .map(this::searchRequest)
                 .map(this::searchResponse)
                 .findFirst().orElseThrow();
@@ -70,13 +73,7 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
     }
 
     private SearchResponse searchResponse(SearchRequest searchRequest) {
-        try (RestHighLevelClient client = new RestHighLevelClient(
-            RestClient.builder(httpHost)
-        )) {
-            return client.search(searchRequest, getRequestOptions());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return attempt(() -> client.search(searchRequest, getRequestOptions())).orElseThrow();
     }
 
     private RequestOptions getRequestOptions() {
