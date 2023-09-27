@@ -1,14 +1,18 @@
 package no.unit.nva.search2;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
+import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
@@ -20,6 +24,8 @@ import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.QueryStringQueryBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -54,17 +60,27 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
 
     @Override
     public SearchResponse doSearch(ResourceAwsQuery query, String mediaType) {
-        var luceneParameters = query.toLuceneParameter().get("q");
         return
-            Stream.of(QueryBuilders.queryStringQuery(luceneParameters))
+            getQueryBuilderStream(query)
                 .map(this::searchSource)
                 .map(searchSource -> searchSource
-                    .size(query.getValue(SIZE).as())
-                    .from(query.getValue(FROM).as())
-                    .sort(query.getValue(SORT).<String>as()))
+                                         .size(query.getValue(SIZE).as())
+                                         .from(query.getValue(FROM).as())
+                                         .sort(query.getValue(SORT).<String>as()))
                 .map(this::searchRequest)
                 .map(this::searchResponse)
                 .findFirst().orElseThrow();
+    }
+
+    private static Stream<Tuple<QueryStringQueryBuilder, ResourceAwsQuery>> getQueryBuilderStream(ResourceAwsQuery query) {
+        var fields = query.removeValue(FIELDS);
+        var luceneParameters = query.toLuceneParameter().get("q");
+        var qbuilder = QueryBuilders.queryStringQuery(luceneParameters);
+        qbuilder.defaultOperator(Operator.AND);
+        if (nonNull(fields)) {
+            Arrays.stream(fields.split(",")).forEach(qbuilder::field);
+        }
+        return Stream.of(new Tuple<>(qbuilder, query));
     }
 
     @Override
@@ -72,8 +88,13 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
         client.close();
     }
 
-    private SearchSourceBuilder searchSource(QueryStringQueryBuilder queryBuilder) {
-        var builder = new SearchSourceBuilder().query(queryBuilder);
+    private SearchSourceBuilder searchSource(Tuple<QueryStringQueryBuilder, ResourceAwsQuery> tuple) {
+        var builder = new SearchSourceBuilder().query(tuple.v1());
+        var searchAfter = tuple.v2().removeValue(SEARCH_AFTER);
+        if (nonNull(searchAfter)) {
+            var sortKeys = searchAfter.split(",");
+            builder.searchAfter(sortKeys);
+        }
         RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
         return builder;
     }

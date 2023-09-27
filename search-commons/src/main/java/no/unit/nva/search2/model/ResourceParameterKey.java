@@ -62,11 +62,11 @@ public enum ResourceParameterKey implements ParameterKey {
     FIELDS(STRING, EQUALS,"fields",null, null,PATTERN_IS_NON_EMPTY),
     // Pagination parameters
     PAGE(NUMBER, "page"),
-    FROM(NUMBER, EQUALS, "from", null,"offset|from", null),
-    SIZE(NUMBER, EQUALS, "size", null, "per.page|results|limit|size", null),
-    SORT(STRING_DECODE, EQUALS, "sort", null, "(?i)orderBy|sort", PATTERN_IS_NON_EMPTY),
-    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)sortOrder|order", "asc|desc"),
-    SEARCH_AFTER(CUSTOM, "search_after"),
+    FROM(NUMBER, EQUALS, "from", null,"(?i)offset|from", null),
+    SIZE(NUMBER, EQUALS, "size", null, "(?i)per.?page|results|limit|size", null),
+    SORT(STRING_DECODE, EQUALS, "sort", null, "(?i)order.?by|sort", PATTERN_IS_NON_EMPTY),
+    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)sort.?order|order", "asc|desc"),
+    SEARCH_AFTER(CUSTOM, NONE, "search_after", null, "(?i)search.?after", PATTERN_IS_NON_EMPTY),
     // ignored parameter
     LANG(STRING, "lang");
 

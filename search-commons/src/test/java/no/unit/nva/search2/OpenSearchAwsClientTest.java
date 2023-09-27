@@ -89,6 +89,8 @@ class OpenSearchAwsClientTest {
                        + "=desc"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=fieldName1:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc&searchAfter"
+                       + "=1241234,23412"),
             URI.create("https://example.com/?category=PhdThesis&sort=fieldName1+asc&sort=fieldName2+desc"));
     }
 

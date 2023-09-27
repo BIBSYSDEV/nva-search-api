@@ -50,7 +50,6 @@ class ResourceQueryTest {
     }
 
 
-
     @ParameterizedTest
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
