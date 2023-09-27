@@ -1,11 +1,14 @@
 package no.unit.nva.search2.model;
 
+import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.net.URI;
 import java.util.List;
-import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import java.util.Map;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.Nullable;
 
 public record PagedSearchResourceDto(
     URI id,
@@ -23,12 +26,12 @@ public record PagedSearchResourceDto(
 
     private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
-            builder.nextResults,
-            builder.previousResults,
-            builder.totalHits,
-            builder.hits,
-            builder.nextResultsBySortKey,
-            builder.aggregations
+             builder.nextResults,
+             builder.previousResults,
+             builder.totalHits,
+             builder.hits,
+             builder.nextResultsBySortKey,
+             builder.aggregations
         );
     }
 
@@ -43,7 +46,6 @@ public record PagedSearchResourceDto(
         private List<JsonNode> hits;
         private JsonNode aggregations;
 
-
         private Builder() {
         }
 
@@ -51,18 +53,14 @@ public record PagedSearchResourceDto(
             return new Builder();
         }
 
-        public Builder withId(URI id) {
-            this.id = id;
-            return this;
-        }
+        public Builder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset, Integer size) {
+            this.id =
+                createUriOffsetRef(requestParameter, offset, gatewayUri);
+            this.previousResults =
+                createUriOffsetRef(requestParameter, offset - size, gatewayUri);
 
-        public Builder withNextResults(URI nextResults) {
-            this.nextResults = nextResults;
-            return this;
-        }
-
-        public Builder withPreviousResults(URI previousResults) {
-            this.previousResults = previousResults;
+            this.nextResults =
+                createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
             return this;
         }
 
@@ -84,6 +82,25 @@ public record PagedSearchResourceDto(
         public Builder withAggregations(JsonNode aggregations) {
             this.aggregations = aggregations;
             return this;
+        }
+
+        @Nullable
+        private URI createNextResults(Map<String, String> requestParameter, Integer offset, Long totalSize,
+                                      URI gatewayUri) {
+            return offset < totalSize
+                       ? createUriOffsetRef(requestParameter, offset, gatewayUri)
+                       : null;
+        }
+
+        private URI createUriOffsetRef(Map<String, String> params, Integer offset, URI gatewayUri) {
+            if (offset < 0) {
+                return null;
+            }
+
+            params.put(FROM.key(), String.valueOf(offset));
+            return UriWrapper.fromUri(gatewayUri)
+                       .addQueryParameters(params)
+                       .getUri();
         }
 
         public PagedSearchResourceDto build() {
