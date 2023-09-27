@@ -46,8 +46,8 @@ public enum ResourceParameterKey implements ParameterKey {
     ID(STRING, "id", "identifier"),
     INSTITUTION(STRING, "institution",
         "entityDescription.contributors.affiliation.id|entityDescription.contributors.affiliation.name"),
-    ISSN(STRING, "issn",
-        "entityDescription.reference.publicationContext.onlineIssn|entityDescription.reference.publicationContext.printIssn"),
+    ISSN(STRING, "issn","entityDescription.reference.publicationContext.onlineIssn"
+                        + "|entityDescription.reference.publicationContext.printIssn"),
     MODIFIED_BEFORE(SHORT_DATE, LESS_THAN, "modified_before", "modified"),
     MODIFIED_SINCE(SHORT_DATE, GREATER_THAN_OR_EQUAL_TO, "modified_since", "modified"),
     PROJECT_CODE(STRING, "project_code", "fundings.identifier"),

@@ -8,6 +8,7 @@ import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 
+import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.nonNull;
@@ -50,6 +51,7 @@ public record OpenSearchSwsResponse(
         }
     }
 
+    @JacocoGenerated
     @NotNull
     @Transient
     public Long getTotalSize() {
@@ -58,6 +60,7 @@ public record OpenSearchSwsResponse(
                    : 0;
     }
 
+    @JacocoGenerated
     @NotNull
     @Transient
     public List<JsonNode> getSearchHits() {

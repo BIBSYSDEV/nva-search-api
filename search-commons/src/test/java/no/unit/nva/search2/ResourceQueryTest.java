@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.net.URI;
-import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
@@ -64,7 +63,7 @@ class ResourceQueryTest {
         var modified =
             resourceParameters
                 .getValue(MODIFIED_BEFORE)
-                .<Date>as();
+                .<DateTime>as();
         var publishedBefore =
             resourceParameters
                 .getValue(PUBLISHED_BEFORE)

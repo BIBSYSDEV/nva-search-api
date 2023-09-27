@@ -23,6 +23,7 @@ import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.ResourceParameterKey;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,12 +122,13 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
         }
 
+        @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
             if (isNull(query.getValue(FROM))) {
-                var page = query.getValue(PAGE).<Long>as();
-                var perPage = query.getValue(SIZE).<Long>as();
+                var page = query.getValue(PAGE).<Integer>as();
+                var perPage = query.getValue(SIZE).<Integer>as();
                 query.setQueryValue(FROM, String.valueOf(page * perPage));
             }
             query.removeValue(PAGE);

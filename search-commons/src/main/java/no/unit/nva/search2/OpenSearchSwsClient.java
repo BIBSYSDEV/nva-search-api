@@ -20,6 +20,7 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceSwsQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenSearchSwsClient.class);
@@ -52,12 +53,13 @@ public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsRespon
                 .orElseThrow();
     }
 
+    @JacocoGenerated
     private OpenSearchSwsResponse handleResponse(HttpResponse<String> response) throws BadGatewayException {
         if (response.statusCode() != HttpStatus.SC_OK) {
             logger.error(response.body());
             throw new BadGatewayException(response.body());
         }
-        return getResponseBodyAs(response, OpenSearchSwsResponse.class);
+        return toSwsResponse(response);
     }
 
     private HttpRequest getHttpRequest(URI requestUri, String mediaType) {
@@ -68,7 +70,8 @@ public class OpenSearchSwsClient implements OpenSearchClient<OpenSearchSwsRespon
                    .GET().build();
     }
 
-    private static <T> T getResponseBodyAs(HttpResponse<String> response, Class<T> valueType) {
-        return attempt(() -> objectMapperWithEmpty.readValue(response.body(), valueType)).orElseThrow();
+    private static OpenSearchSwsResponse toSwsResponse(HttpResponse<String> response) {
+        return attempt(() -> objectMapperWithEmpty.readValue(response.body(), OpenSearchSwsResponse.class))
+                   .orElseThrow();
     }
 }

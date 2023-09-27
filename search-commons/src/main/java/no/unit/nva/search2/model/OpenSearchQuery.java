@@ -1,32 +1,5 @@
 package no.unit.nva.search2.model;
 
-import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
@@ -42,6 +15,29 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
@@ -92,8 +88,8 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public Map<String, String> toLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-            .map(this::toLuceneEntryToString)
-            .collect(Collectors.joining(AND));
+                        .map(this::toLuceneEntryToString)
+                        .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
 
@@ -121,15 +117,15 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return new AsType(
             luceneParameters.containsKey(key)
                 ? luceneParameters.get(key)
-                : queryParameters.get(key)
-            , key
+                : queryParameters.get(key),
+            key
         );
     }
 
     public String removeValue(K key) {
         return luceneParameters.containsKey(key)
-            ? luceneParameters.remove(key)
-            : queryParameters.remove(key);
+                   ? luceneParameters.remove(key)
+                   : queryParameters.remove(key);
     }
 
     /**
@@ -156,7 +152,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         }
     }
 
-
     public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
         return queryToMapEntries(uri.getQuery());
     }
@@ -165,12 +160,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return
             nonNull(query)
                 ? Arrays.stream(query.split(AMPERSAND))
-                .map(s -> s.split(EQUAL))
-                .map(OpenSearchQuery::stringsToEntry)
-                .toList()
+                      .map(s -> s.split(EQUAL))
+                      .map(OpenSearchQuery::stringsToEntry)
+                      .toList()
                 : Collections.emptyList();
     }
-
 
     protected String toQueryName(Entry<K, String> entry) {
         return entry.getKey().swsKey().stream().findFirst().orElseThrow();
@@ -182,8 +176,8 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected String toQueryValue(Entry<K, String> entry) {
         return entry.getKey().encoding() == KeyEncoding.ENCODE_DECODE
-            ? encodeUTF(entry.getValue())
-            : entry.getValue();
+                   ? encodeUTF(entry.getValue())
+                   : entry.getValue();
     }
 
     protected static String mergeParameters(String oldValue, String newValue) {
@@ -238,6 +232,8 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
         return key1.ordinal() - key2.ordinal();
     }
+
+    @SuppressWarnings({"PMD.ShortMethodName"})
     public static class AsType {
 
         private final String value;
@@ -248,13 +244,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             this.key = key;
         }
 
-        public <T> T as()  {
+        public <T> T as() {
             if (isNull(value)) {
                 return null;
             }
             return (T) switch (key.kind()) {
-                case DATE -> castDateTime();
-                case SHORT_DATE -> castDate();
+                case SHORT_DATE, DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };
@@ -264,17 +259,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
 
-        private <T> T castDate() {
-            return attempt(
-                () -> ((Class<T>) Date.class).cast(new SimpleDateFormat("yyyy-MM-dd").parse(value)))
-                       .orElseThrow();
-        }
+
 
         @NotNull
         private <T extends Number> T castNumber() {
             return (T) attempt(() -> Integer.parseInt(value))
-                       .orElseThrow();
+                           .orElseThrow();
         }
-
     }
 }

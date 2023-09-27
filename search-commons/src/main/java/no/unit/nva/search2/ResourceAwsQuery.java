@@ -19,6 +19,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
@@ -30,6 +31,8 @@ import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.ResourceParameterKey;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadGatewayException;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.opensearch.action.search.SearchResponse;
@@ -44,10 +47,13 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     public PagedSearchResourceDto doSearch(OpenSearchAwsClient queryClient) throws ApiGatewayException {
-        return
-            Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
-                .map(this::toResponse)
-                .findFirst().orElseThrow();
+        try (queryClient) {
+            return Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
+                       .map(this::toResponse)
+                       .findFirst().orElseThrow();
+        } catch (IOException e) {
+            throw new BadGatewayException(e.getMessage());
+        }
     }
 
     @NotNull
@@ -162,6 +168,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).toString(), value));
         }
 
+        @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set

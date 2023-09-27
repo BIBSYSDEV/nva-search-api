@@ -26,12 +26,12 @@ public record PagedSearchResourceDto(
 
     private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
-            builder.nextResults,
-            builder.previousResults,
-            builder.totalHits,
-            builder.hits,
-            builder.nextResultsBySortKey,
-            builder.aggregations
+             builder.nextResults,
+             builder.previousResults,
+             builder.totalHits,
+             builder.hits,
+             builder.nextResultsBySortKey,
+             builder.aggregations
         );
     }
 
@@ -45,7 +45,6 @@ public record PagedSearchResourceDto(
         private long totalHits;
         private List<JsonNode> hits;
         private JsonNode aggregations;
-
 
         private Builder() {
         }
@@ -61,7 +60,7 @@ public record PagedSearchResourceDto(
                 createUriOffsetRef(requestParameter, offset - size, gatewayUri);
 
             this.nextResults =
-                nextResults(requestParameter, offset + size, totalHits , gatewayUri);
+                createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
             return this;
         }
 
@@ -86,7 +85,8 @@ public record PagedSearchResourceDto(
         }
 
         @Nullable
-        private URI nextResults(Map<String, String> requestParameter, int offset, Long totalSize, URI gatewayUri) {
+        private URI createNextResults(Map<String, String> requestParameter, Integer offset, Long totalSize,
+                                      URI gatewayUri) {
             return offset < totalSize
                        ? createUriOffsetRef(requestParameter, offset, gatewayUri)
                        : null;
@@ -102,6 +102,7 @@ public record PagedSearchResourceDto(
                        .addQueryParameters(params)
                        .getUri();
         }
+
         public PagedSearchResourceDto build() {
             return new PagedSearchResourceDto(this);
         }

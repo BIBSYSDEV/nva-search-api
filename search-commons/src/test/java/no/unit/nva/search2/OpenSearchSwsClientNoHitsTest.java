@@ -66,11 +66,11 @@ class OpenSearchSwsClientNoHitsTest {
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        var pagedSearchResourceDto =
-                resourceSwsQuery.doSearch(openSearchSwsClient);
         assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
         assertNotNull(resourceSwsQuery.removeValue(CATEGORY));
         assertNull(resourceSwsQuery.removeValue(CATEGORY));
+        var pagedSearchResourceDto =
+            resourceSwsQuery.doSearch(openSearchSwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertEquals(0L, pagedSearchResourceDto.totalHits());

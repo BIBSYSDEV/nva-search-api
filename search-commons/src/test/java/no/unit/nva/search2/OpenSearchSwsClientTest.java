@@ -142,11 +142,11 @@ class OpenSearchSwsClientTest {
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        var pagedSearchResourceDto =
-                resourceSwsQuery.doSearch(openSearchSwsClient);
         assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
         assertNotNull(resourceSwsQuery.removeValue(CATEGORY));
         assertNull(resourceSwsQuery.removeValue(CATEGORY));
+        var pagedSearchResourceDto =
+            resourceSwsQuery.doSearch(openSearchSwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
     }
@@ -166,7 +166,8 @@ class OpenSearchSwsClientTest {
             URI.create("https://example.com/testsearch?category=hello+world&lang=en&size=2&from=2"),
             URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020"),
-            URI.create("https://example.com/testsearch?user=hello+world&size=2&from=0"));
+            URI.create("https://example.com/testsearch?user=hello+world&per_page=2&page=0"),
+            URI.create("https://example.com/testsearch?user=hello+world&fields=all"));
     }
 
     private Map<String,String> getMapFromUri(URI uri) {
