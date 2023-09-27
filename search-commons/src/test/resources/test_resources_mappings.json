@@ -1,6 +1,6 @@
 {
   "properties": {
-    "topLevelOrganization": {
+    "topLevelOrganizations": {
       "type": "nested",
       "include_in_parent": true,
       "properties": {
