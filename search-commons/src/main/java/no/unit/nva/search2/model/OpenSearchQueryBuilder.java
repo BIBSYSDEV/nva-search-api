@@ -1,11 +1,11 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
-import no.unit.nva.search2.model.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,23 +13,22 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static nva.commons.apigateway.RestRequestHandler.EMPTY_STRING;
 
 /**
  * Builder for OpenSearchQuery.
  * @param <K> Enum of QueryParameterKeys
- * @param <R> Immutable Dto Record
+ * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R extends Record> {
+public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q extends OpenSearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQueryBuilder.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient OpenSearchQuery<K, R> query;
+    protected final transient OpenSearchQuery<K> query;
     protected transient boolean notValidated = true;
 
     /**
@@ -41,26 +40,27 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
      * .build()
      * </samp>
      */
-    public OpenSearchQueryBuilder(OpenSearchQuery<K, R> query) {
+    public OpenSearchQueryBuilder(OpenSearchQuery<K> query) {
         this.query = query;
     }
 
     /**
-     * Builder of CristinQuery.
+     * Builder of Query.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public OpenSearchQuery<K, R>  build() throws BadRequestException {
+    @SuppressWarnings("unchecked")
+    public Q build() throws BadRequestException {
         if (notValidated) {
             validate();
         }
-        return query;
+        return (Q) query;
     }
 
     /**
      * Validator of CristinQuery.Builder.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public OpenSearchQueryBuilder<K, R> validate() throws BadRequestException {
+    public OpenSearchQueryBuilder<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
         for (var entry : query.queryParameters.entrySet()) {
             validatesEntrySet(entry);
@@ -72,7 +72,10 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
         }
         if (!invalidKeys.isEmpty()) {
-            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
+            throw new BadRequestException(
+                validQueryParameterNamesMessage(
+                    invalidKeys,
+                    validKeys()));
         }
         applyRulesAfterValidation();
         notValidated = false;
@@ -82,7 +85,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
     /**
      * Adds query and path parameters from requestInfo.
      */
-    public final OpenSearchQueryBuilder<K, R> fromRequestInfo(RequestInfo requestInfo) {
+    public final OpenSearchQueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.gatewayUri = requestInfo.getRequestUri();
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
@@ -91,22 +94,30 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
     /**
      * Adds parameters from query.
      */
-    public OpenSearchQueryBuilder<K, R> fromQueryParameters(Map<String, String> parameters) {
-        parameters.forEach(this::setValue);
+    public OpenSearchQueryBuilder<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
+        parameters.forEach(this::setEntryValue);
         return this;
     }
 
+    /**
+     * Adds parameters from query.
+     */
+    public OpenSearchQueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
+        parameters.forEach(this::setValue);
+        return this;
+    }
 
     /**
      * Defines which parameters are required.
      * @param requiredParameters comma seperated QueryParameterKeys
      */
     @SafeVarargs
-    public final OpenSearchQueryBuilder<K, R> withRequiredParameters(K... requiredParameters) {
+    public final OpenSearchQueryBuilder<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
         query.otherRequiredKeys.addAll(tmpSet);
         return this;
     }
+
 
     /**
      * Sample code for assignDefaultValues.
@@ -140,10 +151,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
 
 
     /**
-     returns T.VALID_QUERY_PARAMETER_NVA_KEYS
+     * returns T.VALID_QUERY_PARAMETER_NVA_KEYS
      */
-    protected Set<String> validKeys() {
-        return VALID_LUCENE_PARAMETER_KEYS;
+    protected Collection<String> validKeys() {
+        return VALID_LUCENE_PARAMETER_KEYS.stream()
+                   .map(ParameterKey::key)
+                   .toList();
     }
 
     protected boolean invalidQueryParameter(K key, String value) {
@@ -174,18 +187,17 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, R
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
         final var key = entry.getKey();
-        if (invalidQueryParameter(key, entry.getValue())) {
+        final var value = entry.getValue();
+        if (invalidQueryParameter(key, value)) {
             final var keyName =  key.key();
-            String errorMessage;
-            if (nonNull(key.errorMessage())) {
-                errorMessage = String.format(key.errorMessage(), keyName);
-            } else {
-                errorMessage = invalidQueryParametersMessage(keyName, EMPTY_STRING);
-            }
+            final var errorMessage = nonNull(key.errorMessage())
+                ? key.errorMessage().formatted(keyName, value)
+                : invalidQueryParametersMessage(keyName, value);
             throw new BadRequestException(errorMessage);
         }
     }
 
-
-
+    private void setEntryValue(Map.Entry<String, String> entry) {
+        setValue(entry.getKey(), entry.getValue());
+    }
 }

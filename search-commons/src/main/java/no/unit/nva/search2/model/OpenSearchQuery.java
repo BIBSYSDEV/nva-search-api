@@ -1,20 +1,26 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.model;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
-import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
+import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
+import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
+import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
+import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
+import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
+import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -25,28 +31,23 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extends Record> {
+public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-    protected static final String AMPERSAND = "&";
-    protected static final String EQUAL = "=";
-    protected static final String PLUS = "+";
-    protected static final String PREFIX = "(";
     protected static final String SPACE_ENCODED = "%20";
-    protected static final String SUFFIX = ")";
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected transient URI gatewayUri;
+    protected transient URI gatewayUri = URI.create("https://localhost/resource/search");
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -112,10 +113,13 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
      * @param key to look up.
      * @return String content raw
      */
-    public String getValue(K key) {
-        return luceneParameters.containsKey(key)
-                   ? luceneParameters.get(key)
-                   : queryParameters.get(key);
+    public AsType getValue(K key) {
+        return new AsType(
+            luceneParameters.containsKey(key)
+                ? luceneParameters.get(key)
+                : queryParameters.get(key),
+            key
+        );
     }
 
     public String removeValue(K key) {
@@ -148,19 +152,18 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
         }
     }
 
-    public abstract R doSearch(OpenSearchSwsClient queryClient) throws ApiGatewayException;
-
-    public static Map<String, String> queryToMap(URI uri) {
-        return queryToMap(uri.getQuery());
+    public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
+        return queryToMapEntries(uri.getQuery());
     }
 
-    public static Map<String, String> queryToMap(String query) {
+    public static Collection<Entry<String, String>> queryToMapEntries(String query) {
         return
             nonNull(query)
                 ? Arrays.stream(query.split(AMPERSAND))
                       .map(s -> s.split(EQUAL))
-                      .collect(Collectors.toMap(strings -> strings[0], OpenSearchQuery::valueOrEmpty))
-                : Collections.emptyMap();
+                      .map(OpenSearchQuery::stringsToEntry)
+                      .toList()
+                : Collections.emptyList();
     }
 
     protected String toQueryName(Entry<K, String> entry) {
@@ -177,7 +180,16 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
                    : entry.getValue();
     }
 
-    protected String decodeUTF(String encoded) {
+    protected static String mergeParameters(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches("asc|desc") ? ":" : ",";
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
+    }
+
+    protected static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
@@ -192,8 +204,67 @@ public abstract class OpenSearchQuery<K extends Enum<K> & ParameterKey, R extend
                 .collect(Collectors.joining(OR, PREFIX, SUFFIX));
     }
 
+    @NotNull
+    private static Entry<String, String> stringsToEntry(String... strings) {
+        return new Entry<>() {
+            @Override
+            public String getKey() {
+                return strings[0];
+            }
+
+            @Override
+            public String getValue() {
+                return valueOrEmpty(strings);
+            }
+
+            @Override
+            @JacocoGenerated
+            public String setValue(String value) {
+                return null;
+            }
+        };
+    }
+
     private static String valueOrEmpty(String... strings) {
         return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
     }
 
+    public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
+        return key1.ordinal() - key2.ordinal();
+    }
+
+    @SuppressWarnings({"PMD.ShortMethodName"})
+    public static class AsType {
+
+        private final String value;
+        private final ParameterKey key;
+
+        public AsType(String value, ParameterKey key) {
+            this.value = value;
+            this.key = key;
+        }
+
+        public <T> T as() {
+            if (isNull(value)) {
+                return null;
+            }
+            return (T) switch (key.kind()) {
+                case SHORT_DATE, DATE -> castDateTime();
+                case NUMBER -> castNumber();
+                default -> value;
+            };
+        }
+
+        private <T> T castDateTime() {
+            return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
+        }
+
+
+
+        @NotNull
+        private <T extends Number> T castNumber() {
+            return (T) attempt(() -> Integer.parseInt(value))
+                           .orElseThrow();
+        }
+    }
 }

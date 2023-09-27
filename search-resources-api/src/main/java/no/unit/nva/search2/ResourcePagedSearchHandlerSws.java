@@ -1,7 +1,10 @@
 package no.unit.nva.search2;
 
+import static no.unit.nva.search2.OpenSearchSwsClient.defaultClient;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.nva.search2.common.OpenSearchSwsClient;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -10,22 +13,16 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpStatus;
 
-import static no.unit.nva.search2.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.PER_PAGE;
-import static no.unit.nva.search2.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.ResourceParameterKey.SORT_ORDER;
-import static no.unit.nva.search2.common.OpenSearchSwsClient.defaultSwsClient;
-
-public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSearchResourceDto> {
+public class ResourcePagedSearchHandlerSws extends ApiGatewayHandler<Void, PagedSearchResourceDto> {
 
     private final OpenSearchSwsClient openSearchSwsClient;
 
     @JacocoGenerated
-    public ResourcePagedSearchHandler() {
-        this(new Environment(), defaultSwsClient());
+    public ResourcePagedSearchHandlerSws() {
+        this(new Environment(), defaultClient());
     }
 
-    public ResourcePagedSearchHandler(Environment environment, OpenSearchSwsClient openSearchSwsClient) {
+    public ResourcePagedSearchHandlerSws(Environment environment, OpenSearchSwsClient openSearchSwsClient) {
         super(Void.class, environment);
         this.openSearchSwsClient = openSearchSwsClient;
     }
@@ -34,9 +31,9 @@ public class ResourcePagedSearchHandler extends ApiGatewayHandler<Void, PagedSea
     protected PagedSearchResourceDto processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
         return
-            ResourceQuery.Builder.queryBuilder()
+            ResourceSwsQuery.Builder.queryBuilder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(PAGE, PER_PAGE,SORT,SORT_ORDER)
+                .withRequiredParameters(FROM, SIZE, SORT)
                 .validate()
                 .build()
                 .doSearch(openSearchSwsClient);

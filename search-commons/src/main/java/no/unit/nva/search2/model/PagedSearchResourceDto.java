@@ -1,17 +1,14 @@
 package no.unit.nva.search2.model;
 
+import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import nva.commons.core.paths.UriWrapper;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.ResourceParameterKey.OFFSET;
-import static no.unit.nva.search2.ResourceParameterKey.SEARCH_AFTER;
-import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.Nullable;
 
 public record PagedSearchResourceDto(
     URI id,
@@ -29,29 +26,25 @@ public record PagedSearchResourceDto(
 
     private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
-            builder.nextResults,
-            builder.previousResults,
-            builder.totalHits,
-            builder.hits,
-            builder.nextResultsBySortKey,
-            builder.aggregations
+             builder.nextResults,
+             builder.previousResults,
+             builder.totalHits,
+             builder.hits,
+             builder.nextResultsBySortKey,
+             builder.aggregations
         );
     }
 
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     public static final class Builder {
+
         private URI id;
         private URI nextResults;
         private URI previousResults;
+        private URI nextResultsBySortKey;
         private long totalHits;
         private List<JsonNode> hits;
-        private URI nextResultsBySortKey;
         private JsonNode aggregations;
-        private String rootUrl;
-        private Long offset;
-        private Long nextOffset;
-        private Long previousOffset;
-        private Map<String, String> parameters;
 
         private Builder() {
         }
@@ -60,31 +53,21 @@ public record PagedSearchResourceDto(
             return new Builder();
         }
 
-        public Builder withRequestParameters(Map<String, String> params) {
-            this.parameters = params;
+        public Builder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset, Integer size) {
+            this.id =
+                createUriOffsetRef(requestParameter, offset, gatewayUri);
+            this.previousResults =
+                createUriOffsetRef(requestParameter, offset - size, gatewayUri);
+
+            this.nextResults =
+                createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
             return this;
         }
 
-        public Builder withRootUrl(String rootUrl) {
-            this.rootUrl = rootUrl;
+        public Builder withNextResultsBySortKey(URI nextResultsBySortKey) {
+            this.nextResultsBySortKey = nextResultsBySortKey;
             return this;
         }
-
-        public Builder withOffsetNext(Long offset) {
-            this.nextOffset = offset;
-            return this;
-        }
-
-        public Builder withOffsetPrevious(Long offset) {
-            this.previousOffset = offset;
-            return this;
-        }
-
-        public Builder withOffset(Long offset) {
-            this.offset = offset;
-            return this;
-        }
-
 
         public Builder withTotalHits(long totalHits) {
             this.totalHits = totalHits;
@@ -96,48 +79,31 @@ public record PagedSearchResourceDto(
             return this;
         }
 
-        public Builder withSort(List<Long> sort) {
-            if (sort.isEmpty()) {
-                return this;
-            }
-            var sortedP = String.join(",", sort.stream().map(Object::toString).toList());
-            parameters.put(SEARCH_AFTER.key(), sortedP);
-
-            this.nextResultsBySortKey =
-                UriWrapper.fromUri(rootUrl)
-                    .addQueryParameters(parameters)
-                    .getUri();
-            return this;
-        }
-
         public Builder withAggregations(JsonNode aggregations) {
             this.aggregations = aggregations;
             return this;
         }
 
+        @Nullable
+        private URI createNextResults(Map<String, String> requestParameter, Integer offset, Long totalSize,
+                                      URI gatewayUri) {
+            return offset < totalSize
+                       ? createUriOffsetRef(requestParameter, offset, gatewayUri)
+                       : null;
+        }
 
-        private URI createUriOffsetRef(Long offset) {
+        private URI createUriOffsetRef(Map<String, String> params, Integer offset, URI gatewayUri) {
             if (offset < 0) {
                 return null;
             }
-            parameters.put(OFFSET.key(), offset.toString());
-            return UriWrapper.fromUri(rootUrl)
-                .addQueryParameters(parameters)
-                .getUri();
+
+            params.put(FROM.key(), String.valueOf(offset));
+            return UriWrapper.fromUri(gatewayUri)
+                       .addQueryParameters(params)
+                       .getUri();
         }
 
         public PagedSearchResourceDto build() {
-            if (nonNull(totalHits)) {
-                if (nonNull(offset)) {
-                    this.id = createUriOffsetRef(offset);
-                }
-                if (nextOffset < totalHits) {
-                    this.nextResults = createUriOffsetRef(nextOffset);
-                }
-                if (previousOffset >= 0) {
-                    this.previousResults = createUriOffsetRef(previousOffset);
-                }
-            }
             return new PagedSearchResourceDto(this);
         }
     }

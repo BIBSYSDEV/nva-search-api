@@ -8,6 +8,7 @@ import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 
+import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.nonNull;
@@ -21,10 +22,10 @@ public record OpenSearchSwsResponse(
     JsonNode aggregations) {
 
     public record ShardsInfo(
-        int total,
-        int successful,
-        int skipped,
-        int failed) {
+        Long total,
+        Long successful,
+        Long skipped,
+        Long failed) {
 
     }
 
@@ -33,7 +34,7 @@ public record OpenSearchSwsResponse(
         double max_score,
         List<Hit> hits) {
         public record TotalInfo(
-            int value,
+            Long value,
             String relation) {
 
         }
@@ -50,14 +51,16 @@ public record OpenSearchSwsResponse(
         }
     }
 
+    @JacocoGenerated
     @NotNull
     @Transient
-    public Integer getTotalSize() {
+    public Long getTotalSize() {
         return nonNull(hits)
                    ? hits.total.value
                    : 0;
     }
 
+    @JacocoGenerated
     @NotNull
     @Transient
     public List<JsonNode> getSearchHits() {
@@ -71,7 +74,7 @@ public record OpenSearchSwsResponse(
     @Transient
     public List<Long> getSort() {
         return
-            nonNull(hits) && nonNull(hits.hits) && hits.hits.size() > 0
+            nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
                 ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort())
                     .orElse(List.of())
                 : List.of();
