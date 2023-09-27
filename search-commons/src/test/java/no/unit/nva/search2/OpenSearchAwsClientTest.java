@@ -43,7 +43,7 @@ class OpenSearchAwsClientTest {
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchSingleTermReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
+    void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var pagedSearchResourceDto =
             ResourceAwsQuery.Builder
                 .queryBuilder()
@@ -58,7 +58,7 @@ class OpenSearchAwsClientTest {
 
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
-    void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
+    void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var pagedSearchResourceDto =
             ResourceAwsQuery.Builder
                 .queryBuilder()
@@ -73,7 +73,7 @@ class OpenSearchAwsClientTest {
 
     @ParameterizedTest
     @MethodSource("uriInvalidProvider")
-    void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
+    void failToSearchUri(URI uri) {
         assertThrows(BadRequestException.class,
                      () -> ResourceAwsQuery.Builder
                                .queryBuilder()
