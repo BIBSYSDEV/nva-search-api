@@ -62,7 +62,7 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
     public SearchResponse doSearch(ResourceAwsQuery query, String mediaType) {
         return
             getQueryBuilderStream(query)
-                .map(this::searchSource)
+                .map(this::searchSourceWithAggregation)
                 .map(searchSource -> searchSource
                                          .size(query.getValue(SIZE).as())
                                          .from(query.getValue(FROM).as())
@@ -72,15 +72,16 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
                 .findFirst().orElseThrow();
     }
 
-    private static Stream<Tuple<QueryStringQueryBuilder, ResourceAwsQuery>> getQueryBuilderStream(ResourceAwsQuery query) {
-        var fields = query.removeValue(FIELDS);
+    private static Stream<Tuple<QueryStringQueryBuilder, ResourceAwsQuery>> getQueryBuilderStream(
+        ResourceAwsQuery query) {
         var luceneParameters = query.toLuceneParameter().get("q");
-        var qbuilder = QueryBuilders.queryStringQuery(luceneParameters);
-        qbuilder.defaultOperator(Operator.AND);
+        var stringQueryBuilder = QueryBuilders.queryStringQuery(luceneParameters);
+        stringQueryBuilder.defaultOperator(Operator.AND);
+        var fields = query.removeValue(FIELDS);
         if (nonNull(fields)) {
-            Arrays.stream(fields.split(",")).forEach(qbuilder::field);
+            Arrays.stream(fields.split(",")).forEach(stringQueryBuilder::field);
         }
-        return Stream.of(new Tuple<>(qbuilder, query));
+        return Stream.of(new Tuple<>(stringQueryBuilder, query));
     }
 
     @Override
@@ -88,7 +89,7 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
         client.close();
     }
 
-    private SearchSourceBuilder searchSource(Tuple<QueryStringQueryBuilder, ResourceAwsQuery> tuple) {
+    private SearchSourceBuilder searchSourceWithAggregation(Tuple<QueryStringQueryBuilder, ResourceAwsQuery> tuple) {
         var builder = new SearchSourceBuilder().query(tuple.v1());
         var searchAfter = tuple.v2().removeValue(SEARCH_AFTER);
         if (nonNull(searchAfter)) {
@@ -102,7 +103,6 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
     private SearchRequest searchRequest(SearchSourceBuilder sourceBuilder) {
         return new SearchRequest(RESOURCES).source(sourceBuilder);
     }
-
 
     @JacocoGenerated
     private SearchResponse searchResponse(SearchRequest searchRequest) {

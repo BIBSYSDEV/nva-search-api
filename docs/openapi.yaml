@@ -70,7 +70,273 @@ paths:
               schema:
                 $ref: "#/components/schemas/TicketSearchResponse"
 
+  /resources:
+    get:
+      description: "Search for public available publications by given criteria"
+      tags:
+        - external
+      parameters:
+        - in: query
+          name: query
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderBy
+          description: "Field to order result by."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          description: "Order of search results (asc or desc)."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: from
+          description: "Start position from results, 0-based."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: results
+          description: "Maximum number of publications in response."
+          required: false
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicationSearchResponse"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/PublicationSearchCsv"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /resources2:
+    get:
+      description: "Search for public available publications by given criteria"
+      tags:
+        - external
+      parameters:
+        - in: query
+          name: category
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: contributor
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: created_before
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: created_since
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: doi
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: fields
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: funding
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: funding_source
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: id
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: institution
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: issn
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: lang
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: modified_before
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: modified_since
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: order
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: page
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: per_page
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: project_code
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: published_before
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: published_since
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: query
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: sort
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: title
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: unit
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: user
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: year_reported
+          description: "Term to search for in resource."
+          required: false
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchSwsResourcesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedPublicationSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+
+  /resources3:
     get:
       description: "Search for public available publications by given criteria"
       tags:
@@ -234,7 +500,7 @@ paths:
           type: string
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Search2ResourcesFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -245,76 +511,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PagedPublicationSearchResponse"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "500":
-          description: "500 info description"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-  /resources:
-    get:
-      description: "Search for public available publications by given criteria"
-      tags:
-        - external
-      parameters:
-        - in: query
-          name: query
-          description: "Term to search for in resource."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: orderBy
-          description: "Field to order result by."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: sortOrder
-          description: "Order of search results (asc or desc)."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: from
-          description: "Start position from results, 0-based."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: results
-          description: "Maximum number of publications in response."
-          required: false
-          schema:
-            type: string
-      x-amazon-apigateway-integration:
-        uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
-        responses: { }
-        httpMethod: POST
-        type: AWS_PROXY
-      responses:
-        "200":
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PublicationSearchResponse"
-            text/csv:
-              schema:
-                $ref: "#/components/schemas/PublicationSearchCsv"
         "400":
           description: Bad Request
           content:
