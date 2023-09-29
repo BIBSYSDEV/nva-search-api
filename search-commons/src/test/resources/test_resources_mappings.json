@@ -28,12 +28,7 @@
                   "type": "keyword"
                 },
                 "name": {
-                  "type": "text",
-                  "fields": {
-                    "keyword": {
-                      "type": "keyword"
-                    }
-                  }
+                  "type": "text"
                 }
               }
             }
