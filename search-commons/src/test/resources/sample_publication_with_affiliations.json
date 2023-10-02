@@ -142,7 +142,12 @@
       "doi": "https://doi.org/10.1016/j.foodres.2022.111012",
       "publicationContext": {
         "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
-        "type": "Journal"
+        "type": "Journal",
+        "publisher": {
+          "type": "UnconfirmedPublisher",
+          "name": "Jernbaneverket",
+          "valid": true
+        }
       },
       "publicationInstance": {
         "type": "AcademicArticle",

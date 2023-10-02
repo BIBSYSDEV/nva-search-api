@@ -46,6 +46,21 @@
                   "type": "keyword"
                 }
               }
+            },
+            "publicationContext": {
+              "type": "nested",
+              "include_in_parent": true,
+              "properties": {
+                "publisher": {
+                  "type": "nested",
+                  "include_in_parent": true,
+                  "properties": {
+                    "name": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
             }
           }
         }
