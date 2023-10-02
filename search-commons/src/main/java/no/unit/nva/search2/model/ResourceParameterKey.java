@@ -19,7 +19,6 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SHORT_DATE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOI_URL;
 import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
 import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN;
 import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
@@ -40,7 +39,7 @@ public enum ResourceParameterKey implements ParameterKey {
         "entityDescription.contributors.identity.id|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "created_before", "created"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "created_since", "created"),
-    DOI(CUSTOM, EQUALS, "doi", "entityDescription.reference.doi", null, PATTERN_IS_DOI_URL),
+    DOI(CUSTOM, EQUALS, "doi", "entityDescription.reference.doi", null, PATTERN_IS_NON_EMPTY),
     FUNDING(STRING, "funding", "fundings.identifier|source.identifier"),
     FUNDING_SOURCE(STRING, "funding_source", "fundings.source.identifier"),
     ID(STRING, "id", "identifier"),
