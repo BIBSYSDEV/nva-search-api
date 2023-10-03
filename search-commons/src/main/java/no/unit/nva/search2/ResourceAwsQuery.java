@@ -1,30 +1,5 @@
 package no.unit.nva.search2;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.SortKeys;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadGatewayException;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.search.SearchHit;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -42,6 +17,28 @@ import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAME
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadGatewayException;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.search.SearchHit;
 
 public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
 
@@ -52,8 +49,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     public PagedSearchResourceDto doSearch(OpenSearchAwsClient queryClient) throws ApiGatewayException {
         try (queryClient) {
             return Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
-                .map(this::toResponse)
-                .findFirst().orElseThrow();
+                       .map(this::toResponse)
+                       .findFirst().orElseThrow();
         } catch (IOException e) {
             throw new BadGatewayException(e.getMessage());
         }
@@ -62,23 +59,23 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     @NotNull
     private PagedSearchResourceDto toResponse(@NotNull SearchResponse response) {
 
-        final var source = URI.create(gatewayUri.toString().split("/?")[0]);
+        final var source = URI.create(gatewayUri.toString().split("\\?")[0]);
         final var requestParameter = toGateWayRequestParameter();
         final var offset = getValue(FROM).<Integer>as();
         final var size = getValue(SIZE).<Integer>as();
 
         var hits = Arrays.stream(response.getHits().getHits())
-            .map(hitsToJsonString())
-            .map(jsonToNode())
-            .toList();
+                       .map(hitsToJsonString())
+                       .map(jsonToNode())
+                       .toList();
 
         return PagedSearchResourceDto.Builder.builder()
-            .withTotalHits(response.getHits().getTotalHits().value)
-            .withHits(hits)
-            .withAggregations(extractAggregations(response))
-            .withIds(source, requestParameter, offset, size)
-            .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
-            .build();
+                   .withTotalHits(response.getHits().getTotalHits().value)
+                   .withHits(hits)
+                   .withAggregations(extractAggregations(response))
+                   .withIds(source,requestParameter, offset, size)
+                   .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
+                   .build();
     }
 
     @NotNull
@@ -111,8 +108,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 .collect(Collectors.joining(","));
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
         return UriWrapper.fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
+                   .addQueryParameters(requestParameter)
+                   .getUri();
     }
 
     public static final class Builder
@@ -146,20 +143,20 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER,
-                    FROM,
-                    SIZE,
-                    PAGE -> query.setQueryValue(qpKey, value);
+                         FROM,
+                         SIZE,
+                         PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> setSortQuery(qpKey, value);
                 case SORT_ORDER -> addSortOrderToSortQuery(value);
                 case CATEGORY, CONTRIBUTOR,
-                    CREATED_BEFORE, CREATED_SINCE,
-                    DOI, FUNDING, FUNDING_SOURCE, ID,
-                    INSTITUTION, ISSN,
-                    MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PROJECT_CODE, PUBLISHED_BEFORE,
-                    PUBLISHED_SINCE, SEARCH_ALL, TITLE,
-                    UNIT, USER, YEAR_REPORTED -> query.setLucineValue(qpKey, value);
+                         CREATED_BEFORE, CREATED_SINCE,
+                         DOI, FUNDING, FUNDING_SOURCE, ID,
+                         INSTITUTION, ISSN,
+                         MODIFIED_BEFORE, MODIFIED_SINCE,
+                         PROJECT_CODE, PUBLISHED_BEFORE,
+                         PUBLISHED_SINCE, SEARCH_ALL, TITLE,
+                         UNIT, USER, YEAR_REPORTED -> query.setLucineValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
@@ -209,8 +206,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
         private static String expandFields(String value) {
             return ALL.equals(value)
-                ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
-                : value;
+                       ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
+                       : value;
         }
 
     }

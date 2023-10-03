@@ -8,6 +8,7 @@ import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -68,6 +69,7 @@ class OpenSearchAwsClientTest {
                 .doSearch(openSearchAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
+        assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));
     }
 
 
