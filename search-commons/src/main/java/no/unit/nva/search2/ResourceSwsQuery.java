@@ -44,7 +44,7 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
     private PagedSearchResourceDto toResponse(@NotNull OpenSearchSwsResponse response) {
 
         final var requestParameter = toGateWayRequestParameter();
-        final var source = URI.create(this.gatewayUri.getHost() + this.gatewayUri.getPath());
+        final var source = URI.create(gatewayUri.toString().split("/?")[0]);
 
         return PagedSearchResourceDto.Builder.builder()
                    .withTotalHits(response.getTotalSize())

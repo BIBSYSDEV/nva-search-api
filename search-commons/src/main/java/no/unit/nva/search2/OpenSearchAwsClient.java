@@ -29,6 +29,7 @@ import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.QueryStringQueryBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +64,6 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
         return
             getQueryBuilderStream(query)
                 .map(this::searchSourceWithAggregation)
-                .map(searchSource -> searchSource
-                                         .size(query.getValue(SIZE).as())
-                                         .from(query.getValue(FROM).as())
-                                         .sort(query.getValue(SORT).<String>as()))
                 .map(this::searchRequest)
                 .map(this::searchResponse)
                 .findFirst().orElseThrow();
@@ -91,13 +88,26 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
 
     private SearchSourceBuilder searchSourceWithAggregation(Tuple<QueryStringQueryBuilder, ResourceAwsQuery> tuple) {
         var builder = new SearchSourceBuilder().query(tuple.v1());
-        var searchAfter = tuple.v2().removeValue(SEARCH_AFTER);
+        var query = tuple.v2();
+        var searchAfter = query.removeValue(SEARCH_AFTER);
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(",");
             builder.searchAfter(sortKeys);
         }
         RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
+        builder.size(query.getValue(SIZE).as());
+        builder.from(query.getValue(FROM).as());
+        Arrays.stream(query.getValue(SORT).
+            <String>as().split(","))
+            .map(sort -> sort.split(":"))
+            .map(this::listToPair)
+            .forEach(params -> builder.sort(params.v1(), params.v2()));
         return builder;
+    }
+
+    private Tuple<String, SortOrder> listToPair(String[] strings) {
+        var sortOrder =  strings.length==2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
+        return new Tuple<>(strings[0], sortOrder);
     }
 
     private SearchRequest searchRequest(SearchSourceBuilder sourceBuilder) {

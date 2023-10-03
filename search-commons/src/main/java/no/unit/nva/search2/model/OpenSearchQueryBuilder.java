@@ -151,7 +151,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
 
 
     /**
-     * returns T.VALID_QUERY_PARAMETER_NVA_KEYS
+     * returns T.VALID_LUCENE_PARAMETER_KEYS
      */
     protected Collection<String> validKeys() {
         return VALID_LUCENE_PARAMETER_KEYS.stream()

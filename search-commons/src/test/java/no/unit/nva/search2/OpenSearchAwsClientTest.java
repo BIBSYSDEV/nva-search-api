@@ -85,13 +85,14 @@ class OpenSearchAwsClientTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1&sortOrder=asc&sort=fieldName2&order"
-                       + "=desc"),
-            URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=fieldName1:desc"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc&searchAfter"
-                       + "=1241234,23412"),
-            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1+asc&sort=fieldName2+desc"));
+            URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category&order"
+                + "=desc"),
+            URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
+            URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=contributorid:asc,funding:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc," +
+                "modifiedDate:desc&searchAfter=1241234,23412"),
+            URI.create("https://example.com/?category=PhdThesis&sort=unit+asc&sort=id+desc"));
     }
 
     static Stream<URI> uriProvider() {
@@ -107,6 +108,7 @@ class OpenSearchAwsClientTest {
             URI.create("https://example.com/testsearch?categories=hello+world&lang=en"),
             URI.create("https://example.com/testsearch?tittles=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/testsearch?conttributors=hello+world&published_before=2020"),
+            URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
             URI.create("https://example.com/testsearch?useers=hello+world&lang=en"));
     }
 
