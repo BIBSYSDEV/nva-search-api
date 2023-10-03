@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -149,6 +150,7 @@ class OpenSearchSwsClientTest {
             resourceSwsQuery.doSearch(openSearchSwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
+        assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));
     }
 
 

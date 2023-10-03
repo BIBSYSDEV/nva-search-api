@@ -59,7 +59,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     @NotNull
     private PagedSearchResourceDto toResponse(@NotNull SearchResponse response) {
 
-        final var source = URI.create(this.gatewayUri.getHost() + this.gatewayUri.getPath());
+        final var source = URI.create(gatewayUri.toString().split("\\?")[0]);
         final var requestParameter = toGateWayRequestParameter();
         final var offset = getValue(FROM).<Integer>as();
         final var size = getValue(SIZE).<Integer>as();
