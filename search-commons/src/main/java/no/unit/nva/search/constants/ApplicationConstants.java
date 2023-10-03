@@ -69,6 +69,7 @@ public final class ApplicationConstants {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLISHER = "publisher";
+    public static final String JOURNAL = "journal";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
         generateSimpleAggregation("resourceOwner.owner",
@@ -113,8 +114,8 @@ public final class ApplicationConstants {
                    .subAggregation(generateNestedPublicationInstanceAggregation()
                                        .subAggregation(generatePublicationInstanceTypeAggregation()))
                    .subAggregation(generateNestedPublicationContextAggregation()
-                                .subAggregation(generatePublicationContextPublisherAggregation()
-                                ));
+                                .subAggregation(generatePublicationContextPublisherAggregation())
+                                .subAggregation(generatePublicationContextJournalAggregation()));
     }
 
     private static TermsAggregationBuilder generatePublicationInstanceTypeAggregation() {
@@ -133,7 +134,12 @@ public final class ApplicationConstants {
 
     private static TermsAggregationBuilder generatePublicationContextPublisherAggregation() {
         return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
-                                                             PUBLISHER, NAME));
+                                                             PUBLISHER, NAME, KEYWORD));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextJournalAggregation() {
+        return generateSimpleAggregation(JOURNAL, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                           NAME, KEYWORD));
     }
 
     private static NestedAggregationBuilder generateEntityDescriptionAggregation() {

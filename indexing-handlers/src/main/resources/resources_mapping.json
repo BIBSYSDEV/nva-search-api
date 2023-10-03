@@ -51,14 +51,8 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "publisher": {
-                  "type": "nested",
-                  "include_in_parent": true,
-                  "properties": {
-                    "name": {
-                      "type": "keyword"
-                    }
-                  }
+                "id": {
+                  "type": "keyword"
                 }
               }
             }
