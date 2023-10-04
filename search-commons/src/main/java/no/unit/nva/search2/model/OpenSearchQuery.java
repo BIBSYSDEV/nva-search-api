@@ -9,6 +9,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
 import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
+import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
@@ -16,7 +17,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import static org.testcontainers.shaded.org.yaml.snakeyaml.nodes.Tag.PREFIX;
+
 
 import java.net.URI;
 import java.net.URLDecoder;
