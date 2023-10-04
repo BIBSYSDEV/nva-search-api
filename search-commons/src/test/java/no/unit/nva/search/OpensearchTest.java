@@ -476,6 +476,14 @@ public class OpensearchTest {
             var contributorAggregation = actualAggregations.at(
                 "/entityDescription.contributors.identity.name/buckets");
             assertAggregation(contributorAggregation, "lametti, Stefania", 2);
+
+            var publisherAggregation = actualAggregations.at(
+                "/entityDescription.reference.publicationContext.publisher/buckets");
+            assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
+
+            var journalAggregation = actualAggregations.at(
+                "/entityDescription.reference.publicationContext.journal/buckets");
+            assertAggregation(journalAggregation, "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
         }
 
         @Test

@@ -146,9 +146,20 @@
     "reference": {
       "type": "Reference",
       "doi": "https://doi.org/10.1016/j.foodres.2022.111012",
-      "publicationContext": {
-        "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
-        "type": "Journal"
+      "publicationContext" : {
+        "identifier" : "451123",
+        "publisherId" : "https://api.dev.nva.aws.unit.no/publication-channels/publisher/18066/2023",
+        "website" : {
+          "id" : "http://1650-1850.net/"
+        },
+        "level" : "1",
+        "name" : "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era",
+        "active" : true,
+        "npiDomain" : "Historie og Idéhistorie",
+        "language" : "http://lexvo.org/id/iso639-3/und",
+        "id" : "https://api.dev.nva.aws.unit.no/publication-channels/journal/451123/2023",
+        "type" : "Journal",
+        "printIssn" : "1065-3112"
       },
       "publicationInstance": {
         "type": "AcademicArticle",
