@@ -72,7 +72,7 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
                 .findFirst().orElseThrow();
     }
 
-    private static Stream<Tuple<QueryStringQueryBuilder, ResourceAwsQuery>> getQueryBuilderStream(
+    private Stream<Tuple<QueryStringQueryBuilder, ResourceAwsQuery>> getQueryBuilderStream(
         ResourceAwsQuery query) {
         var luceneParameters = query.toLuceneParameter().get("q");
         var stringQueryBuilder = QueryBuilders.queryStringQuery(luceneParameters);
