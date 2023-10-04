@@ -23,6 +23,7 @@ import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.ResourceParameterKey;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -77,6 +78,13 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         public static Builder queryBuilder() {
             return new Builder();
+        }
+
+        @Override
+        protected void validateSort() throws BadRequestException {
+            if (isNull(query.getValue(SORT))) {
+                throw new BadRequestException("Sort parameter is required");
+            }
         }
 
         @Override

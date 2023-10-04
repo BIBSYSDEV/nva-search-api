@@ -94,7 +94,7 @@ class OpenSearchAwsClientTest {
             URI.create("https://example.com/?category=PhdThesis&orderBy=contributorid:asc,funding:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc," +
                 "modifiedDate:desc&searchAfter=1241234,23412"),
-            URI.create("https://example.com/?category=PhdThesis&sort=unit+asc&sort=id+desc"));
+            URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=id+desc"));
     }
 
     static Stream<URI> uriProvider() {

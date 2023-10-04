@@ -1,5 +1,32 @@
 package no.unit.nva.search2;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import no.unit.nva.search2.model.SortKeys;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.opensearch.action.search.SearchResponse;
+import org.opensearch.common.xcontent.XContentHelper;
+import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.search.SearchHit;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -8,37 +35,19 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
 import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
+import static no.unit.nva.search2.model.SortKeys.INVALID;
+import static no.unit.nva.search2.model.SortKeys.validSortKeys;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadGatewayException;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.search.SearchHit;
 
 public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
 
@@ -164,10 +173,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             }
         }
 
-        private void addSortOrderToSortQuery(String value) {
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).toString(), value));
-        }
-
         @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
@@ -184,26 +189,63 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
 
 
-        private void setSortQuery(ResourceParameterKey qpKey, String value) {
-            var decodedValue = decodeUTF(value).split(":| ");
-            var sortKey = Arrays.stream(SortKeys.values())
-                .filter(SortKeys.equalTo(decodedValue[0].trim()))
-                .map(SortKeys::getLuceneField)
-                .map(lucene -> addSorting(lucene, decodedValue))
-                .findFirst();
-            sortKey.ifPresent(s -> query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), s)));
-//        } else {
-//            invalidSortKeys.add(decodedValue[0]);
-//        }
+        @Override
+        protected void validateSort() throws BadRequestException {
+            var sortKeys = query.getValue(SORT).<String>as().split(",");
+            var joiner = new StringJoiner(",");
+            for (String sortKey : sortKeys) {
+                joiner.add(validateSortKey(sortKey));
+            }
+            var validSortKeys = joiner.toString();
+            query.setQueryValue(SORT, validSortKeys);
         }
 
-        @NotNull
-        private String addSorting(String lucene, String[] decodedValue) {
-            if (decodedValue.length == 1) {
-                return lucene + ":asc";
+        private String validateSortKey(String keySort) throws BadRequestException {
+            var sortKeyParts = keySort.split(":");
+            if (sortKeyParts.length > 2) {
+                throw new BadRequestException(ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys()));
             }
-            return lucene + ":" + decodedValue[1];
+            var sortOrder = (sortKeyParts.length == 2)
+                ? sortKeyParts[1]
+                : DEFAULT_VALUE_SORT_ORDER;
+            if (!sortOrder.matches(SORT_ORDER.pattern())) {
+                throw new BadRequestException("Invalid sort order: " + sortOrder);
+            }
+            var sortField = sortKeyParts[0];
+            var sortKey = SortKeys.keyFromString(sortField);
+            if (sortKey == INVALID) {
+                throw new BadRequestException(
+                    ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys())
+                );
+            }
+            return sortKey.name() + ":" + sortOrder;
+
         }
+
+        private void addSortOrderToSortQuery(String value) {
+            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
+        }
+
+
+        private void setSortQuery(ResourceParameterKey qpKey, String value) {
+            var validFieldValue = decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
+            query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validFieldValue));
+            //    var decodedValue = decodeUTF(value).split(":| ");
+            //    var sortKey = SortKeys.keyFromString(decodedValue[0].trim());
+            //    if (sortKey != INVALID) {
+            //        var validSortKey = addSorting(sortKey.name(), decodedValue);
+            //        query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validSortKey));
+            //    }
+        }
+
+//        @NotNull
+//        private String addSorting(String keyName, String[] decodedValue) {
+//            if (decodedValue.length == 1) {
+//                return keyName + ":asc";
+//            }
+//            return keyName + ":" + decodedValue[1];
+//        }
+
         private static String expandFields(String value) {
             return ALL.equals(value)
                        ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())

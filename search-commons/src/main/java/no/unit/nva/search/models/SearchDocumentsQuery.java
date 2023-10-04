@@ -63,7 +63,7 @@ public class SearchDocumentsQuery {
         return sourceBuilder;
     }
 
-    private SearchSourceBuilder  toSearchSourceBuilder() {
+    private SearchSourceBuilder toSearchSourceBuilder() {
 
         var sourceBuilder = new SearchSourceBuilder()
                                 .query(QueryBuilders.queryStringQuery(searchTerm))

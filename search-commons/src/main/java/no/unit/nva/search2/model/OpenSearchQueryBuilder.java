@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 
 /**
  * Builder for OpenSearchQuery.
@@ -72,11 +72,9 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
         }
         if (!invalidKeys.isEmpty()) {
-            throw new BadRequestException(
-                validQueryParameterNamesMessage(
-                    invalidKeys,
-                    validKeys()));
+            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys,validKeys()));
         }
+        validateSort();
         applyRulesAfterValidation();
         notValidated = false;
         return this;
@@ -118,6 +116,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         return this;
     }
 
+    /**
+     * Validate sort keys.
+     *
+     * @throws BadRequestException if sort key is invalid
+     */
+    protected abstract void validateSort() throws BadRequestException;
 
     /**
      * Sample code for assignDefaultValues.

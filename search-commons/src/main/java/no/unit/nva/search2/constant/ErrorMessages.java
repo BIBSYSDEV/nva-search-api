@@ -48,10 +48,6 @@ public class ErrorMessages {
         return String.format(ERROR_MESSAGE_INVALID_VALUE, queryParameterName, inValidValue);
     }
 
-    public static String invalidSortParametersMessage(String queryParameterName, String inValidValue) {
-        return String.format(ERROR_MESSAGE_INVALID_VALUE_WITH_SORT, queryParameterName, inValidValue);
-    }
-
     public static String requiredMissingMessage(Set<String> missingKeys) {
         return String.format(ERROR_MESSAGE_MISSING_PARAMETER, prettifyList(missingKeys));
     }
