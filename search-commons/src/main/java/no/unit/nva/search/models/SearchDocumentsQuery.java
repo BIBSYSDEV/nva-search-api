@@ -51,10 +51,10 @@ public class SearchDocumentsQuery {
 
     private SearchSourceBuilder toSearchSourceBuilderWithQuery(BoolQueryBuilder query) {
         var sourceBuilder = new SearchSourceBuilder()
-                                .query(query)
-                                .from(from)
-                                .size(results)
-                                .trackTotalHits(true);
+            .query(query)
+            .from(from)
+            .size(results)
+            .trackTotalHits(true);
 
         if (aggregations != null) {
             addAggregations(sourceBuilder);
@@ -63,14 +63,14 @@ public class SearchDocumentsQuery {
         return sourceBuilder;
     }
 
-    private SearchSourceBuilder  toSearchSourceBuilder() {
+    private SearchSourceBuilder toSearchSourceBuilder() {
 
         var sourceBuilder = new SearchSourceBuilder()
-                                .query(QueryBuilders.queryStringQuery(searchTerm))
-                                .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
-                                .from(from)
-                                .size(results)
-                                .trackTotalHits(true);
+            .query(QueryBuilders.queryStringQuery(searchTerm))
+            .sort(SortBuilders.fieldSort(orderBy).unmappedType(STRING).order(sortOrder))
+            .from(from)
+            .size(results)
+            .trackTotalHits(true);
 
         if (aggregations != null) {
             addAggregations(sourceBuilder);
