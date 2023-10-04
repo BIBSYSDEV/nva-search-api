@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.SortKeys;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.apache.http.HttpHost;
@@ -100,14 +101,15 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
         Arrays.stream(query.getValue(SORT).
             <String>as().split(","))
             .map(sort -> sort.split(":"))
-            .map(this::listToPair)
+            .map(this::expandSortKeys)
             .forEach(params -> builder.sort(params.v1(), params.v2()));
         return builder;
     }
 
-    private Tuple<String, SortOrder> listToPair(String[] strings) {
+    private Tuple<String, SortOrder> expandSortKeys(String[] strings) {
         var sortOrder =  strings.length==2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
-        return new Tuple<>(strings[0], sortOrder);
+        var luceneKey = SortKeys.keyFromString(strings[0]).getLuceneField();
+        return new Tuple<>(luceneKey, sortOrder);
     }
 
     private SearchRequest searchRequest(SearchSourceBuilder sourceBuilder) {

@@ -1,40 +1,7 @@
 package no.unit.nva.search2;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
-import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
-import static no.unit.nva.search2.model.SortKeys.INVALID;
-import static no.unit.nva.search2.model.SortKeys.VALID_SORT_PARAMETER_KEYS;
-import static no.unit.nva.search2.model.SortKeys.validSortKeys;
-import static nva.commons.core.attempt.Try.attempt;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
@@ -50,6 +17,37 @@ import org.opensearch.action.search.SearchResponse;
 import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.search.SearchHit;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
+import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
+import static no.unit.nva.search2.model.SortKeys.INVALID;
+import static no.unit.nva.search2.model.SortKeys.validSortKeys;
+import static nva.commons.core.attempt.Try.attempt;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
 

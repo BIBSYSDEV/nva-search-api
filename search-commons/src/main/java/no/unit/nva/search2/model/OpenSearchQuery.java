@@ -259,8 +259,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
         @NotNull
         private <T extends Number> T castNumber() {
-            return (T) attempt(() -> Integer.parseInt(value))
-                           .orElseThrow();
+            return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
         }
     }
 }

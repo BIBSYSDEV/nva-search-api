@@ -1,5 +1,8 @@
 package no.unit.nva.search2.model;
 
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -7,14 +10,10 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import no.unit.nva.search2.ResourceSwsQuery;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
+import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
@@ -31,7 +30,6 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SHORT_DATE;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING_DECODE;
 
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING, null),
