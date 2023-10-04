@@ -113,9 +113,9 @@ public final class ApplicationConstants {
         return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
                    .subAggregation(generateNestedPublicationInstanceAggregation()
                                        .subAggregation(generatePublicationInstanceTypeAggregation()))
-                   .subAggregation(generateNestedPublicationContextAggregation()
-                                .subAggregation(generatePublicationContextPublisherAggregation())
-                                .subAggregation(generatePublicationContextJournalAggregation()));
+            .subAggregation(generateNestedPublicationContextAggregation()
+                                .subAggregation(generatePublicationContextPublisherIdAggregation().subAggregation(generatePublicationContextPublisherNameAggregation()))
+                                .subAggregation(generatePublicationContextJournalIdAggregation().subAggregation(generatePublicationContextJournalNameAggregation())));
     }
 
     private static TermsAggregationBuilder generatePublicationInstanceTypeAggregation() {
@@ -132,14 +132,24 @@ public final class ApplicationConstants {
                                             jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT));
     }
 
-    private static TermsAggregationBuilder generatePublicationContextPublisherAggregation() {
-        return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
-                                                             PUBLISHER, NAME, KEYWORD));
+    private static TermsAggregationBuilder generatePublicationContextPublisherIdAggregation() {
+        return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
+            , ID));
     }
 
-    private static TermsAggregationBuilder generatePublicationContextJournalAggregation() {
-        return generateSimpleAggregation(JOURNAL, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
-                                                           NAME, KEYWORD));
+    private static TermsAggregationBuilder generatePublicationContextPublisherNameAggregation() {
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
+            , NAME));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextJournalIdAggregation() {
+        return generateSimpleAggregation(ID, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                      ID));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextJournalNameAggregation() {
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                        NAME));
     }
 
     private static NestedAggregationBuilder generateEntityDescriptionAggregation() {
