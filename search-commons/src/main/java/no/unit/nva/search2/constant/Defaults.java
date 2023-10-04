@@ -1,11 +1,10 @@
 package no.unit.nva.search2.constant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search2.model.ParameterKey;
-import no.unit.nva.search2.model.ResourceParameterKey;
 import no.unit.nva.search2.model.SortKeys;
+
+import java.net.URI;
 
 public final class Defaults {
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;

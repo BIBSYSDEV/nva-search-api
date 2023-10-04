@@ -4,10 +4,11 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
 import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
-import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
@@ -15,6 +16,8 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import static org.testcontainers.shaded.org.yaml.snakeyaml.nodes.Tag.PREFIX;
+
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -182,7 +185,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected static String mergeParameters(String oldValue, String newValue) {
         if (nonNull(oldValue)) {
-            var delimiter = newValue.matches("asc|desc") ? ":" : ",";
+            var delimiter = newValue.matches("asc|desc") ? COLON : COMMA;
             return String.join(delimiter, oldValue, newValue);
         } else {
             return newValue;

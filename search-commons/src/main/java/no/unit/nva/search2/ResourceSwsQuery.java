@@ -1,6 +1,23 @@
 package no.unit.nva.search2;
 
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.util.Objects.isNull;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
@@ -13,20 +30,6 @@ import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import java.net.URI;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
 
 public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey> {
 
@@ -93,7 +96,7 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
                 switch (key) {
                     case FROM -> setValue(key.key(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + ":" + DEFAULT_VALUE_SORT_ORDER);
+                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + COLON + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -133,14 +136,16 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
         @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
-            // convert page to offset if offset is not set
+            convertPageToOffsetIfNotSet();
+        }
+
+        private void convertPageToOffsetIfNotSet() {
             if (isNull(query.getValue(FROM))) {
                 var page = query.getValue(PAGE).<Integer>as();
                 var perPage = query.getValue(SIZE).<Integer>as();
                 query.setQueryValue(FROM, String.valueOf(page * perPage));
             }
             query.removeValue(PAGE);
-            // TODO check if field is set and has value 'all' then populate with all fields
         }
 
         private String expandFields(String value) {

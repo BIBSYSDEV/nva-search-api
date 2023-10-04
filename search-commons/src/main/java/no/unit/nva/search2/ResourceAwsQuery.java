@@ -31,6 +31,8 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
@@ -121,10 +123,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                    .getUri();
     }
 
+    @SuppressWarnings("PMD.GodClass")
     public static final class Builder
         extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
 
-        public static final String ALL = "all";
+        private static final String ALL = "all";
+        public static final Integer EXPECTED_TWO_PARTS = 2;
 
         private Builder() {
             super(new ResourceAwsQuery());
@@ -140,7 +144,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 switch (key) {
                     case FROM -> setValue(key.key(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + ":" + DEFAULT_VALUE_SORT_ORDER);
+                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + COLON + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -185,14 +189,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 }
                 query.removeValue(PAGE);
             }
-            // TODO check if field is set and has value 'all' then populate with all fields
         }
-
 
         @Override
         protected void validateSort() throws BadRequestException {
-            var sortKeys = query.getValue(SORT).<String>as().split(",");
-            var joiner = new StringJoiner(",");
+            var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
+            var joiner = new StringJoiner(COMMA);
             for (String sortKey : sortKeys) {
                 joiner.add(validateSortKey(sortKey));
             }
@@ -201,11 +203,13 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
 
         private String validateSortKey(String keySort) throws BadRequestException {
-            var sortKeyParts = keySort.split(":");
-            if (sortKeyParts.length > 2) {
-                throw new BadRequestException(ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys()));
+            var sortKeyParts = keySort.split(COLON);
+            if (sortKeyParts.length > EXPECTED_TWO_PARTS) {
+                throw new BadRequestException(
+                    ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys())
+                );
             }
-            var sortOrder = (sortKeyParts.length == 2)
+            var sortOrder = (sortKeyParts.length == EXPECTED_TWO_PARTS)
                 ? sortKeyParts[1]
                 : DEFAULT_VALUE_SORT_ORDER;
             if (!sortOrder.matches(SORT_ORDER.pattern())) {
@@ -218,39 +222,22 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                     ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys())
                 );
             }
-            return sortKey.name() + ":" + sortOrder;
-
+            return sortKey.name() + COLON + sortOrder;
         }
 
         private void addSortOrderToSortQuery(String value) {
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
         }
 
-
         private void setSortQuery(ResourceParameterKey qpKey, String value) {
             var validFieldValue = decodeUTF(value).replaceAll(" (asc|desc)", ":$1");
             query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validFieldValue));
-            //    var decodedValue = decodeUTF(value).split(":| ");
-            //    var sortKey = SortKeys.keyFromString(decodedValue[0].trim());
-            //    if (sortKey != INVALID) {
-            //        var validSortKey = addSorting(sortKey.name(), decodedValue);
-            //        query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validSortKey));
-            //    }
         }
 
-//        @NotNull
-//        private String addSorting(String keyName, String[] decodedValue) {
-//            if (decodedValue.length == 1) {
-//                return keyName + ":asc";
-//            }
-//            return keyName + ":" + decodedValue[1];
-//        }
-
-        private static String expandFields(String value) {
+        private String expandFields(String value) {
             return ALL.equals(value)
                        ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
                        : value;
         }
-
     }
 }

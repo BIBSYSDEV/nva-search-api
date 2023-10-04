@@ -11,6 +11,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
@@ -155,7 +156,7 @@ public enum ResourceParameterKey implements ParameterKey {
     @JacocoGenerated
     public String toString() {
         return
-            new StringJoiner(":", "Key[", "]")
+            new StringJoiner(COMMA, "Key[", "]")
                 .add(String.valueOf(ordinal()))
                 .add(name())
                 .toString();

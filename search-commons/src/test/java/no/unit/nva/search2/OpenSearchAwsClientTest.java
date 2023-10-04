@@ -56,7 +56,6 @@ class OpenSearchAwsClientTest {
         assertNotNull(pagedSearchResourceDto);
     }
 
-
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
@@ -77,12 +76,12 @@ class OpenSearchAwsClientTest {
     @MethodSource("uriInvalidProvider")
     void failToSearchUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceAwsQuery.Builder
-                               .queryBuilder()
-                               .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                               .withRequiredParameters(FROM, SIZE)
-                               .build()
-                               .doSearch(openSearchAwsClient));
+            () -> ResourceAwsQuery.Builder
+                .queryBuilder()
+                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .build()
+                .doSearch(openSearchAwsClient));
     }
 
     static Stream<URI> uriSortingProvider() {
@@ -92,9 +91,9 @@ class OpenSearchAwsClientTest {
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=contributorid:asc,funding:desc"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc," +
-                "modifiedDate:desc&searchAfter=1241234,23412"),
-            URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=id+desc"));
+            URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
+                + "modifiedDate:desc&searchAfter=1241234,23412"),
+            URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=contributor_name+desc"));
     }
 
     static Stream<URI> uriProvider() {

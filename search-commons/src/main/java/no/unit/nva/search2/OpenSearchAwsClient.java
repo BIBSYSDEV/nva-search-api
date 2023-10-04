@@ -4,6 +4,8 @@ import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
@@ -77,7 +79,7 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
         stringQueryBuilder.defaultOperator(Operator.AND);
         var fields = query.removeValue(FIELDS);
         if (nonNull(fields)) {
-            Arrays.stream(fields.split(",")).forEach(stringQueryBuilder::field);
+            Arrays.stream(fields.split(COMMA)).forEach(stringQueryBuilder::field);
         }
         return Stream.of(new Tuple<>(stringQueryBuilder, query));
     }
@@ -92,22 +94,21 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
         var query = tuple.v2();
         var searchAfter = query.removeValue(SEARCH_AFTER);
         if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(",");
+            var sortKeys = searchAfter.split(COMMA);
             builder.searchAfter(sortKeys);
         }
         RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
         builder.size(query.getValue(SIZE).as());
         builder.from(query.getValue(FROM).as());
-        Arrays.stream(query.getValue(SORT).
-            <String>as().split(","))
-            .map(sort -> sort.split(":"))
+        Arrays.stream(query.getValue(SORT).<String>as().split(COMMA))
+            .map(sort -> sort.split(COLON))
             .map(this::expandSortKeys)
             .forEach(params -> builder.sort(params.v1(), params.v2()));
         return builder;
     }
 
-    private Tuple<String, SortOrder> expandSortKeys(String[] strings) {
-        var sortOrder =  strings.length==2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
+    private Tuple<String, SortOrder> expandSortKeys(String... strings) {
+        var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
         var luceneKey = SortKeys.keyFromString(strings[0]).getLuceneField();
         return new Tuple<>(luceneKey, sortOrder);
     }
@@ -129,8 +130,8 @@ public class OpenSearchAwsClient implements OpenSearchClient<SearchResponse, Res
     private RequestOptions getRequestOptions() {
         var token = "Bearer " + jwtProvider.getValue().getToken();
         return RequestOptions.DEFAULT
-                   .toBuilder()
-                   .addHeader(AUTHORIZATION, token)
-                   .build();
+            .toBuilder()
+            .addHeader(AUTHORIZATION, token)
+            .build();
     }
 }
