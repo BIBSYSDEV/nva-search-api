@@ -25,7 +25,6 @@ public interface ParameterKey {
         return key -> name.matches(key.keyPattern());
     }
 
-
     enum KeyEncoding {
         NONE,DECODE,ENCODE_DECODE
     }

@@ -229,10 +229,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
     }
 
-    public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
-        return key1.ordinal() - key2.ordinal();
-    }
-
     @SuppressWarnings({"PMD.ShortMethodName"})
     public static class AsType {
 

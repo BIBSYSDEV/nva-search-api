@@ -66,7 +66,7 @@ public enum ResourceParameterKey implements ParameterKey {
     FROM(NUMBER, EQUALS, "from", null,"(?i)offset|from", null),
     SIZE(NUMBER, EQUALS, "size", null, "(?i)per.?page|results|limit|size", null),
     SORT(SORT_STRING, EQUALS, "sort", null, "(?i)order.?by|sort", PATTERN_IS_NON_EMPTY),
-    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)sort.?order|order", "asc|desc"),
+    SORT_ORDER(CUSTOM, EQUALS, "sortOrder", null, "(?i)sort.?order|order", "(?i)asc|desc"),
     SEARCH_AFTER(CUSTOM, NONE, "search_after", null, "(?i)search.?after", PATTERN_IS_NON_EMPTY),
     // ignored parameter
     LANG(STRING, "lang");
@@ -76,7 +76,7 @@ public enum ResourceParameterKey implements ParameterKey {
     public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETER_KEYS =
         Arrays.stream(ResourceParameterKey.values())
             .filter(ResourceParameterKey::isLucene)
-            .sorted(ResourceSwsQuery::compareParameterKey)
+            .sorted(ResourceParameterKey::compareParameterKey)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
 
@@ -216,4 +216,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
+    private static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
+        return key1.ordinal() - key2.ordinal();
+    }
 }
