@@ -116,19 +116,10 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         return this;
     }
 
-    ///TODO document this method
     /**
-     * Sample code for validateSort.
-     * <p>Usage:</p>
-     * <samp>requiredMissing().forEach(key -> { <br>
-     *     switch (key) {<br>
-     *         case LANGUAGE:<br>
-     *             query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
-     *             break;<br>
-     *         default:<br>
-     *             break;<br>
-     *     }});<br>
-     * </samp>
+     * Validate sort keys.
+     *
+     * @throws BadRequestException if sort key is invalid
      */
     protected abstract void validateSort() throws BadRequestException;
 

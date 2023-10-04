@@ -188,6 +188,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             // TODO check if field is set and has value 'all' then populate with all fields
         }
 
+
         @Override
         protected void validateSort() throws BadRequestException {
             var sortKeys = query.getValue(SORT).<String>as().split(",");
