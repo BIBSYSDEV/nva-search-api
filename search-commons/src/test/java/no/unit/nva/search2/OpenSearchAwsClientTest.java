@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
+import static no.unit.nva.search2.OpenSearchSwsClientTest.mockedHttpResponse;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
@@ -22,7 +24,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.client.RestHighLevelClient;
 
 class OpenSearchAwsClientTest {
 
@@ -33,12 +34,12 @@ class OpenSearchAwsClientTest {
 
 
     @BeforeEach
-    public void setUp() throws IOException {
-        var mockedOpenSearchClient = mock(RestHighLevelClient.class);
-        var mockedResponse = generateMockSearchResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT);
-        openSearchAwsClient = new OpenSearchAwsClient(setupMockedCachedJwtProvider(), mockedOpenSearchClient);
-        when(mockedOpenSearchClient.search(any(), any()))
-            .thenReturn(mockedResponse);
+    public void setUp() throws IOException, InterruptedException {
+        var httpClient = mock(HttpClient.class);
+        var cachedJwtProvider = setupMockedCachedJwtProvider();
+        openSearchAwsClient = new OpenSearchAwsClient(cachedJwtProvider, httpClient);
+        when(httpClient.send(any(), any()))
+            .thenReturn(mockedHttpResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT));
     }
 
 

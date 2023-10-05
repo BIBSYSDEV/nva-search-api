@@ -1,36 +1,7 @@
 package no.unit.nva.search2;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.SortKeys;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.opensearch.action.search.SearchResponse;
-import org.opensearch.common.xcontent.XContentHelper;
-import org.opensearch.common.xcontent.XContentType;
-import org.opensearch.search.SearchHit;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.search.models.SearchResponseDto.formatAggregations;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
@@ -48,8 +19,23 @@ import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAME
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.model.SortKeys.INVALID;
 import static no.unit.nva.search2.model.SortKeys.validSortKeys;
-import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import java.net.URI;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import no.unit.nva.search2.model.SortKeys;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
 
 public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
 
@@ -58,70 +44,37 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     public PagedSearchResourceDto doSearch(OpenSearchAwsClient queryClient) throws ApiGatewayException {
-        try (queryClient) {
             return Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
                        .map(this::toResponse)
                        .findFirst().orElseThrow();
-        } catch (IOException e) {
-            throw new BadGatewayException(e.getMessage());
-        }
     }
 
     @NotNull
-    private PagedSearchResourceDto toResponse(@NotNull SearchResponse response) {
+    private PagedSearchResourceDto toResponse(@NotNull OpenSearchSwsResponse response) {
 
-        final var source = URI.create(gatewayUri.toString().split("\\?")[0]);
         final var requestParameter = toGateWayRequestParameter();
-        final var offset = getValue(FROM).<Integer>as();
-        final var size = getValue(SIZE).<Integer>as();
-
-        var hits = Arrays.stream(response.getHits().getHits())
-                       .map(hitsToJsonString())
-                       .map(jsonToNode())
-                       .toList();
+        final var source = URI.create(gatewayUri.toString().split("\\?")[0]);
 
         return PagedSearchResourceDto.Builder.builder()
-                   .withTotalHits(response.getHits().getTotalHits().value)
-                   .withHits(hits)
-                   .withAggregations(extractAggregations(response))
-                   .withIds(source,requestParameter, offset, size)
+                   .withTotalHits(response.getTotalSize())
+                   .withHits(response.getSearchHits())
+                   .withAggregations(response.getAggregationsStructured())
+                   .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
                    .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
                    .build();
     }
 
-    @NotNull
-    private static Function<String, JsonNode> jsonToNode() {
-        return content -> attempt(() -> objectMapperWithEmpty.readTree(content)).orElseThrow();
-    }
-
-    private static Function<SearchHit, String> hitsToJsonString() {
-        return hit -> attempt(() -> XContentHelper.convertToJson(
-            hit.getSourceRef(), true, false, XContentType.JSON)
-        ).orElseThrow();
-    }
-
-    private static JsonNode extractAggregations(SearchResponse searchResponse) {
-        var json = attempt(() -> objectMapperWithEmpty.readTree(searchResponse.toString())).orElseThrow();
-        var aggregations = (ObjectNode) json.get("aggregations");
-        return nonNull(aggregations) ? formatAggregations(aggregations) : null;
-    }
-
     private URI nextResultsBySortKey(
-        @NotNull SearchResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-        var lastIndex = response.getHits().getHits().length - 1;
-        if (lastIndex < 0) {
-            return null;
-        }
+        @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
         requestParameter.remove(FROM.key());
         var sortedP =
-            Arrays.stream(response.getHits().getHits()[lastIndex].getSortValues())
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
+            response.getSort().stream().map(Object::toString).collect(Collectors.joining(","));
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
         return UriWrapper.fromUri(gatewayUri)
                    .addQueryParameters(requestParameter)
                    .getUri();
     }
+
 
     @SuppressWarnings("PMD.GodClass")
     public static final class Builder
