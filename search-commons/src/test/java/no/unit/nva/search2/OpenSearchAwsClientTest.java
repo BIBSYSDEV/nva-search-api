@@ -1,12 +1,10 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.search2.OpenSearchSwsClientTest.mockedHttpResponse;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,7 +14,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.nio.file.Path;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -91,7 +88,7 @@ class OpenSearchAwsClientTest {
                 + "=desc"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category:desc"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=contributorid:asc,funding:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=contributorid:asc,institution_name:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
                 + "modifiedDate:desc&searchAfter=1241234,23412"),
             URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=contributor_name+desc"));
@@ -114,9 +111,4 @@ class OpenSearchAwsClientTest {
             URI.create("https://example.com/testsearch?useers=hello+world&lang=en"));
     }
 
-
-    private org.opensearch.action.search.SearchResponse generateMockSearchResponse(String filename) throws IOException {
-        var json = stringFromResources(Path.of(filename));
-        return getSearchResponseFromJson(json);
-    }
 }

@@ -169,10 +169,9 @@ public enum ResourceParameterKey implements ParameterKey {
     @NotNull
     private KeyEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
-            case SHORT_DATE, NUMBER -> KeyEncoding.NONE;
+            case SHORT_DATE, NUMBER, CUSTOM, SORT_STRING -> KeyEncoding.NONE;
             case DATE, STRING_DECODE -> KeyEncoding.DECODE;
-            case STRING, SORT_STRING -> KeyEncoding.ENCODE_DECODE;
-            case CUSTOM -> KeyEncoding.NONE;
+            case STRING -> KeyEncoding.ENCODE_DECODE;
         };
     }
 

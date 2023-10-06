@@ -13,7 +13,6 @@ public enum SortKeys {
     CONTRIBUTOR_ID("(?i)contributor.?id", "entityDescription.contributors.identity.id"),
     CONTRIBUTOR_NAME("(?i)contributor.?name", "entityDescription.contributors.identity.name"),
     CREATED_DATE("(?i)created.?date", "createdDate"),
-    FUNDING("(?i)funding", "fundings.identifier|source.identifier"),
     INSTITUTION_ID("(?i)institution.?id", "entityDescription.contributors.affiliation.id"),
     INSTITUTION_NAME("(?i)institution.?name", "entityDescription.contributors.affiliation.name"),
     MODIFIED_DATE("(?i)modified.?date", "modifiedDate"),
