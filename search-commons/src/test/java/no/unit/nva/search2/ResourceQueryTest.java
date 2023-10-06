@@ -34,7 +34,7 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceSwsQuery.Builder
+            ResourceAwsQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
@@ -54,7 +54,7 @@ class ResourceQueryTest {
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceSwsQuery.Builder
+            ResourceAwsQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
@@ -93,7 +93,7 @@ class ResourceQueryTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceSwsQuery.Builder
+            ResourceAwsQuery.Builder
                 .queryBuilder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
@@ -108,7 +108,7 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceSwsQuery.Builder
+                     () -> ResourceAwsQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
@@ -122,7 +122,7 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceSwsQuery.Builder
+                     () -> ResourceAwsQuery.Builder
                                .queryBuilder()
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
