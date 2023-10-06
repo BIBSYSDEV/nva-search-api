@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
@@ -75,6 +77,7 @@ public final class ApplicationConstants {
                                   "resourceOwner.ownerAffiliation.keyword"),
         generateEntityDescriptionAggregation(),
         generateFundingSourceAggregation(),
+        generateHasFileAggregation(),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATIONS)
     );
 
@@ -187,5 +190,21 @@ public final class ApplicationConstants {
 
     private static String jsonPath(String... args) {
         return String.join(JSON_PATH_DELIMITER, args);
+    }
+
+    private static FilterAggregationBuilder generateHasFileAggregation() {
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+            .must(QueryBuilders.termQuery("associatedArtifacts.type.keyword", "PublishedFile"))
+            .must(QueryBuilders.termQuery("associatedArtifacts.administrativeAgreement", false));
+
+        FilterAggregationBuilder filterAggregation = AggregationBuilders.filter("associatedArtifacts",
+                                                                                boolQuery);
+
+        TermsAggregationBuilder termsAggregation = AggregationBuilders.terms("HasFile")
+            .field("associatedArtifacts.type.keyword");
+
+        return  filterAggregation.subAggregation(termsAggregation);
+
     }
 }
