@@ -86,7 +86,6 @@ public class OpenSearchAwsClient implements OpenSearchClient<OpenSearchSwsRespon
     private QueryBuilderSource searchSourceWithAggregation(QueryBuilder queryBuilder) {
         var builder = new SearchSourceBuilder().query(queryBuilder.buider());
         var query = queryBuilder.query();
-        var mediaType = queryBuilder.mediaType();
         var searchAfter = query.removeValue(SEARCH_AFTER);
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(COMMA);
@@ -102,7 +101,7 @@ public class OpenSearchAwsClient implements OpenSearchClient<OpenSearchSwsRespon
             .map(this::expandSortKeys)
             .forEach(params -> builder.sort(params.v1(), params.v2()));
 
-        return new QueryBuilderSource(builder, query.openSearchUri(), mediaType);
+        return new QueryBuilderSource(builder, query.openSearchUri(), queryBuilder.mediaType());
     }
 
     private Tuple<String, SortOrder> expandSortKeys(String... strings) {

@@ -44,9 +44,9 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     public PagedSearchResourceDto doSearch(OpenSearchAwsClient queryClient) throws ApiGatewayException {
-            return Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
-                       .map(this::toResponse)
-                       .findFirst().orElseThrow();
+        return Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
+                   .map(this::toResponse)
+                   .findFirst().orElseThrow();
     }
 
     @NotNull

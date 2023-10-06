@@ -104,9 +104,10 @@ public record PagedSearchResourceDto(
                        .getUri();
         }
 
+        @SuppressWarnings("PMD.NullAssignment")
         public PagedSearchResourceDto build() {
             if (isNull(this.nextResults)) {
-                this.nextResultsBySortKey = null;
+                this.nextResultsBySortKey = null;       // null values are not serialized
             }
 
             return new PagedSearchResourceDto(this);
