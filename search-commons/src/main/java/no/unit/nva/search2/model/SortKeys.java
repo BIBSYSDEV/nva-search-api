@@ -17,7 +17,7 @@ public enum SortKeys {
     INSTITUTION_ID("(?i)institution.?id", "entityDescription.contributors.affiliation.id"),
     INSTITUTION_NAME("(?i)institution.?name", "entityDescription.contributors.affiliation.name"),
     MODIFIED_DATE("(?i)modified.?date", "modifiedDate"),
-    PUBLISHED_YEAR("(?i)published.?year", "entityDescription.publicationDate.year"),
+    PUBLISHED_DATE("(?i)published.?date", "publishedDate"),
     TITLE("(?i)title", "entityDescription.mainTitle"),
     UNIT_ID("(?i)unit.?id", "entityDescription.contributors.affiliation.id"),
     USER("(?i)(user)|(owner)", "resourceOwner.owner");
