@@ -1,27 +1,7 @@
 package no.unit.nva.search2;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.core.Environment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -37,6 +17,24 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Stream;
+import no.unit.nva.search.common.FakeGatewayResponse;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class ResourcePagedSearchHandlerAwsTest {
 
@@ -195,8 +193,7 @@ class ResourcePagedSearchHandlerAwsTest {
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-
-        var body =  getSearchResponseFromJson(jsonResponse);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -204,7 +201,7 @@ class ResourcePagedSearchHandlerAwsTest {
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body =  getSearchResponseFromJson(jsonResponse);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -212,7 +209,7 @@ class ResourcePagedSearchHandlerAwsTest {
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body =  getSearchResponseFromJson(jsonResponse);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);

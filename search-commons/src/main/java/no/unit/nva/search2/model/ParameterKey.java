@@ -25,13 +25,12 @@ public interface ParameterKey {
         return key -> name.matches(key.keyPattern());
     }
 
-
     enum KeyEncoding {
         NONE,DECODE,ENCODE_DECODE
     }
 
     enum ParamKind {
-        DATE, SHORT_DATE, NUMBER, STRING, STRING_DECODE,CUSTOM
+        DATE, SHORT_DATE, NUMBER, STRING, STRING_DECODE, SORT_STRING, CUSTOM
     }
 
     enum Operator {

@@ -1,5 +1,6 @@
 package no.unit.nva.search2.model;
 
+import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -103,7 +104,12 @@ public record PagedSearchResourceDto(
                        .getUri();
         }
 
+        @SuppressWarnings("PMD.NullAssignment")
         public PagedSearchResourceDto build() {
+            if (isNull(this.nextResults)) {
+                this.nextResultsBySortKey = null;       // null values are not serialized
+            }
+
             return new PagedSearchResourceDto(this);
         }
     }

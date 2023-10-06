@@ -11,6 +11,8 @@ public final class ApplicationConstants {
 
     public static final String AMPERSAND = "&";
     public static final String AND = "+AND+";
+    public static final String COLON = ":";
+    public static final String COMMA = ",";
     public static final String EQUAL = "=";
     public static final String OR = "+OR+";
     public static final String PLUS = "+";
