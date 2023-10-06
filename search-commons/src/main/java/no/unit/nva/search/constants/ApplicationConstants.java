@@ -67,7 +67,6 @@ public final class ApplicationConstants {
     public static final String IDENTITY = "identity";
     public static final String REFERENCE = "reference";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
-    public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String TYPE = "type";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
