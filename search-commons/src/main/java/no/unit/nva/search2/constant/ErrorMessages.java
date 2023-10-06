@@ -12,18 +12,18 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 @JacocoGenerated
 public class ErrorMessages {
-    public static final String ERROR_MESSAGE_INVALID_VALUE = "Parameter [%s] has invalid value [%s]";
-    public static final String ERROR_MESSAGE_INVALID_VALUE_WITH_SORT =
+    public static final String INVALID_VALUE = "Parameter [%s] has invalid value [%s]";
+    public static final String INVALID_VALUE_WITH_SORT =
         "Sort has invalid field value [%s]. Valid values are: %s";
-    public static final String ERROR_MESSAGE_INVALID_NUMBER = "Parameter '%s' has invalid value. Must be a number.";
-    public static final String ERROR_MESSAGE_INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
-    public static final String ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS =
+    public static final String INVALID_NUMBER = "Parameter '%s' has invalid value. Must be a number.";
+    public static final String INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
+    public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
         """
         Invalid query parameter supplied %s.\s
         Valid parameters: %s
         Also pass through to OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, search_after]
         """;
-    public static final String ERROR_MESSAGE_MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
+    public static final String MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
 
     /**
      * Formats and emits a message with valid parameter names.
@@ -33,7 +33,7 @@ public class ErrorMessages {
      * @return formatted string containing a list of valid parameters
      */
     public static String validQueryParameterNamesMessage(Set<String> invalidKeys, Collection<String> queryParameters) {
-        return ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS
+        return TEMPLATE_INVALID_QUERY_PARAMETERS
                    .formatted(invalidKeys,queryParameters);
     }
 
@@ -45,11 +45,11 @@ public class ErrorMessages {
      * @return formatted string containing a message with allowed values for this parameter
      */
     public static String invalidQueryParametersMessage(String queryParameterName, String inValidValue) {
-        return String.format(ERROR_MESSAGE_INVALID_VALUE, queryParameterName, inValidValue);
+        return String.format(INVALID_VALUE, queryParameterName, inValidValue);
     }
 
     public static String requiredMissingMessage(Set<String> missingKeys) {
-        return String.format(ERROR_MESSAGE_MISSING_PARAMETER, prettifyList(missingKeys));
+        return String.format(MISSING_PARAMETER, prettifyList(missingKeys));
     }
 
     private static String prettifyList(Set<String> queryParameters) {

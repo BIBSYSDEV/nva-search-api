@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_DATE;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_NUMBER;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
+import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
+import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
+import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
@@ -178,11 +178,11 @@ public enum ResourceParameterKey implements ParameterKey {
     private String getErrorMessage(ParamKind kind) {
         return switch (kind) {
             // case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
-            case DATE, SHORT_DATE -> ERROR_MESSAGE_INVALID_DATE;
-            case NUMBER -> ERROR_MESSAGE_INVALID_NUMBER;
+            case DATE, SHORT_DATE -> INVALID_DATE;
+            case NUMBER -> INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
-            case SORT_STRING -> ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
-            case STRING, STRING_DECODE, CUSTOM -> ERROR_MESSAGE_INVALID_VALUE;
+            case SORT_STRING -> INVALID_VALUE_WITH_SORT;
+            case STRING, STRING_DECODE, CUSTOM -> INVALID_VALUE;
         };
     }
 

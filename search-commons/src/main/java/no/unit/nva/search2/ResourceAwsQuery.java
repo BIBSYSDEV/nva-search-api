@@ -4,11 +4,12 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
-import static no.unit.nva.search2.constant.ErrorMessages.ERROR_MESSAGE_INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
@@ -21,8 +22,8 @@ import static no.unit.nva.search2.model.SortKeys.INVALID;
 import static no.unit.nva.search2.model.SortKeys.validSortKeys;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
@@ -68,7 +69,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
         requestParameter.remove(FROM.key());
         var sortedP =
-            response.getSort().stream().map(Object::toString).collect(Collectors.joining(","));
+            response.getSort().stream().map(Object::toString).collect(Collectors.joining(COMMA));
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
         return UriWrapper.fromUri(gatewayUri)
                    .addQueryParameters(requestParameter)
@@ -146,36 +147,45 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         @Override
         protected void validateSort() throws BadRequestException {
-            var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
-            var joiner = new StringJoiner(COMMA);
-            for (String sortKey : sortKeys) {
-                joiner.add(validateSortKey(sortKey));
+            try {
+                var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
+                var validSortKeys =
+                    Arrays.stream(sortKeys)
+                        .map(this::validateSortKey)
+
+                        .collect(Collectors.joining(COMMA));
+
+                query.setQueryValue(SORT, validSortKeys);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException(e.getMessage());
             }
-            var validSortKeys = joiner.toString();
-            query.setQueryValue(SORT, validSortKeys);
         }
 
-        private String validateSortKey(String keySort) throws BadRequestException {
+        private String validateSortKey(String keySort) {
             var sortKeyParts = keySort.split(COLON);
             if (sortKeyParts.length > EXPECTED_TWO_PARTS) {
-                throw new BadRequestException(
-                    ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys())
-                );
+                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys()));
             }
-            var sortOrder = (sortKeyParts.length == EXPECTED_TWO_PARTS)
-                ? sortKeyParts[1]
-                : DEFAULT_VALUE_SORT_ORDER;
+
+            var sortOrder = getSortOrder(sortKeyParts);
+
             if (!sortOrder.matches(SORT_ORDER.pattern())) {
-                throw new BadRequestException("Invalid sort order: " + sortOrder);
+                throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
             }
+
             var sortField = sortKeyParts[0];
             var sortKey = SortKeys.keyFromString(sortField);
+
             if (sortKey == INVALID) {
-                throw new BadRequestException(
-                    ERROR_MESSAGE_INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys())
-                );
+                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys()));
             }
             return sortKey.name() + COLON + sortOrder;
+        }
+
+        private String getSortOrder(String[] sortKeyParts) {
+            return (sortKeyParts.length == EXPECTED_TWO_PARTS)
+                       ? sortKeyParts[1]
+                       : DEFAULT_VALUE_SORT_ORDER;
         }
 
         private void addSortOrderToSortQuery(String value) {
@@ -189,7 +199,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String expandFields(String value) {
             return ALL.equals(value)
-                       ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
+                       ? String.join(PIPE, VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
                        : value;
         }
     }

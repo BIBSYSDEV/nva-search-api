@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
-import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search2.constant.Defaults.jsonMapperWithNonAbsent;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -154,12 +154,12 @@ class ResourcePagedSearchHandlerSwsTest {
     }
 
     private InputStream getInputStream() throws JsonProcessingException {
-        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
+        return new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent).withQueryParameters(
             Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
-        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
+        return new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent).withQueryParameters(
                 Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity.id:12345",
                        "results", "10", "from", "0"))
                    .withRequestContext(getRequestContext())
@@ -169,7 +169,7 @@ class ResourcePagedSearchHandlerSwsTest {
 
     private InputStream getInputStreamWithMultipleContributorId() throws JsonProcessingException {
         return
-            new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+            new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent)
                 .withQueryParameters(
                     Map.of(SEARCH_ALL.key(),
                            "((entityDescription.contributors.identity.id:12345)"
@@ -181,7 +181,7 @@ class ResourcePagedSearchHandlerSwsTest {
     }
 
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
-        return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
+        return new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent).withQueryParameters(
                 Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
                    .withHeaders(Map.of("Accept", contentType))
                    .withRequestContext(getRequestContext())
@@ -189,13 +189,13 @@ class ResourcePagedSearchHandlerSwsTest {
     }
 
     private ObjectNode getRequestContext() {
-        return objectMapperWithEmpty.convertValue(
+        return jsonMapperWithNonAbsent.convertValue(
             Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = jsonMapperWithNonAbsent.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -203,7 +203,7 @@ class ResourcePagedSearchHandlerSwsTest {
 
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = jsonMapperWithNonAbsent.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -211,7 +211,7 @@ class ResourcePagedSearchHandlerSwsTest {
 
     private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = jsonMapperWithNonAbsent.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
         when(mockedSearchClient.doSearch(any(),anyString()))
             .thenReturn(body);
@@ -219,7 +219,7 @@ class ResourcePagedSearchHandlerSwsTest {
 
     private PagedSearchResourceDto getSearchResourcesResponseFromFile(String filename)
         throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResourceDto.class);
+        return jsonMapperWithNonAbsent.readValue(stringFromResources(Path.of(filename)), PagedSearchResourceDto.class);
     }
 
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {

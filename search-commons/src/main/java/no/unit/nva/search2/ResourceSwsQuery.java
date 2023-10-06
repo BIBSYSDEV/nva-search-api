@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
@@ -150,7 +151,7 @@ public final class ResourceSwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String expandFields(String value) {
             return ALL.equals(value)
-                       ? String.join("|", VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
+                       ? String.join(PIPE, VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
                        : value;
         }
 
