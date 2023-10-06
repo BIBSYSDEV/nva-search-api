@@ -195,17 +195,15 @@ public final class ApplicationConstants {
 
     private static FilterAggregationBuilder generateHasFileAggregation() {
 
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-            .must(QueryBuilders.termQuery("associatedArtifacts.type.keyword", "PublishedFile"))
-            .must(QueryBuilders.termQuery("associatedArtifacts.administrativeAgreement", false));
+        FilterAggregationBuilder typeFilterAggregation = AggregationBuilders.filter("associatedArtifacts.type",
+                                                                                    QueryBuilders.termQuery("associatedArtifacts.type.keyword", "PublishedFile"));
 
-        FilterAggregationBuilder filterAggregation = AggregationBuilders.filter(ASSOCIATED_ARTIFACTS,
-                                                                                boolQuery);
+        FilterAggregationBuilder filterAggregation = AggregationBuilders.filter("associatedArtifacts"
+                                                                                + ".administrativeAgreement",
+                                                                                QueryBuilders.termQuery("associatedArtifacts.administrativeAgreement", false));
 
-        TermsAggregationBuilder termsAggregation = AggregationBuilders.terms("HasFile")
-            .field("associatedArtifacts.type.keyword");
+        return typeFilterAggregation.subAggregation(filterAggregation);
 
-        return  filterAggregation.subAggregation(termsAggregation);
 
     }
 }
