@@ -520,6 +520,19 @@ public class OpensearchTest {
         }
 
         @Test
+        void shouldQueryingHasFileSuccessfully() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json");
+
+            var query = queryWithTermAndAggregation(
+                "associatedArtifacts.type:\"PublishedFile\" AND associatedArtifacts.administrativeAgreement:\"false\"",
+                ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(1));
+        }
+
+        @Test
         void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException,
                                                                          InterruptedException {
 

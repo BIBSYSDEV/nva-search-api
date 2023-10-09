@@ -196,11 +196,11 @@ public final class ApplicationConstants {
         FilterAggregationBuilder typeFilterAggregation = AggregationBuilders.filter("associatedArtifacts.type",
                                                                                     QueryBuilders.termQuery("associatedArtifacts.type.keyword", "PublishedFile"));
 
-        FilterAggregationBuilder filterAggregation = AggregationBuilders.filter("associatedArtifacts"
+        FilterAggregationBuilder adminAgreementFilterAggregation = AggregationBuilders.filter("associatedArtifacts"
                                                                                 + ".administrativeAgreement",
                                                                                 QueryBuilders.termQuery("associatedArtifacts.administrativeAgreement", false));
 
-        return typeFilterAggregation.subAggregation(filterAggregation);
+        return typeFilterAggregation.subAggregation(adminAgreementFilterAggregation);
 
 
     }
