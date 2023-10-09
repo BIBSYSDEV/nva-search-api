@@ -13,6 +13,8 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 @JacocoGenerated
 public class ErrorMessages {
     public static final String ERROR_MESSAGE_INVALID_VALUE = "Parameter [%s] has invalid value [%s]";
+    public static final String ERROR_MESSAGE_INVALID_VALUE_WITH_SORT =
+        "Sort has invalid field value [%s]. Valid values are: %s";
     public static final String ERROR_MESSAGE_INVALID_NUMBER = "Parameter '%s' has invalid value. Must be a number.";
     public static final String ERROR_MESSAGE_INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
     public static final String ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS =
