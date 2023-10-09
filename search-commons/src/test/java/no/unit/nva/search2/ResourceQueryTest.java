@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.joda.time.DateTime;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,10 +34,9 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
+                .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(FROM).as());
         assertNotNull(resourceParameters.getValue(SIZE).as());
@@ -54,8 +53,7 @@ class ResourceQueryTest {
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
@@ -93,8 +91,7 @@ class ResourceQueryTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
@@ -108,8 +105,7 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceAwsQuery.Builder
-                               .queryBuilder()
+                     () -> ResourceAwsQuery.builder()
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
@@ -122,8 +118,7 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceAwsQuery.Builder
-                               .queryBuilder()
+                     () -> ResourceAwsQuery.builder()
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
@@ -146,10 +141,10 @@ class ResourceQueryTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?sort=fieldName1&sortOrder=asc&sort=fieldName2&order=desc"),
+            URI.create("https://example.com/?sort=category&sortOrder=asc&sort=created_date&order=desc"),
             URI.create("https://example.com/"),
-            URI.create("https://example.com/?orderBy=fieldName1:asc,fieldName2:desc"),
-            URI.create("https://example.com/?sort=fieldName1+asc&sort=fieldName2+desc"));
+            URI.create("https://example.com/?orderBy=category:asc,created_date:desc"),
+            URI.create("https://example.com/?sort=category+asc&sort=created_date+desc"));
     }
 
     static Stream<URI> uriDatesProvider() {

@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.common.PagedSearchResourceDto;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 

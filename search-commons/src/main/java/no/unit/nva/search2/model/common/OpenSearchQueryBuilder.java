@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -84,7 +84,8 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * Adds query and path parameters from requestInfo.
      */
     public final OpenSearchQueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.gatewayUri = requestInfo.getRequestUri();
+        query.setGatewayUri(requestInfo.getRequestUri());
+        query.setMediaType(requestInfo.getHeader("Accept"));
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
 

@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -27,8 +26,8 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.common.PagedSearchResourceDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,12 +46,12 @@ class ResourcePagedSearchHandlerAwsTest {
     private ResourcePagedSearchHandlerAws handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
-    private OpenSearchAwsClient mockedSearchClient;
+    private ResourceAwsClient mockedSearchClient;
 
     @BeforeEach
     void setUp() {
 
-        mockedSearchClient = mock(OpenSearchAwsClient.class);
+        mockedSearchClient = mock(ResourceAwsClient.class);
         handler = new ResourcePagedSearchHandlerAws(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
@@ -67,7 +66,7 @@ class ResourcePagedSearchHandlerAwsTest {
         var gatewayResponse =
             FakeGatewayResponse.of(outputStream);
         var actualBody =
-            gatewayResponse.body();
+              gatewayResponse.body();
         var expected =
             getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
@@ -152,14 +151,17 @@ class ResourcePagedSearchHandlerAwsTest {
     }
 
     private InputStream getInputStream() throws JsonProcessingException {
-        return new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent).withQueryParameters(
-            Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM)).withRequestContext(getRequestContext()).build();
+        return new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent)
+                   .withQueryParameters(Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
+                   .withHeaders(Map.of("Accept", "application/json"))
+                   .withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(jsonMapperWithNonAbsent).withQueryParameters(
                 Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity.id:12345",
                        "results", "10", "from", "0"))
+                   .withHeaders(Map.of("Accept", "application/json"))
                    .withRequestContext(getRequestContext())
                    .withUserName(randomString())
                    .build();
@@ -174,6 +176,7 @@ class ResourcePagedSearchHandlerAwsTest {
                            + "+OR+"
                            + "(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
+                .withHeaders(Map.of("Accept", "application/json"))
                 .withUserName(randomString())
                 .build();
     }
@@ -195,7 +198,7 @@ class ResourcePagedSearchHandlerAwsTest {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var body = jsonMapperWithNonAbsent.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any(),anyString()))
+        when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
     }
 
@@ -203,7 +206,7 @@ class ResourcePagedSearchHandlerAwsTest {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = jsonMapperWithNonAbsent.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any(),anyString()))
+        when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
     }
 
@@ -211,7 +214,7 @@ class ResourcePagedSearchHandlerAwsTest {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
         var body = jsonMapperWithNonAbsent.readValue(jsonResponse, OpenSearchSwsResponse.class);
 
-        when(mockedSearchClient.doSearch(any(),anyString()))
+        when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
     }
 

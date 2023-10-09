@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import java.util.Collection;
 import java.util.function.Predicate;

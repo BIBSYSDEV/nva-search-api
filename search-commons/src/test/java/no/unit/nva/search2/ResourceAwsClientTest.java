@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLSession;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +31,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class OpenSearchAwsClientTest {
+class ResourceAwsClientTest {
 
-    private OpenSearchAwsClient openSearchAwsClient;
+    private ResourceAwsClient resourceAwsClient;
 
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
@@ -43,7 +43,7 @@ class OpenSearchAwsClientTest {
     public void setUp() throws IOException, InterruptedException {
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        openSearchAwsClient = new OpenSearchAwsClient(cachedJwtProvider, httpClient);
+        resourceAwsClient = new ResourceAwsClient(cachedJwtProvider, httpClient);
         when(httpClient.send(any(), any()))
             .thenReturn(mockedHttpResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT));
     }
@@ -53,12 +53,11 @@ class OpenSearchAwsClientTest {
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var pagedSearchResourceDto =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(openSearchAwsClient);
+                .doSearch(resourceAwsClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -66,13 +65,13 @@ class OpenSearchAwsClientTest {
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
-        var pagedSearchResourceDto =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+        var query =
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
-                .build()
-                .doSearch(openSearchAwsClient);
+                .build();
+
+        var pagedSearchResourceDto = query.toPagedResponse(resourceAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));
@@ -83,12 +82,11 @@ class OpenSearchAwsClientTest {
     @MethodSource("uriInvalidProvider")
     void failToSearchUri(URI uri) {
         assertThrows(BadRequestException.class,
-            () -> ResourceAwsQuery.Builder
-                .queryBuilder()
+            () -> ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .doSearch(openSearchAwsClient));
+                .doSearch(resourceAwsClient));
     }
 
     static Stream<URI> uriSortingProvider() {
@@ -97,7 +95,7 @@ class OpenSearchAwsClientTest {
                 + "=desc"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category:desc"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=contributorid:asc,institution_name:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=contributor_name:asc,institution_name:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
                 + "modifiedDate:desc&searchAfter=1241234,23412"),
             URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=contributor_name+desc"));

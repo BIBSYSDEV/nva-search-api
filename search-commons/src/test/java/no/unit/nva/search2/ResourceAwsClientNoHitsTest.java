@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.OpenSearchAwsClientTest.mockedHttpResponse;
+import static no.unit.nva.search2.ResourceAwsClientTest.mockedHttpResponse;
 import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
@@ -16,15 +16,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class OpenSearchAwsClientNoHitsTest {
+class ResourceAwsClientNoHitsTest {
 
-    private OpenSearchAwsClient openSearchAwsClient;
+    private ResourceAwsClient resourceAwsClient;
 
 
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
@@ -34,7 +34,7 @@ class OpenSearchAwsClientNoHitsTest {
 
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        openSearchAwsClient = new OpenSearchAwsClient(cachedJwtProvider, httpClient);
+        resourceAwsClient = new ResourceAwsClient(cachedJwtProvider, httpClient);
         var response = mockedHttpResponse(NO_HITS_RESPONSE_JSON);
         when(httpClient.send(any(), any()))
             .thenReturn(response);
@@ -46,12 +46,11 @@ class OpenSearchAwsClientNoHitsTest {
     void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) throws ApiGatewayException {
 
         var pagedSearchResourceDto =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(openSearchAwsClient);
+                .doSearch(resourceAwsClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -61,16 +60,14 @@ class OpenSearchAwsClientNoHitsTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
         var resourceSwsQuery =
-            ResourceAwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
         assertNotNull(resourceSwsQuery.removeValue(CATEGORY));
         assertNull(resourceSwsQuery.removeValue(CATEGORY));
-        var pagedSearchResourceDto =
-            resourceSwsQuery.doSearch(openSearchAwsClient);
+        var pagedSearchResourceDto = resourceSwsQuery.toPagedResponse(resourceAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertEquals(0L, pagedSearchResourceDto.totalHits());
@@ -80,11 +77,11 @@ class OpenSearchAwsClientNoHitsTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1&sortOrder=asc&sort=fieldName2&order"
+            URI.create("https://example.com/?category=PhdThesis&sort=category&sortOrder=asc&sort=created_date&order"
                        + "=desc"),
             URI.create("https://example.com/?category=PhdThesis"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc"),
-            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1+asc&sort=fieldName2+desc"));
+            URI.create("https://example.com/?category=PhdThesis&orderBy=category:asc,created_date:desc"),
+            URI.create("https://example.com/?category=PhdThesis&sort=category+asc&sort=created_date+desc"));
     }
 
     static Stream<URI> uriProvider() {

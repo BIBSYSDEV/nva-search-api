@@ -18,21 +18,19 @@ import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
 import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
-import static no.unit.nva.search2.model.SortKeys.INVALID;
-import static no.unit.nva.search2.model.SortKeys.validSortKeys;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
+import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.common.PagedSearchResourceDto;
 import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.SortKeys;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
+import no.unit.nva.search2.model.ResourceSortKeys;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
@@ -44,19 +42,29 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         super();
     }
 
-    public PagedSearchResourceDto doSearch(OpenSearchAwsClient queryClient) throws ApiGatewayException {
-        return Stream.of(queryClient.doSearch(this, APPLICATION_JSON.toString()))
-                   .map(this::toResponse)
-                   .findFirst().orElseThrow();
+    static Builder builder() {
+        return new Builder();
     }
 
-    @NotNull
-    private PagedSearchResourceDto toResponse(@NotNull OpenSearchSwsResponse response) {
+    public String doSearch(ResourceAwsClient queryClient) {
+        return switch (this.getMediaType()) {
+            case JSON, JSONLD  -> toPagedResponse(queryClient).toJson();
+            case CSV -> toCsv(queryClient);
+        };
+    }
 
+    private String toCsv(ResourceAwsClient client) {
+        final var response = client.doSearch(this);
+        return CsvTransformer.transform(response.getSearchHits());
+    }
+
+    PagedSearchResourceDto toPagedResponse(ResourceAwsClient client) {
+        final var response = client.doSearch(this);
         final var requestParameter = toGateWayRequestParameter();
-        final var source = URI.create(gatewayUri.toString().split("\\?")[0]);
+        final var source = URI.create(getGatewayUri().toString().split("\\?")[0]);
 
-        return PagedSearchResourceDto.Builder.builder()
+        return
+            PagedSearchResourceDto.Builder.builder()
                    .withTotalHits(response.getTotalSize())
                    .withHits(response.getSearchHits())
                    .withAggregations(response.getAggregationsStructured())
@@ -78,19 +86,15 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
 
     @SuppressWarnings("PMD.GodClass")
-    public static final class Builder
-        extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
+    protected static class Builder extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
 
         private static final String ALL = "all";
         public static final Integer EXPECTED_TWO_PARTS = 2;
 
-        private Builder() {
+        Builder() {
             super(new ResourceAwsQuery());
         }
 
-        public static ResourceAwsQuery.Builder queryBuilder() {
-            return new Builder();
-        }
 
         @Override
         protected void assignDefaultValues() {
@@ -174,7 +178,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             }
 
             var sortField = sortKeyParts[0];
-            var sortKey = SortKeys.keyFromString(sortField);
+            var sortKey = ResourceSortKeys.keyFromString(sortField);
 
             if (sortKey == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys()));
@@ -182,7 +186,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             return sortKey.name() + COLON + sortOrder;
         }
 
-        private String getSortOrder(String[] sortKeyParts) {
+        private String getSortOrder(String... sortKeyParts) {
             return (sortKeyParts.length == EXPECTED_TWO_PARTS)
                        ? sortKeyParts[1]
                        : DEFAULT_VALUE_SORT_ORDER;

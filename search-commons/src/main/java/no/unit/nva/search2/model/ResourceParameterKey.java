@@ -1,6 +1,7 @@
 package no.unit.nva.search2.model;
 
 import java.util.Locale;
+import no.unit.nva.search2.model.common.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,61 +14,64 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CASE_INSENSITIVE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SHORT_DATE;
-import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
-import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
-import static no.unit.nva.search2.model.ParameterKey.Operator.NONE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SHORT_DATE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.model.common.ParameterKey.Operator.EQUALS;
+import static no.unit.nva.search2.model.common.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.common.ParameterKey.Operator.LESS_THAN;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.SHORT_DATE;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.SORT_STRING;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.STRING;
 
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),
     // Parameters converted to Lucene query
     CATEGORY(STRING, "entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR(STRING, "entityDescription.contributors.identity.id|entityDescription.contributors.identity.name"),
-    CREATED_BEFORE(DATE, LESS_THAN, "createdDate", "(?i)created.?before"),
-    CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate", "(?i)created.?since"),
+    CONTRIBUTOR(STRING, "entityDescription.contributors.identity.id"
+                        + "|entityDescription.contributors.identity.name"),
+    CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
+    CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(CUSTOM, "entityDescription.reference.doi"),
     FUNDING(STRING, "fundings.identifier|source.identifier"),
     FUNDING_SOURCE(STRING, "fundings.source.identifier"),
     ID(STRING, "identifier"),
-    INSTITUTION(STRING,
-                "entityDescription.contributors.affiliation.id|entityDescription.contributors.affiliation.name"),
+    INSTITUTION(STRING,"entityDescription.contributors.affiliation.id"
+                       + "|entityDescription.contributors.affiliation.name"),
+    ISBN(STRING, "entityDescription.reference.publicationContext.isbnList"),
     ISSN(STRING, "entityDescription.reference.publicationContext.onlineIssn"
                  + "|entityDescription.reference.publicationContext.printIssn"),
-    MODIFIED_BEFORE(SHORT_DATE, LESS_THAN, "modifiedDate", "(?i)modified.?before"),
-    MODIFIED_SINCE(SHORT_DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate", "(?i)modified.?since"),
-    PROJECT_CODE(STRING, "fundings.identifier", "(?i)project.?code"),
-    PUBLISHED_BEFORE(NUMBER, LESS_THAN, "entityDescription.publicationDate.year",
-                     "(?i)published.?before"),
-    PUBLISHED_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, "entityDescription.publicationDate.year",
-                    "(?i)published.?since"),
+    ORCID(STRING, "entityDescription.contributors.identity.orcId"),
+    MODIFIED_BEFORE(SHORT_DATE, LESS_THAN, "modifiedDate"),
+    MODIFIED_SINCE(SHORT_DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate"),
+    PROJECT_CODE(STRING, "fundings.identifier"),
+    PUBLISHED_BEFORE(NUMBER, LESS_THAN, "entityDescription.publicationDate.year"),
+    PUBLISHED_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, "entityDescription.publicationDate.year"),
     TITLE(STRING, "entityDescription.mainTitle"),
     UNIT(STRING, "entityDescription.contributors.affiliation.id"),
     USER(STRING, "resourceOwner.owner"),
-    YEAR_REPORTED(NUMBER, "entityDescription.publicationDate.year", "(?i)year.?reported"),
+    YEAR_REPORTED(NUMBER, "entityDescription.publicationDate.year"),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(CUSTOM, "q", "(?i)search.?all|query"),
+    SEARCH_ALL(CUSTOM, EQUALS,"q", "(?i)search.?all|query",null),
     FIELDS(STRING),
     // Pagination parameters
     PAGE(NUMBER),
-    FROM(NUMBER, null, "(?i)offset|from"),
-    SIZE(NUMBER, null, "(?i)per.?page|results|limit|size"),
-    SORT(SORT_STRING, null, "(?i)order.?by|sort"),
+    FROM(NUMBER, null, null,"(?i)offset|from",null),
+    SIZE(NUMBER, null, null,"(?i)per.?page|results|limit|size",null),
+    SORT(SORT_STRING, null, null,"(?i)order.?by|sort",null),
     SORT_ORDER(CUSTOM, EQUALS, null, "(?i)sort.?order|order", "(?i)asc|desc"),
-    SEARCH_AFTER(CUSTOM, NONE, null, "(?i)search.?after"),
+    SEARCH_AFTER(CUSTOM),
     // ignored parameter
     LANG(STRING);
 
@@ -76,7 +80,7 @@ public enum ResourceParameterKey implements ParameterKey {
     public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETER_KEYS =
         Arrays.stream(ResourceParameterKey.values())
             .filter(ResourceParameterKey::isLucene)
-            .sorted(ResourceParameterKey::compareParameterKey)
+            .sorted(ResourceParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String theKey;
@@ -92,27 +96,28 @@ public enum ResourceParameterKey implements ParameterKey {
         this(kind, EQUALS, null, null, null);
     }
 
-    ResourceParameterKey(ParamKind kind, String swsKey) {
-        this(kind, EQUALS, swsKey, null, null);
+    ResourceParameterKey(ParamKind kind, String fieldsToSearch) {
+        this(kind, EQUALS, fieldsToSearch, null,null);
     }
 
-    ResourceParameterKey(ParamKind kind, String swsKey, String keyPattern) {
-        this(kind, EQUALS, swsKey, keyPattern, null);
+    ResourceParameterKey(ParamKind kind, Operator operator, String fieldsToSearch) {
+        this(kind, operator, fieldsToSearch, null,null);
     }
 
-    ResourceParameterKey(ParamKind kind, Operator operator, String swsKey, String keyPattern) {
-        this(kind, operator, swsKey, keyPattern, null);
-    }
+    ResourceParameterKey(
+        ParamKind kind, Operator operator, String fieldsToSearch, String keyPattern, String valuePattern) {
 
-    ResourceParameterKey(ParamKind kind, Operator operator, String swsKey, String keyPattern,
-                         String valuePattern) {
         this.theKey = this.name().toLowerCase(Locale.getDefault());
         this.theOperator = operator;
-        this.theSwsKeys = nonNull(swsKey) ? swsKey.split("\\|") : new String[]{theKey};
-        this.theValuePattern = getPattern(kind, valuePattern);
+        this.theSwsKeys = nonNull(fieldsToSearch)
+                              ? fieldsToSearch.split("\\|")
+                              : new String[]{theKey};
+        this.theValuePattern = getValuePattern(kind, valuePattern);
         this.theErrorMessage = getErrorMessage(kind);
         this.theKeyEncoding = getEncoding(kind);
-        this.theKeyPattern = nonNull(keyPattern) ? keyPattern : theKey;
+        this.theKeyPattern = nonNull(keyPattern)
+                                 ? keyPattern
+                                 : PATTERN_IS_CASE_INSENSITIVE + theKey.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
@@ -186,7 +191,7 @@ public enum ResourceParameterKey implements ParameterKey {
         };
     }
 
-    private String getPattern(ParamKind kind, String pattern) {
+    private String getValuePattern(ParamKind kind, String pattern) {
         return switch (kind) {
             // case BOOLEAN -> PATTERN_IS_BOOLEAN;
             case DATE -> PATTERN_IS_DATE;
@@ -216,7 +221,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
-    private static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
+    private static int compareAscending(ResourceParameterKey key1, ResourceParameterKey key2) {
         return key1.ordinal() - key2.ordinal();
     }
 }

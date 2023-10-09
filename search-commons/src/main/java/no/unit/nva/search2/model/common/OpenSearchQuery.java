@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -36,8 +36,9 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import no.unit.nva.search2.model.ParameterKey.ParamKind;
+import no.unit.nva.search2.model.ResourceSortKeys;
+import no.unit.nva.search2.model.common.ParameterKey.KeyEncoding;
+import no.unit.nva.search2.model.common.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -52,12 +53,14 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected transient URI gatewayUri = URI.create("https://localhost/resource/search");
+    private transient MediaType mediaType;
+    private transient URI gatewayUri = URI.create("https://localhost/resource/search");
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
         queryParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
+        mediaType = MediaType.JSONLD;
     }
 
     /**
@@ -171,6 +174,26 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 : Collections.emptyList();
     }
 
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        if (nonNull(mediaType) && mediaType.contains(MediaType.CSV.toString())) {
+            this.mediaType = MediaType.CSV;
+        } else {
+            this.mediaType = MediaType.JSONLD;
+        }
+    }
+
+    public URI getGatewayUri() {
+        return gatewayUri;
+    }
+
+    public void setGatewayUri(URI gatewayUri) {
+        this.gatewayUri = gatewayUri;
+    }
+
     protected String toQueryName(Entry<K, String> entry) {
         return entry.getKey().swsKey().stream().findFirst().orElseThrow();
     }
@@ -216,7 +239,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     private String expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? strings[1] : "ASC";
-        var luceneKey = SortKeys.keyFromString(strings[0]).getLuceneField();
+        var luceneKey = ResourceSortKeys.keyFromString(strings[0]).getFieldName();
         return luceneKey + COLON + sortOrder;
     }
 
