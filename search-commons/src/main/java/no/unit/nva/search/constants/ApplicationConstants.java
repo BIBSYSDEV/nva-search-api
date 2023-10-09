@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
