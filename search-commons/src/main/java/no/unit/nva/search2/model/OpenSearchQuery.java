@@ -4,6 +4,8 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
 import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
@@ -15,6 +17,8 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+
+
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -33,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
+import no.unit.nva.search2.model.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -177,12 +182,17 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected String toQueryValue(Entry<K, String> entry) {
         return entry.getKey().encoding() == KeyEncoding.ENCODE_DECODE
                    ? encodeUTF(entry.getValue())
+                   : entry.getKey().kind() == ParamKind.SORT_STRING
+                   ? Arrays.stream(entry.getValue().split(COMMA))
+                         .map(sort -> sort.split(COLON))
+                         .map(this::expandSortKeys)
+                         .collect(Collectors.joining(COMMA))
                    : entry.getValue();
     }
 
     protected static String mergeParameters(String oldValue, String newValue) {
         if (nonNull(oldValue)) {
-            var delimiter = newValue.matches("asc|desc") ? ":" : ",";
+            var delimiter = newValue.matches("asc|desc") ? COLON : COMMA;
             return String.join(delimiter, oldValue, newValue);
         } else {
             return newValue;
@@ -202,6 +212,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             entry.getKey().swsKey().stream()
                 .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
                 .collect(Collectors.joining(OR, PREFIX, SUFFIX));
+    }
+
+    private String expandSortKeys(String... strings) {
+        var sortOrder = strings.length == 2 ? strings[1] : "ASC";
+        var luceneKey = SortKeys.keyFromString(strings[0]).getLuceneField();
+        return luceneKey + COLON + sortOrder;
     }
 
     @NotNull
@@ -227,10 +243,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     private static String valueOrEmpty(String... strings) {
         return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
-    }
-
-    public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
-        return key1.ordinal() - key2.ordinal();
     }
 
     @SuppressWarnings({"PMD.ShortMethodName"})
@@ -263,8 +275,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
         @NotNull
         private <T extends Number> T castNumber() {
-            return (T) attempt(() -> Integer.parseInt(value))
-                           .orElseThrow();
+            return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
         }
     }
 }
