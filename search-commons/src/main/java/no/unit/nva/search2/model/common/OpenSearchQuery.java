@@ -17,8 +17,6 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -64,11 +62,23 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     /**
+     * Builds URI to query SWS based on post body.
+     *
+     * @return an URI to Sws search without parameters.
+     */
+    public URI openSearchUri() {
+        return
+            fromUri(readSearchInfrastructureApiUri())
+                .addChild(RESOURCES, SEARCH)
+                .getUri();
+    }
+
+    /**
      * Builds URI to query SWS based on parameters supplied to the builder methods.
      *
      * @return an URI to NVA (default) Projects with parameters.
      */
-    public URI openSearchUri() {
+    public URI openSearchLuceneUri() {
         return
             fromUri(readSearchInfrastructureApiUri())
                 .addChild(RESOURCES, SEARCH)
@@ -115,6 +125,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return results;
     }
 
+
     /**
      * Get value from Query Parameter Map with key.
      *
@@ -135,6 +146,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                    ? luceneParameters.remove(key)
                    : queryParameters.remove(key);
     }
+
+    public boolean isPresent(K key) {
+        return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
+    }
+
 
     /**
      * Add a key value pair to Query Parameter Map.
@@ -284,7 +300,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
             return (T) switch (key.kind()) {
-                case SHORT_DATE, DATE -> castDateTime();
+                case SHORT_DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };

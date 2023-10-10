@@ -103,19 +103,20 @@ class ResourceAwsClientTest {
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/testsearch?category=hello+world&lang=en&fields=category,title"),
-            URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020"),
-            URI.create("https://example.com/testsearch?user=hello+world&lang=en&fields=all"));
+            URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
+            URI.create("https://example.com/?title=hello+world&modified_before=2019-01-01"),
+            URI.create("https://example.com/?contributor=hello+world&published_before=2020"),
+            URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019"),
+            URI.create("https://example.com/?query=hello+world&fields=all"));
     }
 
     static Stream<URI> uriInvalidProvider() {
         return Stream.of(
-            URI.create("https://example.com/testsearch?categories=hello+world&lang=en"),
-            URI.create("https://example.com/testsearch?tittles=hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/testsearch?conttributors=hello+world&published_before=2020"),
+            URI.create("https://example.com/?categories=hello+world&lang=en"),
+            URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01-01"),
+            URI.create("https://example.com/?conttributors=hello+world&published_before=2020"),
             URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
-            URI.create("https://example.com/testsearch?useers=hello+world&lang=en"));
+            URI.create("https://example.com/?useers=hello+world&lang=en"));
     }
 
 

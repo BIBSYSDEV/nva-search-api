@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWith
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static nva.commons.core.attempt.Try.attempt;
@@ -20,13 +21,14 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.common.OpenSearchClient;
-import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.QueryBuilderWrapper;
 import no.unit.nva.search2.model.ResourceSortKeys;
+import no.unit.nva.search2.model.common.OpenSearchClient;
+import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
@@ -73,19 +75,27 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private Stream<QueryBuilderWrapper> createQueryBuilderStream(ResourceAwsQuery query) {
-        var luceneParameters = query.toLuceneParameter().get("q");
-        var stringQueryBuilder = QueryBuilders.queryStringQuery(luceneParameters);
-        var fields = query.removeValue(FIELDS);
-        if (nonNull(fields)) {
-            Arrays.stream(fields.split(COMMA)).forEach(stringQueryBuilder::field);
+        if (query.isPresent(SEARCH_ALL)) {
+            var searchAll = query.removeValue(SEARCH_ALL);
+            var field = query.removeValue(FIELDS);
+            var fields = Objects.equals(field, "*")
+                             ? "*".split(COMMA)
+                             : Arrays.stream(field.split(COMMA))
+                                   .map(ResourceSortKeys::keyFromString)
+                                   .map(ResourceSortKeys::getFieldName)
+                                   .toArray(String[]::new);
+            return Stream.of(new QueryBuilderWrapper(QueryBuilders.multiMatchQuery(searchAll, fields), query));
+        } else {
+            query.removeValue(FIELDS);
+            var luceneParameters = query.toLuceneParameter().get("q");
+            var stringQueryBuilder = QueryBuilders.queryStringQuery(luceneParameters);
+            return Stream.of(new QueryBuilderWrapper(stringQueryBuilder, query));
         }
-        return Stream.of(new QueryBuilderWrapper(stringQueryBuilder, query));
     }
 
     private QueryBuilderSourceWrapper populateSearchSource(QueryBuilderWrapper queryBuilderWrapper) {
         var builder = new SearchSourceBuilder().query(queryBuilderWrapper.builder());
         var query = queryBuilderWrapper.query();
-
         var searchAfter = query.removeValue(SEARCH_AFTER);
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(COMMA);
@@ -103,7 +113,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     @JacocoGenerated
     private HttpRequest createRequest(QueryBuilderSourceWrapper qbs) {
-        logger.info(qbs.requestUri().toString());
+        logger.info(qbs.source().query().toString());
         return HttpRequest
                    .newBuilder(qbs.requestUri())
                    .headers(

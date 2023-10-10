@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
-import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
@@ -25,12 +24,12 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import no.unit.nva.search2.model.ResourceSortKeys;
 import no.unit.nva.search2.model.common.OpenSearchQuery;
 import no.unit.nva.search2.model.common.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.common.PagedSearchResourceDto;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.ResourceSortKeys;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
@@ -203,8 +202,11 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String expandFields(String value) {
             return ALL.equals(value)
-                       ? String.join(PIPE, VALID_LUCENE_PARAMETER_KEYS.stream().map(ResourceParameterKey::key).toList())
-                       : value;
+                       ? "*"
+                       : Arrays.stream(value.split(COMMA))
+                             .dropWhile(key -> !VALID_LUCENE_PARAMETER_KEYS.contains(keyFromString(key)))
+                             .collect(Collectors.joining(COMMA));
+
         }
     }
 }
