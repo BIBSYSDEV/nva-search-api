@@ -70,6 +70,7 @@ public final class ApplicationConstants {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
+    public static final String PUBLISHED_FILE = "PublishedFile";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
         generateSimpleAggregation("resourceOwner.owner",
@@ -196,7 +197,7 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateHasFileAggregation() {
 
         FilterAggregationBuilder typeFilterAggregation = AggregationBuilders.filter(TYPE,
-                                                                                    QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), "PublishedFile"));
+                                                                                    QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE));
 
         FilterAggregationBuilder adminAgreementFilterAggregation = AggregationBuilders.filter(ADMINSTRATIVE_AGREEMENT,
                                                                                 QueryBuilders.termQuery( jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false));
