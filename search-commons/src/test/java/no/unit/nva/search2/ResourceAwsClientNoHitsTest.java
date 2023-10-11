@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.OpenSearchSwsClientTest.mockedHttpResponse;
+import static no.unit.nva.search2.ResourceAwsClientTest.mockedHttpResponse;
 import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
@@ -22,9 +22,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class OpenSearchSwsClientNoHitsTest {
+class ResourceAwsClientNoHitsTest {
 
-    private OpenSearchSwsClient openSearchSwsClient;
+    private ResourceAwsClient resourceAwsClient;
 
 
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
@@ -34,7 +34,7 @@ class OpenSearchSwsClientNoHitsTest {
 
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        openSearchSwsClient = new OpenSearchSwsClient(cachedJwtProvider, httpClient);
+        resourceAwsClient = new ResourceAwsClient(cachedJwtProvider, httpClient);
         var response = mockedHttpResponse(NO_HITS_RESPONSE_JSON);
         when(httpClient.send(any(), any()))
             .thenReturn(response);
@@ -46,12 +46,11 @@ class OpenSearchSwsClientNoHitsTest {
     void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) throws ApiGatewayException {
 
         var pagedSearchResourceDto =
-            ResourceSwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(openSearchSwsClient);
+                .doSearch(resourceAwsClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -61,16 +60,14 @@ class OpenSearchSwsClientNoHitsTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
         var resourceSwsQuery =
-            ResourceSwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
         assertNotNull(resourceSwsQuery.removeValue(CATEGORY));
         assertNull(resourceSwsQuery.removeValue(CATEGORY));
-        var pagedSearchResourceDto =
-            resourceSwsQuery.doSearch(openSearchSwsClient);
+        var pagedSearchResourceDto = resourceSwsQuery.toPagedResponse(resourceAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertEquals(0L, pagedSearchResourceDto.totalHits());
@@ -80,11 +77,11 @@ class OpenSearchSwsClientNoHitsTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1&sortOrder=asc&sort=fieldName2&order"
+            URI.create("https://example.com/?category=PhdThesis&sort=category&sortOrder=asc&sort=created_date&order"
                        + "=desc"),
             URI.create("https://example.com/?category=PhdThesis"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=fieldName1:asc,fieldName2:desc"),
-            URI.create("https://example.com/?category=PhdThesis&sort=fieldName1+asc&sort=fieldName2+desc"));
+            URI.create("https://example.com/?category=PhdThesis&orderBy=category:asc,created_date:desc"),
+            URI.create("https://example.com/?category=PhdThesis&sort=category+asc&sort=created_date+desc"));
     }
 
     static Stream<URI> uriProvider() {

@@ -17,8 +17,6 @@ import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfras
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -38,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import no.unit.nva.search2.model.ParameterKey.ParamKind;
+import no.unit.nva.search2.model.common.MediaType;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -52,12 +51,26 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected transient URI gatewayUri = URI.create("https://localhost/resource/search");
+    private transient MediaType mediaType;
+    private transient URI gatewayUri = URI.create("https://localhost/resource/search");
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
         queryParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
+        mediaType = MediaType.JSONLD;
+    }
+
+    /**
+     * Builds URI to query SWS based on post body.
+     *
+     * @return an URI to Sws search without parameters.
+     */
+    public URI openSearchUri() {
+        return
+            fromUri(readSearchInfrastructureApiUri())
+                .addChild(RESOURCES, SEARCH)
+                .getUri();
     }
 
     /**
@@ -65,7 +78,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return an URI to NVA (default) Projects with parameters.
      */
-    public URI openSearchUri() {
+    public URI openSearchLuceneUri() {
         return
             fromUri(readSearchInfrastructureApiUri())
                 .addChild(RESOURCES, SEARCH)
@@ -112,6 +125,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return results;
     }
 
+
     /**
      * Get value from Query Parameter Map with key.
      *
@@ -132,6 +146,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                    ? luceneParameters.remove(key)
                    : queryParameters.remove(key);
     }
+
+    public boolean isPresent(K key) {
+        return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
+    }
+
 
     /**
      * Add a key value pair to Query Parameter Map.
@@ -169,6 +188,26 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                       .map(OpenSearchQuery::stringsToEntry)
                       .toList()
                 : Collections.emptyList();
+    }
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        if (nonNull(mediaType) && mediaType.contains(MediaType.CSV.toString())) {
+            this.mediaType = MediaType.CSV;
+        } else {
+            this.mediaType = MediaType.JSONLD;
+        }
+    }
+
+    public URI getGatewayUri() {
+        return gatewayUri;
+    }
+
+    public void setGatewayUri(URI gatewayUri) {
+        this.gatewayUri = gatewayUri;
     }
 
     protected String toQueryName(Entry<K, String> entry) {
@@ -216,7 +255,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     private String expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? strings[1] : "ASC";
-        var luceneKey = SortKeys.keyFromString(strings[0]).getLuceneField();
+        var luceneKey = ResourceSortKeys.keyFromString(strings[0]).getFieldName();
         return luceneKey + COLON + sortOrder;
     }
 
@@ -261,7 +300,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
             return (T) switch (key.kind()) {
-                case SHORT_DATE, DATE -> castDateTime();
+                case DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };

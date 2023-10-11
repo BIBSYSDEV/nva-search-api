@@ -84,7 +84,8 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * Adds query and path parameters from requestInfo.
      */
     public final OpenSearchQueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.gatewayUri = requestInfo.getRequestUri();
+        query.setGatewayUri(requestInfo.getRequestUri());
+        query.setMediaType(requestInfo.getHeader("Accept"));
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
 
