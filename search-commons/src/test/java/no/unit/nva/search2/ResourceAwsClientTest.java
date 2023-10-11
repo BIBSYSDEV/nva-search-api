@@ -38,7 +38,6 @@ class ResourceAwsClientTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
 
-
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
         var httpClient = mock(HttpClient.class);
@@ -71,7 +70,7 @@ class ResourceAwsClientTest {
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
 
-        var pagedSearchResourceDto = query.toPagedResponse(resourceAwsClient);
+        var pagedSearchResourceDto = query.fetchAsPagedResponse(resourceAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));

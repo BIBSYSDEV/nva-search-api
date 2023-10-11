@@ -26,7 +26,6 @@ class ResourceAwsClientNoHitsTest {
 
     private ResourceAwsClient resourceAwsClient;
 
-
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
 
     @BeforeEach
@@ -67,7 +66,7 @@ class ResourceAwsClientNoHitsTest {
         assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
         assertNotNull(resourceSwsQuery.removeValue(CATEGORY));
         assertNull(resourceSwsQuery.removeValue(CATEGORY));
-        var pagedSearchResourceDto = resourceSwsQuery.toPagedResponse(resourceAwsClient);
+        var pagedSearchResourceDto = resourceSwsQuery.fetchAsPagedResponse(resourceAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertEquals(0L, pagedSearchResourceDto.totalHits());

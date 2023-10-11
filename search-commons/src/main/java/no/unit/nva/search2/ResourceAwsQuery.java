@@ -47,17 +47,17 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
     public String doSearch(ResourceAwsClient queryClient) {
         return switch (this.getMediaType()) {
-            case JSON, JSONLD  -> toPagedResponse(queryClient).toJson();
-            case CSV -> toCsv(queryClient);
+            case JSON, JSONLD  -> fetchAsPagedResponse(queryClient).toJson();
+            case CSV -> fetchAsCsvText(queryClient);
         };
     }
 
-    private String toCsv(ResourceAwsClient client) {
+    private String fetchAsCsvText(ResourceAwsClient client) {
         final var response = client.doSearch(this);
         return CsvTransformer.transform(response.getSearchHits());
     }
 
-    PagedSearchResourceDto toPagedResponse(ResourceAwsClient client) {
+    PagedSearchResourceDto fetchAsPagedResponse(ResourceAwsClient client) {
         final var response = client.doSearch(this);
         final var requestParameter = toGateWayRequestParameter();
         final var source = URI.create(getGatewayUri().toString().split("\\?")[0]);
@@ -155,7 +155,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 var validSortKeys =
                     Arrays.stream(sortKeys)
                         .map(this::validateSortKey)
-
                         .collect(Collectors.joining(COMMA));
 
                 query.setQueryValue(SORT, validSortKeys);
@@ -201,7 +200,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
 
         private String expandFields(String value) {
-            return ALL.equals(value)
+            return ALL.equals(value) || isNull(value)
                        ? "*"
                        : Arrays.stream(value.split(COMMA))
                              .dropWhile(key -> !VALID_LUCENE_PARAMETER_KEYS.contains(keyFromString(key)))
