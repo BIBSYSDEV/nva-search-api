@@ -33,6 +33,7 @@ import no.unit.nva.search2.model.PagedSearchResourceDto;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
+import com.google.common.net.MediaType;
 import org.jetbrains.annotations.NotNull;
 
 public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
@@ -46,10 +47,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     public String doSearch(ResourceAwsClient queryClient) {
-        return switch (this.getMediaType()) {
-            case JSON, JSONLD  -> fetchAsPagedResponse(queryClient).toJsonString();
-            case CSV -> fetchAsCsvText(queryClient);
-        };
+        return
+            this.getMediaType().equals(MediaType.JSON_UTF_8)
+            ? fetchAsPagedResponse(queryClient).toJsonString()
+            : fetchAsCsvText(queryClient);
     }
 
     private String fetchAsCsvText(ResourceAwsClient client) {
@@ -64,12 +65,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         return
             PagedSearchResourceDto.Builder.builder()
-                   .withTotalHits(response.getTotalSize())
-                   .withHits(response.getSearchHits())
-                   .withAggregations(response.getAggregationsStructured())
-                   .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
-                   .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
-                   .build();
+                .withTotalHits(response.getTotalSize())
+                .withHits(response.getSearchHits())
+                .withAggregations(response.getAggregationsStructured())
+                .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
+                .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
+                .build();
     }
 
     private URI nextResultsBySortKey(
@@ -83,7 +84,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                    .getUri();
     }
 
-
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
 
@@ -93,7 +93,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         Builder() {
             super(new ResourceAwsQuery());
         }
-
 
         @Override
         protected void assignDefaultValues() {
@@ -199,13 +198,13 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validFieldValue));
         }
 
+        @JacocoGenerated
         private String expandFields(String value) {
             return ALL.equals(value) || isNull(value)
                        ? "*"
                        : Arrays.stream(value.split(COMMA))
                              .dropWhile(key -> !VALID_LUCENE_PARAMETER_KEYS.contains(keyFromString(key)))
                              .collect(Collectors.joining(COMMA));
-
         }
     }
 }

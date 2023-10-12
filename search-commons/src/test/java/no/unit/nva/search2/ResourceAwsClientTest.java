@@ -93,7 +93,8 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category&order"
                 + "=desc"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
-            URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category:desc"),
+            URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
+            URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=contributor_name:asc,institution_name:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
                 + "modifiedDate:desc&searchAfter=1241234,23412"),
@@ -106,6 +107,7 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?title=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/?contributor=hello+world&published_before=2020"),
             URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019"),
+            URI.create("https://example.com/?user=hello+world&size=1&from=0"),
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
 

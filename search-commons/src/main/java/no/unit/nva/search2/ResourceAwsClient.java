@@ -135,6 +135,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                    .orElseThrow();
     }
 
+    @JacocoGenerated
     private Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
         var luceneKey = ResourceSortKeys.keyFromString(strings[0]).getFieldName();

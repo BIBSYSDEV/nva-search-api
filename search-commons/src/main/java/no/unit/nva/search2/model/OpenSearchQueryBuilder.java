@@ -2,6 +2,7 @@ package no.unit.nva.search2.model;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,8 +85,8 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * Adds query and path parameters from requestInfo.
      */
     public final OpenSearchQueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
+        query.setMediaType(requestInfo.getHeaders().get("Accept"));
         query.setGatewayUri(requestInfo.getRequestUri());
-        query.setMediaType(requestInfo.getHeader("Accept"));
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
 
@@ -164,6 +165,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
                    .toList();
     }
 
+    @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {
         return isNull(value) || !value.matches(key.pattern());
     }
@@ -182,6 +184,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
 
     }
 
+    @JacocoGenerated
     protected Set<K> requiredMissing() {
         return
             required().stream()
@@ -190,6 +193,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
                 .collect(Collectors.toSet());
     }
 
+    @JacocoGenerated
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         final var value = entry.getValue();

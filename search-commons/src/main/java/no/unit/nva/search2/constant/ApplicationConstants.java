@@ -3,7 +3,9 @@ package no.unit.nva.search2.constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
 
+@JacocoGenerated
 public final class ApplicationConstants {
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;

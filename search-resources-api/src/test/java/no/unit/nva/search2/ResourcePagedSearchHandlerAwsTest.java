@@ -3,9 +3,11 @@ package no.unit.nva.search2;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,12 +26,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,20 +84,47 @@ class ResourcePagedSearchHandlerAwsTest {
 
 
 
-    @ParameterizedTest(name = "Should return application/json for accept header {0}")
-    @MethodSource("acceptHeaderValuesJsonProvider")
-    void shouldProduceWithHeader2(String acceptHeaderValue) throws IOException {
-        prepareRestHighLevelClientOkResponse();
-        var requestInput = getRequestInputStreamAccepting(acceptHeaderValue);
-        handler.handleRequest(requestInput, outputStream, contextMock);
+    @ParameterizedTest(name = "should return text/csv for accept header {0}")
+    @MethodSource("acceptHeaderValuesProducingTextCsvProvider")
+    void shouldReturnTextCsvWithGivenAcceptHeader(String acceptHeaderValue) throws IOException {
+        prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(), csvWithYearOnly()));
+        handler.handleRequest(getRequestInputStreamAccepting(acceptHeaderValue), outputStream, mock(Context.class));
 
-        var gatewayResponse =
-            FakeGatewayResponse.of(outputStream);
-
-        assertNotNull(gatewayResponse.headers());
-        assertEquals(HTTP_OK, gatewayResponse.statusCode());
+        GatewayResponse<String> gatewayResponse = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(gatewayResponse.getHeaders().get("Content-Type"), is(equalTo("text/csv; charset=utf-8")));
     }
 
+    private static ExportCsv csvWithFullDate() {
+        var id = randomUri().toString();
+        var title = randomString();
+        var type = "AcademicArticle";
+        var contributors = List.of(randomString(), randomString(), randomString());
+        var date = "2022-01-22";
+
+        var exportCsv = new ExportCsv();
+        exportCsv.setId(id);
+        exportCsv.setMainTitle(title);
+        exportCsv.setPublicationInstance(type);
+        exportCsv.setPublicationDate(date);
+        exportCsv.setContributors(String.join(COMMA, contributors));
+        return exportCsv;
+    }
+
+    private ExportCsv csvWithYearOnly() {
+        var id = randomUri().toString();
+        var title = randomString();
+        var type = "AcademicArticle";
+        var contributors = List.of(randomString(), randomString(), randomString());
+        var date = "2022";
+
+        var exportCsv = new ExportCsv();
+        exportCsv.setId(id);
+        exportCsv.setMainTitle(title);
+        exportCsv.setPublicationInstance(type);
+        exportCsv.setPublicationDate(date);
+        exportCsv.setContributors(String.join(COMMA, contributors));
+        return exportCsv;
+    }
     @Test
     void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException {
         prepareRestHighLevelClientOkResponse();
@@ -209,6 +242,18 @@ class ResourcePagedSearchHandlerAwsTest {
             Map.of("path", SAMPLE_PATH, "domainName", SAMPLE_DOMAIN_NAME), ObjectNode.class);
     }
 
+
+    private void prepareRestHighLevelClientOkResponse(List<ExportCsv> exportCsvs) throws IOException {
+        var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+
+        when(mockedSearchClient.doSearch(any()))
+            .thenReturn(body);
+//        var searchResponse = createSearchResponseWithHits(json);
+//        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
+    }
+
+
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
@@ -238,9 +283,8 @@ class ResourcePagedSearchHandlerAwsTest {
         return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResourceDto.class);
     }
 
-
-    public static Stream<String> acceptHeaderValuesJsonProvider() {
-        return Stream.of(null, "application/json", "text/csv");
+    public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
+        return Stream.of("text/*", "text/csv");
     }
 
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {

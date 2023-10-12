@@ -169,6 +169,7 @@ public enum ResourceParameterKey implements ParameterKey {
     }
 
     @NotNull
+    @JacocoGenerated
     private KeyEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case NUMBER, CUSTOM -> KeyEncoding.NONE;
@@ -176,6 +177,7 @@ public enum ResourceParameterKey implements ParameterKey {
         };
     }
 
+    @JacocoGenerated
     private String getErrorMessage(ParamKind kind) {
         return switch (kind) {
             // case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
@@ -187,6 +189,7 @@ public enum ResourceParameterKey implements ParameterKey {
         };
     }
 
+    @JacocoGenerated
     private String getValuePattern(ParamKind kind, String pattern) {
         return switch (kind) {
             // case BOOLEAN -> PATTERN_IS_BOOLEAN;

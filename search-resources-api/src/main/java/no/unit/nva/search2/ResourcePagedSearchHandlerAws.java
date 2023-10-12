@@ -1,6 +1,8 @@
 package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.google.common.net.MediaType;
+import java.util.List;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -43,4 +45,11 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpStatus.SC_OK;
     }
+
+
+    @Override
+    protected List<MediaType> listSupportedMediaTypes() {
+        return List.of( MediaType.JSON_UTF_8, MediaType.CSV_UTF_8, MediaType.ANY_TEXT_TYPE);
+    }
+
 }
