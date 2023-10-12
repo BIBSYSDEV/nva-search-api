@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,23 +23,23 @@ public record PagedSearchResourceDto(
     URI nextResultsBySortKey,
     JsonNode aggregations) {
 
+    private PagedSearchResourceDto(Builder builder) {
+        this(builder.id,
+            builder.nextResults,
+            builder.previousResults,
+            builder.totalHits,
+            builder.hits,
+            builder.nextResultsBySortKey,
+            builder.aggregations
+        );
+    }
+
     @JsonProperty("@context")
     public URI context() {
         return PAGINATED_SEARCH_RESULT_CONTEXT;
     }
 
-    private PagedSearchResourceDto(Builder builder) {
-        this(builder.id,
-             builder.nextResults,
-             builder.previousResults,
-             builder.totalHits,
-             builder.hits,
-             builder.nextResultsBySortKey,
-             builder.aggregations
-        );
-    }
-
-    public String toJson() {
+    public String toJsonString() {
         return attempt(() -> objectMapperWithEmpty.writeValueAsString(this))
                    .orElseThrow();
     }

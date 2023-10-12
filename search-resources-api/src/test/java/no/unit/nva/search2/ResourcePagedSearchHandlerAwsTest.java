@@ -67,13 +67,29 @@ class ResourcePagedSearchHandlerAwsTest {
         var gatewayResponse =
             FakeGatewayResponse.of(outputStream);
         var actualBody =
-              gatewayResponse.body();
+            gatewayResponse.body();
         var expected =
             getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
         assertThat(actualBody.hits(), is(equalTo(expected.hits())));
+    }
+
+
+
+    @ParameterizedTest(name = "Should return application/json for accept header {0}")
+    @MethodSource("acceptHeaderValuesJsonProvider")
+    void shouldProduceWithHeader2(String acceptHeaderValue) throws IOException {
+        prepareRestHighLevelClientOkResponse();
+        var requestInput = getRequestInputStreamAccepting(acceptHeaderValue);
+        handler.handleRequest(requestInput, outputStream, contextMock);
+
+        var gatewayResponse =
+            FakeGatewayResponse.of(outputStream);
+
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
     }
 
     @Test
@@ -139,33 +155,31 @@ class ResourcePagedSearchHandlerAwsTest {
 
     @ParameterizedTest(name = "Should return application/json for accept header {0}")
     @MethodSource("acceptHeaderValuesProducingApplicationJsonProvider")
-    void shouldProduceWithHeader(String acceptHeaderValue)
-        throws IOException {
+    void shouldProduceWithHeader(String acceptHeaderValue) throws IOException {
         prepareRestHighLevelClientOkResponse();
-        var requestInput =
-            nonNull(acceptHeaderValue) ? getRequestInputStreamAccepting(acceptHeaderValue) : getInputStream();
+        var requestInput = nonNull(acceptHeaderValue)
+            ? getRequestInputStreamAccepting(acceptHeaderValue)
+            : getInputStream();
         handler.handleRequest(requestInput, outputStream, mock(Context.class));
 
-        var gatewayResponse =
-            FakeGatewayResponse.of(outputStream);
+        var gatewayResponse =  FakeGatewayResponse.of(outputStream);
         assertThat(gatewayResponse.headers().get("Content-Type"), is(equalTo("application/json; charset=utf-8")));
     }
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                   .withQueryParameters(Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
-                   .withHeaders(Map.of("Accept", "application/json"))
-                   .withRequestContext(getRequestContext()).build();
+            .withQueryParameters(Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
+            .withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity.id:12345",
-                       "results", "10", "from", "0"))
-                   .withHeaders(Map.of("Accept", "application/json"))
-                   .withRequestContext(getRequestContext())
-                   .withUserName(randomString())
-                   .build();
+                    "results", "10", "from", "0"))
+            .withHeaders(Map.of("Accept", "application/json"))
+            .withRequestContext(getRequestContext())
+            .withUserName(randomString())
+            .build();
     }
 
     private InputStream getInputStreamWithMultipleContributorId() throws JsonProcessingException {
@@ -173,9 +187,9 @@ class ResourcePagedSearchHandlerAwsTest {
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
                     Map.of(SEARCH_ALL.key(),
-                           "((entityDescription.contributors.identity.id:12345)"
-                           + "+OR+"
-                           + "(entityDescription.contributors.identity.id:54321))"))
+                        "((entityDescription.contributors.identity.id:12345)"
+                            + "+OR+"
+                            + "(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
                 .withHeaders(Map.of("Accept", "application/json"))
                 .withUserName(randomString())
@@ -185,9 +199,9 @@ class ResourcePagedSearchHandlerAwsTest {
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
-                   .withHeaders(Map.of("Accept", contentType))
-                   .withRequestContext(getRequestContext())
-                   .build();
+            .withHeaders(Map.of("Accept", contentType))
+            .withRequestContext(getRequestContext())
+            .build();
     }
 
     private ObjectNode getRequestContext() {
@@ -224,7 +238,12 @@ class ResourcePagedSearchHandlerAwsTest {
         return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResourceDto.class);
     }
 
+
+    public static Stream<String> acceptHeaderValuesJsonProvider() {
+        return Stream.of(null, "application/json", "text/csv");
+    }
+
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {
-        return Stream.of(null, "application/json");
+        return Stream.of(null, "application/json", "application/json; charset=utf-8");
     }
 }

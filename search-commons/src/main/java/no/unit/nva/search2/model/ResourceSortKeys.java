@@ -1,7 +1,7 @@
 package no.unit.nva.search2.model;
 
 import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CASE_INSENSITIVE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,27 +25,26 @@ public enum ResourceSortKeys {
 
     public static final Set<ResourceSortKeys> VALID_SORT_PARAMETER_KEYS =
         Arrays.stream(ResourceSortKeys.values())
-            .sorted(ResourceSortKeys::compareParameterKey)
+            .sorted(ResourceSortKeys::compareAscending)
             .skip(1)    // skip INVALID
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    private final String pattern;
+    private final String keyValidationRegEx;
     private final String fieldName;
 
     ResourceSortKeys(String pattern, String fieldName) {
-        this.pattern = pattern;
+        this.keyValidationRegEx = pattern;
         this.fieldName = fieldName;
     }
 
     ResourceSortKeys(String fieldName) {
-        var name = this.name().toLowerCase(Locale.getDefault());
-        this.pattern =  PATTERN_IS_CASE_INSENSITIVE + name.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+        this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.fieldName = fieldName;
     }
 
 
-    public String getPattern() {
-        return pattern;
+    public String getKeyPattern() {
+        return keyValidationRegEx;
     }
 
     public String getFieldName() {
@@ -62,7 +61,7 @@ public enum ResourceSortKeys {
     }
 
     public static Predicate<ResourceSortKeys> equalTo(String name) {
-        return key -> name.matches(key.getPattern());
+        return key -> name.matches(key.getKeyPattern());
     }
 
     public static Collection<String> validSortKeys() {
@@ -72,7 +71,14 @@ public enum ResourceSortKeys {
             .toList();
     }
 
-    private static int compareParameterKey(ResourceSortKeys key1, ResourceSortKeys key2) {
+    private static int compareAscending(ResourceSortKeys key1, ResourceSortKeys key2) {
         return key1.ordinal() - key2.ordinal();
+    }
+
+    private static String getIgnoreCaseAndUnderscoreKeyExpression(String keyName) {
+        var keyNameIgnoreUnderscoreExpression =
+            keyName.toLowerCase(Locale.getDefault())
+                .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+        return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
     }
 }

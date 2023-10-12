@@ -47,7 +47,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
     public String doSearch(ResourceAwsClient queryClient) {
         return switch (this.getMediaType()) {
-            case JSON, JSONLD  -> fetchAsPagedResponse(queryClient).toJson();
+            case JSON, JSONLD  -> fetchAsPagedResponse(queryClient).toJsonString();
             case CSV -> fetchAsCsvText(queryClient);
         };
     }

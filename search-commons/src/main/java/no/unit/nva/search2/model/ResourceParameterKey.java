@@ -18,7 +18,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CASE_INSENSITIVE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
@@ -114,7 +114,7 @@ public enum ResourceParameterKey implements ParameterKey {
         this.theKeyEncoding = getEncoding(kind);
         this.theKeyPattern = nonNull(keyPattern)
                                  ? keyPattern
-                                 : PATTERN_IS_CASE_INSENSITIVE + theKey.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+                                 : PATTERN_IS_IGNORE_CASE + theKey.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
