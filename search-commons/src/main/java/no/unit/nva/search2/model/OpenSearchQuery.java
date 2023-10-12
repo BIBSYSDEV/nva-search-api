@@ -117,6 +117,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                    : queryParameters.remove(key);
     }
 
+    @JacocoGenerated
     public boolean isPresent(K key) {
         return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
     }

@@ -15,7 +15,6 @@ import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
-import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
 import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
@@ -198,12 +197,11 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             query.setQueryValue(qpKey, mergeParameters(query.getValue(qpKey).as(), validFieldValue));
         }
 
-        @JacocoGenerated
         private String expandFields(String value) {
             return ALL.equals(value) || isNull(value)
                        ? "*"
                        : Arrays.stream(value.split(COMMA))
-                             .dropWhile(key -> !VALID_LUCENE_PARAMETER_KEYS.contains(keyFromString(key)))
+                             .filter(key -> !ResourceSortKeys.keyFromString(key).equals(INVALID))
                              .collect(Collectors.joining(COMMA));
         }
     }

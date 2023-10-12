@@ -60,7 +60,7 @@ public enum ResourceParameterKey implements ParameterKey {
     USER(STRING, "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER, "entityDescription.publicationDate.year"),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(CUSTOM, EQUALS, "q", "(?i)search.?all|query", null),
+    SEARCH_ALL(STRING, EQUALS, "q", "(?i)search.?all|query", null),
     FIELDS(STRING),
     // Pagination parameters
     PAGE(NUMBER),

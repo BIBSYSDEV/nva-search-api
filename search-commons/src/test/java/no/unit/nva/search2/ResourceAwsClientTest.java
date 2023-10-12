@@ -1,6 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
@@ -47,7 +48,6 @@ class ResourceAwsClientTest {
             .thenReturn(mockedHttpResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT));
     }
 
-
     @ParameterizedTest
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
@@ -67,7 +67,7 @@ class ResourceAwsClientTest {
         var query =
             ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
                 .build();
 
         var pagedSearchResourceDto = query.fetchAsPagedResponse(resourceAwsClient);
@@ -76,34 +76,34 @@ class ResourceAwsClientTest {
         assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));
     }
 
-
     @ParameterizedTest
     @MethodSource("uriInvalidProvider")
     void failToSearchUri(URI uri) {
         assertThrows(BadRequestException.class,
-            () -> ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .doSearch(resourceAwsClient));
+                     () -> ResourceAwsQuery.builder()
+                               .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                               .withRequiredParameters(FROM, SIZE)
+                               .build()
+                               .doSearch(resourceAwsClient));
     }
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category&order"
-                + "=desc"),
+                       + "=desc"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=contributor_name:asc,institution_name:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
-                + "modifiedDate:desc&searchAfter=1241234,23412"),
+                       + "modifiedDate:desc&searchAfter=1241234,23412"),
             URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=contributor_name+desc"));
     }
 
     static Stream<URI> uriProvider() {
         return Stream.of(
             URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
+            URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg"),
             URI.create("https://example.com/?title=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/?contributor=hello+world&published_before=2020"),
             URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019"),
@@ -119,7 +119,6 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
             URI.create("https://example.com/?useers=hello+world&lang=en"));
     }
-
 
     @NotNull
     public static HttpResponse<Object> mockedHttpResponse(String filename) {

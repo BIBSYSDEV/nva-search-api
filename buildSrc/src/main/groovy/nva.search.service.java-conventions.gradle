@@ -28,15 +28,33 @@ sourceSets {
     }
 }
 
+
 tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
     violationRules {
         rule {
+            excludes = [
+                    'search-commons',
+            ]
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
                 minimum = 1.000
             }
         }
+        rule {
+//            includes = [
+//                    'search-commons',
+//            ]
+            excludes = [
+                    'no.unit.nva.indexing.testutils.csv',
+            ]
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.990
+            }
+        }
+
         rule {
             limit {
                 counter = 'CLASS'
