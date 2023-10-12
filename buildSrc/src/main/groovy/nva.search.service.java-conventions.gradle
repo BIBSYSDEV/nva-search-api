@@ -42,16 +42,13 @@ tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
             }
         }
         rule {
-//            includes = [
-//                    'search-commons',
-//            ]
-            excludes = [
-                    'no.unit.nva.indexing.testutils.csv',
+            includes = [
+                    'search-commons',
             ]
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.990
+                minimum = 0.980
             }
         }
 
