@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
@@ -69,7 +70,9 @@ public final class ApplicationConstants {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLISHER = "publisher";
-    public static final String JOURNAL = "journal";
+    public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
+    public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
+    public static final String PUBLISHED_FILE = "PublishedFile";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
         generateSimpleAggregation("resourceOwner.owner",
@@ -78,6 +81,7 @@ public final class ApplicationConstants {
                                   "resourceOwner.ownerAffiliation.keyword"),
         generateEntityDescriptionAggregation(),
         generateFundingSourceAggregation(),
+        generateHasFileAggregation(),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATIONS)
     );
 
@@ -199,7 +203,7 @@ public final class ApplicationConstants {
     }
 
     private static TermsAggregationBuilder generateNameAggregation() {
-        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME));
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD));
     }
 
 
@@ -218,5 +222,18 @@ public final class ApplicationConstants {
 
     private static String jsonPath(String... args) {
         return String.join(JSON_PATH_DELIMITER, args);
+    }
+
+    private static NestedAggregationBuilder generateHasFileAggregation() {
+
+        FilterAggregationBuilder typeFilterAggregation = AggregationBuilders.filter(TYPE,
+                                                                                    QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE));
+
+        FilterAggregationBuilder adminAgreementFilterAggregation = AggregationBuilders.filter(ADMINSTRATIVE_AGREEMENT,
+                                                                                QueryBuilders.termQuery( jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false));
+
+        return new NestedAggregationBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+            .subAggregation(typeFilterAggregation.subAggregation(adminAgreementFilterAggregation));
+
     }
 }

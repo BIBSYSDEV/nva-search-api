@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +50,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -367,6 +368,17 @@ public class OpensearchTest {
                        is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
         }
 
+        @ParameterizedTest()
+        @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
+        void shouldReturnHitsWhenSearchedForPartianMatchOfCuratorName(String queryStr) throws Exception {
+            addDocumentsToIndex("publication.json");
+
+            var query = queryWithTermAndAggregation(queryStr, null);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(1));
+        }
+
         @Test
         void shouldReturnPendingPublishingRequestsForPublications()
             throws InterruptedException, ApiGatewayException {
@@ -460,29 +472,28 @@ public class OpensearchTest {
 
             var actualAggregations = response.getAggregations();
             var topOrgAggregation = actualAggregations.at(
-                "/entityDescription.contributors.affiliations.topLevelOrganizations.id/buckets");
+                "/topLevelOrganizations/id/buckets");
             assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
             var typeAggregation = actualAggregations.at(
-                "/entityDescription.reference.publicationInstance.type/buckets");
+                "/entityDescription/reference/publicationInstance/type/buckets");
             assertAggregation(typeAggregation, "AcademicArticle", 2);
 
             var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
-            assertAggregation(ownerAggregation, "fredrikTest@unit.no", 1);
+            assertAggregation(ownerAggregation, "1136263@20754.0.0.0", 2);
 
             var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
-            var contributorAggregation = actualAggregations.at(
-                "/entityDescription.contributors.identity.name/buckets");
-            assertAggregation(contributorAggregation, "lametti, Stefania", 2);
+            var contributorAggregation = actualAggregations.at( "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
+            assertAggregation(contributorAggregation, "lametti, Stefania", 1);
 
             var publisherAggregation = actualAggregations.at(
-                "/entityDescription.reference.publicationContext.publisher/buckets");
+                "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
             assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
 
             var journalAggregation = actualAggregations.at(
-                "/entityDescription.reference.publicationContext.journal/buckets");
+                "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
             assertAggregation(journalAggregation, "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
         }
 
@@ -525,6 +536,29 @@ public class OpensearchTest {
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
             assertThat(response.getHits(), hasSize(2));
+        }
+
+        @Test
+        void shouldQueryingHasFileSuccessfully() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json");
+
+            var query = queryWithTermAndAggregation(
+           SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+            assertThat(response, notNullValue());
+
+            var actualAggregations = response.getAggregations();
+
+            var hasPublishedFileAggregation = actualAggregations.at(
+                "/associatedArtifacts/type");
+            assertThat(hasPublishedFileAggregation.get("docCount").asInt(), is(equalTo(2)));
+
+            var hasPublishedFileWithAdminAgreementFalseAggregation = actualAggregations.at(
+                "/associatedArtifacts/type/administrativeAgreement");
+            assertThat(hasPublishedFileWithAdminAgreementFalseAggregation.get("docCount").asInt(), is(equalTo(1)));
         }
 
         @Test
