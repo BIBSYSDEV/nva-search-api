@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -127,13 +128,16 @@ public class OpensearchTest {
     }
 
     void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
+        AtomicBoolean found = new AtomicBoolean(false);
         aggregationNode.forEach(
             bucketNode -> {
                 if (bucketNode.get("key").asText().equals(key)) {
+                    found.set(true);
                     assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
                 }
             }
         );
+        assertThat(found.get(), is(equalTo(true)));
     }
 
     private String generateIndexName() {
@@ -486,7 +490,7 @@ public class OpensearchTest {
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
             var contributorAggregation = actualAggregations.at( "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
-            assertAggregation(contributorAggregation, "lametti, Stefania", 1);
+            assertAggregation(contributorAggregation, "Iametti, Stefania", 1);
 
             var publisherAggregation = actualAggregations.at(
                 "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
