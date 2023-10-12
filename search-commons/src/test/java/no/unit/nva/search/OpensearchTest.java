@@ -472,22 +472,22 @@ public class OpensearchTest {
 
             var actualAggregations = response.getAggregations();
             var topOrgAggregation = actualAggregations.at(
-                "/entityDescription.contributors.affiliations.topLevelOrganizations.id/buckets");
+                "/topLevelOrganizations/id/buckets");
             assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
             var typeAggregation = actualAggregations.at(
-                "/entityDescription.reference.publicationInstance.type/buckets");
+                "/entityDescription/reference/publicationInstance/type/buckets");
             assertAggregation(typeAggregation, "AcademicArticle", 2);
 
             var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
-            assertAggregation(ownerAggregation, "fredrikTest@unit.no", 1);
+            assertAggregation(ownerAggregation, "1136263@20754.0.0.0", 2);
 
             var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
             var contributorAggregation = actualAggregations.at(
-                "/entityDescription.contributors.identity.name/buckets");
-            assertAggregation(contributorAggregation, "lametti, Stefania", 2);
+                "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
+            assertAggregation(contributorAggregation, "lametti, Stefania", 1);
         }
 
         @Test
@@ -529,6 +529,29 @@ public class OpensearchTest {
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
             assertThat(response.getHits(), hasSize(2));
+        }
+
+        @Test
+        void shouldQueryingHasFileSuccessfully() throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                "sample_publication_with_several_of_the_same_affiliation.json");
+
+            var query = queryWithTermAndAggregation(
+           SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+            assertThat(response, notNullValue());
+
+            var actualAggregations = response.getAggregations();
+
+            var hasPublishedFileAggregation = actualAggregations.at(
+                "/associatedArtifacts/type");
+            assertThat(hasPublishedFileAggregation.get("docCount").asInt(), is(equalTo(2)));
+
+            var hasPublishedFileWithAdminAgreementFalseAggregation = actualAggregations.at(
+                "/associatedArtifacts/type/administrativeAgreement");
+            assertThat(hasPublishedFileWithAdminAgreementFalseAggregation.get("docCount").asInt(), is(equalTo(1)));
         }
 
         @Test

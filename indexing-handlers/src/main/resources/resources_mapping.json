@@ -80,6 +80,18 @@
           "type": "keyword"
         }
       }
+    },
+    "associatedArtifacts": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "identifier": {
+          "type": "keyword"
+        },
+        "name": {
+          "type": "keyword"
+        }
+      }
     }
   }
 }
