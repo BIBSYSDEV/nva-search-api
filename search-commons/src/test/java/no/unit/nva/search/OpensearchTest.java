@@ -485,9 +485,16 @@ public class OpensearchTest {
             var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
-            var contributorAggregation = actualAggregations.at(
-                "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
+            var contributorAggregation = actualAggregations.at( "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
             assertAggregation(contributorAggregation, "lametti, Stefania", 1);
+
+            var publisherAggregation = actualAggregations.at(
+                "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
+            assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
+
+            var journalAggregation = actualAggregations.at(
+                "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
+            assertAggregation(journalAggregation, "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
         }
 
         @Test

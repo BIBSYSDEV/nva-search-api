@@ -152,9 +152,23 @@
     "reference": {
       "type": "Reference",
       "doi": "https://doi.org/10.1016/j.foodres.2022.111012",
-      "publicationContext": {
-        "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
-        "type": "Journal"
+      "publicationContext" : {
+        "series" : {
+          "type" : "UnconfirmedSeries"
+        },
+        "publisher" : {
+          "valid" : true,
+          "identifier" : "25162",
+          "website" : {
+            "id" : "http://www.afnlp.org/"
+          },
+          "level" : "1",
+          "name" : "Asian Federation of Natural Language Processing",
+          "active" : true,
+          "id" : "https://api.dev.nva.aws.unit.no/publication-channels/publisher/25162/2023",
+          "type" : "Publisher"
+        },
+        "type" : "Book"
       },
       "publicationInstance": {
         "type": "AcademicArticle",
