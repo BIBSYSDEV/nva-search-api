@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +50,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -365,6 +366,17 @@ public class OpensearchTest {
             var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
             assertThat(searchResourcesResponse.getHits().size(),
                        is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
+        }
+
+        @ParameterizedTest()
+        @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
+        void shouldReturnHitsWhenSearchedForPartianMatchOfCuratorName(String queryStr) throws Exception {
+            addDocumentsToIndex("publication.json");
+
+            var query = queryWithTermAndAggregation(queryStr, null);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(1));
         }
 
         @Test
