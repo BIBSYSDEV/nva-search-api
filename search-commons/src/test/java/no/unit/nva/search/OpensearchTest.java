@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +50,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -367,6 +368,17 @@ public class OpensearchTest {
                        is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
         }
 
+        @ParameterizedTest()
+        @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
+        void shouldReturnHitsWhenSearchedForPartianMatchOfCuratorName(String queryStr) throws Exception {
+            addDocumentsToIndex("publication.json");
+
+            var query = queryWithTermAndAggregation(queryStr, null);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            assertThat(response.getHits(), hasSize(1));
+        }
+
         @Test
         void shouldReturnPendingPublishingRequestsForPublications()
             throws InterruptedException, ApiGatewayException {
@@ -473,9 +485,16 @@ public class OpensearchTest {
             var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
-            var contributorAggregation = actualAggregations.at(
-                "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
+            var contributorAggregation = actualAggregations.at( "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
             assertAggregation(contributorAggregation, "lametti, Stefania", 1);
+
+            var publisherAggregation = actualAggregations.at(
+                "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
+            assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
+
+            var journalAggregation = actualAggregations.at(
+                "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
+            assertAggregation(journalAggregation, "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
         }
 
         @Test

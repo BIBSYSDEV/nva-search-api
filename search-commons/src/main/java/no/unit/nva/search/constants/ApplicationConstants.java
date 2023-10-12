@@ -68,6 +68,8 @@ public final class ApplicationConstants {
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String TYPE = "type";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
+    public static final String PUBLICATION_CONTEXT = "publicationContext";
+    public static final String PUBLISHER = "publisher";
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
     public static final String PUBLISHED_FILE = "PublishedFile";
@@ -114,7 +116,10 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateTypeAggregation() {
         return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
                    .subAggregation(generateNestedPublicationInstanceAggregation()
-                                       .subAggregation(generatePublicationInstanceTypeAggregation()));
+                                       .subAggregation(generatePublicationInstanceTypeAggregation()))
+            .subAggregation(generateNestedPublicationContextAggregation()
+                                .subAggregation(generatePublicationContextPublisherIdAggregation().subAggregation(generatePublicationContextPublisherNameAggregation()))
+                                .subAggregation(generatePublicationContextJournalIdAggregation().subAggregation(generatePublicationContextJournalNameAggregation())));
     }
 
     private static TermsAggregationBuilder generatePublicationInstanceTypeAggregation() {
@@ -124,6 +129,31 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateNestedPublicationInstanceAggregation() {
         return new NestedAggregationBuilder(PUBLICATION_INSTANCE,
                                             jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE));
+    }
+
+    private static NestedAggregationBuilder generateNestedPublicationContextAggregation() {
+        return new NestedAggregationBuilder(PUBLICATION_CONTEXT,
+                                            jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextPublisherIdAggregation() {
+        return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
+            , ID));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextPublisherNameAggregation() {
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
+            , NAME));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextJournalIdAggregation() {
+        return generateSimpleAggregation(ID, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                      ID));
+    }
+
+    private static TermsAggregationBuilder generatePublicationContextJournalNameAggregation() {
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                        NAME));
     }
 
     private static NestedAggregationBuilder generateEntityDescriptionAggregation() {
@@ -173,7 +203,7 @@ public final class ApplicationConstants {
     }
 
     private static TermsAggregationBuilder generateNameAggregation() {
-        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME));
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD));
     }
 
 
