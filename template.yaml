@@ -466,6 +466,14 @@ Resources:
                 responsePayload:
                   topic: [ "PublicationService.ExpandedEntry.Persisted" ]
 
+  BatchIndexEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: !If
+        - WithSuffix
+        - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
+        - "BatchIndexEventBus"
+
   IndexImportCandidates:
     DependsOn:
       - ResourcesIndexerDLQ
