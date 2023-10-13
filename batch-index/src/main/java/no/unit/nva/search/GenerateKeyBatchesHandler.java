@@ -21,7 +21,10 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
     public static final String RESOURCE_DELIMITER = "/resource";
+    public static final String DEFAULT_BATCH_SIZE = "10";
     private static final Environment ENVIRONMENT = new Environment();
+    public static final int MAX_KEYS = Integer.parseInt(
+        ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
     private final S3Client inputClient;
     private final S3Client outputClient;
     private final String inputBucketName;
@@ -51,7 +54,7 @@ public class GenerateKeyBatchesHandler implements RequestStreamHandler {
     }
 
     private static void requestBuilder(Builder request, String bucketName) {
-        request.bucket(bucketName).delimiter(RESOURCE_DELIMITER).maxKeys(10);
+        request.bucket(bucketName).delimiter(RESOURCE_DELIMITER).maxKeys(MAX_KEYS);
     }
 
     private static String toKeySet(ListObjectsV2Response item) {
