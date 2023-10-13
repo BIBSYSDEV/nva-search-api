@@ -1,0 +1,46 @@
+package no.unit.nva.opensearch.constant;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+import no.unit.nva.commons.json.JsonUtils;
+import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
+
+@JacocoGenerated
+public final class Application {
+
+    public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
+
+
+    public static final String AMPERSAND = "&";
+    public static final String AND = "+AND+";
+    public static final String COLON = ":";
+    public static final String COMMA = ",";
+    public static final String EQUAL = "=";
+    public static final String OR = "+OR+";
+    public static final String PIPE = "|";
+    public static final String PLUS = "+";
+    public static final String PREFIX = "(";
+    public static final String QUOTE = "'";
+    public static final String RESOURCES = "resources";
+    public static final String SEARCH = "_search";
+    public static final String SUFFIX = ")";
+    public static final String UNDERSCORE = "_";
+
+    public static final Environment ENVIRONMENT = new Environment();
+
+    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+
+    public static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
+        "doc_count_error_upper_bound", "docCountErrorUpperBound",
+        "sum_other_doc_count", "sumOtherDocCount",
+        "doc_count", "docCount");
+
+    public static String readSearchInfrastructureAuthUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
+    }
+
+    public static String readSearchInfrastructureApiUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
+    }
+}
