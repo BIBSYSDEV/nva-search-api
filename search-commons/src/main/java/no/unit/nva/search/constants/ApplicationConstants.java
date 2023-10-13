@@ -138,7 +138,7 @@ public final class ApplicationConstants {
 
     private static TermsAggregationBuilder generatePublicationContextPublisherIdAggregation() {
         return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
-            , ID));
+            , IDENTIFIER));
     }
 
     private static TermsAggregationBuilder generatePublicationContextPublisherNameAggregation() {
@@ -148,7 +148,7 @@ public final class ApplicationConstants {
 
     private static TermsAggregationBuilder generatePublicationContextJournalIdAggregation() {
         return generateSimpleAggregation(ID, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
-                                                      ID));
+                                                      IDENTIFIER));
     }
 
     private static TermsAggregationBuilder generatePublicationContextJournalNameAggregation() {
