@@ -57,6 +57,10 @@ Parameters:
   ResourcesBucket:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/PersistedEntriesBucketName
+  KeyBatchesBucketName:
+    Type: String
+    Default: "key-batches"
+    Description: Name of bucket for key batches
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
@@ -365,8 +369,7 @@ Resources:
   NvaPublicationBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
-      BasePath:
-        !If
+      BasePath: !If
         - WithSuffix
         - !Sub ${CustomDomainBasePath}-${Suffix}
         - !Sub ${CustomDomainBasePath}
@@ -582,13 +585,20 @@ Resources:
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
-  BatchIndexEventBus:
-    Type: AWS::Events::EventBus
+  GenerateKeyBatchesHandler:
+    Type: AWS::Serverless::Function
     Properties:
-      Name: !If
-        - WithSuffix
-        - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
-        - "BatchIndexEventBus"
+      CodeUri: batch-index
+      Handler: no.unit.nva.search.GenerateKeyBatchesHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 900
+      Role: !GetAtt SearchHandlerRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+          PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
+          KEY_BATCHES_BUCKET: !Sub "${KeyBatchesBucketName}-${AWS::AccountId}"
 
   InitHandler:
     Type: AWS::Serverless::Function
@@ -629,3 +639,14 @@ Resources:
       Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
+
+  KeyBatchesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub "${KeyBatchesBucketName}-${AWS::AccountId}"
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteContentAfter3Days
+            Status: Enabled
+            ExpirationInDays: 3
