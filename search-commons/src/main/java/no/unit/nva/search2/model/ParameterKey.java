@@ -26,11 +26,11 @@ public interface ParameterKey {
     }
 
     enum KeyEncoding {
-        NONE,DECODE,ENCODE_DECODE
+        NONE,DECODE
     }
 
     enum ParamKind {
-        DATE, SHORT_DATE, NUMBER, STRING, STRING_DECODE, SORT_STRING, CUSTOM
+        DATE, NUMBER, STRING, SORT_STRING, CUSTOM
     }
 
     enum Operator {
