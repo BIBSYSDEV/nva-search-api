@@ -31,10 +31,6 @@ import nva.commons.core.paths.UnixPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.opensearch.action.DocWriteRequest.OpType;
-import org.opensearch.action.DocWriteResponse;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkItemResponse.Failure;
 import org.opensearch.action.bulk.BulkResponse;
 
 class KeyBasedBatchIndexHandlerTest {

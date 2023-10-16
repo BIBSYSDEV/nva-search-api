@@ -6,17 +6,16 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UnixPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> {
 
@@ -41,11 +40,9 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
     public Void handleRequest(S3Event input, Context context) {
         var bucket = getBucketName(input);
         var key = getObjectKey(input);
-        var request = createRequest(bucket, key);
-        var content = fetchS3Content(request);
+        var content = fetchS3Content(bucket, key);
         logger.info("Resources to index {}", content);
-        var resourcesToIndex = extractIdentifiers(content).map(id -> createRequest(RESOURCES_BUCKET, id))
-                                   .map(this::fetchS3Content)
+        var resourcesToIndex = extractIdentifiers(content).map(id -> fetchS3Content(RESOURCES_BUCKET, id))
                                    .map(IndexDocument::fromJsonString);
 
         var response = indexingClient.batchInsert(resourcesToIndex);
@@ -53,14 +50,6 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
             logger.info("Batch processed, has failures {}", response.toList().get(0).hasFailures());
         }
         return null;
-    }
-
-    private static String toString(byte[] response) {
-        return new String(response, StandardCharsets.UTF_8);
-    }
-
-    private static GetObjectRequest createRequest(String bucketName, String key) {
-        return GetObjectRequest.builder().bucket(bucketName).key(key).build();
     }
 
     private static String getObjectKey(S3Event input) {
@@ -75,9 +64,8 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         return Arrays.stream(string.split(LINE_BREAK));
     }
 
-    private String fetchS3Content(GetObjectRequest request) {
-        return attempt(() -> s3Client.getObject(request)).map(InputStream::readAllBytes)
-                   .map(KeyBasedBatchIndexHandler::toString)
-                   .orElseThrow();
+    private String fetchS3Content(String bucket, String key) {
+        var s3Driver = new S3Driver(s3Client, bucket);
+        return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
     }
 }
