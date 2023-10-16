@@ -35,21 +35,15 @@ import org.opensearch.action.bulk.BulkResponse;
 
 class BatchHandlerTest {
 
-    private S3Driver s3batchDriver;
-    private S3Driver s3persistedResourcesDriver;
-    private S3Driver s3ReportDriver;
+    private S3Driver s3Driver;
     private FakeS3Client s3Client;
-    private FakeS3Client s3ReportClient;
-    private FakeS3Client s3persistedResourcesClient;
     private FakeOpenSearchClient openSearchClient;
     private BatchHandler handler;
 
     @BeforeEach
     public void init() {
-        s3Client = FakeS3Client.fromContentsMap();
-        s3batchDriver = new S3Driver(s3Client, "batches");
-        s3persistedResourcesDriver = new S3Driver(s3persistedResourcesClient, "resourcesBucket");
-        s3ReportDriver = new S3Driver(s3ReportClient, "reportBucket");
+        s3Client = new FakeS3Client();
+        s3Driver = new S3Driver(s3Client, "someBucket");
         openSearchClient = new FakeOpenSearchClient();
         handler = new BatchHandler(openSearchClient, s3Client);
     }
@@ -75,7 +69,7 @@ class BatchHandlerTest {
                                  .collect(Collectors.joining(System.lineSeparator()));
         var expectedReportKey = s3Event.getRecords().get(0).getS3().getObject().getKey();
         handler.handleRequest(s3Event, Mockito.mock(Context.class));
-        var savedReport = s3ReportDriver.getFile(UnixPath.of(expectedReportKey));
+        var savedReport = s3Driver.getFile(UnixPath.of(expectedReportKey));
 
         assertThat(savedReport, is(equalTo(expectedReport)));
     }
@@ -96,8 +90,8 @@ class BatchHandlerTest {
     }
 
     private IndexDocument insertResourceInPersistedResourcesBucket(IndexDocument document) {
-        attempt(() -> s3persistedResourcesDriver.insertFile(UnixPath.of(document.getDocumentIdentifier()),
-                                                            document.toJsonString())).orElseThrow();
+        attempt(() -> s3Driver.insertFile(UnixPath.of(document.getDocumentIdentifier()),
+                                          document.toJsonString())).orElseThrow();
         return document;
     }
 
@@ -109,7 +103,7 @@ class BatchHandlerTest {
         var fileContent = documents.stream()
                               .map(IndexDocument::getDocumentIdentifier)
                               .collect(Collectors.joining(System.lineSeparator()));
-        s3batchDriver.insertFile(UnixPath.of(objectKey), fileContent);
+        s3Driver.insertFile(UnixPath.of(objectKey), fileContent);
         return new S3Event(List.of(eventNotification));
     }
 
@@ -119,8 +113,6 @@ class BatchHandlerTest {
         var schemaVersion = randomString();
         return new S3Entity(randomString(), bucket, object, schemaVersion);
     }
-
-
 
     private static class FakeOpenSearchClient extends IndexingClient {
 

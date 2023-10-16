@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
@@ -17,9 +19,14 @@ public class BatchHandler implements RequestHandler<S3Event, Void> {
 
     public static final String LINE_BREAK = "\n";
     public static final int SINGLE_RECORD = 0;
-    private final String RESOURCES_BUCKET = new Environment().readEnv("EXPANDED_RESOURCES_BUCKET");
+    private static final String RESOURCES_BUCKET = new Environment().readEnv("EXPANDED_RESOURCES_BUCKET");
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
+
+    @JacocoGenerated
+    public BatchHandler() {
+        this(IndexingClient.defaultIndexingClient(), defaultS3Client());
+    }
 
     public BatchHandler(IndexingClient indexingClient, S3Client s3Client) {
         this.indexingClient = indexingClient;
@@ -39,7 +46,6 @@ public class BatchHandler implements RequestHandler<S3Event, Void> {
                                    .map(IndexDocument::fromJsonString);
 
         indexingClient.batchInsert(resourcesToIndex);
-
         return null;
     }
 
