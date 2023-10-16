@@ -15,20 +15,20 @@ import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
-public class BatchHandler implements RequestHandler<S3Event, Void> {
+public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> {
 
     public static final String LINE_BREAK = "\n";
     public static final int SINGLE_RECORD = 0;
-    private static final String RESOURCES_BUCKET = new Environment().readEnv("EXPANDED_RESOURCES_BUCKET");
+    private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
 
     @JacocoGenerated
-    public BatchHandler() {
+    public KeyBasedBatchIndexHandler() {
         this(IndexingClient.defaultIndexingClient(), defaultS3Client());
     }
 
-    public BatchHandler(IndexingClient indexingClient, S3Client s3Client) {
+    public KeyBasedBatchIndexHandler(IndexingClient indexingClient, S3Client s3Client) {
         this.indexingClient = indexingClient;
         this.s3Client = s3Client;
     }
@@ -71,7 +71,7 @@ public class BatchHandler implements RequestHandler<S3Event, Void> {
 
     private String fetchS3Content(GetObjectRequest request) {
         return attempt(() -> s3Client.getObject(request)).map(InputStream::readAllBytes)
-                   .map(BatchHandler::toString)
+                   .map(KeyBasedBatchIndexHandler::toString)
                    .orElseThrow();
     }
 }

@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
-    public static final String RESOURCE_DELIMITER = "/resource";
+    public static final String RESOURCE_DELIMITER = "/resources";
     public static final String DEFAULT_BATCH_SIZE = "10";
     private static final Environment ENVIRONMENT = new Environment();
     public static final int MAX_KEYS = Integer.parseInt(

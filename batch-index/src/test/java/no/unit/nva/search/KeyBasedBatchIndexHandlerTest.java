@@ -33,19 +33,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opensearch.action.bulk.BulkResponse;
 
-class BatchHandlerTest {
+class KeyBasedBatchIndexHandlerTest {
 
     private S3Driver s3Driver;
     private FakeS3Client s3Client;
     private FakeOpenSearchClient openSearchClient;
-    private BatchHandler handler;
+    private KeyBasedBatchIndexHandler handler;
 
     @BeforeEach
     public void init() {
         s3Client = new FakeS3Client();
         s3Driver = new S3Driver(s3Client, "someBucket");
         openSearchClient = new FakeOpenSearchClient();
-        handler = new BatchHandler(openSearchClient, s3Client);
+        handler = new KeyBasedBatchIndexHandler(openSearchClient, s3Client);
     }
 
     @Test
