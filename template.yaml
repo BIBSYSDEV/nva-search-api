@@ -261,7 +261,7 @@ Resources:
         GetResources:
           Type: Api
           Properties:
-            Path: /resources3
+            Path: /resources2
             Method: get
             RestApiId: !Ref NvaSearchApi
 
