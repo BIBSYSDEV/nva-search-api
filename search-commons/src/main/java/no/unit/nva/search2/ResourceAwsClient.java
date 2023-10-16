@@ -33,6 +33,7 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
@@ -84,11 +85,14 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                                    .map(ResourceSortKeys::keyFromString)
                                    .map(ResourceSortKeys::getFieldName)
                                    .toArray(String[]::new);
-            return Stream.of(new QueryBuilderWrapper(QueryBuilders.multiMatchQuery(searchAll, fields), query));
+            var queryBuilder = QueryBuilders.multiMatchQuery(searchAll, fields);
+            queryBuilder.operator(Operator.AND);
+            return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
         } else {
             query.removeValue(FIELDS);
             var luceneParameters = query.toLuceneParameter().get("q");
             var stringQueryBuilder = QueryBuilders.queryStringQuery(luceneParameters);
+            stringQueryBuilder.defaultOperator(Operator.AND);
             return Stream.of(new QueryBuilderWrapper(stringQueryBuilder, query));
         }
     }
@@ -110,6 +114,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         builder.size(query.getValue(SIZE).as());
         builder.from(query.getValue(FROM).as());
         getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
+
 
         return new QueryBuilderSourceWrapper(builder, query.openSearchUri(), query.getMediaType());
     }
