@@ -10,7 +10,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request.Builder;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
     public static final String RESOURCE_DELIMITER = "/resource";
     public static final String DEFAULT_BATCH_SIZE = "10";
     private static final Environment ENVIRONMENT = new Environment();
@@ -46,8 +48,8 @@ public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) {
-        var bucketName = UriWrapper.fromUri(inputBucketName).getHost().toString();
-        inputClient.listObjectsV2Paginator(request -> requestBuilder(request, bucketName))
+        logger.info("Reading from bucket {}", inputBucketName);
+        inputClient.listObjectsV2Paginator(request -> requestBuilder(request, inputBucketName))
             .stream()
             .map(GenerateKeyBatchesHandler::toKeySet)
             .forEach(this::writeObject);

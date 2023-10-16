@@ -58,8 +58,8 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/PersistedEntriesBucketName
   KeyBatchesBucketName:
-    Type: String
-    Default: "key-batches"
+    Type: 'String'
+    Default: 'key-batches'
     Description: Name of bucket for key batches
   MaxConcurrency:
     Type: String
