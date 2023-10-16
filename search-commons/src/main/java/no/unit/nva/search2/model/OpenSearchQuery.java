@@ -208,10 +208,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-//    protected String encodeUTF(String unencoded) {
-//        return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace(SPACE_ENCODED, PLUS);
-//    }
-
     private String toLuceneEntryToString(Entry<K, String> entry) {
         return
             entry.getKey().swsKey().stream()

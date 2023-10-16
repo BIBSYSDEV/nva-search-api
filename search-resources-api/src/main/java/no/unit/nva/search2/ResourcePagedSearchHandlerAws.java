@@ -30,8 +30,7 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
     }
 
     @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-        throws BadRequestException {
+    protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
             ResourceAwsQuery.builder()
                 .fromRequestInfo(requestInfo)
@@ -46,10 +45,8 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
         return HttpStatus.SC_OK;
     }
 
-
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
-        return List.of( MediaType.JSON_UTF_8, MediaType.CSV_UTF_8, MediaType.ANY_TEXT_TYPE);
+        return List.of(MediaType.JSON_UTF_8, MediaType.CSV_UTF_8, MediaType.ANY_TEXT_TYPE);
     }
-
 }

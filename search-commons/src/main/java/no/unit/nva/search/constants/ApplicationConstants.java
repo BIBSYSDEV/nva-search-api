@@ -105,55 +105,59 @@ public final class ApplicationConstants {
     }
 
     private static FilterAggregationBuilder generateImportedByUserAggregation() {
-        return new FilterAggregationBuilder("importedByUser",
-                                            new TermQueryBuilder("importStatus.candidateStatus.keyword", "IMPORTED"))
-            .subAggregation(AggregationBuilders
-                                .terms("importStatus.setBy")
-                                .field("importStatus.setBy.keyword")
-                                .size(DEFAULT_AGGREGATION_SIZE));
+        return new FilterAggregationBuilder(
+            "importedByUser", new TermQueryBuilder("importStatus.candidateStatus.keyword", "IMPORTED"))
+                   .subAggregation(AggregationBuilders
+                                       .terms("importStatus.setBy")
+                                       .field("importStatus.setBy.keyword")
+                                       .size(DEFAULT_AGGREGATION_SIZE));
     }
 
     private static NestedAggregationBuilder generateTypeAggregation() {
         return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
                    .subAggregation(generateNestedPublicationInstanceAggregation()
                                        .subAggregation(generatePublicationInstanceTypeAggregation()))
-            .subAggregation(generateNestedPublicationContextAggregation()
-                                .subAggregation(generatePublicationContextPublisherIdAggregation().subAggregation(generatePublicationContextPublisherNameAggregation()))
-                                .subAggregation(generatePublicationContextJournalIdAggregation().subAggregation(generatePublicationContextJournalNameAggregation())));
+                   .subAggregation(generateNestedPublicationContextAggregation()
+                                       .subAggregation(
+                                           generatePublicationContextPublisherIdAggregation().subAggregation(
+                                               generatePublicationContextPublisherNameAggregation()))
+                                       .subAggregation(generatePublicationContextJournalIdAggregation().subAggregation(
+                                           generatePublicationContextJournalNameAggregation())));
     }
 
     private static TermsAggregationBuilder generatePublicationInstanceTypeAggregation() {
-        return generateSimpleAggregation(TYPE, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE));
+        return generateSimpleAggregation(
+            TYPE, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE));
     }
 
     private static NestedAggregationBuilder generateNestedPublicationInstanceAggregation() {
-        return new NestedAggregationBuilder(PUBLICATION_INSTANCE,
-                                            jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE));
+        return new NestedAggregationBuilder(
+            PUBLICATION_INSTANCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE));
     }
 
     private static NestedAggregationBuilder generateNestedPublicationContextAggregation() {
-        return new NestedAggregationBuilder(PUBLICATION_CONTEXT,
-                                            jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT));
+        return new NestedAggregationBuilder(
+            PUBLICATION_CONTEXT, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT));
     }
 
     private static TermsAggregationBuilder generatePublicationContextPublisherIdAggregation() {
-        return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
-            , IDENTIFIER));
+        return generateSimpleAggregation(
+            PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, IDENTIFIER));
     }
 
     private static TermsAggregationBuilder generatePublicationContextPublisherNameAggregation() {
-        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
-            , NAME));
+        return generateSimpleAggregation(
+            NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME));
     }
 
     private static TermsAggregationBuilder generatePublicationContextJournalIdAggregation() {
-        return generateSimpleAggregation(ID, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
-                                                      IDENTIFIER));
+        return generateSimpleAggregation(
+            ID, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, IDENTIFIER));
     }
 
     private static TermsAggregationBuilder generatePublicationContextJournalNameAggregation() {
-        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
-                                                        NAME));
+        return generateSimpleAggregation(
+            NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME));
     }
 
     private static NestedAggregationBuilder generateEntityDescriptionAggregation() {
@@ -169,7 +173,7 @@ public final class ApplicationConstants {
                     generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
                         .subAggregation(
                             generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
-            );
+                );
     }
 
     private static NestedAggregationBuilder generateContributorAggregations() {
@@ -177,9 +181,9 @@ public final class ApplicationConstants {
             generateNestedContributorAggregation()
                 .subAggregation(
                     generateNestedIdentityAggregation()
-                       .subAggregation(
-                           generateIdAggregation()
-                               .subAggregation(generateNameAggregation()))
+                        .subAggregation(
+                            generateIdAggregation()
+                                .subAggregation(generateNameAggregation()))
                 );
     }
 
@@ -206,7 +210,6 @@ public final class ApplicationConstants {
         return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD));
     }
 
-
     private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
         return new NestedAggregationBuilder(object, object)
                    .subAggregation(generateIdAggregation(object));
@@ -226,14 +229,19 @@ public final class ApplicationConstants {
 
     private static NestedAggregationBuilder generateHasFileAggregation() {
 
-        FilterAggregationBuilder typeFilterAggregation = AggregationBuilders.filter(TYPE,
-                                                                                    QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE));
+        var typeFilterAggregation =
+            AggregationBuilders
+                .filter(
+                    TYPE, QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE)
+                );
 
-        FilterAggregationBuilder adminAgreementFilterAggregation = AggregationBuilders.filter(ADMINSTRATIVE_AGREEMENT,
-                                                                                QueryBuilders.termQuery( jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false));
+        var adminAgreementFilterAggregation =
+            AggregationBuilders
+                .filter(ADMINSTRATIVE_AGREEMENT,
+                        QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false)
+                );
 
         return new NestedAggregationBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-            .subAggregation(typeFilterAggregation.subAggregation(adminAgreementFilterAggregation));
-
+                   .subAggregation(typeFilterAggregation.subAggregation(adminAgreementFilterAggregation));
     }
 }

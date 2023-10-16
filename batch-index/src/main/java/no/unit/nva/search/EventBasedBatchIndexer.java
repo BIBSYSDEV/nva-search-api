@@ -28,7 +28,11 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
 
     @JacocoGenerated
     public EventBasedBatchIndexer() {
-        this(defaultS3Client(), defaultEsClient(), defaultEventBridgeClient(), NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+        this(
+            defaultS3Client(),
+            defaultEsClient(),
+            defaultEventBridgeClient(),
+            NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
     }
 
     protected EventBasedBatchIndexer(S3Client s3Client,
