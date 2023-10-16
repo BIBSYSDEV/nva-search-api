@@ -4,8 +4,10 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.stream.Stream;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -13,6 +15,8 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 public class BatchHandler implements RequestHandler<S3Event, Void> {
 
+    public static final String LINE_BREAK = "\n";
+    public static final int SINGLE_RECORD = 0;
     private final String RESOURCES_BUCKET = new Environment().readEnv("EXPANDED_RESOURCES_BUCKET");
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
@@ -24,18 +28,44 @@ public class BatchHandler implements RequestHandler<S3Event, Void> {
 
     @Override
     public Void handleRequest(S3Event input, Context context) {
-        var bucketName = input.getRecords().get(0).getS3().getBucket().getName();
-        var key = input.getRecords().get(0).getS3().getObject().getKey();
-        var request = GetObjectRequest.builder().bucket(bucketName).key(key).build();
-        var response = attempt(() -> s3Client.getObject(request).readAllBytes()).orElseThrow();
-        var content = new String(response, StandardCharsets.UTF_8);
-        var resources = Arrays.stream(content.split("\n"))
-                            .map(identifier -> s3Client.getObject(GetObjectRequest.builder().bucket(RESOURCES_BUCKET).key(identifier).build()))
-                            .map(res -> attempt(res::readAllBytes).orElseThrow())
-                            .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
-                            .toList();
-        var documentToIndex = resources.stream().map(IndexDocument::fromJsonString);
-        indexingClient.batchInsert(documentToIndex);
+        var bucket = getBucketName(input);
+        var key = getObjectKey(input);
+        var request = createRequest(bucket, key);
+        var content = fetchS3Content(request);
+
+        var resourcesToIndex = extractIdentifiers(content)
+                                   .map(id -> createRequest(RESOURCES_BUCKET, id))
+                                   .map(this::fetchS3Content)
+                                   .map(IndexDocument::fromJsonString);
+
+        indexingClient.batchInsert(resourcesToIndex);
+
         return null;
+    }
+
+    private static String toString(byte[] response) {
+        return new String(response, StandardCharsets.UTF_8);
+    }
+
+    private static GetObjectRequest createRequest(String bucketName, String key) {
+        return GetObjectRequest.builder().bucket(bucketName).key(key).build();
+    }
+
+    private static String getObjectKey(S3Event input) {
+        return input.getRecords().get(SINGLE_RECORD).getS3().getObject().getKey();
+    }
+
+    private static String getBucketName(S3Event input) {
+        return input.getRecords().get(SINGLE_RECORD).getS3().getBucket().getName();
+    }
+
+    private Stream<String> extractIdentifiers(String string) {
+        return Arrays.stream(string.split(LINE_BREAK));
+    }
+
+    private String fetchS3Content(GetObjectRequest request) {
+        return attempt(() -> s3Client.getObject(request)).map(InputStream::readAllBytes)
+                   .map(BatchHandler::toString)
+                   .orElseThrow();
     }
 }

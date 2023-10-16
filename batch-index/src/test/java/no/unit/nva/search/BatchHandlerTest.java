@@ -6,6 +6,8 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3BucketEntity;
@@ -33,28 +35,49 @@ import org.opensearch.action.bulk.BulkResponse;
 
 class BatchHandlerTest {
 
-    private S3Driver s3bachDriver;
+    private S3Driver s3batchDriver;
     private S3Driver s3persistedResourcesDriver;
+    private S3Driver s3ReportDriver;
     private FakeS3Client s3Client;
+    private FakeS3Client s3ReportClient;
+    private FakeS3Client s3persistedResourcesClient;
     private FakeOpenSearchClient openSearchClient;
+    private BatchHandler handler;
 
     @BeforeEach
     public void init() {
-        s3Client = new FakeS3Client();
-        s3bachDriver = new S3Driver(s3Client, "batches");
+        s3Client = FakeS3Client.fromContentsMap();
+        s3batchDriver = new S3Driver(s3Client, "batches");
+        s3persistedResourcesDriver = new S3Driver(s3persistedResourcesClient, "resourcesBucket");
+        s3ReportDriver = new S3Driver(s3ReportClient, "reportBucket");
         openSearchClient = new FakeOpenSearchClient();
-        s3persistedResourcesDriver = new S3Driver(s3Client, "resourcesBucket");
+        handler = new BatchHandler(openSearchClient, s3Client);
     }
 
     @Test
     void shouldReturnIndexDocumentsWhenIndexingInBatches() throws IOException {
         var expectedDocuments = createExpectedDocuments();
-        var s3Event = createS3Event(expectedDocuments);
-        var handler = new BatchHandler(openSearchClient, s3Client);
-        handler.handleRequest(s3Event, Mockito.mock(Context.class));
+
+        handler.handleRequest(createS3Event(expectedDocuments), Mockito.mock(Context.class));
+
         var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
         assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
+    }
+
+    @Test
+    void shouldSaveBatchDocumentsWhenSuccessfullyIndexed() throws IOException {
+        var expectedDocuments = createExpectedDocuments();
+        var s3Event = createS3Event(expectedDocuments);
+
+        var expectedReport = expectedDocuments.stream()
+                                 .map(IndexDocument::getDocumentIdentifier)
+                                 .collect(Collectors.joining(System.lineSeparator()));
+        var expectedReportKey = s3Event.getRecords().get(0).getS3().getObject().getKey();
+        handler.handleRequest(s3Event, Mockito.mock(Context.class));
+        var savedReport = s3ReportDriver.getFile(UnixPath.of(expectedReportKey));
+
+        assertThat(savedReport, is(equalTo(expectedReport)));
     }
 
     private static EventConsumptionAttributes randomConsumptionAttribute() {
@@ -67,8 +90,7 @@ class BatchHandlerTest {
 
     private List<IndexDocument> createExpectedDocuments() {
         return IntStream.range(0, 10)
-                   .mapToObj(i -> jsonNode())
-                   .map(node -> new IndexDocument(randomConsumptionAttribute(), node))
+                   .mapToObj(i -> new IndexDocument(randomConsumptionAttribute(), jsonNode()))
                    .map(this::insertResourceInPersistedResourcesBucket)
                    .toList();
     }
@@ -87,7 +109,7 @@ class BatchHandlerTest {
         var fileContent = documents.stream()
                               .map(IndexDocument::getDocumentIdentifier)
                               .collect(Collectors.joining(System.lineSeparator()));
-        s3bachDriver.insertFile(UnixPath.of(objectKey), fileContent);
+        s3batchDriver.insertFile(UnixPath.of(objectKey), fileContent);
         return new S3Event(List.of(eventNotification));
     }
 
@@ -98,14 +120,10 @@ class BatchHandlerTest {
         return new S3Entity(randomString(), bucket, object, schemaVersion);
     }
 
+
+
     private static class FakeOpenSearchClient extends IndexingClient {
 
-        /**
-         * Creates a new OpenSearchRestClient.
-         *
-         * @param openSearchClient  client to use for access to search infrastructure
-         * @param cachedJwtProvider
-         */
         private final List<IndexDocument> documents;
 
         public FakeOpenSearchClient() {

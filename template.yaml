@@ -541,6 +541,31 @@ Resources:
           ALLOWED_ORIGIN: '*'
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
 
+  BatchHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: batch-index
+      Handler: no.unit.nva.search.BatchHandler::handleRequest
+      Runtime: java17
+      MemorySize: 10240
+      Timeout: 900
+      Role: !GetAtt SearchHandlerRole.Arn
+      Events:
+        BatchEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref ScopusXmlBucket
+            Events: 's3:ObjectCreated:*'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: '.txt'
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+          BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
+
   StartBatchIndexingButton:
     Type: AWS::Serverless::Function
     Properties:
