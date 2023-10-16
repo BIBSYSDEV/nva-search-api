@@ -67,7 +67,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     public OpenSearchSwsResponse doSearch(ResourceAwsQuery query) {
         return
             createQueryBuilderStream(query)
-                .map(this::populateSearchSource)
+                .map(this::populateSearchRequest)
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
@@ -93,16 +93,19 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         }
     }
 
-    private QueryBuilderSourceWrapper populateSearchSource(QueryBuilderWrapper queryBuilderWrapper) {
+    private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
         var builder = new SearchSourceBuilder().query(queryBuilderWrapper.builder());
         var query = queryBuilderWrapper.query();
         var searchAfter = query.removeValue(SEARCH_AFTER);
+
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(COMMA);
             builder.searchAfter(sortKeys);
         }
 
-        RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
+        if (query.isPresent(FROM) && query.getValue(FROM).<Integer>as().equals(0)) {
+            RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
+        }
 
         builder.size(query.getValue(SIZE).as());
         builder.from(query.getValue(FROM).as());
