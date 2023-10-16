@@ -34,5 +34,5 @@ test {
     environment "PERSISTED_RESOURCES_PATH","s3://somebucket/some/folder"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
-    environment "EXPANDED_RESOURCES_BUCKET", "resourcesBucket"
+    environment "PERSISTED_RESOURCES_BUCKET", "resourcesBucket"
 }
