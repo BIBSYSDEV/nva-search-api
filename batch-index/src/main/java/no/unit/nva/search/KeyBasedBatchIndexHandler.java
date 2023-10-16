@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -12,6 +13,8 @@ import java.util.stream.Stream;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
@@ -19,6 +22,7 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
 
     public static final String LINE_BREAK = "\n";
     public static final int SINGLE_RECORD = 0;
+    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
@@ -39,13 +43,15 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         var key = getObjectKey(input);
         var request = createRequest(bucket, key);
         var content = fetchS3Content(request);
-
-        var resourcesToIndex = extractIdentifiers(content)
-                                   .map(id -> createRequest(RESOURCES_BUCKET, id))
+        logger.info("Resources to index {}", content);
+        var resourcesToIndex = extractIdentifiers(content).map(id -> createRequest(RESOURCES_BUCKET, id))
                                    .map(this::fetchS3Content)
                                    .map(IndexDocument::fromJsonString);
 
-        indexingClient.batchInsert(resourcesToIndex);
+        var response = indexingClient.batchInsert(resourcesToIndex);
+        if (nonNull(response)) {
+            logger.info("Batch processed, has failures {}", response.toList().get(0).hasFailures());
+        }
         return null;
     }
 

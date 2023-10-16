@@ -21,9 +21,11 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
-    public static final String RESOURCE_DELIMITER = "/resources";
+    public static final String RESOURCES_FOLDER = "resources/";
     public static final String DEFAULT_BATCH_SIZE = "10";
+    public static final String PERSISTED_MESSAGE = "Batches have been persisted successfully";
+    public static final String DELIMITER = "/";
+    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
     private static final Environment ENVIRONMENT = new Environment();
     public static final int MAX_KEYS = Integer.parseInt(
         ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
@@ -48,15 +50,15 @@ public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) {
-        logger.info("Reading from bucket {}", inputBucketName);
         inputClient.listObjectsV2Paginator(request -> requestBuilder(request, inputBucketName))
             .stream()
             .map(GenerateKeyBatchesHandler::toKeySet)
             .forEach(this::writeObject);
+        logger.info(PERSISTED_MESSAGE);
     }
 
     private static void requestBuilder(Builder request, String bucketName) {
-        request.bucket(bucketName).delimiter(RESOURCE_DELIMITER).maxKeys(MAX_KEYS);
+        request.bucket(bucketName).prefix(RESOURCES_FOLDER).delimiter(DELIMITER).maxKeys(MAX_KEYS);
     }
 
     private static String toKeySet(ListObjectsV2Response item) {
