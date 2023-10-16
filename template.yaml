@@ -606,8 +606,8 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-          PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
-          KEY_BATCHES_BUCKET: !Sub "${KeyBatchesBucketName}-${AWS::AccountId}"
+          PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
+          KEY_BATCHES_BUCKET: !Ref KeyBatchesBucketName
 
   InitHandler:
     Type: AWS::Serverless::Function

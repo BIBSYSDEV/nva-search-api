@@ -34,7 +34,7 @@ public class GenerateKeyBatchesHandler implements RequestStreamHandler {
 
     @JacocoGenerated
     public GenerateKeyBatchesHandler() {
-        this(defaultS3Client(), defaultS3Client(), ENVIRONMENT.readEnv("PERSISTED_RESOURCES_PATH"),
+        this(defaultS3Client(), defaultS3Client(), ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET"),
              ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET"));
     }
 
