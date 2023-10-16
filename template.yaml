@@ -607,7 +607,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: '*'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
-          KEY_BATCHES_BUCKET: !Ref KeyBatchesBucketName
+          KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
 
   InitHandler:
     Type: AWS::Serverless::Function
