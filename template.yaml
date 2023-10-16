@@ -581,7 +581,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: '*'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
-          KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
+          KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
 
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
@@ -596,7 +596,7 @@ Resources:
         BatchEvent:
           Type: S3
           Properties:
-            Bucket: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
+            Bucket: !Ref KeyBatchesBucket
             Events: 's3:ObjectCreated:*'
       Environment:
         Variables:
