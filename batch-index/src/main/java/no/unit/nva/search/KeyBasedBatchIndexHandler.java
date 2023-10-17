@@ -21,7 +21,7 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
 
     public static final String LINE_BREAK = "\n";
     public static final int SINGLE_RECORD = 0;
-    private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
@@ -43,9 +43,10 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         var content = fetchS3Content(bucket, key);
         logger.info("Resources to index {}", content);
         var resourcesToIndex = extractIdentifiers(content).map(id -> fetchS3Content(RESOURCES_BUCKET, id))
-                                   .map(IndexDocument::fromJsonString);
+                                   .map(IndexDocument::fromJsonString)
+                                   .filter(this::isValid);
 
-        var response = indexingClient.batchInsert(resourcesToIndex);
+        var response = attempt(() -> indexingClient.batchInsert(resourcesToIndex)).orElseThrow();
         if (nonNull(response)) {
             logger.info("Batch processed, has failures {}", response.toList().get(0).hasFailures());
         }
@@ -58,6 +59,14 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
 
     private static String getBucketName(S3Event input) {
         return input.getRecords().get(SINGLE_RECORD).getS3().getBucket().getName();
+    }
+
+    private boolean isValid(IndexDocument document) {
+        var validator = new AggregationsValidator(document.getResource());
+        if (!validator.isValid()) {
+            logger.info(validator.getReport());
+        }
+        return validator.isValid();
     }
 
     private Stream<String> extractIdentifiers(String string) {
