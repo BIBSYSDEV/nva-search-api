@@ -10,7 +10,7 @@ public final class ApplicationConstants {
 
     public static final String AMPERSAND = "&";
     public static final String ASTERISK = "*";
-    public static final String ALL = "ALL";
+    public static final String ALL = "all";
     public static final String AND = " AND ";
     public static final String COLON = ":";
     public static final String COMMA = ",";
@@ -23,6 +23,7 @@ public final class ApplicationConstants {
     public static final String SEARCH = "_search";
     public static final String SUFFIX = ")";
     public static final String UNDERSCORE = "_";
+    public static final String ZERO = "0";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
 
 

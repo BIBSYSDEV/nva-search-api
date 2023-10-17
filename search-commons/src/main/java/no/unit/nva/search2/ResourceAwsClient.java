@@ -9,6 +9,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
@@ -110,7 +111,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             builder.searchAfter(sortKeys);
         }
 
-        if (query.isPresent(FROM) && query.getValue(FROM).equals("0")) {
+        if (ZERO.equals(query.getValue(FROM).as())) {
             RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
         }
 

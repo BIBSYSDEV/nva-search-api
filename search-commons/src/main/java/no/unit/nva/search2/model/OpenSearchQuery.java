@@ -268,16 +268,9 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             };
         }
 
-        public boolean equals(String other) {
-            return value.equals(other);
-        }
-
-
         private <T> T castDateTime() {
             return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
-
-
 
         @NotNull
         private <T extends Number> T castNumber() {
