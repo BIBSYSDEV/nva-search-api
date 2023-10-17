@@ -269,6 +269,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
+
   /resources:
     get:
       description: "Search for public available publications by given criteria"
