@@ -79,11 +79,11 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private Stream<QueryBuilderWrapper> createQueryBuilderStream(ResourceAwsQuery query) {
-        var field = query.removeValue(FIELDS);
+        var field = query.getValue(FIELDS).toString();
         var queryBuilder =
             query.isPresent(SEARCH_ALL)
                 ? QueryBuilders
-                      .multiMatchQuery(query.removeValue(SEARCH_ALL), extractFields(field))
+                      .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
                       .operator(Operator.AND)
                 : QueryBuilders
                       .queryStringQuery(query.toSwsLuceneParameter().get("q"))

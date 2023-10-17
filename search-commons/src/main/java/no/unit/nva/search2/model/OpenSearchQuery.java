@@ -268,6 +268,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             };
         }
 
+        @Override
+        public String toString() {
+            return value;
+        }
+
         private <T> T castDateTime() {
             return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
