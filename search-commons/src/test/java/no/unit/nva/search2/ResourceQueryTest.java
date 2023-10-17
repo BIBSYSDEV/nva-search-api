@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,12 +41,17 @@ class ResourceQueryTest {
                 .build();
         assertNotNull(resourceParameters.getValue(FROM).as());
         assertNotNull(resourceParameters.getValue(SIZE).as());
+        var uri2 =
+            UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
+                .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
+
         logger.info(resourceParameters
-                        .toGateWayRequestParameter()
+                        .toNvaSearchApiRequestParameter()
                         .entrySet().stream()
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(" & ")));
-        assertNotEquals(uri, resourceParameters.openSearchUri());
+                        .collect(Collectors.joining("&")));
+        logger.info(uri2.toString());
+        assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
 
 
@@ -109,7 +115,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
-                               .openSearchUri());
+                               .openSearchSwsUri());
     }
 
 
@@ -122,7 +128,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
-                               .openSearchUri());
+                               .openSearchSwsUri());
     }
 
 

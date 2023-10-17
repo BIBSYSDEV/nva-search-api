@@ -94,7 +94,7 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=contributor_name:asc,institution_name:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=CONTRIBUTOR_NAME:asc,institution_name:desc"),
             URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
                        + "modifiedDate:desc&searchAfter=1241234,23412"),
             URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=contributor_name+desc"));

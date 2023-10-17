@@ -5,6 +5,8 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever.ACCEPT;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
+import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
@@ -76,25 +78,26 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private Stream<QueryBuilderWrapper> createQueryBuilderStream(ResourceAwsQuery query) {
-        if (query.isPresent(SEARCH_ALL)) {
-            var searchAll = query.removeValue(SEARCH_ALL);
-            var field = query.removeValue(FIELDS);
-            var fields = Objects.equals(field, "*")
-                             ? "*".split(COMMA)
-                             : Arrays.stream(field.split(COMMA))
-                                   .map(ResourceSortKeys::keyFromString)
-                                   .map(ResourceSortKeys::getFieldName)
-                                   .toArray(String[]::new);
-            var queryBuilder = QueryBuilders.multiMatchQuery(searchAll, fields);
-            queryBuilder.operator(Operator.AND);
-            return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
-        } else {
-            query.removeValue(FIELDS);
-            var luceneParameters = query.toLuceneParameter().get("q");
-            var stringQueryBuilder = QueryBuilders.queryStringQuery(luceneParameters);
-            stringQueryBuilder.defaultOperator(Operator.AND);
-            return Stream.of(new QueryBuilderWrapper(stringQueryBuilder, query));
-        }
+        var field = query.removeValue(FIELDS);
+        var queryBuilder =
+            query.isPresent(SEARCH_ALL)
+                ? QueryBuilders
+                      .multiMatchQuery(query.removeValue(SEARCH_ALL), extractFields(field))
+                      .operator(Operator.AND)
+                : QueryBuilders
+                      .queryStringQuery(query.toSwsLuceneParameter().get("q"))
+                      .defaultOperator(Operator.AND);
+        return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
+    }
+
+    @NotNull
+    private static String[] extractFields(String field) {
+        return Objects.equals(field, ALL)
+                   ? ASTERISK.split(COMMA)
+                   : Arrays.stream(field.split(COMMA))
+                         .map(ResourceSortKeys::fromSortKey)
+                         .map(ResourceSortKeys::getFieldName)
+                         .toArray(String[]::new);
     }
 
     private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
@@ -107,7 +110,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             builder.searchAfter(sortKeys);
         }
 
-        if (query.isPresent(FROM) && query.getValue(FROM).<Integer>as().equals(0)) {
+        if (query.isPresent(FROM) && query.getValue(FROM).equals("0")) {
             RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
         }
 
@@ -116,7 +119,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
 
 
-        return new QueryBuilderSourceWrapper(builder, query.openSearchUri(), query.getMediaType());
+        return new QueryBuilderSourceWrapper(builder, query.openSearchSwsUri(), query.getMediaType());
     }
 
     @JacocoGenerated
@@ -146,7 +149,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     @JacocoGenerated
     private Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
-        var luceneKey = ResourceSortKeys.keyFromString(strings[0]).getFieldName();
+        var luceneKey = ResourceSortKeys.fromSortKey(strings[0]).getFieldName();
         return new Tuple<>(luceneKey, sortOrder);
     }
 

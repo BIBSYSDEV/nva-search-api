@@ -9,11 +9,14 @@ import nva.commons.core.JacocoGenerated;
 public final class ApplicationConstants {
 
     public static final String AMPERSAND = "&";
+    public static final String ASTERISK = "*";
+    public static final String ALL = "ALL";
     public static final String AND = " AND ";
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String EQUAL = "=";
     public static final String OR = " OR ";
+    public static final String PLUS = "+";
     public static final String PREFIX = "(";
     public static final String QUOTE = "'";
     public static final String RESOURCES = "resources";
