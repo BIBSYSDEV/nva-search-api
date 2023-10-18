@@ -9,6 +9,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
@@ -67,7 +68,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private static String getContinuationToken(SQSEvent input) {
-        return notEmptyEvent(input) ? parseMessageBody(input).continuationToken() : DEFAULT_CONTINUATION_TOKEN;
+        return notEmptyEvent(input) ? parseMessageBody(input).lastEvaluatedKey() : DEFAULT_CONTINUATION_TOKEN;
     }
 
     private static boolean notEmptyEvent(SQSEvent event) {
@@ -79,17 +80,17 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
                                                                  KeyBatchMessage.class)).orElseThrow();
     }
 
-    private static ListObjectsV2Request createRequest(String continuationToken, String bucketName) {
+    private static ListObjectsV2Request createRequest(String lastEvaluatedKey, String bucketName) {
         return ListObjectsV2Request.builder()
                    .bucket(bucketName)
                    .prefix(RESOURCES_FOLDER)
                    .delimiter(DELIMITER)
-                   .continuationToken(continuationToken)
+                   .startAfter(lastEvaluatedKey)
                    .maxKeys(MAX_KEYS)
                    .build();
     }
 
-    private static String toKeySet(ListObjectsV2Response response) {
+    private static String toKeyString(ListObjectsV2Response response) {
         return response.contents().stream().map(S3Object::key).collect(Collectors.joining(System.lineSeparator()));
     }
 
@@ -99,21 +100,29 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private Void processMessage(SQSEvent input) {
-        var continuationToken = getContinuationToken(input);
-        logger.error("Continuation token from event {}", continuationToken);
-        var response = inputClient.listObjectsV2(createRequest(continuationToken, inputBucketName));
-        writeObject(toKeySet(response));
-        logger.error("S3 bucket has been truncated {}", response.isTruncated());
+        var lastEvaluatedKey = getContinuationToken(input);
+        logger.error("Continuation token from event {}", lastEvaluatedKey);
+        var response = inputClient.listObjectsV2(createRequest(lastEvaluatedKey, inputBucketName));
+        var keys = response.contents().stream().map(S3Object::key).toList();
+        var string = toKeyString(response);
+        writeObject(string);
+        logger.error("S3 bucket has been truncated: {}", response.isTruncated());
         if (response.isTruncated()) {
-            sqsClient.sendMessage(constructMessage(response.continuationToken()));
+            var message = constructMessage(getLastEvaluatedKey(keys));
+            sqsClient.sendMessage(message);
         }
         logger.info(PERSISTED_MESSAGE);
         return null;
     }
 
-    private SendMessageRequest constructMessage(String continuationToken) {
+    private static String getLastEvaluatedKey(List<String> keys) {
+        return keys.get(keys.size() - 1);
+    }
+
+    private SendMessageRequest constructMessage(String lastEvaluatedKey) {
+        logger.info();
         return SendMessageRequest.builder()
-                   .messageBody(new KeyBatchMessage(continuationToken).toString())
+                   .messageBody(new KeyBatchMessage(lastEvaluatedKey).toString())
                    .queueUrl(getQueueUrl())
                    .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
                    .messageDeduplicationId(randomUUID().toString())

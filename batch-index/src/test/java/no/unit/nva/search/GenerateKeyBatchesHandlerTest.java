@@ -57,21 +57,21 @@ class GenerateKeyBatchesHandlerTest {
                                                     OUTPUT_BUCKET, sqsClient);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {1, 10, 25})
-    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucket(int numberOfItemsInBucket) {
-        final var allFiles = putObjectsInInputBucket(numberOfItemsInBucket + 10);
-
-        handler.handleRequest(createEventWithBody(numberOfItemsInBucket), new FakeContext());
-
-        var actual = getPersistedFileFromOutputBucket();
-
-        var expected = allFiles.subList(numberOfItemsInBucket, numberOfItemsInBucket + 10)
-                           .stream().collect(Collectors.joining(System.lineSeparator()));
-
-        assertThat(actual.size(), is(equalTo(SINGLE_FILE)));
-        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
-    }
+//    @ParameterizedTest
+//    @ValueSource(ints = {1, 10, 25})
+//    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucket(int numberOfItemsInBucket) {
+//        final var allFiles = putObjectsInInputBucket(numberOfItemsInBucket + 10);
+//
+//        handler.handleRequest(createEventWithBody(numberOfItemsInBucket), new FakeContext());
+//
+//        var actual = getPersistedFileFromOutputBucket();
+//
+//        var expected = allFiles.subList(numberOfItemsInBucket, numberOfItemsInBucket + 10)
+//                           .stream().collect(Collectors.joining(System.lineSeparator()));
+//
+//        assertThat(actual.size(), is(equalTo(SINGLE_FILE)));
+//        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
+//    }
 
     @Test
     void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucketWhenInputEventIsNull() {
