@@ -4,13 +4,13 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever.ACCEPT;
+import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
-import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
@@ -27,11 +27,11 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
+import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.QueryBuilderWrapper;
 import no.unit.nva.search2.model.ResourceSortKeys;
-import no.unit.nva.search2.model.OpenSearchClient;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
@@ -60,11 +60,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     @JacocoGenerated
     public static ResourceAwsClient defaultClient() {
         var cachedJwtProvider =
-            OpenSearchClient
-                .getCachedJwtProvider(new SecretsReader());
-        var client = HttpClient.newHttpClient();
+            OpenSearchClient.getCachedJwtProvider(new SecretsReader());
 
-        return new ResourceAwsClient(cachedJwtProvider, client);
+        return new ResourceAwsClient(cachedJwtProvider, HttpClient.newHttpClient());
     }
 
     @Override
@@ -93,7 +91,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     @NotNull
     private static String[] extractFields(String field) {
-        return Objects.equals(field, ALL)
+        return ALL.equals(field) || Objects.isNull(field)
                    ? ASTERISK.split(COMMA)
                    : Arrays.stream(field.split(COMMA))
                          .map(ResourceSortKeys::fromSortKey)
@@ -104,14 +102,14 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
         var builder = new SearchSourceBuilder().query(queryBuilderWrapper.builder());
         var query = queryBuilderWrapper.query();
-        var searchAfter = query.removeValue(SEARCH_AFTER);
+        var searchAfter = query.getValue(SEARCH_AFTER).toString();
 
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(COMMA);
             builder.searchAfter(sortKeys);
         }
 
-        if (ZERO.equals(query.getValue(FROM).as())) {
+        if (isFirstPage(query)) {
             RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
         }
 
@@ -143,7 +141,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
         }
-        return attempt(() -> objectMapperWithEmpty.readValue(response.body(), OpenSearchSwsResponse.class))
+        return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
                    .orElseThrow();
     }
 
@@ -159,6 +157,10 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         return Arrays.stream(query.getValue(SORT).<String>as().split(COMMA))
                    .map(sort -> sort.split(COLON))
                    .map(this::expandSortKeys);
+    }
+
+    private boolean isFirstPage(ResourceAwsQuery query) {
+        return ZERO.equals(query.getValue(FROM).as());
     }
 
 }
