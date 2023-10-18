@@ -8,6 +8,7 @@ import nva.commons.core.JacocoGenerated;
 @JacocoGenerated
 public final class ApplicationConstants {
 
+    public static final Integer EXPECTED_TWO_PARTS = 2;
     public static final String AMPERSAND = "&";
     public static final String ASTERISK = "*";
     public static final String ALL = "all";

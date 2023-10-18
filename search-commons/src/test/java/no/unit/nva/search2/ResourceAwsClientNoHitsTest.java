@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

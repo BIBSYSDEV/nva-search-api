@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;

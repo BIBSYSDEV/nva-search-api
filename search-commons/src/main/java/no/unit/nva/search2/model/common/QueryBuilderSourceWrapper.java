@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import java.net.URI;
 import com.google.common.net.MediaType;

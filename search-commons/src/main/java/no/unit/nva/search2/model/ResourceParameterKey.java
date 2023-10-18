@@ -1,6 +1,7 @@
 package no.unit.nva.search2.model;
 
 import java.util.Locale;
+import no.unit.nva.search2.model.common.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,14 +24,14 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
-import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.model.common.ParameterKey.Operator.EQUALS;
+import static no.unit.nva.search2.model.common.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.common.ParameterKey.Operator.LESS_THAN;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.SORT_STRING;
+import static no.unit.nva.search2.model.common.ParameterKey.ParamKind.STRING;
 
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),

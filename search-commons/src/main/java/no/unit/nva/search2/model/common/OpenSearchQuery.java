@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -35,8 +35,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import no.unit.nva.search2.model.ParameterKey.ParamKind;
+import no.unit.nva.search2.model.ResourceSortKeys;
+import no.unit.nva.search2.model.common.ParameterKey.KeyEncoding;
+import no.unit.nva.search2.model.common.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;

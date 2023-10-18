@@ -1,8 +1,8 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search2.model.OpenSearchSwsResponse.HitsInfo.Hit;
+import no.unit.nva.search2.model.common.OpenSearchSwsResponse.HitsInfo.Hit;
 
 import java.beans.Transient;
 import java.util.List;

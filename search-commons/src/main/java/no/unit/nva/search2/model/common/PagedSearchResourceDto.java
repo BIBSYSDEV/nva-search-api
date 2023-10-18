@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;

@@ -17,11 +17,13 @@ public class ErrorMessages {
         "Sort has invalid field value [%s]. Valid values are: %s";
     public static final String INVALID_NUMBER = "Parameter '%s' has invalid value. Must be a number.";
     public static final String INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
+    public static final String INVALID_SORT_ORDER =
+        "Parameter '%s' has invalid value. Must be either 'asc' or 'desc'.";
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
         """
-        Invalid query parameter supplied %s.\s
+        Invalid query parameter supplied %s.
         Valid parameters: %s
-        Also pass through to OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, search_after]
+        Also pass through to OpenSearch: [from & size]|[offset & results]|[page & per_page], [sort (& sortOrder)], fields, search_after
         """;
     public static final String MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
 

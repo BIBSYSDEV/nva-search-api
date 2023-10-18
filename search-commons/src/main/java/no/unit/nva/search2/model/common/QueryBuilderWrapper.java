@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.common;
 
 import no.unit.nva.search2.ResourceAwsQuery;
 import org.opensearch.index.query.AbstractQueryBuilder;

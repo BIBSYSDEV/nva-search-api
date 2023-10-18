@@ -2,12 +2,15 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.EXPECTED_TWO_PARTS;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
+import static no.unit.nva.search2.constant.ErrorMessages.INVALID_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
@@ -27,10 +30,10 @@ import java.util.stream.Collectors;
 import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.model.ResourceParameterKey;
 import no.unit.nva.search2.model.ResourceSortKeys;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.common.OpenSearchQuery;
+import no.unit.nva.search2.model.common.OpenSearchQueryBuilder;
+import no.unit.nva.search2.model.common.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.common.PagedSearchResourceDto;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
@@ -88,8 +91,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
 
-        private static final String ALL = "all";
-        public static final Integer EXPECTED_TWO_PARTS = 2;
+
 
         Builder() {
             super(new ResourceAwsQuery());
@@ -172,7 +174,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             var sortOrder = getSortOrder(sortKeyParts);
 
             if (!sortOrder.matches(SORT_ORDER.pattern())) {
-                throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
+                throw new IllegalArgumentException(INVALID_SORT_ORDER.formatted(sortOrder));
             }
 
             var sortField = sortKeyParts[0];
