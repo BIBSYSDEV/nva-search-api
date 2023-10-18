@@ -37,8 +37,8 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     public static final String KEY_BATCHES_QUEUE = ENVIRONMENT.readEnv("KEY_BATCHES_QUEUE_NAME");
     public static final int MAX_KEYS = Integer.parseInt(
         ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
-    private static final String KEY_BATCH_MESSAGE_GROUP =
-        ENVIRONMENT.readEnvOpt("KEY_BATCHES_MESSAGE_GROUP").orElse("KEY_BATCHES_GROUP_ID");
+    private static final String KEY_BATCH_MESSAGE_GROUP = ENVIRONMENT.readEnvOpt("KEY_BATCHES_MESSAGE_GROUP")
+                                                              .orElse("KEY_BATCHES_GROUP_ID");
     private final S3Client inputClient;
     private final S3Client outputClient;
     private final String inputBucketName;
@@ -62,14 +62,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
 
     @Override
     public Void handleRequest(SQSEvent input, Context context) {
-        var continuationToken = getContinuationToken(input);
-        var response = inputClient.listObjectsV2(createRequest(continuationToken, inputBucketName));
-        writeObject(toKeySet(response));
-        if (response.isTruncated()) {
-            sqsClient.sendMessage(constructMessage(response.continuationToken()));
-        }
-        logger.info(PERSISTED_MESSAGE);
-        return null;
+        return attempt(() -> processMessage(input)).orElse(failure -> logMessage(input));
     }
 
     private static String getContinuationToken(SQSEvent input) {
@@ -78,19 +71,6 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
 
     private static boolean notEmptyEvent(SQSEvent event) {
         return nonNull(event) && nonNull(event.getRecords()) && nonNull(event.getRecords().get(0));
-    }
-
-    private SendMessageRequest constructMessage(String continuationToken) {
-        return SendMessageRequest.builder()
-                   .messageBody(new KeyBatchMessage(continuationToken).toString())
-                   .queueUrl(getQueueUrl())
-                   .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
-                   .messageDeduplicationId(randomUUID().toString())
-                   .build();
-    }
-
-    private String getQueueUrl() {
-        return sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(KEY_BATCHES_QUEUE).build()).queueUrl();
     }
 
     private static KeyBatchMessage parseMessageBody(SQSEvent input) {
@@ -110,6 +90,35 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
 
     private static String toKeySet(ListObjectsV2Response response) {
         return response.contents().stream().map(S3Object::key).collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    private Void logMessage(SQSEvent input) {
+        logger.error("Could not proceed event {}", input);
+        return null;
+    }
+
+    private Void processMessage(SQSEvent input) {
+        var continuationToken = getContinuationToken(input);
+        var response = inputClient.listObjectsV2(createRequest(continuationToken, inputBucketName));
+        writeObject(toKeySet(response));
+        if (response.isTruncated()) {
+            sqsClient.sendMessage(constructMessage(response.continuationToken()));
+        }
+        logger.info(PERSISTED_MESSAGE);
+        return null;
+    }
+
+    private SendMessageRequest constructMessage(String continuationToken) {
+        return SendMessageRequest.builder()
+                   .messageBody(new KeyBatchMessage(continuationToken).toString())
+                   .queueUrl(getQueueUrl())
+                   .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
+                   .messageDeduplicationId(randomUUID().toString())
+                   .build();
+    }
+
+    private String getQueueUrl() {
+        return sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(KEY_BATCHES_QUEUE).build()).queueUrl();
     }
 
     private void writeObject(String object) {

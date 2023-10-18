@@ -182,6 +182,8 @@ Resources:
                   - sqs:DeleteMessage
                   - sqs:GetQueueAttributes
                   - sqs:ChangeMessageVisibility
+                  - kms:GenerateDataKey
+                  - kms:Decrypt
                 Resource:
                   - !GetAtt KeyBatchesQueue.Arn
 
@@ -604,13 +606,16 @@ Resources:
           ALLOWED_ORIGIN: '*'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
-          KEY_BATCHES_QUEUE_NAME: !Sub '${KeyBatchesBucketName}'
+          KEY_BATCHES_QUEUE_NAME: !Ref KeyBatchesQueueName
           KEY_BATCHES_MESSAGE_GROUP: 'KEY_BATCHES_GROUP_ID'
       Events:
         SqsEvent:
           Type: SQS
           Properties:
             Queue: !GetAtt KeyBatchesQueue.Arn
+            BatchSize: 1
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
 
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
