@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.keybatch;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.s3.S3Driver;
+import no.unit.nva.search.AggregationsValidator;
+import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;

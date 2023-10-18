@@ -38,4 +38,7 @@ test {
     environment "PERSISTED_RESOURCES_BUCKET", "resourcesBucket"
     environment "KEY_BATCHES_QUEUE_NAME", "someQueue"
     environment "KEY_BATCHES_MESSAGE_GROUP", "someGroup"
+    environment "EVENT_BUS", "someBus"
+    environment "TOPIC", "someTopic"
+    environment "KEY_BATCHES_BUCKET", "someBucket"
 }

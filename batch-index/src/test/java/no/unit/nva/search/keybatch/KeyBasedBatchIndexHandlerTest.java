@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.keybatch;
 
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.IndexingClient.objectMapper;
@@ -30,6 +30,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.s3.S3Driver;
+import no.unit.nva.search.IndexingClient;
+import no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.stubs.FakeS3Client;

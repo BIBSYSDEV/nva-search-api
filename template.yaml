@@ -61,6 +61,9 @@ Parameters:
   ResourcesBucket:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/PersistedEntriesBucketName
+  EventsBucketsName:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/NVA/Events/EventsBucketName'
   KeyBatchesBucketName:
     Type: 'String'
     Default: 'key-batches'
@@ -592,6 +595,22 @@ Resources:
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
+  StartKeyBasedBatchHandler:
+    DependsOn: EventsLambdaPermissions
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: batch-index
+      Handler: no.unit.nva.search.StartKeyBasedBatchHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 900
+      Role: !GetAtt SearchHandlerRole.Arn
+      Environment:
+        Variables:
+          EVENT_BUS: !GetAtt BatchIndexEventBus.Name
+          EVENTS_BUCKET: !Ref EventsBucketsName
+          TOPIC: 'SearchService.Index.KeyBasedBatch'
+
   GenerateKeyBatchesHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -606,16 +625,14 @@ Resources:
           ALLOWED_ORIGIN: '*'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
-          KEY_BATCHES_QUEUE_NAME: !Ref KeyBatchesQueueName
-          KEY_BATCHES_MESSAGE_GROUP: 'KEY_BATCHES_GROUP_ID'
       Events:
-        SqsEvent:
-          Type: SQS
+        BatchIndexEvent:
+          Type: EventBridgeRule
           Properties:
-            Queue: !GetAtt KeyBatchesQueue.Arn
-            BatchSize: 1
-      EventInvokeConfig:
-        MaximumRetryAttempts: 0
+            EventBusName: !GetAtt BatchIndexEventBus.Name
+            Pattern:
+              detail:
+                topic: [ 'SearchService.Index.KeyBasedBatch' ]
 
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
