@@ -37,6 +37,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     public static final String KEY_BATCHES_QUEUE = ENVIRONMENT.readEnv("KEY_BATCHES_QUEUE_NAME");
     public static final int MAX_KEYS = Integer.parseInt(
         ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
+    private static final String KEY_BATCH_MESSAGE_GROUP = ENVIRONMENT.readEnv("KEY_BATCHES_MESSAGE_GROUP");
     private final S3Client inputClient;
     private final S3Client outputClient;
     private final String inputBucketName;
@@ -82,6 +83,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         return SendMessageRequest.builder()
                    .messageBody(new KeyBatchMessage(continuationToken).toString())
                    .queueUrl(getQueueUrl())
+                   .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
                    .build();
     }
 

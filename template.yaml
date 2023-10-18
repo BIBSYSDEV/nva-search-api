@@ -607,6 +607,7 @@ Resources:
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
           KEY_BATCHES_QUEUE_NAME: !Sub '${KeyBatchesBucketName}'
+          KEY_BATCHES_MESSAGE_GROUP: 'KEY_BATCHES_GROUP_ID'
       Events:
         SqsEvent:
           Type: SQS
