@@ -87,7 +87,7 @@ class ResourceAwsClientNoHitsTest {
         return Stream.of(
             URI.create("https://example.com/testsearch?category=hello+world&lang=en"),
             URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020"),
+            URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020-01-01"),
             URI.create("https://example.com/testsearch?user=hello+world&lang=en"));
     }
 }
