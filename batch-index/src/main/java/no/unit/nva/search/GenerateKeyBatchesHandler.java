@@ -34,29 +34,33 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
     private static final Environment ENVIRONMENT = new Environment();
     public static final String KEY_BATCHES_QUEUE = ENVIRONMENT.readEnv("KEY_BATCHES_QUEUE_NAME");
-    public static final String INPUT_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
-    public static final String OUTPUT_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
     public static final int MAX_KEYS = Integer.parseInt(
         ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
     private final S3Client inputClient;
     private final S3Client outputClient;
+    private final String inputBucketName;
+    private final String outputBucketName;
     private final SqsClient sqsClient;
 
     @JacocoGenerated
     public GenerateKeyBatchesHandler() {
-        this(defaultS3Client(), defaultS3Client(), defaultSqsClient());
+        this(defaultS3Client(), defaultS3Client(), ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET"),
+             ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET"), defaultSqsClient());
     }
 
-    public GenerateKeyBatchesHandler(S3Client inputClient, S3Client outputClient, SqsClient sqsClient) {
+    public GenerateKeyBatchesHandler(S3Client inputClient, S3Client outputClient, String inputBucketName,
+                                     String outputBucketName, SqsClient sqsClient) {
         this.inputClient = inputClient;
         this.outputClient = outputClient;
+        this.inputBucketName = inputBucketName;
+        this.outputBucketName = outputBucketName;
         this.sqsClient = sqsClient;
     }
 
     @Override
     public Void handleRequest(SQSEvent input, Context context) {
         var continuationToken = getContinuationToken(input);
-        var response = inputClient.listObjectsV2(createRequest(continuationToken, INPUT_BUCKET));
+        var response = inputClient.listObjectsV2(createRequest(continuationToken, inputBucketName));
         writeObject(toKeySet(response));
         if (response.isTruncated()) {
             sqsClient.sendMessage(constructMessage(response.continuationToken()));
@@ -66,11 +70,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private static String getContinuationToken(SQSEvent input) {
-        return notEmptyEvent(input) ? parseMessageBody(input).continuationToken() : DEFAULT_CONTINUATION_TOKEN;
-    }
-
-    private static boolean notEmptyEvent(SQSEvent input) {
-        return nonNull(input) && nonNull(input.getRecords()) && nonNull(input.getRecords().get(0));
+        return nonNull(input) ? parseMessageBody(input).continuationToken() : DEFAULT_CONTINUATION_TOKEN;
     }
 
     private static SendMessageRequest constructMessage(String continuationToken) {
@@ -100,7 +100,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private void writeObject(String object) {
-        var request = PutObjectRequest.builder().bucket(OUTPUT_BUCKET).key(UUID.randomUUID().toString()).build();
+        var request = PutObjectRequest.builder().bucket(outputBucketName).key(UUID.randomUUID().toString()).build();
         outputClient.putObject(request, RequestBody.fromBytes(object.getBytes(StandardCharsets.UTF_8)));
     }
 }
