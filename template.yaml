@@ -183,9 +183,7 @@ Resources:
                   - sqs:GetQueueAttributes
                   - sqs:ChangeMessageVisibility
                 Resource:
-                  Fn::GetAtt:
-                    - KeyBatchesQueue
-                    - Arn
+                  - !GetAtt KeyBatchesQueue.Arn
 
   NvaSearchApi:
     Type: AWS::Serverless::Api
