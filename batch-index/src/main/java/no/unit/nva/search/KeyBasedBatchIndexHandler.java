@@ -48,7 +48,7 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
 
         var response = attempt(() -> indexingClient.batchInsert(resourcesToIndex)).orElseThrow();
         if (nonNull(response)) {
-            logger.info("Batch processed, has failures {}", response.toList().get(0).hasFailures());
+            logger.info("Batch processed, has failures: {}", response.toList().get(0).hasFailures());
         }
         return null;
     }

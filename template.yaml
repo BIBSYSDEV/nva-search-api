@@ -24,6 +24,10 @@ Globals:
       AllowOrigin: "'*'"
 
 Parameters:
+  AwsRegion:
+    Type: 'String'
+    Description: AWS Region
+    Default: ${AWS::Region}
   CognitoUri:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Reference to Cognito Auth URI

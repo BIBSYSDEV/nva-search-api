@@ -22,6 +22,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void> {
@@ -73,15 +74,19 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         return notEmptyEvent(input) ? parseMessageBody(input).continuationToken() : DEFAULT_CONTINUATION_TOKEN;
     }
 
-    private static boolean notEmptyEvent(SQSEvent input) {
-        return nonNull(input) && nonNull(input.getRecords()) && nonNull(input.getRecords().get(0));
+    private static boolean notEmptyEvent(SQSEvent event) {
+        return nonNull(event) && nonNull(event.getRecords()) && nonNull(event.getRecords().get(0));
     }
 
-    private static SendMessageRequest constructMessage(String continuationToken) {
+    private SendMessageRequest constructMessage(String continuationToken) {
         return SendMessageRequest.builder()
                    .messageBody(new KeyBatchMessage(continuationToken).toString())
-                   .queueUrl(KEY_BATCHES_QUEUE)
+                   .queueUrl(getQueueUrl())
                    .build();
+    }
+
+    private String getQueueUrl() {
+        return sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(KEY_BATCHES_QUEUE).build()).queueUrl();
     }
 
     private static KeyBatchMessage parseMessageBody(SQSEvent input) {
