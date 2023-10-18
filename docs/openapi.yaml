@@ -149,7 +149,7 @@ paths:
       - in: query
         name: institution
         description: "Id, name or acronym of the institution the contributors belong to"
-        examples:  {institution=185, institution=UiO, institution=University of Oslo}
+        example:  [185, UiO, University of Oslo]
         required: false
         schema:
           type: string
