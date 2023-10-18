@@ -608,7 +608,6 @@ Resources:
           Properties:
             Queue: !GetAtt KeyBatchesQueue.Arn
 
-
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -686,5 +685,5 @@ Resources:
     Properties:
       FifoQueue: True
       VisibilityTimeout: 900
-      QueueName: !Ref KeyBatchesQueueName.fifo
+      QueueName: KeyBatchesQueueName.fifo
 
