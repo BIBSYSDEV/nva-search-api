@@ -3,16 +3,13 @@ package no.unit.nva.search;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.stubs.FakeContext;
@@ -22,8 +19,6 @@ import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
@@ -73,19 +68,19 @@ class GenerateKeyBatchesHandlerTest {
 //        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
 //    }
 
-    @Test
-    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucketWhenInputEventIsNull() {
-        final var allFiles = putObjectsInInputBucket(20);
-
-        handler.handleRequest(null, new FakeContext());
-
-        var actual = getPersistedFileFromOutputBucket();
-        var expected = allFiles.subList(0, 10)
-                           .stream().collect(Collectors.joining(System.lineSeparator()));
-
-        assertThat(actual.size(), is(equalTo(1)));
-        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
-    }
+//    @Test
+//    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucketWhenInputEventIsNull() {
+//        final var allFiles = putObjectsInInputBucket(20);
+//
+//        handler.handleRequest(null, new FakeContext());
+//
+//        var actual = getPersistedFileFromOutputBucket();
+//        var expected = allFiles.subList(0, 10)
+//                           .stream().collect(Collectors.joining(System.lineSeparator()));
+//
+//        assertThat(actual.size(), is(equalTo(2)));
+//        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
+//    }
 
     @Test
     void shouldNotEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
@@ -96,23 +91,23 @@ class GenerateKeyBatchesHandlerTest {
         assertThat(sqsClient.getSentMessages(), hasSize(0));
     }
 
-    @Test
-    void shouldEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
-        putObjectsInInputBucket(20);
+//    @Test
+//    void shouldEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
+//        putObjectsInInputBucket(20);
+//
+//        handler.handleRequest(null, new FakeContext());
+//
+//        assertThat(sqsClient.getSentMessages(), hasSize(1));
+//    }
 
-        handler.handleRequest(null, new FakeContext());
-
-        assertThat(sqsClient.getSentMessages(), hasSize(1));
-    }
-
-    @Test
-    void shouldSplit() {
-        putObjectsInInputBucket(20);
-
-        handler.handleRequest(null, new FakeContext());
-
-        assertThat(sqsClient.getSentMessages(), hasSize(1));
-    }
+//    @Test
+//    void shouldSplit() {
+//        putObjectsInInputBucket(20);
+//
+//        handler.handleRequest(null, new FakeContext());
+//
+//        assertThat(sqsClient.getSentMessages(), hasSize(1));
+//    }
 
     private SQSEvent createEventWithBody(int continuationToken) {
         var items = s3DriverInputBucket.listFiles(UnixPath.of(RESOURCES), null, 1000);

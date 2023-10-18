@@ -9,6 +9,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -86,12 +86,12 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
                    .prefix(RESOURCES_FOLDER)
                    .delimiter(DELIMITER)
                    .startAfter(lastEvaluatedKey)
-                   .maxKeys(MAX_KEYS)
+                   .maxKeys(1000)
                    .build();
     }
 
-    private static String toKeyString(ListObjectsV2Response response) {
-        return response.contents().stream().map(S3Object::key).collect(Collectors.joining(System.lineSeparator()));
+    private static String toKeyString(List<String> keys) {
+        return keys.stream().collect(Collectors.joining(System.lineSeparator()));
     }
 
     private Void logMessage(Failure<Void> input) {
@@ -104,8 +104,15 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         logger.error("Continuation token from event {}", lastEvaluatedKey);
         var response = inputClient.listObjectsV2(createRequest(lastEvaluatedKey, inputBucketName));
         var keys = response.contents().stream().map(S3Object::key).toList();
-        var string = toKeyString(response);
-        writeObject(string);
+        var list = new ArrayList<String>();
+        for (String key : keys) {
+            list.add(key);
+            if (hasBatchOfItems(list)) {
+                var string = toKeyString(list);
+                writeObject(string);
+                list.clear();
+            }
+        }
         logger.error("S3 bucket has been truncated: {}", response.isTruncated());
         if (response.isTruncated()) {
             var message = constructMessage(getLastEvaluatedKey(keys));
@@ -113,6 +120,10 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         }
         logger.info(PERSISTED_MESSAGE);
         return null;
+    }
+
+    private static boolean hasBatchOfItems(List<String> list) {
+        return list.size() == MAX_KEYS;
     }
 
     private static String getLastEvaluatedKey(List<String> keys) {
