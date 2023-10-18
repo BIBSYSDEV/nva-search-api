@@ -60,7 +60,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     @Override
     public Void handleRequest(SQSEvent input, Context context) {
         var continuationToken = getContinuationToken(input);
-        var response = inputClient.listObjectsV2(requestBuilder(continuationToken, inputBucketName));
+        var response = inputClient.listObjectsV2(createRequest(continuationToken, inputBucketName));
         writeObject(toKeySet(response));
         if (response.isTruncated()) {
             sqsClient.sendMessage(constructMessage(response.continuationToken()));
@@ -85,7 +85,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
                                                                  KeyBatchMessage.class)).orElseThrow();
     }
 
-    private static ListObjectsV2Request requestBuilder(String continuationToken, String bucketName) {
+    private static ListObjectsV2Request createRequest(String continuationToken, String bucketName) {
         return ListObjectsV2Request.builder()
                    .bucket(bucketName)
                    .prefix(RESOURCES_FOLDER)
