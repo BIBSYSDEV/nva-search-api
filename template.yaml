@@ -61,6 +61,9 @@ Parameters:
     Type: 'String'
     Default: 'key-batches'
     Description: Name of bucket for key batches
+  KeyBatchesQueueName:
+    Type: String
+    Default: KeyBatchesQueue
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
@@ -582,12 +585,12 @@ Resources:
           ALLOWED_ORIGIN: '*'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
-          KEY_BATCHES_QUEUE_NAME: !Ref KeyBatchesQueueName
+          KEY_BATCHES_QUEUE_NAME: !Sub '${KeyBatchesBucketName}'
       Events:
         SqsEvent:
           Type: SQS
           Properties:
-            Queue: !GetAtt KeyBatchesQueueName.Arn
+            Queue: !GetAtt KeyBatchesQueue.Arn
 
 
   KeyBasedBatchIndexHandler:
@@ -662,7 +665,7 @@ Resources:
             Status: Enabled
             ExpirationInDays: 3
 
-  KeyBatchesQueueName:
+  KeyBatchesQueue:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Ref KeyBatchesQueueName

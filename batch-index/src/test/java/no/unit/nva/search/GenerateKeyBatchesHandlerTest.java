@@ -97,10 +97,6 @@ class GenerateKeyBatchesHandlerTest {
         return sqsEvent;
     }
 
-    private static int getExpectedNumberOfFiles(int numberOfItemsInBucket) {
-        return (int) Math.ceil(numberOfItemsInBucket < 11 ? 1 : (double) numberOfItemsInBucket / 10);
-    }
-
     private static String getBucketPath(UriWrapper uri) {
         return Path.of(UnixPath.fromString(uri.toString()).getPathElementByIndexFromEnd(1), uri.getLastPathElement())
                    .toString();
