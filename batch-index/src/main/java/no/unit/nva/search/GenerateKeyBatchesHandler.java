@@ -62,7 +62,9 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         var continuationToken = getContinuationToken(input);
         var response = inputClient.listObjectsV2(requestBuilder(continuationToken, inputBucketName));
         writeObject(toKeySet(response));
-        sqsClient.sendMessage(constructMessage(response.continuationToken()));
+        if (response.isTruncated()) {
+            sqsClient.sendMessage(constructMessage(response.continuationToken()));
+        }
         logger.info(PERSISTED_MESSAGE);
         return null;
     }

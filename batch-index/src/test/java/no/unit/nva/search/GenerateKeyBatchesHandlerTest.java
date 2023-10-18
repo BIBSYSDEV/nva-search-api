@@ -4,6 +4,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
@@ -42,7 +43,8 @@ class GenerateKeyBatchesHandlerTest {
     private S3Driver s3DriverOutputBucket;
     private FakeS3Client outputClient;
     private FakeS3Client s3ClientInputClient;
-    private SqsClient sqsClient;
+    private FakeSqsClient sqsClient;
+    private GenerateKeyBatchesHandler handler;
 
     @BeforeEach
     void setUp() {
@@ -51,15 +53,14 @@ class GenerateKeyBatchesHandlerTest {
         outputClient = new FakeS3Client();
         s3DriverOutputBucket = new S3Driver(outputClient, OUTPUT_BUCKET);
         sqsClient = new FakeSqsClient();
+        handler = new GenerateKeyBatchesHandler(s3ClientInputClient, outputClient, INPUT_BUCKET_PATH,
+                                                    OUTPUT_BUCKET, sqsClient);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {1, 10, 25})
     void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucket(int numberOfItemsInBucket) {
         final var allFiles = putObjectsInInputBucket(numberOfItemsInBucket + 10);
-
-        var handler = new GenerateKeyBatchesHandler(s3ClientInputClient, outputClient, INPUT_BUCKET_PATH,
-                                                    OUTPUT_BUCKET, sqsClient);
 
         handler.handleRequest(createEventWithBody(numberOfItemsInBucket), new FakeContext());
 
@@ -76,8 +77,6 @@ class GenerateKeyBatchesHandlerTest {
     void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucketWhenInputEventIsNull() {
         final var allFiles = putObjectsInInputBucket(20);
 
-        var handler = new GenerateKeyBatchesHandler(s3ClientInputClient, outputClient, INPUT_BUCKET_PATH,
-                                                    OUTPUT_BUCKET, sqsClient);
         handler.handleRequest(null, new FakeContext());
 
         var actual = getPersistedFileFromOutputBucket();
@@ -87,6 +86,25 @@ class GenerateKeyBatchesHandlerTest {
         assertThat(actual.size(), is(equalTo(1)));
         assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
     }
+
+    @Test
+    void shouldNotEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
+        putObjectsInInputBucket(5);
+
+        handler.handleRequest(null, new FakeContext());
+
+        assertThat(sqsClient.getSentMessages(), hasSize(0));
+    }
+
+    @Test
+    void shouldEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
+        putObjectsInInputBucket(20);
+
+        handler.handleRequest(null, new FakeContext());
+
+        assertThat(sqsClient.getSentMessages(), hasSize(1));
+    }
+
 
     private SQSEvent createEventWithBody(int continuationToken) {
         var items = s3DriverInputBucket.listFiles(UnixPath.of(RESOURCES), null, 1000);
