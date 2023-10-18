@@ -42,7 +42,6 @@ public enum ResourceSortKeys {
         this.fieldName = fieldName;
     }
 
-
     public String getKeyPattern() {
         return keyValidationRegEx;
     }
@@ -51,9 +50,9 @@ public enum ResourceSortKeys {
         return fieldName;
     }
 
-    public static ResourceSortKeys keyFromString(String paramName) {
+    public static ResourceSortKeys fromSortKey(String keyName) {
         var result = Arrays.stream(ResourceSortKeys.values())
-            .filter(ResourceSortKeys.equalTo(paramName))
+            .filter(ResourceSortKeys.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()

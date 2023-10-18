@@ -8,12 +8,14 @@ import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
+import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
 import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.StringUtils.SPACE;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
@@ -26,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -61,7 +64,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return an URI to Sws search without parameters.
      */
-    public URI openSearchUri() {
+    public URI openSearchSwsUri() {
         return
             fromUri(readSearchInfrastructureApiUri())
                 .addChild(RESOURCES, SEARCH)
@@ -74,9 +77,9 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return Map of String and String
      */
-    public Map<String, String> toLuceneParameter() {
+    public Map<String, String> toSwsLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-                        .map(this::toLuceneEntryToString)
+                        .map(this::swsLuceneEntryToString)
                         .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
@@ -86,12 +89,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return Map of String and String
      */
-    public Map<String, String> toGateWayRequestParameter() {
+    public Map<String, String> toNvaSearchApiRequestParameter() {
         var results = new LinkedHashMap<String, String>();
         Stream.of(luceneParameters.entrySet(), queryParameters.entrySet())
             .flatMap(Set::stream)
             .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-            .forEach(entry -> results.put(toGatewayKey(entry), toQueryValue(entry)));
+            .forEach(entry -> results.put(toNvaSearchApiKey(entry), entry.getValue().replace(SPACE, PLUS)));
         return results;
     }
 
@@ -147,20 +150,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         }
     }
 
-    public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
-        return queryToMapEntries(uri.getQuery());
-    }
-
-    public static Collection<Entry<String, String>> queryToMapEntries(String query) {
-        return
-            nonNull(query)
-                ? Arrays.stream(query.split(AMPERSAND))
-                      .map(s -> s.split(EQUAL))
-                      .map(OpenSearchQuery::stringsToEntry)
-                      .toList()
-                : Collections.emptyList();
-    }
-
     public MediaType getMediaType() {
         return mediaType;
     }
@@ -173,24 +162,23 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         }
     }
 
-    public URI getGatewayUri() {
+    public URI getNvaSearchApiUri() {
         return gatewayUri;
     }
 
-    public void setGatewayUri(URI gatewayUri) {
+    public void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
     }
 
-
-    protected String toGatewayKey(Entry<K, String> entry) {
-        return entry.getKey().key();
+    protected String toNvaSearchApiKey(Entry<K, String> entry) {
+        return entry.getKey().key().toLowerCase(Locale.getDefault());
     }
 
-    protected String toQueryValue(Entry<K, String> entry) {
+    protected String toSwsParameterValue(Entry<K, String> entry) {
         return entry.getKey().kind() == ParamKind.SORT_STRING
                    ? Arrays.stream(entry.getValue().split(COMMA))
                          .map(sort -> sort.split(COLON))
-                         .map(this::expandSortKeys)
+                         .map(this::expandToSwsSort)
                          .collect(Collectors.joining(COMMA))
                    : entry.getValue();
     }
@@ -208,17 +196,33 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    private String toLuceneEntryToString(Entry<K, String> entry) {
+    private String swsLuceneEntryToString(Entry<K, String> entry) {
         return
             entry.getKey().swsKey().stream()
-                .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
+                .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toSwsParameterValue(entry)))
                 .collect(Collectors.joining(OR, PREFIX, SUFFIX));
     }
 
-    private String expandSortKeys(String... strings) {
-        var sortOrder = strings[1];
-        var luceneKey = ResourceSortKeys.keyFromString(strings[0]).getFieldName();
+    private String expandToSwsSort(String... strings) {
+        var luceneKey = ResourceSortKeys
+                            .fromSortKey(strings[0])
+                            .getFieldName();
+        var sortOrder = strings[1].toLowerCase(Locale.getDefault());
         return luceneKey + COLON + sortOrder;
+    }
+
+    public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
+        return queryToMapEntries(uri.getQuery());
+    }
+
+    public static Collection<Entry<String, String>> queryToMapEntries(String query) {
+        return
+            nonNull(query)
+                ? Arrays.stream(query.split(AMPERSAND))
+                      .map(s -> s.split(EQUAL))
+                      .map(OpenSearchQuery::stringsToEntry)
+                      .toList()
+                : Collections.emptyList();
     }
 
     @NotNull
@@ -231,7 +235,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
             @Override
             public String getValue() {
-                return valueOrEmpty(strings);
+                return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
             }
 
             @Override
@@ -240,10 +244,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
         };
-    }
-
-    private static String valueOrEmpty(String... strings) {
-        return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
     }
 
     @SuppressWarnings({"PMD.ShortMethodName"})
@@ -268,11 +268,14 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             };
         }
 
+        @Override
+        public String toString() {
+            return value;
+        }
+
         private <T> T castDateTime() {
             return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
-
-
 
         @NotNull
         private <T extends Number> T castNumber() {
