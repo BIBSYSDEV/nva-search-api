@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Failure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -62,7 +63,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
 
     @Override
     public Void handleRequest(SQSEvent input, Context context) {
-        return attempt(() -> processMessage(input)).orElse(failure -> logMessage(input));
+        return attempt(() -> processMessage(input)).orElse(this::logMessage);
     }
 
     private static String getContinuationToken(SQSEvent input) {
@@ -92,8 +93,8 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         return response.contents().stream().map(S3Object::key).collect(Collectors.joining(System.lineSeparator()));
     }
 
-    private Void logMessage(SQSEvent input) {
-        logger.error("Could not proceed event {}", input);
+    private Void logMessage(Failure<Void> input) {
+        logger.error("Could not proceed event {}", input.getException().getMessage());
         return null;
     }
 
