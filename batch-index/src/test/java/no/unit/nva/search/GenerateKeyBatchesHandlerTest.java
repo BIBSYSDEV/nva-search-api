@@ -105,6 +105,14 @@ class GenerateKeyBatchesHandlerTest {
         assertThat(sqsClient.getSentMessages(), hasSize(1));
     }
 
+    @Test
+    void shouldSplit() {
+        putObjectsInInputBucket(20);
+
+        handler.handleRequest(null, new FakeContext());
+
+        assertThat(sqsClient.getSentMessages(), hasSize(1));
+    }
 
     private SQSEvent createEventWithBody(int continuationToken) {
         var items = s3DriverInputBucket.listFiles(UnixPath.of(RESOURCES), null, 1000);

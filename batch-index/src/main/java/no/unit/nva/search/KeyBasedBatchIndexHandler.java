@@ -6,7 +6,10 @@ import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.models.IndexDocument;
@@ -23,6 +26,7 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
     public static final int SINGLE_RECORD = 0;
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
+    public static final int MAX_PAYLOAD = 5_291_456;
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
 
@@ -45,12 +49,32 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         var resourcesToIndex = extractIdentifiers(content).map(id -> fetchS3Content(RESOURCES_BUCKET, id))
                                    .map(IndexDocument::fromJsonString)
                                    .filter(this::isValid);
+        var indexDocuments = resourcesToIndex.toList();
+        var documents = new ArrayList<IndexDocument>();
+        var totalSize = 0;
+        for (IndexDocument indexDocument : indexDocuments) {
+            var currentFileSize = indexDocument.toJsonString().getBytes(StandardCharsets.UTF_8).length;
+            if (totalSize + currentFileSize < MAX_PAYLOAD) {
+                documents.add(indexDocument);
+                totalSize += currentFileSize;
+            } else {
+                indexDocuments(documents);
+                totalSize = 0;
+                documents.clear();
+                documents.add(indexDocument);
+            }
+        }
+        if (!documents.isEmpty()) {
+            indexDocuments(documents);
+        }
+        return null;
+    }
 
-        var response = attempt(() -> indexingClient.batchInsert(resourcesToIndex)).orElseThrow();
+    private void indexDocuments(List<IndexDocument> list) {
+        var response =  attempt(() -> indexingClient.batchInsert(list.stream())).orElseThrow();
         if (nonNull(response)) {
             logger.info("Batch processed, has failures: {}", response.toList().get(0).hasFailures());
         }
-        return null;
     }
 
     private static String getObjectKey(S3Event input) {

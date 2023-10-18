@@ -9,7 +9,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
