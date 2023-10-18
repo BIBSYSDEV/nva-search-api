@@ -596,7 +596,6 @@ Resources:
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
   StartKeyBasedBatchHandler:
-    DependsOn: EventsLambdaPermissions
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
