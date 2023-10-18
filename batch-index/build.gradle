@@ -37,4 +37,5 @@ test {
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
     environment "PERSISTED_RESOURCES_BUCKET", "resourcesBucket"
     environment "KEY_BATCHES_QUEUE_NAME", "someQueue"
+    environment "KEY_BATCHES_MESSAGE_GROUP", "someGroup"
 }

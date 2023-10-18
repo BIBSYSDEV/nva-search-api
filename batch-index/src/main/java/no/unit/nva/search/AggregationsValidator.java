@@ -22,7 +22,9 @@ public class AggregationsValidator {
     }
 
     public String getReport() {
-        return String.format(REPORT_TEMPLATE, document.at(IDENTIFIER_POINTER).textValue(), String.join(DELIMITER, report));
+        return String.format(REPORT_TEMPLATE,
+                             document.at(IDENTIFIER_POINTER).textValue(),
+                             String.join(DELIMITER, report));
     }
 
     public boolean isValid() {
