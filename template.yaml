@@ -599,7 +599,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.StartKeyBasedBatchHandler::handleRequest
+      Handler: no.unit.nva.search.keybatch.StartKeyBasedBatchHandler::handleRequest
       Runtime: java17
       MemorySize: 1024
       Timeout: 900
@@ -614,7 +614,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.GenerateKeyBatchesHandler::handleRequest
+      Handler: no.unit.nva.search.keybatch.GenerateKeyBatchesHandler::handleRequest
       Runtime: java17
       MemorySize: 1024
       Timeout: 900
@@ -637,7 +637,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: batch-index
-      Handler: no.unit.nva.search.KeyBasedBatchIndexHandler::handleRequest
+      Handler: no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler::handleRequest
       Runtime: java17
       MemorySize: 10240
       Timeout: 900
