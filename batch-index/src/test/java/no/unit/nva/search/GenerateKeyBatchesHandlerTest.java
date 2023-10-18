@@ -106,18 +106,6 @@ class GenerateKeyBatchesHandlerTest {
     }
 
     @Test
-    void shouldTriggerItself() {
-        putObjectsInInputBucket(100);
-        handler.handleRequest(null, new FakeContext());
-        while(!sqsClient.getSentMessages().isEmpty()) {
-            handler.handleRequest(createEventWithBody(
-                , new FakeContext());
-        }
-
-    }
-
-
-    @Test
     void shouldSplit() {
         putObjectsInInputBucket(20);
 
