@@ -100,8 +100,10 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
 
     private Void processMessage(SQSEvent input) {
         var continuationToken = getContinuationToken(input);
+        logger.error("Continuation token from event {}", continuationToken);
         var response = inputClient.listObjectsV2(createRequest(continuationToken, inputBucketName));
         writeObject(toKeySet(response));
+        logger.error("S3 bucket has been truncated {}", response.isTruncated());
         if (response.isTruncated()) {
             sqsClient.sendMessage(constructMessage(response.continuationToken()));
         }
