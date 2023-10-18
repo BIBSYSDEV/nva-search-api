@@ -70,7 +70,11 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private static String getContinuationToken(SQSEvent input) {
-        return nonNull(input) ? parseMessageBody(input).continuationToken() : DEFAULT_CONTINUATION_TOKEN;
+        return notEmptyEvent(input) ? parseMessageBody(input).continuationToken() : DEFAULT_CONTINUATION_TOKEN;
+    }
+
+    private static boolean notEmptyEvent(SQSEvent input) {
+        return nonNull(input) && nonNull(input.getRecords()) && nonNull(input.getRecords().get(0));
     }
 
     private static SendMessageRequest constructMessage(String continuationToken) {
