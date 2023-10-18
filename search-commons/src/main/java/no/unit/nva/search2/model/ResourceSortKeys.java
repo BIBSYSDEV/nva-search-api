@@ -14,9 +14,7 @@ import java.util.stream.Collectors;
 public enum ResourceSortKeys {
     INVALID(""),
     CATEGORY("entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR_NAME("entityDescription.contributors.identity.name"),
     CREATED_DATE("createdDate"),
-    INSTITUTION_NAME("entityDescription.contributors.affiliation.name"),
     MODIFIED_DATE("modifiedDate"),
     PUBLISHED_DATE("publishedDate"),
     TITLE("entityDescription.mainTitle"),

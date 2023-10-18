@@ -168,19 +168,19 @@ paths:
           type: string
       - in: query
         name: page
-        description: "Page number. See Pagination https://api.cristin.no/v2/doc/index.html#pagination"
+        description: "Page number, zero based, see from and size."
         required: false
         schema:
           type: number
       - in: query
-        name: offset
-        description: "Start result from item no. See Pagination"
+        name: from
+        description: "Start result from item no. zero based [offset] is also accepted. Default is 0"
         required: false
         schema:
           type: number
       - in: query
-        name: per_page
-        description: "Number of items per page. See Pagination"
+        name: size
+        description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15"
         required: false
         schema:
           type: number
@@ -192,25 +192,25 @@ paths:
           type: string
       - in: query
         name: published_before
-        description: "Results published before and inclusive the given year, (yyyy), e.g: 2017"
+        description: "Results published before and inclusive the given date, (yyyy-mm-dd), e.g: 2005-03-17"
         required: false
         schema:
           type: string
       - in: query
         name: published_since
-        description: "Results published since and inclusive the given year, (yyyy), e.g: 2005"
+        description: "Results published since and inclusive the given date, (yyyy-mm-dd), e.g: 2005-03-17"
         required: false
         schema:
           type: string
       - in: query
         name: query
-        description: "expected to be a lucene query string, e.g: '(title:my title)'"
+        description: "free text search, all words are searched for in all fields, only documents containing all words are returned"
         required: false
         schema:
           type: string
       - in: query
         name: sort
-        description: "Sorts on 'category' and/or 'year_published'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
+        description: "Sorts on [category] and/or [created_date, modified_date, published_date, title, unit_id], e.g: sort=category:asc,created_date:desc"
         required: false
         schema:
           type: string
@@ -234,10 +234,10 @@ paths:
           type: string
       - in: query
         name: year_reported
-        description: "The year a result was reported"
+        description: "The year a result was reported (i.e 2022)"
         required: false
         schema:
-          type: string
+          type: number
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
