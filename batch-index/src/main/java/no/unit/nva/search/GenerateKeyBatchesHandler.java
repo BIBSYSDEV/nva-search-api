@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static java.util.Objects.nonNull;
+import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
 import static no.unit.nva.search.BatchIndexingConstants.defaultSqsClient;
 import static nva.commons.core.attempt.Try.attempt;
@@ -37,7 +38,8 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     public static final String KEY_BATCHES_QUEUE = ENVIRONMENT.readEnv("KEY_BATCHES_QUEUE_NAME");
     public static final int MAX_KEYS = Integer.parseInt(
         ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
-    private static final String KEY_BATCH_MESSAGE_GROUP = ENVIRONMENT.readEnv("KEY_BATCHES_MESSAGE_GROUP");
+    private static final String KEY_BATCH_MESSAGE_GROUP =
+        ENVIRONMENT.readEnvOpt("KEY_BATCHES_MESSAGE_GROUP").orElse("KEY_BATCHES_GROUP_ID");
     private final S3Client inputClient;
     private final S3Client outputClient;
     private final String inputBucketName;
@@ -84,6 +86,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
                    .messageBody(new KeyBatchMessage(continuationToken).toString())
                    .queueUrl(getQueueUrl())
                    .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
+                   .messageDeduplicationId(randomUUID().toString())
                    .build();
     }
 
@@ -111,7 +114,7 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private void writeObject(String object) {
-        var request = PutObjectRequest.builder().bucket(outputBucketName).key(UUID.randomUUID().toString()).build();
+        var request = PutObjectRequest.builder().bucket(outputBucketName).key(randomUUID().toString()).build();
         outputClient.putObject(request, RequestBody.fromBytes(object.getBytes(StandardCharsets.UTF_8)));
     }
 }
