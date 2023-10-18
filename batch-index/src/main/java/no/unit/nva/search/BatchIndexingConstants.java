@@ -8,6 +8,7 @@ import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 public final class BatchIndexingConstants {
 
@@ -39,6 +40,15 @@ public final class BatchIndexingConstants {
     public static S3Client defaultS3Client() {
         String awsRegion = ENVIRONMENT.readEnvOpt(AWS_REGION_ENV_VARIABLE).orElse(Region.EU_WEST_1.toString());
         return S3Client.builder()
+                   .region(Region.of(awsRegion))
+                   .httpClient(UrlConnectionHttpClient.builder().build())
+                   .build();
+    }
+
+    @JacocoGenerated
+    public static SqsClient defaultSqsClient() {
+        var awsRegion = ENVIRONMENT.readEnvOpt(AWS_REGION_ENV_VARIABLE).orElse(Region.EU_WEST_1.toString());
+        return SqsClient.builder()
                    .region(Region.of(awsRegion))
                    .httpClient(UrlConnectionHttpClient.builder().build())
                    .build();

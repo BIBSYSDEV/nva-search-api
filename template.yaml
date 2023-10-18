@@ -582,6 +582,13 @@ Resources:
           ALLOWED_ORIGIN: '*'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
+          KEY_BATCHES_QUEUE_NAME: !Ref KeyBatchesQueueName
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt KeyBatchesQueueName.Arn
+
 
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
@@ -654,3 +661,9 @@ Resources:
           - Id: DeleteContentAfter3Days
             Status: Enabled
             ExpirationInDays: 3
+
+  KeyBatchesQueueName:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref KeyBatchesQueueName
+
