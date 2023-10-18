@@ -165,6 +165,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             }
         }
 
+        private static boolean notInvalid(String key) {
+            return keyFromString(key) != ResourceParameterKey.INVALID;
+        }
+
         private String validateSortKey(String keySort) {
             var sortKeyParts = keySort.split(COLON);
             if (sortKeyParts.length > EXPECTED_TWO_PARTS) {
@@ -207,7 +211,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             return ALL.equals(value) || isNull(value)
                        ? ALL
                        : Arrays.stream(value.split(COMMA))
-                             .filter(key -> !ResourceSortKeys.fromSortKey(key).equals(INVALID))
+                             .filter(Builder::notInvalid)
                              .collect(Collectors.joining(COMMA));
         }
     }

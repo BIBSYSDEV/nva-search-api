@@ -102,7 +102,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
         var builder = new SearchSourceBuilder().query(queryBuilderWrapper.builder());
         var query = queryBuilderWrapper.query();
-        var searchAfter = query.getValue(SEARCH_AFTER).toString();
+        var searchAfter = query.removeValue(SEARCH_AFTER);
 
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(COMMA);
