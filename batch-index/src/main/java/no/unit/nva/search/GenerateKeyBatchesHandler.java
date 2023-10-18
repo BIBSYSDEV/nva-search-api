@@ -120,13 +120,14 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
     }
 
     private SendMessageRequest constructMessage(String lastEvaluatedKey) {
-        logger.info();
-        return SendMessageRequest.builder()
+        var message = SendMessageRequest.builder()
                    .messageBody(new KeyBatchMessage(lastEvaluatedKey).toString())
                    .queueUrl(getQueueUrl())
                    .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
                    .messageDeduplicationId(randomUUID().toString())
                    .build();
+        logger.info("Message to send: {}", message.toString());
+        return message;
     }
 
     private String getQueueUrl() {
