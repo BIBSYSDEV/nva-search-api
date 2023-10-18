@@ -94,10 +94,10 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=CONTRIBUTOR_NAME:asc,institution_name:desc"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=institutionName:asc,"
+            URI.create("https://example.com/?category=PhdThesis&orderBy=UNIT_ID:asc,title:desc"),
+            URI.create("https://example.com/?category=PhdThesis&orderBy=title:asc,"
                        + "modifiedDate:desc&searchAfter=1241234,23412"),
-            URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=contributor_name+desc"));
+            URI.create("https://example.com/?category=PhdThesis&sort=unitId+asc&sort=category+desc"));
     }
 
     static Stream<URI> uriProvider() {
@@ -105,8 +105,8 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
             URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg"),
             URI.create("https://example.com/?title=hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/?contributor=hello+world&published_before=2020"),
-            URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019"),
+            URI.create("https://example.com/?contributor=hello+world&published_before=2020-01-01"),
+            URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019-01-01"),
             URI.create("https://example.com/?user=hello+world&size=1&from=0"),
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
@@ -115,7 +115,7 @@ class ResourceAwsClientTest {
         return Stream.of(
             URI.create("https://example.com/?categories=hello+world&lang=en"),
             URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/?conttributors=hello+world&published_before=2020"),
+            URI.create("https://example.com/?conttributors=hello+world&published_before=2020-01-01"),
             URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
             URI.create("https://example.com/?useers=hello+world&lang=en"));
     }
