@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>> {
 
-    R doSearch(Q query, String mediaType);
+    R doSearch(Q query);
 
     @NotNull
     @JacocoGenerated

@@ -1,6 +1,6 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT;
+import static no.unit.nva.search.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -61,7 +61,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         indexer = new EventBasedBatchIndexer(s3Client,
                                              openSearchClient,
                                              eventBridgeClient,
-                                             NUMBER_OF_FILES_PER_EVENT);
+                                             NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
     }
 
     @ParameterizedTest(name = "should return all ids for published resources that failed to be indexed. "

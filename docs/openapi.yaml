@@ -240,7 +240,7 @@ paths:
           type: string
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Search2ResourcesFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY

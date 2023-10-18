@@ -83,6 +83,18 @@
       "value": "2-s2.0-85124989905"
     }
   ],
+  "associatedArtifacts" : [ {
+    "type" : "PublishedFile",
+    "identifier" : "87aa4a2b-83b7-4830-86a3-c032f93272d0",
+    "name" : "Inflammation+in+the+pleural+cavity+following+injection+of+multi+walled+carbon+nanotubes+is+dependent+on+their+characteristics+and+the+presence+of+IL.pdf",
+    "mimeType" : "application/pdf",
+    "size" : 2478719,
+    "license" : "https://rightsstatements.org/page/inc/1.0",
+    "administrativeAgreement" : false,
+    "publisherAuthority" : true,
+    "publishedDate" : "2023-10-03T09:15:02.568906448Z",
+    "visibleForNonOwner" : true
+  } ],
   "entityDescription": {
     "type": "EntityDescription",
     "abstract": "The demand for sustainably produced proteins is increasing with the world population and is prompting a dietary shift toward plant sourced proteins. Vegetable proteins have lower digestibility and biological value compared to animal derived counterparts. We explored sprouting of chickpea seeds as a strategy for improving digestibility. Protein evolution associated with by the sprouting process was assessed by proteomics. The sprouting induced breakdown of seed storage proteins and doubled the release of free alpha-amino nitrogen in sprouted chickpea flour. During sprouting, several enzymes involved in plant development were newly expressed. An ex vivo model of gastroduodenal and jejunal digestion was applied to assess the bioaccessibility of the protein digests. Proteins from chickpea sprouts showed a greater susceptibility to digestion with a 10% increase in alpha amino nitrogen. Peptides with potential immunoreactivity or bioactivity were catalogued in both digested chickpea sprouts and seeds using an in-silico approach. Peptides belonging to the non-specific transfer proteins, which are allergens in pulses, and peptides belonging to an IgE-binding hemagglutinin protein could only be identified in the digested chickpea sprouts. The observation collected paved the way to immune-based evaluations to assess the effect of germination on the allergenic potential.",
@@ -140,9 +152,23 @@
     "reference": {
       "type": "Reference",
       "doi": "https://doi.org/10.1016/j.foodres.2022.111012",
-      "publicationContext": {
-        "id": "https://api.nva.unit.no/publication-channels/journal/1111/2019",
-        "type": "Journal"
+      "publicationContext" : {
+        "series" : {
+          "type" : "UnconfirmedSeries"
+        },
+        "publisher" : {
+          "valid" : true,
+          "identifier" : "25162",
+          "website" : {
+            "id" : "http://www.afnlp.org/"
+          },
+          "level" : "1",
+          "name" : "Asian Federation of Natural Language Processing",
+          "active" : true,
+          "id" : "https://api.dev.nva.aws.unit.no/publication-channels/publisher/25162/2023",
+          "type" : "Publisher"
+        },
+        "type" : "Book"
       },
       "publicationInstance": {
         "type": "AcademicArticle",

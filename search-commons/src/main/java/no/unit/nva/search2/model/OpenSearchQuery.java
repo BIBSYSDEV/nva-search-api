@@ -4,6 +4,8 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
 import static no.unit.nva.search2.constant.ApplicationConstants.AND;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
 import static no.unit.nva.search2.constant.ApplicationConstants.OR;
 import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
@@ -13,11 +15,12 @@ import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.StringUtils.SPACE;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,70 +28,58 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
+import no.unit.nva.search2.model.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-    protected static final String SPACE_ENCODED = "%20";
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected transient URI gatewayUri = URI.create("https://localhost/resource/search");
+    private transient MediaType mediaType;
+    private transient URI gatewayUri = URI.create("https://localhost/resource/search");
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
         queryParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
+        mediaType = MediaType.JSON_UTF_8;
     }
 
     /**
-     * Builds URI to query SWS based on parameters supplied to the builder methods.
+     * Builds URI to query SWS based on post body.
      *
-     * @return an URI to NVA (default) Projects with parameters.
+     * @return an URI to Sws search without parameters.
      */
-    public URI openSearchUri() {
+    public URI openSearchSwsUri() {
         return
             fromUri(readSearchInfrastructureApiUri())
                 .addChild(RESOURCES, SEARCH)
-                .addQueryParameters(toLuceneParameter())
-                .addQueryParameters(toParameters())
                 .getUri();
     }
 
-    /**
-     * Query Parameters with string Keys.
-     *
-     * @return Map of String and String
-     */
-    public Map<String, String> toParameters() {
-        var results =
-            queryParameters.entrySet().stream()
-                .collect(Collectors.toMap(this::toQueryName, this::toQueryValue));
-        return new TreeMap<>(results);
-    }
 
     /**
      * Query Parameters with string Keys.
      *
      * @return Map of String and String
      */
-    public Map<String, String> toLuceneParameter() {
+    public Map<String, String> toSwsLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
-                        .map(this::toLuceneEntryToString)
+                        .map(this::swsLuceneEntryToString)
                         .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
@@ -98,14 +89,15 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return Map of String and String
      */
-    public Map<String, String> toGateWayRequestParameter() {
+    public Map<String, String> toNvaSearchApiRequestParameter() {
         var results = new LinkedHashMap<String, String>();
         Stream.of(luceneParameters.entrySet(), queryParameters.entrySet())
             .flatMap(Set::stream)
             .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-            .forEach(entry -> results.put(toGatewayKey(entry), toQueryValue(entry)));
+            .forEach(entry -> results.put(toNvaSearchApiKey(entry), entry.getValue().replace(SPACE, PLUS)));
         return results;
     }
+
 
     /**
      * Get value from Query Parameter Map with key.
@@ -127,6 +119,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                    ? luceneParameters.remove(key)
                    : queryParameters.remove(key);
     }
+
+    @JacocoGenerated
+    public boolean isPresent(K key) {
+        return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
+    }
+
 
     /**
      * Add a key value pair to Query Parameter Map.
@@ -152,6 +150,67 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         }
     }
 
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        if (nonNull(mediaType) && mediaType.contains("text/")) {
+            this.mediaType = MediaType.CSV_UTF_8;
+        } else {
+            this.mediaType = MediaType.JSON_UTF_8;
+        }
+    }
+
+    public URI getNvaSearchApiUri() {
+        return gatewayUri;
+    }
+
+    public void setNvaSearchApiUri(URI gatewayUri) {
+        this.gatewayUri = gatewayUri;
+    }
+
+    protected String toNvaSearchApiKey(Entry<K, String> entry) {
+        return entry.getKey().key().toLowerCase(Locale.getDefault());
+    }
+
+    protected String toSwsParameterValue(Entry<K, String> entry) {
+        return entry.getKey().kind() == ParamKind.SORT_STRING
+                   ? Arrays.stream(entry.getValue().split(COMMA))
+                         .map(sort -> sort.split(COLON))
+                         .map(this::expandToSwsSort)
+                         .collect(Collectors.joining(COMMA))
+                   : entry.getValue();
+    }
+
+    protected static String mergeParameters(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches("asc|desc") ? COLON : COMMA;
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
+    }
+
+    protected static String decodeUTF(String encoded) {
+        return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+    }
+
+    private String swsLuceneEntryToString(Entry<K, String> entry) {
+        return
+            entry.getKey().swsKey().stream()
+                .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toSwsParameterValue(entry)))
+                .collect(Collectors.joining(OR, PREFIX, SUFFIX));
+    }
+
+    private String expandToSwsSort(String... strings) {
+        var luceneKey = ResourceSortKeys
+                            .fromSortKey(strings[0])
+                            .getFieldName();
+        var sortOrder = strings[1].toLowerCase(Locale.getDefault());
+        return luceneKey + COLON + sortOrder;
+    }
+
     public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
         return queryToMapEntries(uri.getQuery());
     }
@@ -166,44 +225,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 : Collections.emptyList();
     }
 
-    protected String toQueryName(Entry<K, String> entry) {
-        return entry.getKey().swsKey().stream().findFirst().orElseThrow();
-    }
-
-    protected String toGatewayKey(Entry<K, String> entry) {
-        return entry.getKey().key();
-    }
-
-    protected String toQueryValue(Entry<K, String> entry) {
-        return entry.getKey().encoding() == KeyEncoding.ENCODE_DECODE
-                   ? encodeUTF(entry.getValue())
-                   : entry.getValue();
-    }
-
-    protected static String mergeParameters(String oldValue, String newValue) {
-        if (nonNull(oldValue)) {
-            var delimiter = newValue.matches("asc|desc") ? ":" : ",";
-            return String.join(delimiter, oldValue, newValue);
-        } else {
-            return newValue;
-        }
-    }
-
-    protected static String decodeUTF(String encoded) {
-        return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
-    }
-
-    protected String encodeUTF(String unencoded) {
-        return URLEncoder.encode(unencoded, StandardCharsets.UTF_8).replace(SPACE_ENCODED, PLUS);
-    }
-
-    private String toLuceneEntryToString(Entry<K, String> entry) {
-        return
-            entry.getKey().swsKey().stream()
-                .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toQueryValue(entry)))
-                .collect(Collectors.joining(OR, PREFIX, SUFFIX));
-    }
-
     @NotNull
     private static Entry<String, String> stringsToEntry(String... strings) {
         return new Entry<>() {
@@ -214,7 +235,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
             @Override
             public String getValue() {
-                return valueOrEmpty(strings);
+                return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
             }
 
             @Override
@@ -223,14 +244,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
         };
-    }
-
-    private static String valueOrEmpty(String... strings) {
-        return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
-    }
-
-    public static int compareParameterKey(ResourceParameterKey key1, ResourceParameterKey key2) {
-        return key1.ordinal() - key2.ordinal();
     }
 
     @SuppressWarnings({"PMD.ShortMethodName"})
@@ -249,22 +262,24 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
             return (T) switch (key.kind()) {
-                case SHORT_DATE, DATE -> castDateTime();
+                case DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };
+        }
+
+        @Override
+        public String toString() {
+            return value;
         }
 
         private <T> T castDateTime() {
             return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
 
-
-
         @NotNull
         private <T extends Number> T castNumber() {
-            return (T) attempt(() -> Integer.parseInt(value))
-                           .orElseThrow();
+            return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
         }
     }
 }

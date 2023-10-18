@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,19 +35,23 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceSwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
+                .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(FROM).as());
         assertNotNull(resourceParameters.getValue(SIZE).as());
+        var uri2 =
+            UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
+                .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
+
         logger.info(resourceParameters
-                        .toGateWayRequestParameter()
+                        .toNvaSearchApiRequestParameter()
                         .entrySet().stream()
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(" & ")));
-        assertNotEquals(uri, resourceParameters.openSearchUri());
+                        .collect(Collectors.joining("&")));
+        logger.info(uri2.toString());
+        assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
 
 
@@ -54,8 +59,7 @@ class ResourceQueryTest {
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceSwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
@@ -93,8 +97,7 @@ class ResourceQueryTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceSwsQuery.Builder
-                .queryBuilder()
+            ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
@@ -108,12 +111,11 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceSwsQuery.Builder
-                               .queryBuilder()
+                     () -> ResourceAwsQuery.builder()
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
-                               .openSearchUri());
+                               .openSearchSwsUri());
     }
 
 
@@ -122,21 +124,23 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceSwsQuery.Builder
-                               .queryBuilder()
+                     () -> ResourceAwsQuery.builder()
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
-                               .openSearchUri());
+                               .openSearchSwsUri());
     }
 
 
     static Stream<URI> uriProvider() {
         return Stream.of(
             URI.create("https://example.com/"),
-            URI.create("https://example.com/?fields=value1,value2"),
+            URI.create("https://example.com/?fields=category,title,created_date"),
             URI.create("https://example.com/?fields=all"),
             URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
+            URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),
+            URI.create("https://example.com/?category=hello+world&sort=created_date:ASC"),
+            URI.create("https://example.com/?category=hello+world&sort=created_date"),
             URI.create("https://example.com/?category=hello+world&user=12%203&page=2"),
             URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
             URI.create("https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
@@ -146,10 +150,10 @@ class ResourceQueryTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?sort=fieldName1&sortOrder=asc&sort=fieldName2&order=desc"),
+            URI.create("https://example.com/?sort=category&sortOrder=asc&sort=created_date&order=desc"),
             URI.create("https://example.com/"),
-            URI.create("https://example.com/?orderBy=fieldName1:asc,fieldName2:desc"),
-            URI.create("https://example.com/?sort=fieldName1+asc&sort=fieldName2+desc"));
+            URI.create("https://example.com/?orderBy=category:asc,created_date:desc"),
+            URI.create("https://example.com/?sort=category+asc&sort=created_date+desc"));
     }
 
     static Stream<URI> uriDatesProvider() {
@@ -164,6 +168,8 @@ class ResourceQueryTest {
             URI.create("https://example.com/?dcategory=hello+world&page=0"),
             URI.create("https://example.com/?publishedbefore=202t0&lang=en&user="),
             URI.create("https://example.com/?publishedbefore=202t0&lang=en&"),
+            URI.create("https://example.com/?publishedbefore=2020&sort=category:BESC"),
+            URI.create("https://example.com/?publishedbefore=2020&sort=category:BESC:AS"),
             URI.create("https://example.com/?institutions=uib&funding=NFR&lang=en"));
     }
 }

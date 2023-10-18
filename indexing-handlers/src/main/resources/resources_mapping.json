@@ -28,7 +28,12 @@
                   "type": "keyword"
                 },
                 "name": {
-                  "type": "keyword"
+                  "type": "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword"
+                    }
+                  }
                 }
               }
             }
@@ -44,6 +49,36 @@
               "properties": {
                 "type": {
                   "type": "keyword"
+                }
+              }
+            },
+            "publicationContext": {
+              "type": "nested",
+              "include_in_parent": true,
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "identifier": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                },
+                "publisher": {
+                  "type": "nested",
+                  "include_in_parent": true,
+                  "properties": {
+                    "id": {
+                      "type": "keyword"
+                    },
+                    "identifier": {
+                      "type": "keyword"
+                    },
+                    "name": {
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
             }
@@ -74,6 +109,18 @@
       "include_in_parent": true,
       "properties": {
         "id": {
+          "type": "keyword"
+        },
+        "name": {
+          "type": "keyword"
+        }
+      }
+    },
+    "associatedArtifacts": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "identifier": {
           "type": "keyword"
         },
         "name": {
