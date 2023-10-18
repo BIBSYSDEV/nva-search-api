@@ -686,5 +686,5 @@ Resources:
     Properties:
       FifoQueue: True
       VisibilityTimeout: 900
-      QueueName: !Ref KeyBatchesQueueName
+      QueueName: !Ref KeyBatchesQueueName.fifo
 
