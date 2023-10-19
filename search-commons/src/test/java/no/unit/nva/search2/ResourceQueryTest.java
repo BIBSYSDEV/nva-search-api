@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,12 +41,17 @@ class ResourceQueryTest {
                 .build();
         assertNotNull(resourceParameters.getValue(FROM).as());
         assertNotNull(resourceParameters.getValue(SIZE).as());
+        var uri2 =
+            UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
+                .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
+
         logger.info(resourceParameters
-                        .toGateWayRequestParameter()
+                        .toNvaSearchApiRequestParameter()
                         .entrySet().stream()
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(" & ")));
-        assertNotEquals(uri, resourceParameters.openSearchUri());
+                        .collect(Collectors.joining("&")));
+        logger.info(uri2.toString());
+        assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
 
 
@@ -64,7 +70,7 @@ class ResourceQueryTest {
         var publishedBefore =
             resourceParameters
                 .getValue(PUBLISHED_BEFORE)
-                .<Integer>as();
+                .<DateTime>as();
         var created =
             resourceParameters
                 .getValue(CREATED_BEFORE)
@@ -109,7 +115,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
-                               .openSearchUri());
+                               .openSearchSwsUri());
     }
 
 
@@ -122,7 +128,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
-                               .openSearchUri());
+                               .openSearchSwsUri());
     }
 
 
@@ -138,8 +144,9 @@ class ResourceQueryTest {
             URI.create("https://example.com/?category=hello+world&user=12%203&page=2"),
             URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
             URI.create("https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
-            URI.create("https://example.com/?published_before=2020&lang=en&user=1%2023"),
-            URI.create("https://example.com/?published_since=2019&institution=uib&funding=NFR&user=Per%20Eplekjekk"));
+            URI.create("https://example.com/?published_before=2020-01-01&lang=en&user=1%2023"),
+            URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding=NFR&user=Per"
+                       + "%20Eplekjekk"));
     }
 
     static Stream<URI> uriSortingProvider() {
@@ -153,7 +160,7 @@ class ResourceQueryTest {
     static Stream<URI> uriDatesProvider() {
         return Stream.of(
             URI.create("https://example.com/?category=hello&modified_before=2020-01-01&modified_since=2019-01-01"),
-            URI.create("https://example.com/?published_before=2020&published_since=2019"),
+            URI.create("https://example.com/?published_before=2020-01-02&published_since=2019-01-02"),
             URI.create("https://example.com/?created_before=2020-01-01T23:59:59&created_since=2019-01-01"));
     }
 

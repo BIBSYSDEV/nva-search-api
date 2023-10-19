@@ -25,6 +25,10 @@ public interface ParameterKey {
         return key -> name.matches(key.keyPattern());
     }
 
+    static String escapeSearchString(String value){
+        return value.replaceAll("([-+&|!(){}\\[\\]^\"~*?:\\\\/])", "\\$1");
+    }
+
     enum KeyEncoding {
         NONE,DECODE
     }
@@ -52,5 +56,4 @@ public interface ParameterKey {
             return format;
         }
     }
-
 }

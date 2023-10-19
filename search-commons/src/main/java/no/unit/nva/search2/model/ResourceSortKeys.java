@@ -14,9 +14,7 @@ import java.util.stream.Collectors;
 public enum ResourceSortKeys {
     INVALID(""),
     CATEGORY("entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR_NAME("entityDescription.contributors.identity.name"),
     CREATED_DATE("createdDate"),
-    INSTITUTION_NAME("entityDescription.contributors.affiliation.name"),
     MODIFIED_DATE("modifiedDate"),
     PUBLISHED_DATE("publishedDate"),
     TITLE("entityDescription.mainTitle"),
@@ -42,7 +40,6 @@ public enum ResourceSortKeys {
         this.fieldName = fieldName;
     }
 
-
     public String getKeyPattern() {
         return keyValidationRegEx;
     }
@@ -51,9 +48,9 @@ public enum ResourceSortKeys {
         return fieldName;
     }
 
-    public static ResourceSortKeys keyFromString(String paramName) {
+    public static ResourceSortKeys fromSortKey(String keyName) {
         var result = Arrays.stream(ResourceSortKeys.values())
-            .filter(ResourceSortKeys.equalTo(paramName))
+            .filter(ResourceSortKeys.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
