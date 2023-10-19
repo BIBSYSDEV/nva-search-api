@@ -135,11 +135,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public void setLucineValue(K key, String value) {
         if (nonNull(value)) {
-            var encodedValue = key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
+            var decodedValue = key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
             if (key.kind() == ParamKind.STRING) {
-                luceneParameters.put(key, escapeSearchString(encodedValue));
+                luceneParameters.put(key, escapeSearchString(decodedValue));
             } else {
-                luceneParameters.put(key, encodedValue);
+                luceneParameters.put(key, decodedValue);
             }
         }
     }
