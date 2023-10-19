@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
@@ -128,7 +129,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         return HttpRequest
             .newBuilder(qbs.requestUri())
             .headers(
-                "Accept", MediaType.JSON_UTF_8.toString(),
+                ACCEPT, MediaType.JSON_UTF_8.toString(),
                 AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
             .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
