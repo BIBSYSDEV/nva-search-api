@@ -6,6 +6,8 @@ import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
+import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -46,7 +48,7 @@ class GenerateKeyBatchesHandlerTest {
     void shouldPersistS3KeysToBatchBucket() throws JsonProcessingException {
         final var allFiles = putObjectsInInputBucket(10);
 
-        handler.handleRequest(eventStream(null), outputStream, new FakeContext());
+        handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
 
         var actual = getPersistedFileFromOutputBucket();
         var expected = allFiles.stream().collect(Collectors.joining(System.lineSeparator()));
@@ -58,7 +60,7 @@ class GenerateKeyBatchesHandlerTest {
     void shouldEmitNewEventWhenS3BucketHasNotBeenTruncated() throws JsonProcessingException {
         var s3Objects = putObjectsInInputBucket(1001);
 
-        handler.handleRequest(eventStream(null), outputStream, new FakeContext());
+        handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
 
         var emittedEvent = eventBridgeClient.getLatestEvent();
 

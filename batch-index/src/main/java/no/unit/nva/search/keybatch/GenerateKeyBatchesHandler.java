@@ -67,17 +67,18 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         var keys = getKeys(response);
         writeObject(toKeyString(keys));
         var lastEvaluatedKey = getLastEvaluatedKey(keys);
-        sendEvent(constructRequestEntry(lastEvaluatedKey));
+        sendEvent(constructRequestEntry(lastEvaluatedKey, context));
         logger.info(PERSISTED_MESSAGE);
         return null;
     }
 
-    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey) {
+    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context) {
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
                    .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC).toJsonString())
                    .source(EventBasedBatchIndexer.class.getName())
                    .time(Instant.now())
+                   .resources(context.getInvokedFunctionArn())
                    .build();
     }
 
