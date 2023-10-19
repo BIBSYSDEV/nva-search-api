@@ -85,6 +85,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                    .getUri();
     }
 
+    @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
 
         private static final String ALL = "all";
