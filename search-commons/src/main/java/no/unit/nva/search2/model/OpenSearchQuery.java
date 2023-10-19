@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
 import no.unit.nva.search2.model.ParameterKey.ParamKind;
+import nva.commons.apigateway.MediaTypes;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -160,8 +161,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         return mediaType;
     }
 
-    public void setMediaType(String mediaType) {
-        if (nonNull(mediaType) && mediaType.contains("text/")) {
+    public void setMediaType(String acceptHeader) {
+        if (isNull(acceptHeader) || acceptHeader.contains(MediaType.JSON_UTF_8.toString())) {
+            this.mediaType = MediaType.JSON_UTF_8;
+        } else if (acceptHeader.contains(MediaTypes.APPLICATION_JSON_LD.toString())) {
+            this.mediaType = MediaTypes.APPLICATION_JSON_LD;
+        } else if (acceptHeader.contains("text/")) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
             this.mediaType = MediaType.JSON_UTF_8;
