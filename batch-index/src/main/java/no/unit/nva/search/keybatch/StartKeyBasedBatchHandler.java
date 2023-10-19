@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 public class StartKeyBasedBatchHandler implements RequestStreamHandler {
 
     public static final String EVENT_BUS = new Environment().readEnv("EVENT_BUS");
-    public static final String KEY_BASED_BATCH = new Environment().readEnv("TOPIC");
+    public static final String TOPIC = new Environment().readEnv("TOPIC");
     private static final Logger logger = LoggerFactory.getLogger(StartKeyBasedBatchHandler.class);
     private final EventBridgeClient client;
 
@@ -43,7 +43,7 @@ public class StartKeyBasedBatchHandler implements RequestStreamHandler {
     private static PutEventsRequestEntry constructRequestEntry(Context context) {
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
-                   .detail(new KeyBatchRequestEvent(null).toJsonString())
+                   .detail(new KeyBatchRequestEvent(null, TOPIC).toJsonString())
                    .detailType(INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL)
                    .source(EventBasedBatchIndexer.class.getName())
                    .resources(context.getInvokedFunctionArn())

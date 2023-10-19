@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
 import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.EVENT_BUS;
+import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.TOPIC;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -74,7 +75,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey) {
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
-                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey).toJsonString())
+                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC).toJsonString())
                    .source(EventBasedBatchIndexer.class.getName())
                    .time(Instant.now())
                    .build();

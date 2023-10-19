@@ -6,6 +6,6 @@ import no.unit.nva.commons.json.JsonSerializable;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSerialize
-public record KeyBatchRequestEvent(String startMarker) implements JsonSerializable {
+public record KeyBatchRequestEvent(String startMarker, String topic) implements JsonSerializable {
 
 }
