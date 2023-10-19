@@ -3,6 +3,7 @@ package no.unit.nva.search.keybatch;
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
+import static no.unit.nva.search.EmitEventUtils.INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL;
 import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.EVENT_BUS;
 import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.TOPIC;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -22,6 +23,7 @@ import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
+import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -62,13 +64,13 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     protected Void processInput(KeyBatchRequestEvent input, AwsEventBridgeEvent<KeyBatchRequestEvent> event,
                                 Context context) {
         var startMarker = getStartMarker(input);
-        logger.error(START_MARKER_MESSAGE, startMarker);
+        logger.info(START_MARKER_MESSAGE, startMarker);
         var response = inputClient.listObjectsV2(createRequest(startMarker));
         var keys = getKeys(response);
         writeObject(toKeyString(keys));
         var lastEvaluatedKey = getLastEvaluatedKey(keys);
-        sendEvent(constructRequestEntry(lastEvaluatedKey, context));
-        logger.info(PERSISTED_MESSAGE);
+        var eventsResponse = sendEvent(constructRequestEntry(lastEvaluatedKey, context));
+        logger.info(eventsResponse.toString());
         return null;
     }
 
@@ -76,9 +78,10 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
                    .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC).toJsonString())
+                   .detailType(INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL)
                    .source(EventBasedBatchIndexer.class.getName())
-                   .time(Instant.now())
                    .resources(context.getInvokedFunctionArn())
+                   .time(Instant.now())
                    .build();
     }
 
@@ -117,8 +120,8 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         return EventBridgeClient.builder().httpClientBuilder(UrlConnectionHttpClient.builder()).build();
     }
 
-    private void sendEvent(PutEventsRequestEntry event) {
-        eventBridgeClient.putEvents(PutEventsRequest.builder().entries(event).build());
+    private PutEventsResponse sendEvent(PutEventsRequestEntry event) {
+        return eventBridgeClient.putEvents(PutEventsRequest.builder().entries(event).build());
     }
 
     private void writeObject(String object) {

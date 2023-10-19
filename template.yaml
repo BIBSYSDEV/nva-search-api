@@ -621,9 +621,10 @@ Resources:
       Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          EVENT_BUS: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
+          TOPIC: 'SearchService.Index.KeyBasedBatch'
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule
