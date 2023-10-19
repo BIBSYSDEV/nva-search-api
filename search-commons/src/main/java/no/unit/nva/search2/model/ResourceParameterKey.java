@@ -40,9 +40,9 @@ public enum ResourceParameterKey implements ParameterKey {
                         + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
-    DOI(CUSTOM, "entityDescription.reference.doi"),
-    FUNDING(STRING, "fundings.identifier|source.identifier"),
-    FUNDING_SOURCE(STRING, "fundings.source.identifier"),
+    DOI(STRING, "entityDescription.reference.doi"),
+    FUNDING(STRING, "fundings.identifier"),
+    FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels.*"),
     ID(STRING, "identifier"),
     INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
                         + "|entityDescription.contributors.affiliation.name"),
