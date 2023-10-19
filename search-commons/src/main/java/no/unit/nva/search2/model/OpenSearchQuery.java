@@ -161,7 +161,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     public void setMediaType(String mediaType) {
-        if (nonNull(mediaType) && mediaType.contains("text/")) {
+        if (nonNull(mediaType) && mediaType.contains("text/csv")) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
             this.mediaType = MediaType.JSON_UTF_8;
