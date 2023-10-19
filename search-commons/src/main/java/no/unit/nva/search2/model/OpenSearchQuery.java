@@ -81,7 +81,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     public Map<String, String> toSwsLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
                         .map(this::swsLuceneEntryToString)
-                        .collect(Collectors.joining(AND));
+                        .collect(Collectors.joining(AND, PREFIX, SUFFIX));
         return Map.of("q", query);
     }
 

@@ -102,9 +102,10 @@ class ResourceAwsClientTest {
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
-            URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg"),
             URI.create("https://example.com/?title=http://hello+world&modified_before=2019-01-01"),
+            URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
+            URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
+            URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg"),
             URI.create("https://example.com/?contributor=hello+:+world&published_before=2020-01-01"),
             URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019-01-01"),
             URI.create("https://example.com/?user=hello+world&size=1&from=0"),
