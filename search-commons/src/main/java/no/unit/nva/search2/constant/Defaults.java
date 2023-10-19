@@ -20,13 +20,12 @@ public final class Defaults {
     public static final String DEFAULT_OFFSET = "0";
     public static final String DEFAULT_VALUE_PER_PAGE = "15";
     public static final String DEFAULT_VALUE_SORT = ResourceSortKeys.PUBLISHED_DATE
-                                                        .name().toLowerCase(Locale.getDefault());
+        .name().toLowerCase(Locale.getDefault());
     public static final String DEFAULT_VALUE_SORT_ORDER = "desc";
     public static final URI PAGINATED_SEARCH_RESULT_CONTEXT
-         = URI.create("https://bibsysdev.github.io/src/search/paginated-search-result.json");
+        = URI.create("https://bibsysdev.github.io/src/search/paginated-search-result.json");
 
     public static final List<MediaType> DEFAULT_RESPONSE_MEDIA_TYPES =
-        List.of(MediaType.JSON_UTF_8, MediaTypes.APPLICATION_JSON_LD, MediaType.CSV_UTF_8, MediaTypes.APPLICATION_PROBLEM_JSON);
-
-
+        List.of(MediaType.JSON_UTF_8, MediaTypes.APPLICATION_JSON_LD,
+            MediaType.CSV_UTF_8, MediaTypes.APPLICATION_PROBLEM_JSON);
 }
