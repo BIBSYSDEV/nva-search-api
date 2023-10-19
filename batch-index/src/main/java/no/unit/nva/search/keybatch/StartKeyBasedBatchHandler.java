@@ -3,7 +3,6 @@ package no.unit.nva.search.keybatch;
 import static no.unit.nva.search.EmitEventUtils.INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
@@ -35,7 +34,7 @@ public class StartKeyBasedBatchHandler implements RequestStreamHandler {
     }
 
     @Override
-    public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
+    public void handleRequest(InputStream input, OutputStream output, Context context) {
         var event = constructRequestEntry(context);
         var response = sendEvent(event);
         logger.info(response.toString());
@@ -44,7 +43,7 @@ public class StartKeyBasedBatchHandler implements RequestStreamHandler {
     private static PutEventsRequestEntry constructRequestEntry(Context context) {
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
-                   .detail(KEY_BASED_BATCH)
+                   .detail(new KeyBatchRequestEvent(null).toJsonString())
                    .detailType(INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL)
                    .source(EventBasedBatchIndexer.class.getName())
                    .resources(context.getInvokedFunctionArn())
