@@ -44,13 +44,4 @@ public final class BatchIndexingConstants {
                    .httpClient(UrlConnectionHttpClient.builder().build())
                    .build();
     }
-
-    @JacocoGenerated
-    public static SqsClient defaultSqsClient() {
-        var awsRegion = ENVIRONMENT.readEnvOpt(AWS_REGION_ENV_VARIABLE).orElse(Region.EU_WEST_1.toString());
-        return SqsClient.builder()
-                   .region(Region.of(awsRegion))
-                   .httpClient(UrlConnectionHttpClient.builder().build())
-                   .build();
-    }
 }
