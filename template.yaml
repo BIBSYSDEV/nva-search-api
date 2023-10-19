@@ -599,7 +599,7 @@ Resources:
       Handler: no.unit.nva.search.GenerateKeyBatchesHandler::handleRequest
       Runtime: java17
       MemorySize: 1024
-      Timeout: 900
+      Timeout: 30
       Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
@@ -693,6 +693,6 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       FifoQueue: True
-      VisibilityTimeout: 900
+      VisibilityTimeout: 150
       QueueName: KeyBatchesQueueName.fifo
 
