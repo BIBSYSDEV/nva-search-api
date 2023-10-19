@@ -29,6 +29,7 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
     public static final int MAX_PAYLOAD = 5_291_456;
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
+    public static final String LAST_CONSUMED_KEY_MESSAGE = "Last consumed key: {}";
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
 
@@ -47,10 +48,11 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         var bucket = getBucketName(input);
         var key = getObjectKey(input);
         var content = fetchS3Content(bucket, key);
-        logger.info("Resources to index {}", content);
         var indexDocuments = mapToIndexDocuments(content);
+
         sendDocumentsToIndexInBatches(indexDocuments);
 
+        logger.info(LAST_CONSUMED_KEY_MESSAGE, key);
         return null;
     }
 
