@@ -14,6 +14,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.StringUtils.SPACE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -134,7 +135,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public void setLucineValue(K key, String value) {
         if (nonNull(value)) {
-            luceneParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
+            var encodedValue = key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
+            if (key.kind() == ParamKind.STRING) {
+                luceneParameters.put(key, escapeSearchString(encodedValue));
+            } else {
+                luceneParameters.put(key, encodedValue);
+            }
         }
     }
 
