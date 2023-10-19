@@ -3,13 +3,16 @@ package no.unit.nva.search;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.stubs.FakeContext;
@@ -52,35 +55,33 @@ class GenerateKeyBatchesHandlerTest {
                                                     OUTPUT_BUCKET, sqsClient);
     }
 
-//    @ParameterizedTest
-//    @ValueSource(ints = {1, 10, 25})
-//    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucket(int numberOfItemsInBucket) {
-//        final var allFiles = putObjectsInInputBucket(numberOfItemsInBucket + 10);
-//
-//        handler.handleRequest(createEventWithBody(numberOfItemsInBucket), new FakeContext());
-//
-//        var actual = getPersistedFileFromOutputBucket();
-//
-//        var expected = allFiles.subList(numberOfItemsInBucket, numberOfItemsInBucket + 10)
-//                           .stream().collect(Collectors.joining(System.lineSeparator()));
-//
-//        assertThat(actual.size(), is(equalTo(SINGLE_FILE)));
-//        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
-//    }
+    @Test
+    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucket() {
+        final var allFiles = putObjectsInInputBucket(1000);
 
-//    @Test
-//    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucketWhenInputEventIsNull() {
-//        final var allFiles = putObjectsInInputBucket(20);
-//
-//        handler.handleRequest(null, new FakeContext());
-//
-//        var actual = getPersistedFileFromOutputBucket();
-//        var expected = allFiles.subList(0, 10)
-//                           .stream().collect(Collectors.joining(System.lineSeparator()));
-//
-//        assertThat(actual.size(), is(equalTo(2)));
-//        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
-//    }
+        handler.handleRequest(createEventWithBody(1000), new FakeContext());
+
+        var actual = getPersistedFileFromOutputBucket();
+
+        var expected = allFiles
+                           .stream().collect(Collectors.joining(System.lineSeparator()));
+
+        assertThat(actual.size(), is(equalTo(SINGLE_FILE)));
+        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
+    }
+
+    @Test
+    void shouldReadS3KeysFromPersistedBucketAndWriteToS3BatchBucketWhenInputEventIsNull() {
+        final var allFiles = putObjectsInInputBucket(20);
+
+        handler.handleRequest(null, new FakeContext());
+
+        var actual = getPersistedFileFromOutputBucket();
+        var expected = allFiles.stream().collect(Collectors.joining(System.lineSeparator()));
+
+        assertThat(actual.size(), is(equalTo(1)));
+        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
+    }
 
     @Test
     void shouldNotEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
@@ -90,24 +91,6 @@ class GenerateKeyBatchesHandlerTest {
 
         assertThat(sqsClient.getSentMessages(), hasSize(0));
     }
-
-//    @Test
-//    void shouldEmitNewEventWhenAllS3ObjectsHasBeenProcessed() {
-//        putObjectsInInputBucket(20);
-//
-//        handler.handleRequest(null, new FakeContext());
-//
-//        assertThat(sqsClient.getSentMessages(), hasSize(1));
-//    }
-
-//    @Test
-//    void shouldSplit() {
-//        putObjectsInInputBucket(20);
-//
-//        handler.handleRequest(null, new FakeContext());
-//
-//        assertThat(sqsClient.getSentMessages(), hasSize(1));
-//    }
 
     private SQSEvent createEventWithBody(int continuationToken) {
         var items = s3DriverInputBucket.listFiles(UnixPath.of(RESOURCES), null, 1000);

@@ -9,7 +9,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
@@ -30,7 +29,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void> {
 
     public static final String RESOURCES_FOLDER = "resources/";
-    public static final String DEFAULT_BATCH_SIZE = "10";
+    public static final String DEFAULT_BATCH_SIZE = "1000";
     public static final String PERSISTED_MESSAGE = "Batches have been persisted successfully";
     public static final String DELIMITER = "/";
     public static final String DEFAULT_CONTINUATION_TOKEN = null;
@@ -86,12 +85,16 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
                    .prefix(RESOURCES_FOLDER)
                    .delimiter(DELIMITER)
                    .startAfter(lastEvaluatedKey)
-                   .maxKeys(1000)
+                   .maxKeys(MAX_KEYS)
                    .build();
     }
 
     private static String toKeyString(List<String> keys) {
         return keys.stream().collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    private static String getLastEvaluatedKey(List<String> keys) {
+        return keys.get(keys.size() - 1);
     }
 
     private Void logMessage(Failure<Void> input) {
@@ -104,15 +107,8 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         logger.error("Continuation token from event {}", lastEvaluatedKey);
         var response = inputClient.listObjectsV2(createRequest(lastEvaluatedKey, inputBucketName));
         var keys = response.contents().stream().map(S3Object::key).toList();
-        var list = new ArrayList<String>();
-        for (String key : keys) {
-            list.add(key);
-            if (hasBatchOfItems(list)) {
-                var string = toKeyString(list);
-                writeObject(string);
-                list.clear();
-            }
-        }
+        var string = toKeyString(keys);
+        writeObject(string);
         logger.error("S3 bucket has been truncated: {}", response.isTruncated());
         if (response.isTruncated()) {
             var message = constructMessage(getLastEvaluatedKey(keys));
@@ -122,21 +118,13 @@ public class GenerateKeyBatchesHandler implements RequestHandler<SQSEvent, Void>
         return null;
     }
 
-    private static boolean hasBatchOfItems(List<String> list) {
-        return list.size() == MAX_KEYS;
-    }
-
-    private static String getLastEvaluatedKey(List<String> keys) {
-        return keys.get(keys.size() - 1);
-    }
-
     private SendMessageRequest constructMessage(String lastEvaluatedKey) {
         var message = SendMessageRequest.builder()
-                   .messageBody(new KeyBatchMessage(lastEvaluatedKey).toString())
-                   .queueUrl(getQueueUrl())
-                   .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
-                   .messageDeduplicationId(randomUUID().toString())
-                   .build();
+                          .messageBody(new KeyBatchMessage(lastEvaluatedKey).toString())
+                          .queueUrl(getQueueUrl())
+                          .messageGroupId(KEY_BATCH_MESSAGE_GROUP)
+                          .messageDeduplicationId(randomUUID().toString())
+                          .build();
         logger.info("Message to send: {}", message.toString());
         return message;
     }
