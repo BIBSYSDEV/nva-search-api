@@ -693,6 +693,5 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       FifoQueue: True
-      VisibilityTimeout: 150
       QueueName: KeyBatchesQueueName.fifo
 
