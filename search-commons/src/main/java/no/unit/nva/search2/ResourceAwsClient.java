@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import com.google.common.net.MediaType;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
@@ -80,22 +82,22 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         var queryBuilder =
             query.isPresent(SEARCH_ALL)
                 ? QueryBuilders
-                      .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
-                      .operator(Operator.AND)
+                .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
+                .operator(Operator.AND)
                 : QueryBuilders
-                      .queryStringQuery(query.toSwsLuceneParameter().get("q"))
-                      .defaultOperator(Operator.AND);
+                .queryStringQuery(query.toSwsLuceneParameter().get("q"))
+                .defaultOperator(Operator.AND);
         return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
     }
 
     @NotNull
     private static String[] extractFields(String field) {
         return ALL.equals(field) || Objects.isNull(field)
-                   ? ASTERISK.split(COMMA)
-                   : Arrays.stream(field.split(COMMA))
-                         .map(ResourceSortKeys::fromSortKey)
-                         .map(ResourceSortKeys::getFieldName)
-                         .toArray(String[]::new);
+            ? ASTERISK.split(COMMA)
+            : Arrays.stream(field.split(COMMA))
+            .map(ResourceSortKeys::fromSortKey)
+            .map(ResourceSortKeys::getFieldName)
+            .toArray(String[]::new);
     }
 
     private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
@@ -124,10 +126,11 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private HttpRequest createRequest(QueryBuilderSourceWrapper qbs) {
         logger.info(qbs.source().query().toString());
         return HttpRequest
-                   .newBuilder(qbs.requestUri())
-                   .headers(
-                       AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-                   .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
+            .newBuilder(qbs.requestUri())
+            .headers(
+                "Accept", MediaType.JSON_UTF_8.toString(),
+                AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+            .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
 
     private HttpResponse<String> fetch(HttpRequest httpRequest) {
@@ -140,7 +143,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             throw new RuntimeException(response.body());
         }
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
-                   .orElseThrow();
+            .orElseThrow();
     }
 
     @JacocoGenerated
@@ -153,12 +156,11 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     @NotNull
     private Stream<Tuple<String, SortOrder>> getSortStream(ResourceAwsQuery query) {
         return Arrays.stream(query.getValue(SORT).<String>as().split(COMMA))
-                   .map(sort -> sort.split(COLON))
-                   .map(this::expandSortKeys);
+            .map(sort -> sort.split(COLON))
+            .map(this::expandSortKeys);
     }
 
     private boolean isFirstPage(ResourceAwsQuery query) {
         return ZERO.equals(query.getValue(FROM).as());
     }
-
 }
