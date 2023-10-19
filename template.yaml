@@ -68,6 +68,9 @@ Parameters:
   KeyBatchesQueueName:
     Type: String
     Default: KeyBatchesQueue
+  KeyBatchesDLQName:
+    Type: String
+    Default: KeyBatchesDLQ
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
@@ -615,7 +618,11 @@ Resources:
             Queue: !GetAtt KeyBatchesQueue.Arn
             BatchSize: 1
       EventInvokeConfig:
-        MaximumRetryAttempts: 0
+        DestinationConfig:
+          OnFailure:
+            Type: SQS
+            Destination: !GetAtt KeyBatchesDLQ.Arn
+        MaximumRetryAttempts: 5
 
   KeyBasedBatchIndexHandler:
     Type: AWS::Serverless::Function
@@ -694,4 +701,10 @@ Resources:
     Properties:
       FifoQueue: True
       QueueName: KeyBatchesQueueName.fifo
+
+  KeyBatchesDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref KeyBatchesDLQName
+      MessageRetentionPeriod: 43200
 
