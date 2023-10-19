@@ -26,9 +26,9 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
 
     public static final String LINE_BREAK = "\n";
     public static final int SINGLE_RECORD = 0;
+    public static final int MAX_PAYLOAD = 5_291_456;
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
-    public static final int MAX_PAYLOAD = 5_291_456;
     private final IndexingClient indexingClient;
     private final S3Client s3Client;
 
@@ -48,10 +48,28 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         var key = getObjectKey(input);
         var content = fetchS3Content(bucket, key);
         logger.info("Resources to index {}", content);
-        var resourcesToIndex = extractIdentifiers(content).map(id -> fetchS3Content(RESOURCES_BUCKET, id))
-                                   .map(IndexDocument::fromJsonString)
-                                   .filter(this::isValid);
-        var indexDocuments = resourcesToIndex.toList();
+        var indexDocuments = mapToIndexDocuments(content);
+        sendDocumentsToIndexInBatches(indexDocuments);
+
+        return null;
+    }
+
+    private static String getObjectKey(S3Event input) {
+        return input.getRecords().get(SINGLE_RECORD).getS3().getObject().getKey();
+    }
+
+    private static String getBucketName(S3Event input) {
+        return input.getRecords().get(SINGLE_RECORD).getS3().getBucket().getName();
+    }
+
+    private List<IndexDocument> mapToIndexDocuments(String content) {
+        return extractIdentifiers(content).map(id -> fetchS3Content(RESOURCES_BUCKET, id))
+                   .map(IndexDocument::fromJsonString)
+                   .filter(this::isValid)
+                   .toList();
+    }
+
+    private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
         for (IndexDocument indexDocument : indexDocuments) {
@@ -69,22 +87,13 @@ public class KeyBasedBatchIndexHandler implements RequestHandler<S3Event, Void> 
         if (!documents.isEmpty()) {
             indexDocuments(documents);
         }
-        return null;
     }
 
     private void indexDocuments(List<IndexDocument> list) {
-        var response =  attempt(() -> indexingClient.batchInsert(list.stream())).orElseThrow();
+        var response = attempt(() -> indexingClient.batchInsert(list.stream())).orElseThrow();
         if (nonNull(response)) {
             logger.info("Batch processed, has failures: {}", response.toList().get(0).hasFailures());
         }
-    }
-
-    private static String getObjectKey(S3Event input) {
-        return input.getRecords().get(SINGLE_RECORD).getS3().getObject().getKey();
-    }
-
-    private static String getBucketName(S3Event input) {
-        return input.getRecords().get(SINGLE_RECORD).getS3().getBucket().getName();
     }
 
     private boolean isValid(IndexDocument document) {

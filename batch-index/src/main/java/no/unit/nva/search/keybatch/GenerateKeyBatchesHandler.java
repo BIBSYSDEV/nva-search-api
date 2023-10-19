@@ -3,7 +3,7 @@ package no.unit.nva.search.keybatch;
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
-import static no.unit.nva.search.EmitEventUtils.INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL;
+import static no.unit.nva.search.EmitEventUtils.MANDATORY_UNUSED_SUBTOPIC;
 import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.EVENT_BUS;
 import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.TOPIC;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -78,7 +78,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
                    .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC).toJsonString())
-                   .detailType(INDICATION_THAT_EVENT_TYPE_IS_INSIDE_DETAIL)
+                   .detailType(MANDATORY_UNUSED_SUBTOPIC)
                    .source(EventBasedBatchIndexer.class.getName())
                    .resources(context.getInvokedFunctionArn())
                    .time(Instant.now())

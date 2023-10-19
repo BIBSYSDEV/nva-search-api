@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
+import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.s3.S3Driver;
-import no.unit.nva.stubs.FakeContext;
 import no.unit.nva.stubs.FakeS3Client;
 import nva.commons.core.SingletonCollector;
 import nva.commons.core.ioutils.IoUtils;
@@ -36,6 +36,8 @@ class GenerateKeyBatchesHandlerTest {
 
     public static final String OUTPUT_BUCKET = "outputBucket";
     public static final String RESOURCES = "resources";
+    public static final int SINGLE_BATCH_FILE_SIZE = 10;
+    private static final int MULTIPLE_BATCH_FILE_SIZE = 1001;
     private ByteArrayOutputStream outputStream;
     private FakeS3Client outputClient;
     private FakeS3Client inputClient;
@@ -43,29 +45,6 @@ class GenerateKeyBatchesHandlerTest {
     private GenerateKeyBatchesHandler handler;
     private S3Driver s3DriverInputBucket;
     private S3Driver s3DriverOutputBucket;
-
-    @Test
-    void shouldPersistS3KeysToBatchBucket() throws JsonProcessingException {
-        final var allFiles = putObjectsInInputBucket(10);
-
-        handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
-
-        var actual = getPersistedFileFromOutputBucket();
-        var expected = allFiles.stream().collect(Collectors.joining(System.lineSeparator()));
-
-        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
-    }
-
-    @Test
-    void shouldEmitNewEventWhenS3BucketHasNotBeenTruncated() throws JsonProcessingException {
-        var s3Objects = putObjectsInInputBucket(1001);
-
-        handler.handleRequest(eventStream(null), outputStream, mock(Context.class));
-
-        var emittedEvent = eventBridgeClient.getLatestEvent();
-
-        assertThat(emittedEvent.startMarker(), is(equalTo(s3Objects.get(s3Objects.size() - 2))));
-    }
 
     @BeforeEach
     void setUp() {
@@ -78,14 +57,39 @@ class GenerateKeyBatchesHandlerTest {
         handler = new GenerateKeyBatchesHandler(inputClient, outputClient, eventBridgeClient);
     }
 
+    @Test
+    void shouldPersistS3KeysToBatchBucket() throws JsonProcessingException {
+        final var allFiles = putObjectsInInputBucket(SINGLE_BATCH_FILE_SIZE);
+
+        handler.handleRequest(eventStream(), outputStream, mock(Context.class));
+
+        var actual = getPersistedFileFromOutputBucket();
+        var expected = allFiles.stream().collect(Collectors.joining(System.lineSeparator()));
+
+        assertThat(actual.stream().collect(Collectors.joining(System.lineSeparator())), is(equalTo(expected)));
+    }
+
+    @Test
+    void shouldEmitNewEventWhenS3BucketHasNotBeenTruncated() throws JsonProcessingException {
+        var s3Objects = putObjectsInInputBucket(MULTIPLE_BATCH_FILE_SIZE);
+
+        handler.handleRequest(eventStream(), outputStream, mock(Context.class));
+
+        var emittedEvent = eventBridgeClient.getLatestEvent();
+
+        var startMarkerForNextIteration = s3Objects.get(s3Objects.size() - 2);
+
+        assertThat(emittedEvent.startMarker(), is(equalTo(startMarkerForNextIteration)));
+    }
+
     private static String getBucketPath(UriWrapper uri) {
         return Path.of(UnixPath.fromString(uri.toString()).getPathElementByIndexFromEnd(1), uri.getLastPathElement())
                    .toString();
     }
 
-    private InputStream eventStream(KeyBatchRequestEvent detail) throws JsonProcessingException {
+    private InputStream eventStream() throws JsonProcessingException {
         var event = new AwsEventBridgeEvent<KeyBatchRequestEvent>();
-        event.setDetail(detail);
+        event.setDetail(null);
         var jsonString = objectMapperWithEmpty.writeValueAsString(event);
         return IoUtils.stringToStream(jsonString);
     }
@@ -98,7 +102,8 @@ class GenerateKeyBatchesHandlerTest {
 
     private List<String> putObjectsInInputBucket(int numberOfItems) {
         return IntStream.range(0, numberOfItems)
-                   .mapToObj(item -> randomString())
+                   .mapToObj(item -> SortableIdentifier.next())
+                   .map(SortableIdentifier::toString)
                    .map(this::insertFileWithKey)
                    .map(UriWrapper::fromUri)
                    .map(GenerateKeyBatchesHandlerTest::getBucketPath)
@@ -109,7 +114,7 @@ class GenerateKeyBatchesHandlerTest {
         return attempt(() -> s3DriverInputBucket.insertFile(UnixPath.of(RESOURCES, key), randomString())).orElseThrow();
     }
 
-    public class StubEventBridgeClient implements EventBridgeClient {
+    private static class StubEventBridgeClient implements EventBridgeClient {
 
         private KeyBatchRequestEvent latestEvent;
 

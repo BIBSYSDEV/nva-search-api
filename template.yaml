@@ -544,7 +544,7 @@ Resources:
       CodeUri: batch-index
       Handler: no.unit.nva.search.EventBasedBatchIndexer::handleRequest
       Runtime: java17
-      MemorySize: 10240
+      MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
       Events:
@@ -620,7 +620,7 @@ Resources:
       CodeUri: batch-index
       Handler: no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler::handleRequest
       Runtime: java17
-      MemorySize: 10240
+      MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
       Events:
