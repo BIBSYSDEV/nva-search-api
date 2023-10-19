@@ -45,7 +45,7 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
 
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
-        return  HttpURLConnection.HTTP_OK;
+        return HttpURLConnection.HTTP_OK;
     }
 
 
