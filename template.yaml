@@ -24,6 +24,10 @@ Globals:
       AllowOrigin: "'*'"
 
 Parameters:
+  AwsRegion:
+    Type: 'String'
+    Description: AWS Region
+    Default: ${AWS::Region}
   CognitoUri:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Reference to Cognito Auth URI
@@ -57,6 +61,13 @@ Parameters:
   ResourcesBucket:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/PersistedEntriesBucketName
+  EventsBucketsName:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/NVA/Events/EventsBucketName'
+  KeyBatchesBucketName:
+    Type: 'String'
+    Default: 'key-batches'
+    Description: Name of bucket for key batches
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
@@ -137,6 +148,7 @@ Resources:
                 Action:
                   - s3:Get*
                   - s3:List*
+                  - s3:PutObject*
                   - events:*
                 Resource: '*'
         - PolicyName: writeLog
@@ -339,8 +351,7 @@ Resources:
   NvaPublicationBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
-      BasePath:
-        !If
+      BasePath: !If
         - WithSuffix
         - !Sub ${CustomDomainBasePath}-${Suffix}
         - !Sub ${CustomDomainBasePath}
@@ -437,6 +448,14 @@ Resources:
                 responsePayload:
                   topic: [ "PublicationService.ExpandedEntry.Persisted" ]
 
+  BatchIndexEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: !If
+        - WithSuffix
+        - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
+        - "BatchIndexEventBus"
+
   IndexImportCandidates:
     DependsOn:
       - ResourcesIndexerDLQ
@@ -525,7 +544,7 @@ Resources:
       CodeUri: batch-index
       Handler: no.unit.nva.search.EventBasedBatchIndexer::handleRequest
       Runtime: java17
-      MemorySize: 10240
+      MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
       Events:
@@ -556,13 +575,65 @@ Resources:
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 
-  BatchIndexEventBus:
-    Type: AWS::Events::EventBus
+  StartKeyBasedBatchHandler:
+    Type: AWS::Serverless::Function
     Properties:
-      Name: !If
-        - WithSuffix
-        - !Join [ "-",[ "BatchIndexEventBus", !Ref Suffix ] ]
-        - "BatchIndexEventBus"
+      CodeUri: batch-index
+      Handler: no.unit.nva.search.keybatch.StartKeyBasedBatchHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 900
+      Role: !GetAtt SearchHandlerRole.Arn
+      Environment:
+        Variables:
+          EVENT_BUS: !GetAtt BatchIndexEventBus.Name
+          EVENTS_BUCKET: !Ref EventsBucketsName
+          TOPIC: 'SearchService.Index.KeyBasedBatch'
+
+  GenerateKeyBatchesHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: batch-index
+      Handler: no.unit.nva.search.keybatch.GenerateKeyBatchesHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 900
+      Role: !GetAtt SearchHandlerRole.Arn
+      Environment:
+        Variables:
+          EVENT_BUS: !GetAtt BatchIndexEventBus.Name
+          PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
+          KEY_BATCHES_BUCKET: !Ref KeyBatchesBucket
+          TOPIC: 'SearchService.Index.KeyBasedBatch'
+      Events:
+        BatchIndexEvent:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: !GetAtt BatchIndexEventBus.Name
+            Pattern:
+              detail:
+                topic: [ 'SearchService.Index.KeyBasedBatch' ]
+
+  KeyBasedBatchIndexHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: batch-index
+      Handler: no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler::handleRequest
+      Runtime: java17
+      MemorySize: 1024
+      Timeout: 900
+      Role: !GetAtt SearchHandlerRole.Arn
+      Events:
+        BatchEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref KeyBatchesBucket
+            Events: 's3:ObjectCreated:*'
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+          PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
+          KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
 
   InitHandler:
     Type: AWS::Serverless::Function
@@ -603,3 +674,15 @@ Resources:
       Runtime: java17
       MemorySize: 1024
       Role: !GetAtt SearchHandlerRole.Arn
+
+  KeyBatchesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub "${KeyBatchesBucketName}-${AWS::AccountId}"
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteContentAfter3Days
+            Status: Enabled
+            ExpirationInDays: 3
+
