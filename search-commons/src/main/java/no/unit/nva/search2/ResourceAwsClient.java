@@ -83,11 +83,11 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         var queryBuilder =
             query.isPresent(SEARCH_ALL)
                 ? QueryBuilders
-                .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
-                .operator(Operator.AND)
+                    .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
+                    .operator(Operator.AND)
                 : QueryBuilders
-                .queryStringQuery(query.toSwsLuceneParameter().get("q"))
-                .defaultOperator(Operator.AND);
+                    .queryStringQuery(query.toSwsLuceneParameter().get("q"))
+                    .defaultOperator(Operator.AND);
         return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
     }
 
@@ -96,9 +96,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         return ALL.equals(field) || Objects.isNull(field)
             ? ASTERISK.split(COMMA)
             : Arrays.stream(field.split(COMMA))
-            .map(ResourceSortKeys::fromSortKey)
-            .map(ResourceSortKeys::getFieldName)
-            .toArray(String[]::new);
+                .map(ResourceSortKeys::fromSortKey)
+                .map(ResourceSortKeys::getFieldName)
+                .toArray(String[]::new);
     }
 
     private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
@@ -120,7 +120,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
 
 
-        return new QueryBuilderSourceWrapper(builder, query.openSearchSwsUri(), query.getMediaType());
+        return new QueryBuilderSourceWrapper(builder, query.openSearchSwsUri());
     }
 
     @JacocoGenerated
