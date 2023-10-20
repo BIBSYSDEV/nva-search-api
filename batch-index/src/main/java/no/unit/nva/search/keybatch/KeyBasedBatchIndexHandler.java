@@ -22,7 +22,6 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.SingletonCollector;
 import nva.commons.core.paths.UnixPath;
 import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
@@ -103,15 +102,16 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static boolean isNotSuccess(Stream<BulkResponse> response) {
-        return nonNull(response) && (!isSuccess(response) || !isCreated(response));
+        var singleResponse = nonNull(response) ? response.toList().get(0) : null;
+        return nonNull(response) && (!isSuccess(singleResponse) || !isCreated(singleResponse));
     }
 
-    private static boolean isCreated(Stream<BulkResponse> response) {
-        return response.collect(SingletonCollector.collect()).status().getStatus() == HttpURLConnection.HTTP_CREATED;
+    private static boolean isCreated(BulkResponse response) {
+        return response.status().getStatus() == HttpURLConnection.HTTP_CREATED;
     }
 
-    private static boolean isSuccess(Stream<BulkResponse> response) {
-        return response.collect(SingletonCollector.collect()).status().getStatus() == HttpURLConnection.HTTP_OK;
+    private static boolean isSuccess(BulkResponse response) {
+        return response.status().getStatus() == HttpURLConnection.HTTP_OK;
     }
 
     private String extractContent(String key) {
