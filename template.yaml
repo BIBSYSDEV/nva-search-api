@@ -628,6 +628,7 @@ Resources:
           TOPIC: 'SearchService.Index.IndexKeyBatch'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
+          EVENT_BUS: !GetAtt BatchIndexEventBus.Name
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule

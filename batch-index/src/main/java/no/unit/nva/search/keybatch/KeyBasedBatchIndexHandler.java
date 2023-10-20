@@ -7,6 +7,7 @@ import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.EVENT_BUS;
 import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.TOPIC;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -21,7 +22,9 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.SingletonCollector;
 import nva.commons.core.paths.UnixPath;
+import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -35,9 +38,8 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
     public static final String LINE_BREAK = "\n";
-    public static final int SINGLE_RECORD = 0;
     public static final int MAX_PAYLOAD = 5_291_456;
-    public static final String LAST_CONSUMED_KEY_MESSAGE = "Last consumed key: {}";
+    public static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
     private static final String KEY_BATCHES_BUCKET = new Environment().readEnv("KEY_BATCHES_BUCKET");
@@ -70,14 +72,15 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
                                 Context context) {
         var startMarker = getStartMarker(input);
         var batchResponse = fetchSingleBatch(startMarker);
-        var content = extractContent(batchResponse);
+        var batchKey = batchResponse.contents().get(0).key();
+        var content = extractContent(batchKey);
         var indexDocuments = mapToIndexDocuments(content);
 
-        sendDocumentsToIndexInBatches(indexDocuments);
+        sendDocumentsToIndexInBatches(indexDocuments, batchKey);
 
         var lastEvaluatedKey = batchResponse.contents().get(0).key();
         sendEvent(constructRequestEntry(lastEvaluatedKey, context));
-        logger.info(LAST_CONSUMED_KEY_MESSAGE, getStartMarker(input));
+        logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
         return null;
     }
 
@@ -96,9 +99,21 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return nonNull(input) && nonNull(input.getStartMarker()) ? input.getStartMarker() : null;
     }
 
-    private String extractContent(ListObjectsV2Response batchResponse) {
+    private static boolean isNotSuccess(Stream<BulkResponse> response) {
+        return nonNull(response) && (!isSuccess(response) || !isCreated(response));
+    }
+
+    private static boolean isCreated(Stream<BulkResponse> response) {
+        return response.collect(SingletonCollector.collect()).status().getStatus() != HttpURLConnection.HTTP_CREATED;
+    }
+
+    private static boolean isSuccess(Stream<BulkResponse> response) {
+        return response.collect(SingletonCollector.collect()).status().getStatus() != HttpURLConnection.HTTP_OK;
+    }
+
+    private String extractContent(String key) {
         var s3Driver = new S3Driver(s3BatchesClient, KEY_BATCHES_BUCKET);
-        return attempt(() -> s3Driver.getFile(UnixPath.of(batchResponse.contents().get(0).key()))).orElseThrow();
+        return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
     }
 
     private void sendEvent(PutEventsRequestEntry event) {
@@ -117,7 +132,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
                    .toList();
     }
 
-    private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
+    private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments, String batchKey) {
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
         for (IndexDocument indexDocument : indexDocuments) {
@@ -126,21 +141,21 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
                 documents.add(indexDocument);
                 totalSize += currentFileSize;
             } else {
-                indexDocuments(documents);
+                indexDocuments(documents, batchKey);
                 totalSize = 0;
                 documents.clear();
                 documents.add(indexDocument);
             }
         }
         if (!documents.isEmpty()) {
-            indexDocuments(documents);
+            indexDocuments(documents, batchKey);
         }
     }
 
-    private void indexDocuments(List<IndexDocument> list) {
+    private void indexDocuments(List<IndexDocument> list, String batchKey) {
         var response = attempt(() -> indexingClient.batchInsert(list.stream())).orElseThrow();
-        if (nonNull(response)) {
-            logger.info("Batch processed, has failures: {}", response.toList().get(0).hasFailures());
+        if (isNotSuccess(response)) {
+            logger.error("Something went wrong, batch key: {}", batchKey);
         }
     }
 
