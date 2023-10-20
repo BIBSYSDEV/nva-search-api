@@ -86,11 +86,11 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static String getStartMarker(KeyBatchRequestEvent input) {
-        return notEmptyEvent(input) ? input.startMarker() : DEFAULT_START_MARKER;
+        return notEmptyEvent(input) ? input.getStartMarker() : DEFAULT_START_MARKER;
     }
 
     private static boolean notEmptyEvent(KeyBatchRequestEvent event) {
-        return nonNull(event) && nonNull(event.startMarker());
+        return nonNull(event) && nonNull(event.getStartMarker());
     }
 
     private static ListObjectsV2Request createRequest(String startMarker) {
