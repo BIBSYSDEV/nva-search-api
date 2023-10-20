@@ -1,7 +1,6 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
@@ -50,8 +49,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     public String doSearch(ResourceAwsClient queryClient) {
         return
             MediaType.CSV_UTF_8.is(this.getMediaType())
-            ? fetchAsCsvText(queryClient)
-            : fetchAsPagedResponse(queryClient).toJsonString();
+                ? fetchAsCsvText(queryClient)
+                : fetchAsPagedResponse(queryClient).toJsonString();
     }
 
     private String fetchAsCsvText(ResourceAwsClient client) {
@@ -81,8 +80,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             response.getSort().stream().map(Object::toString).collect(Collectors.joining(COMMA));
         requestParameter.put(SEARCH_AFTER.key(), sortedP);
         return UriWrapper.fromUri(gatewayUri)
-                   .addQueryParameters(requestParameter)
-                   .getUri();
+            .addQueryParameters(requestParameter)
+            .getUri();
     }
 
     @SuppressWarnings("PMD.GodClass")
@@ -113,20 +112,20 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER,
-                         FROM,
-                         SIZE,
-                         PAGE -> query.setQueryValue(qpKey, value);
+                    FROM,
+                    SIZE,
+                    PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
+                case PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setLucineValue(qpKey, expandDate(value));
                 case CATEGORY, CONTRIBUTOR,
-                         CREATED_BEFORE, CREATED_SINCE,
-                         DOI, FUNDING, FUNDING_SOURCE, ID,
-                         INSTITUTION, ISSN,
-                         MODIFIED_BEFORE, MODIFIED_SINCE,
-                         PROJECT_CODE, PUBLISHED_BEFORE,
-                         PUBLISHED_SINCE, SEARCH_ALL, TITLE,
-                         UNIT, USER, YEAR_REPORTED -> query.setLucineValue(qpKey, value);
+                    CREATED_BEFORE, CREATED_SINCE,
+                    DOI, FUNDING, FUNDING_SOURCE, ID,
+                    INSTITUTION, ISSN,
+                    MODIFIED_BEFORE, MODIFIED_SINCE,
+                    PROJECT_CODE, SEARCH_ALL, TITLE,
+                    UNIT, USER, YEAR_REPORTED -> query.setLucineValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
@@ -134,12 +133,16 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             }
         }
 
+        private String expandDate(String value) {
+            return value.length() == 4 ? value + "-01-01" : value;
+        }
+
         @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (nonNull(query.getValue(PAGE))) {
-                if (isNull(query.getValue(FROM))) {
+            if (query.isPresent(PAGE)) {
+                if (query.isPresent(FROM)) {
                     var page = query.getValue(PAGE).<Number>as();
                     var perPage = query.getValue(SIZE).<Number>as();
                     query.setQueryValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
@@ -190,8 +193,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String getSortOrder(String... sortKeyParts) {
             return (sortKeyParts.length == EXPECTED_TWO_PARTS)
-                       ? sortKeyParts[1].toLowerCase(Locale.getDefault())
-                       : DEFAULT_VALUE_SORT_ORDER;
+                ? sortKeyParts[1].toLowerCase(Locale.getDefault())
+                : DEFAULT_VALUE_SORT_ORDER;
         }
 
         private void addSortOrderQuery(String value) {
@@ -207,10 +210,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String expandFields(String value) {
             return ALL.equals(value) || isNull(value)
-                       ? ALL
-                       : Arrays.stream(value.split(COMMA))
-                             .filter(Builder::notInvalid)
-                             .collect(Collectors.joining(COMMA));
+                ? ALL
+                : Arrays.stream(value.split(COMMA))
+                .filter(Builder::notInvalid)
+                .collect(Collectors.joining(COMMA));
         }
     }
 }

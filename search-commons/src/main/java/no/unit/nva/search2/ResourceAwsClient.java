@@ -40,6 +40,8 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.AbstractQueryBuilder;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -81,16 +83,28 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private Stream<QueryBuilderWrapper> createQueryBuilderStream(ResourceAwsQuery query) {
-        var field = query.getValue(FIELDS).toString();
-        var queryBuilder =
-            query.isPresent(SEARCH_ALL)
-                ? QueryBuilders
+        AbstractQueryBuilder<?> queryBuilder;
+
+            if (query.isPresent(SEARCH_ALL)) {
+                var field = query.getValue(FIELDS).toString();
+                queryBuilder = QueryBuilders
                     .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
-                    .operator(Operator.AND)
-                : QueryBuilders
-                    .queryStringQuery(query.toSwsLuceneParameter().get("q"))
-                    .defaultOperator(Operator.AND);
+                    .operator(Operator.AND);
+            } else if (query.noLucineParameter()) {
+                queryBuilder = QueryBuilders.matchAllQuery();
+            } else {
+                queryBuilder = boolQuery(query);
+            }
+
         return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
+    }
+
+    private BoolQueryBuilder boolQuery(ResourceAwsQuery query) {
+        var bq = QueryBuilders.boolQuery();
+        query.getLuceneParameters()
+            .forEach((key, value) -> key.swsKey()
+                .forEach(swsKey -> bq.should(QueryBuilders.matchQuery(swsKey, value))));
+        return bq;
     }
 
     @NotNull
