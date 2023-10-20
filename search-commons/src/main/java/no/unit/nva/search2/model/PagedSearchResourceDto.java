@@ -16,19 +16,19 @@ import org.jetbrains.annotations.Nullable;
 
 public record PagedSearchResourceDto(
     URI id,
-    URI nextResults,
-    URI previousResults,
     long totalHits,
     List<JsonNode> hits,
-    URI nextResultsBySortKey,
+    URI nextResults,
+    URI nextSearchAfterResults,
+    URI previousResults,
     JsonNode aggregations) {
 
     private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
-            builder.nextResults,
-            builder.previousResults,
             builder.totalHits,
             builder.hits,
+            builder.nextResults,
+            builder.previousResults,
             builder.nextResultsBySortKey,
             builder.aggregations
         );

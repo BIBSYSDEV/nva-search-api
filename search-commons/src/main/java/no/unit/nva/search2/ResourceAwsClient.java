@@ -87,6 +87,8 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                 ? QueryBuilders
                     .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
                     .operator(Operator.AND)
+                : query.noLucineParameter()
+                ? QueryBuilders.matchAllQuery()
                 : QueryBuilders
                     .queryStringQuery(query.toSwsLuceneParameter().get("q"))
                     .defaultOperator(Operator.AND);

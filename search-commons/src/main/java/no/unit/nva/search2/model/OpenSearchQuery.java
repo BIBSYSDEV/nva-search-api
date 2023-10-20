@@ -81,7 +81,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     public Map<String, String> toSwsLuceneParameter() {
         var query = luceneParameters.entrySet().stream()
                         .map(this::swsLuceneEntryToString)
-                        .collect(Collectors.joining(AND, PREFIX, SUFFIX));
+                        .collect(Collectors.joining(AND));
         return Map.of("q", query);
     }
 
@@ -121,11 +121,15 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                    : queryParameters.remove(key);
     }
 
-    @JacocoGenerated
     public boolean isPresent(K key) {
         return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
     }
 
+
+    @JacocoGenerated
+    public boolean noLucineParameter() {
+        return luceneParameters.isEmpty();
+    }
 
     /**
      * Add a key value pair to Query Parameter Map.
@@ -268,7 +272,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
             return (T) switch (key.kind()) {
-                case DATE -> castDateTime();
+                case DATE, DATE_STRING -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };
