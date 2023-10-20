@@ -26,7 +26,7 @@ public interface ParameterKey {
     }
 
     static String escapeSearchString(String value) {
-        return value.replaceAll("([-+&|!(){}\\[\\]^\"~*?:\\\\/])", "\\$1");
+        return value.replaceAll("([-+&|!(){}\\[\\]^\"~*?:\\\\/])", "\\\\$1");
     }
 
     enum KeyEncoding {

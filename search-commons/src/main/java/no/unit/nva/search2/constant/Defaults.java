@@ -27,5 +27,5 @@ public final class Defaults {
 
     public static final List<MediaType> DEFAULT_RESPONSE_MEDIA_TYPES =
         List.of(MediaType.JSON_UTF_8, MediaTypes.APPLICATION_JSON_LD,
-            MediaType.CSV_UTF_8, MediaTypes.APPLICATION_PROBLEM_JSON);
+            MediaType.CSV_UTF_8);
 }
