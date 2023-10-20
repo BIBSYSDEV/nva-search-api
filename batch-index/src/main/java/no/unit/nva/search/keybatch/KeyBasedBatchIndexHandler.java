@@ -107,11 +107,11 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static boolean isCreated(Stream<BulkResponse> response) {
-        return response.collect(SingletonCollector.collect()).status().getStatus() != HttpURLConnection.HTTP_CREATED;
+        return response.collect(SingletonCollector.collect()).status().getStatus() == HttpURLConnection.HTTP_CREATED;
     }
 
     private static boolean isSuccess(Stream<BulkResponse> response) {
-        return response.collect(SingletonCollector.collect()).status().getStatus() != HttpURLConnection.HTTP_OK;
+        return response.collect(SingletonCollector.collect()).status().getStatus() == HttpURLConnection.HTTP_OK;
     }
 
     private String extractContent(String key) {
