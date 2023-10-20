@@ -38,7 +38,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
     public static final String LINE_BREAK = "\n";
-    public static final int MAX_PAYLOAD = 5_291_456;
+    public static final int MAX_PAYLOAD = 3_291_456;
     public static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
@@ -79,7 +79,9 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         sendDocumentsToIndexInBatches(indexDocuments, batchKey);
 
         var lastEvaluatedKey = batchResponse.contents().get(0).key();
-        sendEvent(constructRequestEntry(lastEvaluatedKey, context));
+        if (batchResponse.isTruncated()) {
+            sendEvent(constructRequestEntry(lastEvaluatedKey, context));
+        }
         logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
         return null;
     }
@@ -96,6 +98,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static String getStartMarker(KeyBatchRequestEvent input) {
+
         return nonNull(input) && nonNull(input.getStartMarker()) ? input.getStartMarker() : null;
     }
 
@@ -153,7 +156,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private void indexDocuments(List<IndexDocument> list, String batchKey) {
-        var response = attempt(() -> indexingClient.batchInsert(list.stream())).orElseThrow();
+        var response = attempt(() -> indexingClient.batchInsert(list.stream())).orElse(failure -> null);
         if (isNotSuccess(response)) {
             logger.error("Something went wrong, batch key: {}", batchKey);
         }

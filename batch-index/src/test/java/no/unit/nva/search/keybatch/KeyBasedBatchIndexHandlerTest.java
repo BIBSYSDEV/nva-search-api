@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3BucketEntity;
@@ -95,6 +96,21 @@ class KeyBasedBatchIndexHandlerTest {
         var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
         assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
+    }
+
+    @Test
+    void shouldNotEmitNewEventWhenNoMoreBatchesToRetrieve() throws IOException {
+        var expectedDocuments = createExpectedDocuments(10);
+        var batch = expectedDocuments.stream()
+                        .map(IndexDocument::getDocumentIdentifier)
+                        .collect(Collectors.joining(System.lineSeparator()));
+        var batchKey = randomString();
+        s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
+
+        handler.handleRequest(eventStream(null), outputStream, Mockito.mock(Context.class));
+
+        var emittedEvent = ((StubEventBridgeClient) eventBridgeClient).getLatestEvent();
+        assertThat(emittedEvent, is(nullValue()));
     }
 
     @Test
