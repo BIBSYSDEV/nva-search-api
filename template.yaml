@@ -623,17 +623,19 @@ Resources:
       MemorySize: 1024
       Timeout: 900
       Role: !GetAtt SearchHandlerRole.Arn
-      Events:
-        BatchEvent:
-          Type: S3
-          Properties:
-            Bucket: !Ref KeyBatchesBucket
-            Events: 's3:ObjectCreated:*'
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          TOPIC: 'SearchService.Index.IndexKeyBatch'
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
+      Events:
+        BatchIndexEvent:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: !GetAtt BatchIndexEventBus.Name
+            Pattern:
+              detail:
+                topic: [ 'SearchService.Index.IndexKeyBatch' ]
 
   InitHandler:
     Type: AWS::Serverless::Function
