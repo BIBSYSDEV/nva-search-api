@@ -24,6 +24,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -33,6 +34,7 @@ import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.QueryBuilderWrapper;
+import no.unit.nva.search2.model.ResourceParameterKey;
 import no.unit.nva.search2.model.ResourceSortKeys;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
@@ -96,8 +98,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         return ALL.equals(field) || Objects.isNull(field)
             ? ASTERISK.split(COMMA)
             : Arrays.stream(field.split(COMMA))
-                .map(ResourceSortKeys::fromSortKey)
-                .map(ResourceSortKeys::getFieldName)
+                .map(ResourceParameterKey::keyFromString)
+                .map(ResourceParameterKey::swsKey)
+                .flatMap(Collection::stream)
                 .toArray(String[]::new);
     }
 
