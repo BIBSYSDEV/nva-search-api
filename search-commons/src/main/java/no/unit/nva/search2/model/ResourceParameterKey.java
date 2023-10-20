@@ -18,6 +18,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE_STRING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -28,6 +29,7 @@ import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQ
 import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE_STRING;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
@@ -42,7 +44,7 @@ public enum ResourceParameterKey implements ParameterKey {
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(STRING, "entityDescription.reference.doi"),
     FUNDING(STRING, "fundings.identifier"),
-    FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels.*"),
+    FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
     ID(STRING, "identifier"),
     INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
                         + "|entityDescription.contributors.affiliation.name"),
@@ -53,8 +55,8 @@ public enum ResourceParameterKey implements ParameterKey {
     MODIFIED_BEFORE(DATE, LESS_THAN, "modifiedDate"),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate"),
     PROJECT_CODE(STRING, "fundings.identifier"),
-    PUBLISHED_BEFORE(DATE, LESS_THAN, "publishedDate"),
-    PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
+    PUBLISHED_BEFORE(DATE_STRING, LESS_THAN, "publishedDate"),
+    PUBLISHED_SINCE(DATE_STRING, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
     TITLE(STRING, "entityDescription.mainTitle"),
     UNIT(STRING, "entityDescription.contributors.affiliation.id"),
     USER(STRING, "resourceOwner.owner"),
@@ -173,7 +175,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private KeyEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case NUMBER, CUSTOM -> KeyEncoding.NONE;
-            case DATE, STRING, SORT_STRING -> KeyEncoding.DECODE;
+            case DATE, DATE_STRING, STRING, SORT_STRING -> KeyEncoding.DECODE;
         };
     }
 
@@ -181,7 +183,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private String getErrorMessage(ParamKind kind) {
         return switch (kind) {
             // case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
-            case DATE -> INVALID_DATE;
+            case DATE, DATE_STRING -> INVALID_DATE;
             case NUMBER -> INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case SORT_STRING -> INVALID_VALUE_WITH_SORT;
@@ -194,6 +196,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return switch (kind) {
             // case BOOLEAN -> PATTERN_IS_BOOLEAN;
             case DATE -> PATTERN_IS_DATE;
+            case DATE_STRING -> PATTERN_IS_DATE_STRING;
             case NUMBER -> PATTERN_IS_NUMBER;
             // case RANGE -> PATTERN_IS_RANGE;
             case STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;

@@ -34,7 +34,7 @@ public interface ParameterKey {
     }
 
     enum ParamKind {
-        DATE, NUMBER, STRING, SORT_STRING, CUSTOM
+        DATE, DATE_STRING, NUMBER, STRING, SORT_STRING, CUSTOM
     }
 
     enum Operator {

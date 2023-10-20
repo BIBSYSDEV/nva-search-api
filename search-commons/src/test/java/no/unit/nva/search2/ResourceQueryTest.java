@@ -8,13 +8,13 @@ import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.MODIFIED_BEFORE;
 import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.model.ResourceParameterKey.PUBLISHED_BEFORE;
+import static no.unit.nva.search2.model.ResourceParameterKey.PUBLISHED_SINCE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,10 +67,16 @@ class ResourceQueryTest {
             resourceParameters
                 .getValue(MODIFIED_BEFORE)
                 .<DateTime>as();
-        var publishedBefore =
+        var publishedBefore = resourceParameters.isPresent(PUBLISHED_BEFORE) ?
             resourceParameters
                 .getValue(PUBLISHED_BEFORE)
-                .<DateTime>as();
+                .<DateTime>as()
+            : null;
+        var publishedSince = resourceParameters.isPresent(PUBLISHED_SINCE) ?
+            resourceParameters
+                .getValue(PUBLISHED_SINCE)
+                .<DateTime>as()
+            : null;
         var created =
             resourceParameters
                 .getValue(CREATED_BEFORE)
@@ -82,14 +88,18 @@ class ResourceQueryTest {
 
         if (nonNull(modified)) {
             logger.info("modified: {}", modified);
-        } else if (nonNull(publishedBefore)) {
+        }
+        if (nonNull(publishedBefore)) {
             logger.info("publishedBefore: {}", publishedBefore);
-        } else if (nonNull(created)) {
+        }
+        if (nonNull(publishedSince)) {
+            logger.info("publishedSince: {}", publishedSince);
+        }
+        if (nonNull(created)) {
             logger.info("created: {}", created);
-        } else if (nonNull(category)) {
+        }
+        if (nonNull(category)) {
             logger.info("category: {}", category);
-        } else {
-            fail("No date found");
         }
     }
 
@@ -162,6 +172,7 @@ class ResourceQueryTest {
         return Stream.of(
             URI.create("https://example.com/?category=hello&modified_before=2020-01-01&modified_since=2019-01-01"),
             URI.create("https://example.com/?published_before=2020-01-02&published_since=2019-01-02"),
+            URI.create("https://example.com/?published_before=2020&published_since=2019"),
             URI.create("https://example.com/?created_before=2020-01-01T23:59:59&created_since=2019-01-01"));
     }
 

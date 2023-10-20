@@ -109,6 +109,7 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?contributor=hello+:+world&published_before=2020-01-01"),
             URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019-01-01"),
             URI.create("https://example.com/?user=hello+world&size=1&from=0"),
+            URI.create("https://example.com/"),
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
 
