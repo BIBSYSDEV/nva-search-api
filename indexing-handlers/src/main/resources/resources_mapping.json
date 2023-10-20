@@ -59,6 +59,9 @@
                 "id": {
                   "type": "keyword"
                 },
+                "identifier": {
+                  "type": "keyword"
+                },
                 "name": {
                   "type": "keyword"
                 },
@@ -67,6 +70,9 @@
                   "include_in_parent": true,
                   "properties": {
                     "id": {
+                      "type": "keyword"
+                    },
+                    "identifier": {
                       "type": "keyword"
                     },
                     "name": {

@@ -13,6 +13,9 @@ dependencies {
     implementation libs.aws.sdk2.urlconnection
     implementation libs.aws.sdk2.eventbridge
     implementation libs.aws.sdk2.s3
+    implementation libs.aws.sdk2.sqs
+    implementation libs.aws.lambda.events
+
 
     implementation libs.aws.ion
     implementation libs.guava
@@ -32,4 +35,10 @@ test {
     environment "PERSISTED_RESOURCES_PATH","s3://somebucket/some/folder"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
+    environment "PERSISTED_RESOURCES_BUCKET", "resourcesBucket"
+    environment "KEY_BATCHES_QUEUE_NAME", "someQueue"
+    environment "KEY_BATCHES_MESSAGE_GROUP", "someGroup"
+    environment "EVENT_BUS", "someBus"
+    environment "TOPIC", "someTopic"
+    environment "KEY_BATCHES_BUCKET", "someBucket"
 }

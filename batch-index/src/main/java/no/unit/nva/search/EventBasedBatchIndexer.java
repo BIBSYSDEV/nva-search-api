@@ -28,7 +28,11 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
 
     @JacocoGenerated
     public EventBasedBatchIndexer() {
-        this(defaultS3Client(), defaultEsClient(), defaultEventBridgeClient(), NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+        this(
+            defaultS3Client(),
+            defaultEsClient(),
+            defaultEventBridgeClient(),
+            NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
     }
 
     protected EventBasedBatchIndexer(S3Client s3Client,
@@ -55,7 +59,7 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
                                                 AwsEventBridgeEvent<ImportDataRequestEvent> event,
                                                 Context context) {
         logger.info("Indexing folder:" + input.getS3Location());
-        logger.info("Indexing startingPoint:" + input.getStartMarker());
+        logger.info("Indexing lastEvaluatedKey:" + input.getStartMarker());
         IndexingResult<SortableIdentifier> result = new BatchIndexer(input, s3Client,
                                                                      openSearchClient,
                                                                      numberOfFilesPerEvent
