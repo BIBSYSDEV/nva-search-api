@@ -1,6 +1,6 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT;
+import static no.unit.nva.search.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
 import static no.unit.nva.search.BatchIndexingConstants.defaultEsClient;
 import static no.unit.nva.search.BatchIndexingConstants.defaultEventBridgeClient;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
@@ -28,7 +28,7 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
 
     @JacocoGenerated
     public EventBasedBatchIndexer() {
-        this(defaultS3Client(), defaultEsClient(), defaultEventBridgeClient(), NUMBER_OF_FILES_PER_EVENT);
+        this(defaultS3Client(), defaultEsClient(), defaultEventBridgeClient(), NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
     }
 
     protected EventBasedBatchIndexer(S3Client s3Client,
