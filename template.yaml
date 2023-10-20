@@ -205,6 +205,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: '*'
           COGNITO_HOST: !Ref CognitoUri
+          BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
       Events:
         GetTickets:
           Type: Api

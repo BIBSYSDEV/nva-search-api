@@ -50,7 +50,8 @@
     "messageType": "PublishingRequest"
   },
   "status": "Pending",
-  "organizationIds": [
-    "https://www.example.com/20754.0.0.0"
-  ]
+  "organization": {
+    "id": "https://www.example.com/20754.0.0.0",
+    "partOf": []
+  }
 }

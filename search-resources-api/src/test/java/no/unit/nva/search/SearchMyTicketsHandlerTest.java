@@ -3,12 +3,14 @@ package no.unit.nva.search;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.HttpHeaders;
+import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.responses.UserResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.core.Environment;
+import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.action.search.SearchResponse;
@@ -44,6 +46,8 @@ class SearchMyTicketsHandlerTest {
     private static final String SAMPLE_OPENSEARCH_TICKETS_RESPONSE_JSON = "sample_opensearch_mytickets_response.json";
     private static final String OWNER_ID = "1306838@20754.0.0.0";
     private static final String SAMPLE_DOMAIN_NAME = "localhost";
+    public static final URI TOP_LEVEL_CRISTIN_ORG_ID = URI.create(
+        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
     private static final String USERNAME = randomString();
     private static final String ROLE = "role";
     private SearchTicketsHandler handler;
@@ -51,52 +55,47 @@ class SearchMyTicketsHandlerTest {
     private Context context;
     private ByteArrayOutputStream outputStream;
     private FakeRestHighLevelClientWrapper restHighLevelClientWrapper;
+    private AuthorizedBackendUriRetriever uriRetriever;
 
     @BeforeEach
     void init() throws IOException {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         prepareSearchClientWithResponse();
         var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
-        setupFakeIdentityClient();
-        handler = new SearchTicketsHandler(new Environment(), searchClient, identityClientMock);
+        setupFakeUriRetriever();
+        handler = new SearchTicketsHandler(new Environment(), searchClient, uriRetriever);
         context = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
 
     @Test
-    void shouldDefaultToCuratorRoleIfNoRoleIsProvided() throws IOException {
+    void shouldNotSearchForOwnerIfNoRoleIsProvided() throws IOException {
         var query = searchQueryWithoutAnyParameters();
         handler.handleRequest(query, outputStream, context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
 
         var queryDescription = searchRequest.buildDescription();
-        for (var uriInDefaultViewingScope : includedUrisInDefaultViewingScope()) {
-            assertThat(queryDescription, containsString(uriInDefaultViewingScope.toString()));
-        }
+        assertThat(queryDescription, not(containsString("owner")));
     }
 
     @Test
-    void shouldReturnCuratorTicketsIfCuratorRoleIsSet() throws IOException {
+    void shouldNotSearchForOwnerIfRoleCuratorIsProvided() throws IOException {
         var query = searchQueryWithParameters(Map.of(ROLE, "curator"));
         handler.handleRequest(query, outputStream, context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
 
         var queryDescription = searchRequest.buildDescription();
-        for (var uriInDefaultViewingScope : includedUrisInDefaultViewingScope()) {
-            assertThat(queryDescription, containsString(uriInDefaultViewingScope.toString()));
-        }
+        assertThat(queryDescription, not(containsString("owner")));
     }
 
     @Test
-    void shouldNotContainOrgIfRoleCreatorIsProvided() throws IOException {
+    void shouldSearchForOwnerIfRoleCreatorIsProvided() throws IOException {
         var query = searchQueryWithParameters(Map.of(ROLE, "creator"));
         handler.handleRequest(query, outputStream, context);
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
 
         var queryDescription = searchRequest.buildDescription();
-        for (var uriInDefaultViewingScope : includedUrisInDefaultViewingScope()) {
-            assertThat(queryDescription, not(containsString(uriInDefaultViewingScope.toString())));
-        }
+        assertThat(queryDescription, containsString("owner"));
     }
 
     @Test
@@ -120,14 +119,8 @@ class SearchMyTicketsHandlerTest {
             .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
             .withRequestContextValue(PATH, "tickets")
             .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
             .build();
-    }
-
-    private Set<URI> includedUrisInDefaultViewingScope() {
-        return identityClientMock.getUser(USERNAME, randomString())
-            .map(UserResponse::getViewingScope)
-            .map(ViewingScope::getIncludedUnits)
-            .orElseThrow();
     }
 
     private InputStream searchQueryWithoutAnyParameters() throws JsonProcessingException {
@@ -139,6 +132,7 @@ class SearchMyTicketsHandlerTest {
             .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
             .withRequestContextValue(PATH, "tickets")
             .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+            .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
             .build();
     }
 
@@ -153,18 +147,10 @@ class SearchMyTicketsHandlerTest {
         return SearchResponseUtil.getSearchResponseFromJson(jsonResponse);
     }
 
-    private void setupFakeIdentityClient() {
-        identityClientMock = mock(IdentityClient.class);
-        when(identityClientMock.getUser(anyString(), anyString())).thenReturn(getUserResponse());
-    }
-
-    private Optional<UserResponse> getUserResponse() {
-        UserResponse userResponse = new UserResponse();
-        ViewingScope viewingScope = new ViewingScope();
-        viewingScope.setIncludedUnits(Set.of(randomUri(), randomUri()));
-        viewingScope.setExcludedUnits(Collections.emptySet());
-        userResponse.setViewingScope(viewingScope);
-        return Optional.of(userResponse);
+    private void setupFakeUriRetriever() {
+        uriRetriever = mock(AuthorizedBackendUriRetriever.class);
+        when(uriRetriever.getRawContent(any(), any())).thenReturn(
+            Optional.of(IoUtils.stringFromResources(Path.of("20754.0.0.0.json"))));
     }
 
     private Map<String, String> defaultQueryHeaders() {

@@ -137,13 +137,13 @@ public final class ApplicationConstants {
     }
 
     private static TermsAggregationBuilder generatePublicationContextPublisherIdAggregation() {
-        return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
-            , ID));
+        return generateSimpleAggregation(PUBLISHER, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                             PUBLISHER, ID));
     }
 
     private static TermsAggregationBuilder generatePublicationContextPublisherNameAggregation() {
-        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER
-            , NAME));
+        return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                        PUBLISHER, NAME));
     }
 
     private static TermsAggregationBuilder generatePublicationContextJournalIdAggregation() {
@@ -230,7 +230,7 @@ public final class ApplicationConstants {
                                                                                     QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE));
 
         FilterAggregationBuilder adminAgreementFilterAggregation = AggregationBuilders.filter(ADMINSTRATIVE_AGREEMENT,
-                                                                                QueryBuilders.termQuery( jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false));
+                                                                                QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false));
 
         return new NestedAggregationBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
             .subAggregation(typeFilterAggregation.subAggregation(adminAgreementFilterAggregation));
