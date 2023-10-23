@@ -106,7 +106,7 @@ public record PagedSearchResourceDto(
                 return null;
             }
 
-            params.put(FROM.key(), String.valueOf(offset));
+            params.put(FROM.fieldName(), String.valueOf(offset));
             return UriWrapper.fromUri(gatewayUri)
                        .addQueryParameters(params)
                        .getUri();

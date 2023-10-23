@@ -23,6 +23,12 @@ public class Patterns {
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
-    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!(){}\\[\\]^\"~*?:\\\\/])";
+
+    /**
+     * Pattern for matching group of opensearch special characters.
+     * - + & | ! ( ) { } [ ] ^ " ~ * ? : \ /
+     *  with the intention of escaping them.
+     */
+    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\"~*?:\\\\/])";
 
 }

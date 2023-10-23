@@ -32,7 +32,7 @@ import com.google.common.net.MediaType;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.ParameterKey;
+import no.unit.nva.search2.model.ParameterKey.FieldOperator;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.QueryBuilderWrapper;
 import no.unit.nva.search2.model.ResourceParameterKey;
@@ -43,8 +43,10 @@ import org.jetbrains.annotations.NotNull;
 import org.opensearch.common.collect.Tuple;
 import org.opensearch.index.query.AbstractQueryBuilder;
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.RangeQueryBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -89,7 +91,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         AbstractQueryBuilder<?> queryBuilder;
         if (query.isPresent(SEARCH_ALL)) {
             queryBuilder = multiMatchQuery(query);
-        } else if (query.noLucineParameter()) {
+        } else if (query.hasNoSearchValue()) {
             queryBuilder = QueryBuilders.matchAllQuery();
         } else {
             queryBuilder = boolQuery(query);
@@ -116,7 +118,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         builder.from(query.getValue(FROM).as());
         getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
 
-        return new QueryBuilderSourceWrapper(builder, query.openSearchSwsUri());
+        return new QueryBuilderSourceWrapper(builder, query.openSearchUri());
     }
 
     @JacocoGenerated
@@ -143,7 +145,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                    .orElseThrow();
     }
 
-    private AbstractQueryBuilder<?> multiMatchQuery(ResourceAwsQuery query) {
+    private MultiMatchQueryBuilder multiMatchQuery(ResourceAwsQuery query) {
         var field = query.getValue(FIELDS).toString();
         return QueryBuilders
                    .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
@@ -152,31 +154,31 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private BoolQueryBuilder boolQuery(ResourceAwsQuery query) {
         var bq = QueryBuilders.boolQuery();
-        query.getLuceneParameters()
+        query.getOpenSearchParameters()
             .forEach((key, value) -> {
-                var swsKey = key.swsKey().toArray(String[]::new);
-                if (swsKey.length > SINGLE_FIELD) {
-                    bq.must(QueryBuilders.multiMatchQuery(value, swsKey));
+                var searchFields = key.searchFields().toArray(String[]::new);
+                if (hasMultipleFields(searchFields)) {
+                    bq.must(QueryBuilders.multiMatchQuery(value, searchFields));
                 } else {
-                    if (key.operator() != ParameterKey.Operator.EQUALS) {
-                        bq.must(rangeQuery(key.operator(), swsKey[0], value));
+                    var searchField = searchFields[0];
+                    if (isRangeQuery(key)) {
+                        bq.must(rangeQuery(key.searchOperator(), searchField, value));
                     } else {
-                        bq.must(QueryBuilders.matchQuery(swsKey[0], value));
+                        bq.must(QueryBuilders.matchQuery(searchField, value));
                     }
                 }
             });
         return bq;
     }
 
-    private AbstractQueryBuilder<?> rangeQuery(ParameterKey.Operator operator, String swsKey, String value) {
-        return
-            switch (operator) {
-                case NONE, EQUALS -> throw new IllegalArgumentException("Operator not supported");
-                case GREATER_THAN -> QueryBuilders.rangeQuery(swsKey).gt(value);
-                case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(swsKey).gte(value);
-                case LESS_THAN -> QueryBuilders.rangeQuery(swsKey).lt(value);
-                case LESS_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(swsKey).lte(value);
-            };
+    private RangeQueryBuilder rangeQuery(FieldOperator operator, String fieldName, String value) {
+        return switch (operator) {
+            case NONE, EQUALS -> throw new IllegalArgumentException("Operator not supported");
+            case GREATER_THAN -> QueryBuilders.rangeQuery(fieldName).gt(value);
+            case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(fieldName).gte(value);
+            case LESS_THAN -> QueryBuilders.rangeQuery(fieldName).lt(value);
+            case LESS_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(fieldName).lte(value);
+        };
     }
 
     @NotNull
@@ -185,7 +187,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                    ? ASTERISK.split(COMMA)
                    : Arrays.stream(field.split(COMMA))
                          .map(ResourceParameterKey::keyFromString)
-                         .map(ResourceParameterKey::swsKey)
+                         .map(ResourceParameterKey::searchFields)
                          .flatMap(Collection::stream)
                          .toArray(String[]::new);
     }
@@ -193,8 +195,8 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     @JacocoGenerated
     private Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
-        var luceneKey = ResourceSortKeys.fromSortKey(strings[0]).getFieldName();
-        return new Tuple<>(luceneKey, sortOrder);
+        var fieldName = ResourceSortKeys.fromSortKey(strings[0]).getFieldName();
+        return new Tuple<>(fieldName, sortOrder);
     }
 
     @NotNull
@@ -206,5 +208,13 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private boolean isFirstPage(ResourceAwsQuery query) {
         return ZERO.equals(query.getValue(FROM).toString());
+    }
+
+    private static boolean hasMultipleFields(String... swsKey) {
+        return swsKey.length > SINGLE_FIELD;
+    }
+
+    private static boolean isRangeQuery(ResourceParameterKey key) {
+        return key.searchOperator() != FieldOperator.EQUALS;
     }
 }

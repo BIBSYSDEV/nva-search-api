@@ -63,33 +63,37 @@ class ResourceQueryTest {
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
+
         var modified =
             resourceParameters.getValue(MODIFIED_BEFORE).<DateTime>as();
+        if (nonNull(modified)) {
+            logger.info("modified: {}", modified);
+        }
+
         var publishedBefore =
             resourceParameters.isPresent(PUBLISHED_BEFORE)
                 ? resourceParameters.getValue(PUBLISHED_BEFORE).<DateTime>as()
                 : null;
+        if (nonNull(publishedBefore)) {
+            logger.info("publishedBefore: {}", publishedBefore);
+        }
+
         var publishedSince =
             resourceParameters.isPresent(PUBLISHED_SINCE)
                 ? resourceParameters.getValue(PUBLISHED_SINCE).<DateTime>as()
                 : null;
-        var created =
-            resourceParameters.getValue(CREATED_BEFORE).<DateTime>as();
-        var category =
-            resourceParameters.getValue(CATEGORY).<String>as();
-
-        if (nonNull(modified)) {
-            logger.info("modified: {}", modified);
-        }
-        if (nonNull(publishedBefore)) {
-            logger.info("publishedBefore: {}", publishedBefore);
-        }
         if (nonNull(publishedSince)) {
             logger.info("publishedSince: {}", publishedSince);
         }
+
+        var created =
+            resourceParameters.getValue(CREATED_BEFORE).<DateTime>as();
         if (nonNull(created)) {
             logger.info("created: {}", created);
         }
+
+        var category =
+            resourceParameters.getValue(CATEGORY).<String>as();
         if (nonNull(category)) {
             logger.info("category: {}", category);
         }
@@ -117,7 +121,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
-                               .openSearchSwsUri());
+                               .openSearchUri());
     }
 
 
@@ -130,7 +134,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
-                               .openSearchSwsUri());
+                               .openSearchUri());
     }
 
 
