@@ -161,13 +161,13 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      */
     protected Collection<String> validKeys() {
         return VALID_LUCENE_PARAMETER_KEYS.stream()
-                   .map(ParameterKey::key)
+                   .map(ParameterKey::fieldName)
                    .toList();
     }
 
     @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {
-        return isNull(value) || !value.matches(key.pattern());
+        return isNull(value) || !value.matches(key.valuePattern());
     }
 
 
@@ -175,7 +175,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         return
             requiredMissing()
                 .stream()
-                .map(ParameterKey::key)
+                .map(ParameterKey::fieldName)
                 .collect(Collectors.toSet());
     }
 
@@ -198,7 +198,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         final var key = entry.getKey();
         final var value = entry.getValue();
         if (invalidQueryParameter(key, value)) {
-            final var keyName =  key.key();
+            final var keyName =  key.fieldName();
             final var errorMessage = nonNull(key.errorMessage())
                 ? key.errorMessage().formatted(keyName, value)
                 : invalidQueryParametersMessage(keyName, value);

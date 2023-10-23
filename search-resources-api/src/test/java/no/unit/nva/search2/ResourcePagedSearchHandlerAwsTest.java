@@ -201,14 +201,14 @@ class ResourcePagedSearchHandlerAwsTest {
 
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withQueryParameters(Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
+            .withQueryParameters(Map.of(SEARCH_ALL.fieldName(), SAMPLE_SEARCH_TERM))
             .withRequestContext(getRequestContext()).build();
     }
 
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.key(), "entityDescription.contributors.identity.id:12345",
-                    "results", "10", "from", "0"))
+                Map.of(SEARCH_ALL.fieldName(), "entityDescription.contributors.identity.id:12345",
+                       "results", "10", "from", "0"))
             .withHeaders(Map.of("Accept", "application/json"))
             .withRequestContext(getRequestContext())
             .withUserName(randomString())
@@ -219,7 +219,7 @@ class ResourcePagedSearchHandlerAwsTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_ALL.key(),
+                    Map.of(SEARCH_ALL.fieldName(),
                         "((entityDescription.contributors.identity.id:12345)"
                             + "+OR+"
                             + "(entityDescription.contributors.identity.id:54321))"))
@@ -231,7 +231,7 @@ class ResourcePagedSearchHandlerAwsTest {
 
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.key(), SAMPLE_SEARCH_TERM))
+                Map.of(SEARCH_ALL.fieldName(), SAMPLE_SEARCH_TERM))
             .withHeaders(Map.of("Accept", contentType))
             .withRequestContext(getRequestContext())
             .build();

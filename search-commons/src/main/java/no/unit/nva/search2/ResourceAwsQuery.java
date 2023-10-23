@@ -75,10 +75,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
     private URI nextResultsBySortKey(
         @NotNull OpenSearchSwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-        requestParameter.remove(FROM.key());
+        requestParameter.remove(FROM.fieldName());
         var sortedP =
             response.getSort().stream().map(Object::toString).collect(Collectors.joining(COMMA));
-        requestParameter.put(SEARCH_AFTER.key(), sortedP);
+        requestParameter.put(SEARCH_AFTER.fieldName(), sortedP);
         return UriWrapper.fromUri(gatewayUri)
             .addQueryParameters(requestParameter)
             .getUri();
@@ -98,9 +98,9 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.key(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.key(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.key(), DEFAULT_VALUE_SORT + COLON + DEFAULT_VALUE_SORT_ORDER);
+                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.fieldName(), DEFAULT_VALUE_SORT + COLON + DEFAULT_VALUE_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -118,14 +118,14 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
-                case PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setLucineValue(qpKey, expandDate(value));
+                case PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
                 case CATEGORY, CONTRIBUTOR,
                     CREATED_BEFORE, CREATED_SINCE,
                     DOI, FUNDING, FUNDING_SOURCE, ID,
                     INSTITUTION, ISSN,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PROJECT_CODE, SEARCH_ALL, TITLE,
-                    UNIT, USER, YEAR_REPORTED -> query.setLucineValue(qpKey, value);
+                    UNIT, USER, YEAR_REPORTED -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
@@ -178,7 +178,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
             var sortOrder = getSortOrder(sortKeyParts);
 
-            if (!sortOrder.matches(SORT_ORDER.pattern())) {
+            if (!sortOrder.matches(SORT_ORDER.valuePattern())) {
                 throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
             }
 

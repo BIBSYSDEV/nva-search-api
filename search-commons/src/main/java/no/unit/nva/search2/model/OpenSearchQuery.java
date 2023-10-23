@@ -60,14 +60,14 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return an URI to Sws search without parameters.
      */
-    public URI openSearchSwsUri() {
+    public URI openSearchUri() {
         return
             fromUri(readSearchInfrastructureApiUri())
                 .addChild(RESOURCES, SEARCH)
                 .getUri();
     }
 
-    public Map<K, String> getLuceneParameters() {
+    public Map<K, String> getOpenSearchParameters() {
         return luceneParameters;
     }
 
@@ -114,20 +114,20 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
 
     @JacocoGenerated
-    public boolean noLucineParameter() {
+    public boolean hasNoSearchValue() {
         return luceneParameters.isEmpty();
     }
 
     /**
-     * Add a key value pair to Query Parameter Map.
+     * Add a key value pair to searchable Parameters.
      *
      * @param key   to add to.
      * @param value to assign
      */
-    public void setLucineValue(K key, String value) {
+    public void setSearchFieldValue(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
-            if (key.kind() == ParamKind.STRING) {
+            var decodedValue = key.valueEncoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
+            if (key.fieldKind() == ParamKind.STRING) {
                 luceneParameters.put(key, escapeSearchString(decodedValue));
             } else {
                 luceneParameters.put(key, decodedValue);
@@ -136,14 +136,14 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * Add a key value pair to Query Parameter Map.
+     * Add a key value pair to non-searchable Parameters.
      *
      * @param key   to add to.
      * @param value to assign
      */
     public void setQueryValue(K key, String value) {
         if (nonNull(value)) {
-            queryParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
+            queryParameters.put(key, key.valueEncoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
         }
     }
 
@@ -168,7 +168,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().key().toLowerCase(Locale.getDefault());
+        return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
     }
 
     protected static String mergeParameters(String oldValue, String newValue) {
@@ -234,7 +234,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             if (isNull(value)) {
                 return null;
             }
-            return (T) switch (key.kind()) {
+            return (T) switch (key.fieldKind()) {
                 case DATE, DATE_STRING -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;

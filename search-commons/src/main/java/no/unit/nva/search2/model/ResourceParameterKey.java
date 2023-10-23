@@ -24,9 +24,9 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
-import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.EQUALS;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE_STRING;
@@ -78,17 +78,17 @@ public enum ResourceParameterKey implements ParameterKey {
 
     public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETER_KEYS =
         Arrays.stream(ResourceParameterKey.values())
-            .filter(ResourceParameterKey::isLucene)
+            .filter(ResourceParameterKey::isSearchField)
             .sorted(ResourceParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    private final String theKey;
-    private final String theKeyPattern;
-    private final String[] theFieldsToSearch;
-    private final String theErrorMessage;
-    private final String theValuePattern;
-    private final KeyEncoding theKeyEncoding;
-    private final Operator theOperator;
+    private final String key;
+    private final KeyEncoding keyEncoding;
+    private final String keyPattern;
+    private final String validValuePattern;
+    private final String[] fieldsToSearch;
+    private final FieldOperator fieldOperator;
+    private final String errorMsg;
     private final ParamKind paramkind;
 
     ResourceParameterKey(ParamKind kind) {
@@ -99,65 +99,65 @@ public enum ResourceParameterKey implements ParameterKey {
         this(kind, EQUALS, fieldsToSearch, null, null);
     }
 
-    ResourceParameterKey(ParamKind kind, Operator operator, String fieldsToSearch) {
+    ResourceParameterKey(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
         this(kind, operator, fieldsToSearch, null, null);
     }
 
     ResourceParameterKey(
-        ParamKind kind, Operator operator, String fieldsToSearch, String keyPattern, String valuePattern) {
+        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern) {
 
-        this.theKey = this.name().toLowerCase(Locale.getDefault());
-        this.theOperator = operator;
-        this.theFieldsToSearch = nonNull(fieldsToSearch)
+        this.key = this.name().toLowerCase(Locale.getDefault());
+        this.fieldOperator = operator;
+        this.fieldsToSearch = nonNull(fieldsToSearch)
                                      ? fieldsToSearch.split("\\|")
-                                     : new String[]{theKey};
-        this.theValuePattern = getValuePattern(kind, valuePattern);
-        this.theErrorMessage = getErrorMessage(kind);
-        this.theKeyEncoding = getEncoding(kind);
-        this.theKeyPattern = nonNull(keyPattern)
+                                     : new String[]{key};
+        this.validValuePattern = getValuePattern(kind, valuePattern);
+        this.errorMsg = getErrorMessage(kind);
+        this.keyEncoding = getEncoding(kind);
+        this.keyPattern = nonNull(keyPattern)
                                  ? keyPattern
-                                 : PATTERN_IS_IGNORE_CASE + theKey.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+                                 : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
     @Override
-    public Operator operator() {
-        return theOperator;
+    public String fieldName() {
+        return key;
     }
 
     @Override
-    public String key() {
-        return theKey;
+    public ParamKind fieldKind() {
+        return paramkind;
     }
 
     @Override
-    public Collection<String> swsKey() {
-        return Arrays.stream(theFieldsToSearch).toList();
+    public String fieldPattern() {
+        return keyPattern;
     }
 
     @Override
-    public String pattern() {
-        return theValuePattern;
+    public String valuePattern() {
+        return validValuePattern;
     }
 
     @Override
-    public String keyPattern() {
-        return theKeyPattern;
+    public KeyEncoding valueEncoding() {
+        return keyEncoding;
+    }
+
+    @Override
+    public Collection<String> searchFields() {
+        return Arrays.stream(fieldsToSearch).toList();
+    }
+
+    @Override
+    public FieldOperator searchOperator() {
+        return fieldOperator;
     }
 
     @Override
     public String errorMessage() {
-        return theErrorMessage;
-    }
-
-    @Override
-    public KeyEncoding encoding() {
-        return theKeyEncoding;
-    }
-
-    @Override
-    public ParamKind kind() {
-        return paramkind;
+        return errorMsg;
     }
 
     @Override
@@ -218,7 +218,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
 
-    private static boolean isLucene(ResourceParameterKey f) {
+    private static boolean isSearchField(ResourceParameterKey f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 

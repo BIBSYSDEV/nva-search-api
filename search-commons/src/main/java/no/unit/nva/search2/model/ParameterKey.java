@@ -7,24 +7,24 @@ import java.util.function.Predicate;
 
 public interface ParameterKey {
 
-    Operator operator();
+    String fieldName();
 
-    String key();
+    ParamKind fieldKind();
 
-    Collection<String> swsKey();
+    String fieldPattern();
 
-    String pattern();
+    String valuePattern();
 
-    String keyPattern();
+    KeyEncoding valueEncoding();
+
+    Collection<String> searchFields();
+
+    FieldOperator searchOperator();
 
     String errorMessage();
 
-    KeyEncoding encoding();
-
-    ParamKind kind();
-
     static Predicate<ParameterKey> equalTo(String name) {
-        return key -> name.matches(key.keyPattern());
+        return key -> name.matches(key.fieldPattern());
     }
 
     static String escapeSearchString(String value) {
@@ -39,23 +39,7 @@ public interface ParameterKey {
         DATE, DATE_STRING, NUMBER, STRING, SORT_STRING, CUSTOM
     }
 
-    enum Operator {
-        NONE("%s%s"),
-        EQUALS("(%s:%s)"),
-        GREATER_THAN("(%s:>%s)"),
-        GREATER_THAN_OR_EQUAL_TO("(%s:>=%s)"),
-        LESS_THAN("(%s:<%s)"),
-        LESS_THAN_OR_EQUAL_TO("(%s:<=%s)"),
-        ;
-
-        private final String format;
-
-        Operator(String format) {
-            this.format = format;
-        }
-
-        public String format() {
-            return format;
-        }
+    enum FieldOperator {
+        NONE, EQUALS, GREATER_THAN, GREATER_THAN_OR_EQUAL_TO, LESS_THAN, LESS_THAN_OR_EQUAL_TO
     }
 }
