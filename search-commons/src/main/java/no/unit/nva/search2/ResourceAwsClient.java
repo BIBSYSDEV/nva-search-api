@@ -57,7 +57,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
 
-    private final Integer SINGLE_FIELD = 1;
+    private static final Integer SINGLE_FIELD = 1;
 
     public ResourceAwsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
@@ -87,13 +87,13 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private Stream<QueryBuilderWrapper> createQueryBuilderStream(ResourceAwsQuery query) {
         AbstractQueryBuilder<?> queryBuilder;
-            if (query.isPresent(SEARCH_ALL)) {
-                queryBuilder = multiMatchQuery(query);
-            } else if (query.noLucineParameter()) {
-                queryBuilder = QueryBuilders.matchAllQuery();
-            } else {
-                queryBuilder = boolQuery(query);
-            }
+        if (query.isPresent(SEARCH_ALL)) {
+            queryBuilder = multiMatchQuery(query);
+        } else if (query.noLucineParameter()) {
+            queryBuilder = QueryBuilders.matchAllQuery();
+        } else {
+            queryBuilder = boolQuery(query);
+        }
 
         return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
     }
@@ -116,7 +116,6 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         builder.from(query.getValue(FROM).as());
         getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
 
-
         return new QueryBuilderSourceWrapper(builder, query.openSearchSwsUri());
     }
 
@@ -124,11 +123,11 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private HttpRequest createRequest(QueryBuilderSourceWrapper qbs) {
         logger.info(qbs.source().query().toString());
         return HttpRequest
-            .newBuilder(qbs.requestUri())
-            .headers(
-                ACCEPT, MediaType.JSON_UTF_8.toString(),
-                AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-            .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
+                   .newBuilder(qbs.requestUri())
+                   .headers(
+                       ACCEPT, MediaType.JSON_UTF_8.toString(),
+                       AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+                   .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
 
     private HttpResponse<String> fetch(HttpRequest httpRequest) {
@@ -141,7 +140,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             throw new RuntimeException(response.body());
         }
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
-            .orElseThrow();
+                   .orElseThrow();
     }
 
     private AbstractQueryBuilder<?> multiMatchQuery(ResourceAwsQuery query) {
@@ -159,7 +158,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                 if (swsKey.length > SINGLE_FIELD) {
                     bq.must(QueryBuilders.multiMatchQuery(value, swsKey));
                 } else {
-                    if (key.operator() != ParameterKey.Operator.EQUALS ) {
+                    if (key.operator() != ParameterKey.Operator.EQUALS) {
                         bq.must(rangeQuery(key.operator(), swsKey[0], value));
                     } else {
                         bq.must(QueryBuilders.matchQuery(swsKey[0], value));
@@ -171,13 +170,13 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private AbstractQueryBuilder<?> rangeQuery(ParameterKey.Operator operator, String swsKey, String value) {
         return
-            switch (operator){
-            case NONE, EQUALS -> throw new IllegalArgumentException("Operator not supported");
-            case GREATER_THAN -> QueryBuilders.rangeQuery(swsKey).gt(value);
-            case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(swsKey).gte(value);
-            case LESS_THAN -> QueryBuilders.rangeQuery(swsKey).lt(value);
-            case LESS_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(swsKey).lte(value);
-        };
+            switch (operator) {
+                case NONE, EQUALS -> throw new IllegalArgumentException("Operator not supported");
+                case GREATER_THAN -> QueryBuilders.rangeQuery(swsKey).gt(value);
+                case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(swsKey).gte(value);
+                case LESS_THAN -> QueryBuilders.rangeQuery(swsKey).lt(value);
+                case LESS_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(swsKey).lte(value);
+            };
     }
 
     @NotNull
@@ -191,7 +190,6 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                          .toArray(String[]::new);
     }
 
-
     @JacocoGenerated
     private Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
@@ -202,8 +200,8 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     @NotNull
     private Stream<Tuple<String, SortOrder>> getSortStream(ResourceAwsQuery query) {
         return Arrays.stream(query.getValue(SORT).<String>as().split(COMMA))
-            .map(sort -> sort.split(COLON))
-            .map(this::expandSortKeys);
+                   .map(sort -> sort.split(COLON))
+                   .map(this::expandSortKeys);
     }
 
     private boolean isFirstPage(ResourceAwsQuery query) {

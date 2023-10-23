@@ -64,27 +64,19 @@ class ResourceQueryTest {
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         var modified =
-            resourceParameters
-                .getValue(MODIFIED_BEFORE)
-                .<DateTime>as();
-        var publishedBefore = resourceParameters.isPresent(PUBLISHED_BEFORE) ?
-            resourceParameters
-                .getValue(PUBLISHED_BEFORE)
-                .<DateTime>as()
-            : null;
-        var publishedSince = resourceParameters.isPresent(PUBLISHED_SINCE) ?
-            resourceParameters
-                .getValue(PUBLISHED_SINCE)
-                .<DateTime>as()
-            : null;
+            resourceParameters.getValue(MODIFIED_BEFORE).<DateTime>as();
+        var publishedBefore =
+            resourceParameters.isPresent(PUBLISHED_BEFORE)
+                ? resourceParameters.getValue(PUBLISHED_BEFORE).<DateTime>as()
+                : null;
+        var publishedSince =
+            resourceParameters.isPresent(PUBLISHED_SINCE)
+                ? resourceParameters.getValue(PUBLISHED_SINCE).<DateTime>as()
+                : null;
         var created =
-            resourceParameters
-                .getValue(CREATED_BEFORE)
-                .<DateTime>as();
+            resourceParameters.getValue(CREATED_BEFORE).<DateTime>as();
         var category =
-            resourceParameters
-                .getValue(CATEGORY)
-                .<String>as();
+            resourceParameters.getValue(CATEGORY).<String>as();
 
         if (nonNull(modified)) {
             logger.info("modified: {}", modified);

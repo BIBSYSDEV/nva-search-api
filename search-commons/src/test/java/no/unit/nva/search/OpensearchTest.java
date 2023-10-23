@@ -215,8 +215,8 @@ public class OpensearchTest {
         void shouldReturnCorrectAggregationsForImportCandidates()
             throws InterruptedException, ApiGatewayException {
             addDocumentsToIndex("imported_candidate_from_index.json",
-                                        "not_imported_candidate_from_index.json",
-                                       "not_applicable_import_candidate_from_index.json");
+                                "not_imported_candidate_from_index.json",
+                                "not_applicable_import_candidate_from_index.json");
 
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
@@ -427,11 +427,11 @@ public class OpensearchTest {
         void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
             addDocumentsToIndex("sample_publication.json",
                                 "sample_publication_with_several_of_the_same_affiliation.json",
-                               "sample_publication_with_affiliations.json");
+                                "sample_publication_with_affiliations.json");
             var mostBoostedPublication = "https://api.sandbox.nva.aws.unit"
-                                       + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df";
+                                         + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df";
             var secondBoostedPublication = "https://api.sandbox.nva.aws.unit"
-                        + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9";
+                                           + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9";
             var promotedPublications = List.of(mostBoostedPublication, secondBoostedPublication);
             var contributor = "1234";
             var query = queryWithTermAndAggregation(SEARCH_ALL, RESOURCES_AGGREGATIONS);
@@ -489,7 +489,8 @@ public class OpensearchTest {
             var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
             assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
-            var contributorAggregation = actualAggregations.at( "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
+            var contributorAggregation = actualAggregations.at(
+                "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
             assertAggregation(contributorAggregation, "Iametti, Stefania", 1);
 
             var publisherAggregation = actualAggregations.at(
@@ -498,7 +499,8 @@ public class OpensearchTest {
 
             var journalAggregation = actualAggregations.at(
                 "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
-            assertAggregation(journalAggregation, "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
+            assertAggregation(journalAggregation,
+                              "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
         }
 
         @Test
@@ -548,7 +550,7 @@ public class OpensearchTest {
                                 "sample_publication_with_several_of_the_same_affiliation.json");
 
             var query = queryWithTermAndAggregation(
-           SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
+                SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
