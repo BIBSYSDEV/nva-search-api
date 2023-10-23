@@ -166,8 +166,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             }
         }
 
-        private static boolean notInvalid(String key) {
-            return keyFromString(key) != ResourceParameterKey.INVALID;
+        private void addSortOrderQuery(String value) {
+            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
         }
 
         private String validateSortKey(String keySort) {
@@ -197,10 +197,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 : DEFAULT_VALUE_SORT_ORDER;
         }
 
-        private void addSortOrderQuery(String value) {
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
-        }
-
         private void addSortQuery(String value) {
             var validFieldValue =
                 decodeUTF(value)
@@ -212,8 +208,13 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             return ALL.equals(value) || isNull(value)
                 ? ALL
                 : Arrays.stream(value.split(COMMA))
-                .filter(Builder::notInvalid)
+                .filter(this::keyIsValid)
                 .collect(Collectors.joining(COMMA));
         }
+
+        private boolean keyIsValid(String key) {
+            return keyFromString(key) != ResourceParameterKey.INVALID;
+        }
+
     }
 }

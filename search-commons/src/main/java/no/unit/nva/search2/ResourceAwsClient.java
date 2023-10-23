@@ -205,6 +205,6 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private boolean isFirstPage(ResourceAwsQuery query) {
-        return ZERO.equals(query.getValue(FROM).as());
+        return ZERO.equals(query.getValue(FROM).toString());
     }
 }
