@@ -25,8 +25,8 @@ public class Patterns {
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
 
     /**
-     * Pattern for matching opensearch special characters.
-     *  - + & | ! ( ) { } [ ] ^ " ~ * ? : \ /
+     * Pattern for matching group of opensearch special characters.
+     * - + & | ! ( ) { } [ ] ^ " ~ * ? : \ /
      *  with the intention of escaping them.
      */
     public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\"~*?:\\\\/])";
