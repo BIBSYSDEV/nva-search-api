@@ -57,6 +57,8 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
 
+    private final Integer SINGLE_FIELD = 1;
+
     public ResourceAwsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
         this.jwtProvider = cachedJwtProvider;
@@ -154,7 +156,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         query.getLuceneParameters()
             .forEach((key, value) -> {
                 var swsKey = key.swsKey().toArray(String[]::new);
-                if (swsKey.length > 1) {
+                if (swsKey.length > SINGLE_FIELD) {
                     bq.must(QueryBuilders.multiMatchQuery(value, swsKey));
                 } else {
                     if (key.operator() != ParameterKey.Operator.EQUALS ) {
