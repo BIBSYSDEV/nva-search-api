@@ -9,13 +9,13 @@ public interface ParameterKey {
 
     String fieldName();
 
-    ParamKind fieldKind();
+    ParamKind fieldType();
 
     String fieldPattern();
 
     String valuePattern();
 
-    KeyEncoding valueEncoding();
+    ValueEncoding valueEncoding();
 
     Collection<String> searchFields();
 
@@ -31,7 +31,7 @@ public interface ParameterKey {
         return value.replaceAll(PATTERN_IS_SPECIAL_CHARACTERS, PATTERN_IS_ADD_SLASH);
     }
 
-    enum KeyEncoding {
+    enum ValueEncoding {
         NONE, DECODE
     }
 

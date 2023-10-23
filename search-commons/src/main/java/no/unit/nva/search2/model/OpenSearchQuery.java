@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
+import no.unit.nva.search2.model.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.model.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
@@ -126,8 +126,8 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public void setSearchFieldValue(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
-            if (key.fieldKind() == ParamKind.STRING) {
+            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            if (key.fieldType() == ParamKind.STRING) {
                 luceneParameters.put(key, escapeSearchString(decodedValue));
             } else {
                 luceneParameters.put(key, decodedValue);
@@ -143,7 +143,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public void setQueryValue(K key, String value) {
         if (nonNull(value)) {
-            queryParameters.put(key, key.valueEncoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
+            queryParameters.put(key, key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value);
         }
     }
 
@@ -234,7 +234,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             if (isNull(value)) {
                 return null;
             }
-            return (T) switch (key.fieldKind()) {
+            return (T) switch (key.fieldType()) {
                 case DATE, DATE_STRING -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;

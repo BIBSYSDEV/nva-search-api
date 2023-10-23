@@ -83,7 +83,7 @@ public enum ResourceParameterKey implements ParameterKey {
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String key;
-    private final KeyEncoding keyEncoding;
+    private final ValueEncoding encoding;
     private final String keyPattern;
     private final String validValuePattern;
     private final String[] fieldsToSearch;
@@ -113,7 +113,7 @@ public enum ResourceParameterKey implements ParameterKey {
                                      : new String[]{key};
         this.validValuePattern = getValuePattern(kind, valuePattern);
         this.errorMsg = getErrorMessage(kind);
-        this.keyEncoding = getEncoding(kind);
+        this.encoding = getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
                                  ? keyPattern
                                  : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
@@ -126,7 +126,7 @@ public enum ResourceParameterKey implements ParameterKey {
     }
 
     @Override
-    public ParamKind fieldKind() {
+    public ParamKind fieldType() {
         return paramkind;
     }
 
@@ -141,8 +141,8 @@ public enum ResourceParameterKey implements ParameterKey {
     }
 
     @Override
-    public KeyEncoding valueEncoding() {
-        return keyEncoding;
+    public ValueEncoding valueEncoding() {
+        return encoding;
     }
 
     @Override
@@ -172,10 +172,10 @@ public enum ResourceParameterKey implements ParameterKey {
 
     @NotNull
     @JacocoGenerated
-    private KeyEncoding getEncoding(ParamKind kind) {
+    private ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
-            case NUMBER, CUSTOM -> KeyEncoding.NONE;
-            case DATE, DATE_STRING, STRING, SORT_STRING -> KeyEncoding.DECODE;
+            case NUMBER, CUSTOM -> ValueEncoding.NONE;
+            case DATE, DATE_STRING, STRING, SORT_STRING -> ValueEncoding.DECODE;
         };
     }
 
