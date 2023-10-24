@@ -10,7 +10,6 @@ import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.StringUtils.SPACE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -32,7 +31,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import no.unit.nva.search2.model.ParameterKey.ValueEncoding;
-import no.unit.nva.search2.model.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -127,11 +125,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     public void setSearchFieldValue(K key, String value) {
         if (nonNull(value)) {
             var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
-            if (key.fieldType() == ParamKind.STRING) {
-                luceneParameters.put(key, escapeSearchString(decodedValue));
-            } else {
-                luceneParameters.put(key, decodedValue);
-            }
+            luceneParameters.put(key, decodedValue);
         }
     }
 

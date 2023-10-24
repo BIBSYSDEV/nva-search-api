@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
+import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
@@ -146,9 +147,10 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private MultiMatchQueryBuilder multiMatchQuery(ResourceAwsQuery query) {
-        var field = query.getValue(FIELDS).toString();
+        var fields = extractFields(query.getValue(FIELDS).toString());
+        var value = escapeSearchString(query.getValue(SEARCH_ALL).toString());
         return QueryBuilders
-                   .multiMatchQuery(query.getValue(SEARCH_ALL).toString(), extractFields(field))
+                   .multiMatchQuery(value, fields)
                    .operator(Operator.AND);
     }
 
@@ -158,13 +160,17 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             .forEach((key, value) -> {
                 var searchFields = key.searchFields().toArray(String[]::new);
                 if (hasMultipleFields(searchFields)) {
-                    bq.must(QueryBuilders.multiMatchQuery(value, searchFields));
+                    bq.must(QueryBuilders
+                                .multiMatchQuery(escapeSearchString(value), searchFields)
+                                .operator(Operator.AND));
                 } else {
                     var searchField = searchFields[0];
                     if (isRangeQuery(key)) {
                         bq.must(rangeQuery(key.searchOperator(), searchField, value));
                     } else {
-                        bq.must(QueryBuilders.matchQuery(searchField, value));
+                        bq.must(QueryBuilders
+                                    .matchQuery(searchField, escapeSearchString(value))
+                                    .operator(Operator.AND));
                     }
                 }
             });
