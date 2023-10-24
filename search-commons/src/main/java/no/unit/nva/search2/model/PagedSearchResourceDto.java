@@ -25,12 +25,12 @@ public record PagedSearchResourceDto(
 
     private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
-            builder.totalHits,
-            builder.hits,
-            builder.nextResults,
-            builder.previousResults,
-            builder.nextResultsBySortKey,
-            builder.aggregations
+             builder.totalHits,
+             builder.hits,
+             builder.nextResults,
+             builder.nextResultsBySortKey,
+             builder.previousResults,
+             builder.aggregations
         );
     }
 
