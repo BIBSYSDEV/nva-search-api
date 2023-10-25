@@ -1,6 +1,7 @@
 package no.unit.nva.search2.model;
 
 import java.util.Locale;
+
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 

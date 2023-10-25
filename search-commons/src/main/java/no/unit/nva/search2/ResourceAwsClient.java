@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
+import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR;
 import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
@@ -60,6 +61,8 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
 
+    private final UserSettingsClient userSettingsClient;
+
     private static final Integer SINGLE_FIELD = 1;
 
     public ResourceAwsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
@@ -67,6 +70,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         this.jwtProvider = cachedJwtProvider;
         this.httpClient = client;
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
+        this.userSettingsClient = new UserSettingsClient(cachedJwtProvider, client);
     }
 
     @JacocoGenerated
@@ -161,20 +165,36 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                 var searchFields = key.searchFields().toArray(String[]::new);
                 if (hasMultipleFields(searchFields)) {
                     bq.must(QueryBuilders
-                                .multiMatchQuery(escapeSearchString(value), searchFields)
-                                .operator(Operator.AND));
+                        .multiMatchQuery(escapeSearchString(value), searchFields)
+                        .operator(Operator.AND));
+                    if (key.equals(CONTRIBUTOR)) {
+                        addPromotedQuery(query, bq);
+                    }
                 } else {
                     var searchField = searchFields[0];
                     if (isRangeQuery(key)) {
                         bq.must(rangeQuery(key.searchOperator(), searchField, value));
                     } else {
                         bq.must(QueryBuilders
-                                    .matchQuery(searchField, escapeSearchString(value))
-                                    .operator(Operator.AND));
+                            .matchQuery(searchField, escapeSearchString(value))
+                            .operator(Operator.AND));
+                        if (key.equals(CONTRIBUTOR)) {
+                            addPromotedQuery(query, bq);
+                        }
                     }
                 }
             });
         return bq;
+    }
+
+    private void addPromotedQuery(ResourceAwsQuery query, BoolQueryBuilder bq) {
+        var promotedPublications = userSettingsClient
+            .doSearch(query)
+            .promotedPublications();
+        for (int i = 0; i < promotedPublications.size(); i++) {
+            bq.should(QueryBuilders.matchQuery("id", promotedPublications.get(i))
+                .boost(promotedPublications.size() - i));
+        }
     }
 
     private RangeQueryBuilder rangeQuery(FieldOperator operator, String fieldName, String value) {
@@ -186,6 +206,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             case LESS_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(fieldName).lte(value);
         };
     }
+
 
     @NotNull
     private String[] extractFields(String field) {
