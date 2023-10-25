@@ -246,7 +246,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private boolean hasPromotedPublications(List<String> promotedPublications) {
-        return !promotedPublications.isEmpty();
+        return  nonNull(promotedPublications) && !promotedPublications.isEmpty();
     }
 
     private static boolean isRangeQuery(ResourceParameterKey key) {
