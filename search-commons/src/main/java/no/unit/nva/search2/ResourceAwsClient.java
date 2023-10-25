@@ -192,12 +192,12 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         var promotedPublications = userSettingsClient
             .doSearch(query)
             .promotedPublications();
-        for (int i = 0; i < promotedPublications.size(); i++) {
-            bq.should(QueryBuilders.matchQuery("id", promotedPublications.get(i))
-                .boost(promotedPublications.size() - i));
-        }
         if (hasPromotedPublications(promotedPublications)) {
             query.removeKey(SORT);
+            for (int i = 0; i < promotedPublications.size(); i++) {
+                bq.should(QueryBuilders.matchQuery("id", promotedPublications.get(i))
+                    .boost(promotedPublications.size() - i));
+            }
         }
     }
 
