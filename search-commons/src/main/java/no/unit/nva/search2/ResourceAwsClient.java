@@ -108,7 +108,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private QueryBuilderSourceWrapper populateSearchRequest(QueryBuilderWrapper queryBuilderWrapper) {
         var builder = new SearchSourceBuilder().query(queryBuilderWrapper.builder());
         var query = queryBuilderWrapper.query();
-        var searchAfter = query.removeValue(SEARCH_AFTER);
+        var searchAfter = query.removeKey(SEARCH_AFTER);
 
         if (nonNull(searchAfter)) {
             var sortKeys = searchAfter.split(COMMA);
@@ -195,6 +195,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             bq.should(QueryBuilders.matchQuery("id", promotedPublications.get(i))
                 .boost(promotedPublications.size() - i));
         }
+        query.removeKey(SORT);
     }
 
     private RangeQueryBuilder rangeQuery(FieldOperator operator, String fieldName, String value) {

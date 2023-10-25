@@ -100,7 +100,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         );
     }
 
-    public String removeValue(K key) {
+    public String removeKey(K key) {
         return luceneParameters.containsKey(key)
                    ? luceneParameters.remove(key)
                    : queryParameters.remove(key);

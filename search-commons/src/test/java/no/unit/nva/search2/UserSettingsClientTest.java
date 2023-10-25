@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 class UserSettingsClientTest {
 
     private UserSettingsClient userSettingsClient;
-    private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserSettingsClientTest.class);
     public static final String SAMPLE_USERSETTINGS_RESPONSE
         = "user_settings.json";
 
