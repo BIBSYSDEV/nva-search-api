@@ -147,7 +147,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                     var perPage = query.getValue(SIZE).<Number>as();
                     query.setQueryValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.removeValue(PAGE);
+                query.removeKey(PAGE);
             }
         }
 
