@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
@@ -85,11 +84,14 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
     @JacocoGenerated
     private UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
-            throw new RuntimeException(response.body());
+            logger.error("Error fetching user settings: {}", response.body());
+            return new UserSettings(Collections.emptyList());
         }
-        var usersettings = attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
-            .orElseThrow();
-        return nonNull(usersettings.promotedPublications()) ? usersettings : new UserSettings(Collections.emptyList());
+
+        var settings = attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class));
+        return settings.isSuccess()
+            ? settings.get()
+            : new UserSettings(Collections.emptyList());
     }
 
 }
