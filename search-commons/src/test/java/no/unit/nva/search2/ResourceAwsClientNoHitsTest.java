@@ -64,8 +64,8 @@ class ResourceAwsClientNoHitsTest {
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
-        assertNotNull(resourceSwsQuery.removeValue(CATEGORY));
-        assertNull(resourceSwsQuery.removeValue(CATEGORY));
+        assertNotNull(resourceSwsQuery.removeKey(CATEGORY));
+        assertNull(resourceSwsQuery.removeKey(CATEGORY));
         var pagedSearchResourceDto = resourceSwsQuery.fetchAsPagedResponse(resourceAwsClient);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
