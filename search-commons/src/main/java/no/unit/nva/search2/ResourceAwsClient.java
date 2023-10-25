@@ -27,6 +27,7 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -195,7 +196,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             bq.should(QueryBuilders.matchQuery("id", promotedPublications.get(i))
                 .boost(promotedPublications.size() - i));
         }
-        if (!promotedPublications.isEmpty()) {
+        if (hasPromotedPublications(promotedPublications)) {
             query.removeKey(SORT);
         }
     }
@@ -240,8 +241,12 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         return ZERO.equals(query.getValue(FROM).toString());
     }
 
-    private static boolean hasMultipleFields(String... swsKey) {
+    private boolean hasMultipleFields(String... swsKey) {
         return swsKey.length > SINGLE_FIELD;
+    }
+
+    private boolean hasPromotedPublications(List<String> promotedPublications) {
+        return !promotedPublications.isEmpty();
     }
 
     private static boolean isRangeQuery(ResourceParameterKey key) {
