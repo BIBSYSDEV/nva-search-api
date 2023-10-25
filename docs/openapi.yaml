@@ -181,6 +181,20 @@ paths:
           type: string
           format: date
       - in: query
+        name: publication_id
+        description: "Publication Id of the result"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: publication_type
+        description: "Publication type of the result"
+        example: "Anthology"
+        required: false
+        schema:
+          type: string
+          enum: [Anthology, Monografi]
+      - in: query
         name: modified_since
         description: "Results modified since and inclusive the given date, (yyyy-mm-dd)"
         example: "2005-03-17"

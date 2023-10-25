@@ -55,6 +55,8 @@ public enum ResourceParameterKey implements ParameterKey {
     MODIFIED_BEFORE(DATE, LESS_THAN, "modifiedDate"),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate"),
     PROJECT_CODE(STRING, "fundings.identifier"),
+    PUBLICATION_ID(STRING, "entityDescription.reference.publicationInstance.id"),
+    PUBLICATION_TYPE(STRING, "entityDescription.reference.publicationInstance.type"),
     PUBLISHED_BEFORE(DATE_STRING, LESS_THAN, "publishedDate"),
     PUBLISHED_SINCE(DATE_STRING, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
     TITLE(STRING, "entityDescription.mainTitle"),
