@@ -3,6 +3,7 @@ package no.unit.nva.search;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.search.RequestUtil.toQueryTickets;
+import static no.unit.nva.search.RequestUtil.toQueryTicketsWithViewingScope;
 import static no.unit.nva.search.SearchClient.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.STATUS_TERMS_AGGREGATION;
 import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
@@ -124,7 +125,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private SearchResponseDto handleCuratorSearch(RequestInfo requestInfo, String indexName)
         throws ApiGatewayException {
-        var query = toQueryTickets(requestInfo, TICKETS_AGGREGATIONS);
+        var query = toQueryTicketsWithViewingScope(requestInfo, TICKETS_AGGREGATIONS);
         assertUserIsAllowedViewingScope(requestInfo.getTopLevelOrgCristinId().orElseThrow(), query);
         return searchClient.searchWithSearchTicketQuery(query, indexName);
     }
@@ -134,10 +135,10 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         var allowed = attempt(() -> this.uriRetriever.getRawContent(topLevelOrg,
                                                                     APPLICATION_JSON)).map(
                 Optional::orElseThrow)
-                          .map(str -> createModel(dtoObjectMapper.readTree(str)))
+                          .map(document -> createModel(dtoObjectMapper.readTree(document)))
                           .map(model -> model.listObjectsOfProperty(model.createProperty(HAS_PART_PROPERTY)))
                           .map(node -> node.toList().stream().map(RDFNode::toString))
-                          .map(s -> Stream.concat(s, Stream.of(topLevelOrg.toString())))
+                          .map(hasPartOrgs -> Stream.concat(hasPartOrgs, Stream.of(topLevelOrg.toString())))
                           .orElseThrow()
                           .collect(Collectors.toSet());
 

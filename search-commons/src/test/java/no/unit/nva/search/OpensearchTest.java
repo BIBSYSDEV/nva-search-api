@@ -150,8 +150,7 @@ public class OpensearchTest {
     }
 
     private IndexDocument getTicketIndexDocument(String indexName, URI organization, List<URI> partOf) {
-        var doc = getTicketIndexDocument(indexName, organization, partOf, STATUS_TO_INCLUDE_IN_RESULT);
-        return doc;
+        return getTicketIndexDocument(indexName, organization, partOf, STATUS_TO_INCLUDE_IN_RESULT);
     }
 
     private IndexDocument getTicketIndexDocument(String indexName, URI organization, List<URI> partOf, String status) {
@@ -489,15 +488,15 @@ public class OpensearchTest {
             @Test
             void shouldReturnSubUnitDocumentWhenSearchingTopUnit() throws Exception {
 
-                var orgId = randomUri();
+                var topLevelOrg = randomUri();
                 var subUnit = randomUri();
-                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, subUnit, List.of(orgId)));
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, subUnit, List.of(topLevelOrg)));
 
                 Thread.sleep(DELAY_AFTER_INDEXING);
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(orgId), false);
+                                                                List.of(topLevelOrg), false);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 
@@ -507,15 +506,15 @@ public class OpensearchTest {
             @Test
             void shouldNotReturnSubUnitDocumentWhenExlucingSubUnitsAndSearchingTopUnit() throws Exception {
 
-                var orgId = randomUri();
+                var topLevelOrg = randomUri();
                 var subUnit = randomUri();
-                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, subUnit, List.of(orgId)));
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, subUnit, List.of(topLevelOrg)));
 
                 Thread.sleep(DELAY_AFTER_INDEXING);
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(orgId), true);
+                                                                List.of(topLevelOrg), true);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 

@@ -35,6 +35,7 @@ public class RequestUtil {
     public static final String HTTPS = "https";
     public static final Environment ENVIRONMENT = new Environment();
     private static final String COMMA = ",";
+    public static final String FALSE = Boolean.FALSE.toString();
 
     /**
      * Get searchTerm from request query parameters.
@@ -74,7 +75,7 @@ public class RequestUtil {
 
     public static boolean getExcludeSubUnits(RequestInfo requestInfo) {
         return Boolean.parseBoolean(
-            requestInfo.getQueryParameters().getOrDefault(EXCLUDE_SUB_UNITS_KEY, "false")
+            requestInfo.getQueryParameters().getOrDefault(EXCLUDE_SUB_UNITS_KEY, FALSE)
         );
     }
 
@@ -145,6 +146,20 @@ public class RequestUtil {
     public static SearchTicketsQuery toQueryTickets(
             RequestInfo requestInfo,
             List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        return new SearchTicketsQuery(
+            getSearchTerm(requestInfo),
+            getResults(requestInfo),
+            getFrom(requestInfo),
+            getOrderBy(requestInfo),
+            getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
+            aggregations
+        );
+    }
+
+    public static SearchTicketsQuery toQueryTicketsWithViewingScope(
+        RequestInfo requestInfo,
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
         var topLevelOrg = requestInfo.getTopLevelOrgCristinId().orElseThrow();
         return new SearchTicketsQuery(
             getSearchTerm(requestInfo),

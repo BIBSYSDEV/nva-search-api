@@ -22,6 +22,8 @@ public class SearchTicketsQuery {
     private static final String STRING = "string";
     private static final String OWNER_PROPERTY = "owner.username";
     private static final String OWNER_TICKETS_QUERY = "OwnerTicketsQuery";
+    public static final String VIEWING_SCOPE_QUERY_NAME = "ViewingScopeQuery";
+
     private static final String KEYWORD = "keyword";
     private final String searchTerm;
     private final int results;
@@ -32,6 +34,25 @@ public class SearchTicketsQuery {
     private final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations;
     private final List<String> viewingScope;
     private final boolean excludeSubUnits;
+
+    public SearchTicketsQuery(
+        String searchTerm,
+        int results,
+        int from,
+        String orderBy,
+        SortOrder sortOrder,
+        URI requestUri,
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        this.searchTerm = searchTerm;
+        this.results = results;
+        this.from = from;
+        this.orderBy = orderBy;
+        this.sortOrder = sortOrder;
+        this.requestUri = requestUri;
+        this.aggregations = aggregations;
+        this.viewingScope = List.of();
+        this.excludeSubUnits = false;
+    }
 
     public SearchTicketsQuery(
             String searchTerm,
@@ -137,13 +158,13 @@ public class SearchTicketsQuery {
         query.should(
             QueryBuilders.termsQuery(jsonPathOf(ORGANIZATION_FIELD, PART_OF_FIELD, KEYWORD),
                                                this.viewingScope));
-        query.queryName(SearchClient.VIEWING_SCOPE_QUERY_NAME);
+        query.queryName(VIEWING_SCOPE_QUERY_NAME);
         return query;
     }
 
     private QueryBuilder excludeSubUnitsQuery() {
         return QueryBuilders.termsQuery(jsonPathOf(ORGANIZATION_FIELD, ID_FIELD, KEYWORD), this.viewingScope)
-                   .queryName(SearchClient.VIEWING_SCOPE_QUERY_NAME);
+                   .queryName(VIEWING_SCOPE_QUERY_NAME);
     }
 
     private void addAggregations(SearchSourceBuilder sourceBuilder) {

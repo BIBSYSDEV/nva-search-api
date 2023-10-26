@@ -8,6 +8,7 @@ import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
 import static no.unit.nva.search.RequestUtil.VIEWING_SCOPE_KEY;
 import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
 import static no.unit.nva.search.SearchTicketsHandler.ROLE_CREATOR;
+import static no.unit.nva.search.SearchTicketsHandler.ROLE_CURATOR;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
