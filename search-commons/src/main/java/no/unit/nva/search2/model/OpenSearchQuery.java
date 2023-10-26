@@ -3,18 +3,13 @@ package no.unit.nva.search2.model;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
-import static no.unit.nva.search2.constant.ApplicationConstants.AND;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
-import static no.unit.nva.search2.constant.ApplicationConstants.OR;
 import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
-import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
-import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.StringUtils.SPACE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -34,10 +29,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey.KeyEncoding;
-import no.unit.nva.search2.model.ParameterKey.ParamKind;
+import no.unit.nva.search2.model.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -65,25 +58,17 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return an URI to Sws search without parameters.
      */
-    public URI openSearchSwsUri() {
+    public URI openSearchUri() {
         return
             fromUri(readSearchInfrastructureApiUri())
                 .addChild(RESOURCES, SEARCH)
                 .getUri();
     }
 
-
-    /**
-     * Query Parameters with string Keys.
-     *
-     * @return Map of String and String
-     */
-    public Map<String, String> toSwsLuceneParameter() {
-        var query = luceneParameters.entrySet().stream()
-                        .map(this::swsLuceneEntryToString)
-                        .collect(Collectors.joining(AND, PREFIX, SUFFIX));
-        return Map.of("q", query);
+    public Map<K, String> getOpenSearchParameters() {
+        return luceneParameters;
     }
+
 
     /**
      * Query Parameters with string Keys.
@@ -115,44 +100,44 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         );
     }
 
-    public String removeValue(K key) {
+    public String removeKey(K key) {
         return luceneParameters.containsKey(key)
                    ? luceneParameters.remove(key)
                    : queryParameters.remove(key);
     }
 
-    @JacocoGenerated
     public boolean isPresent(K key) {
         return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
     }
 
 
+    @JacocoGenerated
+    public boolean hasNoSearchValue() {
+        return luceneParameters.isEmpty();
+    }
+
     /**
-     * Add a key value pair to Query Parameter Map.
+     * Add a key value pair to searchable Parameters.
      *
      * @param key   to add to.
      * @param value to assign
      */
-    public void setLucineValue(K key, String value) {
+    public void setSearchFieldValue(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value;
-            if (key.kind() == ParamKind.STRING) {
-                luceneParameters.put(key, escapeSearchString(decodedValue));
-            } else {
-                luceneParameters.put(key, decodedValue);
-            }
+            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            luceneParameters.put(key, decodedValue);
         }
     }
 
     /**
-     * Add a key value pair to Query Parameter Map.
+     * Add a key value pair to non-searchable Parameters.
      *
      * @param key   to add to.
      * @param value to assign
      */
     public void setQueryValue(K key, String value) {
         if (nonNull(value)) {
-            queryParameters.put(key, key.encoding() != KeyEncoding.NONE ? decodeUTF(value) : value);
+            queryParameters.put(key, key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value);
         }
     }
 
@@ -177,16 +162,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().key().toLowerCase(Locale.getDefault());
-    }
-
-    protected String toSwsParameterValue(Entry<K, String> entry) {
-        return entry.getKey().kind() == ParamKind.SORT_STRING
-                   ? Arrays.stream(entry.getValue().split(COMMA))
-                         .map(sort -> sort.split(COLON))
-                         .map(this::expandToSwsSort)
-                         .collect(Collectors.joining(COMMA))
-                   : entry.getValue();
+        return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
     }
 
     protected static String mergeParameters(String oldValue, String newValue) {
@@ -200,21 +176,6 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
-    }
-
-    private String swsLuceneEntryToString(Entry<K, String> entry) {
-        return
-            entry.getKey().swsKey().stream()
-                .map(swsKey -> entry.getKey().operator().format().formatted(swsKey, toSwsParameterValue(entry)))
-                .collect(Collectors.joining(OR, PREFIX, SUFFIX));
-    }
-
-    private String expandToSwsSort(String... strings) {
-        var luceneKey = ResourceSortKeys
-                            .fromSortKey(strings[0])
-                            .getFieldName();
-        var sortOrder = strings[1].toLowerCase(Locale.getDefault());
-        return luceneKey + COLON + sortOrder;
     }
 
     public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
@@ -267,8 +228,8 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
             if (isNull(value)) {
                 return null;
             }
-            return (T) switch (key.kind()) {
-                case DATE -> castDateTime();
+            return (T) switch (key.fieldType()) {
+                case DATE, DATE_STRING -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };

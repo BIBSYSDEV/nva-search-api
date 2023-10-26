@@ -1,6 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
 import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLSession;
-import no.unit.nva.search2.model.OpenSearchQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ class ResourceAwsClientTest {
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var pagedSearchResourceDto =
             ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
                 .doSearch(resourceAwsClient);
@@ -66,7 +66,7 @@ class ResourceAwsClientTest {
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var query =
             ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
                 .build();
 
@@ -81,7 +81,7 @@ class ResourceAwsClientTest {
     void failToSearchUri(URI uri) {
         assertThrows(BadRequestException.class,
                      () -> ResourceAwsQuery.builder()
-                               .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                               .fromQueryParameters(queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
                                .doSearch(resourceAwsClient));
@@ -102,13 +102,15 @@ class ResourceAwsClientTest {
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/?title=http://hello+world&modified_before=2019-01-01"),
+            URI.create("https://example.com/?title=http://hello+world&INSTITUTION=UiO"),
             URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
             URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg"),
+            URI.create("https://example.com/?title=http://hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/?contributor=hello+:+world&published_before=2020-01-01"),
             URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019-01-01"),
             URI.create("https://example.com/?user=hello+world&size=1&from=0"),
+            URI.create("https://example.com/"),
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
 

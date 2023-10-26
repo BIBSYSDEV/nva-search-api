@@ -40,5 +40,5 @@ test {
     environment "KEY_BATCHES_MESSAGE_GROUP", "someGroup"
     environment "EVENT_BUS", "someBus"
     environment "TOPIC", "someTopic"
-    environment "KEY_BATCHES_BUCKET", "someBucket"
+    environment "KEY_BATCHES_BUCKET", "batchesBucket"
 }

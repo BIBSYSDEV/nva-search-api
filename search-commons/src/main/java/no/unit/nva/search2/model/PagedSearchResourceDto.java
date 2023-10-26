@@ -16,21 +16,21 @@ import org.jetbrains.annotations.Nullable;
 
 public record PagedSearchResourceDto(
     URI id,
-    URI nextResults,
-    URI previousResults,
     long totalHits,
     List<JsonNode> hits,
-    URI nextResultsBySortKey,
+    URI nextResults,
+    URI nextSearchAfterResults,
+    URI previousResults,
     JsonNode aggregations) {
 
     private PagedSearchResourceDto(Builder builder) {
         this(builder.id,
-            builder.nextResults,
-            builder.previousResults,
-            builder.totalHits,
-            builder.hits,
-            builder.nextResultsBySortKey,
-            builder.aggregations
+             builder.totalHits,
+             builder.hits,
+             builder.nextResults,
+             builder.nextResultsBySortKey,
+             builder.previousResults,
+             builder.aggregations
         );
     }
 
@@ -106,7 +106,7 @@ public record PagedSearchResourceDto(
                 return null;
             }
 
-            params.put(FROM.key(), String.valueOf(offset));
+            params.put(FROM.fieldName(), String.valueOf(offset));
             return UriWrapper.fromUri(gatewayUri)
                        .addQueryParameters(params)
                        .getUri();

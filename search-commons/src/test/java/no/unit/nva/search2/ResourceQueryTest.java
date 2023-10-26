@@ -8,13 +8,13 @@ import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.MODIFIED_BEFORE;
 import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.model.ResourceParameterKey.PUBLISHED_BEFORE;
+import static no.unit.nva.search2.model.ResourceParameterKey.PUBLISHED_SINCE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,33 +63,39 @@ class ResourceQueryTest {
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        var modified =
-            resourceParameters
-                .getValue(MODIFIED_BEFORE)
-                .<DateTime>as();
-        var publishedBefore =
-            resourceParameters
-                .getValue(PUBLISHED_BEFORE)
-                .<DateTime>as();
-        var created =
-            resourceParameters
-                .getValue(CREATED_BEFORE)
-                .<DateTime>as();
-        var category =
-            resourceParameters
-                .getValue(CATEGORY)
-                .<String>as();
 
+        var modified =
+            resourceParameters.getValue(MODIFIED_BEFORE).<DateTime>as();
         if (nonNull(modified)) {
             logger.info("modified: {}", modified);
-        } else if (nonNull(publishedBefore)) {
+        }
+
+        var publishedBefore =
+            resourceParameters.isPresent(PUBLISHED_BEFORE)
+                ? resourceParameters.getValue(PUBLISHED_BEFORE).<DateTime>as()
+                : null;
+        if (nonNull(publishedBefore)) {
             logger.info("publishedBefore: {}", publishedBefore);
-        } else if (nonNull(created)) {
+        }
+
+        var publishedSince =
+            resourceParameters.isPresent(PUBLISHED_SINCE)
+                ? resourceParameters.getValue(PUBLISHED_SINCE).<DateTime>as()
+                : null;
+        if (nonNull(publishedSince)) {
+            logger.info("publishedSince: {}", publishedSince);
+        }
+
+        var created =
+            resourceParameters.getValue(CREATED_BEFORE).<DateTime>as();
+        if (nonNull(created)) {
             logger.info("created: {}", created);
-        } else if (nonNull(category)) {
+        }
+
+        var category =
+            resourceParameters.getValue(CATEGORY).<String>as();
+        if (nonNull(category)) {
             logger.info("category: {}", category);
-        } else {
-            fail("No date found");
         }
     }
 
@@ -115,7 +121,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE, DOI)
                                .build()
-                               .openSearchSwsUri());
+                               .openSearchUri());
     }
 
 
@@ -128,7 +134,7 @@ class ResourceQueryTest {
                                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
-                               .openSearchSwsUri());
+                               .openSearchUri());
     }
 
 
@@ -162,6 +168,7 @@ class ResourceQueryTest {
         return Stream.of(
             URI.create("https://example.com/?category=hello&modified_before=2020-01-01&modified_since=2019-01-01"),
             URI.create("https://example.com/?published_before=2020-01-02&published_since=2019-01-02"),
+            URI.create("https://example.com/?published_before=2020&published_since=2019"),
             URI.create("https://example.com/?created_before=2020-01-01T23:59:59&created_since=2019-01-01"));
     }
 

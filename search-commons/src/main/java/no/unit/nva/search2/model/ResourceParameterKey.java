@@ -18,16 +18,18 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE_STRING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.Operator.EQUALS;
-import static no.unit.nva.search2.model.ParameterKey.Operator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.ParameterKey.Operator.LESS_THAN;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.EQUALS;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE_STRING;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
@@ -42,7 +44,7 @@ public enum ResourceParameterKey implements ParameterKey {
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(STRING, "entityDescription.reference.doi"),
     FUNDING(STRING, "fundings.identifier"),
-    FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels.*"),
+    FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
     ID(STRING, "identifier"),
     INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
                         + "|entityDescription.contributors.affiliation.name"),
@@ -53,8 +55,8 @@ public enum ResourceParameterKey implements ParameterKey {
     MODIFIED_BEFORE(DATE, LESS_THAN, "modifiedDate"),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate"),
     PROJECT_CODE(STRING, "fundings.identifier"),
-    PUBLISHED_BEFORE(DATE, LESS_THAN, "publishedDate"),
-    PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
+    PUBLISHED_BEFORE(DATE_STRING, LESS_THAN, "publishedDate"),
+    PUBLISHED_SINCE(DATE_STRING, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
     TITLE(STRING, "entityDescription.mainTitle"),
     UNIT(STRING, "entityDescription.contributors.affiliation.id"),
     USER(STRING, "resourceOwner.owner"),
@@ -76,17 +78,17 @@ public enum ResourceParameterKey implements ParameterKey {
 
     public static final Set<ResourceParameterKey> VALID_LUCENE_PARAMETER_KEYS =
         Arrays.stream(ResourceParameterKey.values())
-            .filter(ResourceParameterKey::isLucene)
+            .filter(ResourceParameterKey::isSearchField)
             .sorted(ResourceParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    private final String theKey;
-    private final String theKeyPattern;
-    private final String[] theFieldsToSearch;
-    private final String theErrorMessage;
-    private final String theValuePattern;
-    private final KeyEncoding theKeyEncoding;
-    private final Operator theOperator;
+    private final String key;
+    private final ValueEncoding encoding;
+    private final String keyPattern;
+    private final String validValuePattern;
+    private final String[] fieldsToSearch;
+    private final FieldOperator fieldOperator;
+    private final String errorMsg;
     private final ParamKind paramkind;
 
     ResourceParameterKey(ParamKind kind) {
@@ -97,65 +99,65 @@ public enum ResourceParameterKey implements ParameterKey {
         this(kind, EQUALS, fieldsToSearch, null, null);
     }
 
-    ResourceParameterKey(ParamKind kind, Operator operator, String fieldsToSearch) {
+    ResourceParameterKey(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
         this(kind, operator, fieldsToSearch, null, null);
     }
 
     ResourceParameterKey(
-        ParamKind kind, Operator operator, String fieldsToSearch, String keyPattern, String valuePattern) {
+        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern) {
 
-        this.theKey = this.name().toLowerCase(Locale.getDefault());
-        this.theOperator = operator;
-        this.theFieldsToSearch = nonNull(fieldsToSearch)
+        this.key = this.name().toLowerCase(Locale.getDefault());
+        this.fieldOperator = operator;
+        this.fieldsToSearch = nonNull(fieldsToSearch)
                                      ? fieldsToSearch.split("\\|")
-                                     : new String[]{theKey};
-        this.theValuePattern = getValuePattern(kind, valuePattern);
-        this.theErrorMessage = getErrorMessage(kind);
-        this.theKeyEncoding = getEncoding(kind);
-        this.theKeyPattern = nonNull(keyPattern)
+                                     : new String[]{key};
+        this.validValuePattern = getValuePattern(kind, valuePattern);
+        this.errorMsg = getErrorMessage(kind);
+        this.encoding = getEncoding(kind);
+        this.keyPattern = nonNull(keyPattern)
                                  ? keyPattern
-                                 : PATTERN_IS_IGNORE_CASE + theKey.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+                                 : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
     @Override
-    public Operator operator() {
-        return theOperator;
+    public String fieldName() {
+        return key;
     }
 
     @Override
-    public String key() {
-        return theKey;
+    public ParamKind fieldType() {
+        return paramkind;
     }
 
     @Override
-    public Collection<String> swsKey() {
-        return Arrays.stream(theFieldsToSearch).toList();
+    public String fieldPattern() {
+        return keyPattern;
     }
 
     @Override
-    public String pattern() {
-        return theValuePattern;
+    public String valuePattern() {
+        return validValuePattern;
     }
 
     @Override
-    public String keyPattern() {
-        return theKeyPattern;
+    public ValueEncoding valueEncoding() {
+        return encoding;
+    }
+
+    @Override
+    public Collection<String> searchFields() {
+        return Arrays.stream(fieldsToSearch).toList();
+    }
+
+    @Override
+    public FieldOperator searchOperator() {
+        return fieldOperator;
     }
 
     @Override
     public String errorMessage() {
-        return theErrorMessage;
-    }
-
-    @Override
-    public KeyEncoding encoding() {
-        return theKeyEncoding;
-    }
-
-    @Override
-    public ParamKind kind() {
-        return paramkind;
+        return errorMsg;
     }
 
     @Override
@@ -170,10 +172,10 @@ public enum ResourceParameterKey implements ParameterKey {
 
     @NotNull
     @JacocoGenerated
-    private KeyEncoding getEncoding(ParamKind kind) {
+    private ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
-            case NUMBER, CUSTOM -> KeyEncoding.NONE;
-            case DATE, STRING, SORT_STRING -> KeyEncoding.DECODE;
+            case NUMBER, CUSTOM -> ValueEncoding.NONE;
+            case DATE, DATE_STRING, STRING, SORT_STRING -> ValueEncoding.DECODE;
         };
     }
 
@@ -181,7 +183,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private String getErrorMessage(ParamKind kind) {
         return switch (kind) {
             // case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
-            case DATE -> INVALID_DATE;
+            case DATE, DATE_STRING -> INVALID_DATE;
             case NUMBER -> INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case SORT_STRING -> INVALID_VALUE_WITH_SORT;
@@ -194,6 +196,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return switch (kind) {
             // case BOOLEAN -> PATTERN_IS_BOOLEAN;
             case DATE -> PATTERN_IS_DATE;
+            case DATE_STRING -> PATTERN_IS_DATE_STRING;
             case NUMBER -> PATTERN_IS_NUMBER;
             // case RANGE -> PATTERN_IS_RANGE;
             case STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;
@@ -215,7 +218,7 @@ public enum ResourceParameterKey implements ParameterKey {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
 
-    private static boolean isLucene(ResourceParameterKey f) {
+    private static boolean isSearchField(ResourceParameterKey f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
