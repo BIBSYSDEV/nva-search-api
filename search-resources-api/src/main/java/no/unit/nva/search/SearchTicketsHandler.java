@@ -1,24 +1,28 @@
 package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.function.Predicate.isEqual;
+import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import static no.unit.nva.search.RequestUtil.toQueryTickets;
+import static no.unit.nva.search.RequestUtil.toQueryTicketsWithViewingScope;
 import static no.unit.nva.search.SearchClient.defaultSearchClient;
 import static no.unit.nva.search.constants.ApplicationConstants.STATUS_TERMS_AGGREGATION;
 import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.TYPE_TERMS_AGGREGATION;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringToStream;
 import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Sets;
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import no.unit.nva.commons.json.JsonUtils;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.search.models.SearchResponseDto;
-import no.unit.nva.search.restclients.IdentityClient;
-import no.unit.nva.search.restclients.IdentityClientImpl;
-import no.unit.nva.search.restclients.responses.UserResponse;
-import no.unit.nva.search.restclients.responses.ViewingScope;
+import no.unit.nva.search.models.SearchTicketsQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -27,9 +31,13 @@ import nva.commons.apigateway.exceptions.ForbiddenException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.attempt.Try;
 import nva.commons.core.paths.UnixPath;
-import nva.commons.core.paths.UriWrapper;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotException;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
@@ -39,26 +47,30 @@ import org.slf4j.LoggerFactory;
 
 public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponseDto> {
 
-    public static final String VIEWING_SCOPE_QUERY_PARAMETER = "viewingScope";
-    public static final String CRISTIN_ORG_LEVEL_DELIMITER = "\\.";
-    public static final int HIGHEST_LEVEL_ORGANIZATION = 0;
     public static final String ACCESS_RIGHTS_TO_VIEW_TICKETS = "APPROVE_DOI_REQUEST";
     public static final String ROLE_CURATOR = "curator";
     public static final String PARAM_ROLE = "role";
     public static final String ROLE_CREATOR = "creator";
     private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
+    public static final String APPLICATION_JSON = "application/json";
+    private static final String HAS_PART_PROPERTY = "hasPart";
+    private static final CharSequence COMMA_AND_SPACE = ", ";
+    public static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_VIEWINGSCOPE
+        = "User is not allowed to search viewingScope: %s";
     private final SearchClient searchClient;
-    private final IdentityClient identityClient;
+    private final AuthorizedBackendUriRetriever uriRetriever;
 
     @JacocoGenerated
     public SearchTicketsHandler() {
-        this(new Environment(), defaultSearchClient(), defaultIdentityClient());
+        this(new Environment(), defaultSearchClient(), defaultUriRetriver());
     }
 
-    public SearchTicketsHandler(Environment environment, SearchClient searchClient, IdentityClient identityClient) {
+    public SearchTicketsHandler(Environment environment,
+                                SearchClient searchClient,
+                                AuthorizedBackendUriRetriever uriRetriever) {
         super(Void.class, environment, objectMapperWithEmpty);
         this.searchClient = searchClient;
-        this.identityClient = identityClient;
+        this.uriRetriever = uriRetriever;
     }
 
     @Override
@@ -82,11 +94,6 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
                    .mustNot(QueryBuilders.matchQuery(notInField, owner).operator(Operator.AND));
     }
 
-    @JacocoGenerated
-    private static IdentityClient defaultIdentityClient() {
-        return new IdentityClientImpl();
-    }
-
     private static boolean userHasAccessRights(RequestInfo requestInfo) {
         return requestInfo.userIsAuthorized(ACCESS_RIGHTS_TO_VIEW_TICKETS);
     }
@@ -103,7 +110,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     }
 
     private SearchResponseDto handleCreatorSearch(RequestInfo requestInfo, String indexName)
-        throws UnauthorizedException, BadGatewayException {
+        throws UnauthorizedException, BadGatewayException, ForbiddenException {
         final var owner = requestInfo.getUserName();
         logger.info("OwnerScope: {}", owner);
         var unread = new FilterAggregationBuilder(
@@ -111,16 +118,38 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
             notInFilter(requestInfo, owner, "owner", "viewedBy"));
         var aggregations = List.of(
             TYPE_TERMS_AGGREGATION, STATUS_TERMS_AGGREGATION, unread);
-        return searchClient.searchOwnerTickets(toQueryTickets(requestInfo, aggregations), owner, indexName);
+        var query = toQueryTickets(requestInfo, aggregations);
+        assertUserIsAllowedViewingScope(requestInfo.getTopLevelOrgCristinId().orElseThrow(), query);
+        return searchClient.searchOwnerTickets(query, owner, indexName);
     }
 
     private SearchResponseDto handleCuratorSearch(RequestInfo requestInfo, String indexName)
         throws ApiGatewayException {
-        ViewingScope viewingScope = getViewingScopeForUser(requestInfo);
-        logger.info("ViewingScope: {} ", attempt(() -> JsonUtils.dtoObjectMapper.writeValueAsString(viewingScope))
-                                             .orElseThrow());
-        return searchClient.searchWithSearchTicketQuery(viewingScope, toQueryTickets(requestInfo, TICKETS_AGGREGATIONS),
-                                                        indexName);
+        var query = toQueryTicketsWithViewingScope(requestInfo, TICKETS_AGGREGATIONS);
+        assertUserIsAllowedViewingScope(requestInfo.getTopLevelOrgCristinId().orElseThrow(), query);
+        return searchClient.searchWithSearchTicketQuery(query, indexName);
+    }
+
+    private void assertUserIsAllowedViewingScope(URI topLevelOrg, SearchTicketsQuery query)
+        throws ForbiddenException {
+        var allowed = attempt(() -> this.uriRetriever.getRawContent(topLevelOrg,
+                                                                    APPLICATION_JSON)).map(
+                Optional::orElseThrow)
+                          .map(document -> createModel(dtoObjectMapper.readTree(document)))
+                          .map(model -> model.listObjectsOfProperty(model.createProperty(HAS_PART_PROPERTY)))
+                          .map(node -> node.toList().stream().map(RDFNode::toString))
+                          .map(hasPartOrgs -> Stream.concat(hasPartOrgs, Stream.of(topLevelOrg.toString())))
+                          .orElseThrow()
+                          .collect(Collectors.toSet());
+
+        var illegal = Sets.difference(new HashSet<>(new HashSet<>(query.getViewingScope())), allowed);
+
+        if (!illegal.isEmpty()) {
+            logger.info(String.format(USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_VIEWINGSCOPE,
+                                      illegal.stream().collect(Collectors.joining(
+                                          COMMA_AND_SPACE.toString()))));
+            throw new ForbiddenException();
+        }
     }
 
     private void assertCuratorHasAppropriateAccessRights(RequestInfo requestInfo)
@@ -130,72 +159,25 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
         }
     }
 
-    private ViewingScope getViewingScopeForUser(RequestInfo requestInfo) throws ApiGatewayException {
-        return getUserDefinedViewingScore(requestInfo)
-                   .map(attempt(viewingScope -> authorizeCustomViewingScope(viewingScope, requestInfo)))
-                   .orElseGet(() -> defaultViewingScope(requestInfo))
-                   .orElseThrow(failure -> handleFailure(failure.getException()));
-    }
-
-    private ApiGatewayException handleFailure(Exception exception) {
-        if (exception instanceof ForbiddenException) {
-            return (ForbiddenException) exception;
-        }
-        return new BadGatewayException(exception.getMessage());
-    }
-
-    //This is quick fix for implementing authorization. It is based on the assumption that
-    // all Organizations have a common prefix in their Cristin Ids.
-    //TODO: When the Cristin proxy is mature and quick, we should query the Cristin proxy in
-    // order to avoid using semantically charged identifiers.
-    private ViewingScope authorizeCustomViewingScope(ViewingScope viewingScope, RequestInfo requestInfo)
-        throws ForbiddenException {
-        var customerCristinId = requestInfo.getTopLevelOrgCristinId().orElseThrow();
-        logger.info("customerCristinId: {}", customerCristinId);
-        return userIsAuthorized(viewingScope, customerCristinId);
-    }
-
-    private Try<ViewingScope> defaultViewingScope(RequestInfo requestInfo) {
-        return attempt(requestInfo::getUserName)
-                   .map(nvaUsername -> identityClient.getUser(nvaUsername, requestInfo.getAuthHeader()))
-                   .map(Optional::orElseThrow)
-                   .map(UserResponse::getViewingScope);
-    }
-
-    private Optional<ViewingScope> getUserDefinedViewingScore(RequestInfo requestInfo) {
-        return requestInfo.getQueryParameterOpt(VIEWING_SCOPE_QUERY_PARAMETER)
-                   .map(URI::create)
-                   .map(ViewingScope::create);
-    }
-
-    private ViewingScope userIsAuthorized(ViewingScope viewingScope, URI customerCristinId) throws ForbiddenException {
-        if (allIncludedUnitsAreLegal(viewingScope, customerCristinId)) {
-            return viewingScope;
-        }
-        throw new ForbiddenException();
-    }
-
-    private boolean allIncludedUnitsAreLegal(ViewingScope viewingScope, URI customerCristinId) {
-        return viewingScope.getIncludedUnits().stream()
-                   .map(requestedOrg -> isUnderUsersInstitution(requestedOrg, customerCristinId))
-                   .allMatch(isEqual(true));
-    }
-
-    private boolean isUnderUsersInstitution(URI requestedOrg, URI customerCristinId) {
-        logger.info("viewingScope for requeest institution: {}", requestedOrg);
-        logger.info("viewingScope for institution: {}", customerCristinId);
-        String requestedOrgInstitutionNumber = extractInstitutionNumberFromRequestedOrganization(requestedOrg);
-        String customerCristinInstitutionNumber = extractInstitutionNumberFromRequestedOrganization(customerCristinId);
-        return customerCristinInstitutionNumber.equals(requestedOrgInstitutionNumber);
-    }
-
-    private String extractInstitutionNumberFromRequestedOrganization(URI requestedOrg) {
-        String requestedOrgCristinIdentifier = UriWrapper.fromUri(requestedOrg).getLastPathElement();
-        return requestedOrgCristinIdentifier.split(CRISTIN_ORG_LEVEL_DELIMITER)[HIGHEST_LEVEL_ORGANIZATION];
-    }
-
     private String getIndexName(RequestInfo requestInfo) {
         String requestPath = RequestUtil.getRequestPath(requestInfo);
         return UnixPath.of(requestPath).getLastPathElement();
+    }
+
+    public static Model createModel(JsonNode body) {
+        var model = ModelFactory.createDefaultModel();
+        try {
+            RDFDataMgr.read(model, stringToStream(body.toString()), Lang.JSONLD);
+        } catch (RiotException e) {
+            logger.warn(e.getMessage());
+        }
+
+        return model;
+    }
+
+    @JacocoGenerated
+    private static AuthorizedBackendUriRetriever defaultUriRetriver() {
+        return new AuthorizedBackendUriRetriever(new Environment().readEnv("COGNITO_HOST"),
+                                                 new Environment().readEnv("BACKEND_CLIENT_SECRET_NAME"));
     }
 }

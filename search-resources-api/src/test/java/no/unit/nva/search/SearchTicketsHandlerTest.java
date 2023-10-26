@@ -5,9 +5,10 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
+import static no.unit.nva.search.RequestUtil.VIEWING_SCOPE_KEY;
 import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
 import static no.unit.nva.search.SearchTicketsHandler.ROLE_CREATOR;
-import static no.unit.nva.search.SearchTicketsHandler.VIEWING_SCOPE_QUERY_PARAMETER;
+import static no.unit.nva.search.SearchTicketsHandler.ROLE_CURATOR;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -20,11 +21,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -39,19 +38,21 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.SearchResponseDto;
-import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.search.restclients.responses.UserResponse;
 import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
+import nva.commons.core.ioutils.IoUtils;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,19 +79,22 @@ class SearchTicketsHandlerTest {
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
     private static final String USERNAME = randomString();
     private static final String ORGANIZATION_IDS = "https://www.example.com/20754.0.0.0";
-    private IdentityClient identityClientMock;
+    public static final URI TOP_LEVEL_CRISTIN_ORG_ID = URI.create(
+        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
+    public static final String COMMA = ",";
     private SearchTicketsHandler handler;
     private Context context;
     private ByteArrayOutputStream outputStream;
     private FakeRestHighLevelClientWrapper restHighLevelClientWrapper;
+    private AuthorizedBackendUriRetriever uriRetriever;
 
     @BeforeEach
     void init() throws IOException {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         prepareSearchClientWithResponse();
         var searchClient = new SearchClient(restHighLevelClientWrapper, cachedJwtProvider);
-        setupFakeIdentityClient();
-        handler = new SearchTicketsHandler(new Environment(), searchClient, identityClientMock);
+        setupFakeUriRetriever();
+        handler = new SearchTicketsHandler(new Environment(), searchClient, uriRetriever);
         context = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -124,22 +128,9 @@ class SearchTicketsHandlerTest {
     }
 
     @Test
-    void shouldSendQueryOverridingDefaultViewingScopeWhenUserRequestsToViewDoiRequestsOrMessagesWithinTheirLegalScope()
-        throws IOException {
-        handler.handleRequest(queryWithCustomOrganizationAsQueryParameter(SOME_LEGAL_CUSTOM_CRISTIN_ID),
-                              outputStream,
-                              context);
-        var searchRequest = restHighLevelClientWrapper.getSearchRequest();
-        var queryDescription = searchRequest.buildDescription();
-
-        assertThat(queryDescription, containsString(SOME_LEGAL_CUSTOM_CRISTIN_ID.toString()));
-        assertThatDefaultScopeHasBeenOverridden(queryDescription);
-    }
-
-    @Test
     void shouldNotSendQueryAndReturnForbiddenWhenUserRequestsToViewDoiRequestsOrMessagesOutsideTheirLegalScope()
         throws IOException {
-        handler.handleRequest(queryWithCustomOrganizationAsQueryParameter(SOME_ILLEGAL_CUSTOM_CRISTIN_ID),
+        handler.handleRequest(queryWithCustomOrganizationAsQueryParameter(List.of(SOME_ILLEGAL_CUSTOM_CRISTIN_ID)),
                               outputStream,
                               context);
         var response = GatewayResponse.fromOutputStream(outputStream, Problem.class);
@@ -147,17 +138,6 @@ class SearchTicketsHandlerTest {
 
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
         assertThat(searchRequest, is(nullValue()));
-    }
-
-    @Test
-    void shouldSendQueryWhenDefaultScopeIsNotOverriddenByUser() throws IOException {
-        handler.handleRequest(queryWithoutQueryParameters(), outputStream, context);
-        var searchRequest = restHighLevelClientWrapper.getSearchRequest();
-        var queryDescription = searchRequest.buildDescription();
-
-        for (var uriInDefaultViewingScope : includedUrisInDefaultViewingScope()) {
-            assertThat(queryDescription, containsString(uriInDefaultViewingScope.toString()));
-        }
     }
 
     @Test
@@ -249,35 +229,14 @@ class SearchTicketsHandlerTest {
                    .withRequestContextValue(PATH, path)
                    .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
                    .build();
     }
 
-    private void assertThatDefaultScopeHasBeenOverridden(String queryDescription) {
-        var notExpectedDefaultViewingUris = includedUrisInDefaultViewingScope();
-        for (var notExpectedUri : notExpectedDefaultViewingUris) {
-            assertThat(queryDescription, not(containsString(notExpectedUri.toString())));
-        }
-    }
-
-    private Set<URI> includedUrisInDefaultViewingScope() {
-        return identityClientMock.getUser(USERNAME, randomString())
-                   .map(UserResponse::getViewingScope)
-                   .map(ViewingScope::getIncludedUnits)
-                   .orElseThrow();
-    }
-
-    private void setupFakeIdentityClient() {
-        identityClientMock = mock(IdentityClient.class);
-        when(identityClientMock.getUser(anyString(), anyString())).thenReturn(getUserResponse());
-    }
-
-    private Optional<UserResponse> getUserResponse() {
-        UserResponse userResponse = new UserResponse();
-        ViewingScope viewingScope = new ViewingScope();
-        viewingScope.setIncludedUnits(Set.of(randomUri(), randomUri()));
-        viewingScope.setExcludedUnits(Collections.emptySet());
-        userResponse.setViewingScope(viewingScope);
-        return Optional.of(userResponse);
+    private void setupFakeUriRetriever() {
+        uriRetriever = mock(AuthorizedBackendUriRetriever.class);
+        when(uriRetriever.getRawContent(any(), any())).thenReturn(
+            Optional.of(IoUtils.stringFromResources(Path.of("20754.0.0.0.json"))));
     }
 
     private void prepareSearchClientWithResponse() throws IOException {
@@ -295,6 +254,7 @@ class SearchTicketsHandlerTest {
                    .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
                    .withRequestContextValue(PATH, path)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
                    .build();
     }
 
@@ -331,10 +291,12 @@ class SearchTicketsHandlerTest {
         return Map.of(HttpHeaders.AUTHORIZATION, randomString());
     }
 
-    private InputStream queryWithCustomOrganizationAsQueryParameter(URI desiredOrgUri) throws JsonProcessingException {
+    private InputStream queryWithCustomOrganizationAsQueryParameter(List<URI> desiredOrgUris)
+        throws JsonProcessingException {
         var customerId = randomUri();
+        var viewingScope = desiredOrgUris.stream().map(URI::toString).collect(Collectors.joining(COMMA));
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                   .withQueryParameters(Map.of(VIEWING_SCOPE_QUERY_PARAMETER, desiredOrgUri.toString()))
+                   .withQueryParameters(Map.of(VIEWING_SCOPE_KEY, viewingScope))
                    .withUserName(USERNAME)
                    .withCurrentCustomer(customerId)
                    .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
@@ -359,6 +321,7 @@ class SearchTicketsHandlerTest {
                    .withRequestContextValue(PATH, SAMPLE_PATH)
                    .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
+                   .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
                    .build();
     }
 }

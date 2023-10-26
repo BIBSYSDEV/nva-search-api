@@ -2,9 +2,10 @@
   "owner": "1128464@20754.0.0.0",
   "identifier": "018007e58ef4-115b5684-05cb-4d6a-a64a-d8381c992d9f",
   "createdDate": "2022-04-08T06:38:46.517082Z",
-  "organizationIds": [
-    "https://www.example.com/20754.0.0.0"
-  ],
+  "organization": {
+    "id": "https://www.example.com/20754.0.0.0",
+    "partOf": []
+  },
   "publication": {
     "owner": "1128464@20754.0.0.0",
     "identifier": "018007e58ef4-115b5684-05cb-4d6a-a64a-d8381c992d9f",

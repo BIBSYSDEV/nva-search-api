@@ -2,9 +2,10 @@ package no.unit.nva.search;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 import static java.util.Collections.emptyList;
-import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
+import static java.util.Objects.isNull;
 import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.indexing.testutils.SearchResponseUtil.getSearchResponseFromJson;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
 import static no.unit.nva.search.SearchClient.DRAFT_PUBLICATION_STATUS;
 import static no.unit.nva.search.SearchClient.GENERAL_SUPPORT_CASE;
@@ -13,6 +14,7 @@ import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_TICKET_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.models.SearchTicketsQuery.VIEWING_SCOPE_QUERY_NAME;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -36,7 +38,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +45,6 @@ import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
-import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.search.utils.RequestOptionsHeaderMatcher;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
@@ -128,8 +128,7 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
-                                                 generateSampleTicketQuery(),
+        searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingDoiRequest = extractQueryBuilderValuesForDoiRequests(sentRequest);
@@ -145,8 +144,7 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
-                                                 generateSampleTicketQuery(),
+        searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationConversation = extractQueryBuilderValuesForPublicationConversation(sentRequest);
@@ -161,8 +159,7 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
-                                                 generateSampleTicketQuery(),
+        searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationRequest = extractQueryBuilderValuesForPublicationRequest(sentRequest);
@@ -190,8 +187,7 @@ class SearchClientTest {
             new SearchClient(new RestHighLevelClientWrapper(restHighLevelClient), cachedJwtProvider);
 
         var response =
-            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
-                                                     generateSampleTicketQuery(),
+            searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                      OPENSEARCH_TICKET_ENDPOINT_INDEX);
         assertNotNull(response);
     }
@@ -222,10 +218,11 @@ class SearchClientTest {
         int resultSize = 1 + randomInteger(1000);
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, resultSize, SAMPLE_FROM, SAMPLE_ORDERBY, DESC,
                                                         SAMPLE_REQUEST_URI,
-                                                        emptyList());
+                                                        emptyList(),
+                                                        generateSampleViewingScope(),
+                                                        false);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
-                                                 searchTicketsQuery,
+        searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var actualRequestedSize = sentRequest.source().size();
@@ -242,9 +239,9 @@ class SearchClientTest {
         int resultsFrom = randomInteger(100);
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, SAMPLE_NUMBER_OF_RESULTS, resultsFrom,
                                                         SAMPLE_ORDERBY,
-                                                        DESC, SAMPLE_REQUEST_URI, emptyList());
-        searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(),
-                                                 searchTicketsQuery,
+                                                        DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                        generateSampleViewingScope(), false);
+        searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var actualResultsFrom = sentRequest.source().from();
@@ -282,7 +279,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
         var searchResponseDto =
-            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
+            searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                      OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
         var aggregations = searchResponseDto.getAggregations();
@@ -303,7 +300,7 @@ class SearchClientTest {
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
 
         SearchResponseDto searchResponseDto =
-            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
+            searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                      OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
         assertNotNull(searchResponseDto);
@@ -320,7 +317,7 @@ class SearchClientTest {
         when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
         var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
         SearchResponseDto searchResponseDto =
-            searchClient.searchWithSearchTicketQuery(generateSampleViewingScope(), generateSampleTicketQuery(),
+            searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
                                                      OPENSEARCH_TICKET_ENDPOINT_INDEX);
 
         var exportSearchResults = CsvTransformer.transform(searchResponseDto);
@@ -347,7 +344,7 @@ class SearchClientTest {
 
     @NotNull
     private List<MatchQueryBuilder> listAllInclusionAndExclusionRulesForDoiRequests(SearchRequest sentRequest) {
-        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+        return listNonViewingScopePartOfRequest(sentRequest)
             .filter(this::keepOnlyTheDoiRequestRelatedConditions)
             .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
             .filter(this::keepOnlyMatchTypeRules)
@@ -358,7 +355,7 @@ class SearchClientTest {
     @NotNull
     private List<MatchQueryBuilder> listAllInclusionAndExclusionRulesForPublicationConversation(
         SearchRequest sentRequest) {
-        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+        return listNonViewingScopePartOfRequest(sentRequest)
             .filter(this::keepOnlyThePublicationConversationRelatedConditions)
             .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
             .filter(this::keepOnlyMatchTypeRules)
@@ -375,7 +372,7 @@ class SearchClientTest {
     @NotNull
     private List<MatchQueryBuilder> listAllInclusionAndExclusionRulesForPublicationRequest(
         SearchRequest sentRequest) {
-        return listAllDisjunctiveRulesForMatchingDocuments(sentRequest)
+        return listNonViewingScopePartOfRequest(sentRequest)
             .filter(this::keepOnlyThePublicationRequestRelatedConditions)
             .flatMap(this::listAllInclusionAndExclusionRulesInQuery)
             .filter(this::keepOnlyMatchTypeRules)
@@ -392,10 +389,15 @@ class SearchClientTest {
                 .anyMatch(match -> match.value().equals(GENERAL_SUPPORT_CASE));
     }
 
-    private Stream<BoolQueryBuilder> listAllDisjunctiveRulesForMatchingDocuments(SearchRequest sentRequest) {
-        return booleanQuery(sentRequest.source().query()).should()
-            .stream()
-            .map(queryClause -> (BoolQueryBuilder) queryClause);
+    private Stream<BoolQueryBuilder> listNonViewingScopePartOfRequest(SearchRequest sentRequest) {
+        return booleanQuery(sentRequest.source().query()).must()
+                   .stream()
+                   .filter(queryClause -> isNull(queryClause.queryName())
+                                          || !queryClause.queryName().equals(VIEWING_SCOPE_QUERY_NAME))
+                   .map(queryClause -> (BoolQueryBuilder) queryClause)
+                   .map(query -> query.should())
+                   .flatMap(List::stream)
+                   .map(q -> (BoolQueryBuilder) q);
     }
 
     private boolean keepOnlyMatchTypeRules(QueryBuilder condition) {
@@ -423,11 +425,8 @@ class SearchClientTest {
         return (BoolQueryBuilder) queryBuilder;
     }
 
-    private ViewingScope generateSampleViewingScope() {
-        var viewingScope = new ViewingScope();
-        viewingScope.setIncludedUnits(Set.of(randomUri(), randomUri()));
-        viewingScope.setExcludedUnits(Set.of(randomUri()));
-        return viewingScope;
+    private List<URI> generateSampleViewingScope() {
+        return List.of(randomUri(), randomUri());
     }
 
     private SearchDocumentsQuery generateSampleQuery() {
@@ -447,7 +446,9 @@ class SearchClientTest {
                                       SAMPLE_ORDERBY,
                                       DESC,
                                       SAMPLE_REQUEST_URI,
-                                      SAMPLE_AGGREGATIONS);
+                                      SAMPLE_AGGREGATIONS,
+                                      generateSampleViewingScope(),
+                                      false);
     }
 
     private String generateOpenSearchResponseAsString(String fileName) {
