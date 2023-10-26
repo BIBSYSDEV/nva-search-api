@@ -1,5 +1,11 @@
 package no.unit.nva.search;
 
+import static nva.commons.core.attempt.Try.attempt;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchTicketsQuery;
 import nva.commons.apigateway.RequestInfo;
@@ -9,11 +15,6 @@ import nva.commons.core.paths.UriWrapper;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-import java.net.URI;
-import java.util.List;
-
-import static nva.commons.core.attempt.Try.attempt;
-
 @JacocoGenerated
 public class RequestUtil {
 
@@ -21,6 +22,8 @@ public class RequestUtil {
     public static final String RESULTS_KEY = "results";
     public static final String FROM_KEY = "from";
     public static final String ORDERBY_KEY = "orderBy";
+    public static final String VIEWING_SCOPE_KEY = "viewingScope";
+    public static final String EXCLUDE_SUB_UNITS_KEY = "excludeSubUnits";
     public static final String SORTORDER_KEY = "sortOrder";
     private static final String RESULTS_DEFAULT_SIZE = "10";
     public static final String SEARCH_ALL_PUBLICATIONS_DEFAULT_QUERY = "*";
@@ -31,6 +34,8 @@ public class RequestUtil {
     public static final String DOMAIN_NAME = "domainName";
     public static final String HTTPS = "https";
     public static final Environment ENVIRONMENT = new Environment();
+    private static final String COMMA = ",";
+    public static final String FALSE = Boolean.FALSE.toString();
 
     /**
      * Get searchTerm from request query parameters.
@@ -63,10 +68,25 @@ public class RequestUtil {
         return SortOrder.fromString(requestInfo.getQueryParameters().getOrDefault(SORTORDER_KEY, DEFAULT_SORT_ORDER));
     }
 
+    public static Optional<List<URI>> getViewingScope(RequestInfo requestInfo) {
+        return requestInfo.getQueryParameterOpt(VIEWING_SCOPE_KEY)
+                   .map(RequestUtil::splitStringToUris);
+    }
+
+    public static boolean getExcludeSubUnits(RequestInfo requestInfo) {
+        return Boolean.parseBoolean(
+            requestInfo.getQueryParameters().getOrDefault(EXCLUDE_SUB_UNITS_KEY, FALSE)
+        );
+    }
+
     public static URI getRequestUri(RequestInfo requestInfo) {
         String path = getRequestPath(requestInfo);
         String domainName = getRequestDomainName(requestInfo);
         return new UriWrapper(HTTPS, domainName).addChild(path).getUri();
+    }
+
+    private static List<URI> splitStringToUris(String s) {
+        return Arrays.stream(s.split(COMMA)).map(URI::create).collect(Collectors.toList());
     }
 
     public static String getRequestPath(RequestInfo requestInfo) {
@@ -134,6 +154,23 @@ public class RequestUtil {
             getSortOrder(requestInfo),
             getRequestUri(requestInfo),
             aggregations
+        );
+    }
+
+    public static SearchTicketsQuery toQueryTicketsWithViewingScope(
+        RequestInfo requestInfo,
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        var topLevelOrg = requestInfo.getTopLevelOrgCristinId().orElseThrow();
+        return new SearchTicketsQuery(
+            getSearchTerm(requestInfo),
+            getResults(requestInfo),
+            getFrom(requestInfo),
+            getOrderBy(requestInfo),
+            getSortOrder(requestInfo),
+            getRequestUri(requestInfo),
+            aggregations,
+            getViewingScope(requestInfo).orElse(List.of(topLevelOrg)),
+            getExcludeSubUnits(requestInfo)
         );
     }
 }
