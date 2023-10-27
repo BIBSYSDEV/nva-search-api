@@ -45,7 +45,8 @@ public enum ResourceParameterKey implements ParameterKey {
     FUNDING(STRING, "fundings.identifier"),
     FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
     ID(STRING, "identifier"),
-    INSTITUTION(STRING, "entityDescription.contributors.affiliation"),
+    INSTITUTION(STRING, "entityDescription.contributors.affiliation"
+                        + "|entityDescription.contributors.affiliation.name"),
     ISBN(STRING, "entityDescription.reference.publicationContext.isbnList"),
     ISSN(STRING, "entityDescription.reference.publicationContext.onlineIssn"
                  + "|entityDescription.reference.publicationContext.printIssn"),
