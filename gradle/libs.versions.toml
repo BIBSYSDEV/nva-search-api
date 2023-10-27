@@ -23,6 +23,7 @@ slf4j = { strictly = '1.8.0-beta4' }
 testContainers = { strictly = '1.17.5' }
 typesafe = { strictly = '1.4.1' }
 xraySdk = { strictly = '2.10.0' }
+jena = { strictly = '4.7.0' }
 zalandoProblem = { strictly = '0.27.1' }
 
 
@@ -95,6 +96,9 @@ jackson-hamrest = { group= 'com.spotify', name= 'hamcrest-jackson', version.ref 
 
 csv = {group = 'com.opencsv', name = 'opencsv', version.ref = 'open-csv'}
 
+jena-core = { group = 'org.apache.jena', name = 'jena-core', version.ref = 'jena' }
+jena-arq = { group = 'org.apache.jena', name = 'jena-arq', version.ref = 'jena' }
+
 [bundles]
 jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jsr310', 'jackson-datatype-jdk8']
 jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
@@ -104,3 +108,4 @@ testing = ['junit-jupiter-engine', 'junit-jupiter-api', 'junit-jupiter-params', 
     'nva-testutils', 'nva-logutils','jackson-hamrest']
 opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content' ]
 aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']
+jena = ['jena-core', 'jena-arq']

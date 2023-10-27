@@ -38,7 +38,7 @@ public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),
     // Parameters converted to Lucene query
     CATEGORY(STRING, "entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR(STRING, "entityDescription.contributors.identity.id"
+    CONTRIBUTOR(CUSTOM, "entityDescription.contributors.identity.id"
                         + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),

@@ -9,6 +9,18 @@ paths:
       description: Listing of all tickets
       parameters:
         - in: query
+          name: viewingScope
+          description: 'Only return tickets with a resource owner in one of the selected organisation. Including their sub-units. Formated as a comma separated list of affiliations ids.'
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: excludeSubUnits
+          description: 'Exclude sub-units of the given viewingScope.'
+          required: false
+          schema:
+            type: boolean
+        - in: query
           name: role
           description: "The role you have when getting tickets"
           required: false
@@ -46,14 +58,6 @@ paths:
           required: false
           schema:
             type: string
-        - in: query
-          name: viewingScope
-          description: "List tickets for this organization."
-          required: false
-          schema:
-            type: string
-            format: uri
-            example: "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
       security:
         - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend", "aws.cognito.signin.user.admin" ]
       x-amazon-apigateway-integration:

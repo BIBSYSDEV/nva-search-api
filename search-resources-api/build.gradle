@@ -9,10 +9,12 @@ dependencies {
     implementation libs.bundles.opensearch
     implementation libs.nva.core
     implementation libs.nva.json
+    implementation libs.nva.auth
     implementation libs.nva.apigateway
     implementation libs.bundles.logging
     implementation libs.guava
     implementation libs.opensearch.java
+    implementation libs.bundles.jena
 
     testImplementation libs.opensearch.rest.highlevel.client
     implementation libs.com.auth0.jwt
@@ -31,4 +33,5 @@ test{
     environment "SEARCH_INFRASTRUCTURE_API_URI", "https://example.org"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "https://example.org"
     environment "EXPORT_SEARCH_RESULTS_SIZE", "100"
+    environment "BACKEND_CLIENT_SECRET_NAME", "secret"
 }

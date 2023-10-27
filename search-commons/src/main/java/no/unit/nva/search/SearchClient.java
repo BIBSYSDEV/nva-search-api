@@ -9,7 +9,6 @@ import java.util.List;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
-import no.unit.nva.search.restclients.responses.ViewingScope;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
@@ -21,7 +20,9 @@ import org.opensearch.index.query.QueryBuilders;
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
     public static final String NO_RESPONSE_FROM_INDEX = "No response from index";
-    public static final String ORGANIZATION_IDS = "organizationIds";
+    public static final String ORGANIZATION_FIELD = "organization";
+    public static final String ID_FIELD = "id";
+    public static final String PART_OF_FIELD = "partOf";
     public static final String PUBLICATION_STATUS = "publication.status";
     public static final String DRAFT_PUBLICATION_STATUS = "DRAFT";
     public static final String DOCUMENT_TYPE = "type";
@@ -31,11 +32,8 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String GENERAL_SUPPORT_QUERY_NAME = "GeneralSupportQuery";
     public static final String DOI_REQUESTS_QUERY_NAME = "DoiRequestsQuery";
     public static final String PUBLISHING_REQUESTS_QUERY_NAME = "PublishingRequestsQuery";
-    public static final String INCLUDED_VIEWING_SCOPES_QUERY_NAME = "IncludedViewingScopesQuery";
-    public static final String EXCLUDED_VIEWING_SCOPES_QUERY_NAME = "ExcludedViewingScopesQuery";
     public static final String TICKET_STATUS = "status";
     public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id";
-
 
     /**
      * Creates a new SearchClient.
@@ -95,12 +93,11 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         }
     }
 
-    public SearchResponseDto searchWithSearchTicketQuery(ViewingScope viewingScope,
-                                                         SearchTicketsQuery searchTicketsQuery, String... index)
+    public SearchResponseDto searchWithSearchTicketQuery(SearchTicketsQuery searchTicketsQuery, String... index)
         throws ApiGatewayException {
         try {
             SearchRequest searchRequest = searchTicketsQuery.createSearchRequestForTicketsWithOrganizationIds(
-                viewingScope, index);
+                index);
             return doSearch(searchRequest, searchTicketsQuery.getRequestUri(), searchTicketsQuery.getSearchTerm());
         } catch (IOException e) {
             throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);

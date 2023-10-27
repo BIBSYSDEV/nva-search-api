@@ -25,9 +25,10 @@
         "mainTitle": "This is the main title"
       },
       "status": "Pending",
-      "organizationIds": [
-        "https://www.example.com/20754.0.0.0"
-      ]
+      "organization": {
+        "id": "https://www.example.com/20754.0.0.0",
+        "partOf": []
+      }
     },
     {
       "type": "GeneralSupportCase",
@@ -49,9 +50,10 @@
         "identifier": "0185c9ff4c0e-53ed7dfa-d57d-4289-8e97-a5c356125365",
         "mainTitle": "FredrikTest Aggregering"
       },
-      "organizationIds": [
-        "https://www.example.com/20754.0.0.0"
-      ],
+      "organization": {
+        "id": "https://www.example.com/20754.0.0.0",
+        "partOf": []
+      },
       "status": "Completed"
     }
   ]

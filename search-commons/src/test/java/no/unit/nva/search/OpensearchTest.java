@@ -1,10 +1,13 @@
 package no.unit.nva.search;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
 import static no.unit.nva.search.SearchClient.DOI_REQUEST;
-import static no.unit.nva.search.SearchClient.ORGANIZATION_IDS;
+import static no.unit.nva.search.SearchClient.ID_FIELD;
+import static no.unit.nva.search.SearchClient.ORGANIZATION_FIELD;
+import static no.unit.nva.search.SearchClient.PART_OF_FIELD;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
@@ -31,6 +34,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -71,6 +75,7 @@ public class OpensearchTest {
     public static final long NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
+    public static final String TEST_TICKETS_MAPPINGS = "test_tickets_mappings.json";
     public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "test_import_candidates_mappings.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
@@ -144,21 +149,21 @@ public class OpensearchTest {
         return RandomDataGenerator.randomString().toLowerCase();
     }
 
-    private ViewingScope getEmptyViewingScope() {
-        return new ViewingScope();
+    private IndexDocument getTicketIndexDocument(String indexName, URI organization, List<URI> partOf) {
+        return getTicketIndexDocument(indexName, organization, partOf, STATUS_TO_INCLUDE_IN_RESULT);
     }
 
-    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds) {
-        return getIndexDocument(indexName, organizationIds, STATUS_TO_INCLUDE_IN_RESULT);
-    }
-
-    private IndexDocument getIndexDocument(String indexName, Set<URI> organizationIds, String status) {
+    private IndexDocument getTicketIndexDocument(String indexName, URI organization, List<URI> partOf, String status) {
         var eventConsumptionAttributes = new EventConsumptionAttributes(
             indexName,
             SortableIdentifier.next()
         );
         Map<String, Object> map = Map.of(
-            ORGANIZATION_IDS, organizationIds,
+            ORGANIZATION_FIELD, Map.of(
+                ID_FIELD, isNull(organization) ? "" : organization.toString(),
+                "test", "test2",
+                PART_OF_FIELD, isNull(partOf) ? List.of() : partOf.stream().map(URI::toString).toList()
+            ),
             DOCUMENT_TYPE, DOI_REQUEST,
             TICKET_STATUS, status
         );
@@ -240,262 +245,121 @@ public class OpensearchTest {
     @Nested
     class AddDocumentToIndexTest {
 
-        @BeforeEach
-        void beforeEachTest() throws IOException {
-            indexName = generateIndexName();
 
-            var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
-            var type = new TypeReference<Map<String, Object>>() {
-            };
-            var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-            indexingClient.createIndex(indexName, mappings);
-        }
 
         @AfterEach
         void afterEachTest() throws Exception {
             indexingClient.deleteIndex(indexName);
         }
 
-        @Test
-        void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
+        @Nested
+        class ResourcesTests {
+            @BeforeEach
+            void beforeEachTest() throws IOException {
+                indexName = generateIndexName();
 
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of()));
+                var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
+                var type = new TypeReference<Map<String, Object>>() {
+                };
+                var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
+                indexingClient.createIndex(indexName, mappings);
+            }
 
-            Thread.sleep(DELAY_AFTER_INDEXING);
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.searchWithSearchTicketQuery(getEmptyViewingScope(),
-                                                                    searchTicketsQuery,
-                                                                    indexName);
+            @Test
+            void shouldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException,
+                                                                                          InterruptedException {
+                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+                                    "sample_publishing_request_of_published_publication.json");
 
-            assertThat(response.getSize(),
-                       is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
-        }
+                var aggregationDto = new TermsAggregationBuilder("publication.status")
+                                         .field("publication.status.keyword")
+                                         .size(1);
 
-        @Test
-        void shouldReturnTwoHitsOnViewingScopeWithIncludedUnit() throws Exception {
+                SearchDocumentsQuery query = queryWithTermAndAggregation(SEARCH_ALL, List.of(aggregationDto));
 
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-            Thread.sleep(DELAY_AFTER_INDEXING);
+                assertThat(response.getAggregations()
+                               .get("publication.status")
+                               .get("buckets")
+                               .size(),
+                           is(equalTo(1))
+                );
+            }
 
-            var viewingScope = getEmptyViewingScope();
-            viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.searchWithSearchTicketQuery(viewingScope,
-                                                                    searchTicketsQuery,
-                                                                    indexName);
+            @Test
+            void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
+                addDocumentsToIndex("sample_publication.json",
+                                    "sample_publication_with_several_of_the_same_affiliation.json",
+                                    "sample_publication_with_affiliations.json");
+                var mostBoostedPublication = "https://api.sandbox.nva.aws.unit"
+                                             + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df";
+                var secondBoostedPublication = "https://api.sandbox.nva.aws.unit"
+                                               + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9";
+                var promotedPublications = List.of(mostBoostedPublication, secondBoostedPublication);
+                var contributor = "1234";
+                var query = queryWithTermAndAggregation(SEARCH_ALL, RESOURCES_AGGREGATIONS);
+                var response =
+                    searchClient.searchWithSearchPromotedPublicationsForContributorQuery(
+                        contributor,
+                        promotedPublications,
+                        query,
+                        indexName);
+                assertThat(response.getHits().get(0).toString(), containsString(mostBoostedPublication));
+                assertThat(response.getHits().get(1).toString(), containsString(secondBoostedPublication));
+                assertThat(response, notNullValue());
+                assertThat(response.getAggregations(), notNullValue());
+            }
 
-            assertThat(response.getSize(),
-                       is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
-        }
+            @Test
+            void shouldNotReturnAggregationsWhenNotRequested()
+                throws ApiGatewayException, InterruptedException {
 
-        @Test
-        void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
+                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+                                    "sample_publishing_request_of_published_publication.json");
 
-            indexingClient.addDocumentToIndex(
-                getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID), COMPLETED)
-            );
+                var query = queryWithTermAndAggregation(SEARCH_ALL, null);
 
-            Thread.sleep(DELAY_AFTER_INDEXING);
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-            var viewingScope = getEmptyViewingScope();
-            viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.searchWithSearchTicketQuery(viewingScope,
-                                                                    searchTicketsQuery,
-                                                                    indexName);
+                assertThat(response, notNullValue());
+                assertThat(response.getAggregations(), nullValue());
+            }
 
-            assertThat(response.getSize(),
-                       is(equalTo(NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED)));
-        }
+            @Test
+            void shouldReturnCorrectAggregations() throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                    "sample_publication_with_several_of_the_same_affiliation.json");
 
-        @Test
-        void shouldReturnOneHitOnViewingScopeWithExcludedUnit() throws Exception {
+                var query = queryWithTermAndAggregation(
+                    SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
 
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID,
-                                                                                 EXCLUDED_ORGANIZATION_ID)));
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-            Thread.sleep(DELAY_AFTER_INDEXING);
+                assertThat(response, notNullValue());
 
-            var viewingScope = getEmptyViewingScope();
-            viewingScope.setIncludedUnits(Set.of(INCLUDED_ORGANIZATION_ID));
-            viewingScope.setExcludedUnits(Set.of(EXCLUDED_ORGANIZATION_ID));
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var response = searchClient.searchWithSearchTicketQuery(viewingScope,
-                                                                    searchTicketsQuery,
-                                                                    indexName);
+                var actualAggregations = response.getAggregations();
+                var topOrgAggregation = actualAggregations.at(
+                    "/topLevelOrganizations/id/buckets");
+                assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
 
-            assertThat(response.getSize(),
-                       is(equalTo(ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED)));
-        }
+                var typeAggregation = actualAggregations.at(
+                    "/entityDescription/reference/publicationInstance/type/buckets");
+                assertAggregation(typeAggregation, "AcademicArticle", 2);
 
-        @Test
-        void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
+                var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
+                assertAggregation(ownerAggregation, "1136263@20754.0.0.0", 2);
 
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-            indexingClient.addDocumentToIndex(getIndexDocument(indexName, Set.of(INCLUDED_ORGANIZATION_ID)));
-
-            Thread.sleep(DELAY_AFTER_INDEXING);
-
-            var viewingScope = ViewingScope.create(INCLUDED_ORGANIZATION_ID);
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(viewingScope,
-                                                                                   searchTicketsQuery,
-                                                                                   indexName);
-
-            assertThat(searchResourcesResponse, is(notNullValue()));
-            assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
-        }
-
-        @Test
-        void shouldVerifySearchNotReturningHitsWithPublicationRequestInSearchResponse() throws Exception {
-            addDocumentsToIndex("sample_response_with_publication_status_as_draft.json",
-                                "sample_response_with_publication_status_as_requested.json");
-
-            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(viewingScope,
-                                                                                   searchTicketsQuery,
-                                                                                   indexName);
-
-            assertThat(searchResourcesResponse, is(notNullValue()));
-            var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
-            assertThat(searchResourcesResponse.getHits().size(),
-                       is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
-        }
-
-        @ParameterizedTest()
-        @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
-        void shouldReturnHitsWhenSearchedForPartianMatchOfCuratorName(String queryStr) throws Exception {
-            addDocumentsToIndex("publication.json");
-
-            var query = queryWithTermAndAggregation(queryStr, null);
-
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-            assertThat(response.getHits(), hasSize(1));
-        }
-
-        @Test
-        void shouldReturnPendingPublishingRequestsForPublications()
-            throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
-                                "sample_publishing_request_of_published_publication.json");
-
-            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(viewingScope,
-                                                                                   searchTicketsQuery,
-                                                                                   indexName);
-
-            assertThat(searchResourcesResponse, is(notNullValue()));
-            var expectedHits = 2;
-            assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
-        }
-
-        @Test
-        void shouldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException,
-                                                                                      InterruptedException {
-            addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
-                                "sample_publishing_request_of_published_publication.json");
-
-            var aggregationDto = new TermsAggregationBuilder("publication.status")
-                                     .field("publication.status.keyword")
-                                     .size(1);
-
-            SearchDocumentsQuery query = queryWithTermAndAggregation(SEARCH_ALL, List.of(aggregationDto));
-
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-            assertThat(response.getAggregations()
-                           .get("publication.status")
-                           .get("buckets")
-                           .size(),
-                       is(equalTo(1))
-            );
-        }
-
-        @Test
-        void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
-            addDocumentsToIndex("sample_publication.json",
-                                "sample_publication_with_several_of_the_same_affiliation.json",
-                                "sample_publication_with_affiliations.json");
-            var mostBoostedPublication = "https://api.sandbox.nva.aws.unit"
-                                         + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df";
-            var secondBoostedPublication = "https://api.sandbox.nva.aws.unit"
-                                           + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9";
-            var promotedPublications = List.of(mostBoostedPublication, secondBoostedPublication);
-            var contributor = "1234";
-            var query = queryWithTermAndAggregation(SEARCH_ALL, RESOURCES_AGGREGATIONS);
-            var response =
-                searchClient.searchWithSearchPromotedPublicationsForContributorQuery(
-                    contributor,
-                    promotedPublications,
-                    query,
-                    indexName);
-            assertThat(response.getHits().get(0).toString(), containsString(mostBoostedPublication));
-            assertThat(response.getHits().get(1).toString(), containsString(secondBoostedPublication));
-            assertThat(response, notNullValue());
-            assertThat(response.getAggregations(), notNullValue());
-        }
-
-        @Test
-        void shouldNotReturnAggregationsWhenNotRequested()
-            throws ApiGatewayException, InterruptedException {
-
-            addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
-                                "sample_publishing_request_of_published_publication.json");
-
-            var query = queryWithTermAndAggregation(SEARCH_ALL, null);
-
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-            assertThat(response, notNullValue());
-            assertThat(response.getAggregations(), nullValue());
-        }
-
-        @Test
-        void shouldReturnCorrectAggregations() throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                "sample_publication_with_several_of_the_same_affiliation.json");
-
-            var query = queryWithTermAndAggregation(
-                SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
-
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-            assertThat(response, notNullValue());
-
-            var actualAggregations = response.getAggregations();
-            var topOrgAggregation = actualAggregations.at(
-                "/topLevelOrganizations/id/buckets");
-            assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
-
-            var typeAggregation = actualAggregations.at(
-                "/entityDescription/reference/publicationInstance/type/buckets");
-            assertAggregation(typeAggregation, "AcademicArticle", 2);
-
-            var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
-            assertAggregation(ownerAggregation, "1136263@20754.0.0.0", 2);
-
-            var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
-            assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
+                var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
+                assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
             var contributorAggregation = actualAggregations.at(
                 "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
             assertAggregation(contributorAggregation, "Iametti, Stefania", 1);
 
-            var publisherAggregation = actualAggregations.at(
-                "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
-            assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
+                var publisherAggregation = actualAggregations.at(
+                    "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
+                assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
 
             var journalAggregation = actualAggregations.at(
                 "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
@@ -503,112 +367,280 @@ public class OpensearchTest {
                               "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
         }
 
-        @Test
-        void shouldReturnPublicationWhenQueryingByProject() throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                "sample_publication_with_several_of_the_same_affiliation.json");
+            @Test
+            void shouldReturnPublicationWhenQueryingByProject() throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                    "sample_publication_with_several_of_the_same_affiliation.json");
 
-            var query = queryWithTermAndAggregation(
-                "projects.id:\"https://api.dev.nva.aws.unit.no/cristin/project/14334813\"",
-                ApplicationConstants.RESOURCES_AGGREGATIONS);
+                var query = queryWithTermAndAggregation(
+                    "projects.id:\"https://api.dev.nva.aws.unit.no/cristin/project/14334813\"",
+                    ApplicationConstants.RESOURCES_AGGREGATIONS);
 
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-            assertThat(response.getHits(), hasSize(1));
+                assertThat(response.getHits(), hasSize(1));
+            }
+
+            @Test
+            void shouldReturnPublicationWhenQueryingByTopLevelOrg() throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                    "sample_publication_with_several_of_the_same_affiliation.json");
+
+                var query = queryWithTermAndAggregation(
+                    "topLevelOrganizations.id:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0\"",
+                    ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+                assertThat(response.getHits(), hasSize(2));
+            }
+
+            @Test
+            void shouldQueryingFundingSuccessfully() throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                    "sample_publication_with_several_of_the_same_affiliation.json");
+
+                var query = queryWithTermAndAggregation(
+                    "fundings.source.identifier:\"NFR\"",
+                    ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+                assertThat(response.getHits(), hasSize(2));
+            }
+
+            @Test
+            void shouldQueryingHasFileSuccessfully() throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_publication_with_affiliations.json",
+                                    "sample_publication_with_several_of_the_same_affiliation.json");
+
+                var query = queryWithTermAndAggregation(
+                    SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
+
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+                assertThat(response, notNullValue());
+
+                var actualAggregations = response.getAggregations();
+
+                var hasPublishedFileAggregation = actualAggregations.at(
+                    "/associatedArtifacts/type");
+                assertThat(hasPublishedFileAggregation.get("docCount").asInt(), is(equalTo(2)));
+
+                var hasPublishedFileWithAdminAgreementFalseAggregation = actualAggregations.at(
+                    "/associatedArtifacts/type/administrativeAgreement");
+                assertThat(hasPublishedFileWithAdminAgreementFalseAggregation.get("docCount").asInt(), is(equalTo(1)));
+            }
+
+            @ParameterizedTest()
+            @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
+            void shouldReturnHitsWhenSearchedForPartianMatchOfCuratorName(String queryStr) throws Exception {
+                addDocumentsToIndex("publication.json");
+
+                var query = queryWithTermAndAggregation(queryStr, null);
+
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+                assertThat(response.getHits(), hasSize(1));
+            }
         }
 
-        @Test
-        void shouldReturnPublicationWhenQueryingByTopLevelOrg() throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                "sample_publication_with_several_of_the_same_affiliation.json");
 
-            var query = queryWithTermAndAggregation(
-                "topLevelOrganizations.id:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0\"",
-                ApplicationConstants.RESOURCES_AGGREGATIONS);
+        @Nested
+        class TicketTests {
+            @BeforeEach
+            void beforeEachTest() throws IOException {
+                indexName = generateIndexName();
+                indexingClient.createIndex(indexName);
+            }
 
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            @Test
+            void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
 
-            assertThat(response.getHits(), hasSize(2));
-        }
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, null, null));
 
-        @Test
-        void shouldQueryingFundingSuccessfully() throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                "sample_publication_with_several_of_the_same_affiliation.json");
+                Thread.sleep(DELAY_AFTER_INDEXING);
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(), List.of(), false);
+                var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                        indexName);
 
-            var query = queryWithTermAndAggregation(
-                "fundings.source.identifier:\"NFR\"",
-                ApplicationConstants.RESOURCES_AGGREGATIONS);
+                assertThat(response.getSize(),
+                           is(equalTo(ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY)));
+            }
 
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-            assertThat(response.getHits(), hasSize(2));
-        }
+            @Test
+            void shouldReturnTwoHitsOnViewingScopeWithIncludedUnit() throws Exception {
 
-        @Test
-        void shouldQueryingHasFileSuccessfully() throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                "sample_publication_with_several_of_the_same_affiliation.json");
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID,
+                                                                         List.of()));
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID,
+                                                                         List.of(randomUri())));
 
-            var query = queryWithTermAndAggregation(
-                SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
+                Thread.sleep(DELAY_AFTER_INDEXING);
 
-            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(INCLUDED_ORGANIZATION_ID), false);
+                var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                        indexName);
 
-            assertThat(response, notNullValue());
+                assertThat(response.getSize(),
+                           is(equalTo(TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS)));
+            }
 
-            var actualAggregations = response.getAggregations();
+            @Test
+            void shouldReturnSubUnitDocumentWhenSearchingTopUnit() throws Exception {
 
-            var hasPublishedFileAggregation = actualAggregations.at(
-                "/associatedArtifacts/type");
-            assertThat(hasPublishedFileAggregation.get("docCount").asInt(), is(equalTo(2)));
+                var topLevelOrg = randomUri();
+                var subUnit = randomUri();
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, subUnit, List.of(topLevelOrg)));
 
-            var hasPublishedFileWithAdminAgreementFalseAggregation = actualAggregations.at(
-                "/associatedArtifacts/type/administrativeAgreement");
-            assertThat(hasPublishedFileWithAdminAgreementFalseAggregation.get("docCount").asInt(), is(equalTo(1)));
-        }
+                Thread.sleep(DELAY_AFTER_INDEXING);
 
-        @Test
-        void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException,
-                                                                         InterruptedException {
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(topLevelOrg), false);
+                var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                        indexName);
 
-            addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
-                                "sample_ticket_general_support_case_of_published_publication.json");
+                assertThat(response.getSize(), is(equalTo(1L)));
+            }
 
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, emptyList());
-            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            var searchResponseDto = searchClient.searchWithSearchTicketQuery(viewingScope, searchTicketsQuery,
-                                                                             indexName);
+            @Test
+            void shouldNotReturnSubUnitDocumentWhenExlucingSubUnitsAndSearchingTopUnit() throws Exception {
 
-            assertThat(searchResponseDto, notNullValue());
-            assertThat(searchResponseDto.getAggregations(), nullValue());
-        }
+                var topLevelOrg = randomUri();
+                var subUnit = randomUri();
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, subUnit, List.of(topLevelOrg)));
 
-        @Test
-        void shouldReturnCorrectTicketsAggregations() throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
-                                "sample_ticket_general_support_case_of_published_publication.json");
+                Thread.sleep(DELAY_AFTER_INDEXING);
 
-            var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(topLevelOrg), true);
+                var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                        indexName);
 
-            var viewingScope = ViewingScope.create(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES);
-            var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                            DESC, SAMPLE_REQUEST_URI, aggregations);
-            var searchResponseDto = searchClient.searchWithSearchTicketQuery(viewingScope, searchTicketsQuery,
-                                                                             indexName);
+                assertThat(response.getSize(), is(equalTo(0L)));
+            }
 
-            assertThat(searchResponseDto, notNullValue());
+            @Test
+            void shouldReturnCorrectTicketsAggregations() throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
+                                    "sample_ticket_general_support_case_of_published_publication.json");
 
-            var actualAggregations = searchResponseDto.getAggregations();
+                var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
 
-            var typeAggregation = actualAggregations.at("/type/"
-                                                        + "buckets");
-            assertThat(typeAggregation.size(), greaterThan(0));
-            assertAggregation(typeAggregation, "GeneralSupportCase", 1);
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, aggregations,
+                                                                List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                false);
+                var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                 indexName);
 
-            var statusAggregation = actualAggregations.at("/status/buckets");
-            assertThat(statusAggregation.size(), greaterThan(0));
-            assertAggregation(statusAggregation, "Pending", 2);
+                assertThat(searchResponseDto, notNullValue());
+
+                var actualAggregations = searchResponseDto.getAggregations();
+
+                var typeAggregation = actualAggregations.at("/type/"
+                                                            + "buckets");
+                assertThat(typeAggregation.size(), greaterThan(0));
+                assertAggregation(typeAggregation, "GeneralSupportCase", 1);
+
+                var statusAggregation = actualAggregations.at("/status/buckets");
+                assertThat(statusAggregation.size(), greaterThan(0));
+                assertAggregation(statusAggregation, "Pending", 2);
+            }
+
+            @Test
+            void shouldReturnZeroHitsBecauseStatusIsCompleted() throws Exception {
+
+                indexingClient.addDocumentToIndex(
+                    getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of(), COMPLETED)
+                );
+
+                Thread.sleep(DELAY_AFTER_INDEXING);
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(INCLUDED_ORGANIZATION_ID), false);
+                var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                        indexName);
+
+                assertThat(response.getSize(),
+                           is(equalTo(NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED)));
+            }
+
+            @Test
+            void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
+
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of()));
+                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of()));
+
+                Thread.sleep(DELAY_AFTER_INDEXING);
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(INCLUDED_ORGANIZATION_ID), false);
+                var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                       indexName);
+
+                assertThat(searchResourcesResponse, is(notNullValue()));
+                assertThat(searchResourcesResponse.getHits().size(), is(equalTo(2)));
+            }
+
+            @Test
+            void shouldVerifySearchNotReturningHitsWithPublicationRequestInSearchResponse() throws Exception {
+                addDocumentsToIndex("sample_response_with_publication_status_as_draft.json",
+                                    "sample_response_with_publication_status_as_requested.json");
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                false);
+                var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                       indexName);
+
+                assertThat(searchResourcesResponse, is(notNullValue()));
+                var actualHitsExcludingHitsWithPublicationStatusDraft = 1;
+                assertThat(searchResourcesResponse.getHits().size(),
+                           is(equalTo(actualHitsExcludingHitsWithPublicationStatusDraft)));
+            }
+
+            @Test
+            void shouldReturnPendingPublishingRequestsForPublications()
+                throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+                                    "sample_publishing_request_of_published_publication.json");
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                false);
+                var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                       indexName);
+
+                assertThat(searchResourcesResponse, is(notNullValue()));
+                var expectedHits = 2;
+                assertThat(searchResourcesResponse.getHits().size(), is(equalTo(expectedHits)));
+            }
+
+            @Test
+            void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException,
+                                                                             InterruptedException {
+
+                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
+                                    "sample_ticket_general_support_case_of_published_publication.json");
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                false);
+                var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                 indexName);
+
+                assertThat(searchResponseDto, notNullValue());
+                assertThat(searchResponseDto.getAggregations(), nullValue());
+            }
         }
     }
 }
