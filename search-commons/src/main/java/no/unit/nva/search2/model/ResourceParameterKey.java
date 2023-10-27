@@ -38,16 +38,14 @@ public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),
     // Parameters converted to Lucene query
     CATEGORY(STRING, "entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR(CUSTOM, "entityDescription.contributors.identity.id"
-                        + "|entityDescription.contributors.identity.name"),
+    CONTRIBUTOR(CUSTOM, "entityDescription.contributors.identity"),
     CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(STRING, "entityDescription.reference.doi"),
     FUNDING(STRING, "fundings.identifier"),
     FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
     ID(STRING, "identifier"),
-    INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
-                        + "|entityDescription.contributors.affiliation.name"),
+    INSTITUTION(STRING, "entityDescription.contributors.affiliation"),
     ISBN(STRING, "entityDescription.reference.publicationContext.isbnList"),
     ISSN(STRING, "entityDescription.reference.publicationContext.onlineIssn"
                  + "|entityDescription.reference.publicationContext.printIssn"),
@@ -59,19 +57,19 @@ public enum ResourceParameterKey implements ParameterKey {
     PUBLICATION_TYPE(STRING, "entityDescription.reference.publicationInstance.type"),
     PUBLISHED_BEFORE(DATE_STRING, LESS_THAN, "publishedDate"),
     PUBLISHED_SINCE(DATE_STRING, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
-    TITLE(STRING, "entityDescription.mainTitle"),
+    TITLE(STRING, "entityDescription.mainTitle",2F),
     UNIT(STRING, "entityDescription.contributors.affiliation.id"),
     USER(STRING, "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER, "entityDescription.publicationDate.year"),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(STRING, EQUALS, "q", "(?i)search.?all|query", null),
+    SEARCH_ALL(STRING, EQUALS, "q", "(?i)search.?all|query", null ,null),
     FIELDS(STRING),
     // Pagination parameters
     PAGE(NUMBER),
-    FROM(NUMBER, null, null, "(?i)offset|from", null),
-    SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null),
-    SORT(SORT_STRING, null, null, "(?i)order.?by|sort", null),
-    SORT_ORDER(CUSTOM, EQUALS, null, "(?i)sort.?order|order", "(?i)asc|desc"),
+    FROM(NUMBER, null, null, "(?i)offset|from", null,null),
+    SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null,null),
+    SORT(SORT_STRING, null, null, "(?i)order.?by|sort", null,null),
+    SORT_ORDER(CUSTOM, EQUALS, null, "(?i)sort.?order|order", "(?i)asc|desc",null),
     SEARCH_AFTER(CUSTOM),
     // ignored parameter
     LANG(STRING);
@@ -92,39 +90,50 @@ public enum ResourceParameterKey implements ParameterKey {
     private final FieldOperator fieldOperator;
     private final String errorMsg;
     private final ParamKind paramkind;
+    private final Float boost;
 
     ResourceParameterKey(ParamKind kind) {
-        this(kind, EQUALS, null, null, null);
+        this(kind, EQUALS, null, null, null, null);
     }
 
     ResourceParameterKey(ParamKind kind, String fieldsToSearch) {
-        this(kind, EQUALS, fieldsToSearch, null, null);
+        this(kind, EQUALS, fieldsToSearch, null, null, null);
+    }
+    ResourceParameterKey(ParamKind kind, String fieldsToSearch, Float boost) {
+        this(kind, EQUALS, fieldsToSearch, null, null, boost);
     }
 
     ResourceParameterKey(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
-        this(kind, operator, fieldsToSearch, null, null);
+        this(kind, operator, fieldsToSearch, null, null, null);
     }
 
     ResourceParameterKey(
-        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern) {
+        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
+        Float boost) {
 
         this.key = this.name().toLowerCase(Locale.getDefault());
         this.fieldOperator = operator;
+        this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
-                                     ? fieldsToSearch.split("\\|")
-                                     : new String[]{key};
+                                  ? fieldsToSearch.split("\\|")
+                                  : new String[]{key};
         this.validValuePattern = getValuePattern(kind, valuePattern);
         this.errorMsg = getErrorMessage(kind);
         this.encoding = getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
-                                 ? keyPattern
-                                 : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+                              ? keyPattern
+                              : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
     @Override
     public String fieldName() {
         return key;
+    }
+
+    @Override
+    public Float fieldBoost() {
+        return boost;
     }
 
     @Override

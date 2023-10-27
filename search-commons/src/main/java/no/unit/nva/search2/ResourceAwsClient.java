@@ -47,6 +47,7 @@ import org.opensearch.common.collect.Tuple;
 import org.opensearch.index.query.AbstractQueryBuilder;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.RangeQueryBuilder;
@@ -61,7 +62,6 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
-
     private final UserSettingsClient userSettingsClient;
 
     private static final Integer SINGLE_FIELD = 1;
@@ -151,14 +151,25 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                    .orElseThrow();
     }
 
+    /**
+     * Creates a multi match query, all words needs to be present, within a document.
+     * @param query ResourceAwsQuery
+     * @return a MultiMatchQueryBuilder
+     */
     private MultiMatchQueryBuilder multiMatchQuery(ResourceAwsQuery query) {
         var fields = extractFields(query.getValue(FIELDS).toString());
         var value = escapeSearchString(query.getValue(SEARCH_ALL).toString());
         return QueryBuilders
                    .multiMatchQuery(value, fields)
+                   .type(Type.CROSS_FIELDS)
                    .operator(Operator.AND);
     }
 
+    /**
+     * Creates a boolean query, with all the search parameters.
+     * @param query ResourceAwsQuery
+     * @return a BoolQueryBuilder
+     */
     private BoolQueryBuilder boolQuery(ResourceAwsQuery query) {
         var bq = QueryBuilders.boolQuery();
         query.getOpenSearchParameters()
@@ -178,6 +189,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                     } else {
                         bq.must(QueryBuilders
                             .matchQuery(searchField, escapeSearchString(value))
+                            .boost(key.fieldBoost())
                             .operator(Operator.AND));
                         if (key.equals(CONTRIBUTOR)) {
                             addPromotedQuery(query, bq);
@@ -193,10 +205,12 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             .doSearch(query)
             .promotedPublications();
         if (hasPromotedPublications(promotedPublications)) {
-            query.removeKey(SORT);
+            query.removeKey(SORT);                                  // remove sort to avoid sorting by score
             for (int i = 0; i < promotedPublications.size(); i++) {
-                bq.should(QueryBuilders.matchQuery("id", promotedPublications.get(i))
-                    .boost(promotedPublications.size() - i));
+                bq.should(
+                    QueryBuilders
+                        .matchQuery("id", promotedPublications.get(i))
+                        .boost(3.14F + promotedPublications.size() - i));
             }
         }
     }
