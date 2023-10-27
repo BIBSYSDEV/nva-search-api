@@ -9,6 +9,8 @@ public interface ParameterKey {
 
     String fieldName();
 
+    Float fieldBoost();
+
     ParamKind fieldType();
 
     String fieldPattern();

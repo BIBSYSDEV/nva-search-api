@@ -111,30 +111,25 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
             switch (qpKey) {
-                case SEARCH_AFTER,
-                    FROM,
-                    SIZE,
-                    PAGE -> query.setQueryValue(qpKey, value);
+                case SEARCH_AFTER, FROM,
+                     SIZE, PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
-                case PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
+                case CREATED_BEFORE, CREATED_SINCE,
+                     MODIFIED_BEFORE, MODIFIED_SINCE,
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
                 case CATEGORY, CONTRIBUTOR,
-                    CREATED_BEFORE, CREATED_SINCE,
-                    DOI, FUNDING, FUNDING_SOURCE, ID,
-                    INSTITUTION, ISSN,
-                    MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PROJECT_CODE, SEARCH_ALL, TITLE,
-                    UNIT, USER, YEAR_REPORTED -> query.setSearchFieldValue(qpKey, value);
+                     DOI, FUNDING, FUNDING_SOURCE, ID,
+                     INSTITUTION, ISSN, ISBN, ORCID,
+                     PUBLICATION_ID, PUBLICATION_TYPE,
+                     PROJECT_CODE, SEARCH_ALL, TITLE,
+                     UNIT, USER, YEAR_REPORTED -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
                 default -> invalidKeys.add(key);
             }
-        }
-
-        private String expandDate(String value) {
-            return value.length() == 4 ? value + "-01-01" : value;
         }
 
         @JacocoGenerated
@@ -202,6 +197,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 decodeUTF(value)
                     .replaceAll(PATTERN_IS_IGNORE_CASE + " (asc|desc)", ":$1");
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
+        }
+
+        private String expandDate(String value) {
+            return value.length() == 4 ? value + "-01-01" : value;
         }
 
         private String expandFields(String value) {

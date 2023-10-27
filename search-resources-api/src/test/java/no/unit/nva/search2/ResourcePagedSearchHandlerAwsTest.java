@@ -125,6 +125,7 @@ class ResourcePagedSearchHandlerAwsTest {
         exportCsv.setContributors(String.join(COMMA, contributors));
         return exportCsv;
     }
+
     @Test
     void shouldReturnSortedSearchResultsWhenSendingContributorId() throws IOException {
         prepareRestHighLevelClientOkResponse();
@@ -249,8 +250,8 @@ class ResourcePagedSearchHandlerAwsTest {
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
-//        var searchResponse = createSearchResponseWithHits(json);
-//        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
+        //        var searchResponse = createSearchResponseWithHits(json);
+        //        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
 
 

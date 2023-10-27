@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -62,7 +61,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
     private URI populateSearchRequest(String contributorId) {
         return UriWrapper.fromHost(readApiHost())
             .addChild("person-preferences")
-            .addChild(URLEncoder.encode(contributorId, StandardCharsets.UTF_8))
+            .addChild(contributorId)
             .getUri();
     }
 
