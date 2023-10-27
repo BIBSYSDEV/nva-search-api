@@ -57,19 +57,19 @@ public enum ResourceParameterKey implements ParameterKey {
     PUBLICATION_TYPE(STRING, "entityDescription.reference.publicationInstance.type"),
     PUBLISHED_BEFORE(DATE_STRING, LESS_THAN, "publishedDate"),
     PUBLISHED_SINCE(DATE_STRING, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
-    TITLE(STRING, "entityDescription.mainTitle",2F),
+    TITLE(STRING, "entityDescription.mainTitle", 2F),
     UNIT(STRING, "entityDescription.contributors.affiliation.id"),
     USER(STRING, "resourceOwner.owner"),
     YEAR_REPORTED(NUMBER, "entityDescription.publicationDate.year"),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(STRING, EQUALS, "q", "(?i)search.?all|query", null ,null),
+    SEARCH_ALL(STRING, EQUALS, "q", "(?i)search.?all|query", null, null),
     FIELDS(STRING),
     // Pagination parameters
     PAGE(NUMBER),
-    FROM(NUMBER, null, null, "(?i)offset|from", null,null),
-    SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null,null),
-    SORT(SORT_STRING, null, null, "(?i)order.?by|sort", null,null),
-    SORT_ORDER(CUSTOM, EQUALS, null, "(?i)sort.?order|order", "(?i)asc|desc",null),
+    FROM(NUMBER, null, null, "(?i)offset|from", null, null),
+    SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null, null),
+    SORT(SORT_STRING, null, null, "(?i)order.?by|sort", null, null),
+    SORT_ORDER(CUSTOM, EQUALS, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
     SEARCH_AFTER(CUSTOM),
     // ignored parameter
     LANG(STRING);
@@ -99,6 +99,7 @@ public enum ResourceParameterKey implements ParameterKey {
     ResourceParameterKey(ParamKind kind, String fieldsToSearch) {
         this(kind, EQUALS, fieldsToSearch, null, null, null);
     }
+
     ResourceParameterKey(ParamKind kind, String fieldsToSearch, Float boost) {
         this(kind, EQUALS, fieldsToSearch, null, null, boost);
     }

@@ -34,8 +34,6 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
@@ -45,7 +43,6 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchTicketsQuery;
-import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.apache.http.HttpHost;
@@ -245,8 +242,6 @@ public class OpensearchTest {
     @Nested
     class AddDocumentToIndexTest {
 
-
-
         @AfterEach
         void afterEachTest() throws Exception {
             indexingClient.deleteIndex(indexName);
@@ -254,6 +249,7 @@ public class OpensearchTest {
 
         @Nested
         class ResourcesTests {
+
             @BeforeEach
             void beforeEachTest() throws IOException {
                 indexName = generateIndexName();
@@ -341,7 +337,8 @@ public class OpensearchTest {
                 var actualAggregations = response.getAggregations();
                 var topOrgAggregation = actualAggregations.at(
                     "/topLevelOrganizations/id/buckets");
-                assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0", 2);
+                assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0",
+                                  2);
 
                 var typeAggregation = actualAggregations.at(
                     "/entityDescription/reference/publicationInstance/type/buckets");
@@ -353,19 +350,19 @@ public class OpensearchTest {
                 var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
                 assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
 
-            var contributorAggregation = actualAggregations.at(
-                "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
-            assertAggregation(contributorAggregation, "Iametti, Stefania", 1);
+                var contributorAggregation = actualAggregations.at(
+                    "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
+                assertAggregation(contributorAggregation, "Iametti, Stefania", 1);
 
                 var publisherAggregation = actualAggregations.at(
                     "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
                 assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
 
-            var journalAggregation = actualAggregations.at(
-                "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
-            assertAggregation(journalAggregation,
-                              "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
-        }
+                var journalAggregation = actualAggregations.at(
+                    "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
+                assertAggregation(journalAggregation,
+                                  "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
+            }
 
             @Test
             void shouldReturnPublicationWhenQueryingByProject() throws InterruptedException, ApiGatewayException {
@@ -443,9 +440,9 @@ public class OpensearchTest {
             }
         }
 
-
         @Nested
         class TicketTests {
+
             @BeforeEach
             void beforeEachTest() throws IOException {
                 indexName = generateIndexName();
@@ -459,7 +456,8 @@ public class OpensearchTest {
 
                 Thread.sleep(DELAY_AFTER_INDEXING);
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                                                                DESC, SAMPLE_REQUEST_URI, emptyList(), List.of(), false);
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(), List.of(),
+                                                                false);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 
@@ -573,8 +571,10 @@ public class OpensearchTest {
             @Test
             void shouldCreateSearchTicketsResponseFromSearchResponse() throws Exception {
 
-                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of()));
-                indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of()));
+                indexingClient.addDocumentToIndex(
+                    getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of()));
+                indexingClient.addDocumentToIndex(
+                    getTicketIndexDocument(indexName, INCLUDED_ORGANIZATION_ID, List.of()));
 
                 Thread.sleep(DELAY_AFTER_INDEXING);
 
