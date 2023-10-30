@@ -151,15 +151,13 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         attempt(() -> indexBatch(indexDocuments)).orElse(this::logFailure);
     }
 
-    private Stream<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
-        var bulkResponseStream = indexingClient.batchInsert(indexDocuments.stream());
-        bulkResponseStream.forEach(response -> logger.info("Bulk response: {}", response));
-        return bulkResponseStream;
+    private List<BulkResponse> logFailure(Failure<List<BulkResponse>> failure) {
+        logger.error("Bulk has failed: ", failure.getException());
+        return List.of();
     }
 
-    private Stream<BulkResponse> logFailure(Failure<Stream<BulkResponse>> failure) {
-        logger.error("Bulk has failed: ", failure.getException());
-        return null;
+    private List<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
+        return indexingClient.batchInsert(indexDocuments.stream()).toList();
     }
 
     private boolean isValid(IndexDocument document) {
