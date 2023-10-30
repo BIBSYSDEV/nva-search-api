@@ -22,7 +22,9 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Failure;
 import nva.commons.core.paths.UnixPath;
+import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -145,7 +147,12 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private void indexDocuments(List<IndexDocument> list) {
-        attempt(() -> indexingClient.batchInsert(list.stream())).orElse(failure -> null);
+        attempt(() -> indexingClient.batchInsert(list.stream())).orElse(this::logFailure);
+    }
+
+    private Stream<BulkResponse> logFailure(Failure<Stream<BulkResponse>> failure) {
+        logger.error("Bulk has failed: ", failure.getException());
+        return null;
     }
 
     private boolean isValid(IndexDocument document) {
