@@ -22,7 +22,9 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Failure;
 import nva.commons.core.paths.UnixPath;
+import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -79,6 +81,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         }
 
         sendDocumentsToIndexInBatches(indexDocuments);
+
 
         logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
         return null;
@@ -144,8 +147,17 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         }
     }
 
-    private void indexDocuments(List<IndexDocument> list) {
-        attempt(() -> indexingClient.batchInsert(list.stream())).orElse(failure -> null);
+    private void indexDocuments(List<IndexDocument> indexDocuments) {
+        attempt(() -> indexBatch(indexDocuments)).orElse(this::logFailure);
+    }
+
+    private List<BulkResponse> logFailure(Failure<List<BulkResponse>> failure) {
+        logger.error("Bulk has failed: ", failure.getException());
+        return List.of();
+    }
+
+    private List<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
+        return indexingClient.batchInsert(indexDocuments.stream()).toList();
     }
 
     private boolean isValid(IndexDocument document) {
@@ -161,7 +173,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private String fetchS3Content(String key) {
-        var s3Driver = new S3Driver(s3ResourcesClient, KeyBasedBatchIndexHandler.RESOURCES_BUCKET);
+        var s3Driver = new S3Driver(s3ResourcesClient, RESOURCES_BUCKET);
         return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
     }
 }
