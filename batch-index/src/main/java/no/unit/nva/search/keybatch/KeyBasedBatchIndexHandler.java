@@ -146,8 +146,13 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         }
     }
 
-    private void indexDocuments(List<IndexDocument> list) {
-        attempt(() -> indexingClient.batchInsert(list.stream())).orElse(this::logFailure);
+    private void indexDocuments(List<IndexDocument> indexDocuments) {
+        attempt(() -> indexBatch(indexDocuments)).orElse(this::logFailure);
+    }
+
+    private Stream<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
+        logger.info("First document to index: {}", indexDocuments.get(0));
+        return indexingClient.batchInsert(indexDocuments.stream());
     }
 
     private Stream<BulkResponse> logFailure(Failure<Stream<BulkResponse>> failure) {
