@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
@@ -115,15 +116,12 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private List<IndexDocument> mapToIndexDocuments(String content) {
-        return extractIdentifiers(content).filter(this::isNotEmpty)
+        return extractIdentifiers(content)
+                   .filter(Objects::nonNull)
                    .map(this::fetchS3Content)
                    .map(IndexDocument::fromJsonString)
                    .filter(this::isValid)
                    .toList();
-    }
-
-    private boolean isNotEmpty(String value) {
-        return nonNull(value) && !value.isBlank();
     }
 
     private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
@@ -158,8 +156,8 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return validator.isValid();
     }
 
-    private Stream<String> extractIdentifiers(String string) {
-        return Arrays.stream(string.split(LINE_BREAK));
+    private Stream<String> extractIdentifiers(String value) {
+        return nonNull(value) && !value.isBlank() ? Arrays.stream(value.split(LINE_BREAK)) : Stream.empty();
     }
 
     private String fetchS3Content(String key) {
