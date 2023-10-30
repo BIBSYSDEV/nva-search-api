@@ -76,12 +76,12 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         var content = extractContent(batchKey);
         var indexDocuments = mapToIndexDocuments(content);
 
-
-        sendDocumentsToIndexInBatches(indexDocuments);
-
         if (batchResponse.isTruncated()) {
             sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context));
         }
+
+        sendDocumentsToIndexInBatches(indexDocuments);
+
 
         logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
         return null;
@@ -152,8 +152,9 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private Stream<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
-        logger.info("First document to index: {}", indexDocuments.get(0));
-        return indexingClient.batchInsert(indexDocuments.stream());
+        var bulkResponseStream = indexingClient.batchInsert(indexDocuments.stream());
+        bulkResponseStream.forEach(response -> logger.info("Bulk response: {}", response));
+        return bulkResponseStream;
     }
 
     private Stream<BulkResponse> logFailure(Failure<Stream<BulkResponse>> failure) {
@@ -174,7 +175,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private String fetchS3Content(String key) {
-        var s3Driver = new S3Driver(s3ResourcesClient, KeyBasedBatchIndexHandler.RESOURCES_BUCKET);
+        var s3Driver = new S3Driver(s3ResourcesClient, RESOURCES_BUCKET);
         return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
     }
 }
