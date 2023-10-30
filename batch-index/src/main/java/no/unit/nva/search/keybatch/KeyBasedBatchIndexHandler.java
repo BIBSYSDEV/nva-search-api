@@ -76,11 +76,12 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         var content = extractContent(batchKey);
         var indexDocuments = mapToIndexDocuments(content);
 
+
+        sendDocumentsToIndexInBatches(indexDocuments);
+
         if (batchResponse.isTruncated()) {
             sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context));
         }
-
-        sendDocumentsToIndexInBatches(indexDocuments);
 
         logger.info(LAST_CONSUMED_BATCH, batchResponse.contents().get(0));
         return null;
