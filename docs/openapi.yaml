@@ -133,7 +133,6 @@ paths:
         name: funding
         description: "Funding source code e.g: NFR, and project_code together separated by ':'"
         example: "NFR:1234"
-
         required: false
         schema:
           type: string
@@ -146,7 +145,7 @@ paths:
           type: string
       - in: query
         name: id
-        description: "The Cristin id of the result"
+        description: "The identifier (UUID) of the result"
         required: false
         schema:
           type: string
@@ -159,7 +158,7 @@ paths:
           type: string
       - in: query
         name: isbn
-        description: "The issn of the result"
+        description: "The isbn of the result"
         required: false
         schema:
           type: string
@@ -184,20 +183,6 @@ paths:
         schema:
           type: string
           format: date
-      - in: query
-        name: publication_id
-        description: "Publication Id of the result"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: publication_type
-        description: "Publication type of the result"
-        example: "Anthology"
-        required: false
-        schema:
-          type: string
-          enum: [Anthology, Monografi]
       - in: query
         name: modified_since
         description: "Results modified since and inclusive the given date, (yyyy-mm-dd)"
@@ -236,8 +221,8 @@ paths:
         schema:
           type: number
       - in: query
-        name: project_code
-        description: "Project code is the internal reference number used by funding source"
+        name: project
+        description: "Project id (URI)"
         example: "NFR"
         required: false
         schema:

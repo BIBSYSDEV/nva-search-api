@@ -122,9 +122,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 case CATEGORY, CONTRIBUTOR,
                      DOI, FUNDING, FUNDING_SOURCE, ID,
                      INSTITUTION, ISSN, ISBN, ORCID,
-                     PUBLICATION_ID, PUBLICATION_TYPE,
-                     PROJECT_CODE, SEARCH_ALL, TITLE,
-                     UNIT, USER, YEAR_REPORTED -> query.setSearchFieldValue(qpKey, value);
+                     PROJECT, SEARCH_ALL, TITLE,
+                     UNIT, USER, PUBLICATION_YEAR -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
