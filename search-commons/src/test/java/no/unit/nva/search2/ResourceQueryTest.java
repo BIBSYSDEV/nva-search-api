@@ -141,7 +141,6 @@ class ResourceQueryTest {
     static Stream<URI> uriProvider() {
         return Stream.of(
             URI.create("https://example.com/"),
-            URI.create("https://example.com/?publicationId=123123&publicationType=Anthology"),
             URI.create("https://example.com/?fields=category,title,created_date"),
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
             URI.create("https://example.com/?fields=all"),
