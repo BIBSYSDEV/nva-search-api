@@ -38,14 +38,15 @@ public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),
     // Parameters converted to Lucene query
     CATEGORY(STRING, "entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR(CUSTOM, "entityDescription.contributors.identity"),
+    CONTRIBUTOR(STRING, "entityDescription.contributors.identity.id"
+                        + "|entityDescription.contributors.identity.name"),
     CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(STRING, "entityDescription.reference.doi"),
     FUNDING(STRING, "fundings.identifier"),
     FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
     ID(STRING, "identifier"),
-    INSTITUTION(STRING, "entityDescription.contributors.affiliation"
+    INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
                         + "|entityDescription.contributors.affiliation.name"),
     ISBN(STRING, "entityDescription.reference.publicationContext.isbnList"),
     ISSN(STRING, "entityDescription.reference.publicationContext.onlineIssn"
