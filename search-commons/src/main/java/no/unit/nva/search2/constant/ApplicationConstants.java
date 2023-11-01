@@ -19,6 +19,7 @@ public final class ApplicationConstants {
     public static final String QUOTE = "'";
     public static final String RESOURCES = "resources";
     public static final String SEARCH = "_search";
+    public static final String SPACE = " ";
     public static final String SUFFIX = ")";
     public static final String UNDERSCORE = "_";
     public static final String ZERO = "0";
