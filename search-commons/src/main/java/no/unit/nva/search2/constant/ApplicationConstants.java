@@ -25,6 +25,10 @@ public final class ApplicationConstants {
     public static final String ZERO = "0";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
 
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID = "entityDescription.contributors.identity.id";
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME = "entityDescription.contributors.identity.name";
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID = "entityDescription.contributors.affiliation.id";
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME = "entityDescription.contributors.affiliation.name";
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final Environment ENVIRONMENT = new Environment();

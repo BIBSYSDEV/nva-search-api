@@ -167,6 +167,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
      * @param query ResourceAwsQuery
      * @return a BoolQueryBuilder
      */
+    @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
     private BoolQueryBuilder boolQuery(ResourceAwsQuery query) {
         var bq = QueryBuilders.boolQuery();
         query.getOpenSearchParameters()

@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME;
 import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
@@ -48,13 +52,13 @@ public enum ResourceParameterKey implements ParameterKey {
     CATEGORY(STRING, "entityDescription.reference.publicationInstance.type"),
     CATEGORY_NOT(STRING, MUST_NOT, "entityDescription.reference.publicationInstance.type"),
     CATEGORY_SHOULD(STRING, SHOULD, "entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR_ID(CUSTOM, "entityDescription.contributors.identity.id"),
-    CONTRIBUTOR(STRING, "entityDescription.contributors.identity.id"
-                        + "|entityDescription.contributors.identity.name"),
-    CONTRIBUTOR_NOT(STRING, MUST_NOT, "entityDescription.contributors.identity.id"
-                        + "|entityDescription.contributors.identity.name"),
-    CONTRIBUTOR_SHOULD(STRING, SHOULD, "entityDescription.contributors.identity.id"
-                                      + "|entityDescription.contributors.identity.name"),
+    CONTRIBUTOR_ID(CUSTOM, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID),
+    CONTRIBUTOR(STRING, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+                        + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NOT(STRING, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+                                      + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_SHOULD(STRING, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+                                       + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
     CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(STRING, "entityDescription.reference.doi"),
@@ -68,12 +72,12 @@ public enum ResourceParameterKey implements ParameterKey {
     ID(STRING, "identifier"),
     ID_NOT(STRING, MUST_NOT, "identifier"),
     ID_SHOULD(STRING, MUST_NOT, "identifier"),
-    INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
-                        + "|entityDescription.contributors.affiliation.name"),
-    INSTITUTION_NOT(STRING, MUST_NOT, "entityDescription.contributors.affiliation.id"
-                                      + "|entityDescription.contributors.affiliation.name"),
-    INSTITUTION_SHOULD(STRING, SHOULD, "entityDescription.contributors.affiliation.id"
-                                      + "|entityDescription.contributors.affiliation.name"),
+    INSTITUTION(STRING, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
+                        + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_NOT(STRING, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
+                                      + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_SHOULD(STRING, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
+                                       + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
     ISBN(STRING, "entityDescription.reference.publicationContext.isbnList"),
     ISBN_NOT(STRING, MUST_NOT, "entityDescription.reference.publicationContext.isbnList"),
     ISBN_SHOULD(STRING, SHOULD, "entityDescription.reference.publicationContext.isbnList"),
@@ -82,7 +86,7 @@ public enum ResourceParameterKey implements ParameterKey {
     ISSN_NOT(STRING, MUST_NOT, "entityDescription.reference.publicationContext.onlineIssn"
                                + "|entityDescription.reference.publicationContext.printIssn"),
     ISSN_SHOULD(STRING, SHOULD, "entityDescription.reference.publicationContext.onlineIssn"
-                               + "|entityDescription.reference.publicationContext.printIssn"),
+                                + "|entityDescription.reference.publicationContext.printIssn"),
     ORCID(STRING, "entityDescription.contributors.identity.orcId"),
     ORCID_NOT(STRING, MUST_NOT, "entityDescription.contributors.identity.orcId"),
     ORCID_SHOULD(STRING, SHOULD, "entityDescription.contributors.identity.orcId"),
@@ -96,16 +100,16 @@ public enum ResourceParameterKey implements ParameterKey {
     TITLE(STRING, "entityDescription.mainTitle", 2F),
     TITLE_NOT(STRING, MUST_NOT, "entityDescription.mainTitle"),
     TITLE_SHOULD(STRING, SHOULD, "entityDescription.mainTitle"),
-    UNIT(STRING, "entityDescription.contributors.affiliation.id"),
-    UNIT_NOT(STRING, MUST_NOT,"entityDescription.contributors.affiliation.id"),
-    UNIT_SHOULD(STRING, SHOULD,"entityDescription.contributors.affiliation.id"),
+    UNIT(STRING, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_NOT(STRING, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_SHOULD(STRING, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
     USER(STRING, "resourceOwner.owner"),
-    USER_NOT(STRING, MUST_NOT,"resourceOwner.owner"),
-    USER_SHOULD(STRING, SHOULD,"resourceOwner.owner"),
+    USER_NOT(STRING, MUST_NOT, "resourceOwner.owner"),
+    USER_SHOULD(STRING, SHOULD, "resourceOwner.owner"),
     PUBLICATION_YEAR(NUMBER, MUST, "entityDescription.publicationDate.year",
                      "(?i)year.?reported|publication.?year", null, null),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, "entityDescription.publicationDate.year",
-                     "(?i)year.?reported|publication.?year", null, null),
+                            "(?i)year.?reported|publication.?year", null, null),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(STRING, MUST, "q", "(?i)search.?all|query", null, null),
     FIELDS(CUSTOM),
@@ -232,7 +236,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case NUMBER, CUSTOM -> ValueEncoding.NONE;
-            case DATE,  STRING, SORT_STRING -> ValueEncoding.DECODE;
+            case DATE, STRING, SORT_STRING -> ValueEncoding.DECODE;
         };
     }
 
