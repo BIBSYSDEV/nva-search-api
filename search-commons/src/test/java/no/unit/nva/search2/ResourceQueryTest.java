@@ -143,6 +143,10 @@ class ResourceQueryTest {
             URI.create("https://example.com/"),
             URI.create("https://example.com/?fields=category,title,created_date"),
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
+            URI.create("https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
+            URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
+                       + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                       + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
             URI.create("https://example.com/?fields=all"),
             URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
             URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),

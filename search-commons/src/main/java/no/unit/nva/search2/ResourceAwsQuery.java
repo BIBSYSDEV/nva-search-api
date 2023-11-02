@@ -119,13 +119,22 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
                 case CREATED_BEFORE, CREATED_SINCE,
-                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
-                case CATEGORY, CONTRIBUTOR,
-                     DOI, FUNDING, FUNDING_SOURCE, ID,
-                     INSTITUTION, ISSN, ISBN, ORCID,
-                     PROJECT, SEARCH_ALL, TITLE,
-                     UNIT, USER, PUBLICATION_YEAR -> query.setSearchFieldValue(qpKey, value);
+                         MODIFIED_BEFORE, MODIFIED_SINCE,
+                         PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
+                case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD, CONTRIBUTOR_ID,
+                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                     DOI, DOI_NOT, DOI_SHOULD,
+                     FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
+                     ID, ID_NOT, ID_SHOULD,
+                     INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
+                     ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
+                     ORCID, ORCID_NOT, ORCID_SHOULD,
+                     PROJECT, PROJECT_NOT, PROJECT_SHOULD,
+                     PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
+                     SEARCH_ALL,
+                     TITLE, TITLE_NOT, TITLE_SHOULD,
+                     UNIT, UNIT_NOT, UNIT_SHOULD,
+                     USER, USER_NOT, USER_SHOULD -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }

@@ -236,7 +236,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
             return (T) switch (key.fieldType()) {
-                case DATE, DATE_STRING -> castDateTime();
+                case DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };
