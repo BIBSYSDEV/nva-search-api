@@ -215,15 +215,16 @@ public enum ResourceParameterKey implements ParameterKey {
 
     @JacocoGenerated
     private String getValuePattern(ParamKind kind, String pattern) {
-        return switch (kind) {
-            // case BOOLEAN -> PATTERN_IS_BOOLEAN;
-            case DATE -> PATTERN_IS_DATE;
-            case DATE_STRING -> PATTERN_IS_DATE_STRING;
-            case NUMBER -> PATTERN_IS_NUMBER;
-            // case RANGE -> PATTERN_IS_RANGE;
-            case STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;
-            case CUSTOM -> nonNull(pattern) ? pattern : PATTERN_IS_NON_EMPTY;
-        };
+        return
+            nonNull(pattern) ? pattern
+                : switch (kind) {
+                    // case BOOLEAN -> PATTERN_IS_BOOLEAN;
+                    case DATE -> PATTERN_IS_DATE;
+                    case DATE_STRING -> PATTERN_IS_DATE_STRING;
+                    case NUMBER -> PATTERN_IS_NUMBER;
+                    // case RANGE -> PATTERN_IS_RANGE;
+                    case CUSTOM, STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;
+                };
     }
 
     public static ResourceParameterKey keyFromString(String paramName) {
