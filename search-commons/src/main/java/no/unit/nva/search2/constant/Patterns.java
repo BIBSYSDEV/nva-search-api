@@ -16,13 +16,17 @@ public class Patterns {
      *  yyyy | yyyy-MM-dd
      */
     public static final String PATTERN_IS_DATE_STRING = "\\b\\d{4}(?:-\\d{2}-\\d{2})?\\b";
-
-
     public static final String PATTERN_IS_ADD_SLASH = "\\\\$1";
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
+
+    /**
+     * Pattern for matching a funding string.
+     * funding source and project_id together separated by ':'
+     */
+    public static final String PATTERN_IS_FUNDING =  "[\\w]+[:\\s]{1}\\d+";
 
     /**
      * Pattern for matching group of opensearch special characters.

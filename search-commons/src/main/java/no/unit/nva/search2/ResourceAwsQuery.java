@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.SPACE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
@@ -10,6 +11,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.FUNDING;
 import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
@@ -18,22 +20,22 @@ import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
 import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
 import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
 import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
+import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.ResourceSortKeys;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.ResourceParameterKey;
+import no.unit.nva.search2.model.ResourceSortKeys;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
-import com.google.common.net.MediaType;
 import org.jetbrains.annotations.NotNull;
 
 public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
@@ -112,7 +114,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER, FROM,
-                     SIZE, PAGE -> query.setQueryValue(qpKey, value);
+                         SIZE, PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
@@ -122,9 +124,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 case CATEGORY, CONTRIBUTOR,
                      DOI, FUNDING, FUNDING_SOURCE, ID,
                      INSTITUTION, ISSN, ISBN, ORCID,
-                     PUBLICATION_ID, PUBLICATION_TYPE,
-                     PROJECT_CODE, SEARCH_ALL, TITLE,
-                     UNIT, USER, YEAR_REPORTED -> query.setSearchFieldValue(qpKey, value);
+                     PROJECT, SEARCH_ALL, TITLE,
+                     UNIT, USER, PUBLICATION_YEAR -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
@@ -144,10 +145,15 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 }
                 query.removeKey(PAGE);
             }
+            query.getOptional(FUNDING)
+                .ifPresent(funding -> query.setSearchFieldValue(FUNDING, funding.replaceAll(COLON, SPACE)));
         }
 
         @Override
         protected void validateSort() throws BadRequestException {
+            if (!query.isPresent(SORT)) {
+                return;
+            }
             try {
                 var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
                 var validSortKeys =

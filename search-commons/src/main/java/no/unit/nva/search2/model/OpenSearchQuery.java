@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -98,6 +99,12 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 : queryParameters.get(key),
             key
         );
+    }
+
+    public Optional<String> getOptional(K key) {
+        return Optional.ofNullable(luceneParameters.containsKey(key)
+                   ? luceneParameters.get(key)
+                   : queryParameters.get(key));
     }
 
     public String removeKey(K key) {
