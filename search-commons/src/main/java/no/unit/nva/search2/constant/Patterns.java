@@ -1,6 +1,5 @@
 package no.unit.nva.search2.constant;
 
-import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import nva.commons.core.JacocoGenerated;
 
 @JacocoGenerated
