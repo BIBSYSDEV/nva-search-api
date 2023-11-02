@@ -122,8 +122,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
         builder.size(query.getValue(SIZE).as());
         builder.from(query.getValue(FROM).as());
-        getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
-
+        if (query.isPresent(SORT)) {
+            getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
+        }
         return new QueryBuilderSourceWrapper(builder, query.openSearchUri());
     }
 
@@ -246,9 +247,11 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     @NotNull
     private Stream<Tuple<String, SortOrder>> getSortStream(ResourceAwsQuery query) {
-        return Arrays.stream(query.getValue(SORT).<String>as().split(COMMA))
-                   .map(sort -> sort.split(COLON))
-                   .map(this::expandSortKeys);
+        return
+            query.getOptional(SORT).stream()
+                .flatMap(sort -> Arrays.stream(sort.split(COMMA)))
+                .map(sort -> sort.split(COLON))
+                .map(this::expandSortKeys);
     }
 
     private boolean isFirstPage(ResourceAwsQuery query) {

@@ -1,5 +1,6 @@
 package no.unit.nva.search;
 
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
@@ -8,7 +9,6 @@ import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
 import static no.unit.nva.search.RequestUtil.VIEWING_SCOPE_KEY;
 import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
 import static no.unit.nva.search.SearchTicketsHandler.ROLE_CREATOR;
-import static no.unit.nva.search.SearchTicketsHandler.ROLE_CURATOR;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -35,19 +35,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.SearchResponseDto;
-import no.unit.nva.search.restclients.responses.UserResponse;
-import no.unit.nva.search.restclients.responses.ViewingScope;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.GatewayResponse;
@@ -125,6 +122,33 @@ class SearchTicketsHandlerTest {
 
         JsonNode jsonNode = objectMapperWithEmpty.readTree(response.getBody());
         assertThat(jsonNode, is(notNullValue()));
+    }
+
+    @Test
+    void shouldReturnOkWhenSearchingWithDefaultViewingScopeWhenNoViewingScopeIsQueried()
+        throws IOException {
+        var inputStream = getInputStream();
+        handler.handleRequest(inputStream, outputStream, context);
+        var response = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(response.getStatusCode(), is(equalTo(HTTP_OK)));
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenSearchingWithViewingScopeOutsideOfTopLevelOrg() throws IOException {
+        var inputStream = queryWithCustomOrganizationAsQueryParameter(List.of(randomUri()));
+        handler.handleRequest(inputStream, outputStream, context);
+        var response = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(response.getStatusCode(), is(equalTo(HTTP_FORBIDDEN)));
+    }
+
+    @Test
+    void shouldReturnOkWhenSearchingWithViewingScopeThatIsPartOfTopLevelCristinOrg()
+        throws URISyntaxException, IOException {
+        var uri = new URI("https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0");
+        var inputStream = queryWithCustomOrganizationAsQueryParameter(List.of(uri));
+        handler.handleRequest(inputStream, outputStream, context);
+        var response = GatewayResponse.fromOutputStream(outputStream, String.class);
+        assertThat(response.getStatusCode(), is(equalTo(HTTP_OK)));
     }
 
     @Test

@@ -53,10 +53,10 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     public static final String ROLE_CREATOR = "creator";
     private static final Logger logger = LoggerFactory.getLogger(SearchTicketsHandler.class);
     public static final String APPLICATION_JSON = "application/json";
-    private static final String HAS_PART_PROPERTY = "hasPart";
+    private static final String HAS_PART_PROPERTY = "https://nva.sikt.no/ontology/publication#hasPart";
     private static final CharSequence COMMA_AND_SPACE = ", ";
     public static final String USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_VIEWINGSCOPE
-        = "User is not allowed to search viewingScope: %s";
+        = "User of %s is not allowed to search viewingScope: %s";
     private final SearchClient searchClient;
     private final AuthorizedBackendUriRetriever uriRetriever;
 
@@ -146,6 +146,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
         if (!illegal.isEmpty()) {
             logger.info(String.format(USER_IS_NOT_ALLOWED_TO_SEARCH_FOR_VIEWINGSCOPE,
+                                      topLevelOrg.toString(),
                                       illegal.stream().collect(Collectors.joining(
                                           COMMA_AND_SPACE.toString()))));
             throw new ForbiddenException();

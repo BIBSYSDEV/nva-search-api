@@ -19,6 +19,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE_STRING;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -34,6 +35,13 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
 
+/**
+ * Enum for all the parameters that can be used to query the search index.
+ * This enum needs to implement these parameters
+ * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ *
+ */
+
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),
     // Parameters converted to Lucene query
@@ -43,7 +51,8 @@ public enum ResourceParameterKey implements ParameterKey {
     CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
     DOI(STRING, "entityDescription.reference.doi"),
-    FUNDING(STRING, "fundings.identifier"),
+    FUNDING(STRING, EQUALS, "fundings.identifier|fundings.source.identifier",
+            null, PATTERN_IS_FUNDING, null),
     FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
     ID(STRING, "identifier"),
     INSTITUTION(STRING, "entityDescription.contributors.affiliation.id"
@@ -54,15 +63,14 @@ public enum ResourceParameterKey implements ParameterKey {
     ORCID(STRING, "entityDescription.contributors.identity.orcId"),
     MODIFIED_BEFORE(DATE, LESS_THAN, "modifiedDate"),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate"),
-    PROJECT_CODE(STRING, "fundings.identifier"),
-    PUBLICATION_ID(STRING, "entityDescription.reference.publicationInstance.id"),
-    PUBLICATION_TYPE(STRING, "entityDescription.reference.publicationInstance.type"),
+    PROJECT(STRING, "projects.id"),
     PUBLISHED_BEFORE(DATE_STRING, LESS_THAN, "publishedDate"),
     PUBLISHED_SINCE(DATE_STRING, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
     TITLE(STRING, "entityDescription.mainTitle", 2F),
     UNIT(STRING, "entityDescription.contributors.affiliation.id"),
     USER(STRING, "resourceOwner.owner"),
-    YEAR_REPORTED(NUMBER, "entityDescription.publicationDate.year"),
+    PUBLICATION_YEAR(NUMBER, EQUALS, "entityDescription.publicationDate.year",
+                     "(?i)year.?reported|publication.?year", null, null),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(STRING, EQUALS, "q", "(?i)search.?all|query", null, null),
     FIELDS(STRING),
@@ -207,15 +215,16 @@ public enum ResourceParameterKey implements ParameterKey {
 
     @JacocoGenerated
     private String getValuePattern(ParamKind kind, String pattern) {
-        return switch (kind) {
-            // case BOOLEAN -> PATTERN_IS_BOOLEAN;
-            case DATE -> PATTERN_IS_DATE;
-            case DATE_STRING -> PATTERN_IS_DATE_STRING;
-            case NUMBER -> PATTERN_IS_NUMBER;
-            // case RANGE -> PATTERN_IS_RANGE;
-            case STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;
-            case CUSTOM -> nonNull(pattern) ? pattern : PATTERN_IS_NON_EMPTY;
-        };
+        return
+            nonNull(pattern) ? pattern
+                : switch (kind) {
+                    // case BOOLEAN -> PATTERN_IS_BOOLEAN;
+                    case DATE -> PATTERN_IS_DATE;
+                    case DATE_STRING -> PATTERN_IS_DATE_STRING;
+                    case NUMBER -> PATTERN_IS_NUMBER;
+                    // case RANGE -> PATTERN_IS_RANGE;
+                    case CUSTOM, STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;
+                };
     }
 
     public static ResourceParameterKey keyFromString(String paramName) {

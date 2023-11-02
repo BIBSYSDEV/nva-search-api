@@ -9,6 +9,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -41,6 +42,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.stubs.FakeS3Client;
 import nva.commons.core.SingletonCollector;
+import nva.commons.core.StringUtils;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.logutils.LogUtils;
@@ -96,6 +98,18 @@ class KeyBasedBatchIndexHandlerTest {
         var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
         assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
+    }
+
+    @Test
+    void shouldSkipEmptyBatches() throws IOException {
+        var batchKey = randomString();
+        s3BatchesDriver.insertFile(UnixPath.of(batchKey), StringUtils.EMPTY_STRING);
+
+        handler.handleRequest(eventStream(null), outputStream, Mockito.mock(Context.class));
+
+        var documentsFromIndex = openSearchClient.getIndexedDocuments();
+
+        assertThat(documentsFromIndex, is(emptyIterable()));
     }
 
     @Test
