@@ -152,7 +152,7 @@ class ResourceQueryTest {
             URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
             URI.create("https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
             URI.create("https://example.com/?published_before=2020-01-01&lang=en&user=1%2023"),
-            URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding=NFR&user=Per"
+            URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
                        + "%20Eplekjekk"));
     }
 
