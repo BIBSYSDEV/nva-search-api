@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.FUNDING;
 import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
@@ -120,9 +121,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 case CREATED_BEFORE, CREATED_SINCE,
                      MODIFIED_BEFORE, MODIFIED_SINCE,
                      PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
-                case FUNDING -> query.setSearchFieldValue(qpKey, value.replace(COLON, SPACE));
                 case CATEGORY, CONTRIBUTOR,
-                     DOI, FUNDING_SOURCE, ID,
+                     DOI, FUNDING, FUNDING_SOURCE, ID,
                      INSTITUTION, ISSN, ISBN, ORCID,
                      PROJECT, SEARCH_ALL, TITLE,
                      UNIT, USER, PUBLICATION_YEAR -> query.setSearchFieldValue(qpKey, value);
@@ -145,10 +145,15 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 }
                 query.removeKey(PAGE);
             }
+            query.getOptional(FUNDING)
+                .ifPresent(funding -> query.setSearchFieldValue(FUNDING, funding.replaceAll(COLON, SPACE)));
         }
 
         @Override
         protected void validateSort() throws BadRequestException {
+            if (!query.isPresent(SORT)) {
+                return;
+            }
             try {
                 var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
                 var validSortKeys =

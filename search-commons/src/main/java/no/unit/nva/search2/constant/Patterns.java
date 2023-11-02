@@ -27,7 +27,7 @@ public class Patterns {
      * Pattern for matching a funding string.
      * funding source and project_id together separated by ':'
      */
-    public static final String PATTERN_IS_FUNDING =  PATTERN_IS_NON_EMPTY + COLON + PATTERN_IS_NON_EMPTY;
+    public static final String PATTERN_IS_FUNDING =  "[\\w]+[:\\s]{1}\\d+";
 
     /**
      * Pattern for matching group of opensearch special characters.

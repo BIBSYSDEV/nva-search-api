@@ -112,6 +112,8 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?user=hello+world&size=1&from=0"),
             URI.create("https://example.com/?isbn=1872-9460"),
             URI.create("https://example.com/?issn=1872-9460"),
+            URI.create("https://example.com/?funding=NFR:296896"),
+            URI.create("https://example.com/?funding=NFR+296896"),
             URI.create("https://example.com/?MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01"),
             URI.create("https://example.com/?ORCID=1872-9460"),
             URI.create("https://example.com/"),
@@ -124,6 +126,7 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/?conttributors=hello+world&published_before=2020-01-01"),
             URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
+            URI.create("https://example.com/?funding=NFR,296896"),
             URI.create("https://example.com/?useers=hello+world&lang=en"));
     }
 
