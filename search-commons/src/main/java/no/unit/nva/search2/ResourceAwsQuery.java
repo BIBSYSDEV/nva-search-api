@@ -113,16 +113,15 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
             switch (qpKey) {
-                case SEARCH_AFTER, FROM,
-                         SIZE, PAGE -> query.setQueryValue(qpKey, value);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setQueryValue(qpKey, value);
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
                 case CREATED_BEFORE, CREATED_SINCE,
-                         MODIFIED_BEFORE, MODIFIED_SINCE,
-                         PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
-                case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD, CONTRIBUTOR_ID,
-                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                     MODIFIED_BEFORE, MODIFIED_SINCE,
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
+                case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
+                     CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                      DOI, DOI_NOT, DOI_SHOULD,
                      FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                      ID, ID_NOT, ID_SHOULD,
@@ -222,8 +221,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             return ALL.equals(value) || isNull(value)
                 ? ALL
                 : Arrays.stream(value.split(COMMA))
-                .filter(this::keyIsValid)
-                .collect(Collectors.joining(COMMA));
+                    .filter(this::keyIsValid)
+                    .collect(Collectors.joining(COMMA));
         }
 
         private boolean keyIsValid(String key) {
