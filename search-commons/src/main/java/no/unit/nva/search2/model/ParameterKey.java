@@ -1,6 +1,8 @@
 package no.unit.nva.search2.model;
 
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ADD_SLASH;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SPECIAL_CHARACTERS;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -38,10 +40,24 @@ public interface ParameterKey {
     }
 
     enum ParamKind {
-        DATE, DATE_STRING, NUMBER, STRING, SORT_STRING, CUSTOM
+        DATE, NUMBER, STRING, SORT_STRING, CUSTOM
     }
 
     enum FieldOperator {
-        NONE, EQUALS, GREATER_THAN, GREATER_THAN_OR_EQUAL_TO, LESS_THAN, LESS_THAN_OR_EQUAL_TO
+        MUST(""),
+        MUST_NOT("NOT"),
+        SHOULD("SHOULD"),
+        GREATER_THAN_OR_EQUAL_TO("SINCE"),
+        LESS_THAN("BEFORE");
+
+        private final String keyPattern;
+
+        FieldOperator(String pattern) {
+            this.keyPattern = PATTERN_IS_IGNORE_CASE + PATTERN_IS_NONE_OR_ONE + pattern;
+        }
+
+        public String pattern() {
+            return keyPattern;
+        }
     }
 }
