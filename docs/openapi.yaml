@@ -80,20 +80,46 @@ paths:
       parameters:
       - in: query
         name: category
-        description: "Result category code, category codes are defined in the Cristin API documentation."
+        description: "Returns documents with this category code, only one category code is allowed."
         example: "JournalArticle"
         required: false
         schema:
+          $ref: "#/components/schemas/CategoryEnum"
+      - in: query
+        name: category_not
+        description: "Returns documents without these category codes. Support list of Enums, seperated by space (+)."
+        example: "JournalArticle"
+        required: false
+        schema:
+          $ref: "#/components/schemas/CategoryEnum"
+      - in: query
+        name: category_should
+        description: "Returns documents with these category codes. Support list of Enums, seperated by space (+)."
+        example: "JournalArticle"
+        required: false
+        schema:
+          $ref: "#/components/schemas/CategoryEnum"
+      - in: query
+        name: contributor_id
+        description: "person id (URI)."
+        required: false
+        schema:
           type: string
-          enum: [AcademicArticle,AcademicChapter,AcademicLiteratureReview,AcademicMonograph,Architecture,ArtisticDesign,BookAbstracts,BookAnthology,BookMonograph,CaseReport,ChapterArticle,
-                 ChapterConferenceAbstract,ChapterInReport,ConferenceAbstract,ConferenceLecture,ConferencePoster,ConferenceReport,DataManagementPlan,DataSet,DegreeBachelor,DegreeLicentiate,
-                 DegreeMaster,DegreePhd,Encyclopedia,EncyclopediaChapter,ExhibitionCatalog,ExhibitionCatalogChapter,ExhibitionProduction,FeatureArticle,Introduction,JournalArticle,JournalCorrigendum,
-                 JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
-                 MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
-                 PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts]
       - in: query
         name: contributor
-        description: "Author's name or Cristin person id."
+        description: "returns document with Author's name or person id(URI)."
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: contributor_not
+        description: "returns document without Author's names or person ids(URI)."
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: contributor_should
+        description: "returns document with Author's names or person ids(URI)."
         required: false
         schema:
           type: string
@@ -116,7 +142,21 @@ paths:
           format: date
       - in: query
         name: doi
-        description: "DOI name"
+        description: "returns document with this DOI id"
+        example: "10.1000/123456"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: doi_not
+        description: "returns document without these DOI ids"
+        example: "10.1000/123456"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: doi_should
+        description: "returns document with these DOI ids"
         example: "10.1000/123456"
         required: false
         schema:
@@ -138,33 +178,115 @@ paths:
           type: string
       - in: query
         name: funding_source
-        description: "Funding source code"
+        description: "returns document with this funding source code"
+        example: "NFR"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: funding_source_not
+        description: "returns document without these funding source codes"
+        example: "NFR"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: funding_source_should
+        description: "returns document with these funding source codes"
         example: "NFR"
         required: false
         schema:
           type: string
       - in: query
         name: id
-        description: "The identifier (UUID) of the result"
+        description: "returns document with the identifier (UUID)"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: id_not
+        description: "returns document without these identifiers (UUID)"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: id_should
+        description: "returns document with these identifiers (UUID)"
         required: false
         schema:
           type: string
       - in: query
         name: institution
-        description: "Id, name or acronym of the institution the contributors belong to"
+        description: "returns document with Id, name or acronym of the institution the contributors belong to"
+        example:  [185, UiO, University of Oslo]
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: institution_not
+        description: "returns document without Ids, names or acronyms of the institution the contributors belong to"
+        example:  [185, UiO, University of Oslo]
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: institution_should
+        description: "returns document with Ids, names or acronyms of the institution the contributors belong to"
         example:  [185, UiO, University of Oslo]
         required: false
         schema:
           type: string
       - in: query
         name: isbn
-        description: "The isbn of the result"
+        description: "returns document with this ISBN id"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: isbn_not
+        description: "returns document without these ISBN ids"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: isbn_should
+        description: "returns document with these ISBN ids"
         required: false
         schema:
           type: string
       - in: query
         name: issn
-        description: "The issn of the result"
+        description: "returns document with this issn"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: issn_not
+        description: "returns document without these issn"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: issn_should
+        description: "returns document with these issn"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: orcid
+        description: "returns document with this ORCID id"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: orcid_not
+        description: "returns document without these ORCID ids"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: orcid_should
+        description: "returns document with these ORCID ids"
         required: false
         schema:
           type: string
@@ -222,7 +344,21 @@ paths:
           type: number
       - in: query
         name: project
-        description: "Project id (URI)"
+        description: "returns document with this project id (URI)"
+        example: "NFR"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: project_not
+        description: "returns document without these project ids (URI)"
+        example: "NFR"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: project_should
+        description: "returns document with these project ids (URI)"
         example: "NFR"
         required: false
         schema:
@@ -271,29 +407,78 @@ paths:
             - unit_id:desc
       - in: query
         name: title
-        description: "The title of the result, all words are searched for, only documents containing all words are returned"
+        description: "returns document with these words in the title"
+        example: "covid-19"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: title_not
+        description: "returns document without these words in the title"
+        example: "covid-19"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: title_should
+        description: "returns document with any of these words in the title"
         example: "covid-19"
         required: false
         schema:
           type: string
       - in: query
         name: unit
-        description: "Id"
+        description: "returns document with these words in the Id"
+        example: 185.53.18.10
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: unit_not
+        description: "returns document without these words in the Id"
+        example: 185.53.18.10
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: unit_should
+        description: "returns document with any of these words in the Id"
         example: 185.53.18.10
         required: false
         schema:
           type: string
       - in: query
         name: user
-        description: "A person's username in Cristin together with the institution id separated by ':'"
+        description: "returns document with this resource owner (user id (URI))"
         example: "askeladd:185"
         required: false
         schema:
           type: string
       - in: query
-        name: year_reported
-        description: "The year a result was reported"
+        name: user_not
+        description: "returns document without these resource owners (user id (URI))"
+        example: "askeladd:185"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: user_should
+        description: "returns document with any of these resource owners (user id (URI))"
+        example: "askeladd:185"
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: publication_year
+        description: "returns document with this publication year"
         example: "2022"
+        required: false
+        schema:
+          type: number
+      - in: query
+        name: publication_year_should
+        description: "returns document with any of these publication years"
+        example: "2022 2023"
         required: false
         schema:
           type: number
@@ -844,6 +1029,14 @@ components:
       type: string
       pattern: 'https:\/\/.*$'
       description: The URI of the object ID
+    CategoryEnum:
+      type: string
+      enum: [AcademicArticle,AcademicChapter,AcademicLiteratureReview,AcademicMonograph,Architecture,ArtisticDesign,BookAbstracts,BookAnthology,BookMonograph,CaseReport,ChapterArticle,
+             ChapterConferenceAbstract,ChapterInReport,ConferenceAbstract,ConferenceLecture,ConferencePoster,ConferenceReport,DataManagementPlan,DataSet,DegreeBachelor,DegreeLicentiate,
+             DegreeMaster,DegreePhd,Encyclopedia,EncyclopediaChapter,ExhibitionCatalog,ExhibitionCatalogChapter,ExhibitionProduction,FeatureArticle,Introduction,JournalArticle,JournalCorrigendum,
+             JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
+             MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
+             PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts]
   securitySchemes:
     CognitoUserPool:
       type: apiKey
