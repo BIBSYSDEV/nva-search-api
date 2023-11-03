@@ -25,6 +25,7 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
@@ -49,7 +50,7 @@ public enum ResourceParameterKey implements ParameterKey {
     CATEGORY(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    CONTRIBUTOR_ID(CUSTOM, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID),
+    CONTRIBUTOR_ID(CUSTOM, MUST, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID,null, PATTERN_IS_URI, null),
     CONTRIBUTOR(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
                         + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
     CONTRIBUTOR_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID

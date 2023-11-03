@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
+import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
 import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
 public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceAwsQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceAwsClient.class);
+
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
@@ -206,22 +208,30 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         if (hasMultipleFields()) {
             return QueryBuilders
                        .multiMatchQuery(escapeSearchString(value), searchFields)
-                       .operator(Operator.AND);
+                       .operator(operatorByKey(key));
         }
         var searchField = searchFields[0];
         return QueryBuilders
                    .matchQuery(searchField, escapeSearchString(value))
                    .boost(key.fieldBoost())
-                   .operator(Operator.AND);
+                   .operator(operatorByKey(key));
     }
 
     private RangeQueryBuilder rangeQuery(ResourceParameterKey key, String value) {
         final var searchField = key.searchFields().toArray()[0].toString();
 
         return switch (key.searchOperator()) {
-            case MUST, MUST_NOT, SHOULD -> throw new IllegalArgumentException("Operator not supported");
+            case MUST, MUST_NOT, SHOULD -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(searchField).gte(value);
             case LESS_THAN -> QueryBuilders.rangeQuery(searchField).lt(value);
+        };
+    }
+
+    private Operator operatorByKey(ResourceParameterKey key) {
+        return switch (key.searchOperator()) {
+            case MUST -> Operator.AND;
+            case MUST_NOT, SHOULD -> Operator.OR;
+            case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         };
     }
 
