@@ -13,10 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
-import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID;
-import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME;
-import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID;
-import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME;
+import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
 import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
@@ -49,66 +46,66 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
 public enum ResourceParameterKey implements ParameterKey {
     INVALID(STRING),
     // Parameters converted to Lucene query
-    CATEGORY(STRING, "entityDescription.reference.publicationInstance.type"),
-    CATEGORY_NOT(STRING, MUST_NOT, "entityDescription.reference.publicationInstance.type"),
-    CATEGORY_SHOULD(STRING, SHOULD, "entityDescription.reference.publicationInstance.type"),
-    CONTRIBUTOR_ID(CUSTOM, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID),
-    CONTRIBUTOR(STRING, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
-                        + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NOT(STRING, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
-                                      + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_SHOULD(STRING, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
-                                       + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
-    CREATED_BEFORE(DATE, LESS_THAN, "createdDate"),
-    CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "createdDate"),
-    DOI(STRING, "entityDescription.reference.doi"),
-    DOI_NOT(STRING, MUST_NOT, "entityDescription.reference.doi"),
-    DOI_SHOULD(STRING, SHOULD, "entityDescription.reference.doi"),
-    FUNDING(STRING, MUST, "fundings.identifier|fundings.source.identifier",
+    CATEGORY(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CONTRIBUTOR_ID(CUSTOM, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID),
+    CONTRIBUTOR(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+                        + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+                                      + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+                                       + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
+    CREATED_BEFORE(DATE, LESS_THAN, Constants.CREATED_DATE),
+    CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.CREATED_DATE),
+    DOI(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
+    DOI_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
+    DOI_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
+    FUNDING(STRING, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
             null, PATTERN_IS_FUNDING, null),
-    FUNDING_SOURCE(STRING, "fundings.source.identifier|fundings.source.labels"),
-    FUNDING_SOURCE_NOT(STRING, MUST_NOT, "fundings.source.identifier|fundings.source.labels"),
-    FUNDING_SOURCE_SHOULD(STRING, SHOULD, "fundings.source.identifier|fundings.source.labels"),
-    ID(STRING, "identifier"),
-    ID_NOT(STRING, MUST_NOT, "identifier"),
-    ID_SHOULD(STRING, MUST_NOT, "identifier"),
-    INSTITUTION(STRING, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                        + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_NOT(STRING, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                                      + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_SHOULD(STRING, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                                       + "|" + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    ISBN(STRING, "entityDescription.reference.publicationContext.isbnList"),
-    ISBN_NOT(STRING, MUST_NOT, "entityDescription.reference.publicationContext.isbnList"),
-    ISBN_SHOULD(STRING, SHOULD, "entityDescription.reference.publicationContext.isbnList"),
-    ISSN(STRING, "entityDescription.reference.publicationContext.onlineIssn"
-                 + "|entityDescription.reference.publicationContext.printIssn"),
-    ISSN_NOT(STRING, MUST_NOT, "entityDescription.reference.publicationContext.onlineIssn"
-                               + "|entityDescription.reference.publicationContext.printIssn"),
-    ISSN_SHOULD(STRING, SHOULD, "entityDescription.reference.publicationContext.onlineIssn"
-                                + "|entityDescription.reference.publicationContext.printIssn"),
-    ORCID(STRING, "entityDescription.contributors.identity.orcId"),
-    ORCID_NOT(STRING, MUST_NOT, "entityDescription.contributors.identity.orcId"),
-    ORCID_SHOULD(STRING, SHOULD, "entityDescription.contributors.identity.orcId"),
-    MODIFIED_BEFORE(DATE, LESS_THAN, "modifiedDate"),
-    MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "modifiedDate"),
-    PROJECT(STRING, "projects.id"),
-    PROJECT_NOT(STRING, MUST_NOT, "projects.id"),
-    PROJECT_SHOULD(STRING, SHOULD, "projects.id"),
-    PUBLISHED_BEFORE(DATE, LESS_THAN, "publishedDate"),
-    PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, "publishedDate"),
-    TITLE(STRING, "entityDescription.mainTitle", 2F),
-    TITLE_NOT(STRING, MUST_NOT, "entityDescription.mainTitle"),
-    TITLE_SHOULD(STRING, SHOULD, "entityDescription.mainTitle"),
-    UNIT(STRING, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    UNIT_NOT(STRING, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    UNIT_SHOULD(STRING, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    USER(STRING, "resourceOwner.owner"),
-    USER_NOT(STRING, MUST_NOT, "resourceOwner.owner"),
-    USER_SHOULD(STRING, SHOULD, "resourceOwner.owner"),
-    PUBLICATION_YEAR(NUMBER, MUST, "entityDescription.publicationDate.year",
+    FUNDING_SOURCE(STRING, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_NOT(STRING, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_SHOULD(STRING, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    ID(STRING, Constants.IDENTIFIER),
+    ID_NOT(STRING, MUST_NOT, Constants.IDENTIFIER),
+    ID_SHOULD(STRING, MUST_NOT, Constants.IDENTIFIER),
+    INSTITUTION(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
+                        + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
+                                      + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
+                                       + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    ISBN(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISSN(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+                 + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
+    ISSN_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+                               + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
+    ISSN_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+                                + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
+    ORCID(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    MODIFIED_BEFORE(DATE, LESS_THAN, Constants.MODIFIED_DATE),
+    MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.MODIFIED_DATE),
+    PROJECT(STRING, Constants.PROJECTS_ID),
+    PROJECT_NOT(STRING, MUST_NOT, Constants.PROJECTS_ID),
+    PROJECT_SHOULD(STRING, SHOULD, Constants.PROJECTS_ID),
+    PUBLISHED_BEFORE(DATE, LESS_THAN, Constants.PUBLISHED_DATE),
+    PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
+    TITLE(STRING, Constants.MAIN_TITLE, 2F),
+    TITLE_NOT(STRING, MUST_NOT, Constants.MAIN_TITLE),
+    TITLE_SHOULD(STRING, SHOULD, Constants.MAIN_TITLE),
+    UNIT(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    USER(STRING, Constants.RESOURCE_OWNER),
+    USER_NOT(STRING, MUST_NOT, Constants.RESOURCE_OWNER),
+    USER_SHOULD(STRING, SHOULD, Constants.RESOURCE_OWNER),
+    PUBLICATION_YEAR(NUMBER, MUST, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                      "(?i)year.?reported|publication.?year", null, null),
-    PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, "entityDescription.publicationDate.year",
+    PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                             "(?i)year.?reported|publication.?year", null, null),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(STRING, MUST, "q", "(?i)search.?all|query", null, null),
@@ -285,5 +282,42 @@ public enum ResourceParameterKey implements ParameterKey {
 
     private static int compareAscending(ResourceParameterKey key1, ResourceParameterKey key2) {
         return key1.ordinal() - key2.ordinal();
+    }
+
+    private static class Constants {
+
+        public static final String CREATED_DATE = "createdDate";
+        public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
+            "entityDescription.contributors.affiliation.id";
+        public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
+            "entityDescription.contributors.affiliation.name";
+        public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
+            "entityDescription.contributors.identity.id";
+        public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
+            "entityDescription.contributors.identity.name";
+        public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID =
+            "entityDescription.contributors.identity.orcId";
+        public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
+            "entityDescription.publicationDate.year";
+        public static final String ENTITY_DESCRIPTION_REFERENCE_DOI =
+            "entityDescription.reference.doi";
+        public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST =
+            "entityDescription.reference.publicationContext.isbnList";
+        public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN =
+            "entityDescription.reference.publicationContext.onlineIssn";
+        public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN =
+            "entityDescription.reference.publicationContext.printIssn";
+        public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE =
+            "entityDescription.reference.publicationInstance.type";
+        public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
+            "fundings.identifier|fundings.source.identifier";
+        public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
+            "fundings.source.identifier|fundings.source.labels";
+        public static final String IDENTIFIER = "identifier";
+        public static final String MAIN_TITLE = "entityDescription.mainTitle";
+        public static final String MODIFIED_DATE = "modifiedDate";
+        public static final String PROJECTS_ID = "projects.id";
+        public static final String PUBLISHED_DATE = "publishedDate";
+        public static final String RESOURCE_OWNER = "resourceOwner.owner";
     }
 }
