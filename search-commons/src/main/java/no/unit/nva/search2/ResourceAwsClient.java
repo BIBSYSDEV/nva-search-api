@@ -43,7 +43,6 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 import org.opensearch.common.collect.Tuple;
-import org.opensearch.index.query.AbstractQueryBuilder;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -94,13 +93,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
     }
 
     private Stream<QueryBuilderWrapper> createQueryBuilderStream(ResourceAwsQuery query) {
-        AbstractQueryBuilder<?> queryBuilder;
-         if (query.hasNoSearchValue()) {
-            queryBuilder = QueryBuilders.matchAllQuery();
-        } else {
-            queryBuilder = boolQuery(query);
-        }
-
+        var queryBuilder = query.hasNoSearchValue()
+                ? QueryBuilders.matchAllQuery()
+                : boolQuery(query);
         return Stream.of(new QueryBuilderWrapper(queryBuilder, query));
     }
 
@@ -120,7 +115,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
         builder.size(query.getValue(SIZE).as());
         builder.from(query.getValue(FROM).as());
-        getSortStream(query).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
+        getSortStream(query)
+            .forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
+
         return new QueryBuilderSourceWrapper(builder, query.openSearchUri());
     }
 
@@ -146,20 +143,6 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         }
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
                    .orElseThrow();
-    }
-
-    /**
-     * Creates a multi match query, all words needs to be present, within a document.
-     * @param query ResourceAwsQuery
-     * @return a MultiMatchQueryBuilder
-     */
-    private MultiMatchQueryBuilder multiMatchQuery(ResourceAwsQuery query) {
-        var fields = extractFields(query.getValue(FIELDS).toString());
-        var value = escapeSearchString(query.getValue(SEARCH_ALL).toString());
-        return QueryBuilders
-                   .multiMatchQuery(value, fields)
-                   .type(Type.CROSS_FIELDS)
-                   .operator(Operator.AND);
     }
 
     /**
@@ -189,28 +172,26 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         return bq;
     }
 
-    private QueryBuilder buildQuery(ResourceParameterKey key, String value) {
-        final var searchFields = key.searchFields().toArray(String[]::new);
-        if (hasMultipleFields()) {
-            return QueryBuilders
-                       .multiMatchQuery(escapeSearchString(value), searchFields)
-                       .operator(Operator.AND);
-        }
-            var searchField = searchFields[0];
-            return QueryBuilders
-                       .matchQuery(searchField, escapeSearchString(value))
-                       .boost(key.fieldBoost())
-                       .operator(Operator.AND);
-
+    /**
+     * Creates a multi match query, all words needs to be present, within a document.
+     * @param query ResourceAwsQuery
+     * @return a MultiMatchQueryBuilder
+     */
+    private MultiMatchQueryBuilder multiMatchQuery(ResourceAwsQuery query) {
+        var fields = extractFields(query.getValue(FIELDS).toString());
+        var value = escapeSearchString(query.getValue(SEARCH_ALL).toString());
+        return QueryBuilders
+                   .multiMatchQuery(value, fields)
+                   .type(Type.CROSS_FIELDS)
+                   .operator(Operator.AND);
     }
-
 
     private void addPromotedQuery(ResourceAwsQuery query, BoolQueryBuilder bq) {
         var promotedPublications = userSettingsClient
             .doSearch(query)
             .promotedPublications();
         if (hasPromotedPublications(promotedPublications)) {
-            query.removeKey(SORT);                                  // remove sort to avoid sorting by score
+            query.removeKey(SORT);                              // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 bq.should(
                     QueryBuilders
@@ -218,6 +199,20 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                         .boost(3.14F + promotedPublications.size() - i));
             }
         }
+    }
+
+    private QueryBuilder buildQuery(ResourceParameterKey key, String value) {
+        final var searchFields = key.searchFields().toArray(String[]::new);
+        if (hasMultipleFields()) {
+            return QueryBuilders
+                       .multiMatchQuery(escapeSearchString(value), searchFields)
+                       .operator(Operator.AND);
+        }
+        var searchField = searchFields[0];
+        return QueryBuilders
+                   .matchQuery(searchField, escapeSearchString(value))
+                   .boost(key.fieldBoost())
+                   .operator(Operator.AND);
     }
 
     private RangeQueryBuilder rangeQuery(ResourceParameterKey key, String value) {
