@@ -113,13 +113,13 @@ paths:
           type: string
       - in: query
         name: contributor_not
-        description: "returns document without Author's names or person ids(URI)."
+        description: "returns document without Author's names or person ids(URI), seperated by space (+)."
         required: false
         schema:
           type: string
       - in: query
         name: contributor_should
-        description: "returns document with Author's names or person ids(URI)."
+        description: "returns document with Author's names or person ids(URI), seperated by space (+)."
         required: false
         schema:
           type: string
@@ -149,14 +149,14 @@ paths:
           type: string
       - in: query
         name: doi_not
-        description: "returns document without these DOI ids"
+        description: "returns document without these DOI ids, seperated by space (+)."
         example: "10.1000/123456"
         required: false
         schema:
           type: string
       - in: query
         name: doi_should
-        description: "returns document with these DOI ids"
+        description: "returns document with these DOI ids, seperated by space (+)."
         example: "10.1000/123456"
         required: false
         schema:
@@ -185,14 +185,14 @@ paths:
           type: string
       - in: query
         name: funding_source_not
-        description: "returns document without these funding source codes"
+        description: "returns document without these funding source codes, seperated by space (+)."
         example: "NFR"
         required: false
         schema:
           type: string
       - in: query
         name: funding_source_should
-        description: "returns document with these funding source codes"
+        description: "returns document with these funding source codes, seperated by space (+)."
         example: "NFR"
         required: false
         schema:
@@ -205,13 +205,13 @@ paths:
           type: string
       - in: query
         name: id_not
-        description: "returns document without these identifiers (UUID)"
+        description: "returns document without these identifiers (UUID), seperated by space (+)."
         required: false
         schema:
           type: string
       - in: query
         name: id_should
-        description: "returns document with these identifiers (UUID)"
+        description: "returns document with these identifiers (UUID), seperated by space (+)."
         required: false
         schema:
           type: string
@@ -224,14 +224,14 @@ paths:
           type: string
       - in: query
         name: institution_not
-        description: "returns document without Ids, names or acronyms of the institution the contributors belong to"
+        description: "returns document without Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
         example:  [185, UiO, University of Oslo]
         required: false
         schema:
           type: string
       - in: query
         name: institution_should
-        description: "returns document with Ids, names or acronyms of the institution the contributors belong to"
+        description: "returns document with Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
         example:  [185, UiO, University of Oslo]
         required: false
         schema:
@@ -244,13 +244,13 @@ paths:
           type: string
       - in: query
         name: isbn_not
-        description: "returns document without these ISBN ids"
+        description: "returns document without these ISBN ids, seperated by space (+)."
         required: false
         schema:
           type: string
       - in: query
         name: isbn_should
-        description: "returns document with these ISBN ids"
+        description: "returns document with these ISBN ids, seperated by space (+)."
         required: false
         schema:
           type: string
@@ -262,13 +262,13 @@ paths:
           type: string
       - in: query
         name: issn_not
-        description: "returns document without these issn"
+        description: "returns document without these issn, seperated by space (+)."
         required: false
         schema:
           type: string
       - in: query
         name: issn_should
-        description: "returns document with these issn"
+        description: "returns document with these issn, seperated by space (+)."
         required: false
         schema:
           type: string
@@ -280,13 +280,13 @@ paths:
           type: string
       - in: query
         name: orcid_not
-        description: "returns document without these ORCID ids"
+        description: "returns document without these ORCID ids, seperated by space (+)."
         required: false
         schema:
           type: string
       - in: query
         name: orcid_should
-        description: "returns document with these ORCID ids"
+        description: "returns document with these ORCID ids, seperated by space (+)."
         required: false
         schema:
           type: string
@@ -351,14 +351,14 @@ paths:
           type: string
       - in: query
         name: project_not
-        description: "returns document without these project ids (URI)"
+        description: "returns document without these project ids (URI), seperated by space (+)."
         example: "NFR"
         required: false
         schema:
           type: string
       - in: query
         name: project_should
-        description: "returns document with these project ids (URI)"
+        description: "returns document with these project ids (URI), seperated by space (+)."
         example: "NFR"
         required: false
         schema:
@@ -414,14 +414,14 @@ paths:
           type: string
       - in: query
         name: title_not
-        description: "returns document without these words in the title"
+        description: "returns document without these words in the title, seperated by space (+)."
         example: "covid-19"
         required: false
         schema:
           type: string
       - in: query
         name: title_should
-        description: "returns document with any of these words in the title"
+        description: "returns document with any of these words in the title, seperated by space (+)."
         example: "covid-19"
         required: false
         schema:
@@ -435,14 +435,14 @@ paths:
           type: string
       - in: query
         name: unit_not
-        description: "returns document without these words in the Id"
+        description: "returns document without these words in the Id, seperated by space (+)."
         example: 185.53.18.10
         required: false
         schema:
           type: string
       - in: query
         name: unit_should
-        description: "returns document with any of these words in the Id"
+        description: "returns document with any of these words in the Id, seperated by space (+)."
         example: 185.53.18.10
         required: false
         schema:
@@ -456,14 +456,14 @@ paths:
           type: string
       - in: query
         name: user_not
-        description: "returns document without these resource owners (user id (URI))"
+        description: "returns document without these resource owners (user id (URI)), seperated by space (+)."
         example: "askeladd:185"
         required: false
         schema:
           type: string
       - in: query
         name: user_should
-        description: "returns document with any of these resource owners (user id (URI))"
+        description: "returns document with any of these resource owners (user id (URI)), seperated by space (+)."
         example: "askeladd:185"
         required: false
         schema:
@@ -477,7 +477,7 @@ paths:
           type: number
       - in: query
         name: publication_year_should
-        description: "returns document with any of these publication years"
+        description: "returns document with any of these publication years, seperated by space (+)."
         example: "2022 2023"
         required: false
         schema:
