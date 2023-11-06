@@ -108,7 +108,7 @@ public enum ResourceParameterKey implements ParameterKey {
     PUBLICATION_YEAR(NUMBER, MUST, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                      "(?i)year.?reported|publication.?year", null, null),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
-                            "(?i)year.?reported|publication.?year", null, null),
+                            "(?i)year.?reported.?should|publication.?year.?should", null, null),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, "q", "(?i)search.?all|query", null, null),
     FIELDS(CUSTOM),
@@ -296,7 +296,7 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
             "entityDescription.contributors.identity.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
-            "entityDescription.contributors.identity.name";
+            "entityDescription.contributors.identity.name.keyward";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID =
             "entityDescription.contributors.identity.orcId";
         public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
