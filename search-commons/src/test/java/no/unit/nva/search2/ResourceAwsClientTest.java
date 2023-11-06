@@ -62,6 +62,20 @@ class ResourceAwsClientTest {
     }
 
     @ParameterizedTest
+    @MethodSource("uriProvider")
+    void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
+
+        var csvResult = ResourceAwsQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE, SORT)
+            .withMediaType("text/csv")
+            .build()
+            .doSearch(resourceAwsClient);
+        assertNotNull(csvResult);
+    }
+
+
+    @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var query =
@@ -109,18 +123,24 @@ class ResourceAwsClientTest {
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
             URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg&ID_NOT=123"),
             URI.create("https://example.com/?title=http://hello+world&modified_before=2019"),
-            URI.create("https://example.com/?contributor=hello+:+world&published_before=2020"),
-            URI.create("https://example.com/?contributor_not=hello+:+world&published_before=2020"),
             URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
                        + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
                        + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+            URI.create("https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
+            URI.create("https://example.com/?CONTRIBUTOR_ID=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
+            URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+            URI.create("https://example.com/?CONTRIBUTOR_NOT="
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
             URI.create("https://example.com/?contributor_should=hello+:+world&published_before=2020"),
             URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019"),
             URI.create("https://example.com/?user=hello+world&size=1&from=0"),
             URI.create("https://example.com/?isbn=1872-9460"),
             URI.create("https://example.com/?issn=1872-9460"),
             URI.create("https://example.com/?funding=NFR:296896"),
-            URI.create("https://example.com/?funding=NFR+296896"),
+            URI.create("https://example.com/?funding_source=NFR+296896"),
             URI.create("https://example.com/?MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01"),
             URI.create("https://example.com/?ORCID=1872-9460"),
             URI.create("https://example.com/"),

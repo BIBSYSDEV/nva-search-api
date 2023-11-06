@@ -118,6 +118,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         return this;
     }
 
+    public final OpenSearchQueryBuilder<K, Q> withMediaType(String mediaType) {
+        query.setMediaType(mediaType);
+        return this;
+    }
+
+
     /**
      * Validate sort keys.
      *

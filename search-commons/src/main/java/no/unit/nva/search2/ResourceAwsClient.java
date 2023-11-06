@@ -10,6 +10,8 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
+import static no.unit.nva.search2.constant.ApplicationConstants.SPACE;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
@@ -36,6 +38,7 @@ import com.google.common.net.MediaType;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.QueryBuilderWrapper;
 import no.unit.nva.search2.model.ResourceParameterKey;
@@ -159,6 +162,8 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
             .forEach((key, value) -> {
                 if (key.equals(SEARCH_ALL)) {
                     bq.must(multiMatchQuery(query));
+                } else if (key.fieldType().equals(ParameterKey.ParamKind.KEYWORD)) {
+                    addKeywordQuery(key, value, bq);
                 } else {
                     switch (key.searchOperator()) {
                         case MUST -> bq.must(buildQuery(key, value));
@@ -166,9 +171,9 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                         case SHOULD -> bq.should(buildQuery(key, value));
                         case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(rangeQuery(key, value));
                     }
-                    if (key.equals(CONTRIBUTOR_ID)) {
-                        addPromotedQuery(query, bq);
-                    }
+                }
+                if (key.equals(CONTRIBUTOR_ID)) {
+                    addPromotedQuery(query, bq);
                 }
             });
         return bq;
@@ -203,9 +208,24 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         }
     }
 
+    private void addKeywordQuery(ResourceParameterKey key, String value, BoolQueryBuilder bq) {
+        final var searchFields = key.searchFields().toArray(String[]::new);
+        final var values = value.split(COMMA + PIPE + SPACE);
+
+        Arrays.stream(searchFields).forEach(searchField -> {
+            final var termsQuery = QueryBuilders.termsQuery(searchField, values).boost(key.fieldBoost());
+            switch (key.searchOperator()) {
+                case MUST -> bq.must(termsQuery);
+                case MUST_NOT -> bq.mustNot(termsQuery);
+                case SHOULD -> bq.should(termsQuery);
+                default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
+            }
+        });
+    }
+
     private QueryBuilder buildQuery(ResourceParameterKey key, String value) {
         final var searchFields = key.searchFields().toArray(String[]::new);
-        if (hasMultipleFields()) {
+        if (hasMultipleFields(searchFields)) {
             return QueryBuilders
                        .multiMatchQuery(escapeSearchString(value), searchFields)
                        .operator(operatorByKey(key));

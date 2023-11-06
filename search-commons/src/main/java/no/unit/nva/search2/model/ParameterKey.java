@@ -40,7 +40,7 @@ public interface ParameterKey {
     }
 
     enum ParamKind {
-        DATE, NUMBER, STRING, SORT_STRING, CUSTOM
+        DATE, NUMBER, KEYWORD, TEXT, SORT_KEY, CUSTOM
     }
 
     enum FieldOperator {
