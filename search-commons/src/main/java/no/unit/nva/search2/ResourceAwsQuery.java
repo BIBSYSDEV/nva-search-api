@@ -154,7 +154,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 query.removeKey(PAGE);
             }
             query.getOptional(FUNDING)
-                .ifPresent(funding -> query.setSearchFieldValue(FUNDING, funding.replaceAll(COLON, SPACE)));
+                .ifPresent(funding -> query.setSearchFieldValue(FUNDING, funding.replaceAll(COLON, COMMA)));
         }
 
         @Override

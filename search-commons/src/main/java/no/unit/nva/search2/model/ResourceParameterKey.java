@@ -292,11 +292,11 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
             "entityDescription.contributors.affiliation.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
-            "entityDescription.contributors.affiliation.name";
+            "entityDescription.contributors.affiliation.name.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
             "entityDescription.contributors.identity.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
-            "entityDescription.contributors.identity.name.keyward";
+            "entityDescription.contributors.identity.name.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID =
             "entityDescription.contributors.identity.orcId";
         public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =

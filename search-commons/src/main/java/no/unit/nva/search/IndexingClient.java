@@ -72,7 +72,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        logger.info(INITIAL_LOG_MESSAGE, SEARCH_INFRASTRUCTURE_API_URI, indexDocument.getIndexName());
+        logger.info(INITIAL_LOG_MESSAGE, SEARCH_INFRASTRUCTURE_API_URI, indexDocument.getDocumentIdentifier());
         openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
         return null;
     }

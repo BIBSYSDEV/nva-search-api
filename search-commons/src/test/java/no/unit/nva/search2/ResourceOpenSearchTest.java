@@ -61,7 +61,7 @@ public class ResourceOpenSearchTest {
     private static String indexName;
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws IOException, InterruptedException {
         container.start();
         System.setProperty("SEARCH_INFRASTRUCTURE_API_URI", container.getHttpHostAddress());
 
@@ -72,31 +72,22 @@ public class ResourceOpenSearchTest {
         searchClient = new ResourceAwsClient(cachedJwtProvider, HttpClient.newHttpClient());
         indexName = generateIndexName();
 
+        createIndex();
+        populateIndex();
+        logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
+        Thread.sleep(DELAY_AFTER_INDEXING);
     }
 
     @AfterAll
-    static void afterAll() throws IOException {
+    static void afterAll() throws IOException, InterruptedException {
+        logger.info("Stopping container");
+        indexingClient.deleteIndex(indexName);
+        Thread.sleep(DELAY_AFTER_INDEXING);
         container.stop();
     }
 
     @Nested
     class AddDocumentToIndexTest {
-
-        @BeforeEach
-        void setUp() throws IOException, InterruptedException {
-            var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
-            var type = new TypeReference<Map<String, Object>>() {
-            };
-            var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-            indexingClient.createIndex(indexName, mappings);
-            addDocumentsToIndex("sample_opensearch_response.json");
-        }
-
-        @AfterEach
-        void tearDown() throws IOException {
-            indexingClient.deleteIndex(indexName);
-        }
-
 
         @Test
         void shoulCheckMapping() {
@@ -107,7 +98,7 @@ public class ResourceOpenSearchTest {
             var topLevelOrgType = mapping.path("properties").path("topLevelOrganizations").path("type").textValue();
             assertThat(topLevelOrgType, is(equalTo("nested")));
 
-            logger.info(mapping.asText());
+            logger.info(mapping.toPrettyString());
 
         }
 
@@ -133,42 +124,46 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?size=3"),
                 URI.create(hostAddress + "/?fields=category,title,created_date&query=Kjetil+Møkkelgjerd&size=2"),
                 URI.create(hostAddress + "/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
-                URI.create(hostAddress + "/?CONTRIBUTOR=Kjetil+Møkkelgjerd&size=2"),
+                URI.create(hostAddress + "/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=2"),
                 URI.create(hostAddress + "/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
-                URI.create(hostAddress + "/?CONTRIBUTOR_ID=https://api.dev.nva.aws.unit" +
-                    ".no/cristin/person/1136254&size=2"),
                 URI.create(hostAddress + "/?CONTRIBUTOR_SHOULD="
-                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=2"),
                 URI.create(hostAddress + "/?CONTRIBUTOR_NOT="
-                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,+"
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=2"),
-                URI.create(hostAddress + "/?category=ReportResearch&page=0&user=12%203&size=2"),
-                URI.create(hostAddress + "/?category=ReportResearch&page=2&size=2"),
-                URI.create(hostAddress + "/?category=ReportResearch&offset=2"),
+                URI.create(hostAddress + "/?category=ReportResearch&page=0&size=2"),
+                URI.create(hostAddress + "/?category=ReportResearch,AcademicArticle&page=2&size=2"),
+                URI.create(hostAddress + "/?category=AcademicArticle&offset=2"),
                 URI.create(hostAddress + "/?category=ReportResearch&from=2&results=2"),
                 URI.create(hostAddress + "/?published_before=2020-01-01&size=2"),
-                URI.create(hostAddress + "/?published_since=2019-01-01&institution=uib&funding_source=NFR&size=2"));
+                URI.create(hostAddress + "/?funding_source=NFR&size=2"),
+                URI.create(hostAddress + "/?funding=NFR:296896&size=2"),
+                URI.create(hostAddress + "/?published_since=2019-01-01&institution=209.0.0.0&size=2"));
         }
-
     }
 
-    private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
-        var eventConsumptionAttributes = new EventConsumptionAttributes(
-            indexName,
-            SortableIdentifier.next()
-        );
-        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-            JsonNode.class);
+    private static void populateIndex() {
+        var jsonFile = stringFromResources(Path.of("sample_resources_search.json"));
+        var jsonNodes =
+            attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
 
-        return new IndexDocument(eventConsumptionAttributes, jsonNode);
+        jsonNodes.forEach(node -> {
+            try {
+                var attributes = new EventConsumptionAttributes(indexName, SortableIdentifier.next());
+                indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    private void addDocumentsToIndex(String... files) throws InterruptedException {
-        Stream.of(files)
-            .forEach(file -> attempt(
-                () -> indexingClient.addDocumentToIndex(crateSampleIndexDocument(indexName, file))));
-        Thread.sleep(DELAY_AFTER_INDEXING);
+    private static void createIndex() throws IOException {
+        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
+        var type = new TypeReference<Map<String, Object>>() {
+        };
+        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
+        indexingClient.createIndex(indexName, mappings);
     }
 
     private static String generateIndexName() {

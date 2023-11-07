@@ -211,12 +211,19 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private void addKeywordQuery(ResourceParameterKey key, String value, BoolQueryBuilder bq) {
         final var searchFields = key.searchFields().toArray(String[]::new);
-        final var values = value.split(COMMA + PIPE + SPACE);
+        final var values = value.split(COMMA);
+        final var multipleFields = hasMultipleFields(searchFields);
 
         Arrays.stream(searchFields).forEach(searchField -> {
             final var termsQuery = QueryBuilders.termsQuery(searchField, values).boost(key.fieldBoost());
             switch (key.searchOperator()) {
-                case MUST -> bq.must(termsQuery);
+                case MUST -> {
+                    if (multipleFields) {
+                        bq.should(termsQuery);
+                    } else {
+                        bq.must(termsQuery);
+                    }
+                }
                 case MUST_NOT -> bq.mustNot(termsQuery);
                 case SHOULD -> bq.should(termsQuery);
                 default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
