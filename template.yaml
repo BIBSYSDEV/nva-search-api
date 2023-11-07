@@ -512,8 +512,6 @@ Resources:
             EventBusName:
               Ref: EventBusName
             Pattern:
-              detail-type:
-                - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
                   topic: [ "PublicationService.ExpandedEntry.Deleted" ]
