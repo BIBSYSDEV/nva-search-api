@@ -91,11 +91,11 @@ public class IndexResourceHandlerTest {
 
     @Test
     void shouldLogErrorContainingRelativeResourceLocationOnCommunicationProblemWithService() throws Exception {
+        final var appender = LogUtils.getTestingAppender(IndexResourceHandler.class);
         indexingClient = indexingClientThrowingException(randomString());
         indexResourceHandler = new IndexResourceHandler(s3Driver, indexingClient);
         var resourceLocation = prepareEventStorageResourceFile();
         var input = createEventBridgeEvent(resourceLocation);
-        var appender = LogUtils.getTestingAppender(IndexResourceHandler.class);
         assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
         var expectedResourceLocationString = UriWrapper.fromUri(resourceLocation).toS3bucketPath().toString();
         assertThat(appender.getMessages(), containsString(expectedResourceLocationString));
