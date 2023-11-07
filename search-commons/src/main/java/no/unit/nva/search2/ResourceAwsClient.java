@@ -10,8 +10,6 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
-import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
-import static no.unit.nva.search2.constant.ApplicationConstants.SPACE;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.model.ParameterKey.escapeSearchString;
@@ -23,6 +21,7 @@ import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
 import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
 import static nva.commons.core.attempt.Try.attempt;
+import com.google.common.net.MediaType;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -33,8 +32,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import com.google.common.net.MediaType;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.model.OpenSearchClient;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
@@ -123,7 +120,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         getSortStream(query)
             .forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
 
-        return new QueryBuilderSourceWrapper(builder, query.openSearchUri());
+        return new QueryBuilderSourceWrapper(builder, query.getOpenSearchUri());
     }
 
     @JacocoGenerated

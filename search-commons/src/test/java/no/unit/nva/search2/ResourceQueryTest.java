@@ -121,7 +121,7 @@ class ResourceQueryTest {
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, DOI)
                 .build()
-                .openSearchUri());
+                      .getOpenSearchUri());
     }
 
 
@@ -133,7 +133,7 @@ class ResourceQueryTest {
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .openSearchUri());
+                      .getOpenSearchUri());
     }
 
 

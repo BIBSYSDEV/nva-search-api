@@ -46,7 +46,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected final transient Set<K> otherRequiredKeys;
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
-    private transient URI openSearchUri = URI.create("https://unset.opensearc");
+    private transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -60,7 +60,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return an URI to Sws search without parameters.
      */
-    public URI openSearchUri() {
+    public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
                 .addChild(RESOURCES, SEARCH)
