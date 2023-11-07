@@ -6,6 +6,8 @@ import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -124,6 +126,18 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     }
 
 
+    public final OpenSearchQueryBuilder<K, Q> withGatewayUri(URI uri) {
+        query.setNvaSearchApiUri(uri);
+        return this;
+    }
+
+    public final OpenSearchQueryBuilder<K, Q> withOpensearcUri(URI uri) {
+        query.setOpenSearchUri(uri);
+        return this;
+    }
+
+
+
     /**
      * Validate sort keys.
      *
@@ -215,4 +229,5 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     private void setEntryValue(Map.Entry<String, String> entry) {
         setValue(entry.getKey(), entry.getValue());
     }
+
 }

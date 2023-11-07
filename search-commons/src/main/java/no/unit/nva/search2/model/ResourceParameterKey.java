@@ -65,9 +65,9 @@ public enum ResourceParameterKey implements ParameterKey {
     DOI_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
     FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
             null, PATTERN_IS_FUNDING, null),
-    FUNDING_SOURCE(KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_SHOULD(KEYWORD, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE(TEXT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_NOT(TEXT, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_SHOULD(TEXT, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     ID(TEXT, Constants.IDENTIFIER),
     ID_NOT(TEXT, MUST_NOT, Constants.IDENTIFIER),
     ID_SHOULD(TEXT, SHOULD, Constants.IDENTIFIER),
@@ -314,7 +314,7 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             "fundings.identifier|fundings.source.identifier";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
-            "fundings.source.identifier|fundings.source.labels";
+            "fundings";
         public static final String IDENTIFIER = "identifier";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";

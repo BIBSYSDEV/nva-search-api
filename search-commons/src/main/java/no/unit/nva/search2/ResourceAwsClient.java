@@ -133,6 +133,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
                    .newBuilder(qbs.requestUri())
                    .headers(
                        ACCEPT, MediaType.JSON_UTF_8.toString(),
+                       "Content-Type", MediaType.JSON_UTF_8.toString(),
                        AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
                    .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
