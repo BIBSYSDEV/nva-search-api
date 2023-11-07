@@ -8,6 +8,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +34,7 @@ import no.unit.nva.stubs.FakeS3Client;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
+import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,12 +46,11 @@ public class IndexResourceHandlerTest {
     public static final IndexDocument SAMPLE_RESOURCE = createSampleResource(SortableIdentifier.next(),
                                                                              RESOURCES_INDEX);
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
+    public static final String IGNORED_TOPIC = "ignoredValue";
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
         createSampleResource(null, RESOURCES_INDEX);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
         createSampleResource(SortableIdentifier.next(), null);
-    public static final String IGNORED_TOPIC = "ignoredValue";
-
     private S3Driver s3Driver;
     private IndexResourceHandler indexResourceHandler;
     private Context context;
@@ -89,13 +90,25 @@ public class IndexResourceHandlerTest {
     }
 
     @Test
+    void shouldLogErrorContainingRelativeResourceLocationOnCommunicationProblemWithService() throws Exception {
+        indexingClient = indexingClientThrowingException(randomString());
+        indexResourceHandler = new IndexResourceHandler(s3Driver, indexingClient);
+        var resourceLocation = prepareEventStorageResourceFile();
+        var input = createEventBridgeEvent(resourceLocation);
+        var appender = LogUtils.getTestingAppender(IndexResourceHandler.class);
+        assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
+        var expectedResourceLocationString = UriWrapper.fromUri(resourceLocation).toS3bucketPath().toString();
+        assertThat(appender.getMessages(), containsString(expectedResourceLocationString));
+    }
+
+    @Test
     void shouldThrowExceptionWhenResourceIsMissingIdentifier() throws Exception {
         URI resourceLocation = prepareEventStorageResourceFile(SAMPLE_RESOURCE_MISSING_IDENTIFIER);
 
         InputStream input = createEventBridgeEvent(resourceLocation);
 
         RuntimeException exception =
-            assertThrows(RuntimeException.class,() -> indexResourceHandler.handleRequest(input, output, context));
+            assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
 
         assertThat(exception.getMessage(), stringContainsInOrder(MISSING_IDENTIFIER_IN_RESOURCE));
     }
@@ -154,7 +167,6 @@ public class IndexResourceHandlerTest {
 
     private InputStream createEventBridgeEvent(URI resourceLocation) throws JsonProcessingException {
         EventReference indexResourceEvent = new EventReference(IGNORED_TOPIC, resourceLocation);
-
 
         AwsEventBridgeDetail<EventReference> detail = new AwsEventBridgeDetail<>();
         detail.setResponsePayload(indexResourceEvent);

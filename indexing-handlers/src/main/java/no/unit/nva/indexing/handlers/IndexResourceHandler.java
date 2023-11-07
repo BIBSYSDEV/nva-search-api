@@ -13,14 +13,16 @@ import no.unit.nva.search.models.IndexDocument;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<EventReference, Void> {
 
-    public static final String MISSING_INDEX_ERROR = "Missing field 'index' in consumption attributes";
-    public static final String MISSING_DOC_IDENTIFIER_ERROR =
-        "Missing field 'documentIdentifier' in consumption attributes";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IndexResourceHandler.class);
     private static final String EXPANDED_RESOURCES_BUCKET = IndexingConfig.ENVIRONMENT.readEnv(
         "EXPANDED_RESOURCES_BUCKET");
+    public static final String INDEXING_ERROR_MSG = "Failure adding document to index. Resource path: {}. "
+                                                    + "Exception message: {}";
     private final S3Driver s3Driver;
     private final IndexingClient indexingClient;
 
@@ -47,8 +49,14 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
 
         UnixPath resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
         IndexDocument indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
-        attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow();
+        attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow(
+            failure -> handleFailure(resourceRelativePath, failure.getException()));
         return null;
+    }
+
+    private RuntimeException handleFailure(UnixPath resourceRelativePath, Exception exception) {
+        LOGGER.error(INDEXING_ERROR_MSG, resourceRelativePath, exception.getMessage());
+        return new RuntimeException(exception);
     }
 
     private IndexDocument fetchFileFromS3Bucket(UnixPath resourceRelativePath) {
