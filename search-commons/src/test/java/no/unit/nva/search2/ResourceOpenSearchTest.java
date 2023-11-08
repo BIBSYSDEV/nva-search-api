@@ -115,14 +115,20 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?size=3"),
                 URI.create(hostAddress + "/?fields=category,title,created_date&query=Kjetil+Møkkelgjerd&size=2"),
                 URI.create(hostAddress + "/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
-                URI.create(hostAddress + "/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=10"),
+                URI.create(hostAddress + "/?query=https://api.dev.nva.aws.unit.no/cristin/person/1136918&fields=CONTRIBUTOR&size=2"),
                 URI.create(hostAddress + "/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
+                URI.create(hostAddress + "/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=2"),
+
+                URI.create(hostAddress + "/?CONTRIBUTOR=Isar+Kristoffer+Buzza,Kjetil+Møkkelgjerd&size=10"),
+                URI.create(hostAddress + "/?CONTRIBUTOR="
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
                 URI.create(hostAddress + "/?CONTRIBUTOR_SHOULD="
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                    + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=10"),
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
                 URI.create(hostAddress + "/?CONTRIBUTOR_NOT="
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,+"
-                    + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=2"),
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=2"),
                 URI.create(hostAddress + "/?category=ReportResearch&page=0&size=2"),
                 URI.create(hostAddress + "/?category=ReportResearch,AcademicArticle&page=2&size=2"),
                 URI.create(hostAddress + "/?category=AcademicArticle&offset=2"),
@@ -133,8 +139,11 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?funding=AFR:296896&size=2"),
                 URI.create(hostAddress + "/?funding=NFR:1296896&size=2"),
                 URI.create(hostAddress
-                           + "/?INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0"
-                           + ".0&size=2"),
+                    + "/?query=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+                    + "&size=2"),
+                URI.create(hostAddress
+                    + "/?INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+                    + "&size=2"),
                 URI.create(hostAddress + "/?INSTITUTION=45220004.0.0.0&size=2"),
                 URI.create(hostAddress + "/?INSTITUTION_SHOULD=45220004.0.0.0&size=2"),
                 URI.create(hostAddress + "/?INSTITUTION_NOT=45220004.0.0.0&size=2"),
