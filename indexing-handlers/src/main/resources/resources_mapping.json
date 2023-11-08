@@ -29,11 +29,25 @@
                 },
                 "name": {
                   "type": "text",
+                  "include_in_parent": true,
                   "fields" : {
                     "keyword" : {
                       "type" : "keyword"
                     }
                   }
+                }
+              }
+            },
+            "affiliations": {
+              "type": "nested",
+              "include_in_parent": true,
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "labels": {
+                  "include_in_parent": true,
+                  "type": "nested"
                 }
               }
             }
@@ -87,18 +101,38 @@
       }
     },
     "fundings": {
-      "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "id": {
+          "include_in_parent": true,
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "ignore_above": 256,
+              "type": "keyword"
+            }
+          }
+        },
         "source": {
-          "type": "nested",
           "include_in_parent": true,
           "properties": {
             "identifier": {
+              "include_in_parent": true,
               "type": "keyword"
             },
+            "id": {
+              "type": "text",
+              "include_in_parent": true,
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              }
+            },
             "labels": {
-              "type": "nested"
+              "include_in_parent": true,
+              "type": "text"
             }
           }
         }

@@ -12,7 +12,7 @@ public class Patterns {
     public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
 
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
-    public static final String PATTERN_IS_ADD_SLASH = "\\$1";
+    public static final String PATTERN_IS_ADD_SLASH = "\\\\$1";
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";

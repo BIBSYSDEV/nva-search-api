@@ -128,8 +128,18 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?category=AcademicArticle&offset=2"),
                 URI.create(hostAddress + "/?category=ReportResearch&from=2&results=2"),
                 URI.create(hostAddress + "/?published_before=2020-01-01&size=2"),
-                URI.create(hostAddress + "/?funding_source=NFR&size=2"),
+                URI.create(hostAddress + "/?funding_source=Norges+forskningsråd&size=2"),
                 URI.create(hostAddress + "/?funding=NFR:296896&size=2"),
+                URI.create(hostAddress + "/?funding=AFR:296896&size=2"),
+                URI.create(hostAddress + "/?funding=NFR:1296896&size=2"),
+                URI.create(hostAddress
+                           + "/?INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0"
+                           + ".0&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION=45220004.0.0.0&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION_SHOULD=45220004.0.0.0&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION_NOT=45220004.0.0.0&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION=Sikt&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION_NOT=Sikt&size=2"),
                 URI.create(hostAddress + "/?published_since=2019-01-01&institution=209.0.0.0&size=2"));
         }
     }

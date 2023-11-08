@@ -1,16 +1,5 @@
 package no.unit.nva.search2.model;
 
-import java.util.Locale;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
@@ -19,16 +8,16 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.SHOULD;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
@@ -37,6 +26,15 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.KEYWORD;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_KEY;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.TEXT;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -65,18 +63,15 @@ public enum ResourceParameterKey implements ParameterKey {
     DOI_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
     FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
             null, PATTERN_IS_FUNDING, null),
-    FUNDING_SOURCE(TEXT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_NOT(TEXT, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_SHOULD(TEXT, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE(KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_SHOULD(KEYWORD, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     ID(TEXT, Constants.IDENTIFIER),
     ID_NOT(TEXT, MUST_NOT, Constants.IDENTIFIER),
     ID_SHOULD(TEXT, SHOULD, Constants.IDENTIFIER),
-    INSTITUTION(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                        + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                                      + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                                       + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    INSTITUTION_NOT(TEXT, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
     ISBN(TEXT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(TEXT, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
@@ -290,9 +285,9 @@ public enum ResourceParameterKey implements ParameterKey {
 
         public static final String CREATED_DATE = "createdDate";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
-            "entityDescription.contributors.affiliation.id";
+            "entityDescription.contributors.affiliation.id.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
-            "entityDescription.contributors.affiliation.name.keyword";
+            "entityDescription.contributors.affiliation";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
             "entityDescription.contributors.identity.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
@@ -314,7 +309,7 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             "fundings.identifier|fundings.source.identifier";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
-            "fundings";
+            "fundings.source.labels";
         public static final String IDENTIFIER = "identifier";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";
