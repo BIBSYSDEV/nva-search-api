@@ -115,11 +115,11 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?size=3"),
                 URI.create(hostAddress + "/?fields=category,title,created_date&query=Kjetil+Møkkelgjerd&size=2"),
                 URI.create(hostAddress + "/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
-                URI.create(hostAddress + "/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=2"),
+                URI.create(hostAddress + "/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=10"),
                 URI.create(hostAddress + "/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
                 URI.create(hostAddress + "/?CONTRIBUTOR_SHOULD="
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                    + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=2"),
+                    + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=10"),
                 URI.create(hostAddress + "/?CONTRIBUTOR_NOT="
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,+"
                     + "https://api.dev.nva.aws.unit.no/cristin/person/1135555&size=2"),
@@ -127,7 +127,7 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?category=ReportResearch,AcademicArticle&page=2&size=2"),
                 URI.create(hostAddress + "/?category=AcademicArticle&offset=2"),
                 URI.create(hostAddress + "/?category=ReportResearch&from=2&results=2"),
-                URI.create(hostAddress + "/?published_before=2020-01-01&size=2"),
+                URI.create(hostAddress + "/?published_since=2023&size=2"),
                 URI.create(hostAddress + "/?funding_source=Norges+forskningsråd&size=2"),
                 URI.create(hostAddress + "/?funding=NFR:296896&size=2"),
                 URI.create(hostAddress + "/?funding=AFR:296896&size=2"),

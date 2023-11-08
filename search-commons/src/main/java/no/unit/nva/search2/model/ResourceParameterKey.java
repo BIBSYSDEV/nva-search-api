@@ -285,9 +285,9 @@ public enum ResourceParameterKey implements ParameterKey {
 
         public static final String CREATED_DATE = "createdDate";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
-            "entityDescription.contributors.affiliation.id.keyword";
+            "entityDescription.contributors.affiliation.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
-            "entityDescription.contributors.affiliation";
+            "entityDescription.contributors.affiliation.*";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
             "entityDescription.contributors.identity.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
@@ -309,7 +309,7 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             "fundings.identifier|fundings.source.identifier";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
-            "fundings.source.labels";
+            "fundings.source.*";
         public static final String IDENTIFIER = "identifier";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";

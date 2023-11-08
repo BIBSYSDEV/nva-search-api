@@ -208,7 +208,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private void addKeywordQuery(ResourceParameterKey key, String value, BoolQueryBuilder bq) {
         final var searchFields = key.searchFields().toArray(String[]::new);
-        final var values = value.split(COMMA);
+        final var values = Arrays.stream(value.split(COMMA)).map(String::trim).toArray(String[]::new);
         final var multipleFields = hasMultipleFields(searchFields);
 
         Arrays.stream(searchFields).forEach(searchField -> {
