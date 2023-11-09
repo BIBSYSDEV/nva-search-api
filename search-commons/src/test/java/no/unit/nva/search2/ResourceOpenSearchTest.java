@@ -115,7 +115,8 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?size=3"),
                 URI.create(hostAddress + "/?fields=category,title,created_date&query=Kjetil+Møkkelgjerd&size=2"),
                 URI.create(hostAddress + "/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
-                URI.create(hostAddress + "/?query=https://api.dev.nva.aws.unit.no/cristin/person/1136918&fields=CONTRIBUTOR&size=2"),
+                URI.create(hostAddress + "/?query=https://api.dev.nva.aws.unit" +
+                    ".no/cristin/person/1136918&fields=CONTRIBUTOR&size=4"),
                 URI.create(hostAddress + "/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
                 URI.create(hostAddress + "/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=2"),
 
@@ -133,23 +134,26 @@ public class ResourceOpenSearchTest {
                 URI.create(hostAddress + "/?category=ReportResearch,AcademicArticle&page=2&size=2"),
                 URI.create(hostAddress + "/?category=AcademicArticle&offset=2"),
                 URI.create(hostAddress + "/?category=ReportResearch&from=2&results=2"),
-                URI.create(hostAddress + "/?published_since=2023&size=2"),
-                URI.create(hostAddress + "/?funding_source=Norges+forskningsråd&size=2"),
+                URI.create(hostAddress + "/?published_since=2023-09-01&size=2"),
+                URI.create(hostAddress + "/?funding_source=Research+Council+of+Norway+(RCN)&size=2"),
                 URI.create(hostAddress + "/?funding=NFR:296896&size=2"),
                 URI.create(hostAddress + "/?funding=AFR:296896&size=2"),
                 URI.create(hostAddress + "/?funding=NFR:1296896&size=2"),
                 URI.create(hostAddress
-                    + "/?query=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+                    + "/?query=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
                     + "&size=2"),
                 URI.create(hostAddress
-                    + "/?INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+                    + "/?query=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&fields=INSTITUTION"
                     + "&size=2"),
-                URI.create(hostAddress + "/?INSTITUTION=45220004.0.0.0&size=2"),
-                URI.create(hostAddress + "/?INSTITUTION_SHOULD=45220004.0.0.0&size=2"),
-                URI.create(hostAddress + "/?INSTITUTION_NOT=45220004.0.0.0&size=2"),
-                URI.create(hostAddress + "/?INSTITUTION=Sikt&size=2"),
+                URI.create(hostAddress
+                    + "/?INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+                    + "&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION=20754&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION_SHOULD=20754&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION_NOT=20754&size=2"),
+                URI.create(hostAddress + "/?INSTITUTION_SHOULD=Sikt&size=2"),
                 URI.create(hostAddress + "/?INSTITUTION_NOT=Sikt&size=2"),
-                URI.create(hostAddress + "/?published_since=2019-01-01&institution=209.0.0.0&size=2"));
+                URI.create(hostAddress + "/?published_since=2023-11-05&institution=209.0.0.0&size=2"));
         }
     }
 

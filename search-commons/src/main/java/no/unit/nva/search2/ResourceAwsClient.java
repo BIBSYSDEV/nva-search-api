@@ -184,7 +184,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
      */
     private MultiMatchQueryBuilder multiMatchQuery(ResourceAwsQuery query) {
         var fields = extractFields(query.getValue(FIELDS).toString());
-        var value = escapeSearchString(query.getValue(SEARCH_ALL).toString());
+        var value = query.getValue(SEARCH_ALL).toString();
         return QueryBuilders
                    .multiMatchQuery(value, fields)
                    .type(Type.CROSS_FIELDS)
@@ -208,7 +208,10 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
 
     private void addKeywordQuery(ResourceParameterKey key, String value, BoolQueryBuilder bq) {
         final var searchFields = key.searchFields().toArray(String[]::new);
-        final var values = Arrays.stream(value.split(COMMA)).map(String::trim).toArray(String[]::new);
+        final var values = Arrays.stream(value.split(COMMA))
+            .map(String::trim)
+            .map(ParameterKey::escapeSearchString)
+            .toArray(String[]::new);
         final var multipleFields = hasMultipleFields(searchFields);
 
         Arrays.stream(searchFields).forEach(searchField -> {
@@ -232,7 +235,7 @@ public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse
         final var searchFields = key.searchFields().toArray(String[]::new);
         if (hasMultipleFields(searchFields)) {
             return QueryBuilders
-                       .multiMatchQuery(escapeSearchString(value), searchFields)
+                       .multiMatchQuery(value, searchFields)
                        .operator(operatorByKey(key));
         }
         var searchField = searchFields[0];
