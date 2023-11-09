@@ -244,6 +244,20 @@ public class OpensearchTest {
         }
 
         @Test
+        void shouldFilterDocumentsWithFiles()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var query = queryWithTermAndAggregation(
+                "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts.administrativeAgreement:\"false\")",
+                                                    IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+            assertThat(response.getHits().size(), is(equalTo(1)));
+        }
+
+        @Test
         void shouldQueryPublicationsWithMultipleOrganizations()
             throws InterruptedException, ApiGatewayException {
             addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
