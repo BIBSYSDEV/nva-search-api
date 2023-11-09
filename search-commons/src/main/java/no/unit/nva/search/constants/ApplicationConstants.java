@@ -45,6 +45,7 @@ public final class ApplicationConstants {
                                   "importStatus.candidateStatus.keyword"),
         generateSimpleAggregation("publicationYear", "publicationYear.keyword"),
         generateObjectLabelsAggregation("organizations"),
+        generateHasFileAggregation(),
         generateSimpleAggregation("collaborationType", "collaborationType.keyword"),
         generateImportedByUserAggregation()
     );
@@ -227,21 +228,14 @@ public final class ApplicationConstants {
         return String.join(JSON_PATH_DELIMITER, args);
     }
 
-    private static NestedAggregationBuilder generateHasFileAggregation() {
+    private static FilterAggregationBuilder generateHasFileAggregation() {
+        var publishedFileQuery = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
+        var notAdministrativeAgreementQuery =
+            new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false);
 
-        var typeFilterAggregation =
-            AggregationBuilders
-                .filter(
-                    TYPE, QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE)
-                );
-
-        var adminAgreementFilterAggregation =
-            AggregationBuilders
-                .filter(ADMINSTRATIVE_AGREEMENT,
-                        QueryBuilders.termQuery(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false)
-                );
-
-        return new NestedAggregationBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                   .subAggregation(typeFilterAggregation.subAggregation(adminAgreementFilterAggregation));
+        var queryToMatch = QueryBuilders.boolQuery()
+                               .must(publishedFileQuery)
+                               .must(notAdministrativeAgreementQuery);
+        return new FilterAggregationBuilder(ASSOCIATED_ARTIFACTS, queryToMatch);
     }
 }
