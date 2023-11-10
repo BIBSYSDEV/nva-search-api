@@ -30,39 +30,46 @@
   "publicationYear": "2020",
   "id": "https://api.dev.nva.aws.unit.no/publication/0189027230f2-2e9bea45-1869-4592-8b43-4ab9e52503fa",
   "type": "ImportCandidate",
-  "publicationInstance": {
-    "volume": "111",
-    "pages": {
-      "end": "301",
-      "type": "Range",
-      "begin": "288"
-    },
-    "issue": "3",
-    "type": "AcademicArticle"
+  "entityDescription": {
+    "reference": {
+      "publicationInstance": {
+        "volume": "111",
+        "pages": {
+          "end": "301",
+          "type": "Range",
+          "begin": "288"
+        },
+        "issue": "3",
+        "type": "AcademicArticle"
+      }
+    }
   },
-  "associatedArtifacts" : [ {
-    "type" : "PublishedFile",
-    "identifier" : "1d343518-c5f7-4fc9-987f-a318ac7407ec",
-    "name" : "284736.pdf",
-    "mimeType" : "application/pdf",
-    "size" : 556403,
-    "license" : "https://creativecommons.org/licenses/by/4.0",
-    "administrativeAgreement" : false,
-    "publisherAuthority" : false,
-    "publishedDate" : "2023-11-08T15:00:54.376933809Z",
-    "visibleForNonOwner" : true
-  }, {
-    "type" : "PublishedFile",
-    "identifier" : "bc17d80b-2d0d-4a59-938d-a68dfbdef77e",
-    "name" : "Enteral_Nutrition_in_Preterm_Infants_2022_A.204.pdf",
-    "mimeType" : "application/pdf",
-    "size" : 1840782,
-    "license" : "https://creativecommons.org/licenses/by/4.0",
-    "administrativeAgreement" : false,
-    "publisherAuthority" : false,
-    "publishedDate" : "2023-11-08T15:00:55.044494571Z",
-    "visibleForNonOwner" : true
-  } ],
+  "associatedArtifacts": [
+    {
+      "type": "PublishedFile",
+      "identifier": "1d343518-c5f7-4fc9-987f-a318ac7407ec",
+      "name": "284736.pdf",
+      "mimeType": "application/pdf",
+      "size": 556403,
+      "license": "https://creativecommons.org/licenses/by/4.0",
+      "administrativeAgreement": false,
+      "publisherAuthority": false,
+      "publishedDate": "2023-11-08T15:00:54.376933809Z",
+      "visibleForNonOwner": true
+    },
+    {
+      "type": "PublishedFile",
+      "identifier": "bc17d80b-2d0d-4a59-938d-a68dfbdef77e",
+      "name": "Enteral_Nutrition_in_Preterm_Infants_2022_A.204.pdf",
+      "mimeType": "application/pdf",
+      "size": 1840782,
+      "license": "https://creativecommons.org/licenses/by/4.0",
+      "administrativeAgreement": false,
+      "publisherAuthority": false,
+      "publishedDate": "2023-11-08T15:00:55.044494571Z",
+      "visibleForNonOwner": true
+    }
+  ],
   "doi": "https://doi.org/10.1111/tesg.12423",
   "totalContributors": 3
 }

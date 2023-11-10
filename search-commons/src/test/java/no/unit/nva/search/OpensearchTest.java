@@ -244,6 +244,18 @@ public class OpensearchTest {
         }
 
         @Test
+        void shouldReturnInstanceTypeAggregationWithDocCountTwo()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            var docCount = getDocCountForAggregation(response, "type");
+            assertThat(docCount, is(equalTo(2)));
+        }
+
+        @Test
         void shouldFilterDocumentsWithFiles()
             throws InterruptedException, ApiGatewayException {
             addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
