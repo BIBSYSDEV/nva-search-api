@@ -46,6 +46,7 @@ public final class ApplicationConstants {
         generateSimpleAggregation("publicationYear", "publicationYear.keyword"),
         generateObjectLabelsAggregation("organizations"),
         generateHasFileAggregation(),
+        generateInstanceTypeAggregation(),
         generateSimpleAggregation("collaborationType", "collaborationType.keyword"),
         generateImportedByUserAggregation()
     );
@@ -117,6 +118,12 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateTypeAggregation() {
         return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
                    .subAggregation(generateNestedPublicationInstanceAggregation()
+                                       .subAggregation(generatePublicationInstanceTypeAggregation()));
+    }
+
+    private static NestedAggregationBuilder generateReferenceAggregation() {
+        return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
+                   .subAggregation(generateNestedPublicationInstanceAggregation()
                                        .subAggregation(generatePublicationInstanceTypeAggregation()))
                    .subAggregation(generateNestedPublicationContextAggregation()
                                        .subAggregation(
@@ -164,6 +171,11 @@ public final class ApplicationConstants {
     private static NestedAggregationBuilder generateEntityDescriptionAggregation() {
         return new NestedAggregationBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
                    .subAggregation(generateContributorAggregations())
+                   .subAggregation(generateReferenceAggregation());
+    }
+
+    private static NestedAggregationBuilder generateInstanceTypeAggregation() {
+        return new NestedAggregationBuilder(TYPE, ENTITY_DESCRIPTION)
                    .subAggregation(generateTypeAggregation());
     }
 
