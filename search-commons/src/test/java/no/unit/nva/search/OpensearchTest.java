@@ -42,6 +42,7 @@ import no.unit.nva.search.constants.ApplicationConstants;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
+import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -199,6 +200,10 @@ public class OpensearchTest {
         );
     }
 
+    private static int getDocCountForAggregation(SearchResponseDto searchResponseDto, String aggregationName) {
+        return searchResponseDto.getAggregations().get(aggregationName).get("docCount").asInt();
+    }
+
     @Nested
     class ImportCandidateIndexTest {
 
@@ -224,6 +229,44 @@ public class OpensearchTest {
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
             assertThat(response.getAggregations(), is(not(emptyIterable())));
+        }
+
+        @Test
+        void shouldReturnAssociatedArtifactAggregationWithSingleDocCount()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            var docCount = getDocCountForAggregation(response, "associatedArtifacts");
+            assertThat(docCount, is(equalTo(1)));
+        }
+
+        @Test
+        void shouldReturnInstanceTypeAggregationWithDocCountTwo()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            var docCount = getDocCountForAggregation(response, "type");
+            assertThat(docCount, is(equalTo(2)));
+        }
+
+        @Test
+        void shouldFilterDocumentsWithFiles()
+            throws InterruptedException, ApiGatewayException {
+            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+
+            var query = queryWithTermAndAggregation(
+                "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts.administrativeAgreement:\"false\")",
+                                                    IMPORT_CANDIDATES_AGGREGATIONS);
+
+            var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+
+            assertThat(response.getHits().size(), is(equalTo(1)));
         }
 
         @Test
@@ -418,17 +461,8 @@ public class OpensearchTest {
 
                 var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
-                assertThat(response, notNullValue());
-
-                var actualAggregations = response.getAggregations();
-
-                var hasPublishedFileAggregation = actualAggregations.at(
-                    "/associatedArtifacts/type");
-                assertThat(hasPublishedFileAggregation.get("docCount").asInt(), is(equalTo(2)));
-
-                var hasPublishedFileWithAdminAgreementFalseAggregation = actualAggregations.at(
-                    "/associatedArtifacts/type/administrativeAgreement");
-                assertThat(hasPublishedFileWithAdminAgreementFalseAggregation.get("docCount").asInt(), is(equalTo(1)));
+                var docCount = getDocCountForAggregation(response, "associatedArtifacts");
+                assertThat(docCount, is(equalTo(1)));
             }
 
             @ParameterizedTest()
@@ -450,6 +484,20 @@ public class OpensearchTest {
             void beforeEachTest() throws IOException {
                 indexName = generateIndexName();
                 indexingClient.createIndex(indexName);
+            }
+
+            @Test
+            void shouldReturnAssociatedArtifactAggregationWithSingleDocCount()
+                throws InterruptedException, ApiGatewayException {
+                addDocumentsToIndex("published_publication_with_multiple_published_files.json",
+                                    "published_publication_with_administrative_agreement.json");
+
+                var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
+
+                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+                var docCount = getDocCountForAggregation(response, "associatedArtifacts");
+
+                assertThat(docCount, is(equalTo(1)));
             }
 
             @Test
