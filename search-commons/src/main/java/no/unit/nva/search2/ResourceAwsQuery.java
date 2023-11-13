@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
@@ -229,7 +228,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
     @NotNull
     private String[] extractFields(String field) {
-        return ALL.equals(field) || Objects.isNull(field)
+        return ALL.equals(field) || isNull(field)
                    ? ASTERISK.split(COMMA)
                    : Arrays.stream(field.split(COMMA))
                          .map(ResourceParameterKey::keyFromString)

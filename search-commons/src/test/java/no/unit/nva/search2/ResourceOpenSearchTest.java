@@ -108,7 +108,6 @@ public class ResourceOpenSearchTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(pagedSearchResourceDto.hits().size())));
-            logger.info("{}", pagedSearchResourceDto.toJsonString());
         }
 
         static Stream<URI> uriProvider() {
