@@ -84,7 +84,8 @@ class ResourceAwsClientTest {
                 .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
                 .build();
 
-        var pagedSearchResourceDto = query.fetchAsPagedResponse(resourceAwsClient);
+        var response = resourceAwsClient.doSearch(query);
+        var pagedSearchResourceDto = query.toPagedResponse(response);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));

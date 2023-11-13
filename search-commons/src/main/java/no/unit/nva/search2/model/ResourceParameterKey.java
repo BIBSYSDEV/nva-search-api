@@ -63,19 +63,18 @@ public enum ResourceParameterKey implements ParameterKey {
     DOI_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
     FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
             null, PATTERN_IS_FUNDING, null),
-    FUNDING_SOURCE(KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE(TEXT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_NOT(TEXT, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(KEYWORD, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     ID(TEXT, Constants.IDENTIFIER),
     ID_NOT(TEXT, MUST_NOT, Constants.IDENTIFIER),
     ID_SHOULD(TEXT, SHOULD, Constants.IDENTIFIER),
-    INSTITUTION(KEYWORD,
-        Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    INSTITUTION_NOT(KEYWORD, MUST_NOT,
-        Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_SHOULD(TEXT, SHOULD,
-        Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-
+    INSTITUTION(TEXT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE
+                      + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_NOT(TEXT, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE
+                                    + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE
+                                     + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
     ISBN(TEXT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(TEXT, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
@@ -289,9 +288,9 @@ public enum ResourceParameterKey implements ParameterKey {
 
         public static final String CREATED_DATE = "createdDate";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
-            "entityDescription.contributors.affiliation.id";
+            "entityDescription.contributors.affiliations.id.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
-            "entityDescription.contributors.affiliation.labels";
+            "entityDescription.contributors.affiliations.labels.*.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
             "entityDescription.contributors.identity.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
@@ -313,7 +312,7 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             "fundings.identifier|fundings.source.identifier";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
-            "fundings.source.labels.*";
+            "fundings.source.labels.en.keyword|fundings.source.labels.nb.keyword";
         public static final String IDENTIFIER = "identifier";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";
