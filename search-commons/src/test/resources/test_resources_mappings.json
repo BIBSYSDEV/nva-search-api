@@ -15,12 +15,15 @@
     },
     "entityDescription": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
         "contributors": {
           "type": "nested",
+          "include_in_parent": true,
           "properties": {
             "identity": {
               "type": "nested",
+              "include_in_parent": true,
               "properties": {
                 "id": {
                   "type": "keyword"
@@ -39,12 +42,18 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "id": {
-                  "type": "keyword"
-                },
                 "labels": {
-                  "include_in_parent": true,
-                  "type": "nested"
+                  "type": "nested",
+                  "include_in_parent": true
+                },
+                "id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
             }
