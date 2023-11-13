@@ -34,7 +34,7 @@ public record OpenSearchSwsResponse(
         double max_score,
         List<Hit> hits) {
         public record TotalInfo(
-            Long value,
+            Integer value,
             String relation) {
 
         }
@@ -54,7 +54,7 @@ public record OpenSearchSwsResponse(
     @JacocoGenerated
     @NotNull
     @Transient
-    public Long getTotalSize() {
+    public Integer getTotalSize() {
         return nonNull(hits)
                    ? hits.total.value
                    : 0;

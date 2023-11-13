@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 public record PagedSearchResourceDto(
     URI id,
-    long totalHits,
+    int totalHits,
     List<JsonNode> hits,
     URI nextResults,
     URI nextSearchAfterResults,
@@ -51,7 +51,7 @@ public record PagedSearchResourceDto(
         private URI nextResults;
         private URI previousResults;
         private URI nextResultsBySortKey;
-        private long totalHits;
+        private int totalHits;
         private List<JsonNode> hits;
         private JsonNode aggregations;
 
@@ -78,7 +78,7 @@ public record PagedSearchResourceDto(
             return this;
         }
 
-        public Builder withTotalHits(long totalHits) {
+        public Builder withTotalHits(int totalHits) {
             this.totalHits = totalHits;
             return this;
         }
@@ -94,7 +94,7 @@ public record PagedSearchResourceDto(
         }
 
         @Nullable
-        private URI createNextResults(Map<String, String> requestParameter, Integer offset, Long totalSize,
+        private URI createNextResults(Map<String, String> requestParameter, Integer offset, Integer totalSize,
                                       URI gatewayUri) {
             return offset < totalSize
                        ? createUriOffsetRef(requestParameter, offset, gatewayUri)

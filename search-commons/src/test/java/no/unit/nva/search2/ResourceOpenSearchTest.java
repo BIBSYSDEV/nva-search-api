@@ -1,23 +1,6 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingClient;
@@ -38,6 +21,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
+import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @Testcontainers
 public class ResourceOpenSearchTest {
 
@@ -54,7 +56,6 @@ public class ResourceOpenSearchTest {
     @BeforeAll
     static void setUp() throws IOException, InterruptedException {
         container.start();
-        System.setProperty("SEARCH_INFRASTRUCTURE_API_URI", container.getHttpHostAddress());
 
         var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
@@ -94,63 +95,67 @@ public class ResourceOpenSearchTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
-            var pagedSearchResourceDto =
+
+            var query =
                 ResourceAwsQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearcUri(URI.create(container.getHttpHostAddress()))
-                    .build()
-                    .doSearch(searchClient);
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build();
+
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
-            logger.info("{}", pagedSearchResourceDto);
+            assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(pagedSearchResourceDto.hits().size())));
+            logger.info("{}", pagedSearchResourceDto.toJsonString());
         }
 
         static Stream<URI> uriProvider() {
             return Stream.of(
-                URI.create("https://url/?size=3"),
-                //                URI.create("https://url/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                //                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
-                //                URI.create("https://url/?CONTRIBUTOR=Isar+Kristoffer+Buzza,Kjetil+Møkkelgjerd&size=10"),
-                //                URI.create("https://url/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
-                //                URI.create("https://url/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=2"),
-                //                URI.create("https://url/?CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                //                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=2"),
-                //                URI.create("https://url/?CONTRIBUTOR_SHOULD=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                //                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
-                URI.create("https://url/?INSTITUTION="
+                URI.create("https://x.org/?size=20"),
+                URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
+                URI.create("https://x.org/?CONTRIBUTOR=Isar+Kristoffer+Buzza,Kjetil+Møkkelgjerd&size=10"),
+                URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
+                URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=2"),
+                URI.create("https://x.org/?CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=18"),
+                URI.create("https://x.org/?CONTRIBUTOR_SHOULD=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
+                URI.create("https://x.org/?INSTITUTION="
                            + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
-                URI.create("https://url/?INSTITUTION=1627.0.0.0&size=2"),
-                URI.create("https://url//?INSTITUTION_NOT="
+                URI.create("https://x.org//?INSTITUTION_NOT="
+                           + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=18"),
+                URI.create("https://x.org//?INSTITUTION_SHOULD="
                            + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
-                URI.create("https://url//?INSTITUTION_SHOULD="
-                           + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
-                URI.create("https://url/?INSTITUTION=Forsvarets+høgskole&size=2"),
-                URI.create("https://url/?INSTITUTION=Forsvarets&size=2"),
-                URI.create("https://url/?INSTITUTION=Norwegian+Defence+University+College&size=2"),
-                URI.create("https://url/?INSTITUTION_NOT=Forsvarets+høgskole&size=2"),
-                URI.create("https://url//?INSTITUTION_NOT=1627.0.0.0,20754.6.0.0&size=2"),
-                URI.create("https://url/?INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0&size=2"),
-                //                URI.create("https://url/?category=AcademicArticle&offset=2"),
-                //                URI.create("https://url/?category=ReportResearch&from=2&results=2"),
-                //                URI.create("https://url/?category=ReportResearch&page=0&size=2"),
-                //                URI.create("https://url/?category=ReportResearch,AcademicArticle&page=2&size=2"),
-                //                URI.create("https://url/?fields=category,title,created_date&query=Kjetil+Møkkelgjerd&size=2"),
-                URI.create("https://url/?funding=AFR:296896&size=2"),
-                URI.create("https://url/?funding=NFR:1296896&size=2"),
-                URI.create("https://url/?funding=NFR:296896&size=2"),
-                URI.create("https://url/?funding_source_should=Norges+forskningsråd&size=2"),
-                URI.create("https://url/?funding_source_not=Norges&size=2"),
-                URI.create("https://url/?funding_source=Norges&size=2"),
-                URI.create("https://url/?funding_source=Research+Council+of+Norway+(RCN)&size=2"),
-                //                URI.create("https://url/?published_before=2020-01-01&size=2"),
-                //                URI.create("https://url/?published_since=2023-11-05&size=2"),
-                URI.create("https://url/?query=Forsvarets+høgskole&fields=INSTITUTION&size=2"),
-                URI.create("https://url/?query=Forsvarets+høgskole&size=2"),
-                //                URI.create("https://url/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
-                URI.create("https://url/?query=https://api.dev.nva.aws.unit.no/cristin/person/1136918"
-                           + "&fields=CONTRIBUTOR&size=4"),
-                URI.create("https://url/?query=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+                URI.create("https://x.org/?INSTITUTION=1627.0.0.0&size=2"),
+                URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0&size=2"),
+                URI.create("https://x.org/?INSTITUTION=Forsvarets+høgskole&size=18"),
+                URI.create("https://x.org/?INSTITUTION=194.63.55.0&size=1"),
+                URI.create("https://x.org/?INSTITUTION=Norwegian+Defence+University+College&size=2"),
+                URI.create("https://x.org/?INSTITUTION_NOT=Forsvarets+høgskole&size=18"),
+                URI.create("https://x.org//?INSTITUTION_NOT=Forsvarets+høgskole,194.63.55.0&size=18"),
+                URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0&size=2"),
+                URI.create("https://x.org/?category=AcademicArticle&size=9"),
+                URI.create("https://x.org/?category=ReportResearch&page=0&size=10"),
+                URI.create("https://x.org/?category=ReportResearch,AcademicArticle&page=0&size=19"),
+                URI.create("https://x.org/?fields=category,title,created_date&query=Kjetil+Møkkelgjerd&size=2"),
+                URI.create("https://x.org/?funding=AFR:296896&size=2"),
+                URI.create("https://x.org/?funding=NFR:1296896&size=2"),
+                URI.create("https://x.org/?funding=NFR:296896&size=2"),
+                URI.create("https://x.org/?funding_source_should=Norges+forskningsråd&size=2"),
+                URI.create("https://x.org/?funding_source_not=Norges&size=19"),
+                URI.create("https://x.org/?funding_source=Norges&size=2"),
+                URI.create("https://x.org/?funding_source=Research+Council+of+Norway+(RCN)&size=2"),
+                URI.create("https://x.org/?published_before=2020-01-01&size=2"),
+                URI.create("https://x.org/?published_since=2023-11-05&size=2"),
+                URI.create("https://x.org/?query=Forsvarets+høgskole&fields=INSTITUTION&size=2"),
+                URI.create("https://x.org/?query=Forsvarets+høgskole&size=2"),
+                URI.create("https://x.org/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
+                URI.create("https://x.org/?query=https://api.dev.nva.aws.unit.no/cristin/person/1136254"
+                           + "&fields=CONTRIBUTOR&size=3"),
+                URI.create("https://x.org/?query=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
                            + "&fields=INSTITUTION&size=2"));
         }
     }

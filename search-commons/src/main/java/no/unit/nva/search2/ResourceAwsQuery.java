@@ -189,6 +189,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     private QueryBuilder buildQuery(ResourceParameterKey key, String value) {
+        final var values = value.replace(COMMA, " ");
         final var searchFields =
             key.searchFields().stream()
                 .map(String::trim)
@@ -198,12 +199,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 .toArray(String[]::new);
         if (hasMultipleFields(searchFields)) {
             return QueryBuilders
-                       .multiMatchQuery(value, searchFields)
+                       .multiMatchQuery(values, searchFields)
                        .operator(operatorByKey(key));
         }
         var searchField = searchFields[0];
         return QueryBuilders
-                   .matchQuery(searchField, value)
+                   .matchQuery(searchField, values)
                    .boost(key.fieldBoost())
                    .operator(operatorByKey(key));
     }
@@ -220,8 +221,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
     private Operator operatorByKey(ResourceParameterKey key) {
         return switch (key.searchOperator()) {
-            case MUST -> Operator.AND;
-            case MUST_NOT, SHOULD -> Operator.AND;
+            case MUST, SHOULD -> Operator.AND;
+            case MUST_NOT -> Operator.OR;
             case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         };
     }
@@ -290,8 +291,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             response.getSort().stream().map(Object::toString).collect(Collectors.joining(COMMA));
         requestParameter.put(SEARCH_AFTER.fieldName(), sortedP);
         return UriWrapper.fromUri(gatewayUri)
-                   .addQueryParameters(requestParameter)
-                   .getUri();
+            .addQueryParameters(requestParameter)
+            .getUri();
     }
 
     @SuppressWarnings("PMD.GodClass")
@@ -326,22 +327,22 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
                 case CREATED_BEFORE, CREATED_SINCE,
-                         MODIFIED_BEFORE, MODIFIED_SINCE,
-                         PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
+                     MODIFIED_BEFORE, MODIFIED_SINCE,
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
                 case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
-                         CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
-                         DOI, DOI_NOT, DOI_SHOULD,
-                         FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
-                         ID, ID_NOT, ID_SHOULD,
-                         INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
-                         ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
-                         ORCID, ORCID_NOT, ORCID_SHOULD,
-                         PROJECT, PROJECT_NOT, PROJECT_SHOULD,
-                         PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
-                         SEARCH_ALL,
-                         TITLE, TITLE_NOT, TITLE_SHOULD,
-                         UNIT, UNIT_NOT, UNIT_SHOULD,
-                         USER, USER_NOT, USER_SHOULD -> query.setSearchFieldValue(qpKey, value);
+                     CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                     DOI, DOI_NOT, DOI_SHOULD,
+                     FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
+                     ID, ID_NOT, ID_SHOULD,
+                     INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
+                     ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
+                     ORCID, ORCID_NOT, ORCID_SHOULD,
+                     PROJECT, PROJECT_NOT, PROJECT_SHOULD,
+                     PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
+                     SEARCH_ALL,
+                     TITLE, TITLE_NOT, TITLE_SHOULD,
+                     UNIT, UNIT_NOT, UNIT_SHOULD,
+                     USER, USER_NOT, USER_SHOULD -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
@@ -410,8 +411,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String getSortOrder(String... sortKeyParts) {
             return (sortKeyParts.length == EXPECTED_TWO_PARTS)
-                       ? sortKeyParts[1].toLowerCase(Locale.getDefault())
-                       : DEFAULT_VALUE_SORT_ORDER;
+                ? sortKeyParts[1].toLowerCase(Locale.getDefault())
+                : DEFAULT_VALUE_SORT_ORDER;
         }
 
         private void addSortQuery(String value) {
@@ -427,10 +428,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
         private String expandFields(String value) {
             return ALL.equals(value) || isNull(value)
-                       ? ALL
-                       : Arrays.stream(value.split(COMMA))
-                             .filter(this::keyIsValid)
-                             .collect(Collectors.joining(COMMA));
+                ? ALL
+                : Arrays.stream(value.split(COMMA))
+                    .filter(this::keyIsValid)
+                    .collect(Collectors.joining(COMMA));
         }
 
         private boolean keyIsValid(String key) {

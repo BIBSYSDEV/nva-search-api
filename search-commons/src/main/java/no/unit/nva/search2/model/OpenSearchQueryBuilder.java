@@ -122,7 +122,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         return this;
     }
 
-    public final OpenSearchQueryBuilder<K, Q> withOpensearcUri(URI uri) {
+
+    /**
+     * When running docker tests, the current host needs to be specified.
+     * @param  uri URI to local docker test instance
+     */
+    public final OpenSearchQueryBuilder<K, Q> withOpensearchUri(URI uri) {
         query.setOpenSearchUri(uri);
         return this;
     }
