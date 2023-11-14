@@ -107,6 +107,7 @@ public class ResourceOpenSearchTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
+            logger.info(pagedSearchResourceDto.toJsonString());
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(pagedSearchResourceDto.hits().size())));
         }
 
@@ -121,7 +122,7 @@ public class ResourceOpenSearchTest {
                 URI.create("https://x.org/?CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
                            + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=18"),
                 URI.create("https://x.org/?CONTRIBUTOR_SHOULD=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136918&size=10"),
+                           + "person/1136918&size=10"),
                 URI.create("https://x.org/?INSTITUTION="
                            + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
                 URI.create("https://x.org//?INSTITUTION_NOT="
@@ -143,9 +144,9 @@ public class ResourceOpenSearchTest {
                 URI.create("https://x.org/?funding=AFR:296896&size=2"),
                 URI.create("https://x.org/?funding=NFR:1296896&size=2"),
                 URI.create("https://x.org/?funding=NFR:296896&size=2"),
-                URI.create("https://x.org/?funding_source_should=Norges+forskningsråd&size=2"),
-                URI.create("https://x.org/?funding_source_not=Norges&size=19"),
-                URI.create("https://x.org/?funding_source=Norges&size=2"),
+                URI.create("https://x.org/?funding_source=Norges+forskningsråd&size=2"),
+                URI.create("https://x.org/?funding_source_not=Norges+forskningsråd&size=19"),
+                URI.create("https://x.org/?funding_source_SHOULD=Norges+epler&size=2"),
                 URI.create("https://x.org/?funding_source=Research+Council+of+Norway+(RCN)&size=2"),
                 URI.create("https://x.org/?published_before=2020-01-01&size=2"),
                 URI.create("https://x.org/?published_since=2023-11-05&size=2"),
