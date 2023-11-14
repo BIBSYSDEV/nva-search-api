@@ -76,9 +76,6 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "id": {
-                  "type": "keyword"
-                },
                 "identifier": {
                   "type": "keyword"
                 },
@@ -111,7 +108,13 @@
       "include_in_parent": true,
       "properties": {
         "id": {
-          "type": "keyword"
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "ignore_above": 256,
+              "type": "keyword"
+            }
+          }
         },
         "identifier": {
           "type": "keyword"
@@ -122,6 +125,15 @@
           "properties": {
             "identifier": {
               "type": "keyword"
+            },
+            "id": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              }
             },
             "labels": {
               "type": "nested",

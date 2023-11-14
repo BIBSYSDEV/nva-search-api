@@ -8,6 +8,7 @@
           "type": "keyword"
         },
         "labels": {
+          "include_in_parent": true,
           "type": "nested"
         }
       }
@@ -29,10 +30,9 @@
                 },
                 "name": {
                   "type": "text",
-                  "include_in_parent": true,
-                  "fields" : {
-                    "keyword" : {
-                      "type" : "keyword"
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword"
                     }
                   }
                 }
@@ -42,12 +42,18 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "id": {
-                  "type": "keyword"
-                },
                 "labels": {
-                  "include_in_parent": true,
-                  "type": "nested"
+                  "type": "nested",
+                  "include_in_parent": true
+                },
+                "id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
             }
@@ -101,10 +107,10 @@
       }
     },
     "fundings": {
+      "type": "nested",
       "include_in_parent": true,
       "properties": {
         "id": {
-          "include_in_parent": true,
           "type": "text",
           "fields": {
             "keyword": {
@@ -113,16 +119,18 @@
             }
           }
         },
+        "identifier": {
+          "type": "keyword"
+        },
         "source": {
+          "type": "nested",
           "include_in_parent": true,
           "properties": {
             "identifier": {
-              "include_in_parent": true,
               "type": "keyword"
             },
             "id": {
               "type": "text",
-              "include_in_parent": true,
               "fields": {
                 "keyword": {
                   "ignore_above": 256,
@@ -131,8 +139,8 @@
               }
             },
             "labels": {
-              "include_in_parent": true,
-              "type": "text"
+              "type": "nested",
+              "include_in_parent": true
             }
           }
         }
