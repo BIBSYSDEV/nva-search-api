@@ -8,6 +8,7 @@
           "type": "keyword"
         },
         "labels": {
+          "include_in_parent": true,
           "type": "nested"
         }
       }
@@ -29,9 +30,28 @@
                 },
                 "name": {
                   "type": "text",
-                  "fields" : {
-                    "keyword" : {
-                      "type" : "keyword"
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+            },
+            "affiliations": {
+              "type": "nested",
+              "include_in_parent": true,
+              "properties": {
+                "labels": {
+                  "type": "nested",
+                  "include_in_parent": true
+                },
+                "id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "ignore_above": 256,
+                      "type": "keyword"
                     }
                   }
                 }
@@ -56,9 +76,6 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "id": {
-                  "type": "keyword"
-                },
                 "identifier": {
                   "type": "keyword"
                 },
@@ -90,6 +107,18 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "id": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "ignore_above": 256,
+              "type": "keyword"
+            }
+          }
+        },
+        "identifier": {
+          "type": "keyword"
+        },
         "source": {
           "type": "nested",
           "include_in_parent": true,
@@ -97,8 +126,18 @@
             "identifier": {
               "type": "keyword"
             },
+            "id": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              }
+            },
             "labels": {
-              "type": "nested"
+              "type": "nested",
+              "include_in_parent": true
             }
           }
         }

@@ -326,6 +326,8 @@ public class OpensearchTest {
                 );
             }
 
+
+
             @Test
             void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
                 addDocumentsToIndex("sample_publication.json",
@@ -364,6 +366,7 @@ public class OpensearchTest {
                 assertThat(response, notNullValue());
                 assertThat(response.getAggregations(), nullValue());
             }
+
 
             @Test
             void shouldReturnCorrectAggregations() throws InterruptedException, ApiGatewayException {

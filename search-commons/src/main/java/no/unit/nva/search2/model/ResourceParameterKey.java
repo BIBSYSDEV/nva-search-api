@@ -1,16 +1,5 @@
 package no.unit.nva.search2.model;
 
-import java.util.Locale;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
@@ -19,23 +8,33 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.model.ParameterKey.FieldOperator.SHOULD;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.KEYWORD;
 import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_STRING;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_KEY;
+import static no.unit.nva.search2.model.ParameterKey.ParamKind.TEXT;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -45,81 +44,81 @@ import static no.unit.nva.search2.model.ParameterKey.ParamKind.STRING;
  */
 
 public enum ResourceParameterKey implements ParameterKey {
-    INVALID(STRING),
+    INVALID(TEXT),
     // Parameters converted to Lucene query
-    CATEGORY(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    CONTRIBUTOR_ID(CUSTOM, MUST, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID,null, PATTERN_IS_URI, null),
-    CONTRIBUTOR(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+    CATEGORY(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CONTRIBUTOR_ID(KEYWORD, MUST, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID,null, PATTERN_IS_URI, null),
+    CONTRIBUTOR(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
                         + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
                                       + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
+    CONTRIBUTOR_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
                                        + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME),
     CREATED_BEFORE(DATE, LESS_THAN, Constants.CREATED_DATE),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.CREATED_DATE),
-    DOI(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
-    DOI_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
-    DOI_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
-    FUNDING(STRING, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
+    DOI(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
+    DOI_NOT(TEXT, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
+    DOI_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_DOI),
+    FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
             null, PATTERN_IS_FUNDING, null),
-    FUNDING_SOURCE(STRING, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_NOT(STRING, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_SHOULD(STRING, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    ID(STRING, Constants.IDENTIFIER),
-    ID_NOT(STRING, MUST_NOT, Constants.IDENTIFIER),
-    ID_SHOULD(STRING, SHOULD, Constants.IDENTIFIER),
-    INSTITUTION(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                        + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                                      + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    INSTITUTION_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                                       + PIPE + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
-    ISBN(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISSN(STRING, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+    FUNDING_SOURCE(KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_SHOULD(TEXT, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    ID(KEYWORD, Constants.IDENTIFIER),
+    ID_NOT(KEYWORD, MUST_NOT, Constants.IDENTIFIER),
+    ID_SHOULD(TEXT, SHOULD, Constants.IDENTIFIER),
+    INSTITUTION(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE
+        + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE
+                                    + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    INSTITUTION_SHOULD(TEXT, SHOULD,  Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID + PIPE
+        + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
+    ISBN(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISSN(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
                  + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
-    ISSN_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+    ISSN_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
                                + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
-    ISSN_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+    ISSN_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
                                 + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
-    ORCID(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
-    ORCID_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
-    ORCID_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
     MODIFIED_BEFORE(DATE, LESS_THAN, Constants.MODIFIED_DATE),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.MODIFIED_DATE),
-    PROJECT(STRING, Constants.PROJECTS_ID),
-    PROJECT_NOT(STRING, MUST_NOT, Constants.PROJECTS_ID),
-    PROJECT_SHOULD(STRING, SHOULD, Constants.PROJECTS_ID),
+    PROJECT(KEYWORD, Constants.PROJECTS_ID),
+    PROJECT_NOT(KEYWORD, MUST_NOT, Constants.PROJECTS_ID),
+    PROJECT_SHOULD(TEXT, SHOULD, Constants.PROJECTS_ID),
     PUBLISHED_BEFORE(DATE, LESS_THAN, Constants.PUBLISHED_DATE),
     PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
-    TITLE(STRING, Constants.MAIN_TITLE, 2F),
-    TITLE_NOT(STRING, MUST_NOT, Constants.MAIN_TITLE),
-    TITLE_SHOULD(STRING, SHOULD, Constants.MAIN_TITLE),
-    UNIT(STRING, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    UNIT_NOT(STRING, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    UNIT_SHOULD(STRING, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    USER(STRING, Constants.RESOURCE_OWNER),
-    USER_NOT(STRING, MUST_NOT, Constants.RESOURCE_OWNER),
-    USER_SHOULD(STRING, SHOULD, Constants.RESOURCE_OWNER),
+    TITLE(TEXT, Constants.MAIN_TITLE, 2F),
+    TITLE_NOT(TEXT, MUST_NOT, Constants.MAIN_TITLE),
+    TITLE_SHOULD(TEXT, SHOULD, Constants.MAIN_TITLE),
+    UNIT(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    USER(KEYWORD, Constants.RESOURCE_OWNER),
+    USER_NOT(KEYWORD, MUST_NOT, Constants.RESOURCE_OWNER),
+    USER_SHOULD(TEXT, SHOULD, Constants.RESOURCE_OWNER),
     PUBLICATION_YEAR(NUMBER, MUST, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                      "(?i)year.?reported|publication.?year", null, null),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
-                            "(?i)year.?reported|publication.?year", null, null),
+                            "(?i)year.?reported.?should|publication.?year.?should", null, null),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(STRING, MUST, "q", "(?i)search.?all|query", null, null),
+    SEARCH_ALL(TEXT, MUST, "q", "(?i)search.?all|query", null, null),
     FIELDS(CUSTOM),
     // Pagination parameters
     PAGE(NUMBER),
     FROM(NUMBER, null, null, "(?i)offset|from", null, null),
     SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null, null),
-    SORT(SORT_STRING, null, null, "(?i)order.?by|sort", null, null),
+    SORT(SORT_KEY, null, null, "(?i)order.?by|sort", null, null),
     SORT_ORDER(CUSTOM, MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
     SEARCH_AFTER(CUSTOM),
     // ignored parameter
-    LANG(STRING);
+    LANG(TEXT);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -234,7 +233,7 @@ public enum ResourceParameterKey implements ParameterKey {
     private ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case NUMBER, CUSTOM -> ValueEncoding.NONE;
-            case DATE, STRING, SORT_STRING -> ValueEncoding.DECODE;
+            case DATE, KEYWORD, TEXT, SORT_KEY -> ValueEncoding.DECODE;
         };
     }
 
@@ -245,8 +244,8 @@ public enum ResourceParameterKey implements ParameterKey {
             case DATE -> INVALID_DATE;
             case NUMBER -> INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
-            case SORT_STRING -> INVALID_VALUE_WITH_SORT;
-            case STRING, CUSTOM -> INVALID_VALUE;
+            case SORT_KEY -> INVALID_VALUE_WITH_SORT;
+            case KEYWORD, TEXT, CUSTOM -> INVALID_VALUE;
         };
     }
 
@@ -259,7 +258,7 @@ public enum ResourceParameterKey implements ParameterKey {
                     case DATE -> PATTERN_IS_DATE;
                     case NUMBER -> PATTERN_IS_NUMBER;
                     // case RANGE -> PATTERN_IS_RANGE;
-                    case CUSTOM, STRING, SORT_STRING -> PATTERN_IS_NON_EMPTY;
+                    case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
                 };
     }
 
@@ -289,13 +288,15 @@ public enum ResourceParameterKey implements ParameterKey {
 
         public static final String CREATED_DATE = "createdDate";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
-            "entityDescription.contributors.affiliation.id";
+            "entityDescription.contributors.affiliations.id.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
-            "entityDescription.contributors.affiliation.name";
+            "entityDescription.contributors.affiliations.labels.nb.keyword"
+                + "|entityDescription.contributors.affiliations.labels.n n.keyword"
+            + "|entityDescription.contributors.affiliations.labels.en.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
             "entityDescription.contributors.identity.id";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
-            "entityDescription.contributors.identity.name";
+            "entityDescription.contributors.identity.name.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID =
             "entityDescription.contributors.identity.orcId";
         public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
@@ -313,7 +314,7 @@ public enum ResourceParameterKey implements ParameterKey {
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             "fundings.identifier|fundings.source.identifier";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
-            "fundings.source.identifier|fundings.source.labels";
+            "fundings.source.labels.nb.keyword|fundings.source.labels.en.keyword";
         public static final String IDENTIFIER = "identifier";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";

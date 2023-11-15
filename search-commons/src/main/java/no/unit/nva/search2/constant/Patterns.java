@@ -29,6 +29,6 @@ public class Patterns {
      * - + & | ! ( ) { } [ ] ^ " ~ * ? : \ /
      *  with the intention of escaping them.
      */
-    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\"\\\\~*?:\\/])";
+    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\\\"\\~*?:\\/])";
 
 }
