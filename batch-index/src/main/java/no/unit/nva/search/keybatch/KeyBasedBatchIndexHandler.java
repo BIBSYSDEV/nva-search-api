@@ -175,11 +175,14 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private Stream<String> extractIdentifiers(String value) {
+        logger.info("Identifiers to fetch: {}", value);
         return nonNull(value) && !value.isBlank() ? Arrays.stream(value.split(LINE_BREAK)) : Stream.empty();
     }
 
     private String fetchS3Content(String key) {
         var s3Driver = new S3Driver(s3ResourcesClient, RESOURCES_BUCKET);
-        return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
+        var content = attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
+        logger.info("s3 file to reindex: {}", content);
+        return content;
     }
 }

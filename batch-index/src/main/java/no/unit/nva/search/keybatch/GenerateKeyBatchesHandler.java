@@ -65,7 +65,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     protected Void processInput(KeyBatchRequestEvent input, AwsEventBridgeEvent<KeyBatchRequestEvent> event,
                                 Context context) {
         var startMarker = getStartMarker(input);
-        var location = getS3Location(input);
+        var location = getLocation(input);
         logger.info(START_MARKER_MESSAGE, startMarker);
         var response = inputClient.listObjectsV2(createRequest(startMarker, location));
         var keys = getKeys(response);
@@ -76,7 +76,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         return null;
     }
 
-    private String getS3Location(KeyBatchRequestEvent event) {
+    private String getLocation(KeyBatchRequestEvent event) {
         return isNotEmptyEvent(event) ? event.getLocation() : DEFAULT_LOCATION;
     }
 
