@@ -164,7 +164,7 @@ class ResourcePagedSearchHandlerAwsTest {
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertThat(actualBody.totalHits(), is(equalTo(0L)));
+        assertThat(actualBody.totalHits(), is(equalTo(0)));
         assertThat(actualBody.hits(), is(empty()));
         assertDoesNotThrow(() -> gatewayResponse.body().id().normalize());
     }
@@ -181,7 +181,7 @@ class ResourcePagedSearchHandlerAwsTest {
 
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertThat(actualBody.totalHits(), is(equalTo(0L)));
+        assertThat(actualBody.totalHits(), is(equalTo(0)));
         assertThat(actualBody.hits(), is(empty()));
         assertDoesNotThrow(() -> gatewayResponse.body().id().normalize());
     }

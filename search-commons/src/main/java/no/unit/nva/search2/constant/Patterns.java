@@ -7,15 +7,11 @@ public class Patterns {
 
     /**
      * Pattern for matching a date string.
-     * yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ
+     * yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ
      */
-    public static final String PATTERN_IS_DATE = "(\\d){4}-(\\d){2}-(\\d){2}[T]*[(\\d){2}:(\\d){2}:(\\d){2,6}Z]*";
+    public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
 
-    /**
-     * Pattern for matching a date string.
-     *  yyyy | yyyy-MM-dd
-     */
-    public static final String PATTERN_IS_DATE_STRING = "\\b\\d{4}(?:-\\d{2}-\\d{2})?\\b";
+    public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_ADD_SLASH = "\\\\$1";
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
@@ -33,6 +29,6 @@ public class Patterns {
      * - + & | ! ( ) { } [ ] ^ " ~ * ? : \ /
      *  with the intention of escaping them.
      */
-    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\"~*?:\\\\/])";
+    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\\\"\\~*?:\\/])";
 
 }

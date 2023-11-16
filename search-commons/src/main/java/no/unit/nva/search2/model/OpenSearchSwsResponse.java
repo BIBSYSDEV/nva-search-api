@@ -34,7 +34,7 @@ public record OpenSearchSwsResponse(
         double max_score,
         List<Hit> hits) {
         public record TotalInfo(
-            Long value,
+            Integer value,
             String relation) {
 
         }
@@ -46,7 +46,7 @@ public record OpenSearchSwsResponse(
             String _id,
             double _score,
             JsonNode _source,
-            List<Long> sort) {
+            List<String> sort) {
 
         }
     }
@@ -54,7 +54,7 @@ public record OpenSearchSwsResponse(
     @JacocoGenerated
     @NotNull
     @Transient
-    public Long getTotalSize() {
+    public Integer getTotalSize() {
         return nonNull(hits)
                    ? hits.total.value
                    : 0;
@@ -72,7 +72,7 @@ public record OpenSearchSwsResponse(
 
     @NotNull
     @Transient
-    public List<Long> getSort() {
+    public List<String> getSort() {
         return
             nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
                 ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort())

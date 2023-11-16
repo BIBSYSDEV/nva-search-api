@@ -46,10 +46,10 @@ class ResourceQueryTest {
                 .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
 
         logger.info(resourceParameters
-                        .toNvaSearchApiRequestParameter()
-                        .entrySet().stream()
-                        .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining("&")));
+            .toNvaSearchApiRequestParameter()
+            .entrySet().stream()
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining("&")));
         logger.info(uri2.toString());
         assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
@@ -117,24 +117,23 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceAwsQuery.builder()
-                               .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                               .withRequiredParameters(FROM, SIZE, DOI)
-                               .build()
-                               .openSearchUri());
+            () -> ResourceAwsQuery.builder()
+                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE, DOI)
+                .build()
+                      .getOpenSearchUri());
     }
-
 
 
     @ParameterizedTest
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceAwsQuery.builder()
-                               .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                               .withRequiredParameters(FROM, SIZE)
-                               .build()
-                               .openSearchUri());
+            () -> ResourceAwsQuery.builder()
+                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .build()
+                      .getOpenSearchUri());
     }
 
 
@@ -143,6 +142,13 @@ class ResourceQueryTest {
             URI.create("https://example.com/"),
             URI.create("https://example.com/?fields=category,title,created_date"),
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
+            URI.create("https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
+            URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+            URI.create("https://example.com/?CONTRIBUTOR_NOT="
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
             URI.create("https://example.com/?fields=all"),
             URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
             URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),
@@ -151,9 +157,12 @@ class ResourceQueryTest {
             URI.create("https://example.com/?category=hello+world&user=12%203&page=2"),
             URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
             URI.create("https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
+            URI.create(
+                "https://example.com/?PARENT_PUBLICATION=https://api.dev.nva.aws.unit"
+                + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
             URI.create("https://example.com/?published_before=2020-01-01&lang=en&user=1%2023"),
             URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
-                       + "%20Eplekjekk"));
+                + "%20Eplekjekk"));
     }
 
     static Stream<URI> uriSortingProvider() {

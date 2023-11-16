@@ -17,6 +17,8 @@ public class ErrorMessages {
         "Sort has invalid field value [%s]. Valid values are: %s";
     public static final String INVALID_NUMBER = "Parameter '%s' has invalid value. Must be a number.";
     public static final String INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
+
+    public static final String OPERATOR_NOT_SUPPORTED = "Operator not supported";
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
         """
         Invalid query parameter supplied %s.\s

@@ -58,15 +58,17 @@ class ResourceAwsClientNoHitsTest {
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
-        var resourceSwsQuery =
+        var query =
             ResourceAwsQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        assertNotNull(resourceSwsQuery.getValue(CATEGORY).as());
-        assertNotNull(resourceSwsQuery.removeKey(CATEGORY));
-        assertNull(resourceSwsQuery.removeKey(CATEGORY));
-        var pagedSearchResourceDto = resourceSwsQuery.fetchAsPagedResponse(resourceAwsClient);
+        assertNotNull(query.getValue(CATEGORY).as());
+        assertNotNull(query.removeKey(CATEGORY));
+        assertNull(query.removeKey(CATEGORY));
+        var response = resourceAwsClient.doSearch(query);
+        var pagedSearchResourceDto = query.toPagedResponse(response);
+
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
         assertEquals(0L, pagedSearchResourceDto.totalHits());

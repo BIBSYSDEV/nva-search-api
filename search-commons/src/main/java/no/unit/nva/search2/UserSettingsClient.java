@@ -22,7 +22,7 @@ import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
-import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR;
+import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
 import static nva.commons.core.attempt.Try.attempt;
 
 public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
@@ -52,10 +52,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
 }
 
     private Stream<String> createQueryBuilderStream(ResourceAwsQuery query) {
-        if (query.isPresent(CONTRIBUTOR)) {
-            return Stream.of(query.getValue(CONTRIBUTOR).toString());
-        }
-        return Stream.empty();
+        return query.getOptional(CONTRIBUTOR_ID).stream();
     }
 
     private URI populateSearchRequest(String contributorId) {

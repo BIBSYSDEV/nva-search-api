@@ -14,6 +14,7 @@ public final class ApplicationConstants {
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String EQUAL = "=";
+    public static final String PIPE = "|";
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
     public static final String QUOTE = "'";

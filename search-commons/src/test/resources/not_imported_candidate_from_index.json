@@ -67,16 +67,32 @@
   "publicationYear": "2023",
   "id": "https://api.dev.nva.aws.unit.no/publication/01890233db02-313e3fef-e6a2-4a69-9a93-72f1a3623492",
   "type": "ImportCandidate",
-  "publicationInstance": {
-    "volume": "24",
-    "pages": {
-      "end": "357",
-      "type": "Range",
-      "begin": "345"
-    },
-    "issue": "2",
-    "type": "AcademicArticle"
+  "entityDescription": {
+    "reference": {
+      "publicationInstance": {
+        "volume": "111",
+        "pages": {
+          "end": "301",
+          "type": "Range",
+          "begin": "288"
+        },
+        "issue": "3",
+        "type": "AcademicChapter"
+      }
+    }
   },
   "doi": "https://doi.org/10.1093/biostatistics/kxab009",
-  "totalContributors": 5
+  "totalContributors": 5,
+  "associatedArtifacts" : [ {
+    "type" : "PublishedFile",
+    "identifier" : "1d343518-c5f7-4fc9-987f-a318ac7407ec",
+    "name" : "284736.pdf",
+    "mimeType" : "application/pdf",
+    "size" : 556403,
+    "license" : "https://creativecommons.org/licenses/by/4.0",
+    "administrativeAgreement" : true,
+    "publisherAuthority" : false,
+    "publishedDate" : "2023-11-08T15:00:54.376933809Z",
+    "visibleForNonOwner" : true
+  }]
 }

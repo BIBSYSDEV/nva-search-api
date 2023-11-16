@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 
 public enum ResourceSortKeys {
     INVALID(""),
-    CATEGORY("entityDescription.reference.publicationInstance.type"),
+    CATEGORY("entityDescription.reference.publicationInstance.type.keyword"),
     CREATED_DATE("createdDate"),
     MODIFIED_DATE("modifiedDate"),
     PUBLISHED_DATE("publishedDate"),
-    TITLE("entityDescription.mainTitle"),
-    UNIT_ID("entityDescription.contributors.affiliation.id"),
-    USER("(?i)(user)|(owner)", "resourceOwner.owner");
+    TITLE("entityDescription.mainTitle.keyword"),
+    UNIT_ID("entityDescription.contributors.affiliations.id.keyword"),
+    USER("(?i)(user)|(owner)", "resourceOwner.owner.keyword");
 
     public static final Set<ResourceSortKeys> VALID_SORT_PARAMETER_KEYS =
         Arrays.stream(ResourceSortKeys.values())

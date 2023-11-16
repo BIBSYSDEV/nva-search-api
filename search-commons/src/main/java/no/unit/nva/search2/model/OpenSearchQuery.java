@@ -45,7 +45,8 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
     private transient MediaType mediaType;
-    private transient URI gatewayUri = URI.create("https://localhost/resource/search");
+    private transient URI gatewayUri = URI.create("https://unset/resource/search");
+    private transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();
@@ -59,9 +60,9 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      *
      * @return an URI to Sws search without parameters.
      */
-    public URI openSearchUri() {
+    public URI getOpenSearchUri() {
         return
-            fromUri(readSearchInfrastructureApiUri())
+            fromUri(openSearchUri)
                 .addChild(RESOURCES, SEARCH)
                 .getUri();
     }
@@ -168,6 +169,11 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
         this.gatewayUri = gatewayUri;
     }
 
+    public void setOpenSearchUri(URI openSearchUri) {
+        this.openSearchUri = openSearchUri;
+    }
+
+
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
         return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
     }
@@ -236,7 +242,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
                 return null;
             }
             return (T) switch (key.fieldType()) {
-                case DATE, DATE_STRING -> castDateTime();
+                case DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
             };
