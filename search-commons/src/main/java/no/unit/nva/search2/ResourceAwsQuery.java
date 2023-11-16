@@ -82,9 +82,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
 
     public Stream<QueryBuilderSourceWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
-        var queryBuilder = this.hasNoSearchValue()
-                               ? QueryBuilders.matchAllQuery()
-                               : boolQuery(userSettingsClient);
+        var queryBuilder =
+            this.hasNoSearchValue()
+                ? QueryBuilders.matchAllQuery()
+                : boolQuery(userSettingsClient);
 
         var builder = new SearchSourceBuilder().query(queryBuilder);
         var searchAfter = removeKey(SEARCH_AFTER);

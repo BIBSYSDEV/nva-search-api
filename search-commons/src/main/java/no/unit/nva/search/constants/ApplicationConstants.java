@@ -194,8 +194,9 @@ public final class ApplicationConstants {
             generateNestedContributorAggregation()
                 .subAggregation(
                     generateNestedIdentityAggregation()
-                        .subAggregation(generateIdAggregation())
-                        .subAggregation(generateNameAggregation())
+                        .subAggregation(
+                            generateIdAggregation()
+                                .subAggregation(generateNameAggregation()))
                 );
     }
 
@@ -204,7 +205,7 @@ public final class ApplicationConstants {
     }
 
     private static NestedAggregationBuilder generateNestedIdentityAggregation() {
-        return new NestedAggregationBuilder(IDENTITY, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, KEYWORD));
+        return new NestedAggregationBuilder(IDENTITY, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY));
     }
 
     private static TermsAggregationBuilder generateIdAggregation() {
@@ -222,9 +223,9 @@ public final class ApplicationConstants {
         return generateSimpleAggregation(NAME, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD));
     }
 
-    private static NestedAggregationBuilder generateObjectLabelsAggregation(String object) {
-        return new NestedAggregationBuilder(object, object)
-                   .subAggregation(generateIdAggregation(object));
+    private static NestedAggregationBuilder generateObjectLabelsAggregation(String nodeName) {
+        return new NestedAggregationBuilder(nodeName, nodeName)
+                   .subAggregation(generateIdAggregation(nodeName));
     }
 
     private static NestedAggregationBuilder generateLabelsAggregation(String object) {

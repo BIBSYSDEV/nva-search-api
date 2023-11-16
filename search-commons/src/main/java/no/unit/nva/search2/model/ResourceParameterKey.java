@@ -321,7 +321,7 @@ public enum ResourceParameterKey implements ParameterKey {
             "entityDescription.reference.publicationInstance.corrigendumFor.keyword"
             + "|entityDescription.reference.publicationContext.id.keyword"
             + "|entityDescription.reference.publicationInstance.manifestations.id.keyword";
-        public static final String IDENTIFIER = "identifier,keyword";
+        public static final String IDENTIFIER = "identifier.keyword";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";
         public static final String PROJECTS_ID = "projects.id";
