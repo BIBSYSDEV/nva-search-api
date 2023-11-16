@@ -3,8 +3,6 @@ package no.unit.nva.search.keybatch;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
 import static no.unit.nva.search.EmitEventUtils.MANDATORY_UNUSED_SUBTOPIC;
-import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.EVENT_BUS;
-import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.TOPIC;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +41,8 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
     private static final String KEY_BATCHES_BUCKET = new Environment().readEnv("KEY_BATCHES_BUCKET");
+    public static final String EVENT_BUS = new Environment().readEnv("EVENT_BUS");
+    public static final String TOPIC = new Environment().readEnv("TOPIC");
     private final IndexingClient indexingClient;
     private final S3Client s3ResourcesClient;
     private final S3Client s3BatchesClient;
@@ -71,10 +71,11 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     protected Void processInput(KeyBatchRequestEvent input, AwsEventBridgeEvent<KeyBatchRequestEvent> event,
                                 Context context) {
         var startMarker = getStartMarker(input);
+        var location = getLocation(input);
         var batchResponse = fetchSingleBatch(startMarker);
 
         if (batchResponse.isTruncated()) {
-            sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context));
+            sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context, location));
         }
 
         var batchKey = batchResponse.contents().get(0).key();
@@ -87,10 +88,15 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return null;
     }
 
-    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context) {
+    private String getLocation(KeyBatchRequestEvent input) {
+        return nonNull(input) && nonNull(input.getLocation()) ? input.getLocation() : null;
+    }
+
+    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context,
+                                                               String location) {
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
-                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC).toJsonString())
+                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC, location).toJsonString())
                    .detailType(MANDATORY_UNUSED_SUBTOPIC)
                    .source(KeyBasedBatchIndexHandler.class.getName())
                    .resources(context.getInvokedFunctionArn())
