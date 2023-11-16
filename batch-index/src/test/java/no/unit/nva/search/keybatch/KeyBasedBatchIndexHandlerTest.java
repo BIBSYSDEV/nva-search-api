@@ -3,6 +3,7 @@ package no.unit.nva.search.keybatch;
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler.DEFAULT_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -223,7 +224,7 @@ class KeyBasedBatchIndexHandlerTest {
     }
 
     private static EventConsumptionAttributes randomConsumptionAttribute() {
-        return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
+        return new EventConsumptionAttributes(DEFAULT_INDEX, SortableIdentifier.next());
     }
 
     private static ObjectNode jsonNode() {

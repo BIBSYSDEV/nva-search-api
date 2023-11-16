@@ -43,6 +43,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     private static final String KEY_BATCHES_BUCKET = new Environment().readEnv("KEY_BATCHES_BUCKET");
     public static final String EVENT_BUS = new Environment().readEnv("EVENT_BUS");
     public static final String TOPIC = new Environment().readEnv("TOPIC");
+    public static final String DEFAULT_INDEX = "resources";
     private final IndexingClient indexingClient;
     private final S3Client s3ResourcesClient;
     private final S3Client s3BatchesClient;
@@ -168,7 +169,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
 
     private boolean isValid(IndexDocument document) {
         var validator = new AggregationsValidator(document.getResource());
-        if (!validator.isValid()) {
+        if (!validator.isValid() && DEFAULT_INDEX.equals(document.getIndexName())) {
             logger.info(validator.getReport());
         }
         return validator.isValid();
