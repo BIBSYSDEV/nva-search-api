@@ -199,6 +199,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         if (hasMultipleFields(searchFields)) {
             return QueryBuilders
                        .multiMatchQuery(values, searchFields)
+                .type(Type.BEST_FIELDS)
                        .operator(operatorByKey(key));
         }
         var searchField = searchFields[0];
@@ -220,8 +221,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
 
     private Operator operatorByKey(ResourceParameterKey key) {
         return switch (key.searchOperator()) {
-            case MUST, SHOULD -> Operator.AND;
-            case MUST_NOT -> Operator.OR;
+            case MUST -> Operator.AND;
+            case SHOULD, MUST_NOT -> Operator.OR;
             case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         };
     }

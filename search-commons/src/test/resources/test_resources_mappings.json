@@ -23,20 +23,7 @@
           "properties": {
             "identity": {
               "type": "nested",
-              "include_in_parent": true,
-              "properties": {
-                "id": {
-                  "type": "keyword"
-                },
-                "name": {
-                  "type": "text",
-                  "fields": {
-                    "keyword": {
-                      "type": "keyword"
-                    }
-                  }
-                }
-              }
+              "include_in_parent": true
             },
             "affiliations": {
               "type": "nested",
@@ -45,15 +32,6 @@
                 "labels": {
                   "type": "nested",
                   "include_in_parent": true
-                },
-                "id": {
-                  "type": "text",
-                  "fields": {
-                    "keyword": {
-                      "ignore_above": 256,
-                      "type": "keyword"
-                    }
-                  }
                 }
               }
             }
@@ -107,15 +85,6 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "ignore_above": 256,
-              "type": "keyword"
-            }
-          }
-        },
         "identifier": {
           "type": "keyword"
         },
@@ -125,15 +94,6 @@
           "properties": {
             "identifier": {
               "type": "keyword"
-            },
-            "id": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "ignore_above": 256,
-                  "type": "keyword"
-                }
-              }
             },
             "labels": {
               "type": "nested",

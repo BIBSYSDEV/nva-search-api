@@ -73,6 +73,7 @@
     },
     "reference": {
       "type": "Reference",
+      "doi":	"https://doi.org/10.1371/journal.pone.0047887",
       "publicationContext": {
         "type": "Report",
         "publisher": {
@@ -332,6 +333,7 @@
     },
     "reference": {
       "type": "Reference",
+      "doi":	"https://doi.org/10.1371/journal.pone.0047855",
       "publicationContext": {
         "type": "Report",
         "publisher": {

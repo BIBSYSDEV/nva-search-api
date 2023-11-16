@@ -291,31 +291,31 @@ public enum ResourceParameterKey implements ParameterKey {
             "entityDescription.contributors.affiliations.id.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME =
             "entityDescription.contributors.affiliations.labels.nb.keyword"
-                + "|entityDescription.contributors.affiliations.labels.n n.keyword"
+                + "|entityDescription.contributors.affiliations.labels.nn.keyword"
             + "|entityDescription.contributors.affiliations.labels.en.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID =
-            "entityDescription.contributors.identity.id";
+            "entityDescription.contributors.identity.id.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME =
             "entityDescription.contributors.identity.name.keyword";
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID =
-            "entityDescription.contributors.identity.orcId";
+            "entityDescription.contributors.identity.orcId.keyword";
         public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
             "entityDescription.publicationDate.year";
         public static final String ENTITY_DESCRIPTION_REFERENCE_DOI =
-            "entityDescription.reference.doi";
+            "entityDescription.reference.doi.keyword";
         public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST =
             "entityDescription.reference.publicationContext.isbnList";
         public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN =
-            "entityDescription.reference.publicationContext.onlineIssn";
+            "entityDescription.reference.publicationContext.onlineIssn.keyword";
         public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN =
-            "entityDescription.reference.publicationContext.printIssn";
+            "entityDescription.reference.publicationContext.printIssn.keyword";
         public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE =
-            "entityDescription.reference.publicationInstance.type";
+            "entityDescription.reference.publicationInstance.type.keyword";
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
-            "fundings.identifier|fundings.source.identifier";
+            "fundings.identifier.keyword|fundings.source.identifier.keyword";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
             "fundings.source.labels.nb.keyword|fundings.source.labels.en.keyword";
-        public static final String IDENTIFIER = "identifier";
+        public static final String IDENTIFIER = "identifier.keyword";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";
         public static final String PROJECTS_ID = "projects.id";
