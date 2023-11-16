@@ -89,6 +89,8 @@ public enum ResourceParameterKey implements ParameterKey {
     ORCID_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
     MODIFIED_BEFORE(DATE, LESS_THAN, Constants.MODIFIED_DATE),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.MODIFIED_DATE),
+    PARENT_PUBLICATION(KEYWORD, MUST, Constants.PARENT_PUBLICATION_ID),
+    PARENT_PUBLICATION_SHOULD(TEXT, SHOULD, Constants.PARENT_PUBLICATION_ID),
     PROJECT(KEYWORD, Constants.PROJECTS_ID),
     PROJECT_NOT(KEYWORD, MUST_NOT, Constants.PROJECTS_ID),
     PROJECT_SHOULD(TEXT, SHOULD, Constants.PROJECTS_ID),
@@ -315,7 +317,11 @@ public enum ResourceParameterKey implements ParameterKey {
             "fundings.identifier.keyword|fundings.source.identifier.keyword";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
             "fundings.source.labels.nb.keyword|fundings.source.labels.en.keyword";
-        public static final String IDENTIFIER = "identifier.keyword";
+        public static final String PARENT_PUBLICATION_ID =
+            "entityDescription.reference.publicationInstance.corrigendumFor.keyword"
+            + "|entityDescription.reference.publicationContext.id.keyword"
+            + "|entityDescription.reference.publicationInstance.manifestations.id.keyword";
+        public static final String IDENTIFIER = "identifier,keyword";
         public static final String MAIN_TITLE = "entityDescription.mainTitle";
         public static final String MODIFIED_DATE = "modifiedDate";
         public static final String PROJECTS_ID = "projects.id";
