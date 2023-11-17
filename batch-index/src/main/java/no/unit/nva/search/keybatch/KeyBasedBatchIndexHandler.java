@@ -135,6 +135,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
+        logger.info("Sending documents to index");
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
         for (IndexDocument indexDocument : indexDocuments) {
@@ -143,6 +144,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
                 documents.add(indexDocument);
                 totalSize += currentFileSize;
             } else {
+                logger.info("Indexing documents 1");
                 indexDocuments(documents);
                 totalSize = 0;
                 documents.clear();
@@ -150,13 +152,13 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
             }
         }
         if (!documents.isEmpty()) {
+            logger.info("Indexing documents 2");
             indexDocuments(documents);
         }
     }
 
     private void indexDocuments(List<IndexDocument> indexDocuments) {
-        logger.info("Indexing documents");
-        logger.info("Index name: {}", indexDocuments.get(0).getIndexName());
+        logger.info("Indexing documents 3");
         attempt(() -> indexBatch(indexDocuments)).orElse(this::logFailure);
     }
 
