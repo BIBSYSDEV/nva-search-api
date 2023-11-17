@@ -19,25 +19,25 @@ import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
 public interface ParameterKey {
-
+    
     String fieldName();
-
+    
     Float fieldBoost();
-
+    
     ParamKind fieldType();
-
+    
     String fieldPattern();
-
+    
     String valuePattern();
-
+    
     ValueEncoding valueEncoding();
-
+    
     Collection<String> searchFields();
-
+    
     FieldOperator searchOperator();
-
+    
     String errorMessage();
-
+    
     static Predicate<ParameterKey> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }
@@ -80,32 +80,31 @@ public interface ParameterKey {
         return key1.ordinal() - key2.ordinal();
     }
     
-    
     static String escapeSearchString(String value) {
         return value.replaceAll(PATTERN_IS_SPECIAL_CHARACTERS, PATTERN_IS_ADD_SLASH);
     }
-
+    
     enum ValueEncoding {
         NONE, DECODE
     }
-
+    
     enum ParamKind {
         BOOLEAN, DATE, NUMBER, KEYWORD, TEXT, SORT_KEY, CUSTOM
     }
-
+    
     enum FieldOperator {
         MUST(""),
         MUST_NOT("NOT"),
         SHOULD("SHOULD"),
         GREATER_THAN_OR_EQUAL_TO("SINCE"),
         LESS_THAN("BEFORE");
-
+        
         private final String keyPattern;
-
+        
         FieldOperator(String pattern) {
             this.keyPattern = PATTERN_IS_IGNORE_CASE + PATTERN_IS_NONE_OR_ONE + pattern;
         }
-
+        
         public String pattern() {
             return keyPattern;
         }

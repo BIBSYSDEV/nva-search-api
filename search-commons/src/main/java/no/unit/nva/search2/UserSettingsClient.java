@@ -24,11 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
+
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final HttpResponse.BodyHandler<String> bodyHandler;
-
 
     public UserSettingsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
@@ -47,7 +47,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
                 .map(this::handleResponse)
                 .findFirst()
                 .orElse(new UserSettings(Collections.emptyList()));
-}
+    }
 
     private Stream<String> createQueryBuilderStream(ResourceAwsQuery query) {
         return query.getOptional(CONTRIBUTOR_ID).stream();
@@ -87,5 +87,4 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
             ? settings.get()
             : new UserSettings(Collections.emptyList());
     }
-
 }
