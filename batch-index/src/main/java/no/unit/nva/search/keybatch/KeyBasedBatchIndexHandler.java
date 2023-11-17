@@ -39,7 +39,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     public static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
     public static final Environment ENVIRONMENT = new Environment();
-    public static final String DEFAULT_PAYLOAD = "3_291_456";
+    public static final String DEFAULT_PAYLOAD = "3291456";
     public static final int MAX_PAYLOAD =
         Integer.parseInt(new Environment().readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
     private static final String RESOURCES_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
@@ -47,6 +47,8 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
     public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
     public static final String DEFAULT_INDEX = "resources";
+    public static final String PROCESSING_BATCH_MESSAGE = "Processing batch: {}";
+    public static final String BULK_HAS_FAILED_MESSAGE = "Bulk has failed: ";
     private final IndexingClient indexingClient;
     private final S3Client s3ResourcesClient;
     private final S3Client s3BatchesClient;
@@ -115,7 +117,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
 
     private String extractContent(String key) {
         var s3Driver = new S3Driver(s3BatchesClient, KEY_BATCHES_BUCKET);
-        logger.info("Processing batch: {}", key);
+        logger.info(PROCESSING_BATCH_MESSAGE, key);
         return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
     }
 
@@ -138,18 +140,14 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
-        logger.info("Sending documents to index");
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
         for (IndexDocument indexDocument : indexDocuments) {
-            logger.info("Indexing documents 1");
             var currentFileSize = indexDocument.toJsonString().getBytes(StandardCharsets.UTF_8).length;
             if (totalSize + currentFileSize < MAX_PAYLOAD) {
-            logger.info("Indexing documents 2");
                 documents.add(indexDocument);
                 totalSize += currentFileSize;
             } else {
-                logger.info("Indexing documents 3");
                 indexDocuments(documents);
                 totalSize = 0;
                 documents.clear();
@@ -157,24 +155,26 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
             }
         }
         if (!documents.isEmpty()) {
-            logger.info("Indexing documents 4");
             indexDocuments(documents);
         }
     }
 
     private void indexDocuments(List<IndexDocument> indexDocuments) {
-        logger.info("Indexing documents 5");
         attempt(() -> indexBatch(indexDocuments)).orElse(this::logFailure);
     }
 
     private List<BulkResponse> logFailure(Failure<List<BulkResponse>> failure) {
-        logger.error("Bulk has failed: ", failure.getException());
+        logger.error(BULK_HAS_FAILED_MESSAGE, failure.getException());
         return List.of();
     }
 
     private List<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
         return indexingClient.batchInsert(indexDocuments.stream()).toList();
     }
+
+    /**
+     * Resource/Publication only should be validated when indexing. ImportCandidate
+     */
 
     private boolean isValid(IndexDocument document) {
         return !isResource(document) || validateResource(document);
