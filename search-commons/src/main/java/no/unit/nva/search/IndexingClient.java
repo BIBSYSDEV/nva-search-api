@@ -139,12 +139,11 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     private BulkResponse insertBatch(List<IndexDocument> bulk) throws IOException {
-        List<IndexRequest> indexRequests = bulk.stream()
+        var indexRequests = bulk.stream()
                                                .parallel()
                                                .map(IndexDocument::toIndexRequest)
-                                               .collect(Collectors.toList());
-
-        BulkRequest request = new BulkRequest();
+                                               .toList();
+        var request = new BulkRequest();
         indexRequests.forEach(request::add);
         request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
         request.waitForActiveShards(ActiveShardCount.ONE);
