@@ -177,11 +177,20 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private boolean isValid(IndexDocument document) {
+        return !isResource(document) || validateResource(document);
+
+    }
+
+    private boolean validateResource(IndexDocument document) {
         var validator = new AggregationsValidator(document.getResource());
-        if (!validator.isValid() && DEFAULT_INDEX.equals(document.getIndexName())) {
+        if (!validator.isValid()) {
             logger.info(validator.getReport());
         }
         return validator.isValid();
+    }
+
+    private static boolean isResource(IndexDocument document) {
+        return DEFAULT_INDEX.equals(document.getIndexName());
     }
 
     private Stream<String> extractIdentifiers(String value) {
