@@ -1,0 +1,322 @@
+{
+  "aggregations": {
+    "entityDescription": {
+      "docCount": 20,
+      "reference": {
+        "docCount": 20,
+        "publicationInstance": {
+          "docCount": 20,
+          "type": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": [
+              {
+                "key": "ReportResearch",
+                "docCount": 10
+              },
+              {
+                "key": "AcademicArticle",
+                "docCount": 9
+              },
+              {
+                "key": "AcademicChapter",
+                "docCount": 1
+              }
+            ]
+          }
+        },
+        "publicationContext": {
+          "docCount": 20,
+          "publisher": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": []
+          },
+          "id": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": []
+          }
+        }
+      },
+      "contributors": {
+        "docCount": 42,
+        "identity": {
+          "docCount": 42,
+          "id": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": [
+              {
+                "key": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+                "docCount": 2,
+                "name": {
+                  "docCountErrorUpperBound": 0,
+                  "sumOtherDocCount": 0,
+                  "buckets": [
+                    {
+                      "key": "Kjetil Møkkelgjerd",
+                      "docCount": 2
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "associatedArtifacts": {
+      "docCount": 20
+    },
+    "resourceOwner.ownerAffiliation": {
+      "docCountErrorUpperBound": 0,
+      "sumOtherDocCount": 0,
+      "buckets": [
+        {
+          "key": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0",
+          "docCount": 11
+        },
+        {
+          "key": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0",
+          "docCount": 7
+        },
+        {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "docCount": 2
+        }
+      ]
+    },
+    "resourceOwner.owner": {
+      "docCountErrorUpperBound": 0,
+      "sumOtherDocCount": 0,
+      "buckets": [
+        {
+          "key": "ngi@7452.0.0.0",
+          "docCount": 11
+        },
+        {
+          "key": "uio@185.90.0.0",
+          "docCount": 7
+        },
+        {
+          "key": "1136254@20754.0.0.0",
+          "docCount": 2
+        }
+      ]
+    },
+    "topLevelOrganizations": {
+      "docCount": 7,
+      "id": {
+        "docCountErrorUpperBound": 0,
+        "sumOtherDocCount": 0,
+        "buckets": [
+          {
+            "key": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+            "docCount": 2,
+            "labels": {
+              "docCount": 2,
+              "nn": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              },
+              "nb": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Forsvarets høgskole",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "en": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Norwegian Defence University College",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "sme": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              }
+            }
+          },
+          {
+            "key": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+            "docCount": 2,
+            "labels": {
+              "docCount": 2,
+              "nn": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              },
+              "nb": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "en": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Sikt - Norwegian Agency for Shared Services in Education and Research",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "sme": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              }
+            }
+          },
+          {
+            "key": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+            "docCount": 2,
+            "labels": {
+              "docCount": 2,
+              "nn": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Al-Iraqia University",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "nb": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Al-Iraqia University",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "en": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Al-Iraqia University",
+                    "docCount": 2
+                  }
+                ]
+              },
+              "sme": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              }
+            }
+          },
+          {
+            "key": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+            "docCount": 1,
+            "labels": {
+              "docCount": 1,
+              "nn": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Noregs teknisk-naturvitskaplege universitet",
+                    "docCount": 1
+                  }
+                ]
+              },
+              "nb": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Norges teknisk-naturvitenskapelige universitet",
+                    "docCount": 1
+                  }
+                ]
+              },
+              "en": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Norwegian University of Science and Technology",
+                    "docCount": 1
+                  }
+                ]
+              },
+              "sme": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "fundings": {
+      "docCount": 1,
+      "identifier": {
+        "docCountErrorUpperBound": 0,
+        "sumOtherDocCount": 0,
+        "buckets": [
+          {
+            "key": "NFR",
+            "docCount": 1,
+            "labels": {
+              "docCount": 1,
+              "nn": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              },
+              "nb": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Norges forskningsråd",
+                    "docCount": 1
+                  }
+                ]
+              },
+              "en": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [
+                  {
+                    "key": "Research Council of Norway (RCN)",
+                    "docCount": 1
+                  }
+                ]
+              },
+              "sme": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": []
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

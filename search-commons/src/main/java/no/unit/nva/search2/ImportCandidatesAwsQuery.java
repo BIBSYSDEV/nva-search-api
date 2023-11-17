@@ -2,8 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search2.QueryBuilderTools.hasPromotedPublications;
+import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
@@ -13,18 +12,16 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.model.ParameterKeyResource.CONTRIBUTOR_ID;
-import static no.unit.nva.search2.model.ParameterKeyResource.FIELDS;
-import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResource.FUNDING;
-import static no.unit.nva.search2.model.ParameterKeyResource.PAGE;
-import static no.unit.nva.search2.model.ParameterKeyResource.SEARCH_AFTER;
-import static no.unit.nva.search2.model.ParameterKeyResource.SEARCH_ALL;
-import static no.unit.nva.search2.model.ParameterKeyResource.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResource.SORT;
-import static no.unit.nva.search2.model.ParameterKeyResource.SORT_ORDER;
-import static no.unit.nva.search2.model.ParameterKeyResource.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.model.ParameterKeyResource.keyFromString;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FIELDS;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FROM;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.PAGE;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SEARCH_ALL;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SIZE;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT_ORDER;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.keyFromString;
 import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
 import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
 import com.google.common.net.MediaType;
@@ -40,7 +37,7 @@ import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.ParameterKey;
-import no.unit.nva.search2.model.ParameterKeyResource;
+import no.unit.nva.search2.model.ParameterKeyImportCandidate;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.ResourceSortKeys;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -55,9 +52,9 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource> {
+public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKeyImportCandidate> {
     
-    private ResourceAwsQuery() {
+    private ImportCandidatesAwsQuery() {
         super();
     }
     
@@ -65,7 +62,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
         return new Builder();
     }
     
-    public String doSearch(ResourceAwsClient queryClient) {
+    public String doSearch(ImportCandidatesAwsClient queryClient) {
         final var response = queryClient.doSearch(this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
@@ -90,11 +87,11 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
                 .build();
     }
     
-    public Stream<QueryBuilderSourceWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
+    public Stream<QueryBuilderSourceWrapper> createQueryBuilderStream() {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : boolQuery(userSettingsClient);
+                : boolQuery();
         
         var builder = new SearchSourceBuilder().query(queryBuilder);
         
@@ -105,7 +102,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
         }
         
         if (isFirstPage()) {
-            RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
+            IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
         }
         
         builder.size(getValue(SIZE).as());
@@ -118,11 +115,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
     /**
      * Creates a boolean query, with all the search parameters.
      *
-     * @param userSettingsClient UserSettingsClient
      * @return a BoolQueryBuilder
      */
     @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
-    private BoolQueryBuilder boolQuery(UserSettingsClient userSettingsClient) {
+    private BoolQueryBuilder boolQuery() {
         var bq = QueryBuilders.boolQuery();
         getOpenSearchParameters()
             .forEach((key, value) -> {
@@ -138,25 +134,8 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
                         case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
                     }
                 }
-                if (key.equals(CONTRIBUTOR_ID)) {
-                    addPromotedPublications(userSettingsClient, bq);
-                }
             });
         return bq;
-    }
-    
-    private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        var promotedPublications = userSettingsClient.doSearch(this).promotedPublications();
-        if (hasPromotedPublications(promotedPublications)) {
-            removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                bq.should(
-                    QueryBuilders
-                        .matchQuery("id", promotedPublications.get(i))
-                        .boost(3.14F + promotedPublications.size() - i)
-                );
-            }
-        }
     }
     
     @NotNull
@@ -187,13 +166,14 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
     }
     
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder extends OpenSearchQueryBuilder<ParameterKeyResource, ResourceAwsQuery> {
+    protected static class Builder
+        extends OpenSearchQueryBuilder<ParameterKeyImportCandidate, ImportCandidatesAwsQuery> {
         
         private static final String ALL = "all";
         public static final Integer EXPECTED_TWO_PARTS = 2;
         
         Builder() {
-            super(new ResourceAwsQuery());
+            super(new ImportCandidatesAwsQuery());
         }
         
         @Override
@@ -217,27 +197,15 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
-                case CREATED_BEFORE, CREATED_SINCE,
-                    MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
+                case PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
                 case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
-                    CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                    COLLABORATION_TYPE,
                     DOI, DOI_NOT, DOI_SHOULD,
-                    FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
-                    INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
-                    ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
-                    ORCID, ORCID_NOT, ORCID_SHOULD,
-                    PARENT_PUBLICATION, PARENT_PUBLICATION_SHOULD,
-                    PROJECT, PROJECT_NOT, PROJECT_SHOULD,
-                    PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
+                    OWNER, OWNER_NOT, OWNER_SHOULD,
+                    PUBLISHER,
                     SEARCH_ALL,
-                    TITLE, TITLE_NOT, TITLE_SHOULD,
-                    UNIT, UNIT_NOT, UNIT_SHOULD,
-                    USER, USER_NOT, USER_SHOULD -> query.setSearchFieldValue(qpKey, value);
-                case LANG -> {
-                    // ignore and continue
-                }
+                    TITLE, TITLE_NOT, TITLE_SHOULD -> query.setSearchFieldValue(qpKey, value);
                 default -> invalidKeys.add(key);
             }
         }
@@ -254,8 +222,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
                 }
                 query.removeKey(PAGE);
             }
-            query.getOptional(FUNDING)
-                .ifPresent(funding -> query.setSearchFieldValue(FUNDING, funding.replaceAll(COLON, COMMA)));
         }
         
         @Override
@@ -334,7 +300,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
         }
         
         private boolean keyIsValid(String key) {
-            return keyFromString(key) != ParameterKeyResource.INVALID;
+            return keyFromString(key) != ParameterKeyImportCandidate.INVALID;
         }
     }
 }

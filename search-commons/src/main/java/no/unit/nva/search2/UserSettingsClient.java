@@ -1,14 +1,13 @@
 package no.unit.nva.search2;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
+import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
+import static no.unit.nva.search2.model.ParameterKeyResource.CONTRIBUTOR_ID;
+import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
-import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.UserSettings;
-import no.unit.nva.search2.model.OpenSearchClient;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,14 +15,13 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Stream;
-
-import static java.net.HttpURLConnection.HTTP_OK;
-import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
-import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
-import static nva.commons.core.attempt.Try.attempt;
+import no.unit.nva.search.CachedJwtProvider;
+import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.UserSettings;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);

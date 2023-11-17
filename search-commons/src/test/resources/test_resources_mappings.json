@@ -4,9 +4,6 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "keyword"
-        },
         "labels": {
           "include_in_parent": true,
           "type": "nested"
@@ -23,20 +20,7 @@
           "properties": {
             "identity": {
               "type": "nested",
-              "include_in_parent": true,
-              "properties": {
-                "id": {
-                  "type": "keyword"
-                },
-                "name": {
-                  "type": "text",
-                  "fields": {
-                    "keyword": {
-                      "type": "keyword"
-                    }
-                  }
-                }
-              }
+              "include_in_parent": true
             },
             "affiliations": {
               "type": "nested",
@@ -45,15 +29,6 @@
                 "labels": {
                   "type": "nested",
                   "include_in_parent": true
-                },
-                "id": {
-                  "type": "text",
-                  "fields": {
-                    "keyword": {
-                      "ignore_above": 256,
-                      "type": "keyword"
-                    }
-                  }
                 }
               }
             }
@@ -67,8 +42,9 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "type": {
-                  "type": "keyword"
+                "pages": {
+                  "type": "nested",
+                  "include_in_parent": true
                 }
               }
             },
@@ -76,26 +52,9 @@
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "identifier": {
-                  "type": "keyword"
-                },
-                "name": {
-                  "type": "keyword"
-                },
                 "publisher": {
                   "type": "nested",
-                  "include_in_parent": true,
-                  "properties": {
-                    "id": {
-                      "type": "keyword"
-                    },
-                    "identifier": {
-                      "type": "keyword"
-                    },
-                    "name": {
-                      "type": "keyword"
-                    }
-                  }
+                  "include_in_parent": true
                 }
               }
             }
@@ -107,34 +66,10 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "ignore_above": 256,
-              "type": "keyword"
-            }
-          }
-        },
-        "identifier": {
-          "type": "keyword"
-        },
         "source": {
           "type": "nested",
           "include_in_parent": true,
           "properties": {
-            "identifier": {
-              "type": "keyword"
-            },
-            "id": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "ignore_above": 256,
-                  "type": "keyword"
-                }
-              }
-            },
             "labels": {
               "type": "nested",
               "include_in_parent": true
@@ -157,15 +92,7 @@
     },
     "associatedArtifacts": {
       "type": "nested",
-      "include_in_parent": true,
-      "properties": {
-        "identifier": {
-          "type": "keyword"
-        },
-        "name": {
-          "type": "keyword"
-        }
-      }
+      "include_in_parent": true
     }
   }
 }

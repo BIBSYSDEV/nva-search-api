@@ -5,7 +5,6 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
@@ -175,11 +174,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     /**
      * returns T.VALID_LUCENE_PARAMETER_KEYS
      */
-    protected Collection<String> validKeys() {
-        return VALID_LUCENE_PARAMETER_KEYS.stream()
-                   .map(ParameterKey::fieldName)
-                   .toList();
-    }
+    protected abstract Collection<String> validKeys();
 
     @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {

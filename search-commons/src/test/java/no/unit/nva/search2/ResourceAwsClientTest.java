@@ -2,10 +2,10 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ParameterKeyResource.CATEGORY;
+import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResource.SIZE;
+import static no.unit.nva.search2.model.ParameterKeyResource.SORT;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
