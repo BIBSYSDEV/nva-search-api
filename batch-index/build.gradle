@@ -41,4 +41,5 @@ test {
     environment "EVENT_BUS", "someBus"
     environment "TOPIC", "someTopic"
     environment "KEY_BATCHES_BUCKET", "batchesBucket"
+    environment "MAX_PAYLOAD", "3291456"
 }

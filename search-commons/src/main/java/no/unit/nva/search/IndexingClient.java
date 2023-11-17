@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import no.unit.nva.commons.json.JsonUtils;
@@ -27,6 +28,7 @@ import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
 import org.opensearch.action.delete.DeleteResponse;
+import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.support.ActiveShardCount;
 import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
@@ -137,11 +139,12 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     private BulkResponse insertBatch(List<IndexDocument> bulk) throws IOException {
-        var indexRequests = bulk.stream()
+        List<IndexRequest> indexRequests = bulk.stream()
                                                .parallel()
                                                .map(IndexDocument::toIndexRequest)
-                                               .toList();
-        var request = new BulkRequest();
+                                               .collect(Collectors.toList());
+
+        BulkRequest request = new BulkRequest();
         indexRequests.forEach(request::add);
         request.setRefreshPolicy(RefreshPolicy.WAIT_UNTIL);
         request.waitForActiveShards(ActiveShardCount.ONE);

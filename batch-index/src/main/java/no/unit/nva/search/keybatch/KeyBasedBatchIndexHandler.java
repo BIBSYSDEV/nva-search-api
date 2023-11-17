@@ -36,13 +36,16 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
     public static final String LINE_BREAK = "\n";
-    public static final int MAX_PAYLOAD = 3_291_456;
     public static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
-    private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
-    private static final String KEY_BATCHES_BUCKET = new Environment().readEnv("KEY_BATCHES_BUCKET");
-    public static final String EVENT_BUS = new Environment().readEnv("EVENT_BUS");
-    public static final String TOPIC = new Environment().readEnv("TOPIC");
+    public static final Environment ENVIRONMENT = new Environment();
+    public static final String DEFAULT_PAYLOAD = "3_291_456";
+    public static final int MAX_PAYLOAD =
+        Integer.parseInt(new Environment().readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
+    private static final String RESOURCES_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
+    private static final String KEY_BATCHES_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
+    public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
+    public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
     public static final String DEFAULT_INDEX = "resources";
     private final IndexingClient indexingClient;
     private final S3Client s3ResourcesClient;
@@ -139,12 +142,14 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
         for (IndexDocument indexDocument : indexDocuments) {
+            logger.info("Indexing documents 1");
             var currentFileSize = indexDocument.toJsonString().getBytes(StandardCharsets.UTF_8).length;
             if (totalSize + currentFileSize < MAX_PAYLOAD) {
+            logger.info("Indexing documents 2");
                 documents.add(indexDocument);
                 totalSize += currentFileSize;
             } else {
-                logger.info("Indexing documents 1");
+                logger.info("Indexing documents 3");
                 indexDocuments(documents);
                 totalSize = 0;
                 documents.clear();
@@ -152,13 +157,13 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
             }
         }
         if (!documents.isEmpty()) {
-            logger.info("Indexing documents 2");
+            logger.info("Indexing documents 4");
             indexDocuments(documents);
         }
     }
 
     private void indexDocuments(List<IndexDocument> indexDocuments) {
-        logger.info("Indexing documents 3");
+        logger.info("Indexing documents 5");
         attempt(() -> indexBatch(indexDocuments)).orElse(this::logFailure);
     }
 
