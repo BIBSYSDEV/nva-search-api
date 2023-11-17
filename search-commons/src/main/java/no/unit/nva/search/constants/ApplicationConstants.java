@@ -115,12 +115,6 @@ public final class ApplicationConstants {
                                        .size(DEFAULT_AGGREGATION_SIZE));
     }
 
-    private static NestedAggregationBuilder generateTypeAggregation() {
-        return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
-                   .subAggregation(generateNestedPublicationInstanceAggregation()
-                                       .subAggregation(generatePublicationInstanceTypeAggregation()));
-    }
-
     private static NestedAggregationBuilder generateReferenceAggregation() {
         return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
                    .subAggregation(generateNestedPublicationInstanceAggregation()
@@ -174,9 +168,8 @@ public final class ApplicationConstants {
                    .subAggregation(generateReferenceAggregation());
     }
 
-    private static NestedAggregationBuilder generateInstanceTypeAggregation() {
-        return new NestedAggregationBuilder(TYPE, ENTITY_DESCRIPTION)
-                   .subAggregation(generateTypeAggregation());
+    private static TermsAggregationBuilder generateInstanceTypeAggregation() {
+        return  generateSimpleAggregation(TYPE, jsonPath(PUBLICATION_INSTANCE, TYPE));
     }
 
     private static NestedAggregationBuilder generateFundingSourceAggregation() {
