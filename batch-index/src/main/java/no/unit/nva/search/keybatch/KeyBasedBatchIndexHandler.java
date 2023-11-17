@@ -173,7 +173,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     /**
-     * Resource/Publication only should be validated when indexing. ImportCandidate
+     * Resources/Publications only should be validated when indexing. ImportCandidates are not validated.
      */
 
     private boolean isValid(IndexDocument document) {

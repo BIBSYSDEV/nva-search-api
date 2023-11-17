@@ -104,10 +104,10 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         return nonNull(event) && nonNull(event.getStartMarker());
     }
 
-    private static ListObjectsV2Request createRequest(String startMarker, String s3Location) {
+    private static ListObjectsV2Request createRequest(String startMarker, String location) {
         return ListObjectsV2Request.builder()
                    .bucket(INPUT_BUCKET)
-                   .prefix(s3Location + DELIMITER)
+                   .prefix(location + DELIMITER)
                    .delimiter(DELIMITER)
                    .startAfter(startMarker)
                    .maxKeys(MAX_KEYS)
