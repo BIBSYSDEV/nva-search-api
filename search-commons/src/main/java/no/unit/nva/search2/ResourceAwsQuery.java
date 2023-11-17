@@ -228,7 +228,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
                     INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
                     ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
                     ORCID, ORCID_NOT, ORCID_SHOULD,
-                    PARENT_PUBLICATION, PARENT_PUBLICATION_SHOULD,
                     PROJECT, PROJECT_NOT, PROJECT_SHOULD,
                     PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
                     SEARCH_ALL,
