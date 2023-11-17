@@ -1,36 +1,34 @@
 package no.unit.nva.search2;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
+import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
+import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
+import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
+import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
-import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.UserSettings;
-import no.unit.nva.search2.model.OpenSearchClient;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Stream;
-
-import static java.net.HttpURLConnection.HTTP_OK;
-import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
-import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
-import static nva.commons.core.attempt.Try.attempt;
+import no.unit.nva.search.CachedJwtProvider;
+import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.UserSettings;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
+
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final HttpResponse.BodyHandler<String> bodyHandler;
-
 
     public UserSettingsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
@@ -43,32 +41,29 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
     public UserSettings doSearch(ResourceAwsQuery query) {
         return
             createQueryBuilderStream(query)
-                .map(this::populateSearchRequest)
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
                 .findFirst()
                 .orElse(new UserSettings(Collections.emptyList()));
-}
+    }
 
     private Stream<String> createQueryBuilderStream(ResourceAwsQuery query) {
         return query.getOptional(CONTRIBUTOR_ID).stream();
     }
 
-    private URI populateSearchRequest(String contributorId) {
-        return UriWrapper.fromHost(readApiHost())
+    @JacocoGenerated
+    private HttpRequest createRequest(String contributorId) {
+        logger.info(contributorId);
+        var userSettingId = UriWrapper.fromHost(readApiHost())
             .addChild("person-preferences")
             .addChild(contributorId)
             .getUri();
-    }
-
-    @JacocoGenerated
-    private HttpRequest createRequest(URI userSettingId) {
-        logger.info(userSettingId.toString());
         return HttpRequest
             .newBuilder(userSettingId)
             .headers(
                 ACCEPT, MediaType.JSON_UTF_8.toString(),
+                CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
                 AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
             .GET().build();
     }
@@ -86,8 +81,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
 
         var settings = attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class));
         return settings.isSuccess()
-            ? settings.get()
-            : new UserSettings(Collections.emptyList());
+                   ? settings.get()
+                   : new UserSettings(Collections.emptyList());
     }
-
 }

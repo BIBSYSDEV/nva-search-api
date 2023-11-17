@@ -19,15 +19,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
-import javax.net.ssl.SSLSession;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingClient;
@@ -37,7 +31,6 @@ import no.unit.nva.search.models.IndexDocument;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
@@ -316,52 +309,5 @@ class ResourceAwsClientTest {
 
     private static String generateIndexName() {
         return "resources";
-    }
-
-
-    @NotNull
-    public static HttpResponse<Object> mockedHttpResponse(String filename) {
-        return new HttpResponse<>() {
-            @Override
-            public int statusCode() {
-                return 200;
-            }
-
-            @Override
-            public HttpRequest request() {
-                return null;
-            }
-
-            @Override
-            public Optional<HttpResponse<Object>> previousResponse() {
-                return Optional.empty();
-            }
-
-            @Override
-            public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
-                                      (s, s2) -> true);
-            }
-
-            @Override
-            public String body() {
-                return stringFromResources(Path.of(filename));
-            }
-
-            @Override
-            public Optional<SSLSession> sslSession() {
-                return Optional.empty();
-            }
-
-            @Override
-            public URI uri() {
-                return null;
-            }
-
-            @Override
-            public HttpClient.Version version() {
-                return null;
-            }
-        };
     }
 }

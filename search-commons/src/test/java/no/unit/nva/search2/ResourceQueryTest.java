@@ -44,16 +44,15 @@ class ResourceQueryTest {
         var uri2 =
             UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
                 .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
-
-        logger.info(resourceParameters
-            .toNvaSearchApiRequestParameter()
-            .entrySet().stream()
-            .map(entry -> entry.getKey() + "=" + entry.getValue())
-            .collect(Collectors.joining("&")));
+        
+        logger.info(
+            resourceParameters.toNvaSearchApiRequestParameter()
+                .entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&")));
         logger.info(uri2.toString());
         assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
-
 
     @ParameterizedTest
     @MethodSource("uriDatesProvider")
@@ -102,40 +101,34 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
-        var resourceParameters =
-            ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT)
-                .build();
+        var resourceParameters = ResourceAwsQuery.builder()
+            .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE, SORT)
+            .build();
         assertNotNull(resourceParameters.getValue(FROM).<Long>as());
         assertNull(resourceParameters.getValue(PAGE).<Long>as());
         assertNotNull(resourceParameters.getValue(SORT).as());
-
     }
 
     @ParameterizedTest
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
-        assertThrows(BadRequestException.class,
-            () -> ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, DOI)
-                .build()
-                      .getOpenSearchUri());
+        assertThrows(BadRequestException.class, () -> ResourceAwsQuery.builder()
+            .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE, DOI)
+            .build()
+            .getOpenSearchUri());
     }
-
 
     @ParameterizedTest
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
-        assertThrows(BadRequestException.class,
-            () -> ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                      .getOpenSearchUri());
+        assertThrows(BadRequestException.class, () -> ResourceAwsQuery.builder()
+            .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .build()
+            .getOpenSearchUri());
     }
-
 
     static Stream<URI> uriProvider() {
         return Stream.of(
@@ -144,11 +137,11 @@ class ResourceQueryTest {
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
             URI.create("https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
             URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
-                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
-                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+                       + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                       + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
             URI.create("https://example.com/?CONTRIBUTOR_NOT="
-                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
-                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+                       + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
+                       + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
             URI.create("https://example.com/?fields=all"),
             URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
             URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),
@@ -162,7 +155,7 @@ class ResourceQueryTest {
                 + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
             URI.create("https://example.com/?published_before=2020-01-01&lang=en&user=1%2023"),
             URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
-                + "%20Eplekjekk"));
+                       + "%20Eplekjekk"));
     }
 
     static Stream<URI> uriSortingProvider() {

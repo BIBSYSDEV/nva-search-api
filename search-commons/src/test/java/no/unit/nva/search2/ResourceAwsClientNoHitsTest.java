@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.ResourceAwsClientTest.mockedHttpResponse;
+import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
 import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
 import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
@@ -39,7 +39,6 @@ class ResourceAwsClientNoHitsTest {
             .thenReturn(response);
     }
 
-
     @ParameterizedTest
     @MethodSource("uriProvider")
     void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) throws ApiGatewayException {
@@ -53,7 +52,6 @@ class ResourceAwsClientNoHitsTest {
 
         assertNotNull(pagedSearchResourceDto);
     }
-
 
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
@@ -74,7 +72,6 @@ class ResourceAwsClientNoHitsTest {
         assertEquals(0L, pagedSearchResourceDto.totalHits());
         assertEquals(0, pagedSearchResourceDto.hits().size());
     }
-
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
