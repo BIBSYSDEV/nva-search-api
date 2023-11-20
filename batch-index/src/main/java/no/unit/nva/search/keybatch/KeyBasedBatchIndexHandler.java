@@ -3,8 +3,6 @@ package no.unit.nva.search.keybatch;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.BatchIndexingConstants.defaultS3Client;
 import static no.unit.nva.search.EmitEventUtils.MANDATORY_UNUSED_SUBTOPIC;
-import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.EVENT_BUS;
-import static no.unit.nva.search.keybatch.StartKeyBasedBatchHandler.TOPIC;
 import static nva.commons.core.attempt.Try.attempt;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.nio.charset.StandardCharsets;
@@ -38,11 +36,19 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
     public static final String LINE_BREAK = "\n";
-    public static final int MAX_PAYLOAD = 3_291_456;
     public static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
-    private static final String RESOURCES_BUCKET = new Environment().readEnv("PERSISTED_RESOURCES_BUCKET");
-    private static final String KEY_BATCHES_BUCKET = new Environment().readEnv("KEY_BATCHES_BUCKET");
+    public static final Environment ENVIRONMENT = new Environment();
+    public static final String DEFAULT_PAYLOAD = "3291456";
+    public static final int MAX_PAYLOAD =
+        Integer.parseInt(new Environment().readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
+    private static final String RESOURCES_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
+    private static final String KEY_BATCHES_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
+    public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
+    public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
+    public static final String DEFAULT_INDEX = "resources";
+    public static final String PROCESSING_BATCH_MESSAGE = "Processing batch: {}";
+    public static final String BULK_HAS_FAILED_MESSAGE = "Bulk has failed: ";
     private final IndexingClient indexingClient;
     private final S3Client s3ResourcesClient;
     private final S3Client s3BatchesClient;
@@ -71,10 +77,11 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     protected Void processInput(KeyBatchRequestEvent input, AwsEventBridgeEvent<KeyBatchRequestEvent> event,
                                 Context context) {
         var startMarker = getStartMarker(input);
+        var location = getLocation(input);
         var batchResponse = fetchSingleBatch(startMarker);
 
         if (batchResponse.isTruncated()) {
-            sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context));
+            sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context, location));
         }
 
         var batchKey = batchResponse.contents().get(0).key();
@@ -87,10 +94,15 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return null;
     }
 
-    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context) {
+    private String getLocation(KeyBatchRequestEvent input) {
+        return nonNull(input) && nonNull(input.getLocation()) ? input.getLocation() : null;
+    }
+
+    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context,
+                                                               String location) {
         return PutEventsRequestEntry.builder()
                    .eventBusName(EVENT_BUS)
-                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC).toJsonString())
+                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC, location).toJsonString())
                    .detailType(MANDATORY_UNUSED_SUBTOPIC)
                    .source(KeyBasedBatchIndexHandler.class.getName())
                    .resources(context.getInvokedFunctionArn())
@@ -105,7 +117,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
 
     private String extractContent(String key) {
         var s3Driver = new S3Driver(s3BatchesClient, KEY_BATCHES_BUCKET);
-        logger.info("Processing batch: {}", key);
+        logger.info(PROCESSING_BATCH_MESSAGE, key);
         return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
     }
 
@@ -152,7 +164,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private List<BulkResponse> logFailure(Failure<List<BulkResponse>> failure) {
-        logger.error("Bulk has failed: ", failure.getException());
+        logger.error(BULK_HAS_FAILED_MESSAGE, failure.getException());
         return List.of();
     }
 
@@ -160,12 +172,25 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return indexingClient.batchInsert(indexDocuments.stream()).toList();
     }
 
+    /**
+     * Resources/Publications only should be validated when indexing. ImportCandidates are not validated.
+     */
+
     private boolean isValid(IndexDocument document) {
+        return !isResource(document) || validateResource(document);
+
+    }
+
+    private boolean validateResource(IndexDocument document) {
         var validator = new AggregationsValidator(document.getResource());
         if (!validator.isValid()) {
             logger.info(validator.getReport());
         }
         return validator.isValid();
+    }
+
+    private static boolean isResource(IndexDocument document) {
+        return DEFAULT_INDEX.equals(document.getIndexName());
     }
 
     private Stream<String> extractIdentifiers(String value) {
