@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public enum ResourceSortKeys {
+public enum SortKeyResources {
     INVALID(""),
     CATEGORY("entityDescription.reference.publicationInstance.type.keyword"),
     CREATED_DATE("createdDate"),
@@ -21,21 +21,21 @@ public enum ResourceSortKeys {
     UNIT_ID("entityDescription.contributors.affiliations.id.keyword"),
     USER("(?i)(user)|(owner)", "resourceOwner.owner.keyword");
 
-    public static final Set<ResourceSortKeys> VALID_SORT_PARAMETER_KEYS =
-        Arrays.stream(ResourceSortKeys.values())
-            .sorted(ResourceSortKeys::compareAscending)
+    public static final Set<SortKeyResources> VALID_SORT_PARAMETER_KEYS =
+        Arrays.stream(SortKeyResources.values())
+            .sorted(SortKeyResources::compareAscending)
             .skip(1)    // skip INVALID
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
     private final String fieldName;
 
-    ResourceSortKeys(String pattern, String fieldName) {
+    SortKeyResources(String pattern, String fieldName) {
         this.keyValidationRegEx = pattern;
         this.fieldName = fieldName;
     }
 
-    ResourceSortKeys(String fieldName) {
+    SortKeyResources(String fieldName) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.fieldName = fieldName;
     }
@@ -48,27 +48,27 @@ public enum ResourceSortKeys {
         return fieldName;
     }
 
-    public static ResourceSortKeys fromSortKey(String keyName) {
-        var result = Arrays.stream(ResourceSortKeys.values())
-            .filter(ResourceSortKeys.equalTo(keyName))
+    public static SortKeyResources fromSortKey(String keyName) {
+        var result = Arrays.stream(SortKeyResources.values())
+            .filter(SortKeyResources.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
 
-    public static Predicate<ResourceSortKeys> equalTo(String name) {
+    public static Predicate<SortKeyResources> equalTo(String name) {
         return key -> name.matches(key.getKeyPattern());
     }
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ResourceSortKeys::name)
+            .map(SortKeyResources::name)
             .map(String::toLowerCase)
             .toList();
     }
 
-    private static int compareAscending(ResourceSortKeys key1, ResourceSortKeys key2) {
+    private static int compareAscending(SortKeyResources key1, SortKeyResources key2) {
         return key1.ordinal() - key2.ordinal();
     }
 

@@ -1,16 +1,16 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
-import static no.unit.nva.search2.model.ResourceParameterKey.CREATED_BEFORE;
-import static no.unit.nva.search2.model.ResourceParameterKey.DOI;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.MODIFIED_BEFORE;
-import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.model.ResourceParameterKey.PUBLISHED_BEFORE;
-import static no.unit.nva.search2.model.ResourceParameterKey.PUBLISHED_SINCE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ParameterKeyResources.CATEGORY;
+import static no.unit.nva.search2.model.ParameterKeyResources.CREATED_BEFORE;
+import static no.unit.nva.search2.model.ParameterKeyResources.DOI;
+import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResources.MODIFIED_BEFORE;
+import static no.unit.nva.search2.model.ParameterKeyResources.PAGE;
+import static no.unit.nva.search2.model.ParameterKeyResources.PUBLISHED_BEFORE;
+import static no.unit.nva.search2.model.ParameterKeyResources.PUBLISHED_SINCE;
+import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
+import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;

@@ -41,16 +41,16 @@ import org.slf4j.LoggerFactory;
 public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
-    protected final transient Map<K, String> queryParameters;
-    protected final transient Map<K, String> luceneParameters;
+    protected final transient Map<K, String> pageParameters;
+    protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
     private transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
 
     protected OpenSearchQuery() {
-        luceneParameters = new ConcurrentHashMap<>();
-        queryParameters = new ConcurrentHashMap<>();
+        searchParameters = new ConcurrentHashMap<>();
+        pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
         mediaType = MediaType.JSON_UTF_8;
     }
@@ -68,7 +68,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     public Map<K, String> getOpenSearchParameters() {
-        return luceneParameters;
+        return searchParameters;
     }
 
 
@@ -79,7 +79,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public Map<String, String> toNvaSearchApiRequestParameter() {
         var results = new LinkedHashMap<String, String>();
-        Stream.of(luceneParameters.entrySet(), queryParameters.entrySet())
+        Stream.of(searchParameters.entrySet(), pageParameters.entrySet())
             .flatMap(Set::stream)
             .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
             .forEach(entry -> results.put(toNvaSearchApiKey(entry), entry.getValue().replace(SPACE, PLUS)));
@@ -95,33 +95,33 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public AsType getValue(K key) {
         return new AsType(
-            luceneParameters.containsKey(key)
-                ? luceneParameters.get(key)
-                : queryParameters.get(key),
+            searchParameters.containsKey(key)
+                ? searchParameters.get(key)
+                : pageParameters.get(key),
             key
         );
     }
 
     public Optional<String> getOptional(K key) {
-        return Optional.ofNullable(luceneParameters.containsKey(key)
-                   ? luceneParameters.get(key)
-                   : queryParameters.get(key));
+        return Optional.ofNullable(searchParameters.containsKey(key)
+                                       ? searchParameters.get(key)
+                                       : pageParameters.get(key));
     }
 
     public String removeKey(K key) {
-        return luceneParameters.containsKey(key)
-                   ? luceneParameters.remove(key)
-                   : queryParameters.remove(key);
+        return searchParameters.containsKey(key)
+            ? searchParameters.remove(key)
+            : pageParameters.remove(key);
     }
 
     public boolean isPresent(K key) {
-        return luceneParameters.containsKey(key) || queryParameters.containsKey(key);
+        return searchParameters.containsKey(key) || pageParameters.containsKey(key);
     }
 
 
     @JacocoGenerated
     public boolean hasNoSearchValue() {
-        return luceneParameters.isEmpty();
+        return searchParameters.isEmpty();
     }
 
     /**
@@ -133,7 +133,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     public void setSearchFieldValue(K key, String value) {
         if (nonNull(value)) {
             var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
-            luceneParameters.put(key, decodedValue);
+            searchParameters.put(key, decodedValue);
         }
     }
 
@@ -145,7 +145,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
      */
     public void setQueryValue(K key, String value) {
         if (nonNull(value)) {
-            queryParameters.put(key, key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value);
+            pageParameters.put(key, key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value);
         }
     }
 

@@ -3,14 +3,13 @@ package no.unit.nva.search2.model;
 import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.Nullable;
 

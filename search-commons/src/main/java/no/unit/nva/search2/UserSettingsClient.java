@@ -6,7 +6,7 @@ import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
-import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
+import static no.unit.nva.search2.model.ParameterKeyResources.CONTRIBUTOR_ID;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.http.HttpClient;
@@ -23,7 +23,7 @@ import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
+public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceAwsQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
     private final CachedJwtProvider jwtProvider;

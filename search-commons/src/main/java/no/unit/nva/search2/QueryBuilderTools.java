@@ -7,8 +7,8 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResources.SEARCH_AFTER;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.ParameterKey;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.ResourceSortKeys;
+import no.unit.nva.search2.model.ParameterKeyResources;
+import no.unit.nva.search2.model.SortKeyResources;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +34,8 @@ import org.opensearch.search.sort.SortOrder;
 public final class QueryBuilderTools {
     
     private static final Integer SINGLE_FIELD = 1;
-    
-    static void addKeywordQuery(ResourceParameterKey key, String value, BoolQueryBuilder bq) {
+
+    static void addKeywordQuery(ParameterKeyResources key, String value, BoolQueryBuilder bq) {
         final var searchFields = key.searchFields().toArray(String[]::new);
         final var values = Arrays.stream(value.split(COMMA))
             .map(String::trim)
@@ -59,8 +59,8 @@ public final class QueryBuilderTools {
             }
         });
     }
-    
-    static QueryBuilder buildQuery(ResourceParameterKey key, String value) {
+
+    static QueryBuilder buildQuery(ParameterKeyResources key, String value) {
         final var values = value.replace(COMMA, " ");
         final var searchFields =
             key.searchFields().stream()
@@ -81,8 +81,8 @@ public final class QueryBuilderTools {
             .boost(key.fieldBoost())
             .operator(operatorByKey(key));
     }
-    
-    static RangeQueryBuilder rangeQuery(ResourceParameterKey key, String value) {
+
+    static RangeQueryBuilder rangeQuery(ParameterKeyResources key, String value) {
         final var searchField = key.searchFields().toArray()[0].toString();
         
         return switch (key.searchOperator()) {
@@ -91,8 +91,8 @@ public final class QueryBuilderTools {
             case LESS_THAN -> QueryBuilders.rangeQuery(searchField).lt(value);
         };
     }
-    
-    static Operator operatorByKey(ResourceParameterKey key) {
+
+    static Operator operatorByKey(ParameterKeyResources key) {
         return switch (key.searchOperator()) {
             case MUST -> Operator.AND;
             case SHOULD, MUST_NOT -> Operator.OR;
@@ -103,7 +103,7 @@ public final class QueryBuilderTools {
     @JacocoGenerated
     static Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
-        var fieldName = ResourceSortKeys.fromSortKey(strings[0]).getFieldName();
+        var fieldName = SortKeyResources.fromSortKey(strings[0]).getFieldName();
         return new Tuple<>(fieldName, sortOrder);
     }
     
@@ -112,8 +112,8 @@ public final class QueryBuilderTools {
         return ALL.equals(field) || isNull(field)
             ? ASTERISK.split(COMMA)
             : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameterKey::keyFromString)
-                .map(ResourceParameterKey::searchFields)
+                .map(ParameterKeyResources::keyFromString)
+                .map(ParameterKeyResources::searchFields)
                 .flatMap(Collection::stream)
                 .toArray(String[]::new);
     }

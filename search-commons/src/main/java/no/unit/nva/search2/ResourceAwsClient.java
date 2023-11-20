@@ -21,7 +21,7 @@ import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceAwsClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceAwsQuery> {
+public class ResourceAwsClient extends OpenSearchClient<OpenSearchSwsResponse, ResourceAwsQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceAwsClient.class);
 

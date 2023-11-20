@@ -2,10 +2,9 @@ package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
+import static no.unit.nva.search2.model.ParameterKeyResources.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;

@@ -1,16 +1,12 @@
 package no.unit.nva.search2.constant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.common.net.MediaType;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
-
-import com.google.common.net.MediaType;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search2.model.ResourceSortKeys;
-
-import java.net.URI;
-
+import no.unit.nva.search2.model.SortKeyResources;
 import nva.commons.apigateway.MediaTypes;
 import nva.commons.core.JacocoGenerated;
 
@@ -19,7 +15,7 @@ public final class Defaults {
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final String DEFAULT_OFFSET = "0";
     public static final String DEFAULT_VALUE_PER_PAGE = "15";
-    public static final String DEFAULT_VALUE_SORT = ResourceSortKeys.PUBLISHED_DATE
+    public static final String DEFAULT_VALUE_SORT = SortKeyResources.PUBLISHED_DATE
         .name().toLowerCase(Locale.getDefault());
     public static final String DEFAULT_VALUE_SORT_ORDER = "desc";
     public static final URI PAGINATED_SEARCH_RESULT_CONTEXT

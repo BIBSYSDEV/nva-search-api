@@ -12,27 +12,27 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 
-public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>> {
+public abstract class OpenSearchClient<R, Q extends OpenSearchQuery<?>> {
 
-    R doSearch(Q query);
+    public abstract R doSearch(Q query);
 
     @NotNull
     @JacocoGenerated
-    static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
+    public static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
         return Stream.of(
             secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
     }
 
     @NotNull
     @JacocoGenerated
-    static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
+    public static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
         var uri = URI.create(readSearchInfrastructureAuthUri());
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
 
     @NotNull
     @JacocoGenerated
-    static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
+    public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
         return
             getUsernamePasswordStream(reader)
                 .map(OpenSearchClient::getCognitoCredentials)

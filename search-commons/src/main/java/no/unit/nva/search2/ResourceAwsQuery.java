@@ -13,19 +13,19 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
-import static no.unit.nva.search2.model.ResourceParameterKey.FIELDS;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.FUNDING;
-import static no.unit.nva.search2.model.ResourceParameterKey.PAGE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_AFTER;
-import static no.unit.nva.search2.model.ResourceParameterKey.SEARCH_ALL;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT_ORDER;
-import static no.unit.nva.search2.model.ResourceParameterKey.keyFromString;
-import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
-import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
+import static no.unit.nva.search2.model.ParameterKeyResources.CONTRIBUTOR_ID;
+import static no.unit.nva.search2.model.ParameterKeyResources.FIELDS;
+import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResources.FUNDING;
+import static no.unit.nva.search2.model.ParameterKeyResources.PAGE;
+import static no.unit.nva.search2.model.ParameterKeyResources.SEARCH_AFTER;
+import static no.unit.nva.search2.model.ParameterKeyResources.SEARCH_ALL;
+import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
+import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
+import static no.unit.nva.search2.model.ParameterKeyResources.SORT_ORDER;
+import static no.unit.nva.search2.model.ParameterKeyResources.keyFromString;
+import static no.unit.nva.search2.model.SortKeyResources.INVALID;
+import static no.unit.nva.search2.model.SortKeyResources.validSortKeys;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
@@ -38,9 +38,9 @@ import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchResourceDto;
 import no.unit.nva.search2.model.ParameterKey;
+import no.unit.nva.search2.model.ParameterKeyResources;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
-import no.unit.nva.search2.model.ResourceParameterKey;
-import no.unit.nva.search2.model.ResourceSortKeys;
+import no.unit.nva.search2.model.SortKeyResources;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey> {
+public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResources> {
     
     private ResourceAwsQuery() {
         super();
@@ -92,7 +92,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : boolQuery(userSettingsClient);
+                : boolQuery();
+
+        if (isPresent(CONTRIBUTOR_ID)) {
+            assert queryBuilder instanceof BoolQueryBuilder;
+            addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
+        }
         
         var builder = new SearchSourceBuilder().query(queryBuilder);
         
@@ -116,11 +121,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     /**
      * Creates a boolean query, with all the search parameters.
      *
-     * @param userSettingsClient UserSettingsClient
      * @return a BoolQueryBuilder
      */
     @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
-    private BoolQueryBuilder boolQuery(UserSettingsClient userSettingsClient) {
+    private BoolQueryBuilder boolQuery() {
         var bq = QueryBuilders.boolQuery();
         getOpenSearchParameters()
             .forEach((key, value) -> {
@@ -135,9 +139,6 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                         case SHOULD -> bq.should(QueryBuilderTools.buildQuery(key, value));
                         case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
                     }
-                }
-                if (key.equals(CONTRIBUTOR_ID)) {
-                    addPromotedPublications(userSettingsClient, bq);
                 }
             });
         return bq;
@@ -181,10 +182,10 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
     }
     
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder extends OpenSearchQueryBuilder<ResourceParameterKey, ResourceAwsQuery> {
-        
-        private static final String ALL = "all";
-        public static final Integer EXPECTED_TWO_PARTS = 2;
+    protected static class Builder extends OpenSearchQueryBuilder<ParameterKeyResources, ResourceAwsQuery> {
+
+        protected static final String ALL = "all";
+        protected static final Integer EXPECTED_TWO_PARTS = 2;
         
         Builder() {
             super(new ResourceAwsQuery());
@@ -287,15 +288,15 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
             }
             
             var sortField = sortKeyParts[0];
-            var sortKey = ResourceSortKeys.fromSortKey(sortField);
+            var sortKey = SortKeyResources.fromSortKey(sortField);
             
             if (sortKey == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys()));
             }
             return sortKey.name().toLowerCase(Locale.getDefault()) + COLON + sortOrder;
         }
-        
-        private String getSortOrder(String... sortKeyParts) {
+
+        protected String getSortOrder(String... sortKeyParts) {
             return (sortKeyParts.length == EXPECTED_TWO_PARTS)
                 ? sortKeyParts[1].toLowerCase(Locale.getDefault())
                 : DEFAULT_VALUE_SORT_ORDER;
@@ -307,12 +308,12 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
                     .replaceAll(PATTERN_IS_IGNORE_CASE + " (asc|desc)", ":$1");
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
         }
-        
-        private String expandDate(String value) {
+
+        protected String expandDate(String value) {
             return value.length() == 4 ? value + "-01-01" : value;
         }
-        
-        private String expandFields(String value) {
+
+        protected String expandFields(String value) {
             return ALL.equals(value) || isNull(value)
                 ? ALL
                 : Arrays.stream(value.split(COMMA))
@@ -321,7 +322,7 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ResourceParameterKey
         }
         
         private boolean keyIsValid(String key) {
-            return keyFromString(key) != ResourceParameterKey.INVALID;
+            return keyFromString(key) != ParameterKeyResources.INVALID;
         }
     }
 }

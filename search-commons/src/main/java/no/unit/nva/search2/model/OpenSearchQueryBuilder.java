@@ -5,7 +5,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.model.ResourceParameterKey.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.ParameterKeyResources.VALID_SEARCH_PARAMETER_KEYS;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,10 +62,10 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      */
     public OpenSearchQueryBuilder<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : query.queryParameters.entrySet()) {
+        for (var entry : query.pageParameters.entrySet()) {
             validatesEntrySet(entry);
         }
-        for (var entry : query.luceneParameters.entrySet()) {
+        for (var entry : query.searchParameters.entrySet()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -176,7 +176,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * returns T.VALID_LUCENE_PARAMETER_KEYS
      */
     protected Collection<String> validKeys() {
-        return VALID_LUCENE_PARAMETER_KEYS.stream()
+        return VALID_SEARCH_PARAMETER_KEYS.stream()
                    .map(ParameterKey::fieldName)
                    .toList();
     }
@@ -204,8 +204,8 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     protected Set<K> requiredMissing() {
         return
             required().stream()
-                .filter(key -> !query.luceneParameters.containsKey(key))
-                .filter(key -> !query.queryParameters.containsKey(key))
+                .filter(key -> !query.searchParameters.containsKey(key))
+                .filter(key -> !query.pageParameters.containsKey(key))
                 .collect(Collectors.toSet());
     }
 

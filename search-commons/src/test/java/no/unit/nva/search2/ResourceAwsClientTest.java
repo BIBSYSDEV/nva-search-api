@@ -2,10 +2,10 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ResourceParameterKey.CATEGORY;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
-import static no.unit.nva.search2.model.ResourceParameterKey.SIZE;
-import static no.unit.nva.search2.model.ResourceParameterKey.SORT;
+import static no.unit.nva.search2.model.ParameterKeyResources.CATEGORY;
+import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
+import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
