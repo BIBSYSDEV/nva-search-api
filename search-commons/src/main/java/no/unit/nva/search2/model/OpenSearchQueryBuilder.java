@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> Enum of QueryParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q extends OpenSearchQuery<K>> {
+public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extends OpenSearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQueryBuilder.class);
 

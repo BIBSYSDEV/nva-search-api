@@ -38,7 +38,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
+public class OpenSearchQuery<K extends Enum<K> & ParameterKey<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
     protected final transient Map<K, String> pageParameters;
@@ -230,9 +230,9 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     public static class AsType {
 
         private final String value;
-        private final ParameterKey key;
+        private final ParameterKey<?> key;
 
-        public AsType(String value, ParameterKey key) {
+        public AsType(String value, ParameterKey<?> key) {
             this.value = value;
             this.key = key;
         }
