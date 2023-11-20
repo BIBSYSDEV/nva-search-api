@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.opensearch;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -31,16 +31,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.ParameterKey.ValueEncoding;
+
+import no.unit.nva.search2.model.parameterkeys.ParameterKey;
+import no.unit.nva.search2.model.parameterkeys.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OpenSearchQuery<K extends Enum<K> & ParameterKey<K>> {
+public class Query<K extends Enum<K> & ParameterKey<K>> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQuery.class);
+    protected static final Logger logger = LoggerFactory.getLogger(Query.class);
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
@@ -48,7 +50,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey<K>> {
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
     private transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
 
-    protected OpenSearchQuery() {
+    protected Query() {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
@@ -200,7 +202,7 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey<K>> {
             nonNull(query)
                 ? Arrays.stream(query.split(AMPERSAND))
                       .map(s -> s.split(EQUAL))
-                      .map(OpenSearchQuery::stringsToEntry)
+                      .map(Query::stringsToEntry)
                       .toList()
                 : Collections.emptyList();
     }

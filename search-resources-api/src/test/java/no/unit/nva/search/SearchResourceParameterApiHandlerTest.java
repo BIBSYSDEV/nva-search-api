@@ -50,7 +50,7 @@ import org.opensearch.action.search.SearchResponse;
 import org.opensearch.client.RestHighLevelClient;
 import org.zalando.problem.Problem;
 
-public class SearchResourcesApiHandlerTest {
+public class SearchResourceParameterApiHandlerTest {
 
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";

@@ -2,10 +2,10 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.model.ParameterKeyResources.CATEGORY;
-import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CATEGORY;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -16,15 +16,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.opensearch.Query;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ResourceAwsClientNoHitsTest {
+class ResourceClientNoHitsTest {
 
-    private ResourceAwsClient resourceAwsClient;
+    private ResourceClient resourceClient;
 
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
 
@@ -33,7 +33,7 @@ class ResourceAwsClientNoHitsTest {
 
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        resourceAwsClient = new ResourceAwsClient(cachedJwtProvider, httpClient);
+        resourceClient = new ResourceClient(cachedJwtProvider, httpClient);
         var response = mockedHttpResponse(NO_HITS_RESPONSE_JSON);
         when(httpClient.send(any(), any()))
             .thenReturn(response);
@@ -44,11 +44,11 @@ class ResourceAwsClientNoHitsTest {
     void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) throws ApiGatewayException {
 
         var pagedSearchResourceDto =
-            ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            ResourceQuery.builder()
+                .fromQueryParameters(Query.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(resourceAwsClient);
+                .doSearch(resourceClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -57,14 +57,14 @@ class ResourceAwsClientNoHitsTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
         var query =
-            ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            ResourceQuery.builder()
+                .fromQueryParameters(Query.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(query.getValue(CATEGORY).as());
         assertNotNull(query.removeKey(CATEGORY));
         assertNull(query.removeKey(CATEGORY));
-        var response = resourceAwsClient.doSearch(query);
+        var response = resourceClient.doSearch(query);
         var pagedSearchResourceDto = query.toPagedResponse(response);
 
         assertNotNull(pagedSearchResourceDto.id());

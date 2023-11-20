@@ -1,16 +1,16 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.model.ParameterKeyResources.CATEGORY;
-import static no.unit.nva.search2.model.ParameterKeyResources.CREATED_BEFORE;
-import static no.unit.nva.search2.model.ParameterKeyResources.DOI;
-import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResources.MODIFIED_BEFORE;
-import static no.unit.nva.search2.model.ParameterKeyResources.PAGE;
-import static no.unit.nva.search2.model.ParameterKeyResources.PUBLISHED_BEFORE;
-import static no.unit.nva.search2.model.ParameterKeyResources.PUBLISHED_SINCE;
-import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CATEGORY;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CREATED_BEFORE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.DOI;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.MODIFIED_BEFORE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.PAGE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.PUBLISHED_BEFORE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.PUBLISHED_SINCE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.model.OpenSearchQuery;
+import no.unit.nva.search2.model.opensearch.Query;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
@@ -35,8 +35,8 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            ResourceQuery.builder()
+                .fromQueryParameters(Query.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(FROM).as());
@@ -58,8 +58,8 @@ class ResourceQueryTest {
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
-            ResourceAwsQuery.builder()
-                .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+            ResourceQuery.builder()
+                .fromQueryParameters(Query.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
 
@@ -101,8 +101,8 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
-        var resourceParameters = ResourceAwsQuery.builder()
-            .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+        var resourceParameters = ResourceQuery.builder()
+            .fromQueryParameters(Query.queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, SORT)
             .build();
         assertNotNull(resourceParameters.getValue(FROM).<Long>as());
@@ -113,8 +113,8 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
-        assertThrows(BadRequestException.class, () -> ResourceAwsQuery.builder()
-            .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+        assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
+            .fromQueryParameters(Query.queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, DOI)
             .build()
             .getOpenSearchUri());
@@ -123,8 +123,8 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
-        assertThrows(BadRequestException.class, () -> ResourceAwsQuery.builder()
-            .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
+        assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
+            .fromQueryParameters(Query.queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE)
             .build()
             .getOpenSearchUri());

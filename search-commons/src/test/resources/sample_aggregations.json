@@ -1,0 +1,3963 @@
+{
+  "aggregations": {
+    "entityDescription": {
+      "docCount": 37,
+      "reference": {
+        "docCount": 37,
+        "publicationInstance": {
+          "docCount": 37,
+          "type": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": [{
+              "key": "AcademicArticle",
+              "docCount": 36
+            }, {
+              "key": "AcademicLiteratureReview",
+              "docCount": 1
+            }
+            ]
+          }
+        },
+        "publicationContext": {
+          "docCount": 37,
+          "publisher": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": []
+          },
+          "id": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": []
+          }
+        }
+      },
+      "contributors": {
+        "docCount": 255,
+        "identity": {
+          "docCount": 255,
+          "id": {
+            "docCountErrorUpperBound": 0,
+            "sumOtherDocCount": 0,
+            "buckets": [{
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/13241",
+              "docCount": 3,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Ingebjørg Seljeflot",
+                  "docCount": 3
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/13353",
+              "docCount": 2,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Alf Åge Reistad Pettersen",
+                  "docCount": 2
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/21841",
+              "docCount": 2,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Harald Arnesen",
+                  "docCount": 2
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/23084",
+              "docCount": 2,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Lise-Lotte Gundersen",
+                  "docCount": 2
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/10746",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Michael Abdelnoor",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/10824",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Linda Møllersen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/11391",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Trine Baur Opstad",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/11787",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Gunn Annette Hildrestrand",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/12337",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Tor Svendsen Bjørheim",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/12980",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Ute Krengel",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/13306",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Mats Ökvist",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/13348",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Arnljot Flaa",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/14068",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Felix M Gradstein",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/14940",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Anette Karlsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/15544",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Anne Bjørhovde Rossebø",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/16374",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Arne Klungland",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/17038",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Magnar Bjørås",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/17980",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Morten Rostrup",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/18306",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Karl Ludvig Reichelt",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/18517",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Westlye, Lars Tjelta",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/1956",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Anja Bjølgerud",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/22114",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Reidar Haugsrud",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/22874",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Størmer, Erling",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/23750",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Sverre Erik Kjeldsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/23831",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Bengt Gunnar Svensson",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/24592",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Truls Norby",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/26268",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Mikal Heldal",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/26703",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Tron Frede Thingstad",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/27869",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Gunnar Bratbak",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/28939",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Gabriel Kiss",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/31796",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Justin W Wells",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/332081",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Ann-Mari Knivsberg",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/37859",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Holtermann, Andreas",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/388595",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Benjamin Storm",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/393240",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Ida Unhammer Njerve",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/39427",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Frode Seland",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/39598",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Hans Torp",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/40139",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Håvard Karoliussen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/404567",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Sigrid Lædre",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/409254",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Stefan Pieter Sobolowski",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/412582",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Anders Ødegård",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/42659",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Eirik Skogvoll",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/43933",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Ole Edvard Kongstein",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/44093",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Charlotte Ingeborg Björk Ingul",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/446",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Vincent Leroux",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/45052",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Xiang Wang",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/45435",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Adrian Tiron",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/45712",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Jan Martin Nordbotten",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/45802",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Jan Mangerud",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/46036",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Dag Haugland",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/46118",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Harald Furnes",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/46166",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Egil Severin Erichsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/47136",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Herbjørn Presthus Heggen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/47284",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Einar Skulstad Davidsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/47694",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Dana Cramariuc",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/47766",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Nickolay V Bukoreshtliev",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/4932",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Lars Sundnes Løvlie",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/50017",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Øystein Strand Lohne",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/50400",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "John-Inge Svendsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/50496",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Svein Norland",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/50744",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Fedor Fomin",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/5081",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Jindrich Kania",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/509693",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Linda Augustin Tveterås",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/51894",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Daniel Fliegel",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/5200",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Steffi Munack",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/52853",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Eva Gerdts",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/52990",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Per Magnus Jørgensen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/53082",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Hans-Hermann Gerdes",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/53115",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Clive R. Bramham",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/531156",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Silvio Funtowicz",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/56283",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Bente Nilsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/56740",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Knut Tore Lappegård",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/5731",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Jan Hendrik Van Eerde",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/57601",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Ole-Jakob How",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/5761",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Skjalg Hassellund",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/6007",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Alexander D. Rowe",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/6784",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Erik Waage Nielsen",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/798679",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Bjørn Ove Faldaas",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/8178",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Zuoan Li",
+                  "docCount": 1
+                }
+                ]
+              }
+            }, {
+              "key": "https://api.dev.nva.aws.unit.no/cristin/person/9186",
+              "docCount": 1,
+              "name": {
+                "docCountErrorUpperBound": 0,
+                "sumOtherDocCount": 0,
+                "buckets": [{
+                  "key": "Jonathan Marc Polfus",
+                  "docCount": 1
+                }
+                ]
+              }
+            }
+            ]
+          }
+        }
+      }
+    },
+    "associatedArtifacts": {
+      "docCount": 10
+    },
+    "resourceOwner.ownerAffiliation": {
+      "docCountErrorUpperBound": 0,
+      "sumOtherDocCount": 0,
+      "buckets": [{
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+        "docCount": 11
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+        "docCount": 9
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+        "docCount": 9
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "docCount": 2
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "docCount": 2
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/1936.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/2012.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/2057.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+        "docCount": 1
+      }
+      ]
+    },
+    "resourceOwner.owner": {
+      "docCountErrorUpperBound": 0,
+      "sumOtherDocCount": 0,
+      "buckets": [{
+        "key": "uib@184.0.0.0",
+        "docCount": 11
+      }, {
+        "key": "uio@185.90.0.0",
+        "docCount": 9
+      }, {
+        "key": "1136326@20754.0.0.0",
+        "docCount": 7
+      }, {
+        "key": "ntnu@194.0.0.0",
+        "docCount": 2
+      }, {
+        "key": "1128464@20754.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "1136254@20754.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "34322@20754.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "41902@20754.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "hbe@1936.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "norce@2057.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "ous@2012.0.0.0",
+        "docCount": 1
+      }, {
+        "key": "uis@217.0.0.0",
+        "docCount": 1
+      }
+      ]
+    },
+    "topLevelOrganizations": {
+      "docCount": 142,
+      "id": {
+        "docCountErrorUpperBound": 0,
+        "sumOtherDocCount": 0,
+        "buckets": [{
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+          "docCount": 14,
+          "labels": {
+            "docCount": 14,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universitetet i Oslo",
+                "docCount": 14
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Oslo",
+                "docCount": 14
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+          "docCount": 11,
+          "labels": {
+            "docCount": 11,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universitetet i Bergen",
+                "docCount": 11
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Bergen",
+                "docCount": 11
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/2012.0.0.0",
+          "docCount": 8,
+          "labels": {
+            "docCount": 8,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Oslo universitetssykehus HF",
+                "docCount": 8
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Oslo University Hospital",
+                "docCount": 8
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/9126.0.0.0",
+          "docCount": 7,
+          "labels": {
+            "docCount": 7,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Andre institusjoner",
+                "docCount": 7
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+          "docCount": 6,
+          "labels": {
+            "docCount": 6,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Noregs teknisk-naturvitskaplege universitet",
+                "docCount": 6
+              }
+              ]
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norges teknisk-naturvitenskapelige universitet",
+                "docCount": 6
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norwegian University of Science and Technology",
+                "docCount": 6
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13100099.0.0.0",
+          "docCount": 3,
+          "labels": {
+            "docCount": 3,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Szkola Glówna Gospodarstwa Wiejskiego w Warszawie",
+                "docCount": 3
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Warsaw University of Life Sciences",
+                "docCount": 3
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/186.0.0.0",
+          "docCount": 3,
+          "labels": {
+            "docCount": 3,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "UiT Norges arktiske universitet",
+                "docCount": 3
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "UiT The Arctic University of Norway",
+                "docCount": 3
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/9127.0.0.0",
+          "docCount": 3,
+          "labels": {
+            "docCount": 3,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Utenlandsk utdanningsinstitusjon",
+                "docCount": 3
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10100086.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Syddansk Universitet",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Southern Denmark",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10600044.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Sveriges lantbruksuniversitet",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Swedish University of Agricultural Sciences",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12300000.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Italia",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Italy",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13100115.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Uniwersytet w Bialymstoku",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Bialystok",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14400003.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Albert-Ludwigs-Universität Freiburg",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Freiburg",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14400181.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Humboldt-Universität zu Berlin",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Humboldt University Berlin",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/15800012.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Univerzita Karlova v Praze",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Charles University, Prague",
+                "docCount": 2
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68400996.0.0.0",
+          "docCount": 2,
+          "labels": {
+            "docCount": 2,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Princeton University",
+                "docCount": 2
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization",
+          "docCount": 1,
+          "labels": {
+            "docCount": 0,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10100000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Danmark",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Denmark",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10100002.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Aalborg Universitet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Aalborg University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10100014.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Danmarks Tekniske Universitet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Technical University of Denmark",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10101907.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Rigshospitalet - København Universitetshospital",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Copenhagen University Hospital",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10107411.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Det Nationale Forskningscenter for Arbejdsmiljø",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "National Research Centre for the Working Environment",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10300000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Finland",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Finland",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10300010.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Helsingin yliopisto / Helsingfors universitet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Helsinki",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10600028.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Linköpings universitet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Linköping University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/10600048.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Umeå universitet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Umeå University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11200246.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Université de Liège",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11700000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Frankrike",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "France",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11700396.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Université Paris Diderot",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Paris Diderot University Paris VII)",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11700450.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Université de Nice-Sophia Antipolis",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Nice-Sophia Antipolis",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11701921.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Assistance Publique - Hôpitaux de Paris",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11705901.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Centre national de la recherche scientifique",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "National Center for Scientific Research",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11707410.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Institut National de Recherche en Informatique et en Automatique",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "The French National Institute for Research in Computer Science and Control",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/11900006.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Ethnikon kai Kapodistriakon Panepistimion Athinon",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "National and Kapodistrian University of Athens",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12300023.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Università degli Studi 'Federico II' di Napoli",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Naples 'Federico II'",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12300044.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Università degli Studi di Foggia",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Foggia",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12300050.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Università degli Studi di Milano",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Milan",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12300066.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Università degli Studi di Torino",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Turin",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12300089.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Università Politecnica delle Marche",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12700073.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universiteit Maastricht",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Maastricht University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12700075.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universiteit Utrecht",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Utrecht University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/12700076.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universiteit van Amsterdam",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Amsterdam",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13107410.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Instytut Biologii Doswiadczalnej im. M. Nenckiengo PAN",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Nencki Institute of Experimental Biology",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13200149.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universidade do Algarve",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Algarve",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13700070.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universitat Politècnica de Catalunya",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Polytechnic University of Catalonia",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13701931.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Hospital Universitario La Paz",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "La Paz University Hospital",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13900000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Storbritannia og Nord-Irland",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "United Kingdom",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13900054.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Loughborough University",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13900100.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University College London",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13900152.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Glasgow",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13900223.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Plymouth",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13901925.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Newcastle upon Tyne Hospitals",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/13907410.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "British Antarctic Survey",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14100003.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Eidgenössische Technische Hochschule Zürich",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Swiss Federal Institute of Technology Zürich",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14300068.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Bitlis Eren Universitesi",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Bitlis Eren University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14400296.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universität Ulm",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Ulm",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14400299.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universität des Saarlandes",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Saarland University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/14407424.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "GeoForschungsZentrum Potsdam",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Helmholtz Centre Potsdam",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/150.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norges idrettshøgskole",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norwegian School of Sport Sciences",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/15300000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Østerrike",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Austria",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/15300081.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Medizinische Universität Wien",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Medical University of Vienna",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/15801901.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Fakultní nemocnice v Motole",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Motol University Hospital",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/1904.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Nordlandssykehuset HF",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Nordland Hospital Trust",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/1936.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Helse Bergen HF - Haukeland universitetssykehus",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Bergen Hospital Trust - Haukeland University Hospital",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/204.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Nord universitet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Nord University",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/2057.3.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 0,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Sikt - Norwegian Agency for Shared Services in Education and Research",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universitetet i Stavanger",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Stavanger",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/42800000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Filippinene",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Philippines",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/48400694.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Chinese Academy of Sciences",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/61200007.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Alberta",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/61200045.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Carleton University",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/61200062.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Ottawa",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68400000.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "USA",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "USA",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68400196.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of California, San Diego",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68400232.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Colorado at Boulder",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68400514.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Purdue University",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68401210.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of North Carolina at Chapel Hill",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68405903.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "National Institutes of Health",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "National Institutes of Health",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/68420033.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Harvard Medical School",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "SINTEF AS",
+                "docCount": 1
+              }
+              ]
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "SINTEF AS",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "SINTEF",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/7431.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Havforskningsinstituttet",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Institute of Marine Research",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/7464.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norsk institutt for vannforsking",
+                "docCount": 1
+              }
+              ]
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norsk institutt for vannforskning",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Norwegian Institute of Water Research",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/76000042.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Universidad Peruana 'Cayetano Heredia'",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Peruvian University 'Cayetano Heredia', San Martín de Porres",
+                "docCount": 1
+              }
+              ]
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/80500066.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of New South Wales",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/80500073.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "University of Sydney",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }, {
+          "key": "https://api.dev.nva.aws.unit.no/cristin/organization/9198.0.0.0",
+          "docCount": 1,
+          "labels": {
+            "docCount": 1,
+            "nn": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "nb": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": [{
+                "key": "Diverse norske bedrifter og organisasjoner",
+                "docCount": 1
+              }
+              ]
+            },
+            "en": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            },
+            "sme": {
+              "docCountErrorUpperBound": 0,
+              "sumOtherDocCount": 0,
+              "buckets": []
+            }
+          }
+        }
+        ]
+      }
+    },
+    "fundings": {
+      "docCount": 0,
+      "identifier": {
+        "docCountErrorUpperBound": 0,
+        "sumOtherDocCount": 0,
+        "buckets": []
+      }
+    }
+  }
+}

@@ -1,11 +1,11 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ParameterKeyResources.CATEGORY;
-import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
+import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CATEGORY;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,14 +44,14 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-class ResourceAwsClientTest {
+class ResourceClientTest {
 
-    protected static final Logger logger = LoggerFactory.getLogger(ResourceAwsClientTest.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-    private static ResourceAwsClient searchClient;
+    private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
     private static String indexName;
 
@@ -63,7 +63,7 @@ class ResourceAwsClientTest {
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-        searchClient = new ResourceAwsClient(cachedJwtProvider, HttpClient.newHttpClient());
+        searchClient = new ResourceClient(cachedJwtProvider, HttpClient.newHttpClient());
         indexName = generateIndexName();
 
         createIndex();
@@ -99,7 +99,7 @@ class ResourceAwsClientTest {
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
 
             var query =
-                ResourceAwsQuery.builder()
+                ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -109,7 +109,7 @@ class ResourceAwsClientTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
-            logger.info(pagedSearchResourceDto.toJsonString());
+            logger.info(pagedSearchResourceDto.aggregations().toPrettyString());
             assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.hits().size())));
             assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.totalHits())));
         }
@@ -118,7 +118,7 @@ class ResourceAwsClientTest {
         @MethodSource("uriProvider2")
         void searchWithUriReturnsOpenSearchAwsResponse2(URI uri) throws ApiGatewayException {
             var pagedSearchResourceDto =
-                ResourceAwsQuery.builder()
+                ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -132,7 +132,7 @@ class ResourceAwsClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
 
-            var csvResult = ResourceAwsQuery.builder()
+            var csvResult = ResourceQuery.builder()
                                 .fromQueryParameters(queryToMapEntries(uri))
                                 .withRequiredParameters(FROM, SIZE, SORT)
                                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -146,7 +146,7 @@ class ResourceAwsClientTest {
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ResourceAwsQuery.builder()
+                ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -165,7 +165,7 @@ class ResourceAwsClientTest {
         @MethodSource("uriInvalidProvider")
         void failToSearchUri(URI uri) {
             assertThrows(BadRequestException.class,
-                         () -> ResourceAwsQuery.builder()
+                         () -> ResourceQuery.builder()
                                    .fromQueryParameters(queryToMapEntries(uri))
                                    .withRequiredParameters(FROM, SIZE)
                                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
