@@ -55,8 +55,8 @@ public record PagedSearchDto<T>(
         private Builder() {
         }
 
-        public Builder builder() {
-            return new Builder();
+        public <T> Builder<T> builder() {
+            return new Builder<>();
         }
 
         @SuppressWarnings("PMD.NullAssignment")

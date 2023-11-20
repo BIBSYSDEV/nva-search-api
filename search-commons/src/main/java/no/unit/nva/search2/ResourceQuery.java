@@ -79,18 +79,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return CsvTransformer.transform(response.getSearchHits());
     }
 
-    PagedSearchDto toPagedResponse(SwsResponse response) {
+    PagedSearchDto<T> toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
 
         return
-            PagedSearchDto.Builder.builder()
+            PagedSearchDto.Builder.builder<JsonNode>()
                 .withTotalHits(response.getTotalSize())
                 .withHits(response.getSearchHits())
                 .withAggregations(response.getAggregationsStructured())
                 .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
-                .build<JsonNode>();
+                .build();
     }
 
     public Stream<QueryBuilderSourceWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
