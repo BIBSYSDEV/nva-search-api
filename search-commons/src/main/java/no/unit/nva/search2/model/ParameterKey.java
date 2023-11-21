@@ -45,9 +45,9 @@ public interface ParameterKey<E extends Enum<E>> {
     @JacocoGenerated
     static ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
-            case NUMBER, CUSTOM -> ValueEncoding.NONE;
+            case INVALID, NUMBER, CUSTOM -> ValueEncoding.NONE;
             case DATE, KEYWORD, TEXT, SORT_KEY -> ValueEncoding.DECODE;
-            case INVALID -> null;
+
         };
     }
 
@@ -60,7 +60,7 @@ public interface ParameterKey<E extends Enum<E>> {
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case SORT_KEY -> INVALID_VALUE_WITH_SORT;
             case KEYWORD, TEXT, CUSTOM -> INVALID_VALUE;
-            case INVALID -> null;
+            case INVALID -> "Status INVALID should not raise an exception, Exception";
         };
     }
 
@@ -74,7 +74,7 @@ public interface ParameterKey<E extends Enum<E>> {
                     case NUMBER -> PATTERN_IS_NUMBER;
                     // case RANGE -> PATTERN_IS_RANGE;
                     case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
-                    case INVALID -> null;
+                    case INVALID -> PATTERN_IS_NONE_OR_ONE;
                 };
     }
 
