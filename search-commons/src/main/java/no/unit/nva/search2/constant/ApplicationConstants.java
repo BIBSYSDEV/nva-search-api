@@ -41,4 +41,15 @@ public final class ApplicationConstants {
     public static String readApiHost() {
         return ENVIRONMENT.readEnv("API_HOST");
     }
+
+    //    public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
+    //        RESOURCES_AGGREGATIONS = List.of(
+    //        generateSimpleAggregation("user","resourceOwner.owner.keyword"),
+    //        generateSimpleAggregation("ownerAffiliation",
+    //                                  "resourceOwner.ownerAffiliation.id.keyword"),
+    //        generateEntityDescriptionAggregation(),
+    //        generateFundingSourceAggregation(),
+    //        generateHasFileAggregation(),
+    //        generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATIONS,TOP_LEVEL_ORGANIZATIONS)
+    //    );
 }

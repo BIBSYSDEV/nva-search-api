@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -89,9 +88,6 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     PROJECT_SHOULD(TEXT, SHOULD, Constants.PROJECTS_ID),
     PUBLISHED_BEFORE(DATE, LESS_THAN, Constants.PUBLISHED_DATE),
     PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
-    OWNER_AFFILIATION(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
-    OWNER_AFFILIATIO_NOT(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
-    OWNER_AFFILIATION_SHOULD(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
     TITLE(TEXT, Constants.MAIN_TITLE, 2F),
     TITLE_NOT(TEXT, MUST_NOT, Constants.MAIN_TITLE),
     TITLE_SHOULD(TEXT, SHOULD, Constants.MAIN_TITLE),
@@ -101,6 +97,9 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     USER(KEYWORD, Constants.RESOURCE_OWNER),
     USER_NOT(KEYWORD, MUST_NOT, Constants.RESOURCE_OWNER),
     USER_SHOULD(TEXT, SHOULD, Constants.RESOURCE_OWNER),
+    USER_AFFILIATION(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
+    USER_AFFILIATION_NOT(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
+    USER_AFFILIATION_SHOULD(TEXT, Constants.RESOURCE_OWNER_AFFILIATION),
     PUBLICATION_YEAR(NUMBER, MUST, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                      "(?i)year.?reported|publication.?year", null, null),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
@@ -276,7 +275,9 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             "fundings.identifier.keyword|fundings.source.identifier.keyword";
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
-            "fundings.source.labels.nb.keyword|fundings.source.labels.en.keyword";
+            FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER + PIPE +
+            "fundings.source.labels.nn.keyword|fundings.source.labels.nb.keyword"
+            + "|fundings.source.labels.en.keyword|fundings.source.labels.sme.keyword";
         public static final String PARENT_PUBLICATION_ID =
             "entityDescription.reference.publicationInstance.corrigendumFor.keyword"
             + "|entityDescription.reference.publicationContext.id.keyword"
@@ -286,7 +287,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
         public static final String MODIFIED_DATE = "modifiedDate";
         public static final String PROJECTS_ID = "projects.id";
         public static final String PUBLISHED_DATE = "publishedDate";
-        public static final String RESOURCE_OWNER = "resourceOwner.owner";
-        public static final String RESOURCE_OWNER_AFFILIATION = "resourceOwner.ownerAffiliation.id.keyword";
+        public static final String RESOURCE_OWNER = "resourceOwner.owner.keyword";
+        public static final String RESOURCE_OWNER_AFFILIATION = "resourceOwner.ownerAffiliation.keyword";
     }
 }

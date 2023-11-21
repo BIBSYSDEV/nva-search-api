@@ -1,18 +1,14 @@
 package no.unit.nva.search2;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.Optional;
-
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.model.opensearch.SwsResponse.formatAggregations;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetsTest {
     protected static final Logger logger = LoggerFactory.getLogger(FacetsTest.class);
@@ -34,5 +30,4 @@ public class FacetsTest {
     private static JsonNode stringToJsonNode(String aggregation) {
         return attempt(() -> objectMapperWithEmpty.readTree(aggregation)).orElseThrow();
     }
-
 }

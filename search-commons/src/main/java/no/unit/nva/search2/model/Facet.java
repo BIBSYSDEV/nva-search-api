@@ -1,19 +1,16 @@
 package no.unit.nva.search2.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
+import no.unit.nva.commons.json.JsonSerializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
-public record Facet(URI id, Integer count, String key, Map<String, String> labels) {
+public record Facet(URI id, String key, Integer count, Map<String, String> labels) implements JsonSerializable {
 
     public Facet {
         Objects.requireNonNull(count);
         Objects.requireNonNull(key);
-        Objects.requireNonNull(labels);
     }
 }

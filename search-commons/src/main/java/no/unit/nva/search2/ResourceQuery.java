@@ -25,8 +25,6 @@ import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT_ORD
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.model.sortkeys.ResourceSort.INVALID;
 import static no.unit.nva.search2.model.sortkeys.ResourceSort.validSortKeys;
-
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
@@ -37,12 +35,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.QueryBuilderTools;
+import no.unit.nva.search2.model.PagedSearchBuilder;
+import no.unit.nva.search2.model.PagedSearchDto;
+import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.opensearch.Query;
 import no.unit.nva.search2.model.opensearch.QueryBuilder;
 import no.unit.nva.search2.model.opensearch.SwsResponse;
-import no.unit.nva.search2.model.PagedSearchDto;
 import no.unit.nva.search2.model.parameterkeys.ParameterKey;
-import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import no.unit.nva.search2.model.parameterkeys.ResourceParameter;
 import no.unit.nva.search2.model.sortkeys.ResourceSort;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -79,17 +78,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return CsvTransformer.transform(response.getSearchHits());
     }
 
-    PagedSearchDto<T> toPagedResponse(SwsResponse response) {
+    PagedSearchDto toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
 
         return
-            PagedSearchDto.Builder.builder<JsonNode>()
+            new PagedSearchBuilder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(response.getSearchHits())
-                .withAggregations(response.getAggregationsStructured())
                 .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
+                .withAggregations(response.getAggregationsStructured())
                 .build();
     }
 
