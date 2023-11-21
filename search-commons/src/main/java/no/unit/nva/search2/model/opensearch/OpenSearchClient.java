@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.opensearch;
 
 import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
@@ -12,7 +12,7 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class OpenSearchClient<R, Q extends OpenSearchQuery<?>> {
+public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     public abstract R doSearch(Q query);
 

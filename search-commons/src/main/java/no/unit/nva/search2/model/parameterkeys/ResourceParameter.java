@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.parameterkeys;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
@@ -8,17 +8,17 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.SHOULD;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.DATE;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.KEYWORD;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.SORT_KEY;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.TEXT;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -35,7 +36,7 @@ import nva.commons.core.JacocoGenerated;
  *
  */
 
-public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources> {
+public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParamKind.INVALID),
     // Parameters converted to Lucene query
     CATEGORY(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
@@ -69,16 +70,16 @@ public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources>
         + Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_NAME),
     ISBN(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISSN(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
                  + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
     ISSN_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
                                + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
-    ISSN_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
+    ISSN_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
                                 + PIPE + Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN),
     ORCID(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
     ORCID_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
-    ORCID_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
     MODIFIED_BEFORE(DATE, LESS_THAN, Constants.MODIFIED_DATE),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.MODIFIED_DATE),
     PARENT_PUBLICATION(KEYWORD, MUST, Constants.PARENT_PUBLICATION_ID),
@@ -88,6 +89,9 @@ public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources>
     PROJECT_SHOULD(TEXT, SHOULD, Constants.PROJECTS_ID),
     PUBLISHED_BEFORE(DATE, LESS_THAN, Constants.PUBLISHED_DATE),
     PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
+    OWNER_AFFILIATION(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
+    OWNER_AFFILIATIO_NOT(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
+    OWNER_AFFILIATION_SHOULD(KEYWORD, Constants.RESOURCE_OWNER_AFFILIATION),
     TITLE(TEXT, Constants.MAIN_TITLE, 2F),
     TITLE_NOT(TEXT, MUST_NOT, Constants.MAIN_TITLE),
     TITLE_SHOULD(TEXT, SHOULD, Constants.MAIN_TITLE),
@@ -116,9 +120,9 @@ public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources>
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ParameterKeyResources> VALID_SEARCH_PARAMETER_KEYS =
-        Arrays.stream(ParameterKeyResources.values())
-            .filter(ParameterKeyResources::isSearchField)
+    public static final Set<ResourceParameter> VALID_SEARCH_PARAMETER_KEYS =
+        Arrays.stream(ResourceParameter.values())
+            .filter(ResourceParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -132,23 +136,23 @@ public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources>
     private final ParamKind paramkind;
     private final Float boost;
 
-    ParameterKeyResources(ParamKind kind) {
+    ResourceParameter(ParamKind kind) {
         this(kind, MUST, null, null, null, null);
     }
 
-    ParameterKeyResources(ParamKind kind, String fieldsToSearch) {
+    ResourceParameter(ParamKind kind, String fieldsToSearch) {
         this(kind, MUST, fieldsToSearch, null, null, null);
     }
 
-    ParameterKeyResources(ParamKind kind, String fieldsToSearch, Float boost) {
+    ResourceParameter(ParamKind kind, String fieldsToSearch, Float boost) {
         this(kind, MUST, fieldsToSearch, null, null, boost);
     }
 
-    ParameterKeyResources(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
+    ResourceParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
         this(kind, operator, fieldsToSearch, null, null, null);
     }
 
-    ParameterKeyResources(
+    ResourceParameter(
         ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
@@ -222,21 +226,22 @@ public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources>
                 .toString();
     }
 
-    public static ParameterKeyResources keyFromString(String paramName) {
-        var result = Arrays.stream(ParameterKeyResources.values())
-            .filter(ParameterKeyResources::ignoreInvalidKey)
-                         .filter(ParameterKey.equalTo(paramName))
-                         .collect(Collectors.toSet());
+
+    public static ResourceParameter keyFromString(String paramName) {
+        var result = Arrays.stream(ResourceParameter.values())
+            .filter(ResourceParameter::ignoreInvalidKey)
+            .filter(ParameterKey.equalTo(paramName))
+            .collect(Collectors.toSet());
         return result.size() == 1
-                   ? result.stream().findFirst().get()
-                   : INVALID;
+            ? result.stream().findFirst().get()
+            : INVALID;
     }
 
-    private static boolean ignoreInvalidKey(ParameterKeyResources f) {
+    private static boolean ignoreInvalidKey(ResourceParameter f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
 
-    private static boolean isSearchField(ParameterKeyResources f) {
+    private static boolean isSearchField(ResourceParameter f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
@@ -282,5 +287,6 @@ public enum ParameterKeyResources implements ParameterKey<ParameterKeyResources>
         public static final String PROJECTS_ID = "projects.id";
         public static final String PUBLISHED_DATE = "publishedDate";
         public static final String RESOURCE_OWNER = "resourceOwner.owner";
+        public static final String RESOURCE_OWNER_AFFILIATION = "resourceOwner.ownerAffiliation.id.keyword";
     }
 }

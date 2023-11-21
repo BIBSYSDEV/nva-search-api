@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.parameterkeys;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
@@ -36,6 +36,7 @@ public interface ParameterKey<E extends Enum<E>> {
     FieldOperator searchOperator();
 
     String errorMessage();
+
 
     static Predicate<ParameterKey<?>> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
@@ -96,6 +97,7 @@ public interface ParameterKey<E extends Enum<E>> {
         return value.replaceAll(PATTERN_IS_SPECIAL_CHARACTERS, PATTERN_IS_ADD_SLASH);
     }
 
+
     enum ValueEncoding {
         NONE, DECODE
     }
@@ -105,7 +107,7 @@ public interface ParameterKey<E extends Enum<E>> {
     }
 
     enum FieldOperator {
-        MUST(""),
+        MUST("KEYWORD"),
         MUST_NOT("NOT"),
         SHOULD("SHOULD"),
         GREATER_THAN_OR_EQUAL_TO("SINCE"),

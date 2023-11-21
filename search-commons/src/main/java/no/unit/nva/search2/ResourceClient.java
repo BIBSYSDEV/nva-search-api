@@ -13,24 +13,24 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.OpenSearchClient;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.model.opensearch.OpenSearchClient;
+import no.unit.nva.search2.model.opensearch.SwsResponse;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceAwsClient extends OpenSearchClient<OpenSearchSwsResponse, ResourceAwsQuery> {
+public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceAwsClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceClient.class);
 
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
     private final UserSettingsClient userSettingsClient;
 
-    public ResourceAwsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
+    public ResourceClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
         this.jwtProvider = cachedJwtProvider;
         this.httpClient = client;
@@ -39,15 +39,15 @@ public class ResourceAwsClient extends OpenSearchClient<OpenSearchSwsResponse, R
     }
 
     @JacocoGenerated
-    public static ResourceAwsClient defaultClient() {
+    public static ResourceClient defaultClient() {
         var cachedJwtProvider =
             OpenSearchClient.getCachedJwtProvider(new SecretsReader());
 
-        return new ResourceAwsClient(cachedJwtProvider, HttpClient.newHttpClient());
+        return new ResourceClient(cachedJwtProvider, HttpClient.newHttpClient());
     }
 
     @Override
-    public OpenSearchSwsResponse doSearch(ResourceAwsQuery query) {
+    public SwsResponse doSearch(ResourceQuery query) {
         return
             query.createQueryBuilderStream(userSettingsClient)
                 .map(this::createRequest)
@@ -74,11 +74,11 @@ public class ResourceAwsClient extends OpenSearchClient<OpenSearchSwsResponse, R
     }
 
     @JacocoGenerated
-    private OpenSearchSwsResponse handleResponse(HttpResponse<String> response) {
+    private SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
         }
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
+        return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
                    .orElseThrow();
     }
 

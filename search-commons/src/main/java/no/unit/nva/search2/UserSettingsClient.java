@@ -6,7 +6,7 @@ import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
-import static no.unit.nva.search2.model.ParameterKeyResources.CONTRIBUTOR_ID;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CONTRIBUTOR_ID;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.http.HttpClient;
@@ -16,14 +16,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.opensearch.OpenSearchClient;
 import no.unit.nva.search2.model.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceAwsQuery> {
+public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
     private final CachedJwtProvider jwtProvider;
@@ -38,7 +38,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceA
     }
 
     @Override
-    public UserSettings doSearch(ResourceAwsQuery query) {
+    public UserSettings doSearch(ResourceQuery query) {
         return
             createQueryBuilderStream(query)
                 .map(this::createRequest)
@@ -48,7 +48,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceA
                 .orElse(new UserSettings(Collections.emptyList()));
     }
 
-    private Stream<String> createQueryBuilderStream(ResourceAwsQuery query) {
+    private Stream<String> createQueryBuilderStream(ResourceQuery query) {
         return query.getOptional(CONTRIBUTOR_ID).stream();
     }
 

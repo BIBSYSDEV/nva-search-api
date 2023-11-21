@@ -2,10 +2,10 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ParameterKeyResources.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResources.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResources.SORT;
+import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -40,7 +40,7 @@ class UserSettingsClientTest {
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var resourceAwsQuery =
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
