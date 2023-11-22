@@ -2,16 +2,22 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.EXPECTED_TWO_PARTS;
+import static no.unit.nva.search2.constant.ApplicationConstants.ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.JANUARY_FIRST;
+import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
@@ -59,6 +65,8 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
+
+
     private ResourceQuery() {
         super();
     }
@@ -80,7 +88,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     PagedSearchDto toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
-        final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
+        final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
 
         return
             new PagedSearchBuilder()
@@ -155,7 +163,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             for (int i = 0; i < promotedPublications.size(); i++) {
                 bq.should(
                     QueryBuilders
-                        .matchQuery("id", promotedPublications.get(i))
+                        .matchQuery(ID, promotedPublications.get(i))
                         .boost(3.14F + promotedPublications.size() - i)
                 );
             }
@@ -219,8 +227,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     protected static class Builder extends
         QueryBuilder<ResourceParameter, ResourceQuery> {
 
-        protected static final String ALL = "all";
-        protected static final Integer EXPECTED_TWO_PARTS = 2;
+
+
 
         Builder() {
             super(new ResourceQuery());
@@ -340,12 +348,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         private void addSortQuery(String value) {
             var validFieldValue =
                 decodeUTF(value)
-                    .replaceAll(PATTERN_IS_IGNORE_CASE + " (asc|desc)", ":$1");
+                    .replaceAll(PATTERN_IS_ASC_OR_DESC, PATTERN_IS_SELECTED_GROUP);
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
         }
 
         public String expandYearToDate(String value) {
-            return value.length() == 4 ? value + "-01-01" : value;
+            return value.length() == 4 ? value + JANUARY_FIRST : value;
         }
 
         protected String expandFields(String value) {

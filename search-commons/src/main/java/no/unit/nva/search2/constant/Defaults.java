@@ -18,6 +18,7 @@ public final class Defaults {
     public static final String DEFAULT_VALUE_SORT = ResourceSort.PUBLISHED_DATE
         .name().toLowerCase(Locale.getDefault());
     public static final String DEFAULT_VALUE_SORT_ORDER = "desc";
+    public static final int DEFAULT_AGGREGATION_SIZE = 100;
     public static final URI PAGINATED_SEARCH_RESULT_CONTEXT
         = URI.create("https://bibsysdev.github.io/src/search/paginated-search-result.json");
 

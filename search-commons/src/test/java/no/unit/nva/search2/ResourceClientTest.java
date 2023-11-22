@@ -109,7 +109,7 @@ class ResourceClientTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
-            logger.info(pagedSearchResourceDto.aggregations().toPrettyString());
+            logger.info(pagedSearchResourceDto.toJsonString());
             assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.hits().size())));
             assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.totalHits())));
         }

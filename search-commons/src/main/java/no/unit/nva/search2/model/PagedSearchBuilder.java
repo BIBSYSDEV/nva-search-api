@@ -70,9 +70,9 @@ public class PagedSearchBuilder {
 
             var list = entry.getValue().stream()
                 .map(facet -> new Facet(uriwrap.addQueryParameter(entry.getKey(), facet.key()).getUri(), facet.key(),
-                                        facet.count(), facet.labels())).collect(Collectors.toList());
+                                        facet.count(), facet.labels())).toList();
             return Map.entry(entry.getKey(), list);
-        }).;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return this;
     }
 
