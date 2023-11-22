@@ -258,11 +258,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandYearToDate(value));
-                case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
+                case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
                     FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
+                    INSTANCE_TYPE, INSTANCE_TYPE_NOT, INSTANCE_TYPE_SHOULD,
                     INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
                     ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
                     ORCID, ORCID_NOT, ORCID_SHOULD,
@@ -271,6 +272,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
                     SEARCH_ALL,
                     TITLE, TITLE_NOT, TITLE_SHOULD,
+                    TOP_LEVEL_ORGANIZATION,
                     UNIT, UNIT_NOT, UNIT_SHOULD,
                     USER, USER_NOT, USER_SHOULD -> query.setSearchFieldValue(qpKey, value);
                 case LANG -> {

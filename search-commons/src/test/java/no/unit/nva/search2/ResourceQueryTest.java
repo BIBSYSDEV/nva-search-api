@@ -1,10 +1,10 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CATEGORY;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.DOI;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.PAGE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.PUBLISHED_BEFORE;
@@ -92,7 +92,7 @@ class ResourceQueryTest {
         }
 
         var category =
-            resourceParameters.getValue(CATEGORY).<String>as();
+            resourceParameters.getValue(INSTANCE_TYPE).<String>as();
         if (nonNull(category)) {
             logger.info("category: {}", category);
         }

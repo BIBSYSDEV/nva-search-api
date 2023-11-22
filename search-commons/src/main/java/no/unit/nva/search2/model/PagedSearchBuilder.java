@@ -61,6 +61,9 @@ public class PagedSearchBuilder {
 
     public PagedSearchBuilder withAggregations(JsonNode aggregations) {
 
+        if (isNull(aggregations)) {
+            return this;
+        }
         var typeReference = new TypeReference<Map<String, List<Facet>>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(aggregations.toPrettyString(), typeReference))

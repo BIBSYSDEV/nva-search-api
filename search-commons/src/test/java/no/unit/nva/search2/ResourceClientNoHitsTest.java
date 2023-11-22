@@ -2,8 +2,8 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CATEGORY;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,9 +61,9 @@ class ResourceClientNoHitsTest {
                 .fromQueryParameters(Query.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        assertNotNull(query.getValue(CATEGORY).as());
-        assertNotNull(query.removeKey(CATEGORY));
-        assertNull(query.removeKey(CATEGORY));
+        assertNotNull(query.getValue(INSTANCE_TYPE).as());
+        assertNotNull(query.removeKey(INSTANCE_TYPE));
+        assertNull(query.removeKey(INSTANCE_TYPE));
         var response = resourceClient.doSearch(query);
         var pagedSearchResourceDto = query.toPagedResponse(response);
 
@@ -75,16 +75,16 @@ class ResourceClientNoHitsTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?category=PhdThesis&sort=category&sortOrder=asc&sort=created_date&order"
+            URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis&sort=INSTANCE_TYPE&sortOrder=asc&sort=created_date&order"
                        + "=desc"),
-            URI.create("https://example.com/?category=PhdThesis"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=category:asc,created_date:desc"),
-            URI.create("https://example.com/?category=PhdThesis&sort=category+asc&sort=created_date+desc"));
+            URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis"),
+            URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis&orderBy=INSTANCE_TYPE:asc,created_date:desc"),
+            URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis&sort=INSTANCE_TYPE+asc&sort=created_date+desc"));
     }
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/testsearch?category=hello+world&lang=en"),
+            URI.create("https://example.com/testsearch?INSTANCE_TYPE=hello+world&lang=en"),
             URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
             URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020-01-01"),
             URI.create("https://example.com/testsearch?user=hello+world&lang=en"));

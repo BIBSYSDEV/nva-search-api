@@ -2,8 +2,8 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.CATEGORY;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
@@ -91,7 +91,7 @@ class ResourceClientTest {
             var topLevelOrgType = mapping.path("properties").path("topLevelOrganizations").path("type").textValue();
             assertThat(topLevelOrgType, is(equalTo("nested")));
 
-            logger.info(mapping.toPrettyString());
+            logger.info(mapping.toString());
         }
 
         @ParameterizedTest
@@ -148,7 +148,7 @@ class ResourceClientTest {
             var query =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
+                    .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build();
 
@@ -234,6 +234,7 @@ class ResourceClientTest {
         static Stream<URI> uriProvider() {
             return Stream.of(
                 URI.create("https://x.org/?size=20"),
+                URI.create("https://x.org/?from=0&size=2&topLevelOrganization=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"),
                 URI.create("https://x.org/?id=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=1"),
                 URI.create("https://x.org/?id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=1"),
                 URI.create("https://x.org/?id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642" +
@@ -261,9 +262,10 @@ class ResourceClientTest {
                 URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0&size=2"),
                 URI.create("https://x.org/?INSTITUTION_should=194.63.55.0&size=1"),
                 URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0&size=2"),
-                URI.create("https://x.org/?category=AcademicArticle&size=9"),
+                URI.create("https://x.org/?CONTEXT_TYPE=Anthology&size=1"),
                 URI.create("https://x.org/?category=ReportResearch&page=0&size=10"),
                 URI.create("https://x.org/?category=ReportResearch,AcademicArticle&page=0&size=19"),
+                URI.create("https://x.org/?INSTANCE_TYPE=AcademicArticle&size=9"),
                 URI.create("https://x.org/?fields=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd&size=2"),
                 URI.create("https://x.org/?funding=AFR:296896&size=1"),
                 URI.create("https://x.org/?funding=NFR:1296896&size=1"),

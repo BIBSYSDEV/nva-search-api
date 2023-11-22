@@ -191,12 +191,11 @@ public final class ApplicationConstants {
 
     private static NestedAggregationBuilder generateContributorAggregations() {
         return
-            generateNestedContributorAggregation()
-                .subAggregation(
-                    generateNestedIdentityAggregation()
-                        .subAggregation(generateIdAggregation())
-                        .subAggregation(generateNameAggregation())
-                );
+            generateNestedContributorAggregation().subAggregation(
+                generateNestedIdentityAggregation().subAggregation(
+                    generateIdAggregation().subAggregation(
+                        generateNameAggregation()))
+            );
     }
 
     private static NestedAggregationBuilder generateNestedContributorAggregation() {
@@ -204,7 +203,7 @@ public final class ApplicationConstants {
     }
 
     private static NestedAggregationBuilder generateNestedIdentityAggregation() {
-        return new NestedAggregationBuilder(IDENTITY, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, KEYWORD));
+        return new NestedAggregationBuilder(IDENTITY, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY));
     }
 
     private static TermsAggregationBuilder generateIdAggregation() {
