@@ -21,6 +21,24 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_AGGREGATION_SIZE;
 public final class ApplicationConstants {
 
 
+    public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
+    public static final Environment ENVIRONMENT = new Environment();
+
+    public static String jsonPath(String... args) {
+        return String.join(DOT, args);
+    }
+
+    public static String readSearchInfrastructureAuthUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
+    }
+
+    public static String readSearchInfrastructureApiUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
+    }
+
+    public static String readApiHost() {
+        return ENVIRONMENT.readEnv("API_HOST");
+    }
     public static final Integer EXPECTED_TWO_PARTS = 2;
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
@@ -129,26 +147,6 @@ public final class ApplicationConstants {
 
 
 
-    public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
-    public static final Environment ENVIRONMENT = new Environment();
-
-    public static String jsonPath(String... args) {
-        return String.join(DOT, args);
-    }
-
-    public static String readSearchInfrastructureAuthUri() {
-        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
-    }
-
-    public static String readSearchInfrastructureApiUri() {
-        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
-    }
-
-    public static String readApiHost() {
-        return ENVIRONMENT.readEnv("API_HOST");
-    }
-
-
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
         generateSimpleAggregation(USER,
@@ -195,14 +193,14 @@ public final class ApplicationConstants {
         return nestedAggregation;
     }
 
-    private static FilterAggregationBuilder generateHasFileAggregation() {
-        var publishedFileQuery = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
-        var notAdministrativeAgreementQuery =
-            new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false);
-
-        var queryToMatch = QueryBuilders.boolQuery()
-            .must(publishedFileQuery)
-            .must(notAdministrativeAgreementQuery);
-        return new FilterAggregationBuilder(ASSOCIATED_ARTIFACTS, queryToMatch);
-    }
+    //    private static FilterAggregationBuilder generateHasFileAggregation() {
+    //        var publishedFileQuery = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
+    //        var notAdministrativeAgreementQuery =
+    //            new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false);
+    //
+    //        var queryToMatch = QueryBuilders.boolQuery()
+    //            .must(publishedFileQuery)
+    //            .must(notAdministrativeAgreementQuery);
+    //        return new FilterAggregationBuilder(ASSOCIATED_ARTIFACTS, queryToMatch);
+    //    }
 }
