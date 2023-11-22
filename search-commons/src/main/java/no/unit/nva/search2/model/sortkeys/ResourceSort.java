@@ -1,5 +1,6 @@
 package no.unit.nva.search2.model.sortkeys;
 
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -13,7 +14,8 @@ import java.util.stream.Collectors;
 
 public enum ResourceSort {
     INVALID(""),
-    CATEGORY("entityDescription.reference.publicationInstance.type.keyword"),
+    CATEGORY(ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    INSTANCE_TYPE(ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE("createdDate"),
     MODIFIED_DATE("modifiedDate"),
     PUBLISHED_DATE("publishedDate"),
