@@ -6,6 +6,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ADD_SLASH;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_BOOLEAN;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -37,7 +38,6 @@ public interface ParameterKey<E extends Enum<E>> {
 
     String errorMessage();
 
-
     static Predicate<ParameterKey<?>> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }
@@ -46,16 +46,15 @@ public interface ParameterKey<E extends Enum<E>> {
     @JacocoGenerated
     static ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
-            case INVALID, NUMBER, CUSTOM -> ValueEncoding.NONE;
+            case INVALID, NUMBER, BOOLEAN, CUSTOM -> ValueEncoding.NONE;
             case DATE, KEYWORD, TEXT, SORT_KEY -> ValueEncoding.DECODE;
-
         };
     }
 
     @JacocoGenerated
     static String getErrorMessage(ParamKind kind) {
         return switch (kind) {
-            // case BOOLEAN -> ERROR_MESSAGE_TEMPLATE_INVALID_QUERY_PARAMETERS;
+            case BOOLEAN -> INVALID_VALUE;
             case DATE -> INVALID_DATE;
             case NUMBER -> INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
@@ -67,27 +66,16 @@ public interface ParameterKey<E extends Enum<E>> {
 
     @JacocoGenerated
     static String getValuePattern(ParamKind kind, String pattern) {
-        return
-            nonNull(pattern) ? pattern
-                : switch (kind) {
-                    // case BOOLEAN -> PATTERN_IS_BOOLEAN;
-                    case DATE -> PATTERN_IS_DATE;
-                    case NUMBER -> PATTERN_IS_NUMBER;
-                    // case RANGE -> PATTERN_IS_RANGE;
-                    case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
-                    case INVALID -> PATTERN_IS_NONE_OR_ONE;
-                };
+        return nonNull(pattern) ? pattern
+            : switch (kind) {
+                case BOOLEAN -> PATTERN_IS_BOOLEAN;
+                case DATE -> PATTERN_IS_DATE;
+                case NUMBER -> PATTERN_IS_NUMBER;
+                // case RANGE -> PATTERN_IS_RANGE;
+                case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
+                case INVALID -> PATTERN_IS_NONE_OR_ONE;
+            };
     }
-
-    //    static boolean ignoreInvalidKey(Enum<?> f) {
-    //        return f.ordinal() > 0;
-    //    }
-    //
-    //    static boolean isSearchField(ParameterKey<?> f) {
-    //        return f.fieldType() == ParamKind.DATE ||
-    //               f.fieldType() == ParamKind.KEYWORD ||
-    //               f.fieldType() == ParamKind.TEXT;
-    //    }
 
     static int compareAscending(Enum<?> key1, Enum<?> key2) {
         return key1.ordinal() - key2.ordinal();
@@ -97,13 +85,12 @@ public interface ParameterKey<E extends Enum<E>> {
         return value.replaceAll(PATTERN_IS_SPECIAL_CHARACTERS, PATTERN_IS_ADD_SLASH);
     }
 
-
     enum ValueEncoding {
         NONE, DECODE
     }
 
     enum ParamKind {
-        DATE, NUMBER, KEYWORD, TEXT, SORT_KEY, CUSTOM, INVALID
+        BOOLEAN, DATE, NUMBER, KEYWORD, TEXT, SORT_KEY, CUSTOM, INVALID
     }
 
     enum FieldOperator {

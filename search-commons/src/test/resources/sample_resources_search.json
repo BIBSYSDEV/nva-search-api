@@ -216,8 +216,8 @@
         "type": "Organization",
         "countryCode": "IQ",
         "labels": {
-          "nn": "Al-Iraqia University",
-          "nb": "Al-Iraqia University",
+          "nb": "Al-Iraqia Universitet",
+          "nn": "Universitet i Irak",
           "en": "Al-Iraqia University"
         }
       },
@@ -306,8 +306,8 @@
           }
         ],
         "labels": {
-          "en": "Norwegian Defence University College",
-          "nb": "Forsvarets høgskole"
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
         }
       }
     ]
@@ -328,7 +328,7 @@
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
         "publisherAuthority": false,
         "size": 699309,
-        "visibleForNonOwner": true
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-09-29T12:14:46Z",
@@ -417,7 +417,7 @@
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
-        "administrativeAgreement": false,
+        "administrativeAgreement": true,
         "identifier": "82c86bd2-f6d1-408f-b315-19e6258e3fd9",
         "license": "https://rightsstatements.org/page/inc/1.0",
         "mimeType": "application/pdf",
@@ -2135,6 +2135,47 @@
       "owner": "uio@185.90.0.0",
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
+    "fundings": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/1234",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-12-31T23:00:00Z",
+        "activeTo": "2019-12-31T23:00:00Z",
+        "identifier": "1234",
+        "labels": {
+          "nb": "Tap av natur som finansiell risiko"
+        },
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/3333",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-12-31T23:00:00Z",
+        "activeTo": "2019-12-31T23:00:00Z",
+        "identifier": "3333",
+        "labels": {
+          "nb": "Tap av Kaptial som finansiell risiko"
+        },
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/CAPS",
+          "type": "FundingSource",
+          "identifier": "CAPS",
+          "labels": {
+            "nb": "All Kaptial",
+            "en": "All Caps"
+          }
+        }
+      }
+    ],
+
     "status": "PUBLISHED"
   },
   {
@@ -3480,9 +3521,9 @@
         "type": "Organization",
         "countryCode": "IQ",
         "labels": {
-          "nn": "Al-Iraqia University",
-          "nb": "Al-Iraqia University",
-          "en": "Al-Iraqia University"
+          "nn": "Al-Iraqia University1",
+          "nb": "Al-Iraqia University2",
+          "en": "Al-Iraqia University3"
         }
       },
       {

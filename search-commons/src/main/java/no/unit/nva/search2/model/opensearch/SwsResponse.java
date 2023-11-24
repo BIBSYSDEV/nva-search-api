@@ -1,22 +1,19 @@
 package no.unit.nva.search2.model.opensearch;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search2.model.opensearch.SwsResponse.HitsInfo.Hit;
-
-import java.beans.Transient;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.LABELS;
 import static no.unit.nva.search.constants.ApplicationConstants.NAME;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.beans.Transient;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import no.unit.nva.search2.model.opensearch.SwsResponse.HitsInfo.Hit;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
 
 public record SwsResponse(
     int took,
@@ -37,6 +34,7 @@ public record SwsResponse(
         TotalInfo total,
         double max_score,
         List<Hit> hits) {
+
         public record TotalInfo(
             Integer value,
             String relation) {
@@ -84,7 +82,6 @@ public record SwsResponse(
                 : List.of();
     }
 
-
     @Transient
     public JsonNode getAggregationsStructured() {
         return nonNull(aggregations)
@@ -123,7 +120,7 @@ public record SwsResponse(
                 outputAggregationNode.set(LABELS, formatName(value));
             } else if (value.isValueNode()) {
                 outputAggregationNode.set(newName, value);
-            } else if (value.has( "buckets")) {
+            } else if (value.has("buckets")) {
                 var bucket = value.get("buckets");
                 var arrayNode = objectMapperWithEmpty.createArrayNode();
                 bucket.forEach(element -> arrayNode.add(formatAggregations(element)));
@@ -171,5 +168,4 @@ public record SwsResponse(
         }
         return outputAggregationNode;
     }
-
 }

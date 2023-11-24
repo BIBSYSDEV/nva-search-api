@@ -11,6 +11,5 @@ public record Facet(URI id, String key, Integer count, Map<String, String> label
 
     public Facet {
         Objects.requireNonNull(count);
-        Objects.requireNonNull(key);
     }
 }

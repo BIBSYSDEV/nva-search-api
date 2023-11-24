@@ -1,7 +1,43 @@
 package no.unit.nva.search2.model.parameterkeys;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.*;
+import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
+import static no.unit.nva.search2.constant.ApplicationConstants.BOKMAAL_CODE;
+import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENGLISH_CODE;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_DOI;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.ApplicationConstants.FUNDINGS;
+import static no.unit.nva.search2.constant.ApplicationConstants.FUNDINGS_SOURCE_LABELS;
+import static no.unit.nva.search2.constant.ApplicationConstants.IDENTIFIER;
+import static no.unit.nva.search2.constant.ApplicationConstants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search2.constant.ApplicationConstants.MAIN_TITLE;
+import static no.unit.nva.search2.constant.ApplicationConstants.MODIFIED_DATE;
+import static no.unit.nva.search2.constant.ApplicationConstants.NYNORSK_CODE;
+import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
+import static no.unit.nva.search2.constant.ApplicationConstants.PROJECTS_ID;
+import static no.unit.nva.search2.constant.ApplicationConstants.PUBLICATION_CONTEXT;
+import static no.unit.nva.search2.constant.ApplicationConstants.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.constant.ApplicationConstants.PUBLISHED_DATE;
+import static no.unit.nva.search2.constant.ApplicationConstants.REFERENCE;
+import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
+import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.constant.ApplicationConstants.SAMI_CODE;
+import static no.unit.nva.search2.constant.ApplicationConstants.SOURCE;
+import static no.unit.nva.search2.constant.ApplicationConstants.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
+import static no.unit.nva.search2.constant.ApplicationConstants.jsonPath;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -17,8 +53,6 @@ import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.KEY
 import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.SORT_KEY;
 import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.TEXT;
-
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -26,7 +60,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-
 import no.unit.nva.search2.constant.ApplicationConstants;
 import nva.commons.core.JacocoGenerated;
 
@@ -52,7 +85,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     DOI(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_DOI),
     DOI_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_DOI),
     DOI_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_REFERENCE_DOI),
-    FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,null, PATTERN_IS_FUNDING, null),
+    FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
     FUNDING_SOURCE(KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
@@ -60,14 +93,14 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),
     INSTANCE_TYPE(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
-        "(?i)instance.?type|category",null,null),
+                  "(?i)instance.?type|category", null, null),
     INSTANCE_TYPE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
-        "(?i)instance.?type.?not|category.?not",null,null),
+                      "(?i)instance.?type.?not|category.?not", null, null),
     INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
-        "(?i)instance.?type.?should|category.?should",null,null),
+                         "(?i)instance.?type.?should|category.?should", null, null),
     INSTITUTION(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_NOT(KEYWORD, MUST_NOT,  Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_SHOULD(TEXT, SHOULD,  Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     ISBN(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
@@ -100,9 +133,9 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     PUBLICATION_YEAR(NUMBER, MUST, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
-        "(?i)year.?reported|publication.?year", null, null),
+                     "(?i)year.?reported|publication.?year", null, null),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
-        "(?i)year.?reported.?should|publication.?year.?should", null, null),
+                            "(?i)year.?reported.?should|publication.?year.?should", null, null),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, "q", "(?i)search.?all|query", null, null),
     FIELDS(CUSTOM),
@@ -159,7 +192,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[] {key};
+            : new String[]{key};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
@@ -224,7 +257,6 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
                 .toString();
     }
 
-
     public static ResourceParameter keyFromString(String paramName) {
         var result = Arrays.stream(ResourceParameter.values())
             .filter(ResourceParameter::ignoreInvalidKey)
@@ -243,50 +275,45 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 
-
     private static class Constants {
 
         public static final String CREATED_DATE = "createdDate";
         private static final String AC_KEYWORD = ApplicationConstants.KEYWORD;
         public static final String AC_ID = ApplicationConstants.ID;
 
-
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
             jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, AC_KEYWORD)
-                + PIPE + jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, NYNORSK_CODE, AC_KEYWORD)
-                + PIPE + jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, BOKMAAL_CODE, AC_KEYWORD)
-                + PIPE + jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, SAMI_CODE, AC_KEYWORD);
+            + PIPE + jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, NYNORSK_CODE, AC_KEYWORD)
+            + PIPE + jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, BOKMAAL_CODE, AC_KEYWORD)
+            + PIPE + jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, SAMI_CODE, AC_KEYWORD);
 
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION =
             ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID
-                + PIPE + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD;
-
+            + PIPE + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD;
 
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY =
             ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID
-                + PIPE + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME;
-
+            + PIPE + ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_NAME;
 
         public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN =
             ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ONLINE_ISSN
-                + PIPE + ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN;
+            + PIPE + ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN;
 
         public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
             jsonPath(FUNDINGS, IDENTIFIER_KEYWORD + PIPE + FUNDINGS, SOURCE, IDENTIFIER, AC_KEYWORD);
 
-
         public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
             FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER
-                + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, ENGLISH_CODE, AC_KEYWORD)
-                + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, NYNORSK_CODE, AC_KEYWORD)
-                + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, BOKMAAL_CODE, AC_KEYWORD)
-                + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, SAMI_CODE, AC_KEYWORD);
+            + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, ENGLISH_CODE, AC_KEYWORD)
+            + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, NYNORSK_CODE, AC_KEYWORD)
+            + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, BOKMAAL_CODE, AC_KEYWORD)
+            + PIPE + jsonPath(FUNDINGS_SOURCE_LABELS, SAMI_CODE, AC_KEYWORD);
 
         public static final String PARENT_PUBLICATION_ID =
             jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, "corrigendumFor", AC_KEYWORD)
-                + PIPE +
-                jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, "manifestations", AC_ID, AC_KEYWORD)
-                + PIPE +
-                jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, AC_ID, AC_KEYWORD);
+            + PIPE
+            + jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, "manifestations", AC_ID, AC_KEYWORD)
+            + PIPE
+            + jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, AC_ID, AC_KEYWORD);
     }
 }

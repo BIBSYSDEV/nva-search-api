@@ -1,44 +1,21 @@
 package no.unit.nva.search2.constant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_AGGREGATION_SIZE;
 
 @JacocoGenerated
 public final class ApplicationConstants {
 
-
-    public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
-    public static final Environment ENVIRONMENT = new Environment();
-
-    public static String jsonPath(String... args) {
-        return String.join(DOT, args);
-    }
-
-    public static String readSearchInfrastructureAuthUri() {
-        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
-    }
-
-    public static String readSearchInfrastructureApiUri() {
-        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
-    }
-
-    public static String readApiHost() {
-        return ENVIRONMENT.readEnv("API_HOST");
-    }
     public static final Integer EXPECTED_TWO_PARTS = 2;
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
@@ -98,11 +75,31 @@ public final class ApplicationConstants {
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String PUBLISHED_FILE = "PublishedFile";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
+
+    public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
+    public static final Environment ENVIRONMENT = new Environment();
+
+    public static String jsonPath(String... args) {
+        return String.join(DOT, args);
+    }
+
+    public static String readSearchInfrastructureAuthUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
+    }
+
+    public static String readSearchInfrastructureApiUri() {
+        return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
+    }
+
+    public static String readApiHost() {
+        return ENVIRONMENT.readEnv("API_HOST");
+    }
+
     public static final String MAIN_TITLE = ENTITY_DESCRIPTION + DOT + "mainTitle";
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
-        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS,ID, KEYWORD);
+        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS =
         jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, LABELS);
@@ -145,26 +142,30 @@ public final class ApplicationConstants {
 
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = jsonPath(RESOURCE_OWNER, OWNER, KEYWORD);
 
-
-
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        generateSimpleAggregation(USER,
-            RESOURCE_OWNER_OWNER_KEYWORD),
-        generateSimpleAggregation(USER_AFFILIATION,
-            RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
+        generateSimpleAggregation(USER, RESOURCE_OWNER_OWNER_KEYWORD),
+        generateSimpleAggregation(USER_AFFILIATION, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
         generateSimpleAggregation(INSTANCE_TYPE, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE_KEYWORD),
         generateSimpleAggregation(CONTEXT_TYPE, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
         generateFundingSourceAggregation(),
+        generateTopLevelOrganizationAggregation2(),
+        //        generateSimpleAggregation(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS + DOT + TYPE + DOT + KEYWORD).,
 //        generateHasFileAggregation(),
-        generateIdAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
+        generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
+        //        generateIdAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
     );
 
     private static TermsAggregationBuilder generateSimpleAggregation(String term, String field) {
         return AggregationBuilders
             .terms(term)
             .field(field)
-            .size(DEFAULT_AGGREGATION_SIZE);
+            .size(Defaults.DEFAULT_AGGREGATION_SIZE);
+    }
+
+    private static NestedAggregationBuilder generateObjectLabelsAggregation(String name, String path) {
+        return new NestedAggregationBuilder(name, path)
+            .subAggregation(generateIdAggregation(path));
     }
 
     private static TermsAggregationBuilder generateFundingSourceAggregation() {
@@ -172,35 +173,77 @@ public final class ApplicationConstants {
             generateSimpleAggregation(FUNDING_SOURCE, jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD))
                 .subAggregation(
                     generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)));
-
     }
 
-    private static TermsAggregationBuilder generateIdAggregation(String displayName, String path) {
-        return generateSimpleAggregation(displayName, jsonPath(path, ID, KEYWORD))
-            .subAggregation(generateLabelsAggregation(path));
+    private static TermsAggregationBuilder generateTopLevelOrganizationAggregation2() {
+        return
+            generateSimpleAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD)
+                .subAggregation(
+                    generateLabelsAggregation(TOP_LEVEL_ORGANIZATIONS));
+    }
 
-//        return new TermsAggregationBuilder(displayName)
-//            .field(jsonPath(path, ID, KEYWORD))
-//            .size(DEFAULT_AGGREGATION_SIZE)
+    private static NestedAggregationBuilder generateTopLevelAggregation() {
+        return
+            new NestedAggregationBuilder("test1", jsonPath(TOP_LEVEL_ORGANIZATIONS))
+                //                .subAggregation(
+                .subAggregation(generateLabelsAggregation(jsonPath(TOP_LEVEL_ORGANIZATIONS)));
+    }
+
+    private static TermsAggregationBuilder generateTopLevelOrganizationAggregation() {
+        return
+            new TermsAggregationBuilder("test2")
+                .field(jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD))
+                .subAggregation(generateLabelsAggregation(jsonPath(TOP_LEVEL_ORGANIZATIONS))
+                );
+    }
+
+    private static TermsAggregationBuilder generateIdAggregation(String object) {
+        return new TermsAggregationBuilder(ID)
+            .field(jsonPath(object, ID, KEYWORD))
+            .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+            .subAggregation(generateLabelsAggregation(object));
+    }
+
+    //    private static TermsAggregationBuilder generateIdAggregation(String displayName, String path) {
+    //        return generateSimpleAggregation(displayName, jsonPath(path, ID, KEYWORD))
+    //            .size(Defaults.DEFAULT_AGGREGATION_SIZE)
 //            .subAggregation(generateLabelsAggregation(path));
-    }
+    //    }
 
-    private static NestedAggregationBuilder generateLabelsAggregation(String object) {
-        var nestedAggregation = new NestedAggregationBuilder(LABELS, jsonPath(object, LABELS));
+    private static NestedAggregationBuilder generateLabelsAggregation(String jsonPath) {
+        var nestedAggregation = new NestedAggregationBuilder(LABELS, jsonPath(jsonPath, LABELS));
         Stream.of(BOKMAAL_CODE, ENGLISH_CODE, NYNORSK_CODE, SAMI_CODE)
-            .map(code -> generateSimpleAggregation(code, jsonPath(object, LABELS, code, KEYWORD)))
+            .map(code -> generateSimpleAggregation(code, jsonPath(jsonPath, LABELS, code, KEYWORD)))
             .forEach(nestedAggregation::subAggregation);
         return nestedAggregation;
     }
 
-    //    private static FilterAggregationBuilder generateHasFileAggregation() {
-    //        var publishedFileQuery = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
-    //        var notAdministrativeAgreementQuery =
-    //            new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false);
-    //
-    //        var queryToMatch = QueryBuilders.boolQuery()
-    //            .must(publishedFileQuery)
-    //            .must(notAdministrativeAgreementQuery);
-    //        return new FilterAggregationBuilder(ASSOCIATED_ARTIFACTS, queryToMatch);
-    //    }
+    private static TermsAggregationBuilder generateHasFileAggregation() {
+        //        var publishedFileQuery = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),
+        //        PUBLISHED_FILE);
+        //        var notAdministrativeAgreementQuery =
+        //            new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false);
+        //
+        //        var queryToMatch = QueryBuilders.boolQuery()
+        //            .must(publishedFileQuery)
+        //            .must(notAdministrativeAgreementQuery);
+
+        var include = new IncludeExclude(PUBLISHED_FILE, "");
+
+        return AggregationBuilders
+            .terms(ASSOCIATED_ARTIFACTS)
+            .field(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD))
+            .includeExclude(include)
+            .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+            .subAggregation(
+                generateSimpleAggregation("public", jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT))
+
+            );
+
+        //        return new FilterAggregationBuilder(ASSOCIATED_ARTIFACTS, queryToMatch)
+        //            .subAggregation(
+        //                new NestedAggregationBuilder("associatedArtifact", jsonPath(ASSOCIATED_ARTIFACTS,
+        //                "visibleForNonOwner", KEYWORD))
+        //            );
+    }
 }

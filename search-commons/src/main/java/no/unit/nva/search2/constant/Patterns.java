@@ -7,6 +7,8 @@ public class Patterns {
 
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
 
+    public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
+
     /**
      * Pattern for matching a date string.
      * yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ

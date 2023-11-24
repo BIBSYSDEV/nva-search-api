@@ -1,6 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.constant.ApplicationConstants.SPACE;
 import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
 import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.INSTANCE_TYPE;
@@ -21,7 +22,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingClient;
@@ -109,7 +112,14 @@ class ResourceClientTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
-            logger.info(pagedSearchResourceDto.toJsonString());
+
+            pagedSearchResourceDto.aggregations()
+                .forEach((s, facets) -> logger.info(s + SPACE + facets.stream()
+                             .map(JsonSerializable::toJsonString)
+                             .collect(Collectors.joining(",\n"))
+                         )
+                );
+
             assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.hits().size())));
             assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.totalHits())));
         }
