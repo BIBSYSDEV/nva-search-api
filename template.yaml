@@ -662,6 +662,7 @@ Resources:
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
           EVENT_BUS: !GetAtt BatchIndexEventBus.Name
+          MAX_PAYLOAD: '3291456'
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule

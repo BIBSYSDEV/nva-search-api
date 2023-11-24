@@ -3,6 +3,7 @@ package no.unit.nva.search.keybatch;
 import static java.util.UUID.randomUUID;
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.keybatch.KeyBasedBatchIndexHandler.DEFAULT_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -62,6 +63,7 @@ class KeyBasedBatchIndexHandlerTest {
     public static final String IDENTIFIER = "__IDENTIFIER__";
     private static final String VALID_PUBLICATION = IoUtils.stringFromResources(Path.of("publication.json"));
     private static final String INVALID_PUBLICATION = IoUtils.stringFromResources(Path.of("invalid_publication.json"));
+    public static final String DEFAULT_LOCATION = "resources";
     private ByteArrayOutputStream outputStream;
     private S3Driver s3ResourcesDriver;
     private FakeS3Client s3ResourcesClient;
@@ -148,6 +150,7 @@ class KeyBasedBatchIndexHandlerTest {
             var emittedEvent = ((StubEventBridgeClient) eventBridgeClient).getLatestEvent();
 
             assertThat(emittedEvent.getStartMarker(), is(equalTo(batchKey)));
+            assertThat(emittedEvent.getLocation(), is(equalTo(DEFAULT_LOCATION)));
         }
     }
 
@@ -221,7 +224,7 @@ class KeyBasedBatchIndexHandlerTest {
     }
 
     private static EventConsumptionAttributes randomConsumptionAttribute() {
-        return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
+        return new EventConsumptionAttributes(DEFAULT_INDEX, SortableIdentifier.next());
     }
 
     private static ObjectNode jsonNode() {
@@ -230,7 +233,15 @@ class KeyBasedBatchIndexHandlerTest {
 
     private InputStream eventStream(String startMarker) throws JsonProcessingException {
         var event = new AwsEventBridgeEvent<KeyBatchRequestEvent>();
-        event.setDetail(new KeyBatchRequestEvent(startMarker, randomString()));
+        event.setDetail(new KeyBatchRequestEvent(startMarker, randomString(), DEFAULT_LOCATION));
+        event.setId(randomString());
+        var jsonString = objectMapperWithEmpty.writeValueAsString(event);
+        return IoUtils.stringToStream(jsonString);
+    }
+
+    private InputStream eventStreamWithLocation(String startMarker, String location) throws JsonProcessingException {
+        var event = new AwsEventBridgeEvent<KeyBatchRequestEvent>();
+        event.setDetail(new KeyBatchRequestEvent(startMarker, randomString(), location));
         event.setId(randomString());
         var jsonString = objectMapperWithEmpty.writeValueAsString(event);
         return IoUtils.stringToStream(jsonString);

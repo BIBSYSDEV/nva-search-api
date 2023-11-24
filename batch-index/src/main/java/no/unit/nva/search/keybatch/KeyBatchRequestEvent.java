@@ -11,21 +11,24 @@ public class KeyBatchRequestEvent implements JsonSerializable, EventBody {
 
     public static final String START_MARKER = "startMarker";
     public static final String TOPIC = "topic";
+    public static final String LOCATION = "location";
     @JsonProperty(START_MARKER)
     private final String startMarker;
     @JsonProperty(TOPIC)
     private final String topic;
+    @JsonProperty(LOCATION)
+    private final String location;
 
     @JsonCreator
-    public KeyBatchRequestEvent(@JsonProperty(START_MARKER) String startMarker, @JsonProperty(TOPIC) String topic) {
+    public KeyBatchRequestEvent(@JsonProperty(START_MARKER) String startMarker, @JsonProperty(TOPIC) String topic,
+                                @JsonProperty(LOCATION) String location) {
         this.startMarker = startMarker;
         this.topic = topic;
+        this.location = location;
     }
 
-    @JacocoGenerated
-    @Override
-    public int hashCode() {
-        return Objects.hash(startMarker, getTopic());
+    public String getLocation() {
+        return location;
     }
 
     @JacocoGenerated
@@ -38,7 +41,15 @@ public class KeyBatchRequestEvent implements JsonSerializable, EventBody {
             return false;
         }
         KeyBatchRequestEvent that = (KeyBatchRequestEvent) o;
-        return Objects.equals(startMarker, that.startMarker) && Objects.equals(getTopic(), that.getTopic());
+        return Objects.equals(getStartMarker(), that.getStartMarker())
+               && Objects.equals(getTopic(), that.getTopic())
+               && Objects.equals(getLocation(), that.getLocation());
+    }
+
+    @JacocoGenerated
+    @Override
+    public int hashCode() {
+        return Objects.hash(getStartMarker(), getTopic(), getLocation());
     }
 
     @Override
