@@ -33,6 +33,9 @@ import nva.commons.core.JacocoGenerated;
 public enum ParameterKeyImportCandidate implements ParameterKey {
     INVALID(TEXT),
     // Parameters converted to Lucene query
+    ADDITIONAL_IDENTIFIERS(KEYWORD, MUST, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, MUST_NOT, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, SHOULD, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
     CATEGORY(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
@@ -201,5 +204,7 @@ public enum ParameterKeyImportCandidate implements ParameterKey {
         public static final String PUBLISHED_DATE = "publishedDate.year";
         public static final String PUBLISHER = "publisher.id.keyword";
         public static final String RESOURCE_OWNER = "owner.keyword";
+        public static final String ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD = "additionalIdentifiers.value.keyword";
+
     }
 }
