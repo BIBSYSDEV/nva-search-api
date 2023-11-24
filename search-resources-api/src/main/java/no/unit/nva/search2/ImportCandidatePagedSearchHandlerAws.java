@@ -2,9 +2,9 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FROM;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;

@@ -14,37 +14,41 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FIELDS;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FROM;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.PAGE;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SEARCH_AFTER;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SEARCH_ALL;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT_ORDER;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.keyFromString;
-import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
-import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.FIELDS;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.PAGE;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SEARCH_ALL;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SORT_ORDER;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.keyFromString;
+import static no.unit.nva.search2.model.sortkeys.ImportCandidateSort.INVALID;
+import static no.unit.nva.search2.model.sortkeys.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.model.OpenSearchQuery;
-import no.unit.nva.search2.model.OpenSearchQueryBuilder;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
+import no.unit.nva.search2.common.QueryBuilderTools;
+import no.unit.nva.search2.model.PagedSearchBuilder;
 import no.unit.nva.search2.model.PagedSearchDto;
-import no.unit.nva.search2.model.ParameterKey;
-import no.unit.nva.search2.model.ParameterKeyImportCandidate;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
-import no.unit.nva.search2.model.ResourceSortKeys;
+import no.unit.nva.search2.model.opensearch.Query;
+import no.unit.nva.search2.model.opensearch.QueryBuilder;
+import no.unit.nva.search2.model.opensearch.SwsResponse;
+import no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter;
+import no.unit.nva.search2.model.parameterkeys.ParameterKey;
+import no.unit.nva.search2.model.sortkeys.ImportCandidateSort;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.opensearch.common.collect.Tuple;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -55,7 +59,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImportCandidate> {
+public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
     ImportCandidateQuery() {
         super();
@@ -79,23 +83,24 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
             ? toCsvText(response)
             : toPagedResponse(response).toJsonString();
     }
-    
-    private String toCsvText(OpenSearchSwsResponse response) {
+
+    private String toCsvText(SwsResponse response) {
         return CsvTransformer.transform(response.getSearchHits());
     }
 
-    PagedSearchDto toPagedResponse(OpenSearchSwsResponse response) {
+    PagedSearchDto toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
         
         return
-            PagedSearchDto.Builder.builder()
+            new PagedSearchBuilder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(response.getSearchHits())
-                .withAggregations(response.getAggregationsStructured())
                 .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
-                .withNextResultsBySortKey(QueryBuilderTools.nextResultsBySortKey(response, requestParameter, source))
+                .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
+                .withAggregations(response.getAggregationsStructured())
                 .build();
+
     }
     
     public Stream<QueryBuilderSourceWrapper> createQueryBuilderStream() {
@@ -155,9 +160,28 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
             getOptional(SORT).stream()
                 .flatMap(sort -> Arrays.stream(sort.split(COMMA)))
                 .map(sort -> sort.split(COLON))
-                .map(QueryBuilderTools::expandSortKeys);
+                .map(this::expandSortKeys);
     }
-    
+
+    public static URI nextResultsBySortKey(
+        SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+
+        requestParameter.remove(FROM.fieldName());
+        var sortedP =
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
+        requestParameter.put(SEARCH_AFTER.fieldName(), sortedP);
+        return UriWrapper.fromUri(gatewayUri)
+            .addQueryParameters(requestParameter)
+            .getUri();
+    }
+
+    Tuple<String, SortOrder> expandSortKeys(String... strings) {
+        var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
+        var fieldName = ImportCandidateSort.fromSortKey(strings[0]).getFieldName();
+        return new Tuple<>(fieldName, sortOrder);
+    }
     /**
      * Creates a multi match query, all words needs to be present, within a document.
      *
@@ -177,8 +201,7 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
     }
     
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder
-        extends OpenSearchQueryBuilder<ParameterKeyImportCandidate, ImportCandidateQuery> {
+    protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
         
         private static final String ALL = "all";
         public static final Integer EXPECTED_TWO_PARTS = 2;
@@ -208,7 +231,8 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
-                case PUBLISHED_BEFORE, PUBLISHED_SINCE,
+                case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE,
                     CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
                     COLLABORATION_TYPE,
                     DOI, DOI_NOT, DOI_SHOULD,
@@ -277,7 +301,7 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
             }
             
             var sortField = sortKeyParts[0];
-            var sortKey = ResourceSortKeys.fromSortKey(sortField);
+            var sortKey = ImportCandidateSort.fromSortKey(sortField);
             
             if (sortKey == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys()));
@@ -307,7 +331,7 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
         }
         
         private boolean keyIsValid(String key) {
-            return keyFromString(key) != ParameterKeyImportCandidate.INVALID;
+            return keyFromString(key) != ImportCandidateParameter.INVALID;
         }
     }
 }

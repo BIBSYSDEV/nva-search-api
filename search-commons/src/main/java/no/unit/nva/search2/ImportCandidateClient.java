@@ -13,15 +13,15 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.OpenSearchClient;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
+import no.unit.nva.search2.model.opensearch.OpenSearchClient;
+import no.unit.nva.search2.model.opensearch.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImportCandidateClient implements OpenSearchClient<OpenSearchSwsResponse, ImportCandidateQuery> {
+public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportCandidateClient.class);
     
@@ -45,7 +45,7 @@ public class ImportCandidateClient implements OpenSearchClient<OpenSearchSwsResp
     }
     
     @Override
-    public OpenSearchSwsResponse doSearch(ImportCandidateQuery query) {
+    public SwsResponse doSearch(ImportCandidateQuery query) {
         return
             query.createQueryBuilderStream()
                 .map(this::createRequest)
@@ -71,11 +71,11 @@ public class ImportCandidateClient implements OpenSearchClient<OpenSearchSwsResp
     }
     
     @JacocoGenerated
-    private OpenSearchSwsResponse handleResponse(HttpResponse<String> response) {
+    private SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
         }
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
+        return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
             .orElseThrow();
     }
 }

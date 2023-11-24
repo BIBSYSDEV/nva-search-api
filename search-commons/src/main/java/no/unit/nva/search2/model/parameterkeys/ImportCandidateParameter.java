@@ -1,20 +1,20 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.model.parameterkeys;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.LESS_THAN;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.model.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.model.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.SHOULD;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.KEYWORD;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.SORT_KEY;
+import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.TEXT;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -30,9 +30,12 @@ import nva.commons.core.JacocoGenerated;
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
  */
 
-public enum ParameterKeyImportCandidate implements ParameterKey {
+public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
     INVALID(TEXT),
     // Parameters converted to Lucene query
+    ADDITIONAL_IDENTIFIERS(KEYWORD, MUST, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, MUST_NOT, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, SHOULD, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
     CATEGORY(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
@@ -64,12 +67,12 @@ public enum ParameterKeyImportCandidate implements ParameterKey {
     SORT(SORT_KEY, null, null, "(?i)order.?by|sort", null, null),
     SORT_ORDER(CUSTOM, MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
     SEARCH_AFTER(CUSTOM);
-    
+
     public static final int IGNORE_PARAMETER_INDEX = 0;
-    
-    public static final Set<ParameterKeyImportCandidate> VALID_LUCENE_PARAMETER_KEYS =
-        Arrays.stream(ParameterKeyImportCandidate.values())
-            .filter(ParameterKeyImportCandidate::isSearchField)
+
+    public static final Set<ImportCandidateParameter> VALID_LUCENE_PARAMETER_KEYS =
+        Arrays.stream(ImportCandidateParameter.values())
+            .filter(ImportCandidateParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     
@@ -82,24 +85,24 @@ public enum ParameterKeyImportCandidate implements ParameterKey {
     private final String errorMsg;
     private final ParamKind paramkind;
     private final Float boost;
-    
-    ParameterKeyImportCandidate(ParamKind kind) {
+
+    ImportCandidateParameter(ParamKind kind) {
         this(kind, MUST, null, null, null, null);
     }
-    
-    ParameterKeyImportCandidate(ParamKind kind, String fieldsToSearch) {
+
+    ImportCandidateParameter(ParamKind kind, String fieldsToSearch) {
         this(kind, MUST, fieldsToSearch, null, null, null);
     }
-    
-    ParameterKeyImportCandidate(ParamKind kind, String fieldsToSearch, Float boost) {
+
+    ImportCandidateParameter(ParamKind kind, String fieldsToSearch, Float boost) {
         this(kind, MUST, fieldsToSearch, null, null, boost);
     }
-    
-    ParameterKeyImportCandidate(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
+
+    ImportCandidateParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
         this(kind, operator, fieldsToSearch, null, null, null);
     }
-    
-    ParameterKeyImportCandidate(
+
+    ImportCandidateParameter(
         ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
         
@@ -172,22 +175,22 @@ public enum ParameterKeyImportCandidate implements ParameterKey {
                 .add(name().toLowerCase(Locale.ROOT))
                 .toString();
     }
-    
-    public static ParameterKeyImportCandidate keyFromString(String paramName) {
-        var result = Arrays.stream(ParameterKeyImportCandidate.values())
-            .filter(ParameterKeyImportCandidate::ignoreInvalidKey)
+
+    public static ImportCandidateParameter keyFromString(String paramName) {
+        var result = Arrays.stream(ImportCandidateParameter.values())
+            .filter(ImportCandidateParameter::ignoreInvalidKey)
             .filter(ParameterKey.equalTo(paramName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
-    
-    private static boolean ignoreInvalidKey(ParameterKeyImportCandidate f) {
+
+    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX;
     }
-    
-    private static boolean isSearchField(ParameterKeyImportCandidate f) {
+
+    private static boolean isSearchField(ImportCandidateParameter f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
     
@@ -201,5 +204,6 @@ public enum ParameterKeyImportCandidate implements ParameterKey {
         public static final String PUBLISHED_DATE = "publishedDate.year";
         public static final String PUBLISHER = "publisher.id.keyword";
         public static final String RESOURCE_OWNER = "owner.keyword";
+        public static final String ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD = "additionalIdentifiers.value.keyword";
     }
 }

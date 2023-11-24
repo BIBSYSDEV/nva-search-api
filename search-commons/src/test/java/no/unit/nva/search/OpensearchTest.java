@@ -174,8 +174,8 @@ public class OpensearchTest {
             indexName,
             SortableIdentifier.next()
         );
-        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-                                                       JsonNode.class);
+        var jsonNode = objectMapperWithEmpty
+            .readValue(inputStreamFromResources(jsonFile), JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }

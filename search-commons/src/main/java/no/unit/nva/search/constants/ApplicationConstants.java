@@ -41,20 +41,19 @@ public final class ApplicationConstants {
     public static final int DEFAULT_AGGREGATION_SIZE = 100;
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
-        generateSimpleAggregation("importStatus.candidateStatus",
-                                  "importStatus.candidateStatus.keyword"),
+        generateSimpleAggregation("importStatus.candidateStatus", "importStatus.candidateStatus.keyword"),
         generateSimpleAggregation("publicationYear", "publicationYear.keyword"),
         generateObjectLabelsAggregation("organizations"),
         generateHasFileAggregation(),
-        generateInstanceTypeAggregation(),
+        generateSimpleAggregation("instanceType", "publicationInstance.type.keyword"),
         generateSimpleAggregation("collaborationType", "collaborationType.keyword"),
         generateImportedByUserAggregation()
     );
 
-    public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION = generateSimpleAggregation("type",
-                                                                                                   "type.keyword");
-    public static final TermsAggregationBuilder STATUS_TERMS_AGGREGATION = generateSimpleAggregation("status",
-                                                                                                     "status.keyword");
+    public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION =
+        generateSimpleAggregation("type", "type.keyword");
+    public static final TermsAggregationBuilder STATUS_TERMS_AGGREGATION =
+        generateSimpleAggregation("status", "status.keyword");
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> TICKETS_AGGREGATIONS =
         List.of(TYPE_TERMS_AGGREGATION,
                 STATUS_TERMS_AGGREGATION
@@ -101,24 +100,24 @@ public final class ApplicationConstants {
 
     private static TermsAggregationBuilder generateSimpleAggregation(String term, String field) {
         return AggregationBuilders
-                   .terms(term)
-                   .field(field)
-                   .size(DEFAULT_AGGREGATION_SIZE);
+            .terms(term)
+            .field(field)
+            .size(DEFAULT_AGGREGATION_SIZE);
     }
 
     private static FilterAggregationBuilder generateImportedByUserAggregation() {
         return new FilterAggregationBuilder(
             "importedByUser", new TermQueryBuilder("importStatus.candidateStatus.keyword", "IMPORTED"))
-                   .subAggregation(AggregationBuilders
-                                       .terms("importStatus.setBy")
-                                       .field("importStatus.setBy.keyword")
-                                       .size(DEFAULT_AGGREGATION_SIZE));
+            .subAggregation(AggregationBuilders
+                                .terms("importStatus.setBy")
+                                .field("importStatus.setBy.keyword")
+                                .size(DEFAULT_AGGREGATION_SIZE));
     }
 
     private static NestedAggregationBuilder generateTypeAggregation() {
         return new NestedAggregationBuilder(REFERENCE, jsonPath(ENTITY_DESCRIPTION, REFERENCE))
-                   .subAggregation(generateNestedPublicationInstanceAggregation()
-                                       .subAggregation(generatePublicationInstanceTypeAggregation()));
+            .subAggregation(generateNestedPublicationInstanceAggregation()
+                                .subAggregation(generatePublicationInstanceTypeAggregation()));
     }
 
     private static NestedAggregationBuilder generateReferenceAggregation() {
@@ -175,8 +174,7 @@ public final class ApplicationConstants {
     }
 
     private static NestedAggregationBuilder generateInstanceTypeAggregation() {
-        return new NestedAggregationBuilder(TYPE, ENTITY_DESCRIPTION)
-                   .subAggregation(generateTypeAggregation());
+        return new NestedAggregationBuilder(TYPE, jsonPath(PUBLICATION_INSTANCE, TYPE, KEYWORD));
     }
 
     private static NestedAggregationBuilder generateFundingSourceAggregation() {

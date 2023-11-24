@@ -1,11 +1,11 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.CATEGORY;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FROM;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT;
+import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.CATEGORY;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SORT;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +34,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class ImportCandidateClientTest {
 
-    private ImportCandidateClient resourceAwsClient;
+    private ImportCandidateClient importCandidateClient;
 
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
@@ -43,7 +43,7 @@ class ImportCandidateClientTest {
     public void setUp() throws IOException, InterruptedException {
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        resourceAwsClient = new ImportCandidateClient(cachedJwtProvider, httpClient);
+        importCandidateClient = new ImportCandidateClient(cachedJwtProvider, httpClient);
         when(httpClient.send(any(), any()))
             .thenReturn(mockedHttpResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT));
     }
@@ -56,7 +56,7 @@ class ImportCandidateClientTest {
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(resourceAwsClient);
+                .doSearch(importCandidateClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -70,7 +70,7 @@ class ImportCandidateClientTest {
             .withRequiredParameters(FROM, SIZE, SORT)
             .withMediaType("text/csv")
             .build()
-            .doSearch(resourceAwsClient);
+            .doSearch(importCandidateClient);
         assertNotNull(csvResult);
     }
 
@@ -83,11 +83,11 @@ class ImportCandidateClientTest {
                 .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
                 .build();
 
-        var response = resourceAwsClient.doSearch(query);
-        var pagedSearchResourceDto = query.toPagedResponse(response);
-        assertNotNull(pagedSearchResourceDto.id());
-        assertNotNull(pagedSearchResourceDto.context());
-        assertTrue(pagedSearchResourceDto.id().getScheme().contains("https"));
+        var response = importCandidateClient.doSearch(query);
+        var pagedResponse = query.toPagedResponse(response);
+        assertNotNull(pagedResponse.id());
+        assertNotNull(pagedResponse.context());
+        assertTrue(pagedResponse.id().getScheme().contains("https"));
     }
 
     @ParameterizedTest
@@ -98,7 +98,7 @@ class ImportCandidateClientTest {
                          .fromQueryParameters(queryToMapEntries(uri))
                          .withRequiredParameters(FROM, SIZE)
                          .build()
-                         .doSearch(resourceAwsClient));
+                         .doSearch(importCandidateClient));
     }
 
     static Stream<URI> uriSortingProvider() {

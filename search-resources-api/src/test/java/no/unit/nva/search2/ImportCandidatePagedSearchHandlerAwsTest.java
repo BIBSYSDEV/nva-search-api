@@ -4,7 +4,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search2.model.ParameterKeyResource.SEARCH_ALL;
+import static no.unit.nva.search2.model.parameterkeys.ImportCandidateParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
 import no.unit.nva.search2.model.PagedSearchDto;
+import no.unit.nva.search2.model.opensearch.SwsResponse;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -242,7 +242,7 @@ class ImportCandidatePagedSearchHandlerAwsTest {
     
     private void prepareRestHighLevelClientOkResponse(List<ExportCsv> exportCsvs) throws IOException {
         var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs);
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
         
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
@@ -252,7 +252,7 @@ class ImportCandidatePagedSearchHandlerAwsTest {
     
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
         
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
@@ -260,7 +260,7 @@ class ImportCandidatePagedSearchHandlerAwsTest {
     
     private void prepareRestHighLevelClientEmptyResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
         
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
@@ -268,7 +268,7 @@ class ImportCandidatePagedSearchHandlerAwsTest {
     
     private void prepareRestHighLevelClientEmptyResponseForSortOrder() throws IOException {
         var jsonResponse = stringFromResources(Path.of(EMPTY_OPENSEARCH_RESPONSE_JSON));
-        var body = objectMapperWithEmpty.readValue(jsonResponse, OpenSearchSwsResponse.class);
+        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
         
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
