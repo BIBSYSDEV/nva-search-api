@@ -297,11 +297,7 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
                     .replaceAll(PATTERN_IS_IGNORE_CASE + " (asc|desc)", ":$1");
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
         }
-        
-        private String expandDate(String value) {
-            return value.length() == 4 ? value + "-01-01" : value;
-        }
-        
+
         private String expandFields(String value) {
             return ALL.equals(value) || isNull(value)
                 ? ALL
