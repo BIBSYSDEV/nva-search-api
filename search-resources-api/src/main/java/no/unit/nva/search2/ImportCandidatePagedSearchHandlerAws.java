@@ -1,10 +1,10 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.ResourceClient.defaultClient;
+import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResource.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResource.SORT;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FROM;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SIZE;
+import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
@@ -15,40 +15,39 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
+public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient openSearchAwsClient;
-
+    private final ImportCandidateClient openSearchAwsClient;
+    
     @JacocoGenerated
-    public ResourcePagedSearchHandlerAws() {
+    public ImportCandidatePagedSearchHandlerAws() {
         this(new Environment(), defaultClient());
     }
-
-    public ResourcePagedSearchHandlerAws(Environment environment, ResourceClient openSearchAwsClient) {
+    
+    public ImportCandidatePagedSearchHandlerAws(Environment environment,
+                                                ImportCandidateClient openSearchAwsClient) {
         super(Void.class, environment);
         this.openSearchAwsClient = openSearchAwsClient;
     }
-
+    
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ResourceQuery.builder()
+            ImportCandidateQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .validate()
                 .build()
                 .doSearch(openSearchAwsClient);
     }
-
+    
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpURLConnection.HTTP_OK;
     }
-
-
+    
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
-
 }

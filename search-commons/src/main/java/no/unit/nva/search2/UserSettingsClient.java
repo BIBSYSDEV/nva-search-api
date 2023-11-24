@@ -1,14 +1,13 @@
 package no.unit.nva.search2;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
+import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
+import static no.unit.nva.search2.model.ParameterKeyResource.CONTRIBUTOR_ID;
+import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
-import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.UserSettings;
-import no.unit.nva.search2.model.OpenSearchClient;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,21 +15,20 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Stream;
+import no.unit.nva.search.CachedJwtProvider;
+import no.unit.nva.search2.model.OpenSearchClient;
+import no.unit.nva.search2.model.UserSettings;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
-import static no.unit.nva.search2.model.ResourceParameterKey.CONTRIBUTOR_ID;
-import static nva.commons.core.attempt.Try.attempt;
+public class UserSettingsClient implements OpenSearchClient<UserSettings, ResourceQuery> {
 
-public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final HttpResponse.BodyHandler<String> bodyHandler;
-
 
     public UserSettingsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
@@ -40,7 +38,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
     }
 
     @Override
-    public UserSettings doSearch(ResourceAwsQuery query) {
+    public UserSettings doSearch(ResourceQuery query) {
         return
             createQueryBuilderStream(query)
                 .map(this::populateSearchRequest)
@@ -49,9 +47,9 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
                 .map(this::handleResponse)
                 .findFirst()
                 .orElse(new UserSettings(Collections.emptyList()));
-}
+    }
 
-    private Stream<String> createQueryBuilderStream(ResourceAwsQuery query) {
+    private Stream<String> createQueryBuilderStream(ResourceQuery query) {
         return query.getOptional(CONTRIBUTOR_ID).stream();
     }
 
@@ -89,5 +87,4 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
             ? settings.get()
             : new UserSettings(Collections.emptyList());
     }
-
 }

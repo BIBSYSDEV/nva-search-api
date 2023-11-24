@@ -3,18 +3,17 @@ package no.unit.nva.search2.model;
 import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
-import static no.unit.nva.search2.model.ResourceParameterKey.FROM;
+import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.Nullable;
 
-public record PagedSearchResourceDto(
+public record PagedSearchDto(
     URI id,
     int totalHits,
     List<JsonNode> hits,
@@ -23,7 +22,7 @@ public record PagedSearchResourceDto(
     URI previousResults,
     JsonNode aggregations) {
 
-    private PagedSearchResourceDto(Builder builder) {
+    private PagedSearchDto(Builder builder) {
         this(builder.id,
              builder.totalHits,
              builder.hits,
@@ -113,12 +112,12 @@ public record PagedSearchResourceDto(
         }
 
         @SuppressWarnings("PMD.NullAssignment")
-        public PagedSearchResourceDto build() {
+        public PagedSearchDto build() {
             if (isNull(this.nextResults)) {
                 this.nextResultsBySortKey = null;       // null values are not serialized
             }
 
-            return new PagedSearchResourceDto(this);
+            return new PagedSearchDto(this);
         }
     }
 }

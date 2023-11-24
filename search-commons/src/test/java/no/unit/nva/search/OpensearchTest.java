@@ -444,7 +444,7 @@ public class OpensearchTest {
                                     "sample_publication_with_several_of_the_same_affiliation.json");
 
                 var query = queryWithTermAndAggregation(
-                    "fundings.source.identifier:\"NFR\"",
+                    "fundings.source.identifier.keyword:\"NFR\"",
                     ApplicationConstants.RESOURCES_AGGREGATIONS);
 
                 var response = searchClient.searchWithSearchDocumentQuery(query, indexName);

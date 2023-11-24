@@ -4,6 +4,8 @@ import nva.commons.core.JacocoGenerated;
 
 @JacocoGenerated
 public class Patterns {
+    
+    public static final String PATTERN_IS_BOOLEAN = "true|false|1|0";
 
     /**
      * Pattern for matching a date string.
