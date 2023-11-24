@@ -1,7 +1,8 @@
 {
   "properties": {
     "publicationInstance": {
-      "type": "nested"
+      "type": "nested",
+      "include_in_parent": true
     },
     "organizations": {
       "type": "nested",
@@ -12,7 +13,8 @@
       }
     },
     "associatedArtifacts": {
-      "type": "nested"
+      "type": "nested",
+      "include_in_parent": true
     }
   }
 }

@@ -149,11 +149,8 @@ public final class ApplicationConstants {
         generateSimpleAggregation(INSTANCE_TYPE, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE_KEYWORD),
         generateSimpleAggregation(CONTEXT_TYPE, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
         generateFundingSourceAggregation(),
-        generateTopLevelOrganizationAggregation2(),
-        //        generateSimpleAggregation(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS + DOT + TYPE + DOT + KEYWORD).,
-//        generateHasFileAggregation(),
-        generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
-        //        generateIdAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
+        generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
+        generateHasFileAggregation()
     );
 
     private static TermsAggregationBuilder generateSimpleAggregation(String term, String field) {
@@ -175,27 +172,6 @@ public final class ApplicationConstants {
                     generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)));
     }
 
-    private static TermsAggregationBuilder generateTopLevelOrganizationAggregation2() {
-        return
-            generateSimpleAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD)
-                .subAggregation(
-                    generateLabelsAggregation(TOP_LEVEL_ORGANIZATIONS));
-    }
-
-    private static NestedAggregationBuilder generateTopLevelAggregation() {
-        return
-            new NestedAggregationBuilder("test1", jsonPath(TOP_LEVEL_ORGANIZATIONS))
-                //                .subAggregation(
-                .subAggregation(generateLabelsAggregation(jsonPath(TOP_LEVEL_ORGANIZATIONS)));
-    }
-
-    private static TermsAggregationBuilder generateTopLevelOrganizationAggregation() {
-        return
-            new TermsAggregationBuilder("test2")
-                .field(jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD))
-                .subAggregation(generateLabelsAggregation(jsonPath(TOP_LEVEL_ORGANIZATIONS))
-                );
-    }
 
     private static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
@@ -204,11 +180,6 @@ public final class ApplicationConstants {
             .subAggregation(generateLabelsAggregation(object));
     }
 
-    //    private static TermsAggregationBuilder generateIdAggregation(String displayName, String path) {
-    //        return generateSimpleAggregation(displayName, jsonPath(path, ID, KEYWORD))
-    //            .size(Defaults.DEFAULT_AGGREGATION_SIZE)
-//            .subAggregation(generateLabelsAggregation(path));
-    //    }
 
     private static NestedAggregationBuilder generateLabelsAggregation(String jsonPath) {
         var nestedAggregation = new NestedAggregationBuilder(LABELS, jsonPath(jsonPath, LABELS));

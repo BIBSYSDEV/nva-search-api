@@ -251,7 +251,7 @@ public class OpensearchTest {
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-            var docCount = response.getAggregations().get("type").get("buckets").get(0).get("docCount").asInt();
+            var docCount = response.getAggregations().get("instanceType").get("buckets").get(0).get("docCount").asInt();
             assertThat(docCount, is(equalTo(1)));
         }
 
@@ -261,8 +261,8 @@ public class OpensearchTest {
             addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
 
             var query = queryWithTermAndAggregation(
-                "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts.administrativeAgreement:\"false\")",
-                                                    IMPORT_CANDIDATES_AGGREGATIONS);
+                "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts"
+                + ".administrativeAgreement:\"false\")", IMPORT_CANDIDATES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 

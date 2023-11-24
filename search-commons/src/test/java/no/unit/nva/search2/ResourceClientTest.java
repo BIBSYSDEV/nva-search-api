@@ -120,8 +120,8 @@ class ResourceClientTest {
                          )
                 );
 
-            assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.hits().size())));
-            assertThat(query.getValue(SIZE).as(), is(equalTo(pagedSearchResourceDto.totalHits())));
+            assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(query.getValue(SIZE).as())));
+            assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(query.getValue(SIZE).as())));
         }
 
         @ParameterizedTest

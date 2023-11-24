@@ -114,17 +114,18 @@ public record SwsResponse(
                 .orElse(fieldName.replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, ""));
 
             var value = nodeEntry.getValue();
+            if (value.at("/id/buckets").isArray()) {
+                value = value.at("/id/buckets");
+            }
+            if (value.has("buckets")) {
+                value = value.at("/buckets");
+            }
             if (LABELS.equals(newName)) {
                 outputAggregationNode.set(newName, formatLabels(value));
             } else if (NAME.equals(newName)) {
                 outputAggregationNode.set(LABELS, formatName(value));
             } else if (value.isValueNode()) {
                 outputAggregationNode.set(newName, value);
-            } else if (value.has("buckets")) {
-                var bucket = value.get("buckets");
-                var arrayNode = objectMapperWithEmpty.createArrayNode();
-                bucket.forEach(element -> arrayNode.add(formatAggregations(element)));
-                outputAggregationNode.set(newName, arrayNode);
             } else if (value.isArray()) {
                 var arrayNode = objectMapperWithEmpty.createArrayNode();
                 value.forEach(element -> arrayNode.add(formatAggregations(element)));
