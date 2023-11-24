@@ -208,7 +208,8 @@ public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImpo
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
-                case PUBLISHED_BEFORE, PUBLISHED_SINCE,
+                case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE,
                     CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
                     COLLABORATION_TYPE,
                     DOI, DOI_NOT, DOI_SHOULD,
