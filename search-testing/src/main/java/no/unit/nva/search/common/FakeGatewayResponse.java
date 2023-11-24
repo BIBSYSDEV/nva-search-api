@@ -1,9 +1,7 @@
 package no.unit.nva.search.common;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

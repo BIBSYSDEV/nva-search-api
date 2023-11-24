@@ -251,8 +251,8 @@ public class OpensearchTest {
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-            var docCount = getDocCountForAggregation(response, "type");
-            assertThat(docCount, is(equalTo(2)));
+            var docCount = response.getAggregations().get("type").get("buckets").get(0).get("docCount").asInt();
+            assertThat(docCount, is(equalTo(1)));
         }
 
         @Test
@@ -444,7 +444,7 @@ public class OpensearchTest {
                                     "sample_publication_with_several_of_the_same_affiliation.json");
 
                 var query = queryWithTermAndAggregation(
-                    "fundings.source.identifier:\"NFR\"",
+                    "fundings.source.identifier.keyword:\"NFR\"",
                     ApplicationConstants.RESOURCES_AGGREGATIONS);
 
                 var response = searchClient.searchWithSearchDocumentQuery(query, indexName);

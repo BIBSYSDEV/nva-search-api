@@ -285,6 +285,30 @@ Resources:
             Path: /resources2
             Method: get
             RestApiId: !Ref NvaSearchApi
+  SearchAwsImportCandidatesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: search-resources-api
+      Handler: no.unit.nva.search2.ImportCandidatePagedSearchHandlerAws::handleRequest
+      Runtime: java17
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Enabled: true
+        Role: !GetAtt CustomCodeDeployServiceRole.Arn
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: 1
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+      Events:
+        GetResources:
+          Type: Api
+          Properties:
+            Path: /import-candidates2
+            Method: get
+            RestApiId: !Ref NvaSearchApi
 
   SearchImportCandidatesFunction:
     Type: AWS::Serverless::Function
@@ -638,6 +662,7 @@ Resources:
           PERSISTED_RESOURCES_BUCKET: !Ref ResourcesBucket
           KEY_BATCHES_BUCKET: !Sub '${KeyBatchesBucketName}-${AWS::AccountId}'
           EVENT_BUS: !GetAtt BatchIndexEventBus.Name
+          MAX_PAYLOAD: '3291456'
       Events:
         BatchIndexEvent:
           Type: EventBridgeRule
