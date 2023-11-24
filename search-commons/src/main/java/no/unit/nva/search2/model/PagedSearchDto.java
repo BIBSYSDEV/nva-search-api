@@ -13,7 +13,7 @@ import java.util.Map;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.Nullable;
 
-public record PagedSearchResourceDto(
+public record PagedSearchDto(
     URI id,
     int totalHits,
     List<JsonNode> hits,
@@ -22,7 +22,7 @@ public record PagedSearchResourceDto(
     URI previousResults,
     JsonNode aggregations) {
 
-    private PagedSearchResourceDto(Builder builder) {
+    private PagedSearchDto(Builder builder) {
         this(builder.id,
              builder.totalHits,
              builder.hits,
@@ -112,12 +112,12 @@ public record PagedSearchResourceDto(
         }
 
         @SuppressWarnings("PMD.NullAssignment")
-        public PagedSearchResourceDto build() {
+        public PagedSearchDto build() {
             if (isNull(this.nextResults)) {
                 this.nextResultsBySortKey = null;       // null values are not serialized
             }
 
-            return new PagedSearchResourceDto(this);
+            return new PagedSearchDto(this);
         }
     }
 }

@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.ResourceAwsClientTest.mockedHttpResponse;
+import static no.unit.nva.search2.ResourceClientTest.mockedHttpResponse;
 import static no.unit.nva.search2.model.ParameterKeyResource.CATEGORY;
 import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
 import static no.unit.nva.search2.model.ParameterKeyResource.SIZE;
@@ -22,9 +22,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ResourceAwsClientNoHitsTest {
+class ResourceClientNoHitsTest {
 
-    private ResourceAwsClient resourceAwsClient;
+    private ResourceClient resourceClient;
 
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
 
@@ -33,7 +33,7 @@ class ResourceAwsClientNoHitsTest {
 
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        resourceAwsClient = new ResourceAwsClient(cachedJwtProvider, httpClient);
+        resourceClient = new ResourceClient(cachedJwtProvider, httpClient);
         var response = mockedHttpResponse(NO_HITS_RESPONSE_JSON);
         when(httpClient.send(any(), any()))
             .thenReturn(response);
@@ -45,11 +45,11 @@ class ResourceAwsClientNoHitsTest {
     void searchSingleTermReturnsOpenSearchSwsResponse(URI uri) throws ApiGatewayException {
 
         var pagedSearchResourceDto =
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(resourceAwsClient);
+                .doSearch(resourceClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -59,14 +59,14 @@ class ResourceAwsClientNoHitsTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
         var query =
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromQueryParameters(OpenSearchQuery.queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(query.getValue(CATEGORY).as());
         assertNotNull(query.removeKey(CATEGORY));
         assertNull(query.removeKey(CATEGORY));
-        var response = resourceAwsClient.doSearch(query);
+        var response = resourceClient.doSearch(query);
         var pagedSearchResourceDto = query.toPagedResponse(response);
 
         assertNotNull(pagedSearchResourceDto.id());

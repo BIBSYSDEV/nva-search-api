@@ -1,6 +1,6 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.ResourceAwsClient.defaultClient;
+import static no.unit.nva.search2.ResourceClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
 import static no.unit.nva.search2.model.ParameterKeyResource.SIZE;
@@ -17,14 +17,14 @@ import nva.commons.core.JacocoGenerated;
 
 public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceAwsClient openSearchAwsClient;
+    private final ResourceClient openSearchAwsClient;
 
     @JacocoGenerated
     public ResourcePagedSearchHandlerAws() {
         this(new Environment(), defaultClient());
     }
 
-    public ResourcePagedSearchHandlerAws(Environment environment, ResourceAwsClient openSearchAwsClient) {
+    public ResourcePagedSearchHandlerAws(Environment environment, ResourceClient openSearchAwsClient) {
         super(Void.class, environment);
         this.openSearchAwsClient = openSearchAwsClient;
     }
@@ -32,7 +32,7 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .validate()

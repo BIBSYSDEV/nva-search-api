@@ -21,61 +21,65 @@ import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImportCandidatesAwsClient implements OpenSearchClient<OpenSearchSwsResponse, ImportCandidatesAwsQuery> {
-    
-    private static final Logger logger = LoggerFactory.getLogger(ImportCandidatesAwsClient.class);
-    
+public class ResourceClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceQuery> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResourceClient.class);
+
     private final CachedJwtProvider jwtProvider;
     private final HttpClient httpClient;
     private final BodyHandler<String> bodyHandler;
-    
-    public ImportCandidatesAwsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
+    private final UserSettingsClient userSettingsClient;
+
+    public ResourceClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
         super();
         this.jwtProvider = cachedJwtProvider;
         this.httpClient = client;
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
+        this.userSettingsClient = new UserSettingsClient(cachedJwtProvider, client);
     }
-    
+
     @JacocoGenerated
-    public static ImportCandidatesAwsClient defaultClient() {
+    public static ResourceClient defaultClient() {
         var cachedJwtProvider =
             OpenSearchClient.getCachedJwtProvider(new SecretsReader());
-        
-        return new ImportCandidatesAwsClient(cachedJwtProvider, HttpClient.newHttpClient());
+
+        return new ResourceClient(cachedJwtProvider, HttpClient.newHttpClient());
     }
-    
+
     @Override
-    public OpenSearchSwsResponse doSearch(ImportCandidatesAwsQuery query) {
+    public OpenSearchSwsResponse doSearch(ResourceQuery query) {
         return
-            query.createQueryBuilderStream()
+            query.createQueryBuilderStream(userSettingsClient)
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
                 .findFirst().orElseThrow();
     }
-    
+
+
     @JacocoGenerated
     private HttpRequest createRequest(QueryBuilderSourceWrapper qbs) {
         logger.info(qbs.source().query().toString());
         return HttpRequest
-            .newBuilder(qbs.requestUri())
-            .headers(
-                ACCEPT, MediaType.JSON_UTF_8.toString(),
-                CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
-                AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-            .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
+                   .newBuilder(qbs.requestUri())
+                   .headers(
+                       ACCEPT, MediaType.JSON_UTF_8.toString(),
+                       CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
+                       AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+                   .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
-    
+
     private HttpResponse<String> fetch(HttpRequest httpRequest) {
         return attempt(() -> httpClient.send(httpRequest, bodyHandler)).orElseThrow();
     }
-    
+
     @JacocoGenerated
     private OpenSearchSwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
         }
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
-            .orElseThrow();
+                   .orElseThrow();
     }
+
 }

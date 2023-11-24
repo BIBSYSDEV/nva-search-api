@@ -50,7 +50,7 @@ class UserSettingsClientTest {
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var resourceAwsQuery =
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();

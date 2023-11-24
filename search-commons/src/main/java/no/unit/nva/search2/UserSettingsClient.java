@@ -23,7 +23,7 @@ import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserSettingsClient  implements OpenSearchClient<UserSettings, ResourceAwsQuery> {
+public class UserSettingsClient implements OpenSearchClient<UserSettings, ResourceQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
     private final CachedJwtProvider jwtProvider;
@@ -38,7 +38,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
     }
 
     @Override
-    public UserSettings doSearch(ResourceAwsQuery query) {
+    public UserSettings doSearch(ResourceQuery query) {
         return
             createQueryBuilderStream(query)
                 .map(this::populateSearchRequest)
@@ -49,7 +49,7 @@ public class UserSettingsClient  implements OpenSearchClient<UserSettings, Resou
                 .orElse(new UserSettings(Collections.emptyList()));
     }
 
-    private Stream<String> createQueryBuilderStream(ResourceAwsQuery query) {
+    private Stream<String> createQueryBuilderStream(ResourceQuery query) {
         return query.getOptional(CONTRIBUTOR_ID).stream();
     }
 

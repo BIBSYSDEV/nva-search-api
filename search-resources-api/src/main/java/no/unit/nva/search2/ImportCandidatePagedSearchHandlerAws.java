@@ -1,6 +1,6 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.ImportCandidatesAwsClient.defaultClient;
+import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search2.model.ParameterKeyImportCandidate.FROM;
 import static no.unit.nva.search2.model.ParameterKeyImportCandidate.SIZE;
@@ -16,8 +16,8 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
-    
-    private final ImportCandidatesAwsClient openSearchAwsClient;
+
+    private final ImportCandidateClient openSearchAwsClient;
     
     @JacocoGenerated
     public ImportCandidatePagedSearchHandlerAws() {
@@ -25,7 +25,7 @@ public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void
     }
     
     public ImportCandidatePagedSearchHandlerAws(Environment environment,
-                                                ImportCandidatesAwsClient openSearchAwsClient) {
+                                                ImportCandidateClient openSearchAwsClient) {
         super(Void.class, environment);
         this.openSearchAwsClient = openSearchAwsClient;
     }
@@ -33,7 +33,7 @@ public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ImportCandidatesAwsQuery.builder()
+            ImportCandidateQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .validate()

@@ -32,9 +32,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ResourceAwsClientTest {
+class ResourceClientTest {
 
-    private ResourceAwsClient resourceAwsClient;
+    private ResourceClient resourceClient;
 
     public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
         = "sample_opensearch_response.json";
@@ -43,7 +43,7 @@ class ResourceAwsClientTest {
     public void setUp() throws IOException, InterruptedException {
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        resourceAwsClient = new ResourceAwsClient(cachedJwtProvider, httpClient);
+        resourceClient = new ResourceClient(cachedJwtProvider, httpClient);
         when(httpClient.send(any(), any()))
             .thenReturn(mockedHttpResponse(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT));
     }
@@ -52,11 +52,11 @@ class ResourceAwsClientTest {
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var pagedSearchResourceDto =
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
-                .doSearch(resourceAwsClient);
+                .doSearch(resourceClient);
 
         assertNotNull(pagedSearchResourceDto);
     }
@@ -65,12 +65,12 @@ class ResourceAwsClientTest {
     @MethodSource("uriProvider")
     void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
 
-        var csvResult = ResourceAwsQuery.builder()
+        var csvResult = ResourceQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, SORT)
             .withMediaType("text/csv")
             .build()
-            .doSearch(resourceAwsClient);
+            .doSearch(resourceClient);
         assertNotNull(csvResult);
     }
 
@@ -79,12 +79,12 @@ class ResourceAwsClientTest {
     @MethodSource("uriSortingProvider")
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var query =
-            ResourceAwsQuery.builder()
+            ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT, CATEGORY)
                 .build();
 
-        var response = resourceAwsClient.doSearch(query);
+        var response = resourceClient.doSearch(query);
         var pagedSearchResourceDto = query.toPagedResponse(response);
         assertNotNull(pagedSearchResourceDto.id());
         assertNotNull(pagedSearchResourceDto.context());
@@ -95,11 +95,11 @@ class ResourceAwsClientTest {
     @MethodSource("uriInvalidProvider")
     void failToSearchUri(URI uri) {
         assertThrows(BadRequestException.class,
-                     () -> ResourceAwsQuery.builder()
+                     () -> ResourceQuery.builder()
                                .fromQueryParameters(queryToMapEntries(uri))
                                .withRequiredParameters(FROM, SIZE)
                                .build()
-                               .doSearch(resourceAwsClient));
+                         .doSearch(resourceClient));
     }
 
     static Stream<URI> uriSortingProvider() {

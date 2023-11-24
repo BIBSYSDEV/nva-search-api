@@ -38,7 +38,7 @@ import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.PagedSearchDto;
 import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKeyResource;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
@@ -55,17 +55,17 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource> {
-    
-    private ResourceAwsQuery() {
+public final class ResourceQuery extends OpenSearchQuery<ParameterKeyResource> {
+
+    private ResourceQuery() {
         super();
     }
     
     static Builder builder() {
         return new Builder();
     }
-    
-    public String doSearch(ResourceAwsClient queryClient) {
+
+    public String doSearch(ResourceClient queryClient) {
         final var response = queryClient.doSearch(this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
@@ -75,13 +75,13 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
     private String toCsvText(OpenSearchSwsResponse response) {
         return CsvTransformer.transform(response.getSearchHits());
     }
-    
-    PagedSearchResourceDto toPagedResponse(OpenSearchSwsResponse response) {
+
+    PagedSearchDto toPagedResponse(OpenSearchSwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
         
         return
-            PagedSearchResourceDto.Builder.builder()
+            PagedSearchDto.Builder.builder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(response.getSearchHits())
                 .withAggregations(response.getAggregationsStructured())
@@ -187,13 +187,13 @@ public final class ResourceAwsQuery extends OpenSearchQuery<ParameterKeyResource
     }
     
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder extends OpenSearchQueryBuilder<ParameterKeyResource, ResourceAwsQuery> {
+    protected static class Builder extends OpenSearchQueryBuilder<ParameterKeyResource, ResourceQuery> {
         
         private static final String ALL = "all";
         public static final Integer EXPECTED_TWO_PARTS = 2;
         
         Builder() {
-            super(new ResourceAwsQuery());
+            super(new ResourceQuery());
         }
         
         @Override

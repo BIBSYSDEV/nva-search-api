@@ -38,7 +38,7 @@ import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.model.OpenSearchQuery;
 import no.unit.nva.search2.model.OpenSearchQueryBuilder;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.PagedSearchDto;
 import no.unit.nva.search2.model.ParameterKey;
 import no.unit.nva.search2.model.ParameterKeyImportCandidate;
 import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
@@ -55,9 +55,9 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKeyImportCandidate> {
-    
-    private ImportCandidatesAwsQuery() {
+public final class ImportCandidateQuery extends OpenSearchQuery<ParameterKeyImportCandidate> {
+
+    ImportCandidateQuery() {
         super();
     }
     
@@ -73,7 +73,7 @@ public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKey
                 .getUri();
     }
 
-    public String doSearch(ImportCandidatesAwsClient queryClient) {
+    public String doSearch(ImportCandidateClient queryClient) {
         final var response = queryClient.doSearch(this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
@@ -83,13 +83,13 @@ public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKey
     private String toCsvText(OpenSearchSwsResponse response) {
         return CsvTransformer.transform(response.getSearchHits());
     }
-    
-    PagedSearchResourceDto toPagedResponse(OpenSearchSwsResponse response) {
+
+    PagedSearchDto toPagedResponse(OpenSearchSwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
         
         return
-            PagedSearchResourceDto.Builder.builder()
+            PagedSearchDto.Builder.builder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(response.getSearchHits())
                 .withAggregations(response.getAggregationsStructured())
@@ -178,13 +178,13 @@ public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKey
     
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder
-        extends OpenSearchQueryBuilder<ParameterKeyImportCandidate, ImportCandidatesAwsQuery> {
+        extends OpenSearchQueryBuilder<ParameterKeyImportCandidate, ImportCandidateQuery> {
         
         private static final String ALL = "all";
         public static final Integer EXPECTED_TWO_PARTS = 2;
         
         Builder() {
-            super(new ImportCandidatesAwsQuery());
+            super(new ImportCandidateQuery());
         }
         
         @Override
@@ -208,8 +208,8 @@ public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKey
                 case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
-                case PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandDate(value));
-                case CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
+                case PUBLISHED_BEFORE, PUBLISHED_SINCE,
+                    CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
                     COLLABORATION_TYPE,
                     DOI, DOI_NOT, DOI_SHOULD,
                     ID, ID_NOT, ID_SHOULD,

@@ -32,7 +32,7 @@ import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
+import no.unit.nva.search2.model.PagedSearchDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -52,12 +52,12 @@ class ResourcePagedSearchHandlerAwsTest {
     private ResourcePagedSearchHandlerAws handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
-    private ResourceAwsClient mockedSearchClient;
+    private ResourceClient mockedSearchClient;
 
     @BeforeEach
     void setUp() {
 
-        mockedSearchClient = mock(ResourceAwsClient.class);
+        mockedSearchClient = mock(ResourceClient.class);
         handler = new ResourcePagedSearchHandlerAws(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
@@ -278,9 +278,9 @@ class ResourcePagedSearchHandlerAwsTest {
             .thenReturn(body);
     }
 
-    private PagedSearchResourceDto getSearchResourcesResponseFromFile(String filename)
+    private PagedSearchDto getSearchResourcesResponseFromFile(String filename)
         throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchResourceDto.class);
+        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchDto.class);
     }
 
     public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {

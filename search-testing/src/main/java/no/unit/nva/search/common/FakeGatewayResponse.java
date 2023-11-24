@@ -1,17 +1,14 @@
 package no.unit.nva.search.common;
 
-
+import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchResourceDto;
-
-import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import no.unit.nva.search2.model.PagedSearchDto;
 
 @SuppressWarnings("PMD.ShortMethodName")
 public record FakeGatewayResponse<T>(
@@ -26,9 +23,9 @@ public record FakeGatewayResponse<T>(
         return dtoObjectMapper.readValue(inputStream, typeReference);
     }
 
-    public static FakeGatewayResponse<PagedSearchResourceDto> of(OutputStream outputStream) throws IOException {
+    public static FakeGatewayResponse<PagedSearchDto> of(OutputStream outputStream) throws IOException {
         var response = ofString(outputStream);
-        var typeReference2 = new TypeReference<PagedSearchResourceDto>() {
+        var typeReference2 = new TypeReference<PagedSearchDto>() {
         };
         var body = dtoObjectMapper.readValue(response.body(), typeReference2);
         return new FakeGatewayResponse<>(
