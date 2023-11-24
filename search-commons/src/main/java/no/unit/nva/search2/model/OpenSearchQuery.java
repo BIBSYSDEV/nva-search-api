@@ -44,9 +44,9 @@ public class OpenSearchQuery<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> queryParameters;
     protected final transient Map<K, String> luceneParameters;
     protected final transient Set<K> otherRequiredKeys;
+    protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
-    private transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
 
     protected OpenSearchQuery() {
         luceneParameters = new ConcurrentHashMap<>();

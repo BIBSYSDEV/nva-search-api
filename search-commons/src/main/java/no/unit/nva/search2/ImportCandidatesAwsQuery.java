@@ -3,8 +3,10 @@ package no.unit.nva.search2;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
 import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
+import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.ZERO;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -24,6 +26,7 @@ import static no.unit.nva.search2.model.ParameterKeyImportCandidate.VALID_LUCENE
 import static no.unit.nva.search2.model.ParameterKeyImportCandidate.keyFromString;
 import static no.unit.nva.search2.model.ResourceSortKeys.INVALID;
 import static no.unit.nva.search2.model.ResourceSortKeys.validSortKeys;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
@@ -61,7 +64,15 @@ public final class ImportCandidatesAwsQuery extends OpenSearchQuery<ParameterKey
     static Builder builder() {
         return new Builder();
     }
-    
+
+    @Override
+    public URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(IMPORT_CANDIDATES_INDEX, SEARCH)
+                .getUri();
+    }
+
     public String doSearch(ImportCandidatesAwsClient queryClient) {
         final var response = queryClient.doSearch(this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
