@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search2.model.sortkeys.ResourceSort;
+import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.apigateway.MediaTypes;
 import nva.commons.core.JacocoGenerated;
 

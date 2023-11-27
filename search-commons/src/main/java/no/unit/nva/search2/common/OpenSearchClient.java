@@ -1,7 +1,7 @@
-package no.unit.nva.search2.model.opensearch;
+package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import java.net.URI;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;

@@ -1,11 +1,6 @@
-package no.unit.nva.search2.model.parameterkeys;
+package no.unit.nva.search2.enums;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
-import static no.unit.nva.search2.constant.ApplicationConstants.BOKMAAL_CODE;
-import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
-import static no.unit.nva.search2.constant.ApplicationConstants.ENGLISH_CODE;
-import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID;
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS;
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID;
@@ -18,41 +13,35 @@ import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTI
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_PRINT_ISSN;
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search2.constant.ApplicationConstants.FUNDINGS;
 import static no.unit.nva.search2.constant.ApplicationConstants.FUNDINGS_SOURCE_LABELS;
-import static no.unit.nva.search2.constant.ApplicationConstants.IDENTIFIER;
 import static no.unit.nva.search2.constant.ApplicationConstants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.constant.ApplicationConstants.MAIN_TITLE;
-import static no.unit.nva.search2.constant.ApplicationConstants.MODIFIED_DATE;
-import static no.unit.nva.search2.constant.ApplicationConstants.NYNORSK_CODE;
-import static no.unit.nva.search2.constant.ApplicationConstants.PIPE;
-import static no.unit.nva.search2.constant.ApplicationConstants.PROJECTS_ID;
-import static no.unit.nva.search2.constant.ApplicationConstants.PUBLICATION_CONTEXT;
-import static no.unit.nva.search2.constant.ApplicationConstants.PUBLICATION_INSTANCE;
-import static no.unit.nva.search2.constant.ApplicationConstants.PUBLISHED_DATE;
-import static no.unit.nva.search2.constant.ApplicationConstants.REFERENCE;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCE_OWNER_OWNER_KEYWORD;
-import static no.unit.nva.search2.constant.ApplicationConstants.SAMI_CODE;
-import static no.unit.nva.search2.constant.ApplicationConstants.SOURCE;
-import static no.unit.nva.search2.constant.ApplicationConstants.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.ApplicationConstants.jsonPath;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.LESS_THAN;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.DATE;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.constant.Words.ASTERISK;
+import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.constant.Words.IDENTIFIER;
+import static no.unit.nva.search2.constant.Words.MODIFIED_DATE;
+import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.constant.Words.PIPE;
+import static no.unit.nva.search2.constant.Words.PROJECTS_ID;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
+import static no.unit.nva.search2.constant.Words.REFERENCE;
+import static no.unit.nva.search2.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -60,7 +49,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.constant.ApplicationConstants;
+import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -73,81 +62,90 @@ import nva.commons.core.JacocoGenerated;
 public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParamKind.INVALID),
     // Parameters converted to Lucene query
-    CONTEXT_TYPE(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTEXT_TYPE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTEXT_TYPE_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTOR_ID(KEYWORD, MUST, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
-    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
-    CONTRIBUTOR_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
-    CREATED_BEFORE(DATE, LESS_THAN, Constants.CREATED_DATE),
-    CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, Constants.CREATED_DATE),
-    DOI(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_DOI),
-    DOI_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_DOI),
-    DOI_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_REFERENCE_DOI),
-    FUNDING(KEYWORD, MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
-    FUNDING_SOURCE(KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_SHOULD(TEXT, SHOULD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    ID(KEYWORD, IDENTIFIER_KEYWORD),
-    ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
-    ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),
-    INSTANCE_TYPE(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
+    CONTEXT_TYPE(ParamKind.KEYWORD, FieldOperator.MUST, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
+    CONTEXT_TYPE_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
+                     ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
+    CONTEXT_TYPE_SHOULD(ParamKind.KEYWORD, FieldOperator.SHOULD,
+                        ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_TYPE_KEYWORD),
+    CONTRIBUTOR_ID(ParamKind.KEYWORD, FieldOperator.MUST, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ID, null,
+                   PATTERN_IS_URI, null),
+    CONTRIBUTOR(ParamKind.KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
+    CONTRIBUTOR_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
+    CONTRIBUTOR_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
+    CREATED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, Constants.CREATED_DATE),
+    CREATED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, Constants.CREATED_DATE),
+    DOI(ParamKind.KEYWORD, ENTITY_DESCRIPTION_REFERENCE_DOI),
+    DOI_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_DOI),
+    DOI_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ENTITY_DESCRIPTION_REFERENCE_DOI),
+    FUNDING(ParamKind.KEYWORD, FieldOperator.MUST, Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null,
+            PATTERN_IS_FUNDING, null),
+    FUNDING_SOURCE(ParamKind.KEYWORD, Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
+                       Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    FUNDING_SOURCE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD,
+                          Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    ID(ParamKind.KEYWORD, IDENTIFIER_KEYWORD),
+    ID_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, IDENTIFIER_KEYWORD),
+    ID_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, IDENTIFIER_KEYWORD),
+    INSTANCE_TYPE(ParamKind.KEYWORD, FieldOperator.MUST, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
                   "(?i)instance.?type|category", null, null),
-    INSTANCE_TYPE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
+    INSTANCE_TYPE_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
                       "(?i)instance.?type.?not|category.?not", null, null),
-    INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
+    INSTANCE_TYPE_SHOULD(ParamKind.KEYWORD, FieldOperator.SHOULD,
+                         ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE,
                          "(?i)instance.?type.?should|category.?should", null, null),
-    INSTITUTION(KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    ISBN(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
-    ISSN(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    ISSN_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    ISSN_SHOULD(KEYWORD, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    ORCID(KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
-    ORCID_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
-    ORCID_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
-    MODIFIED_BEFORE(DATE, LESS_THAN, MODIFIED_DATE),
-    MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
-    PARENT_PUBLICATION(KEYWORD, MUST, Constants.PARENT_PUBLICATION_ID),
-    PARENT_PUBLICATION_SHOULD(TEXT, SHOULD, Constants.PARENT_PUBLICATION_ID),
-    PROJECT(KEYWORD, PROJECTS_ID),
-    PROJECT_NOT(KEYWORD, MUST_NOT, PROJECTS_ID),
-    PROJECT_SHOULD(TEXT, SHOULD, PROJECTS_ID),
-    PUBLISHED_BEFORE(DATE, LESS_THAN, PUBLISHED_DATE),
-    PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
-    TITLE(TEXT, MAIN_TITLE, 2F),
-    TITLE_NOT(TEXT, MUST_NOT, MAIN_TITLE),
-    TITLE_SHOULD(TEXT, SHOULD, MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(KEYWORD, MUST, TOP_LEVEL_ORGANIZATIONS + ".id.keyword"),
-    UNIT(KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    UNIT_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    UNIT_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
-    USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_NOT(KEYWORD, MUST_NOT, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_SHOULD(TEXT, SHOULD, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_AFFILIATION(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    PUBLICATION_YEAR(NUMBER, MUST, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
+    INSTITUTION(ParamKind.KEYWORD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    ISBN(ParamKind.KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_SHOULD(ParamKind.KEYWORD, FieldOperator.SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISBN_LIST),
+    ISSN(ParamKind.KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    ISSN_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
+             Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    ISSN_SHOULD(ParamKind.KEYWORD, FieldOperator.SHOULD,
+                Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    ORCID(ParamKind.KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    ORCID_SHOULD(ParamKind.KEYWORD, FieldOperator.SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY_ORC_ID),
+    MODIFIED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, MODIFIED_DATE),
+    MODIFIED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
+    PARENT_PUBLICATION(ParamKind.KEYWORD, FieldOperator.MUST, Constants.PARENT_PUBLICATION_ID),
+    PARENT_PUBLICATION_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.PARENT_PUBLICATION_ID),
+    PROJECT(ParamKind.KEYWORD, PROJECTS_ID),
+    PROJECT_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, PROJECTS_ID),
+    PROJECT_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, PROJECTS_ID),
+    PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
+    PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
+    TITLE(ParamKind.TEXT, MAIN_TITLE, 2F),
+    TITLE_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, MAIN_TITLE),
+    TITLE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, MAIN_TITLE),
+    TOP_LEVEL_ORGANIZATION(ParamKind.KEYWORD, FieldOperator.MUST, TOP_LEVEL_ORGANIZATIONS + ".id.keyword"),
+    UNIT(ParamKind.KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    UNIT_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID),
+    USER(ParamKind.KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER_AFFILIATION(ParamKind.KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
+    USER_AFFILIATION_NOT(ParamKind.KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
+    USER_AFFILIATION_SHOULD(ParamKind.TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
+    PUBLICATION_YEAR(ParamKind.NUMBER, FieldOperator.MUST, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                      "(?i)year.?reported|publication.?year", null, null),
-    PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
+    PUBLICATION_YEAR_SHOULD(ParamKind.NUMBER, FieldOperator.SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                             "(?i)year.?reported.?should|publication.?year.?should", null, null),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, MUST, "q", "(?i)search.?all|query", null, null),
-    FIELDS(CUSTOM),
+    SEARCH_ALL(ParamKind.TEXT, FieldOperator.MUST, "q", "(?i)search.?all|query", null, null),
+    FIELDS(ParamKind.CUSTOM),
     // Pagination parameters
-    PAGE(NUMBER),
-    FROM(NUMBER, null, null, "(?i)offset|from", null, null),
-    SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null, null),
-    SORT(SORT_KEY, null, null, "(?i)order.?by|sort", null, null),
-    SORT_ORDER(CUSTOM, MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
-    SEARCH_AFTER(CUSTOM),
+    PAGE(ParamKind.NUMBER),
+    FROM(ParamKind.NUMBER, null, null, "(?i)offset|from", null, null),
+    SIZE(ParamKind.NUMBER, null, null, "(?i)per.?page|results|limit|size", null, null),
+    SORT(ParamKind.SORT_KEY, null, null, "(?i)order.?by|sort", null, null),
+    SORT_ORDER(ParamKind.CUSTOM, FieldOperator.MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
+    SEARCH_AFTER(ParamKind.CUSTOM),
     // ignored parameter
-    LANG(CUSTOM);
+    LANG(ParamKind.CUSTOM);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -168,15 +166,15 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     private final Float boost;
 
     ResourceParameter(ParamKind kind) {
-        this(kind, MUST, null, null, null, null);
+        this(kind, FieldOperator.MUST, null, null, null, null);
     }
 
     ResourceParameter(ParamKind kind, String fieldsToSearch) {
-        this(kind, MUST, fieldsToSearch, null, null, null);
+        this(kind, FieldOperator.MUST, fieldsToSearch, null, null, null);
     }
 
     ResourceParameter(ParamKind kind, String fieldsToSearch, Float boost) {
-        this(kind, MUST, fieldsToSearch, null, null, boost);
+        this(kind, FieldOperator.MUST, fieldsToSearch, null, null, boost);
     }
 
     ResourceParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
@@ -278,8 +276,8 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     private static class Constants {
 
         public static final String CREATED_DATE = "createdDate";
-        private static final String AC_KEYWORD = ApplicationConstants.KEYWORD;
-        public static final String AC_ID = ApplicationConstants.ID;
+        private static final String AC_KEYWORD = Words.KEYWORD;
+        public static final String AC_ID = Words.ID;
 
         public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
             jsonPath(ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, AC_KEYWORD)

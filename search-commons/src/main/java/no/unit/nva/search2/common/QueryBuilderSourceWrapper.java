@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.common;
 
 import java.net.URI;
 import org.opensearch.search.builder.SearchSourceBuilder;

@@ -1,5 +1,42 @@
 package no.unit.nva.search2.constant;
 
+import static no.unit.nva.search2.constant.Words.ADMINSTRATIVE_AGREEMENT;
+import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
+import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.constant.Words.DOI;
+import static no.unit.nva.search2.constant.Words.DOT;
+import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.constant.Words.ID;
+import static no.unit.nva.search2.constant.Words.IDENTIFIER;
+import static no.unit.nva.search2.constant.Words.IDENTITY;
+import static no.unit.nva.search2.constant.Words.INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.LABELS;
+import static no.unit.nva.search2.constant.Words.NAME;
+import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.constant.Words.ORC_ID;
+import static no.unit.nva.search2.constant.Words.OWNER;
+import static no.unit.nva.search2.constant.Words.OWNER_AFFILIATION;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_DATE;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.constant.Words.REFERENCE;
+import static no.unit.nva.search2.constant.Words.RESOURCE_OWNER;
+import static no.unit.nva.search2.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.constant.Words.TYPE;
+import static no.unit.nva.search2.constant.Words.USER;
+import static no.unit.nva.search2.constant.Words.USER_AFFILIATION;
+import static no.unit.nva.search2.constant.Words.YEAR;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.stream.Stream;
@@ -15,66 +52,6 @@ import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 @JacocoGenerated
 public final class ApplicationConstants {
-
-    public static final Integer EXPECTED_TWO_PARTS = 2;
-    public static final String AFFILIATIONS = "affiliations";
-    public static final String ALL = "all";
-    public static final String AMPERSAND = "&";
-    public static final String ASTERISK = "*";
-    public static final String BOKMAAL_CODE = "nb";
-    public static final String COLON = ":";
-    public static final String COMMA = ",";
-    public static final String CONTEXT_TYPE = "contextType";
-    public static final String CONTRIBUTORS = "contributors";
-    public static final String DOI = "doi";
-    public static final String DOT = ".";
-    public static final String ENGLISH_CODE = "en";
-    public static final String ENTITY_DESCRIPTION = "entityDescription";
-    public static final String EQUAL = "=";
-    public static final String FUNDINGS = "fundings";
-    public static final String FUNDING_SOURCE = "fundingSource";
-    public static final String ID = "id";
-    public static final String IDENTIFIER = "identifier";
-    public static final String IDENTITY = "identity";
-    public static final String INSTANCE_TYPE = "instanceType";
-    public static final String JANUARY_FIRST = "-01-01";
-    public static final String KEYWORD = "keyword";
-    public static final String LABELS = "labels";
-    public static final String NAME = "name";
-    public static final String NYNORSK_CODE = "nn";
-    public static final String ORC_ID = "orcId";
-    public static final String OWNER = "owner";
-    public static final String OWNER_AFFILIATION = "ownerAffiliation";
-    public static final String PIPE = "|";
-    public static final String PLUS = "+";
-    public static final String PREFIX = "(";
-    public static final String PUBLICATION_CONTEXT = "publicationContext";
-    public static final String PUBLICATION_DATE = "publicationDate";
-    public static final String PUBLICATION_INSTANCE = "publicationInstance";
-    public static final String QUOTE = "'";
-    public static final String REFERENCE = "reference";
-    public static final String RESOURCES = "resources";
-    public static final String RESOURCE_OWNER = "resourceOwner";
-    public static final String SAMI_CODE = "sme";
-    public static final String SEARCH = "_search";
-    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
-    public static final String SOURCE = "source";
-    public static final String SPACE = " ";
-    public static final String SUFFIX = ")";
-    public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
-    public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
-    public static final String TYPE = "type";
-    public static final String UNDERSCORE = "_";
-    public static final String USER = "user";
-    public static final String USER_AFFILIATION = "userAffiliation";
-    public static final String YEAR = "year";
-    public static final String ZERO = "0";
-    public static final String MODIFIED_DATE = "modifiedDate";
-    public static final String PROJECTS_ID = "projects.id";
-    public static final String PUBLISHED_DATE = "publishedDate";
-    public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
-    public static final String PUBLISHED_FILE = "PublishedFile";
-    public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final Environment ENVIRONMENT = new Environment();
@@ -172,14 +149,12 @@ public final class ApplicationConstants {
                     generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)));
     }
 
-
     private static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
             .field(jsonPath(object, ID, KEYWORD))
             .size(Defaults.DEFAULT_AGGREGATION_SIZE)
             .subAggregation(generateLabelsAggregation(object));
     }
-
 
     private static NestedAggregationBuilder generateLabelsAggregation(String jsonPath) {
         var nestedAggregation = new NestedAggregationBuilder(LABELS, jsonPath(jsonPath, LABELS));
@@ -190,17 +165,7 @@ public final class ApplicationConstants {
     }
 
     private static TermsAggregationBuilder generateHasFileAggregation() {
-        //        var publishedFileQuery = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),
-        //        PUBLISHED_FILE);
-        //        var notAdministrativeAgreementQuery =
-        //            new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT), false);
-        //
-        //        var queryToMatch = QueryBuilders.boolQuery()
-        //            .must(publishedFileQuery)
-        //            .must(notAdministrativeAgreementQuery);
-
         var include = new IncludeExclude(PUBLISHED_FILE, "");
-
         return AggregationBuilders
             .terms(ASSOCIATED_ARTIFACTS)
             .field(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD))
@@ -210,11 +175,5 @@ public final class ApplicationConstants {
                 generateSimpleAggregation("public", jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT))
 
             );
-
-        //        return new FilterAggregationBuilder(ASSOCIATED_ARTIFACTS, queryToMatch)
-        //            .subAggregation(
-        //                new NestedAggregationBuilder("associatedArtifact", jsonPath(ASSOCIATED_ARTIFACTS,
-        //                "visibleForNonOwner", KEYWORD))
-        //            );
     }
 }

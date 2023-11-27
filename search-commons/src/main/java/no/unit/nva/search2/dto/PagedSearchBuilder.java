@@ -1,7 +1,7 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.dto;
 
 import static java.util.Objects.isNull;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,12 +24,12 @@ public class PagedSearchBuilder {
     private Map<String, List<Facet>> aggregations;
 
     @SuppressWarnings("PMD.NullAssignment")
-    public PagedSearchDto build() {
+    public PagedSearch build() {
         if (isNull(this.nextResults)) {
             this.nextSearchAfterResults = null;       // null values are not serialized
         }
-        return new PagedSearchDto(id, totalHits, hits, nextResults, nextSearchAfterResults, previousResults,
-                                  aggregations);
+        return new PagedSearch(id, totalHits, hits, nextResults, nextSearchAfterResults, previousResults,
+                               aggregations);
     }
 
     public PagedSearchBuilder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset,

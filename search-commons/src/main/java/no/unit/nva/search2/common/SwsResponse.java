@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model.opensearch;
+package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.constants.ApplicationConstants.LABELS;
@@ -11,7 +11,7 @@ import java.beans.Transient;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import no.unit.nva.search2.model.opensearch.SwsResponse.HitsInfo.Hit;
+import no.unit.nva.search2.common.SwsResponse.HitsInfo.Hit;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,12 +89,6 @@ public record SwsResponse(
             : null;
     }
 
-    public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
-
-    private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
-        "docCount", "count",
-        "doc_count", "count");
-
     public static JsonNode formatAggregations(JsonNode aggregations) {
         var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
 
@@ -110,8 +104,8 @@ public record SwsResponse(
                 continue;
             }
 
-            var newName = Optional.ofNullable(AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
-                .orElse(fieldName.replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, ""));
+            var newName = Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
+                .orElse(fieldName.replaceFirst(Constants.WORD_ENDING_WITH_HASHTAG_REGEX, ""));
 
             var value = nodeEntry.getValue();
             if (value.at("/id/buckets").isArray()) {
@@ -158,8 +152,8 @@ public record SwsResponse(
             if (fieldName.matches(PATTERN_IS_IGNORE_CASE + "sum.?other.?doc.?count")) {
                 continue;
             }
-            var newName = Optional.ofNullable(AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
-                .orElse(fieldName.replaceFirst(WORD_ENDING_WITH_HASHTAG_REGEX, ""));
+            var newName = Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
+                .orElse(fieldName.replaceFirst(Constants.WORD_ENDING_WITH_HASHTAG_REGEX, ""));
 
             if (newName.equals("count")) {
                 continue;
@@ -168,5 +162,14 @@ public record SwsResponse(
             outputAggregationNode.set(newName, keyValue);
         }
         return outputAggregationNode;
+    }
+
+    static final class Constants {
+
+        public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
+
+        private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
+            "docCount", "count",
+            "doc_count", "count");
     }
 }

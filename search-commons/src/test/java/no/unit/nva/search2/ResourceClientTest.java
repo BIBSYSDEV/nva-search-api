@@ -1,12 +1,12 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.constant.ApplicationConstants.SPACE;
-import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
+import static no.unit.nva.search2.common.Query.queryToMapEntries;
+import static no.unit.nva.search2.constant.Words.SPACE;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
+import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -278,12 +278,12 @@ class ResourceClientTest {
                 URI.create("https://x.org/?INSTANCE_TYPE=AcademicArticle&size=9"),
                 URI.create("https://x.org/?fields=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd&size=2"),
                 URI.create("https://x.org/?funding=AFR:296896&size=1"),
-                URI.create("https://x.org/?funding=NFR:1296896&size=1"),
-                URI.create("https://x.org/?funding=NFR:296896&size=1"),
-                URI.create("https://x.org/?funding_source=Norges+forskningsråd&size=1"),
-                URI.create("https://x.org/?funding_source_not=Norges+forskningsråd&size=19"),
-                URI.create("https://x.org/?funding_source_SHOULD=Norges&size=1"),
-                URI.create("https://x.org/?funding_source=Research+Council+of+Norway+(RCN)&size=1"),
+                URI.create("https://x.org/?funding=NFR:1296896&size=2"),
+                URI.create("https://x.org/?funding=NFR:296896&size=2"),
+                URI.create("https://x.org/?funding_source=Norges+forskningsråd&size=2"),
+                URI.create("https://x.org/?funding_source_not=Norges+forskningsråd&size=18"),
+                URI.create("https://x.org/?funding_source_SHOULD=Norges&size=2"),
+                URI.create("https://x.org/?funding_source=Research+Council+of+Norway+(RCN)&size=2"),
                 URI.create("https://x.org/?published_before=2023-09-29&size=5"),
                 URI.create("https://x.org/?published_since=2023-11-05&size=1"),
                 URI.create("https://x.org/?query=Forsvarets+høgskole&fields=INSTITUTION&size=2"),

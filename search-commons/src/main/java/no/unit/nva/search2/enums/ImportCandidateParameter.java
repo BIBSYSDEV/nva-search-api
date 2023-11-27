@@ -1,20 +1,10 @@
-package no.unit.nva.search2.model.parameterkeys;
+package no.unit.nva.search2.enums;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
-import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.LESS_THAN;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.CUSTOM;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.model.parameterkeys.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -31,42 +21,45 @@ import nva.commons.core.JacocoGenerated;
  */
 
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
-    INVALID(TEXT),
+    INVALID(ParamKind.TEXT),
     // Parameters converted to Lucene query
-    ADDITIONAL_IDENTIFIERS(KEYWORD, MUST, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, MUST_NOT, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, SHOULD, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
-    CATEGORY(KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_NOT(KEYWORD, MUST_NOT, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_SHOULD(TEXT, SHOULD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    COLLABORATION_TYPE(KEYWORD, MUST, ""),
-    DOI(KEYWORD, Constants.DOI),
-    DOI_NOT(TEXT, MUST_NOT, Constants.DOI),
-    DOI_SHOULD(TEXT, SHOULD, Constants.DOI),
-    ID(KEYWORD, Constants.IDENTIFIER),
-    ID_NOT(KEYWORD, MUST_NOT, Constants.IDENTIFIER),
-    ID_SHOULD(TEXT, SHOULD, Constants.IDENTIFIER),
-    OWNER(KEYWORD, MUST, Constants.RESOURCE_OWNER),
-    OWNER_NOT(KEYWORD, MUST_NOT, Constants.RESOURCE_OWNER),
-    OWNER_SHOULD(TEXT, SHOULD, Constants.RESOURCE_OWNER),
-    PUBLISHED_BEFORE(NUMBER, LESS_THAN, Constants.PUBLISHED_DATE),
-    PUBLISHED_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
-    PUBLISHER(KEYWORD, MUST, Constants.PUBLISHER),
-    PUBLISHER_NOT(KEYWORD, MUST_NOT, Constants.PUBLISHER),
-    PUBLISHER_SHOULD(TEXT, SHOULD, Constants.PUBLISHER),
-    TITLE(TEXT, Constants.MAIN_TITLE, 2F),
-    TITLE_NOT(TEXT, MUST_NOT, Constants.MAIN_TITLE),
-    TITLE_SHOULD(TEXT, SHOULD, Constants.MAIN_TITLE),
+    ADDITIONAL_IDENTIFIERS(ParamKind.KEYWORD, FieldOperator.MUST, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
+                               Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    CATEGORY(ParamKind.KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
+                 Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD,
+                    Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+    COLLABORATION_TYPE(ParamKind.KEYWORD, FieldOperator.MUST, ""),
+    DOI(ParamKind.KEYWORD, Constants.DOI),
+    DOI_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, Constants.DOI),
+    DOI_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.DOI),
+    ID(ParamKind.KEYWORD, Constants.IDENTIFIER),
+    ID_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.IDENTIFIER),
+    ID_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.IDENTIFIER),
+    OWNER(ParamKind.KEYWORD, FieldOperator.MUST, Constants.RESOURCE_OWNER),
+    OWNER_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.RESOURCE_OWNER),
+    OWNER_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.RESOURCE_OWNER),
+    PUBLISHED_BEFORE(ParamKind.NUMBER, FieldOperator.LESS_THAN, Constants.PUBLISHED_DATE),
+    PUBLISHED_SINCE(ParamKind.NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
+    PUBLISHER(ParamKind.KEYWORD, FieldOperator.MUST, Constants.PUBLISHER),
+    PUBLISHER_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.PUBLISHER),
+    PUBLISHER_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.PUBLISHER),
+    TITLE(ParamKind.TEXT, Constants.MAIN_TITLE, 2F),
+    TITLE_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, Constants.MAIN_TITLE),
+    TITLE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.MAIN_TITLE),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, MUST, "q", "(?i)search.?all|query", null, null),
-    FIELDS(CUSTOM),
+    SEARCH_ALL(ParamKind.TEXT, FieldOperator.MUST, "q", "(?i)search.?all|query", null, null),
+    FIELDS(ParamKind.CUSTOM),
     // Pagination parameters
-    PAGE(NUMBER),
-    FROM(NUMBER, null, null, "(?i)offset|from", null, null),
-    SIZE(NUMBER, null, null, "(?i)per.?page|results|limit|size", null, null),
-    SORT(SORT_KEY, null, null, "(?i)order.?by|sort", null, null),
-    SORT_ORDER(CUSTOM, MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
-    SEARCH_AFTER(CUSTOM);
+    PAGE(ParamKind.NUMBER),
+    FROM(ParamKind.NUMBER, null, null, "(?i)offset|from", null, null),
+    SIZE(ParamKind.NUMBER, null, null, "(?i)per.?page|results|limit|size", null, null),
+    SORT(ParamKind.SORT_KEY, null, null, "(?i)order.?by|sort", null, null),
+    SORT_ORDER(ParamKind.CUSTOM, FieldOperator.MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
+    SEARCH_AFTER(ParamKind.CUSTOM);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -87,15 +80,15 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     private final Float boost;
 
     ImportCandidateParameter(ParamKind kind) {
-        this(kind, MUST, null, null, null, null);
+        this(kind, FieldOperator.MUST, null, null, null, null);
     }
 
     ImportCandidateParameter(ParamKind kind, String fieldsToSearch) {
-        this(kind, MUST, fieldsToSearch, null, null, null);
+        this(kind, FieldOperator.MUST, fieldsToSearch, null, null, null);
     }
 
     ImportCandidateParameter(ParamKind kind, String fieldsToSearch, Float boost) {
-        this(kind, MUST, fieldsToSearch, null, null, boost);
+        this(kind, FieldOperator.MUST, fieldsToSearch, null, null, boost);
     }
 
     ImportCandidateParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {

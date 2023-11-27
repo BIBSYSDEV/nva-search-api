@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.search2.model.opensearch.SwsResponse.formatAggregations;
+import static no.unit.nva.search2.common.SwsResponse.formatAggregations;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;

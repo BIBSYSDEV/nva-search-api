@@ -1,9 +1,9 @@
-package no.unit.nva.search2.model.sortkeys;
+package no.unit.nva.search2.enums;
 
 import static no.unit.nva.search2.constant.ApplicationConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public enum ResourceSort {
+public enum ImportCandidateSort {
     INVALID(""),
     CATEGORY(ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
     INSTANCE_TYPE(ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
@@ -23,21 +23,21 @@ public enum ResourceSort {
     UNIT_ID("entityDescription.contributors.affiliations.id.keyword"),
     USER("(?i)(user)|(owner)", "resourceOwner.owner.keyword");
 
-    public static final Set<ResourceSort> VALID_SORT_PARAMETER_KEYS =
-        Arrays.stream(ResourceSort.values())
-            .sorted(ResourceSort::compareAscending)
+    public static final Set<ImportCandidateSort> VALID_SORT_PARAMETER_KEYS =
+        Arrays.stream(ImportCandidateSort.values())
+            .sorted(ImportCandidateSort::compareAscending)
             .skip(1)    // skip INVALID
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
     private final String fieldName;
 
-    ResourceSort(String pattern, String fieldName) {
+    ImportCandidateSort(String pattern, String fieldName) {
         this.keyValidationRegEx = pattern;
         this.fieldName = fieldName;
     }
 
-    ResourceSort(String fieldName) {
+    ImportCandidateSort(String fieldName) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.fieldName = fieldName;
     }
@@ -50,27 +50,27 @@ public enum ResourceSort {
         return fieldName;
     }
 
-    public static ResourceSort fromSortKey(String keyName) {
-        var result = Arrays.stream(ResourceSort.values())
-            .filter(ResourceSort.equalTo(keyName))
+    public static ImportCandidateSort fromSortKey(String keyName) {
+        var result = Arrays.stream(ImportCandidateSort.values())
+            .filter(ImportCandidateSort.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
 
-    public static Predicate<ResourceSort> equalTo(String name) {
+    public static Predicate<ImportCandidateSort> equalTo(String name) {
         return key -> name.matches(key.getKeyPattern());
     }
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ResourceSort::name)
+            .map(ImportCandidateSort::name)
             .map(String::toLowerCase)
             .toList();
     }
 
-    private static int compareAscending(ResourceSort key1, ResourceSort key2) {
+    private static int compareAscending(ImportCandidateSort key1, ImportCandidateSort key2) {
         return key1.ordinal() - key2.ordinal();
     }
 

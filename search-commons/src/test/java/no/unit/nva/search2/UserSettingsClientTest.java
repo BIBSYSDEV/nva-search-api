@@ -2,10 +2,10 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.model.opensearch.Query.queryToMapEntries;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.FROM;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SIZE;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SORT;
+import static no.unit.nva.search2.common.Query.queryToMapEntries;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
+import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;

@@ -1,4 +1,4 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.dto;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import no.unit.nva.commons.json.JsonSerializable;
 
-public record PagedSearchDto(
+public record PagedSearch(
     URI id,
     int totalHits,
     List<JsonNode> hits,

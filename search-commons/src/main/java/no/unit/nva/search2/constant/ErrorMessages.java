@@ -1,14 +1,13 @@
 package no.unit.nva.search2.constant;
 
+import static no.unit.nva.search2.constant.Words.PREFIX;
+import static no.unit.nva.search2.constant.Words.QUOTE;
+import static no.unit.nva.search2.constant.Words.SUFFIX;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import nva.commons.core.JacocoGenerated;
-
-import static no.unit.nva.search2.constant.ApplicationConstants.QUOTE;
-import static no.unit.nva.search2.constant.ApplicationConstants.SUFFIX;
-import static no.unit.nva.search2.constant.ApplicationConstants.PREFIX;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 @JacocoGenerated
 public class ErrorMessages {

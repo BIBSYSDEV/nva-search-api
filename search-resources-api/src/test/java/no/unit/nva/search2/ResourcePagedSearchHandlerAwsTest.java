@@ -2,9 +2,9 @@ package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search2.model.parameterkeys.ResourceParameter.SEARCH_ALL;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.model.PagedSearchDto;
-import no.unit.nva.search2.model.opensearch.SwsResponse;
+import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -278,9 +278,9 @@ class ResourcePagedSearchHandlerAwsTest {
             .thenReturn(body);
     }
 
-    private PagedSearchDto getSearchResourcesResponseFromFile(String filename)
+    private PagedSearch getSearchResourcesResponseFromFile(String filename)
         throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearchDto.class);
+        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearch.class);
     }
 
     public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {

@@ -1,7 +1,14 @@
 package no.unit.nva.search2.common;
 
-import no.unit.nva.search2.model.parameterkeys.ParameterKey;
-import no.unit.nva.search2.model.parameterkeys.ResourceParameter;
+import static java.util.Objects.isNull;
+import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.search2.constant.Words.ALL;
+import static no.unit.nva.search2.constant.Words.ASTERISK;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import java.util.Arrays;
+import java.util.Collection;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ResourceParameter;
 import org.jetbrains.annotations.NotNull;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -9,15 +16,6 @@ import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.RangeQueryBuilder;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import static java.util.Objects.isNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.ALL;
-import static no.unit.nva.search2.constant.ApplicationConstants.ASTERISK;
-import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
-import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 
 public final class QueryBuilderTools {
     

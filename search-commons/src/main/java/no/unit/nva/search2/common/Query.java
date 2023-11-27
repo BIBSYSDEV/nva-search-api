@@ -1,15 +1,15 @@
-package no.unit.nva.search2.model.opensearch;
+package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.AMPERSAND;
-import static no.unit.nva.search2.constant.ApplicationConstants.COLON;
-import static no.unit.nva.search2.constant.ApplicationConstants.COMMA;
-import static no.unit.nva.search2.constant.ApplicationConstants.EQUAL;
-import static no.unit.nva.search2.constant.ApplicationConstants.PLUS;
-import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES;
-import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH;
 import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.constant.Words.AMPERSAND;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.constant.Words.PLUS;
+import static no.unit.nva.search2.constant.Words.RESOURCES;
+import static no.unit.nva.search2.constant.Words.SEARCH;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.StringUtils.SPACE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -31,9 +31,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import no.unit.nva.search2.model.parameterkeys.ParameterKey;
-import no.unit.nva.search2.model.parameterkeys.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
