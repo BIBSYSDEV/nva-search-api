@@ -8,6 +8,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
@@ -150,6 +151,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                         case MUST_NOT -> bq.mustNot(QueryBuilderTools.buildQuery(key, value));
                         case SHOULD -> bq.should(QueryBuilderTools.buildQuery(key, value));
                         case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
+                        default -> throw new IllegalStateException(UNEXPECTED_VALUE + key.searchOperator());
                     }
                 }
             });

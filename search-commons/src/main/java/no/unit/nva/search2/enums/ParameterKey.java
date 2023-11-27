@@ -66,15 +66,14 @@ public interface ParameterKey<E extends Enum<E>> {
 
     @JacocoGenerated
     static String getValuePattern(ParamKind kind, String pattern) {
-        return nonNull(pattern) ? pattern
-            : switch (kind) {
-                case BOOLEAN -> PATTERN_IS_BOOLEAN;
-                case DATE -> PATTERN_IS_DATE;
-                case NUMBER -> PATTERN_IS_NUMBER;
-                // case RANGE -> PATTERN_IS_RANGE;
-                case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
-                case INVALID -> PATTERN_IS_NONE_OR_ONE;
-            };
+        return nonNull(pattern) ? pattern : switch (kind) {
+            case BOOLEAN -> PATTERN_IS_BOOLEAN;
+            case DATE -> PATTERN_IS_DATE;
+            case NUMBER -> PATTERN_IS_NUMBER;
+            // case RANGE -> PATTERN_IS_RANGE;
+            case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
+            case INVALID -> PATTERN_IS_NONE_OR_ONE;
+        };
     }
 
     static int compareAscending(Enum<?> key1, Enum<?> key2) {

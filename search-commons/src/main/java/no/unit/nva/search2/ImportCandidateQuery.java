@@ -9,6 +9,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
@@ -148,6 +149,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                         case MUST_NOT -> bq.mustNot(QueryBuilderTools.buildQuery(key, value));
                         case SHOULD -> bq.should(QueryBuilderTools.buildQuery(key, value));
                         case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
+                        default -> throw new IllegalStateException(UNEXPECTED_VALUE + key.searchOperator());
                     }
                 }
             });
@@ -182,6 +184,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         var fieldName = ImportCandidateSort.fromSortKey(strings[0]).getFieldName();
         return new Tuple<>(fieldName, sortOrder);
     }
+
     /**
      * Creates a multi match query, all words needs to be present, within a document.
      *
