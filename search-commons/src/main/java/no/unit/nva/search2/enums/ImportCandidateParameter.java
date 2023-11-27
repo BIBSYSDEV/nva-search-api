@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import no.unit.nva.search2.constant.ImportCandidateFields;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -23,33 +24,44 @@ import nva.commons.core.JacocoGenerated;
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
     INVALID(ParamKind.TEXT),
     // Parameters converted to Lucene query
-    ADDITIONAL_IDENTIFIERS(ParamKind.KEYWORD, FieldOperator.MUST, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
+    ADDITIONAL_IDENTIFIERS(ParamKind.KEYWORD, FieldOperator.MUST, ImportCandidateFields.ADDITIONAL_IDENTIFIERS_VALUE),
     ADDITIONAL_IDENTIFIERS_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
-                               Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD),
-    CATEGORY(ParamKind.KEYWORD, Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+                               ImportCandidateFields.ADDITIONAL_IDENTIFIERS_VALUE),
+    ADDITIONAL_IDENTIFIERS_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD,
+                                  ImportCandidateFields.ADDITIONAL_IDENTIFIERS_VALUE),
+    CATEGORY(ParamKind.KEYWORD, ImportCandidateFields.PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT,
-                 Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
+                 ImportCandidateFields.PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD,
-                    Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE),
-    COLLABORATION_TYPE(ParamKind.KEYWORD, FieldOperator.MUST, ""),
-    DOI(ParamKind.KEYWORD, Constants.DOI),
-    DOI_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, Constants.DOI),
-    DOI_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.DOI),
-    ID(ParamKind.KEYWORD, Constants.IDENTIFIER),
-    ID_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.IDENTIFIER),
-    ID_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.IDENTIFIER),
-    OWNER(ParamKind.KEYWORD, FieldOperator.MUST, Constants.RESOURCE_OWNER),
-    OWNER_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.RESOURCE_OWNER),
-    OWNER_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.RESOURCE_OWNER),
-    PUBLISHED_BEFORE(ParamKind.NUMBER, FieldOperator.LESS_THAN, Constants.PUBLISHED_DATE),
-    PUBLISHED_SINCE(ParamKind.NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, Constants.PUBLISHED_DATE),
-    PUBLISHER(ParamKind.KEYWORD, FieldOperator.MUST, Constants.PUBLISHER),
-    PUBLISHER_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, Constants.PUBLISHER),
-    PUBLISHER_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.PUBLISHER),
-    TITLE(ParamKind.TEXT, Constants.MAIN_TITLE, 2F),
-    TITLE_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, Constants.MAIN_TITLE),
-    TITLE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, Constants.MAIN_TITLE),
+                    ImportCandidateFields.PUBLICATION_INSTANCE_TYPE),
+    CREATED_DATE(ParamKind.DATE, ImportCandidateFields.CREATED_DATE),
+    CONTRIBUTOR(ParamKind.KEYWORD, ImportCandidateFields.CONTRIBUTOR),
+    CONTRIBUTOR_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ImportCandidateFields.CONTRIBUTOR),
+    CONTRIBUTOR_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.CONTRIBUTOR),
+    COLLABORATION_TYPE(ParamKind.KEYWORD, FieldOperator.MUST, ImportCandidateFields.COLLABORATION_TYPE),
+    COLLABORATION_TYPE_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ImportCandidateFields.COLLABORATION_TYPE),
+    COLLABORATION_TYPE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.COLLABORATION_TYPE),
+    DOI(ParamKind.KEYWORD, ImportCandidateFields.DOI),
+    DOI_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, ImportCandidateFields.DOI),
+    DOI_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.DOI),
+    ID(ParamKind.KEYWORD, ImportCandidateFields.IDENTIFIER),
+    ID_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ImportCandidateFields.IDENTIFIER),
+    ID_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.IDENTIFIER),
+    IMPORT_STATUS(ParamKind.KEYWORD, ImportCandidateFields.IMPORT_STATUS),
+    IMPORT_STATUS_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ImportCandidateFields.IMPORT_STATUS),
+    IMPORT_STATUS_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.IMPORT_STATUS),
+    INSTANCE_TYPE(ParamKind.KEYWORD, FieldOperator.MUST, ImportCandidateFields.INSTANCE_TYPE),
+    INSTANCE_TYPE_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ImportCandidateFields.INSTANCE_TYPE),
+    INSTANCE_TYPE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.INSTANCE_TYPE),
+    PUBLISHED_BEFORE(ParamKind.NUMBER, FieldOperator.LESS_THAN, ImportCandidateFields.PUBLICATION_YEAR),
+    PUBLISHED_SINCE(ParamKind.NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, ImportCandidateFields.PUBLICATION_YEAR),
+    PUBLISHER(ParamKind.KEYWORD, FieldOperator.MUST, ImportCandidateFields.PUBLISHER),
+    PUBLISHER_NOT(ParamKind.KEYWORD, FieldOperator.MUST_NOT, ImportCandidateFields.PUBLISHER),
+    PUBLISHER_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.PUBLISHER),
+    TITLE(ParamKind.TEXT, ImportCandidateFields.MAIN_TITLE, 2F),
+    TITLE_NOT(ParamKind.TEXT, FieldOperator.MUST_NOT, ImportCandidateFields.MAIN_TITLE),
+    TITLE_SHOULD(ParamKind.TEXT, FieldOperator.SHOULD, ImportCandidateFields.MAIN_TITLE),
+    TYPE(ParamKind.KEYWORD, ImportCandidateFields.TYPE),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(ParamKind.TEXT, FieldOperator.MUST, "q", "(?i)search.?all|query", null, null),
     FIELDS(ParamKind.CUSTOM),
@@ -61,6 +73,12 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     SORT_ORDER(ParamKind.CUSTOM, FieldOperator.MUST, null, "(?i)sort.?order|order", "(?i)asc|desc", null),
     SEARCH_AFTER(ParamKind.CUSTOM);
 
+    //    COLLABORATION_TYPE("collaborationType.keyword"),
+    //    CREATED_DATE("createdDate"),
+    //    INSTANCE_TYPE("publicationInstance.keyword"),
+    //    PUBLICATION_YEAR("publicationYear"),
+    //    TITLE("mainTitle.keyword"),
+    //    TYPE("type.keyword");
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<ImportCandidateParameter> VALID_LUCENE_PARAMETER_KEYS =
@@ -68,7 +86,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
             .filter(ImportCandidateParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
-    
+
     private final String key;
     private final ValueEncoding encoding;
     private final String keyPattern;
@@ -98,7 +116,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     ImportCandidateParameter(
         ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
-        
+
         this.key = this.name().toLowerCase(Locale.getDefault());
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
@@ -113,52 +131,52 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
             : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE) + "*";
         this.paramkind = kind;
     }
-    
+
     @Override
     public String fieldName() {
         return key;
     }
-    
+
     @Override
     public Float fieldBoost() {
         return boost;
     }
-    
+
     @Override
     public ParamKind fieldType() {
         return paramkind;
     }
-    
+
     @Override
     public String fieldPattern() {
         return keyPattern;
     }
-    
+
     @Override
     public String valuePattern() {
         return validValuePattern;
     }
-    
+
     @Override
     public ValueEncoding valueEncoding() {
         return encoding;
     }
-    
+
     @Override
     public Collection<String> searchFields() {
         return Arrays.stream(fieldsToSearch).toList();
     }
-    
+
     @Override
     public FieldOperator searchOperator() {
         return fieldOperator;
     }
-    
+
     @Override
     public String errorMessage() {
         return errorMsg;
     }
-    
+
     @Override
     @JacocoGenerated
     public String toString() {
@@ -185,18 +203,5 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
 
     private static boolean isSearchField(ImportCandidateParameter f) {
         return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
-    }
-    
-    private static class Constants {
-        
-        public static final String DOI = "doi";
-        public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE =
-            "entityDescription.reference.publicationInstance.type.keyword";
-        public static final String IDENTIFIER = "identifier.keyword";
-        public static final String MAIN_TITLE = "title.keyword";
-        public static final String PUBLISHED_DATE = "publishedDate.year";
-        public static final String PUBLISHER = "publisher.id.keyword";
-        public static final String RESOURCE_OWNER = "owner.keyword";
-        public static final String ADDITIONAL_IDENTIFIERS_VALUE_KEYWORD = "additionalIdentifiers.value.keyword";
     }
 }

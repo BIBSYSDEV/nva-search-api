@@ -4,8 +4,10 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "id": {
+          "type": "keyword"
+        },
         "labels": {
-          "include_in_parent": true,
           "type": "nested"
         }
       }
@@ -20,15 +22,10 @@
           "properties": {
             "identity": {
               "type": "nested",
-              "include_in_parent": true
-            },
-            "affiliations": {
-              "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "labels": {
-                  "type": "nested",
-                  "include_in_parent": true
+                "id": {
+                  "type": "keyword"
                 }
               }
             }
@@ -40,15 +37,40 @@
           "properties": {
             "publicationInstance": {
               "type": "nested",
-              "include_in_parent": true
+              "include_in_parent": true,
+              "properties": {
+                "type": {
+                  "type": "keyword"
+                }
+              }
             },
             "publicationContext": {
               "type": "nested",
               "include_in_parent": true,
               "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "identifier": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                },
                 "publisher": {
                   "type": "nested",
-                  "include_in_parent": true
+                  "include_in_parent": true,
+                  "properties": {
+                    "id": {
+                      "type": "keyword"
+                    },
+                    "identifier": {
+                      "type": "keyword"
+                    },
+                    "name": {
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
             }
@@ -64,9 +86,11 @@
           "type": "nested",
           "include_in_parent": true,
           "properties": {
+            "identifier": {
+              "type": "keyword"
+            },
             "labels": {
-              "type": "nested",
-              "include_in_parent": true
+              "type": "nested"
             }
           }
         }

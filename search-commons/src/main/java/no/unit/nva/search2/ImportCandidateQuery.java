@@ -2,15 +2,17 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
-import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.search2.constant.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
+import static no.unit.nva.search2.constant.ImportCandidateFields.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import static no.unit.nva.search2.constant.Words.ALL;
+import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.SEARCH;
@@ -191,7 +193,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
      * @return a MultiMatchQueryBuilder
      */
     private MultiMatchQueryBuilder multiMatchQuery() {
-        var fields = QueryBuilderTools.extractFields(getValue(FIELDS).toString());
+        var fields = extractFields(getValue(FIELDS).toString());
         var value = getValue(SEARCH_ALL).toString();
         return QueryBuilders
             .multiMatchQuery(value, fields)
@@ -202,6 +204,18 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     boolean isFirstPage() {
         return ZERO.equals(getValue(FROM).toString());
     }
+
+    @NotNull
+    public static String[] extractFields(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? ASTERISK.split(COMMA)
+            : Arrays.stream(field.split(COMMA))
+                .map(ImportCandidateParameter::keyFromString)
+                .map(ParameterKey::searchFields)
+                .flatMap(Collection::stream)
+                .toArray(String[]::new);
+    }
+
     
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
@@ -219,7 +233,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 switch (key) {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_VALUE_SORT + COLON + DEFAULT_VALUE_SORT_ORDER);
+                    case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -235,15 +249,18 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 case SORT -> addSortQuery(value);
                 case SORT_ORDER -> addSortOrderQuery(value);
                 case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE,
                     CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
-                    COLLABORATION_TYPE,
+                    CREATED_DATE,
+                    COLLABORATION_TYPE, COLLABORATION_TYPE_NOT, COLLABORATION_TYPE_SHOULD,
+                    CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
-                    OWNER, OWNER_NOT, OWNER_SHOULD,
-                    PUBLISHER,
+                    INSTANCE_TYPE, INSTANCE_TYPE_NOT, INSTANCE_TYPE_SHOULD,
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE,
+                    PUBLISHER, PUBLISHER_NOT, PUBLISHER_SHOULD,
                     SEARCH_ALL,
-                    TITLE, TITLE_NOT, TITLE_SHOULD -> query.setSearchFieldValue(qpKey, value);
+                    TITLE, TITLE_NOT, TITLE_SHOULD,
+                    TYPE -> query.setSearchFieldValue(qpKey, value);
                 default -> invalidKeys.add(key);
             }
         }
@@ -315,7 +332,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         private String getSortOrder(String... sortKeyParts) {
             return (sortKeyParts.length == EXPECTED_TWO_PARTS)
                 ? sortKeyParts[1].toLowerCase(Locale.getDefault())
-                : DEFAULT_VALUE_SORT_ORDER;
+                : DEFAULT_SORT_ORDER;
         }
         
         private void addSortQuery(String value) {

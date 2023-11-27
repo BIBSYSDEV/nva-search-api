@@ -1,15 +1,9 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
-import static no.unit.nva.search2.constant.Words.ALL;
-import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import java.util.Arrays;
-import java.util.Collection;
 import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ResourceParameter;
-import org.jetbrains.annotations.NotNull;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
@@ -88,17 +82,6 @@ public final class QueryBuilderTools {
     }
     
 
-    
-    @NotNull
-    public static String[] extractFields(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)
-            : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .toArray(String[]::new);
-    }
 
     public static boolean hasMultipleFields(String... swsKey) {
         return swsKey.length > SINGLE_FIELD;

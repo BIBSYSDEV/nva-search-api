@@ -4,15 +4,16 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.constant.Words.ALL;
+import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.EXPECTED_TWO_PARTS;
@@ -35,6 +36,7 @@ import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -187,7 +189,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * @return a MultiMatchQueryBuilder
      */
     private MultiMatchQueryBuilder multiMatchQuery() {
-        var fields = QueryBuilderTools.extractFields(getValue(FIELDS).toString());
+        var fields = extractFields(getValue(FIELDS).toString());
         var value = getValue(SEARCH_ALL).toString();
         return QueryBuilders
             .multiMatchQuery(value, fields)
@@ -216,6 +218,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return new Tuple<>(fieldName, sortOrder);
     }
 
+    @NotNull
+    public static String[] extractFields(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? ASTERISK.split(COMMA)
+            : Arrays.stream(field.split(COMMA))
+                .map(ResourceParameter::keyFromString)
+                .map(ParameterKey::searchFields)
+                .flatMap(Collection::stream)
+                .toArray(String[]::new);
+    }
+
 
     public boolean hasPromotedPublications(List<String> promotedPublications) {
         return nonNull(promotedPublications) && !promotedPublications.isEmpty();
@@ -242,7 +255,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 switch (key) {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_VALUE_SORT + COLON + DEFAULT_VALUE_SORT_ORDER);
+                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -346,7 +359,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected String getSortOrder(String... sortKeyParts) {
             return (sortKeyParts.length == EXPECTED_TWO_PARTS)
                 ? sortKeyParts[1].toLowerCase(Locale.getDefault())
-                : DEFAULT_VALUE_SORT_ORDER;
+                : DEFAULT_SORT_ORDER;
         }
 
         private void addSortQuery(String value) {

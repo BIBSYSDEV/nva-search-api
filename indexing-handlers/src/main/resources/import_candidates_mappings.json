@@ -2,11 +2,20 @@
   "properties": {
     "publicationInstance": {
       "type": "nested",
-      "include_in_parent": true
+      "include_in_parent": true,
+      "properties": {
+        "type": {
+          "type": "keyword"
+        }
+      }
     },
     "organizations": {
       "type": "nested",
+      "include_in_parent": true,
       "properties": {
+        "id": {
+          "type": "keyword"
+        },
         "labels": {
           "type": "nested"
         }
@@ -14,9 +23,16 @@
     },
     "associatedArtifacts": {
       "type": "nested",
-      "include_in_parent": true
+      "include_in_parent": true,
+      "properties": {
+        "identifier": {
+          "type": "keyword"
+        },
+        "name": {
+          "type": "keyword"
+        }
+      }
     }
   }
 }
-
 

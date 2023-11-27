@@ -1,0 +1,1563 @@
+[
+  {
+    "importStatus": {
+      "candidateStatus": "NOT_IMPORTED",
+      "modifiedDate": "2023-11-20T19:38:32.362135196Z"
+    },
+    "collaborationType": "NonCollaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "volume": "60",
+      "issue": "3",
+      "articleNumber": "036102",
+      "type": "AcademicArticle"
+    },
+    "associatedArtifacts": [],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/899497CD-FC96-431D-BE38-5B10F1428969/2021",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T19:38:32.361612653Z",
+    "totalVerifiedContributors": 0,
+    "mainTitle": "All-optical multi-wavelength regenerator based on four-wave mixing",
+    "organizations": [],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85104787031"
+      }
+    ],
+    "publicationYear": "2021",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bee3ddae4-653812a8-ed19-469b-8078-c3b488f71f74",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Muhammad Usama Khan",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "National University of Sciences and Technology, School of Electrical Engineering and Computer Science"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Abdulah Jeza Aljohani",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/54400004.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "King Abdul Aziz University",
+              "en": "King Abdul Aziz University"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Aamir Gulistan",
+          "orcId": "https://orcid.org/0000-0002-9520-4211",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20277.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Simula Metropolitan Center for Digital Engineering"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7498.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Simula Research Laboratory"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Salman Ghafoor",
+          "orcId": "https://orcid.org/0000-0002-1031-4471",
+          "type": "Identity"
+        },
+        "correspondingAuthor": true,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "National University of Sciences and Technology, School of Electrical Engineering and Computer Science"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1117/1.OE.60.3.036102",
+    "totalContributors": 4
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "NOT_IMPORTED",
+      "modifiedDate": "2023-11-20T19:38:58.568863583Z"
+    },
+    "collaborationType": "NonCollaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "volume": "13",
+      "pages": {
+        "end": "1323",
+        "type": "Range",
+        "begin": "1285"
+      },
+      "issue": "3",
+      "type": "AcademicLiteratureReview"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "8ffecd57-3130-4c18-b9b3-267e2d6a176b",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 2716847,
+        "publisherAuthority": false,
+        "name": "Best+therapeutic+practices+for+the+use+of+antibacterial+agents+in+finfish+aquaculture_2021_Rigos_et_al.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T19:39:00.332108791Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "5e2a88ae-26ea-45fe-a1e7-eafacf84f6c6",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 2699482,
+        "publisherAuthority": false,
+        "name": "raq.12523.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/octet-stream",
+        "publishedDate": "2023-11-20T19:39:01.551163279Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/B812F187-1A4E-4348-8158-C10371B8A08C/2021",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T19:38:58.568858915Z",
+    "totalVerifiedContributors": 0,
+    "mainTitle": "Best therapeutic practices for the use of antibacterial agents in finfish aquaculture: a particular view on European seabass (Dicentrarchus labrax) and gilthead seabream (Sparus aurata) in Mediterranean aquaculture",
+    "organizations": [],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85098160364"
+      }
+    ],
+    "publicationYear": "2021",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bee3e4a96-4e698b67-310f-4e75-9765-3c87589a7bf8",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "George Rigos",
+          "orcId": "https://orcid.org/0000-0002-3148-6213",
+          "type": "Identity"
+        },
+        "correspondingAuthor": true,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/11907400.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Hellenic Centre for Marine Research"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Dimitra Kogiannou",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/11907400.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Hellenic Centre for Marine Research"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Francesc Padrós",
+          "orcId": "https://orcid.org/0000-0002-8610-5692",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/13700067.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universitat Autònoma de Barcelona",
+              "en": "Autonomous University of Barcelona"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Carles Cristòfol",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/13700067.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universitat Autònoma de Barcelona",
+              "en": "Autonomous University of Barcelona"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Daniela Florio",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/12300036.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": " Università degli Studi di Bologna",
+              "en": "University of Bologna"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1111/raq.12523",
+    "totalContributors": 7
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "NOT_IMPORTED",
+      "modifiedDate": "2023-11-20T19:38:19.691279631Z"
+    },
+    "collaborationType": "Collaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "pages": {
+        "end": "202",
+        "type": "Range",
+        "begin": "197"
+      },
+      "type": "AcademicChapter"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "ca8c63c7-d7ac-43f5-bca5-19051faf1fed",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 3249110,
+        "publisherAuthority": false,
+        "name": "3524273.3532886.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T19:38:21.554335620Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-11-20T19:38:19.691273690Z",
+    "totalVerifiedContributors": 3,
+    "mainTitle": "Njord: A Fishing Trawler Dataset",
+    "organizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+        "type": "Organization",
+        "labels": {
+          "nb": "Universitetet i Oslo",
+          "en": "University of Oslo"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/2d35d439-055d-40e5-94de-a9ec28493835",
+        "type": "Organization",
+        "labels": {
+          "nb": "UiT Norges arktiske universitet",
+          "en": "UiT The Arctic University of Norway"
+        }
+      }
+    ],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85137144310"
+      }
+    ],
+    "publicationYear": "2022",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bee3f4c8c-edc1bd12-fe88-41a2-a906-10159164307a",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Tor Arne Schmidt Nordmo",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/186.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "UiT Norges arktiske universitet",
+              "en": "UiT The Arctic University of Norway"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Aril Bernhard Ovesen",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/186.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "UiT Norges arktiske universitet",
+              "en": "UiT The Arctic University of Norway"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Bjørn Aslak Juliussen",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/186.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "UiT Norges arktiske universitet",
+              "en": "UiT The Arctic University of Norway"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Steven Alexander Hicks",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20277.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Simula Metropolitan Center for Digital Engineering"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Vajira Thambawita",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20277.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Simula Metropolitan Center for Digital Engineering"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1145/3524273.3532886",
+    "totalContributors": 9
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "NOT_IMPORTED",
+      "modifiedDate": "2023-11-20T19:40:54.004861974Z"
+    },
+    "collaborationType": "Collaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "volume": "18",
+      "issue": "5",
+      "articleNumber": "e1003603",
+      "type": "AcademicArticle"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "244b4efd-252e-4f3f-8de2-406ad64afaca",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 1268667,
+        "publisherAuthority": false,
+        "name": "journal.pmed.1003603.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T19:40:55.022348938Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "cd4d3ae5-0667-476f-acce-b40e0f7dfb1f",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 1381772,
+        "publisherAuthority": false,
+        "name": "86199b9e-ca75-4504-a411-f77b7a847c3f.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T19:40:55.640931444Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "ab82cc55-c834-4169-ac69-38f7fdf216ec",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 1381772,
+        "publisherAuthority": false,
+        "name": "36823bf7-aa70-44e5-812d-e9636c4a9bbc.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T19:40:56.144752645Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/948B1795-A32A-4525-998B-36579C43795F/2021",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T19:40:54.004856328Z",
+    "totalVerifiedContributors": 3,
+    "mainTitle": "Risk of miscarriage in women with chronic diseases in Norway: A registry linkage study",
+    "organizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/95bfedd6-0a44-4013-8e96-256b0efb7d28",
+        "type": "Organization",
+        "labels": {
+          "nb": "Folkehelseinstituttet",
+          "en": "Norwegian Institute of Public Health"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/d039e7ea-1380-46f1-bb7d-b6456ddc0fc2",
+        "type": "Organization",
+        "labels": {
+          "nb": "NORCE Norwegian Research Centre AS",
+          "en": "NORCE Norwegian Research Centre AS"
+        }
+      }
+    ],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85106378132"
+      }
+    ],
+    "publicationYear": "2021",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bee400a1f-9c4f3d49-316e-48c0-91f0-45046f382735",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Maria C. Magnus",
+          "type": "Identity"
+        },
+        "correspondingAuthor": true,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7502.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Folkehelseinstituttet",
+              "en": "Norwegian Institute of Public Health"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "MRC IntegrativeEpidemiology Unit at the University of Bristol"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Population Health Sciences, BristolMedical School"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "verificationStatus": "Verified",
+          "name": "Nils-Halvdan Morken",
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/51762",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1936.12.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Overlege / forsker"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.13.25.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Professor",
+              "en": "Professor"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7502.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Folkehelseinstituttet",
+              "en": "Norwegian Institute of Public Health"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "verificationStatus": "Verified",
+          "name": "Knut-Arne Wensaas",
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/52969",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/2057.91.17.12",
+            "type": "Organization",
+            "labels": {
+              "nb": "Forsker ii",
+              "en": "Researcher ii"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Allen J. Wilcox",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/68405928.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "National Institute of Environmental Health Sciences"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "verificationStatus": "Verified",
+          "name": "Siri Eldevik Håberg",
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/12282",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7502.2.2.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Fagdirektør",
+              "en": "Scientific director"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7502.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Folkehelseinstituttet",
+              "en": "Norwegian Institute of Public Health"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1371/journal.pmed.1003603",
+    "totalContributors": 5
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "IMPORTED",
+      "modifiedDate": "2023-11-21T07:28:37.017917397Z",
+      "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf0c7ed0d-589a7f72-4b6e-4651-b902-7621439a9f06",
+      "setBy": "1136326@20754.0.0.0"
+    },
+    "collaborationType": "NonCollaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "volume": "2020",
+      "pages": {
+        "end": "149",
+        "type": "Range",
+        "begin": "114"
+      },
+      "issue": "36",
+      "type": "AcademicArticle"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "5d710b12-601b-49f6-87b5-32905f9c5099",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 1731956,
+        "publisherAuthority": false,
+        "name": "373847-Article Text-540578-1-10-20200930.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:58:23.784905592Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/D04CBD05-5396-425E-8777-79181FE32E6D/2020",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T15:58:21.739094338Z",
+    "totalVerifiedContributors": 1,
+    "mainTitle": "Lexicons, Literacies and Design Futures",
+    "organizations": [],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85109415624"
+      }
+    ],
+    "publicationYear": "2020",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bed744c78-f53e06f7-74da-4c91-969f-ec307a7e7816",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "verificationStatus": "Verified",
+          "name": "Andrew Morrison",
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/23666",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/189.2.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Professor",
+              "en": "Professor"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/189.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Arkitektur- og designhøgskolen i Oslo",
+              "en": "The Oslo School of Architecture and Design"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Nina Bjørnstad",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/189.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Arkitektur- og designhøgskolen i Oslo",
+              "en": "The Oslo School of Architecture and Design"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Einar Sneve Martinussen",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/189.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Arkitektur- og designhøgskolen i Oslo",
+              "en": "The Oslo School of Architecture and Design"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Bjørn Johansen",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universitetet i Oslo",
+              "en": "University of Oslo"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Bastien Kerspern",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Design Friction"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.46467/TdD36.2020.114-149",
+    "totalContributors": 6
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "IMPORTED",
+      "modifiedDate": "2023-11-21T07:14:20.984810674Z",
+      "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf0badda1-f251e5ad-f5d2-4e5b-bb67-a8f78a12aa5c",
+      "setBy": "1136326@20754.0.0.0"
+    },
+    "collaborationType": "Collaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "volume": "111",
+      "pages": {
+        "end": "108",
+        "type": "Range",
+        "begin": "106"
+      },
+      "type": "JournalLetter"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "fcdf655e-4206-4e0f-8f94-30e281d0a7cd",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 0,
+        "publisherAuthority": true,
+        "name": "4c78a1db-ede3-4344-a9a3-c72b771a295e.pdf",
+        "administrativeAgreement": false,
+        "publishedDate": "2023-11-20T15:35:36.102946529Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/497EF4B2-D0DE-4525-AF6E-B53E30A55420/2023",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T15:35:34.955496291Z",
+    "totalVerifiedContributors": 2,
+    "mainTitle": "In reply: Why big data carries big potential rather than big trouble",
+    "organizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/95bfedd6-0a44-4013-8e96-256b0efb7d28",
+        "type": "Organization",
+        "labels": {
+          "nb": "Folkehelseinstituttet",
+          "en": "Norwegian Institute of Public Health"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/fe945ea8-22d1-481c-b5be-4e0447d5656c",
+        "type": "Organization",
+        "labels": {
+          "nb": "Høgskulen på Vestlandet",
+          "en": "Western Norway University of Applied Sciences"
+        }
+      }
+    ],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85168575107"
+      }
+    ],
+    "publicationYear": "2023",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bed5f6e4c-4878afe2-498c-4595-a762-e9d976b9acd8",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Julie Werenberg Dreier",
+          "orcId": "https://orcid.org/0000-0002-9339-4170",
+          "type": "Identity"
+        },
+        "correspondingAuthor": true,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/10100003.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Aarhus Universitet",
+              "en": "Aarhus University"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Department of Clinical Medicine, University of Bergen"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Marte Helene Bjørk",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universitetet i Bergen",
+              "en": "University of Bergen"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Department of Neurology, Haukeland University Hospital"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Silje Alvestad",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universitetet i Bergen",
+              "en": "University of Bergen"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "National Center for Epilepsy, Member of the European Reference Network EpiCARE, Oslo University Hospital"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Mika Gissler",
+          "orcId": "https://orcid.org/0000-0001-8254-7525",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Knowledge Brokers, Finnish Institute for Health and Welfare"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Region Stockholm, Academic Primary Health Care Centre"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Karolinska Institute, Department of Molecular Medicine and Surgery"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "verificationStatus": "Verified",
+          "name": "Jannicke Igland",
+          "id": "https://api.dev.nva.aws.unit.no/cristin/person/49545",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.13.26.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Senioringeniør",
+              "en": "Senior engineer"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/203.11.12.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Førsteamanuensis",
+              "en": "Associate professor"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universitetet i Bergen",
+              "en": "University of Bergen"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1016/j.seizure.2023.08.007",
+    "totalContributors": 12
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "IMPORTED",
+      "modifiedDate": "2023-11-21T14:08:13.790302707Z",
+      "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf235c52d-17bd8622-fabb-4a32-bcc6-3f4f1d2a3184",
+      "setBy": "1136254@20754.0.0.0"
+    },
+    "collaborationType": "NonCollaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "type": "AcademicArticle"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "53a0da3e-99bf-479f-a77a-84caf7112e83",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 693555,
+        "publisherAuthority": false,
+        "name": "f18e6206-2446-49e3-83c1-f47110e6c46d.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:42:52.057941723Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "ef857f01-f956-4b98-bb15-d139358414d0",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 693555,
+        "publisherAuthority": false,
+        "name": "Ciao+AI+the+Italian+adaptation+and+validation+of+the+Chatbot+Usability+Scale.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:42:53.388182377Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "a24e3612-20b9-4493-b2b9-d0a5849d2d4f",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 693555,
+        "publisherAuthority": false,
+        "name": "Chatbot AI Responsibility.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:42:54.325310885Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "e6d4a143-a6db-48cb-ba5b-4bb65506e29b",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 693555,
+        "publisherAuthority": false,
+        "name": "90288b89-bec2-4204-9911-0a9c9a396eb5.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:42:54.809584369Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      },
+      {
+        "identifier": "37e8b303-b316-4baa-adb1-e0b5b569d747",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 693555,
+        "publisherAuthority": false,
+        "name": "Chatbot AI Responsibility.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:42:55.706393787Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/22E08234-76E2-4708-BE1F-12488411E67B/2023",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T15:42:51.488078044Z",
+    "totalVerifiedContributors": 0,
+    "mainTitle": "Ciao AI: the Italian adaptation and validation of the Chatbot Usability Scale",
+    "organizations": [],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85160834649"
+      }
+    ],
+    "publicationYear": "2023",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bed662332-010a374d-bbda-4446-8f28-d7d28ec1c94c",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Simone Borsci",
+          "orcId": "https://orcid.org/0000-0002-3591-3577",
+          "type": "Identity"
+        },
+        "correspondingAuthor": true,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/12700074.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universiteit Twente",
+              "en": "University of Twente, Enschede"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Department of Surgery and Cancer, Faculty of Medicine, NIHR London IVD, Imperial College of London"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Elisa Prati",
+          "orcId": "https://orcid.org/0000-0002-3088-3735",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/12300051.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Università degli Studi di Modena e Reggio Emilia",
+              "en": "University of Modena and Reggio Emilia"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Alessio Malizia",
+          "orcId": "https://orcid.org/0000-0002-2601-7009",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization",
+            "type": "Organization",
+            "labels": {}
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "Molde University College"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Martin Schmettow",
+          "orcId": "https://orcid.org/0000-0003-0240-4087",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/12700074.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universiteit Twente",
+              "en": "University of Twente, Enschede"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Alan Chamberlain",
+          "orcId": "https://orcid.org/0000-0002-2122-8077",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization",
+            "type": "Organization",
+            "labels": {}
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1007/s00779-023-01731-2",
+    "totalContributors": 6
+  },
+  {
+    "importStatus": {
+      "candidateStatus": "IMPORTED",
+      "modifiedDate": "2023-11-21T13:56:42.220681536Z",
+      "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf22b3a94-35be3f58-6dfd-47cd-b1ed-de80224c2fca",
+      "setBy": "1136254@20754.0.0.0"
+    },
+    "collaborationType": "NonCollaborative",
+    "type": "ImportCandidateSummary",
+    "publicationInstance": {
+      "volume": "13",
+      "issue": "1",
+      "articleNumber": "11686",
+      "type": "AcademicArticle"
+    },
+    "associatedArtifacts": [
+      {
+        "identifier": "0f7178fa-8f3d-4ed5-a240-f602095cc659",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 3493842,
+        "publisherAuthority": false,
+        "name": "bbc76824-5752-45c9-8093-7d8468e24cfa.pdf",
+        "administrativeAgreement": false,
+        "mimeType": "application/pdf",
+        "publishedDate": "2023-11-20T15:44:06.742491250Z",
+        "type": "PublishedFile",
+        "visibleForNonOwner": true
+      }
+    ],
+    "journal": {
+      "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/4CE88F3B-DEC2-4893-A1D0-A8186BF64290/2023",
+      "type": "Journal"
+    },
+    "createdDate": "2023-11-20T15:44:04.623421255Z",
+    "totalVerifiedContributors": 1,
+    "mainTitle": "An in-depth characterisation of European seabass intestinal segments for assessing the impact of an algae-based functional diet on intestinal health",
+    "organizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/customer/f94d1d3e-e05a-41f9-8eb8-f891ccd25666",
+        "type": "Organization",
+        "labels": {
+          "nb": "Nord universitet",
+          "en": "Nord University"
+        }
+      }
+    ],
+    "additionalIdentifiers": [
+      {
+        "sourceName": "Scopus",
+        "type": "AdditionalIdentifier",
+        "value": "2-s2.0-85165328932"
+      }
+    ],
+    "publicationYear": "2023",
+    "id": "https://api.dev.nva.aws.unit.no/publication/import-candidate/018bed6738f1-e3867e28-c464-4785-b17e-5dc91050267e",
+    "contributors": [
+      {
+        "sequence": 1,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Mariana Ferreira",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "CIIMAR/CIMAR-LA, Centro Interdisciplinar de Investigação Marinha e Ambiental"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "ICBAS, Instituto de Ciências Biomédicas de Abel Salazar, Universidade Do Porto"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 2,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Vera Sousa",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "CIIMAR/CIMAR-LA, Centro Interdisciplinar de Investigação Marinha e Ambiental"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "ICBAS, Instituto de Ciências Biomédicas de Abel Salazar, Universidade Do Porto"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 3,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Beatriz Oliveira",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "CIIMAR/CIMAR-LA, Centro Interdisciplinar de Investigação Marinha e Ambiental"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "ICBAS, Instituto de Ciências Biomédicas de Abel Salazar, Universidade Do Porto"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 4,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "Ana Canadas-Sousa",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/13200151.0.0.0",
+            "type": "Organization",
+            "labels": {
+              "nb": "Universidade do Porto",
+              "en": "University of Porto"
+            }
+          },
+          {
+            "type": "Organization",
+            "labels": {
+              "pt": "EUVG, Escola Universitária Vasco da Gama, Quinta de S. Jorge, Estrada da Conraria"
+            }
+          }
+        ],
+        "type": "Contributor"
+      },
+      {
+        "sequence": 5,
+        "role": {
+          "type": "Creator"
+        },
+        "identity": {
+          "name": "H. Abreu",
+          "type": "Identity"
+        },
+        "correspondingAuthor": false,
+        "affiliations": [
+          {
+            "type": "Organization",
+            "labels": {
+              "en": "ALGAplus, Production and Trading of Seaweed and Derived Products Ltd"
+            }
+          }
+        ],
+        "type": "Contributor"
+      }
+    ],
+    "doi": "https://doi.org/10.1038/s41598-023-38826-y",
+    "totalContributors": 8
+  }
+]
