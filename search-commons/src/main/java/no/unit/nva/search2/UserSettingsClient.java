@@ -5,7 +5,7 @@ import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.ApplicationConstants.readApiHost;
+import static no.unit.nva.search2.constant.Functions.readApiHost;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;

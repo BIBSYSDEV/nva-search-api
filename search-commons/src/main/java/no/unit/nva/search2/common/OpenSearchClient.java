@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureAuthUri;
 import static no.unit.nva.search2.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import java.net.URI;
 import java.util.stream.Stream;

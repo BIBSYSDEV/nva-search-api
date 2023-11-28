@@ -76,7 +76,7 @@ class ImportCandidateClientTest {
     }
 
     @Nested
-    class QueryOpensearchInstance {
+    class ImportCandidateTest {
 
         @ParameterizedTest
         @MethodSource("uriProvider")
@@ -166,9 +166,9 @@ class ImportCandidateClientTest {
                 URI.create("https://example.com/?CONTRIBUTOR=Andrew+Morrison&size=1"),
                 URI.create("https://example.com/?CONTRIBUTOR_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
                 URI.create("https://example.com/?CONTRIBUTOR_NOT=George+Rigos&size=7"),
-                URI.create("https://example.com/?published_before=2023&size=5"),
-                URI.create("https://example.com/?PUBLISHED_BEFORE=2022&PUBLISHED_SINCE=2024&size=0"),
-                URI.create("https://example.com/?PUBLISHED_BEFORE=2024&PUBLISHED_SINCE=2023&size=3"),
+                URI.create("https://example.com/?PUBLICATION_YEAR_BEFORE=2023&size=5"),
+                URI.create("https://example.com/?publication_year=2022&size=1"),
+                URI.create("https://example.com/?PublicationYearBefore=2024&publication_year_since=2023&size=3"),
                 URI.create("https://example.com/?title=In+reply:+Why+big+data&size=1"),
                 URI.create("https://example.com/?title=chronic+diseases&size=1"),
                 URI.create("https://example.com/?title_should=antibacterial+Fishing&size=2"),
@@ -181,7 +181,7 @@ class ImportCandidateClientTest {
             return Stream.of(
                 URI.create("https://example.com/?categories=hello+world"),
                 URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01"),
-                URI.create("https://example.com/?conttributors=hello+world&published_before=2020-01-01"),
+                URI.create("https://example.com/?conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),
                 URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
                 URI.create("https://example.com/?funding=NFR,296896"),
                 URI.create("https://example.com/?useers=hello+world"));

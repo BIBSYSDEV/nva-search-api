@@ -2,16 +2,16 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -365,7 +365,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         private void addSortQuery(String value) {
             var validFieldValue =
                 decodeUTF(value)
-                    .replaceAll(PATTERN_IS_ASC_OR_DESC, PATTERN_IS_SELECTED_GROUP);
+                    .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
             query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
         }
 

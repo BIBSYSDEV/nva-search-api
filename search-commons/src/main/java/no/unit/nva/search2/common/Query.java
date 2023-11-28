@@ -2,7 +2,7 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;

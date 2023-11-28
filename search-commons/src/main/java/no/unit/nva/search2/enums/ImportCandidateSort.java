@@ -10,16 +10,17 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.constant.ImportCandidateFields;
+import no.unit.nva.search2.constant.ImportCandidate;
+import no.unit.nva.search2.constant.Words;
 
 public enum ImportCandidateSort {
     INVALID(""),
-    COLLABORATION_TYPE(ImportCandidateFields.COLLABORATION_TYPE),
-    CREATED_DATE(ImportCandidateFields.CREATED_DATE),
-    INSTANCE_TYPE(ImportCandidateFields.INSTANCE_TYPE),
-    PUBLICATION_YEAR(ImportCandidateFields.PUBLICATION_YEAR),
-    TITLE(ImportCandidateFields.MAIN_TITLE),
-    TYPE(ImportCandidateFields.TYPE);
+    COLLABORATION_TYPE(ImportCandidate.COLLABORATION_TYPE_KEYWORD),
+    CREATED_DATE(Words.CREATED_DATE),
+    INSTANCE_TYPE(ImportCandidate.INSTANCE_TYPE_KEYWORD),
+    PUBLICATION_YEAR(ImportCandidate.PUBLICATION_YEAR_KEYWORD),
+    TITLE(ImportCandidate.MAIN_TITLE),
+    TYPE(ImportCandidate.TYPE_KEYWORD);
 
     public static final Set<ImportCandidateSort> VALID_SORT_PARAMETER_KEYS =
         Arrays.stream(ImportCandidateSort.values())
@@ -30,10 +31,6 @@ public enum ImportCandidateSort {
     private final String keyValidationRegEx;
     private final String fieldName;
 
-    ImportCandidateSort(String pattern, String fieldName) {
-        this.keyValidationRegEx = pattern;
-        this.fieldName = fieldName;
-    }
 
     ImportCandidateSort(String fieldName) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());

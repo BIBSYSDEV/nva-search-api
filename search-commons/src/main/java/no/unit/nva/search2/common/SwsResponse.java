@@ -5,11 +5,16 @@ import static no.unit.nva.search.constants.ApplicationConstants.LABELS;
 import static no.unit.nva.search.constants.ApplicationConstants.NAME;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import static no.unit.nva.search2.constant.Words.COUNT;
+import static no.unit.nva.search2.constant.Words.DOC_COUNT_ERROR_UPPER_BOUND;
+import static no.unit.nva.search2.constant.Words.SUM_OTHER_DOC_COUNT;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Streams;
 import java.beans.Transient;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import no.unit.nva.search2.common.SwsResponse.HitsInfo.Hit;
 import nva.commons.core.JacocoGenerated;
@@ -21,6 +26,10 @@ public record SwsResponse(
     ShardsInfo _shards,
     HitsInfo hits,
     JsonNode aggregations) {
+
+    public static final String BUCKETS_0_KEY = "/buckets/0/key";
+    public static final String ID_BUCKETS = "/id/buckets";
+    public static final String BUCKETS = "buckets";
 
     public record ShardsInfo(
         Long total,
@@ -92,76 +101,84 @@ public record SwsResponse(
     public static JsonNode formatAggregations(JsonNode aggregations) {
         var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
 
-        var iterator = aggregations.fields();
-        while (iterator.hasNext()) {
-            var nodeEntry = iterator.next();
-            var fieldName = nodeEntry.getKey();
-
-            if (fieldName.matches(PATTERN_IS_IGNORE_CASE + "doc.?count.?error.?upper.?bound")) {
-                continue;
-            }
-            if (fieldName.matches(PATTERN_IS_IGNORE_CASE + "sum.?other.?doc.?count")) {
-                continue;
-            }
-
-            var newName = Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
-                .orElse(fieldName.replaceFirst(Constants.WORD_ENDING_WITH_HASHTAG_REGEX, ""));
-
-            var value = nodeEntry.getValue();
-            if (value.at("/id/buckets").isArray()) {
-                value = value.at("/id/buckets");
-            }
-            if (value.has("buckets")) {
-                value = value.at("/buckets");
-            }
-            if (LABELS.equals(newName)) {
-                outputAggregationNode.set(newName, formatLabels(value));
-            } else if (NAME.equals(newName)) {
-                outputAggregationNode.set(LABELS, formatName(value));
-            } else if (value.isValueNode()) {
-                outputAggregationNode.set(newName, value);
-            } else if (value.isArray()) {
-                var arrayNode = objectMapperWithEmpty.createArrayNode();
-                value.forEach(element -> arrayNode.add(formatAggregations(element)));
-                outputAggregationNode.set(newName, arrayNode);
-            } else {
-                outputAggregationNode.set(newName, formatAggregations(nodeEntry.getValue()));
-            }
-        }
-
+        Streams.stream(aggregations.fields())
+            .filter(SwsResponse::ignoreDocCountErrors)
+            .filter(SwsResponse::ignoreSumOtherDoc)
+            .map(SwsResponse::getJsonNodeEntry)
+            .forEach(entry -> {
+                if (LABELS.equals(entry.getKey())) {
+                    outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
+                } else if (NAME.equals(entry.getKey())) {
+                    outputAggregationNode.set(LABELS, formatName(entry.getValue()));
+                } else if (entry.getValue().isValueNode()) {
+                    outputAggregationNode.set(entry.getKey(), entry.getValue());
+                } else if (entry.getValue().isArray()) {
+                    var arrayNode = objectMapperWithEmpty.createArrayNode();
+                    entry.getValue().forEach(element -> arrayNode.add(formatAggregations(element)));
+                    outputAggregationNode.set(entry.getKey(), arrayNode);
+                } else {
+                    outputAggregationNode.set(entry.getKey(), formatAggregations(entry.getValue()));
+                }
+            });
         return outputAggregationNode;
+    }
+
+    @NotNull
+    private static Entry<String, JsonNode> getJsonNodeEntry(Entry<String, JsonNode> entry) {
+        return Map.entry(getNormalizedFieldName(entry.getKey()), getBucketOrValue(entry.getValue()));
+    }
+
+    private static boolean ignoreSumOtherDoc(Entry<String, JsonNode> item) {
+        return !item.getKey().matches(PATTERN_IS_IGNORE_CASE + SUM_OTHER_DOC_COUNT);
+    }
+
+    private static boolean ignoreDocCountErrors(Entry<String, JsonNode> item) {
+        return !item.getKey().matches(PATTERN_IS_IGNORE_CASE + DOC_COUNT_ERROR_UPPER_BOUND);
+    }
+
+    private static JsonNode getBucketOrValue(JsonNode node) {
+        if (node.at(ID_BUCKETS).isArray()) {
+            return node.at(ID_BUCKETS);
+        }
+        if (node.has(BUCKETS)) {
+            return node.at("/buckets");
+        }
+        return node;
     }
 
     private static JsonNode formatName(JsonNode nodeEntry) {
         var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
-        var keyValue = nodeEntry.at("/buckets/0/key");
+        var keyValue = nodeEntry.at(BUCKETS_0_KEY);
         outputAggregationNode.set("en", keyValue);
         return outputAggregationNode;
     }
 
     private static JsonNode formatLabels(JsonNode value) {
         var outputAggregationNode = objectMapperWithEmpty.createObjectNode();
+        value.fields().forEachRemaining(node -> {
+            var fieldName = node.getKey();
+            if (fieldName.matches(PATTERN_IS_IGNORE_CASE + DOC_COUNT_ERROR_UPPER_BOUND)) {
+                return;
+            }
+            if (fieldName.matches(PATTERN_IS_IGNORE_CASE + SUM_OTHER_DOC_COUNT)) {
+                return;
+            }
+            var newName = getNormalizedFieldName(fieldName);
 
-        var iterator = value.fields();
-        while (iterator.hasNext()) {
-            var nodeEntry = iterator.next();
-            var fieldName = nodeEntry.getKey();
-            if (fieldName.matches(PATTERN_IS_IGNORE_CASE + "doc.?count.?error.?upper.?bound")) {
-                continue;
+            if (COUNT.equals(newName)) {
+                return;
             }
-            if (fieldName.matches(PATTERN_IS_IGNORE_CASE + "sum.?other.?doc.?count")) {
-                continue;
-            }
-            var newName = Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
-                .orElse(fieldName.replaceFirst(Constants.WORD_ENDING_WITH_HASHTAG_REGEX, ""));
-
-            if (newName.equals("count")) {
-                continue;
-            }
-            var keyValue = nodeEntry.getValue().at("/buckets/0/key");
+            var keyValue = node.getValue().at(BUCKETS_0_KEY);
             outputAggregationNode.set(newName, keyValue);
-        }
+        });
+
         return outputAggregationNode;
+    }
+
+    @NotNull
+    private static String getNormalizedFieldName(String fieldName) {
+        return Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
+            .orElse(fieldName.replaceFirst(Constants.WORD_ENDING_WITH_HASHTAG_REGEX, ""));
     }
 
     static final class Constants {
@@ -169,7 +186,7 @@ public record SwsResponse(
         public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
 
         private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
-            "docCount", "count",
-            "doc_count", "count");
+            "docCount", COUNT,
+            "doc_count", COUNT);
     }
 }

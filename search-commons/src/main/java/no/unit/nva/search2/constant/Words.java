@@ -41,6 +41,7 @@ public final class Words {
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String QUOTE = "'";
+    public static final String Q = "q";
     public static final String REFERENCE = "reference";
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
@@ -64,4 +65,10 @@ public final class Words {
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String PUBLISHED_FILE = "PublishedFile";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
+
+    public static final String CREATED_DATE = "createdDate";
+
+    public static final String COUNT = "count";
+    public static final String DOC_COUNT_ERROR_UPPER_BOUND = "doc.?count.?error.?upper.?bound";
+    public static final String SUM_OTHER_DOC_COUNT = "sum.?other.?doc.?count";
 }
