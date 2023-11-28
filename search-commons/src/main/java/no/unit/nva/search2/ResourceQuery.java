@@ -274,7 +274,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandYearToDate(value));
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
-                    CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                    CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT,
                     DOI, DOI_NOT, DOI_SHOULD,
                     FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                     ID, ID_NOT, ID_SHOULD,

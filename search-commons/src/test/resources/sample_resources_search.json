@@ -84,6 +84,9 @@
         "doi": "https://doi.org/10.1371/journal.pone.0047887",
         "publicationContext": {
           "type": "Report",
+          "isbnList": [
+            "9788202535032"
+          ],
           "publisher": {
             "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
             "type": "Publisher",

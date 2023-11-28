@@ -124,19 +124,6 @@ class ResourceClientTest {
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(query.getValue(SIZE).as())));
         }
 
-        @ParameterizedTest
-        @MethodSource("uriProvider2")
-        void searchWithUriReturnsOpenSearchAwsResponse2(URI uri) throws ApiGatewayException {
-            var pagedSearchResourceDto =
-                ResourceQuery.builder()
-                    .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .build()
-                    .doSearch(searchClient);
-
-            assertNotNull(pagedSearchResourceDto);
-        }
 
         @ParameterizedTest
         @MethodSource("uriProvider")
@@ -186,97 +173,50 @@ class ResourceClientTest {
         static Stream<URI> uriSortingProvider() {
             return Stream.of(
                 URI.create(
-                    "https://example.com/?category=AcademicChapter&sort=created_date&sortOrder=asc&sort=category&order"
+                    "https://x.org/?category=AcademicChapter&sort=created_date&sortOrder=asc&sort=category&order"
                     + "=desc"),
                 URI.create(
-                    "https://example.com/?category=AcademicChapter&sort=modified_date&sortOrder=asc&sort=category"),
+                    "https://x.org/?category=AcademicChapter&sort=modified_date&sortOrder=asc&sort=category"),
                 URI.create(
-                    "https://example.com/?category=AcademicChapter&sort=published_date&sortOrder=asc&sort=category"),
-                URI.create("https://example.com/?category=AcademicChapter&size=10&from=0&sort=modified_date"),
-                URI.create("https://example.com/?category=AcademicChapter&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create("https://example.com/?category=AcademicChapter&orderBy=created_date:asc,"
+                    "https://x.org/?category=AcademicChapter&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create("https://x.org/?category=AcademicChapter&size=10&from=0&sort=modified_date"),
+                URI.create("https://x.org/?category=AcademicChapter&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create("https://x.org/?category=AcademicChapter&orderBy=created_date:asc,"
                            + "modifiedDate:desc&searchAfter=1241234,23412"),
-                URI.create("https://example.com/?category=AcademicChapter&sort=published_date+asc&sort=category+desc"));
-        }
-
-        static Stream<URI> uriProvider2() {
-            return Stream.of(
-                URI.create("https://example.com/?title=http://hello+world&INSTITUTION=UiO"),
-                URI.create("https://example.com/?title_not=http://hello+world&INSTITUTION=UiO"),
-                URI.create("https://example.com/?title_should=http://hello+world&INSTITUTION=UiO"),
-                URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title"),
-                URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
-                URI.create("https://example.com/?query=hello+world&lang=en&fields=category,title,werstfg&ID_NOT=123"),
-                URI.create("https://example.com/?title=http://hello+world&modified_before=2019"),
-                URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
-                URI.create("https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
-                URI.create("https://example.com/?CONTRIBUTOR_SHOULD="
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
-                URI.create("https://example.com/?CONTRIBUTOR_NOT="
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1136254+"
-                           + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
-                URI.create("https://example.com/?contributor_should=hello+:+world&published_before=2020"),
-                URI.create("https://example.com/?user=hello+world&lang=en&PUBLISHED_SINCE=2019"),
-                URI.create("https://example.com/?user=hello+world&size=1&from=0"),
-                URI.create("https://example.com/?isbn=1872-9460"),
-                URI.create("https://example.com/?issn=1872-9460"),
-                URI.create("https://example.com/?funding=NFR:296896"),
-                URI.create("https://example.com/?funding_source=NFR+296896"),
-                URI.create("https://example.com/?MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01"),
-                URI.create("https://example.com/?ORCID=1872-9460"),
-                URI.create("https://example.com/"),
-                URI.create("https://example.com/?query=hello+world&fields=all"));
+                URI.create("https://x.org/?category=AcademicChapter&sort=published_date+asc&sort=category+desc"));
         }
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
-                URI.create("https://example.com/?categories=hello+world&lang=en"),
-                URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01-01"),
-                URI.create("https://example.com/?conttributors=hello+world&published_before=2020-01-01"),
-                URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
-                URI.create("https://example.com/?funding=NFR,296896"),
-                URI.create("https://example.com/?useers=hello+world&lang=en"));
+                URI.create("https://x.org/?categories=hello+world&lang=en"),
+                URI.create("https://x.org/?tittles=hello+world&modified_before=2019-01-01"),
+                URI.create("https://x.org/?conttributors=hello+world&published_before=2020-01-01"),
+                URI.create("https://x.org/?category=PhdThesis&sort=beunited+asc"),
+                URI.create("https://x.org/?funding=NFR,296896"),
+                URI.create("https://x.org/?useers=hello+world&lang=en"));
         }
 
         static Stream<URI> uriProvider() {
             return Stream.of(
                 URI.create("https://x.org/?size=20"),
-                URI.create("https://x.org/?from=0&size=2&topLevelOrganization=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"),
-                URI.create("https://x.org/?id=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=1"),
-                URI.create("https://x.org/?id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=1"),
-                URI.create("https://x.org/?id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642" +
-                           "&id_not=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=0"),
-                URI.create("https://x.org/?query=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642" +
-                           "&id_not=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=0"),
-                URI.create("https://x.org/?doi=https://doi.org/10.1371/journal.pone.0047855&size=1"),
-                URI.create("https://x.org/?doi_should=.pone.0047855,pone.0047887&size=2"),
-                URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
-                URI.create("https://x.org/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=8"),
-                URI.create("https://x.org/?CONTRIBUTOR=Kate+Robinson,Henrik+Langeland&size=3"),
-                URI.create("https://x.org/?CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                           + "Peter+Gauer&size=12"),
-                URI.create("https://x.org/?CONTRIBUTOR_SHOULD=person/1136918&size=2"),
-                URI.create("https://x.org/?INSTITUTION="
-                           + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
-                URI.create("https://x.org/?INSTITUTION_NOT="
-                           + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=18"),
-                URI.create("https://x.org/?INSTITUTION_SHOULD="
-                           + "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
-                URI.create("https://x.org/?INSTITUTION=1627.0.0.0&size=0"),
-                URI.create("https://x.org/?INSTITUTION=Forsvarets+høgskole&size=2"),
-                URI.create("https://x.org/?INSTITUTION=Norwegian+Defence+University+College&size=2"),
-                URI.create("https://x.org/?INSTITUTION_NOT=Forsvarets+høgskole&size=18"),
-                URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0&size=2"),
-                URI.create("https://x.org/?INSTITUTION_should=194.63.55.0&size=1"),
-                URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0&size=2"),
-                URI.create("https://x.org/?CONTEXT_TYPE=Anthology&size=1"),
                 URI.create("https://x.org/?category=ReportResearch&page=0&size=10"),
                 URI.create("https://x.org/?category=ReportResearch,AcademicArticle&page=0&size=19"),
-                URI.create("https://x.org/?INSTANCE_TYPE=AcademicArticle&size=9"),
-                URI.create("https://x.org/?fields=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd&size=2"),
+                URI.create("https://x.org/?CONTEXT_TYPE=Anthology&size=1"),
+                URI.create("https://x.org/?CONTEXT_TYPE=Report&size=10"),
+                URI.create("https://x.org/?CONTEXT_TYPE_NOT=Report&size=10"),
+                URI.create("https://x.org/?CONTEXT_TYPE_SHOULD=Report&size=10"),
+                //    URI.create("https://x.org/?CONTRIBUTOR_ID"
+                //               + "=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=1"),
+                URI.create("https://x.org/?CONTRIBUTOR=Kate+Robinson,Henrik+Langeland&size=3"),
+                URI.create("https://x.org/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=8"),
+                URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),
+                URI.create("https://x.org/?CONTRIBUTOR_NOT"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/person/1136254,Peter+Gauer&size=12"),
+                URI.create("https://x.org/?DOI=https://doi.org/10.1371/journal.pone.0047887&size=1"),
+                URI.create("https://x.org/?DOI_NOT=https://doi.org/10.1371/journal.pone.0047887&size=18"),
+                URI.create("https://x.org/?DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887&size=2"),
+                URI.create("https://x.org/?doi=https://doi.org/10.1371/journal.pone.0047855&size=1"),
+                URI.create("https://x.org/?doi_should=.pone.0047855,pone.0047887&size=2"),
                 URI.create("https://x.org/?funding=AFR:296896&size=1"),
                 URI.create("https://x.org/?funding=NFR:1296896&size=2"),
                 URI.create("https://x.org/?funding=NFR:296896&size=2"),
@@ -284,15 +224,84 @@ class ResourceClientTest {
                 URI.create("https://x.org/?funding_source_not=Norges+forskningsråd&size=18"),
                 URI.create("https://x.org/?funding_source_SHOULD=Norges&size=2"),
                 URI.create("https://x.org/?funding_source=Research+Council+of+Norway+(RCN)&size=2"),
+                URI.create("https://x.org/?ID=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39&size=1"),
+                URI.create("https://x.org/?ID_NOT=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39&size=19"),
+                URI.create("https://x.org/?ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39&size=1"),
+                URI.create("https://x.org/?id=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=1"),
+                URI.create("https://x.org/?id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
+                           + "&id_not=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=0"),
+                URI.create("https://x.org/?id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=1"),
+                URI.create("https://x.org/?INSTANCE_TYPE=AcademicArticle&size=9"),
+                URI.create("https://x.org/?INSTANCE_TYPE_NOT=AcademicArticle&size=11"),
+                URI.create("https://x.org/?INSTANCE_TYPE_SHOULD=AcademicArticle&size=9"),
+                URI.create("https://x.org/?INSTITUTION"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&size=1"),
+                URI.create("https://x.org/?INSTITUTION_NOT"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&size=19"),
+                URI.create("https://x.org/?INSTITUTION_SHOULD=Forsvarets+høgskole&size=2"),
+                URI.create("https://x.org/?INSTITUTION=1627.0.0.0&size=0"),
+                URI.create("https://x.org/?INSTITUTION=Forsvarets+høgskole&size=2"),
+                URI.create("https://x.org/?INSTITUTION=Norwegian+Defence+University+College&size=2"),
+                URI.create("https://x.org/?INSTITUTION"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
+                URI.create("https://x.org/?INSTITUTION_NOT=Forsvarets+høgskole&size=18"),
+                URI.create("https://x.org/?INSTITUTION_NOT"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=18"),
+                URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0&size=2"),
+                URI.create("https://x.org/?INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0&size=2"),
+                URI.create("https://x.org/?INSTITUTION_SHOULD"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0&size=2"),
+                URI.create("https://x.org/?INSTITUTION_should=194.63.55.0&size=1"),
+                URI.create("https://x.org/?ISBN=9788202535032&size=1"),
+                URI.create("https://x.org/?ISBN_NOT=9788202535032&size=19"),
+                URI.create("https://x.org/?ISBN_SHOULD=9788202535032&size=1"),
+                URI.create("https://x.org/?issn=1872-9460&size=0"),
+                URI.create("https://x.org/?ISSN=1435-9529&size=1"),
+                URI.create("https://x.org/?ISSN_NOT=1435-9529&size=19"),
+                URI.create("https://x.org/?ISSN_SHOULD=1435-9529&size=1"),
+                URI.create("https://x.org/?ORCID=https://sandbox.orcid.org/0000-0003-4147-3499&size=2"),
+                URI.create("https://x.org/?ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499&size=18"),
+                URI.create("https://x.org/?ORCID_SHOULD=4147-3499&size=2"),
+                URI.create("https://x.org/?PARENT_PUBLICATION=test&size=0"),
+                URI.create("https://x.org/?PARENT_PUBLICATION_SHOULD=test&size=0"),
+                URI.create("https://x.org/?PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813&size=1"),
+                URI.create("https://x.org/?PROJECT_NOT"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/project/14334813&size=19"),
+                URI.create("https://x.org/?PROJECT_SHOULD"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/project/14334813&size=1"),
+                URI.create("https://x.org/?SEARCH_ALL=Fakultet+for+arkitektur&size=1"),
+                URI.create("https://x.org/?TITLE=Kjetils+ticket+test&size=1"),
+                URI.create("https://x.org/?TITLE_NOT=Kjetils+ticket+test&size=17"),
+                URI.create("https://x.org/?TITLE_SHOULD=Simple&size=3"),
+                URI.create("https://x.org/?TOP_LEVEL_ORGANIZATION"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0&size=2"),
+                URI.create("https://x.org/?UNIT"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0&size=2"),
+                URI.create("https://x.org/?UNIT_NOT"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0&size=18"),
+                URI.create("https://x.org/?UNIT_SHOULD=194.63.55.0&size=1"),
+                URI.create("https://x.org/?USER=1136254@20754.0.0.0&size=2"),
+                URI.create("https://x.org/?USER_NOT=1136254@20754.0.0.0&size=18"),
+                URI.create("https://x.org/?USER_SHOULD=1136254@&size=2"),
+                URI.create("https://x.org/?MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01&size=0"),
+                URI.create("https://x.org/?PUBLICATION_YEAR=2022&size=2"),
+                URI.create("https://x.org/?PUBLICATION_YEAR_SHOULD=2022&size=2"),
+                URI.create("https://x.org/?fields=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd&size=2"),
+                URI.create("https://x.org/?from=0&size=2&topLevelOrganization"
+                           + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"),
                 URI.create("https://x.org/?published_before=2023-09-29&size=5"),
                 URI.create("https://x.org/?published_since=2023-11-05&size=1"),
+                URI.create("https://x.org/?query=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
+                           + "&id_not=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&size=0"),
                 URI.create("https://x.org/?query=Forsvarets+høgskole&fields=INSTITUTION&size=2"),
                 URI.create("https://x.org/?query=Forsvarets+høgskole&size=2"),
                 URI.create("https://x.org/?query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR&size=2"),
-                URI.create("https://x.org/?query=https://api.dev.nva.aws.unit.no/cristin/person/1136254"
-                           + "&fields=CONTRIBUTOR&size=2"),
+                URI.create("https://x.org/?query=observations&fields=all&size=3"),
                 URI.create("https://x.org/?query=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
-                           + "&fields=INSTITUTION&size=1"));
+                           + "&fields=INSTITUTION&size=1"),
+                URI.create("https://x.org/?fields=CONTRIBUTOR"
+                           + "&query=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2")
+            );
         }
     }
 
