@@ -91,7 +91,9 @@ class ResourceClientTest {
 
             var mapping = indexingClient.getMapping(indexName);
             assertThat(mapping, is(notNullValue()));
-            var topLevelOrgType = mapping.path("properties").path("topLevelOrganizations").path("type").textValue();
+            var topLevelOrgType = mapping.path("properties")
+                .path("topLevelOrganizations")
+                .path("type").textValue();
             assertThat(topLevelOrgType, is(equalTo("nested")));
 
             logger.info(mapping.toString());
@@ -172,13 +174,10 @@ class ResourceClientTest {
 
         static Stream<URI> uriSortingProvider() {
             return Stream.of(
-                URI.create(
-                    "https://x.org/?category=AcademicChapter&sort=created_date&sortOrder=asc&sort=category&order"
-                    + "=desc"),
-                URI.create(
-                    "https://x.org/?category=AcademicChapter&sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(
-                    "https://x.org/?category=AcademicChapter&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create("https://x.org/?category=AcademicChapter&sort=created_date&sortOrder=asc"
+                           + "&sort=category&order=desc"),
+                URI.create("https://x.org/?category=AcademicChapter&sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create("https://x.org/?category=AcademicChapter&sort=published_date&sortOrder=asc&sort=category"),
                 URI.create("https://x.org/?category=AcademicChapter&size=10&from=0&sort=modified_date"),
                 URI.create("https://x.org/?category=AcademicChapter&orderBy=UNIT_ID:asc,title:desc"),
                 URI.create("https://x.org/?category=AcademicChapter&orderBy=created_date:asc,"
