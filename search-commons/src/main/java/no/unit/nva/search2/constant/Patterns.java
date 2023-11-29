@@ -6,7 +6,6 @@ import nva.commons.core.JacocoGenerated;
 public class Patterns {
 
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
-
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
 
     /**
@@ -34,6 +33,7 @@ public class Patterns {
     public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort.?order|order";
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
+
     /**
      * Pattern for matching a funding string.
      * funding source and project_id together separated by ':'

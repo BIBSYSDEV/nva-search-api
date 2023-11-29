@@ -2,7 +2,7 @@ package no.unit.nva.search2.enums;
 
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.ResourcePaths.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import java.util.Arrays;
 import java.util.Collection;

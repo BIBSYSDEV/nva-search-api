@@ -1,17 +1,14 @@
 package no.unit.nva.search2.dto;
 
-import static java.util.Objects.isNull;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static nva.commons.core.attempt.Try.attempt;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.Nullable;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import no.unit.nva.commons.json.JsonUtils;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.Nullable;
+
+import static java.util.Objects.isNull;
 
 public class PagedSearchBuilder {
 
@@ -28,19 +25,22 @@ public class PagedSearchBuilder {
         if (isNull(this.nextResults)) {
             this.nextSearchAfterResults = null;       // null values are not serialized
         }
-        return new PagedSearch(id, totalHits, hits, nextResults, nextSearchAfterResults, previousResults,
-                               aggregations);
+        return new PagedSearch(
+            id,
+            totalHits,
+            hits,
+            nextResults,
+            nextSearchAfterResults,
+            previousResults,
+            aggregations
+        );
     }
 
     public PagedSearchBuilder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset,
                                       Integer size) {
-        this.id =
-            createUriOffsetRef(requestParameter, offset, gatewayUri);
-        this.previousResults =
-            createUriOffsetRef(requestParameter, offset - size, gatewayUri);
-
-        this.nextResults =
-            createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
+        this.id = createUriOffsetRef(requestParameter, offset, gatewayUri);
+        this.previousResults = createUriOffsetRef(requestParameter, offset - size, gatewayUri);
+        this.nextResults = createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
         return this;
     }
 
@@ -64,18 +64,7 @@ public class PagedSearchBuilder {
         if (isNull(aggregations)) {
             return this;
         }
-        var typeReference = new TypeReference<Map<String, List<Facet>>>() {
-        };
-        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(aggregations.toPrettyString(), typeReference))
-            .orElseThrow();
-        this.aggregations = mappings.entrySet().stream().map(entry -> {
-            final var uriwrap = UriWrapper.fromUri(this.id);
-
-            var list = entry.getValue().stream()
-                .map(facet -> new Facet(uriwrap.addQueryParameter(entry.getKey(), facet.key()).getUri(), facet.key(),
-                                        facet.count(), facet.labels())).toList();
-            return Map.entry(entry.getKey(), list);
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        this.aggregations = FacetBuilder.build(aggregations,this.id);
         return this;
     }
 
@@ -92,7 +81,7 @@ public class PagedSearchBuilder {
             return null;
         }
 
-        params.put(FROM.fieldName(), String.valueOf(offset));
+        params.put("FROM", String.valueOf(offset));
         return UriWrapper.fromUri(gatewayUri)
             .addQueryParameters(params)
             .getUri();

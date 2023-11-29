@@ -111,6 +111,7 @@ class ResourceClientTest {
                     .build();
 
             var response = searchClient.doSearch(query);
+            logger.info(response.aggregations().toPrettyString());
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);

@@ -1,5 +1,25 @@
 package no.unit.nva.search2;
 
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
+import no.unit.nva.search2.enums.ImportCandidateSort;
+import no.unit.nva.search2.enums.ParameterKey;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
@@ -7,7 +27,6 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_INDEX_NAME;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
@@ -19,11 +38,9 @@ import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.SEARCH;
 import static no.unit.nva.search2.constant.Words.ZERO;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_AFTER;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_ALL;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT_ORDER;
@@ -32,36 +49,6 @@ import static no.unit.nva.search2.enums.ImportCandidateParameter.keyFromString;
 import static no.unit.nva.search2.enums.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.enums.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import com.google.common.net.MediaType;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.common.QueryBuilderSourceWrapper;
-import no.unit.nva.search2.common.QueryBuilderTools;
-import no.unit.nva.search2.common.SwsResponse;
-import no.unit.nva.search2.dto.PagedSearch;
-import no.unit.nva.search2.dto.PagedSearchBuilder;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
-import no.unit.nva.search2.enums.ImportCandidateSort;
-import no.unit.nva.search2.enums.ParameterKey;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-import org.opensearch.common.collect.Tuple;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
@@ -73,6 +60,32 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return new Builder();
     }
 
+
+    public Stream<QueryContentWrapper> createQueryBuilderStream() {
+        var queryBuilder =
+            this.hasNoSearchValue()
+                ? QueryBuilders.matchAllQuery()
+                : boolQuery();
+
+        var builder = new SearchSourceBuilder().query(queryBuilder);
+
+        var searchAfter = removeKey(SEARCH_AFTER);
+        if (nonNull(searchAfter)) {
+            var sortKeys = searchAfter.split(COMMA);
+            builder.searchAfter(sortKeys);
+        }
+
+        if (isFirstPage()) {
+            IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
+        }
+
+        builder.size(getValue(SIZE).as());
+        builder.from(getValue(FROM).as());
+        getSortStream(SORT).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
+
+        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
     @Override
     public URI getOpenSearchUri() {
         return
@@ -81,145 +94,47 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .getUri();
     }
 
-    public String doSearch(ImportCandidateClient queryClient) {
-        final var response = queryClient.doSearch(this);
-        return MediaType.CSV_UTF_8.is(this.getMediaType())
-            ? toCsvText(response)
-            : toPagedResponse(response).toJsonString();
+    @Override
+    protected ImportCandidateParameter getFieldsKey() {
+        return getValue(ImportCandidateParameter.FIELDS).getKey();
     }
 
-    private String toCsvText(SwsResponse response) {
-        return CsvTransformer.transform(response.getSearchHits());
-    }
-
-    PagedSearch toPagedResponse(SwsResponse response) {
-        final var requestParameter = toNvaSearchApiRequestParameter();
-        final var source = URI.create(getNvaSearchApiUri().toString().split("\\?")[0]);
-        
-        return
-            new PagedSearchBuilder()
-                .withTotalHits(response.getTotalSize())
-                .withHits(response.getSearchHits())
-                .withIds(source, requestParameter, getValue(FROM).as(), getValue(SIZE).as())
-                .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
-                .withAggregations(response.getAggregationsStructured())
-                .build();
+    @Override
+    protected String[] fieldsToKeyNames(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? ASTERISK.split(COMMA)
+            : Arrays.stream(field.split(COMMA))
+            .map(ImportCandidateParameter::keyFromString)
+            .map(ParameterKey::searchFields)
+            .flatMap(Collection::stream)
+            .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, ""))
+            .toArray(String[]::new);
 
     }
-    
-    public Stream<QueryBuilderSourceWrapper> createQueryBuilderStream() {
-        var queryBuilder =
-            this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery()
-                : boolQuery();
-        
-        var builder = new SearchSourceBuilder().query(queryBuilder);
-        
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
-            builder.searchAfter(sortKeys);
-        }
-        
-        if (isFirstPage()) {
-            IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
-        }
-        
-        builder.size(getValue(SIZE).as());
-        builder.from(getValue(FROM).as());
-        getSortStream().forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
-        
-        return Stream.of(new QueryBuilderSourceWrapper(builder, this.getOpenSearchUri()));
-    }
-    
-    /**
-     * Creates a boolean query, with all the search parameters.
-     *
-     * @return a BoolQueryBuilder
-     */
-    @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
-    private BoolQueryBuilder boolQuery() {
-        var bq = QueryBuilders.boolQuery();
-        getOpenSearchParameters()
-            .forEach((key, value) -> {
-                if (key.equals(SEARCH_ALL)) {
-                    bq.must(multiMatchQuery());
-                } else if (key.fieldType().equals(ParameterKey.ParamKind.KEYWORD)) {
-                    QueryBuilderTools.addKeywordQuery(key, value, bq);
-                } else {
-                    switch (key.searchOperator()) {
-                        case MUST -> bq.must(QueryBuilderTools.buildQuery(key, value));
-                        case MUST_NOT -> bq.mustNot(QueryBuilderTools.buildQuery(key, value));
-                        case SHOULD -> bq.should(QueryBuilderTools.buildQuery(key, value));
-                        case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
-                        default -> throw new IllegalStateException(UNEXPECTED_VALUE + key.searchOperator());
-                    }
-                }
-            });
-        return bq;
-    }
-    
-    @NotNull
-    private Stream<Tuple<String, SortOrder>> getSortStream() {
-        return
-            getOptional(SORT).stream()
-                .flatMap(sort -> Arrays.stream(sort.split(COMMA)))
-                .map(sort -> sort.split(COLON))
-                .map(this::expandSortKeys);
+
+    @Override
+    protected boolean isFirstPage() {
+        return ZERO.equals(getValue(FROM).toString());
     }
 
-    public static URI nextResultsBySortKey(
-        SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(FROM.fieldName());
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(SEARCH_AFTER.fieldName(), sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
+    @Override
+    protected Integer getFrom() {
+        return getValue(FROM).as();
     }
 
-    Tuple<String, SortOrder> expandSortKeys(String... strings) {
+    @Override
+    protected Integer getSize() {
+        return getValue(SIZE).as();
+    }
+
+    @Override
+    protected Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
         var fieldName = ImportCandidateSort.fromSortKey(strings[0]).getFieldName();
         return new Tuple<>(fieldName, sortOrder);
     }
 
-    /**
-     * Creates a multi match query, all words needs to be present, within a document.
-     *
-     * @return a MultiMatchQueryBuilder
-     */
-    private MultiMatchQueryBuilder multiMatchQuery() {
-        var fields = extractFields(getValue(FIELDS).toString());
-        var value = getValue(SEARCH_ALL).toString();
-        return QueryBuilders
-            .multiMatchQuery(value, fields)
-            .type(Type.CROSS_FIELDS)
-            .operator(Operator.AND);
-    }
-    
-    boolean isFirstPage() {
-        return ZERO.equals(getValue(FROM).toString());
-    }
 
-    @NotNull
-    public static String[] extractFields(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)
-            : Arrays.stream(field.split(COMMA))
-                .map(ImportCandidateParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, ""))
-                .map(String::strip)
-                .toArray(String[]::new);
-    }
-
-    
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
         

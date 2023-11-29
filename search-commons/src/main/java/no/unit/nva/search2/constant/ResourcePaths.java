@@ -43,7 +43,7 @@ import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-public class Resource {
+public class ResourcePaths {
 
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_ID =
@@ -119,6 +119,8 @@ public class Resource {
         generateSimpleAggregation(FUNDING_SOURCE, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
             .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
+        generateSimpleAggregation(TOP_LEVEL_ORGANIZATION +"1", jsonPath(TOP_LEVEL_ORGANIZATIONS,ID))
+            .subAggregation(generateLabelsAggregation(jsonPath(TOP_LEVEL_ORGANIZATIONS, ID))),
         generateHasFileAggregation()
     );
 }

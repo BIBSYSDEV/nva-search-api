@@ -1,5 +1,11 @@
 package no.unit.nva.search2.enums;
 
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.function.Predicate;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
@@ -13,10 +19,6 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SPECIAL_CHARACTERS;
-import java.util.Collection;
-import java.util.function.Predicate;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
 
 public interface ParameterKey<E extends Enum<E>> {
 
