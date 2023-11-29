@@ -14,7 +14,7 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
-import no.unit.nva.search2.common.QueryBuilderSourceWrapper;
+import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.common.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
@@ -55,7 +55,7 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
     }
     
     @JacocoGenerated
-    private HttpRequest createRequest(QueryBuilderSourceWrapper qbs) {
+    private HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.info(qbs.source().query().toString());
         return HttpRequest
             .newBuilder(qbs.requestUri())

@@ -2,7 +2,6 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.Query.queryToMapEntries;
-import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -13,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,9 +22,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingClient;
@@ -84,7 +82,7 @@ class ResourceClientTest {
     }
 
     @Nested
-    class QueryOpensearchInstance {
+    class ResourceQueries {
 
         @Test
         void shoulCheckMapping() {
@@ -98,6 +96,31 @@ class ResourceClientTest {
 
             logger.info(mapping.toString());
         }
+
+        @Test
+        void shoulCheckFacets() throws BadRequestException {
+            var uri = URI.create("https://x.org/?size=20");
+            var query = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE, SORT)
+                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .build();
+            var response = searchClient.doSearch(query);
+            var aggregations = query.toPagedResponse(response).aggregations();
+
+            assertFalse(aggregations.isEmpty());
+            assertThat(aggregations.get("userAffiliation").size(), is(3));
+            assertThat(aggregations.get("contextType").size(), is(3));
+            assertThat(aggregations.get("instanceType").size(), is(3));
+            assertThat(aggregations.get("associatedArtifacts").size(), is(1));
+            assertThat(aggregations.get("associatedArtifacts").get(0).count(), is(20));
+            assertThat(aggregations.get("fundingSource").size(), is(2));
+            assertThat(aggregations.get("user").size(), is(3));
+            assertThat(aggregations.get("topLevelOrganization").size(), is(4));
+            assertThat(aggregations.get("topLevelOrganization").get(1).labels().get("nb"),
+                       is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
+        }
+
 
         @ParameterizedTest
         @MethodSource("uriProvider")
@@ -114,14 +137,6 @@ class ResourceClientTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
-
-            pagedSearchResourceDto.aggregations()
-                .forEach((s, facets) -> logger.info(s + SPACE + facets.stream()
-                             .map(JsonSerializable::toJsonString)
-                             .collect(Collectors.joining(",\n"))
-                         )
-                );
-
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(query.getValue(SIZE).as())));
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(query.getValue(SIZE).as())));
         }
@@ -130,14 +145,14 @@ class ResourceClientTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
-
-            var csvResult = ResourceQuery.builder()
-                                .fromQueryParameters(queryToMapEntries(uri))
-                                .withRequiredParameters(FROM, SIZE, SORT)
-                                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                                .withMediaType("text/csv")
-                                .build()
-                                .doSearch(searchClient);
+            var csvResult =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE, SORT)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withMediaType("text/csv")
+                    .build()
+                    .doSearch(searchClient);
             assertNotNull(csvResult);
         }
 
@@ -163,13 +178,14 @@ class ResourceClientTest {
         @ParameterizedTest
         @MethodSource("uriInvalidProvider")
         void failToSearchUri(URI uri) {
-            assertThrows(BadRequestException.class,
-                         () -> ResourceQuery.builder()
-                                   .fromQueryParameters(queryToMapEntries(uri))
-                                   .withRequiredParameters(FROM, SIZE)
-                                   .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                                   .build()
-                                   .doSearch(searchClient));
+            assertThrows(
+                BadRequestException.class,
+                () -> ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .doSearch(searchClient));
         }
 
         static Stream<URI> uriSortingProvider() {
@@ -204,8 +220,6 @@ class ResourceClientTest {
                 URI.create("https://x.org/?CONTEXT_TYPE=Report&size=10"),
                 URI.create("https://x.org/?CONTEXT_TYPE_NOT=Report&size=10"),
                 URI.create("https://x.org/?CONTEXT_TYPE_SHOULD=Report&size=10"),
-                //    URI.create("https://x.org/?CONTRIBUTOR_ID"
-                //               + "=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=1"),
                 URI.create("https://x.org/?CONTRIBUTOR=Kate+Robinson,Henrik+Langeland&size=3"),
                 URI.create("https://x.org/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=8"),
                 URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),

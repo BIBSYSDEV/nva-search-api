@@ -53,7 +53,7 @@ public final class Functions {
 
     static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
-            .field(jsonPath(object, ID, KEYWORD))
+            .field(jsonPath(object, ID))
             .size(Defaults.DEFAULT_AGGREGATION_SIZE)
             .subAggregation(generateLabelsAggregation(object));
     }
