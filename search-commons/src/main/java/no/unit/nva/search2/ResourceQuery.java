@@ -221,7 +221,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             if (fromSortKey(entry.getKey()) == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
             }
-            entry.getValue();
+            entry.getValue();       //  throws error on invalid value
         }
     }
 }
