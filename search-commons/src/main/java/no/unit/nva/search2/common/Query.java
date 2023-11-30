@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.constant.Defaults;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
@@ -41,7 +42,6 @@ import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.opensearch.common.collect.Tuple;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -73,7 +73,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public abstract String getSort();
 
-    protected abstract Tuple<String, SortOrder> expandSortKeys(String... strings);
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -312,6 +311,29 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         };
     }
 
+    public static Entry<String, SortOrder> entryToSortEntry(Entry<String, String> entry) {
+        return new Entry<>() {
+            @Override
+            public String getKey() {
+                return entry.getKey();
+            }
+
+            @Override
+            public SortOrder getValue() {
+                var sortOrder = nonNull(entry.getValue()) && !entry.getValue().isEmpty()
+                    ? entry.getValue()
+                    : Defaults.DEFAULT_SORT_ORDER;
+                return SortOrder.fromString(sortOrder);
+            }
+
+            @Override
+            @JacocoGenerated
+            public SortOrder setValue(SortOrder value) {
+                return null;
+            }
+        };
+    }
+
     @SuppressWarnings({"PMD.ShortMethodName"})
     public class AsType {
 
@@ -354,12 +376,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     // SORTING
-    protected Stream<Tuple<String, SortOrder>> getSortStream(K sortKey) {
-        return
-            getOptional(sortKey).stream()
-                .flatMap(sort -> Arrays.stream(sort.split(COMMA)))
+    protected Stream<Entry<String, SortOrder>> getSortStream() {
+        var optionalSort = Optional.ofNullable(getSort());
+
+        return optionalSort.isEmpty()
+            ? Stream.of()
+            : Arrays.stream(optionalSort.get().split(COMMA))
                 .map(sort -> sort.split(COLON))
-                .map(this::expandSortKeys);
+                .map(Query::stringsToEntry)
+                .map(Query::entryToSortEntry);
     }
 
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {

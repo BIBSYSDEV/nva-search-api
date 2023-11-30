@@ -10,7 +10,6 @@ import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterName
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.Words.ALL;
-import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
@@ -26,6 +25,7 @@ import no.unit.nva.search2.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,25 +146,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     protected abstract boolean isKeyValid(String keyName);
 
     /**
-     * Validate sort keys.
-     *
-     * @throws BadRequestException if sort key is invalid
-     */
-    protected void validatedSort() throws BadRequestException {
-        if (isNull(query.getSort())) {
-            return;
-        }
-        try {
-            Arrays.stream(query.getSort().split(COMMA))
-                .map(keyPair -> keyPair.split(COLON))
-                .map(Query::stringsToEntry)
-                .forEach(this::validateSortEntry);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(e.getMessage());
-        }
-    }
-
-    /**
      * Sample code for assignDefaultValues.
      * <p>Usage:</p>
      * <samp>requiredMissing().forEach(key -> { <br>
@@ -194,7 +175,25 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
 
     protected abstract void applyRulesAfterValidation();
 
-    protected abstract void validateSortEntry(Entry<String, String> entry);
+    protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
+
+    /**
+     * Validate sort keys.
+     *
+     * @throws BadRequestException if sort key is invalid
+     */
+    protected void validatedSort() throws BadRequestException {
+        var sortEntries = query.getSort();
+        if (isNull(sortEntries)) {
+            return;
+        }
+        try {
+            query.getSortStream().forEach(this::validateSortEntry);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
 
 
     /**
@@ -254,7 +253,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
     }
 
-    protected String extractDescAsc(String value) {
+    protected String trimSpace(String value) {
         return decodeUTF(value)
             .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }

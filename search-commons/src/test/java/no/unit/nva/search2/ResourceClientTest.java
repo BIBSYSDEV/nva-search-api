@@ -2,7 +2,6 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.Query.queryToMapEntries;
-import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -13,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,9 +22,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingClient;
@@ -99,6 +97,31 @@ class ResourceClientTest {
             logger.info(mapping.toString());
         }
 
+        @Test
+        void shoulCheckFacets() throws BadRequestException {
+            var uri = URI.create("https://x.org/?size=20");
+            var query = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE, SORT)
+                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .build();
+            var response = searchClient.doSearch(query);
+            var aggregations = query.toPagedResponse(response).aggregations();
+
+            assertFalse(aggregations.isEmpty());
+            assertThat(aggregations.get("userAffiliation").size(), is(3));
+            assertThat(aggregations.get("contextType").size(), is(3));
+            assertThat(aggregations.get("instanceType").size(), is(3));
+            assertThat(aggregations.get("associatedArtifacts").size(), is(1));
+            assertThat(aggregations.get("associatedArtifacts").get(0).count(), is(20));
+            assertThat(aggregations.get("fundingSource").size(), is(2));
+            assertThat(aggregations.get("user").size(), is(3));
+            assertThat(aggregations.get("topLevelOrganization").size(), is(4));
+            assertThat(aggregations.get("topLevelOrganization").get(1).labels().get("nb"),
+                       is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
+        }
+
+
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
@@ -111,18 +134,9 @@ class ResourceClientTest {
                     .build();
 
             var response = searchClient.doSearch(query);
-            logger.info(response.aggregations().toPrettyString());
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
-
-            pagedSearchResourceDto.aggregations()
-                .forEach((s, facets) -> logger.info(s + SPACE + facets.stream()
-                             .map(JsonSerializable::toJsonString)
-                             .collect(Collectors.joining(",\n"))
-                         )
-                );
-
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(query.getValue(SIZE).as())));
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(query.getValue(SIZE).as())));
         }

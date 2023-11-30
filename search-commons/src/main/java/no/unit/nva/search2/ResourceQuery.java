@@ -22,7 +22,6 @@ import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT;
-import static no.unit.nva.search2.enums.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.enums.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.enums.ResourceSort.INVALID;
 import static no.unit.nva.search2.enums.ResourceSort.fromSortKey;
@@ -30,7 +29,6 @@ import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.Query;
@@ -40,7 +38,6 @@ import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.jetbrains.annotations.NotNull;
-import org.opensearch.common.collect.Tuple;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -82,7 +79,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());
-        getSortStream(SORT).forEach(orderTuple -> builder.sort(orderTuple.v1(), orderTuple.v2()));
+        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -103,13 +100,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private boolean hasPromotedPublications(List<String> promotedPublications) {
         return nonNull(promotedPublications) && !promotedPublications.isEmpty();
-    }
-
-    @Override
-    protected Tuple<String, SortOrder> expandSortKeys(String... strings) {
-        var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
-        var fieldName = fromSortKey(strings[0]).getFieldName();
-        return new Tuple<>(fieldName, sortOrder);
     }
 
     @Override
@@ -169,13 +159,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             });
         }
 
+
         @Override
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, value);
                 case FIELDS -> query.setPagingValue(qpKey, expandFields(value));
-                case SORT -> mergeToPagingKey(SORT, extractDescAsc(value));
+                case SORT -> mergeToPagingKey(SORT, trimSpace(value));
                 case SORT_ORDER -> mergeToPagingKey(SORT, value);
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
@@ -226,21 +217,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
 
         @Override
-        protected void validateSortEntry(Entry<String, String> entry) {
-            var sortOrder = nonNull(entry.getValue())
-                ? entry.getValue().toLowerCase(Locale.getDefault())
-                : DEFAULT_SORT_ORDER;
-            if (!sortOrder.matches(SORT_ORDER.valuePattern())) {
-                throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
+        protected void validateSortEntry(Entry<String, SortOrder> entry) {
+            if (fromSortKey(entry.getKey()) == INVALID) {
+                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
             }
-            var sortKey = fromSortKey(entry.getKey());
-
-            if (sortKey == INVALID) {
-                throw new IllegalArgumentException(
-                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
-            }
-
-            //            return sortKey.name().toLowerCase(Locale.getDefault()) + COLON + sortOrder;
         }
     }
 }
