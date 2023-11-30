@@ -2,6 +2,8 @@ package no.unit.nva.search2.common;
 
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.constant.Words.COMMA;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import no.unit.nva.search2.enums.ParameterKey;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -15,15 +17,18 @@ public final class QueryBuilderTools {
     
     private static final Integer SINGLE_FIELD = 1;
 
-    public static void addKeywordQuery(ParameterKey<?> key, String value,
-                                       BoolQueryBuilder bq) {
-        final var searchFields = key.searchFields().toArray(String[]::new);
+    public static String decodeUTF(String encoded) {
+        return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+    }
+
+    public static void addKeywordQuery(ParameterKey key, String value, BoolQueryBuilder bq) {
+        final var searchFields = key.searchFields()
+            .toArray(String[]::new);
         final var values = Arrays.stream(value.split(COMMA))
             .map(String::trim)
-            //            .map(ParameterKey::escapeSearchString)
             .toArray(String[]::new);
         final var multipleFields = hasMultipleFields(searchFields);
-        
+
         Arrays.stream(searchFields).forEach(searchField -> {
             final var termsQuery = QueryBuilders.termsQuery(searchField, values).boost(key.fieldBoost());
             switch (key.searchOperator()) {
@@ -41,7 +46,7 @@ public final class QueryBuilderTools {
         });
     }
 
-    public static QueryBuilder buildQuery(ParameterKey<?> key, String value) {
+    public static QueryBuilder buildQuery(ParameterKey key, String value) {
         final var values = value.replace(COMMA, " ");
         final var searchFields =
             key.searchFields().stream()
@@ -63,7 +68,7 @@ public final class QueryBuilderTools {
             .operator(operatorByKey(key));
     }
 
-    public static RangeQueryBuilder rangeQuery(ParameterKey<?> key, String value) {
+    public static RangeQueryBuilder rangeQuery(ParameterKey key, String value) {
         final var searchField = key.searchFields().toArray()[0].toString();
         
         return switch (key.searchOperator()) {
@@ -73,18 +78,16 @@ public final class QueryBuilderTools {
         };
     }
 
-    public static Operator operatorByKey(ParameterKey<?> key) {
+    public static Operator operatorByKey(ParameterKey key) {
         return switch (key.searchOperator()) {
             case MUST -> Operator.AND;
             case SHOULD, MUST_NOT -> Operator.OR;
             case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         };
     }
-    
 
-
-    public static boolean hasMultipleFields(String... swsKey) {
-        return swsKey.length > SINGLE_FIELD;
+    public static boolean hasMultipleFields(String... swsKeys) {
+        return swsKeys.length > SINGLE_FIELD;
     }
 
 }

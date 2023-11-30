@@ -2,14 +2,24 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.Query.mergeWithColonOrComma;
+import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.constant.Words.ALL;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.enums.ParameterKey;
@@ -24,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> Enum of QueryParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class QueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extends Query<K>> {
+public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
 
@@ -75,7 +85,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extend
         if (!invalidKeys.isEmpty()) {
             throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys,validKeys()));
         }
-        validateSort();
+        validatedSort();
         applyRulesAfterValidation();
         notValidated = false;
         return this;
@@ -133,14 +143,26 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extend
         return this;
     }
 
-
+    protected abstract boolean isKeyValid(String keyName);
 
     /**
      * Validate sort keys.
      *
      * @throws BadRequestException if sort key is invalid
      */
-    protected abstract void validateSort() throws BadRequestException;
+    protected void validatedSort() throws BadRequestException {
+        if (isNull(query.getSort())) {
+            return;
+        }
+        try {
+            Arrays.stream(query.getSort().split(COMMA))
+                .map(keyPair -> keyPair.split(COLON))
+                .map(Query::stringsToEntry)
+                .forEach(this::validateSortEntry);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
 
     /**
      * Sample code for assignDefaultValues.
@@ -172,9 +194,11 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extend
 
     protected abstract void applyRulesAfterValidation();
 
+    protected abstract void validateSortEntry(Entry<String, String> entry);
+
 
     /**
-     * returns T.VALID_LUCENE_PARAMETER_KEYS
+     * returns T.VALID_SEARCH_PARAMETER_KEYS
      */
     protected Collection<String> validKeys() {
         return VALID_SEARCH_PARAMETER_KEYS.stream()
@@ -198,7 +222,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extend
 
     protected Set<K> required() {
         return query.otherRequiredKeys;
-
     }
 
     @JacocoGenerated
@@ -225,6 +248,27 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey<K>, Q extend
 
     private void setEntryValue(Map.Entry<String, String> entry) {
         setValue(entry.getKey(), entry.getValue());
+    }
+
+    protected void mergeToPagingKey(K key, String value) {
+        query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+    }
+
+    protected String extractDescAsc(String value) {
+        return decodeUTF(value)
+            .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
+    }
+
+    protected String expandFields(String value) {
+        return ALL.equals(value) || isNull(value)
+            ? ALL
+            : Arrays.stream(value.split(COMMA))
+                .filter(this::isKeyValid)           // ignoring invalid keys
+                .collect(Collectors.joining(COMMA));
+    }
+
+    public String expandYearToDate(String value) {
+        return value.length() == 4 ? value + JANUARY_FIRST : value;
     }
 
 }

@@ -1,27 +1,5 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ResourceParameter;
-import no.unit.nva.search2.enums.ResourceSort;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-import org.opensearch.common.collect.Tuple;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
@@ -29,16 +7,12 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.ResourcePaths.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.EXPECTED_TWO_PARTS;
 import static no.unit.nva.search2.constant.Words.ID;
-import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
@@ -51,13 +25,33 @@ import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.enums.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.enums.ResourceSort.INVALID;
+import static no.unit.nva.search2.enums.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ResourceParameter;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
+import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     private ResourceQuery() {
         super();
     }
+
 
     static Builder builder() {
         return new Builder();
@@ -114,13 +108,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
-        var fieldName = ResourceSort.fromSortKey(strings[0]).getFieldName();
+        var fieldName = fromSortKey(strings[0]).getFieldName();
         return new Tuple<>(fieldName, sortOrder);
     }
 
     @Override
     protected ResourceParameter getFieldsKey() {
-        return getValue(FIELDS).getKey();
+        return FIELDS;
     }
 
     @NotNull
@@ -134,7 +128,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .flatMap(Collection::stream)
                 .toArray(String[]::new);
     }
-
 
     @Override
     public boolean isFirstPage() {
@@ -151,8 +144,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return getValue(SIZE).as();
     }
 
+    @Override
+    public String getSort() {
+        return getValue(SORT).as();
+    }
+
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+
         Builder() {
             super(new ResourceQuery());
         }
@@ -174,13 +173,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setQueryValue(qpKey, value);
-                case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
-                case SORT -> addSortQuery(value);
-                case SORT_ORDER -> addSortOrderQuery(value);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, value);
+                case FIELDS -> query.setPagingValue(qpKey, expandFields(value));
+                case SORT -> mergeToPagingKey(SORT, extractDescAsc(value));
+                case SORT_ORDER -> mergeToPagingKey(SORT, value);
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchFieldValue(qpKey, expandYearToDate(value));
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(value));
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT,
                     DOI, DOI_NOT, DOI_SHOULD,
@@ -197,7 +196,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     TITLE, TITLE_NOT, TITLE_SHOULD,
                     TOP_LEVEL_ORGANIZATION,
                     UNIT, UNIT_NOT, UNIT_SHOULD,
-                    USER, USER_NOT, USER_SHOULD -> query.setSearchFieldValue(qpKey, value);
+                    USER, USER_NOT, USER_SHOULD -> query.setSearchingValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }
@@ -213,84 +212,35 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 if (query.isPresent(FROM)) {
                     var page = query.getValue(PAGE).<Number>as();
                     var perPage = query.getValue(SIZE).<Number>as();
-                    query.setQueryValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    query.setPagingValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.removeKey(PAGE);
             }
             query.getOptional(FUNDING)
-                .ifPresent(funding -> query.setSearchFieldValue(FUNDING, funding.replaceAll(COLON, COMMA)));
+                .ifPresent(funding -> query.setSearchingValue(FUNDING, funding.replaceAll(COLON, COMMA)));
         }
 
         @Override
-        protected void validateSort() throws BadRequestException {
-            if (!query.isPresent(SORT)) {
-                return;
-            }
-            try {
-                var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
-                var validSortKeys =
-                    Arrays.stream(sortKeys)
-                        .map(this::validateSortKey)
-                        .collect(Collectors.joining(COMMA));
-
-                query.setQueryValue(SORT, validSortKeys);
-            } catch (IllegalArgumentException e) {
-                throw new BadRequestException(e.getMessage());
-            }
+        protected boolean isKeyValid(String keyName) {
+            return keyFromString(keyName) != ResourceParameter.INVALID;
         }
 
-        private void addSortOrderQuery(String value) {
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
-        }
-
-        private String validateSortKey(String keySort) {
-            var sortKeyParts = keySort.split(COLON);
-            if (sortKeyParts.length > EXPECTED_TWO_PARTS) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys()));
-            }
-
-            var sortOrder = getSortOrder(sortKeyParts);
-
+        @Override
+        protected void validateSortEntry(Entry<String, String> entry) {
+            var sortOrder = nonNull(entry.getValue())
+                ? entry.getValue().toLowerCase(Locale.getDefault())
+                : DEFAULT_SORT_ORDER;
             if (!sortOrder.matches(SORT_ORDER.valuePattern())) {
                 throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
             }
-
-            var sortField = sortKeyParts[0];
-            var sortKey = ResourceSort.fromSortKey(sortField);
+            var sortKey = fromSortKey(entry.getKey());
 
             if (sortKey == INVALID) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys()));
+                throw new IllegalArgumentException(
+                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
             }
-            return sortKey.name().toLowerCase(Locale.getDefault()) + COLON + sortOrder;
-        }
 
-        protected String getSortOrder(String... sortKeyParts) {
-            return (sortKeyParts.length == EXPECTED_TWO_PARTS)
-                ? sortKeyParts[1].toLowerCase(Locale.getDefault())
-                : DEFAULT_SORT_ORDER;
-        }
-
-        private void addSortQuery(String value) {
-            var validFieldValue =
-                decodeUTF(value)
-                    .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
-        }
-
-        public String expandYearToDate(String value) {
-            return value.length() == 4 ? value + JANUARY_FIRST : value;
-        }
-
-        protected String expandFields(String value) {
-            return ALL.equals(value) || isNull(value)
-                ? ALL
-                : Arrays.stream(value.split(COMMA))
-                .filter(this::keyIsValid)           // ignoring invalid keys
-                .collect(Collectors.joining(COMMA));
-        }
-
-        private boolean keyIsValid(String key) {
-            return keyFromString(key) != ResourceParameter.INVALID;
+            //            return sortKey.name().toLowerCase(Locale.getDefault()) + COLON + sortOrder;
         }
     }
 }

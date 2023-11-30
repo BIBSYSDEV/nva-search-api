@@ -19,7 +19,7 @@ public enum ImportCandidateSort {
     CREATED_DATE(Words.CREATED_DATE),
     INSTANCE_TYPE(ImportCandidate.INSTANCE_TYPE_KEYWORD),
     PUBLICATION_YEAR(ImportCandidate.PUBLICATION_YEAR_KEYWORD),
-    TITLE(ImportCandidate.MAIN_TITLE),
+    TITLE(ImportCandidate.MAIN_TITLE_KEYWORD),
     TYPE(ImportCandidate.TYPE_KEYWORD);
 
     public static final Set<ImportCandidateSort> VALID_SORT_PARAMETER_KEYS =

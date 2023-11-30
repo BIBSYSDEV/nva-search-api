@@ -88,17 +88,15 @@ class ImportCandidateClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
-            var response = importCandidateClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var swsResponse = importCandidateClient.doSearch(query);
+            var pagedResponse = query.toPagedResponse(swsResponse);
 
-            logger.info("returned: " + pagedSearchResourceDto.hits().size());
-            logger.info("totalHits: " + pagedSearchResourceDto.totalHits());
+            logger.info("returned: " + pagedResponse.hits().size());
+            logger.info("totalHits: " + pagedResponse.totalHits());
 
-            assertNotNull(pagedSearchResourceDto);
-            assertThat(pagedSearchResourceDto.hits().size(),
-                       is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
-            assertThat(pagedSearchResourceDto.totalHits(),
-                       is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
+            assertNotNull(pagedResponse);
+            assertThat(pagedResponse.hits().size(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
+            assertThat(pagedResponse.totalHits(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
         }
 
         @ParameterizedTest

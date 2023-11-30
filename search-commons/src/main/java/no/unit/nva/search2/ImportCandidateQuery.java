@@ -1,25 +1,5 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
-import no.unit.nva.search2.enums.ImportCandidateSort;
-import no.unit.nva.search2.enums.ParameterKey;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.common.collect.Tuple;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
@@ -29,7 +9,6 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_INDEX_NAME;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -49,6 +28,23 @@ import static no.unit.nva.search2.enums.ImportCandidateParameter.keyFromString;
 import static no.unit.nva.search2.enums.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.enums.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
+import no.unit.nva.search2.enums.ImportCandidateSort;
+import no.unit.nva.search2.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
@@ -96,7 +92,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected ImportCandidateParameter getFieldsKey() {
-        return getValue(ImportCandidateParameter.FIELDS).getKey();
+        return ImportCandidateParameter.FIELDS;
     }
 
     @Override
@@ -128,6 +124,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
+    public String getSort() {
+        return getValue(SORT).as();
+    }
+
+    @Override
     protected Tuple<String, SortOrder> expandSortKeys(String... strings) {
         var sortOrder = strings.length == 2 ? SortOrder.fromString(strings[1]) : SortOrder.ASC;
         var fieldName = ImportCandidateSort.fromSortKey(strings[0]).getFieldName();
@@ -137,10 +138,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
-        
-        private static final String ALL = "all";
-        public static final Integer EXPECTED_TWO_PARTS = 2;
-        
+
         Builder() {
             super(new ImportCandidateQuery());
         }
@@ -162,10 +160,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setQueryValue(qpKey, value);
-                case FIELDS -> query.setQueryValue(qpKey, expandFields(value));
-                case SORT -> addSortQuery(value);
-                case SORT_ORDER -> addSortOrderQuery(value);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, value);
+                case FIELDS -> query.setPagingValue(qpKey, expandFields(value));
+                case SORT -> mergeToPagingKey(SORT, extractDescAsc(value));
+                case SORT_ORDER -> mergeToPagingKey(SORT, value);
                 case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
                     CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
                     CREATED_DATE,
@@ -179,7 +177,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     PUBLISHER, PUBLISHER_NOT, PUBLISHER_SHOULD,
                     SEARCH_ALL,
                     TITLE, TITLE_NOT, TITLE_SHOULD,
-                    TYPE -> query.setSearchFieldValue(qpKey, value);
+                    TYPE -> query.setSearchingValue(qpKey, value);
                 default -> invalidKeys.add(key);
             }
         }
@@ -192,7 +190,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 if (query.isPresent(FROM)) {
                     var page = query.getValue(PAGE).<Number>as();
                     var perPage = query.getValue(SIZE).<Number>as();
-                    query.setQueryValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    query.setPagingValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.removeKey(PAGE);
             }
@@ -204,73 +202,27 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .map(ParameterKey::fieldName)
                 .toList();
         }
-        
+
         @Override
-        protected void validateSort() throws BadRequestException {
-            if (!query.isPresent(SORT)) {
-                return;
-            }
-            try {
-                var sortKeys = query.getValue(SORT).<String>as().split(COMMA);
-                var validSortKeys =
-                    Arrays.stream(sortKeys)
-                        .map(this::validateSortKey)
-                        .collect(Collectors.joining(COMMA));
-                
-                query.setQueryValue(SORT, validSortKeys);
-            } catch (IllegalArgumentException e) {
-                throw new BadRequestException(e.getMessage());
-            }
+        protected boolean isKeyValid(String keyName) {
+            return keyFromString(keyName) != ImportCandidateParameter.INVALID;
         }
-        
-        private void addSortOrderQuery(String value) {
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), value));
-        }
-        
-        private String validateSortKey(String keySort) {
-            var sortKeyParts = keySort.split(COLON);
-            if (sortKeyParts.length > EXPECTED_TWO_PARTS) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(keySort, validSortKeys()));
-            }
-            
-            var sortOrder = getSortOrder(sortKeyParts);
-            
+
+        @Override
+        protected void validateSortEntry(Entry<String, String> entry) {
+            var sortOrder = nonNull(entry.getValue())
+                ? entry.getValue().toLowerCase(Locale.getDefault())
+                : DEFAULT_SORT_ORDER;
             if (!sortOrder.matches(SORT_ORDER.valuePattern())) {
                 throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
             }
-            
-            var sortField = sortKeyParts[0];
-            var sortKey = ImportCandidateSort.fromSortKey(sortField);
-            
-            if (sortKey == INVALID) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(sortField, validSortKeys()));
-            }
-            return sortKey.name().toLowerCase(Locale.getDefault()) + COLON + sortOrder;
-        }
-        
-        private String getSortOrder(String... sortKeyParts) {
-            return (sortKeyParts.length == EXPECTED_TWO_PARTS)
-                ? sortKeyParts[1].toLowerCase(Locale.getDefault())
-                : DEFAULT_SORT_ORDER;
-        }
-        
-        private void addSortQuery(String value) {
-            var validFieldValue =
-                decodeUTF(value)
-                    .replaceAll(PATTERN_IS_IGNORE_CASE + " (asc|desc)", ":$1");
-            query.setQueryValue(SORT, mergeParameters(query.getValue(SORT).as(), validFieldValue));
-        }
+            var sortKey = ImportCandidateSort.fromSortKey(entry.getKey());
 
-        private String expandFields(String value) {
-            return ALL.equals(value) || isNull(value)
-                ? ALL
-                : Arrays.stream(value.split(COMMA))
-                    .filter(this::keyIsValid)
-                    .collect(Collectors.joining(COMMA));
-        }
-        
-        private boolean keyIsValid(String key) {
-            return keyFromString(key) != ImportCandidateParameter.INVALID;
+            if (sortKey == INVALID) {
+                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
+            }
+
+            //            return sortKey.name().toLowerCase(Locale.getDefault()) + COLON + sortOrder;
         }
     }
 }

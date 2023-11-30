@@ -1,14 +1,12 @@
 package no.unit.nva.search2.dto;
 
+import static java.util.Objects.isNull;
 import com.fasterxml.jackson.databind.JsonNode;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Objects.isNull;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.Nullable;
 
 public class PagedSearchBuilder {
 
@@ -64,7 +62,7 @@ public class PagedSearchBuilder {
         if (isNull(aggregations)) {
             return this;
         }
-        this.aggregations = FacetBuilder.build(aggregations,this.id);
+        this.aggregations = FacetsBuilder.build(aggregations, this.id);
         return this;
     }
 

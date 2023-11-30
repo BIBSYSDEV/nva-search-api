@@ -24,10 +24,10 @@ public final class ImportCandidate {
     public static final String IDENTIFIER = "id.keyword";
     public static final String IMPORTED_BY_USER = "importedByUser";
     public static final String IMPORT_CANDIDATES_INDEX_NAME = "import-candidates";
-    public static final String IMPORT_STATUS_SET_BY = "importStatus.setBy.keyword";
+    public static final String IMPORT_STATUS_SET_BY_KEYWORD = "importStatus.setBy.keyword";
     public static final String INSTANCE_TYPE = "instanceType";
     public static final String INSTANCE_TYPE_KEYWORD = "publicationInstance.type";
-    public static final String MAIN_TITLE = "mainTitle.keyword";
+    public static final String MAIN_TITLE_KEYWORD = "mainTitle.keyword";
     public static final String PUBLICATION_INSTANCE_TYPE = "publicationInstance.type";
     public static final String PUBLICATION_YEAR = "publicationYear";
     public static final String PUBLICATION_YEAR_KEYWORD = PUBLICATION_YEAR + DOT + KEYWORD;
@@ -41,7 +41,7 @@ public final class ImportCandidate {
         generateSimpleAggregation(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
         generateSimpleAggregation(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
         generateSimpleAggregation(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
-        generateSimpleAggregation(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY),
+        generateSimpleAggregation(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD),
         generateObjectLabelsAggregation("organization", "organizations"),
         generateHasFileAggregation()
     );

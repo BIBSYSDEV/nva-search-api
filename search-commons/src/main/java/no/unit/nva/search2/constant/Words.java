@@ -5,8 +5,6 @@ import nva.commons.core.JacocoGenerated;
 @JacocoGenerated
 public final class Words {
 
-
-    public static final Integer EXPECTED_TWO_PARTS = 2;
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
@@ -35,6 +33,7 @@ public final class Words {
     public static final String JANUARY_FIRST = "-01-01";
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
+    public static final String MAIN_TITLE = "mainTitle";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
     public static final String NYNORSK_CODE = "nn";
@@ -56,12 +55,12 @@ public final class Words {
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";
-
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
     public static final String SEARCH_ALL = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SOURCE = "source";
+    public static final String SORT = "SORT";
     public static final String SPACE = " ";
     public static final String SUFFIX = ")";
     public static final String TEXT_CSV = "text/csv";
@@ -73,6 +72,5 @@ public final class Words {
     public static final String USER_AFFILIATION = "userAffiliation";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
-
 
 }

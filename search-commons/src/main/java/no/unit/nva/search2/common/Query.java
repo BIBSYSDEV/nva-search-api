@@ -2,6 +2,7 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
@@ -16,8 +17,6 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +50,7 @@ import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
+public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
 
@@ -62,7 +61,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
-
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
@@ -72,6 +70,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     protected abstract Integer getFrom();
 
     protected abstract Integer getSize();
+
+    public abstract String getSort();
 
     protected abstract Tuple<String, SortOrder> expandSortKeys(String... strings);
 
@@ -87,7 +87,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         return MediaType.CSV_UTF_8.is(this.getMediaType())
             ? toCsvText((SwsResponse) response)
             : toPagedResponse((SwsResponse) response).toJsonString();
-
     }
 
     protected String toCsvText(SwsResponse response) {
@@ -138,7 +137,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         return results;
     }
 
-
     /**
      * Get value from Query Parameter Map with key.
      *
@@ -170,7 +168,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         return searchParameters.containsKey(key) || pageParameters.containsKey(key);
     }
 
-
     @JacocoGenerated
     public boolean hasNoSearchValue() {
         return searchParameters.isEmpty();
@@ -182,7 +179,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
      * @param key   to add to.
      * @param value to assign
      */
-    public void setSearchFieldValue(K key, String value) {
+    public void setSearchingValue(K key, String value) {
         if (nonNull(value)) {
             var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
             searchParameters.put(key, decodedValue);
@@ -195,7 +192,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
      * @param key   to add to.
      * @param value to assign
      */
-    public void setQueryValue(K key, String value) {
+    public void setPagingValue(K key, String value) {
         if (nonNull(value)) {
             pageParameters.put(key, key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value);
         }
@@ -225,22 +222,17 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         this.openSearchUri = openSearchUri;
     }
 
-
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
         return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
     }
 
-    protected static String mergeParameters(String oldValue, String newValue) {
+    protected static String mergeWithColonOrComma(String oldValue, String newValue) {
         if (nonNull(oldValue)) {
             var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
             return String.join(delimiter, oldValue, newValue);
         } else {
             return newValue;
         }
-    }
-
-    protected static String decodeUTF(String encoded) {
-        return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
     public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
@@ -251,34 +243,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         return
             nonNull(query)
                 ? Arrays.stream(query.split(AMPERSAND))
-                      .map(s -> s.split(EQUAL))
-                      .map(Query::stringsToEntry)
-                      .toList()
+                .map(s -> s.split(EQUAL))
+                .map(Query::stringsToEntry)
+                .toList()
                 : Collections.emptyList();
     }
-
-    protected static URI nextResultsBySortKey(
-        SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(Words.FROM);
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
-    }
-
-    protected Stream<Tuple<String, SortOrder>> getSortStream(K sortKey) {
-        return
-            getOptional(sortKey).stream()
-                .flatMap(sort -> Arrays.stream(sort.split(COMMA)))
-                .map(sort -> sort.split(COLON))
-                .map(this::expandSortKeys);
-    }
-
 
     /**
      * Creates a boolean query, with all the search parameters.
@@ -292,7 +261,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
             .forEach((key, value) -> {
                 if (Words.SEARCH_ALL.equals(key.name())) {
 
-                    bq.must(multiMatchQuery(key,getFieldsKey()));
+                    bq.must(multiMatchQuery(key, getFieldsKey()));
                 } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
                     QueryBuilderTools.addKeywordQuery(key, value, bq);
                 } else {
@@ -308,7 +277,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         return bq;
     }
 
-
     /**
      * Creates a multi match query, all words needs to be present, within a document.
      *
@@ -323,9 +291,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
             .operator(Operator.AND);
     }
 
-
     @NotNull
-    private static Entry<String, String> stringsToEntry(String... strings) {
+    public static Entry<String, String> stringsToEntry(String... strings) {
         return new Entry<>() {
             @Override
             public String getKey() {
@@ -384,5 +351,27 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         private <T extends Number> T castNumber() {
             return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
         }
+    }
+
+    // SORTING
+    protected Stream<Tuple<String, SortOrder>> getSortStream(K sortKey) {
+        return
+            getOptional(sortKey).stream()
+                .flatMap(sort -> Arrays.stream(sort.split(COMMA)))
+                .map(sort -> sort.split(COLON))
+                .map(this::expandSortKeys);
+    }
+
+    private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+
+        requestParameter.remove(Words.FROM);
+        var sortedP =
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
+        requestParameter.put(Words.SEARCH_AFTER, sortedP);
+        return fromUri(gatewayUri)
+            .addQueryParameters(requestParameter)
+            .getUri();
     }
 }

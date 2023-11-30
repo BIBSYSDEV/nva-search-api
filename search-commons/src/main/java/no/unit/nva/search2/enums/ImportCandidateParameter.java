@@ -43,7 +43,7 @@ import nva.commons.core.JacocoGenerated;
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
  */
 
-public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
+public enum ImportCandidateParameter implements ParameterKey {
     INVALID(TEXT),
     // Parameters converted to Lucene query
     ADDITIONAL_IDENTIFIERS(KEYWORD, MUST, ADDITIONAL_IDENTIFIERS_KEYWORD),
@@ -77,9 +77,9 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     PUBLISHER(KEYWORD, MUST, PUBLISHER_ID_KEYWORD),
     PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLISHER_ID_KEYWORD),
     PUBLISHER_SHOULD(TEXT, SHOULD, PUBLISHER_ID_KEYWORD),
-    TITLE(TEXT, ImportCandidate.MAIN_TITLE, 2F),
-    TITLE_NOT(TEXT, MUST_NOT, ImportCandidate.MAIN_TITLE),
-    TITLE_SHOULD(TEXT, SHOULD, ImportCandidate.MAIN_TITLE),
+    TITLE(TEXT, ImportCandidate.MAIN_TITLE_KEYWORD, 2F),
+    TITLE_NOT(TEXT, MUST_NOT, ImportCandidate.MAIN_TITLE_KEYWORD),
+    TITLE_SHOULD(TEXT, SHOULD, ImportCandidate.MAIN_TITLE_KEYWORD),
     TYPE(KEYWORD, ImportCandidate.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),

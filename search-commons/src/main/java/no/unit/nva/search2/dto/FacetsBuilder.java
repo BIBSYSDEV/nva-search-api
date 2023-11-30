@@ -1,19 +1,17 @@
 package no.unit.nva.search2.dto;
 
+import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.commons.json.JsonUtils;
-import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import no.unit.nva.commons.json.JsonUtils;
+import nva.commons.core.paths.UriWrapper;
+import org.jetbrains.annotations.NotNull;
 
-import static nva.commons.core.attempt.Try.attempt;
-
-public final class FacetBuilder {
+public final class FacetsBuilder {
 
     public static Map<String, List<Facet>> build(JsonNode aggregations, URI id) {
         return jsonNodeToMapOfFacets(aggregations)
