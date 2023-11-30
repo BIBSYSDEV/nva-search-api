@@ -1,21 +1,21 @@
 package no.unit.nva.search2.common;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Streams;
-import no.unit.nva.commons.json.JsonUtils;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.Optional;
-
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import static no.unit.nva.search2.common.AggregationFormat.Constants.BUCKETS;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SUM_OTHER_DOC_COUNT;
 import static no.unit.nva.search2.constant.Words.COUNT;
-import static no.unit.nva.search2.constant.Words.DOC_COUNT_ERROR_UPPER_BOUND;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.LABELS;
 import static no.unit.nva.search2.constant.Words.NAME;
-import static no.unit.nva.search2.constant.Words.SUM_OTHER_DOC_COUNT;
+import static no.unit.nva.search2.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Streams;
+import java.util.Map;
+import java.util.Optional;
+import no.unit.nva.commons.json.JsonUtils;
+import org.jetbrains.annotations.NotNull;
 
 public final class AggregationFormat {
     public static JsonNode apply(JsonNode aggregations) {
@@ -55,26 +55,26 @@ public final class AggregationFormat {
     }
 
     private static boolean ignoreSumOtherDoc(Map.Entry<String, JsonNode> item) {
-        return !item.getKey().matches(PATTERN_IS_IGNORE_CASE + SUM_OTHER_DOC_COUNT);
+        return !item.getKey().matches(PATTERN_IS_SUM_OTHER_DOC_COUNT);
     }
 
     private static boolean ignoreDocCountErrors(Map.Entry<String, JsonNode> item) {
-        return !item.getKey().matches(PATTERN_IS_IGNORE_CASE + DOC_COUNT_ERROR_UPPER_BOUND);
+        return !item.getKey().matches(PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND);
     }
 
     private static JsonNode getBucketOrValue(JsonNode node) {
         if (node.at(Constants.ID_BUCKETS).isArray()) {
             return node.at(Constants.ID_BUCKETS);
         }
-        if (node.has(Constants.BUCKETS)) {
-            return node.at("/buckets");
+        if (node.has(BUCKETS)) {
+            return node.at(Constants.BUCKETS_PTR);
         }
         return node;
     }
 
     private static JsonNode formatName(JsonNode nodeEntry) {
         var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
-        var keyValue = nodeEntry.at(Constants.BUCKETS_0_KEY);
+        var keyValue = nodeEntry.at(Constants.BUCKETS_0_KEY_PTR);
         outputAggregationNode.set(ENGLISH_CODE, keyValue);
         return outputAggregationNode;
     }
@@ -88,7 +88,7 @@ public final class AggregationFormat {
             .map(AggregationFormat::getNormalizedJsonNodeEntry)
             .filter(entry -> !COUNT.equals(entry.getKey()))
             .forEach(node -> {
-                var keyValue = node.getValue().at(Constants.BUCKETS_0_KEY);
+                var keyValue = node.getValue().at(Constants.BUCKETS_0_KEY_PTR);
                 outputAggregationNode.set(node.getKey(), keyValue);
             });
         return outputAggregationNode;
@@ -97,15 +97,18 @@ public final class AggregationFormat {
     @NotNull
     private static String getNormalizedFieldName(String fieldName) {
         return Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
-            .orElse(fieldName.replaceFirst(Constants.WORD_ENDING_WITH_HASHTAG_REGEX, EMPTY_STRING));
+            .orElse(fieldName.replaceFirst(Constants.PATTERN_IS_WORD_ENDING_WITH_HASHTAG, EMPTY_STRING));
     }
 
     static final class Constants {
 
-        public static final String BUCKETS_0_KEY = "/buckets/0/key";
-        public static final String ID_BUCKETS = "/id/buckets";
+        public static final String SLASH = "/";
         public static final String BUCKETS = "buckets";
-        public static final String WORD_ENDING_WITH_HASHTAG_REGEX = "[A-za-z0-9]*#";
+
+        public static final String BUCKETS_PTR = SLASH + BUCKETS;
+        public static final String BUCKETS_0_KEY_PTR = SLASH + BUCKETS + SLASH + ZERO + SLASH + "key";
+        public static final String ID_BUCKETS = SLASH + ID + SLASH + BUCKETS;
+        public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
 
         private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
             "docCount", COUNT,

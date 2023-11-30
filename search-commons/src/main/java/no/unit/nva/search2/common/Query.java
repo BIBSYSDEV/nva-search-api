@@ -1,23 +1,20 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.constant.Words.AMPERSAND;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.constant.Words.PLUS;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
-import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.dto.PagedSearch;
-import no.unit.nva.search2.dto.PagedSearchBuilder;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
-import org.opensearch.common.collect.Tuple;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -35,33 +32,36 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.AMPERSAND;
-import static no.unit.nva.search2.constant.Words.COLON;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.EQUAL;
-import static no.unit.nva.search2.constant.Words.PLUS;
-import static no.unit.nva.search2.constant.Words.RESOURCES;
-import static no.unit.nva.search2.constant.Words.SEARCH;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.StringUtils.SPACE;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
+import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.dto.PagedSearch;
+import no.unit.nva.search2.dto.PagedSearchBuilder;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ParamKind;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+import org.opensearch.common.collect.Tuple;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
+
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
+
 
     protected abstract K getFieldsKey();
 
@@ -75,7 +75,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
 
     protected abstract Tuple<String, SortOrder> expandSortKeys(String... strings);
 
-
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
@@ -83,14 +82,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         mediaType = MediaType.JSON_UTF_8;
     }
 
-    public String doSearch(OpenSearchClient<?,?> queryClient) {
-        final var response = queryClient.doSearch(this);
+    public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
+        final var response = queryClient.doSearch((Q) this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
-            ? toCsvText(response)
-            : toPagedResponse(response).toJsonString();
+            ? toCsvText((SwsResponse) response)
+            : toPagedResponse((SwsResponse) response).toJsonString();
+
     }
 
-    private String toCsvText(SwsResponse response) {
+    protected String toCsvText(SwsResponse response) {
         return CsvTransformer.transform(response.getSearchHits());
     }
 
@@ -116,7 +116,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
-                .addChild(RESOURCES, SEARCH)
+                .addChild(Words.RESOURCES, Words.SEARCH)
                 .getUri();
     }
 
@@ -134,7 +134,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         Stream.of(searchParameters.entrySet(), pageParameters.entrySet())
             .flatMap(Set::stream)
             .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-            .forEach(entry -> results.put(toNvaSearchApiKey(entry), entry.getValue().replace(SPACE, PLUS)));
+            .forEach(entry -> results.put(toNvaSearchApiKey(entry), entry.getValue().replace(Words.SPACE, PLUS)));
         return results;
     }
 
@@ -206,7 +206,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     }
 
     public void setMediaType(String mediaType) {
-        if (nonNull(mediaType) && mediaType.contains("text/csv")) {
+        if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
             this.mediaType = MediaType.JSON_UTF_8;
@@ -232,7 +232,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
 
     protected static String mergeParameters(String oldValue, String newValue) {
         if (nonNull(oldValue)) {
-            var delimiter = newValue.matches("asc|desc") ? COLON : COMMA;
+            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
             return String.join(delimiter, oldValue, newValue);
         } else {
             return newValue;
@@ -260,12 +260,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     protected static URI nextResultsBySortKey(
         SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
 
-        requestParameter.remove("FROM");
+        requestParameter.remove(Words.FROM);
         var sortedP =
             response.getSort().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(COMMA));
-        requestParameter.put("SEARCH_AFTER", sortedP);
+        requestParameter.put(Words.SEARCH_AFTER, sortedP);
         return fromUri(gatewayUri)
             .addQueryParameters(requestParameter)
             .getUri();
@@ -290,10 +290,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
         var bq = QueryBuilders.boolQuery();
         getOpenSearchParameters()
             .forEach((key, value) -> {
-                if (key.name().equals("SEARCH_ALL")) {
+                if (Words.SEARCH_ALL.equals(key.name())) {
 
                     bq.must(multiMatchQuery(key,getFieldsKey()));
-                } else if (key.fieldType().equals(ParameterKey.ParamKind.KEYWORD)) {
+                } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
                     QueryBuilderTools.addKeywordQuery(key, value, bq);
                 } else {
                     switch (key.searchOperator()) {
