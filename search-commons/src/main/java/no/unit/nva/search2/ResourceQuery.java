@@ -165,7 +165,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             var qpKey = keyFromString(key);
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, value);
-                case FIELDS -> query.setPagingValue(qpKey, expandFields(value));
+                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(value));
                 case SORT -> mergeToPagingKey(SORT, trimSpace(value));
                 case SORT_ORDER -> mergeToPagingKey(SORT, value);
                 case CREATED_BEFORE, CREATED_SINCE,
@@ -221,6 +221,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             if (fromSortKey(entry.getKey()) == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
             }
+            entry.getValue();
         }
     }
 }

@@ -82,7 +82,7 @@ class ResourceClientTest {
     }
 
     @Nested
-    class QueryOpensearchInstance {
+    class ResourceQueries {
 
         @Test
         void shoulCheckMapping() {
@@ -145,14 +145,14 @@ class ResourceClientTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
-
-            var csvResult = ResourceQuery.builder()
-                                .fromQueryParameters(queryToMapEntries(uri))
-                                .withRequiredParameters(FROM, SIZE, SORT)
-                                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                                .withMediaType("text/csv")
-                                .build()
-                                .doSearch(searchClient);
+            var csvResult =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE, SORT)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withMediaType("text/csv")
+                    .build()
+                    .doSearch(searchClient);
             assertNotNull(csvResult);
         }
 
@@ -178,13 +178,14 @@ class ResourceClientTest {
         @ParameterizedTest
         @MethodSource("uriInvalidProvider")
         void failToSearchUri(URI uri) {
-            assertThrows(BadRequestException.class,
-                         () -> ResourceQuery.builder()
-                                   .fromQueryParameters(queryToMapEntries(uri))
-                                   .withRequiredParameters(FROM, SIZE)
-                                   .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                                   .build()
-                                   .doSearch(searchClient));
+            assertThrows(
+                BadRequestException.class,
+                () -> ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .doSearch(searchClient));
         }
 
         static Stream<URI> uriSortingProvider() {
@@ -219,8 +220,6 @@ class ResourceClientTest {
                 URI.create("https://x.org/?CONTEXT_TYPE=Report&size=10"),
                 URI.create("https://x.org/?CONTEXT_TYPE_NOT=Report&size=10"),
                 URI.create("https://x.org/?CONTEXT_TYPE_SHOULD=Report&size=10"),
-                //    URI.create("https://x.org/?CONTRIBUTOR_ID"
-                //               + "=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=1"),
                 URI.create("https://x.org/?CONTRIBUTOR=Kate+Robinson,Henrik+Langeland&size=3"),
                 URI.create("https://x.org/?CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd&size=8"),
                 URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254&size=2"),

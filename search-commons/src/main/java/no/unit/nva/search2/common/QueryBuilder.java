@@ -194,8 +194,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         }
     }
 
-
-
     /**
      * returns T.VALID_SEARCH_PARAMETER_KEYS
      */
@@ -258,7 +256,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
             .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }
 
-    protected String expandFields(String value) {
+    protected String ignoreInvalidFields(String value) {
         return ALL.equals(value) || isNull(value)
             ? ALL
             : Arrays.stream(value.split(COMMA))
