@@ -1,11 +1,11 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.model.OpenSearchQuery.queryToMapEntries;
-import static no.unit.nva.search2.model.ParameterKeyResource.FROM;
-import static no.unit.nva.search2.model.ParameterKeyResource.SIZE;
-import static no.unit.nva.search2.model.ParameterKeyResource.SORT;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search2.common.Query.queryToMapEntries;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
+import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -13,17 +13,8 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
-import javax.net.ssl.SSLSession;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -34,8 +25,7 @@ class UserSettingsClientTest {
 
     private UserSettingsClient userSettingsClient;
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClientTest.class);
-    public static final String SAMPLE_USERSETTINGS_RESPONSE
-        = "user_settings.json";
+    public static final String SAMPLE_USER_SETTINGS_RESPONSE = "user_settings.json";
 
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
@@ -43,7 +33,7 @@ class UserSettingsClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         userSettingsClient = new UserSettingsClient(cachedJwtProvider, httpClient);
         when(httpClient.send(any(), any()))
-            .thenReturn(mockedHttpResponse(SAMPLE_USERSETTINGS_RESPONSE));
+            .thenReturn(mockedHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE));
     }
 
     @ParameterizedTest
@@ -72,50 +62,4 @@ class UserSettingsClientTest {
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
 
-
-    @NotNull
-    public static HttpResponse<Object> mockedHttpResponse(String filename) {
-        return new HttpResponse<>() {
-            @Override
-            public int statusCode() {
-                return 200;
-            }
-
-            @Override
-            public HttpRequest request() {
-                return null;
-            }
-
-            @Override
-            public Optional<HttpResponse<Object>> previousResponse() {
-                return Optional.empty();
-            }
-
-            @Override
-            public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
-                                      (s, s2) -> true);
-            }
-
-            @Override
-            public String body() {
-                return stringFromResources(Path.of(filename));
-            }
-
-            @Override
-            public Optional<SSLSession> sslSession() {
-                return Optional.empty();
-            }
-
-            @Override
-            public URI uri() {
-                return null;
-            }
-
-            @Override
-            public HttpClient.Version version() {
-                return null;
-            }
-        };
-    }
 }

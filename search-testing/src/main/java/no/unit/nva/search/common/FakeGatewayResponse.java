@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.PagedSearchDto;
+import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.dto.PagedSearch;
 
 @SuppressWarnings("PMD.ShortMethodName")
 public record FakeGatewayResponse<T>(
@@ -16,16 +16,16 @@ public record FakeGatewayResponse<T>(
     int statusCode,
     Map<String, String> headers) {
 
-    public static FakeGatewayResponse<OpenSearchSwsResponse> ofSwsGatewayResponse(InputStream inputStream)
+    public static FakeGatewayResponse<SwsResponse> ofSwsGatewayResponse(InputStream inputStream)
         throws IOException {
-        var typeReference = new TypeReference<FakeGatewayResponse<OpenSearchSwsResponse>>() {
+        var typeReference = new TypeReference<FakeGatewayResponse<SwsResponse>>() {
         };
         return dtoObjectMapper.readValue(inputStream, typeReference);
     }
 
-    public static FakeGatewayResponse<PagedSearchDto> of(OutputStream outputStream) throws IOException {
+    public static FakeGatewayResponse<PagedSearch> of(OutputStream outputStream) throws IOException {
         var response = ofString(outputStream);
-        var typeReference2 = new TypeReference<PagedSearchDto>() {
+        var typeReference2 = new TypeReference<PagedSearch>() {
         };
         var body = dtoObjectMapper.readValue(response.body(), typeReference2);
         return new FakeGatewayResponse<>(

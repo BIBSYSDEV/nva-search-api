@@ -65,15 +65,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class OpensearchTest {
 
     public static final URI INCLUDED_ORGANIZATION_ID = randomUri();
-    public static final URI EXCLUDED_ORGANIZATION_ID = randomUri();
     public static final long ZERO_HITS_BECAUSE_VIEWING_SCOPE_IS_EMPTY = 0;
     public static final long TWO_HITS_BECAUSE_MATCH_ON_BOTH_INCLUDED_UNITS = 2;
-    public static final long ONE_HIT_BECAUSE_ONE_UNIT_WAS_EXCLUDED = 1;
     public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
     public static final long NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
-    public static final String TEST_TICKETS_MAPPINGS = "test_tickets_mappings.json";
     public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "test_import_candidates_mappings.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
@@ -174,8 +171,8 @@ public class OpensearchTest {
             indexName,
             SortableIdentifier.next()
         );
-        var jsonNode = objectMapperWithEmpty.readValue(inputStreamFromResources(jsonFile),
-                                                       JsonNode.class);
+        var jsonNode = objectMapperWithEmpty
+            .readValue(inputStreamFromResources(jsonFile), JsonNode.class);
 
         return new IndexDocument(eventConsumptionAttributes, jsonNode);
     }
@@ -251,7 +248,7 @@ public class OpensearchTest {
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-            var docCount = response.getAggregations().get("type").get("buckets").get(0).get("docCount").asInt();
+            var docCount = response.getAggregations().get("instanceType").get("buckets").get(0).get("docCount").asInt();
             assertThat(docCount, is(equalTo(1)));
         }
 
@@ -261,8 +258,8 @@ public class OpensearchTest {
             addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
 
             var query = queryWithTermAndAggregation(
-                "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts.administrativeAgreement:\"false\")",
-                                                    IMPORT_CANDIDATES_AGGREGATIONS);
+                "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts"
+                + ".administrativeAgreement:\"false\")", IMPORT_CANDIDATES_AGGREGATIONS);
 
             var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
 
@@ -444,7 +441,7 @@ public class OpensearchTest {
                                     "sample_publication_with_several_of_the_same_affiliation.json");
 
                 var query = queryWithTermAndAggregation(
-                    "fundings.source.identifier.keyword:\"NFR\"",
+                    "fundings.source.identifier:\"NFR\"",
                     ApplicationConstants.RESOURCES_AGGREGATIONS);
 
                 var response = searchClient.searchWithSearchDocumentQuery(query, indexName);

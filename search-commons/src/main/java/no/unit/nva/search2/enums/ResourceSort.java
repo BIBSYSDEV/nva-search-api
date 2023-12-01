@@ -1,8 +1,9 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.enums;
 
-import static no.unit.nva.search2.constant.ApplicationConstants.UNDERSCORE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -10,32 +11,35 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import no.unit.nva.search2.constant.Resource;
+import no.unit.nva.search2.constant.Words;
 
-public enum ResourceSortKeys {
-    INVALID(""),
-    CATEGORY("entityDescription.reference.publicationInstance.type"),
-    CREATED_DATE("createdDate"),
-    MODIFIED_DATE("modifiedDate"),
-    PUBLISHED_DATE("publishedDate"),
-    TITLE("entityDescription.mainTitle"),
-    UNIT_ID("entityDescription.contributors.affiliation.id"),
-    USER("(?i)(user)|(owner)", "resourceOwner.owner");
+public enum ResourceSort {
+    INVALID(EMPTY_STRING),
+    CATEGORY(Resource.PUBLICATION_INSTANCE_TYPE),
+    INSTANCE_TYPE(Resource.PUBLICATION_INSTANCE_TYPE),
+    CREATED_DATE(Words.CREATED_DATE),
+    MODIFIED_DATE(Words.MODIFIED_DATE),
+    PUBLISHED_DATE(Words.PUBLISHED_DATE),
+    TITLE(Resource.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
+    UNIT_ID(Resource.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
+    USER("(?i)(user)|(owner)", Resource.RESOURCE_OWNER_OWNER_KEYWORD);
 
-    public static final Set<ResourceSortKeys> VALID_SORT_PARAMETER_KEYS =
-        Arrays.stream(ResourceSortKeys.values())
-            .sorted(ResourceSortKeys::compareAscending)
+    public static final Set<ResourceSort> VALID_SORT_PARAMETER_KEYS =
+        Arrays.stream(ResourceSort.values())
+            .sorted(ResourceSort::compareAscending)
             .skip(1)    // skip INVALID
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
     private final String fieldName;
 
-    ResourceSortKeys(String pattern, String fieldName) {
+    ResourceSort(String pattern, String fieldName) {
         this.keyValidationRegEx = pattern;
         this.fieldName = fieldName;
     }
 
-    ResourceSortKeys(String fieldName) {
+    ResourceSort(String fieldName) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.fieldName = fieldName;
     }
@@ -48,27 +52,27 @@ public enum ResourceSortKeys {
         return fieldName;
     }
 
-    public static ResourceSortKeys fromSortKey(String keyName) {
-        var result = Arrays.stream(ResourceSortKeys.values())
-            .filter(ResourceSortKeys.equalTo(keyName))
+    public static ResourceSort fromSortKey(String keyName) {
+        var result = Arrays.stream(ResourceSort.values())
+            .filter(ResourceSort.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
 
-    public static Predicate<ResourceSortKeys> equalTo(String name) {
+    public static Predicate<ResourceSort> equalTo(String name) {
         return key -> name.matches(key.getKeyPattern());
     }
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ResourceSortKeys::name)
+            .map(ResourceSort::name)
             .map(String::toLowerCase)
             .toList();
     }
 
-    private static int compareAscending(ResourceSortKeys key1, ResourceSortKeys key2) {
+    private static int compareAscending(ResourceSort key1, ResourceSort key2) {
         return key1.ordinal() - key2.ordinal();
     }
 

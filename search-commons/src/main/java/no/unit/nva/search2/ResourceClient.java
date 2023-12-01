@@ -13,15 +13,15 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search2.model.OpenSearchClient;
-import no.unit.nva.search2.model.OpenSearchSwsResponse;
-import no.unit.nva.search2.model.QueryBuilderSourceWrapper;
+import no.unit.nva.search2.common.OpenSearchClient;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.common.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResourceClient implements OpenSearchClient<OpenSearchSwsResponse, ResourceQuery> {
+public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery> {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClient.class);
 
@@ -47,7 +47,7 @@ public class ResourceClient implements OpenSearchClient<OpenSearchSwsResponse, R
     }
 
     @Override
-    public OpenSearchSwsResponse doSearch(ResourceQuery query) {
+    public SwsResponse doSearch(ResourceQuery query) {
         return
             query.createQueryBuilderStream(userSettingsClient)
                 .map(this::createRequest)
@@ -58,7 +58,7 @@ public class ResourceClient implements OpenSearchClient<OpenSearchSwsResponse, R
 
 
     @JacocoGenerated
-    private HttpRequest createRequest(QueryBuilderSourceWrapper qbs) {
+    private HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.info(qbs.source().query().toString());
         return HttpRequest
                    .newBuilder(qbs.requestUri())
@@ -74,11 +74,11 @@ public class ResourceClient implements OpenSearchClient<OpenSearchSwsResponse, R
     }
 
     @JacocoGenerated
-    private OpenSearchSwsResponse handleResponse(HttpResponse<String> response) {
+    private SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
         }
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), OpenSearchSwsResponse.class))
+        return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
                    .orElseThrow();
     }
 

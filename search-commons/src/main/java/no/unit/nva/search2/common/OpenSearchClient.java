@@ -1,7 +1,7 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.ApplicationConstants.SEARCH_INFRASTRUCTURE_CREDENTIALS;
-import static no.unit.nva.search2.constant.ApplicationConstants.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import java.net.URI;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
@@ -12,27 +12,27 @@ import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.jetbrains.annotations.NotNull;
 
-public interface OpenSearchClient<R,Q extends OpenSearchQuery<?>> {
+public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
-    R doSearch(Q query);
+    public abstract R doSearch(Q query);
 
     @NotNull
     @JacocoGenerated
-    static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
+    public static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
         return Stream.of(
             secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
     }
 
     @NotNull
     @JacocoGenerated
-    static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
+    public static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
         var uri = URI.create(readSearchInfrastructureAuthUri());
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
 
     @NotNull
     @JacocoGenerated
-    static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
+    public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
         return
             getUsernamePasswordStream(reader)
                 .map(OpenSearchClient::getCognitoCredentials)

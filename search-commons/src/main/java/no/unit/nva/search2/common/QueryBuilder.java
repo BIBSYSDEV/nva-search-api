@@ -1,19 +1,31 @@
-package no.unit.nva.search2.model;
+package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.Query.mergeWithColonOrComma;
+import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.constant.Words.ALL;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
+import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import no.unit.nva.search2.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +34,12 @@ import org.slf4j.LoggerFactory;
  * @param <K> Enum of QueryParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q extends OpenSearchQuery<K>> {
+public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(OpenSearchQueryBuilder.class);
+    protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient OpenSearchQuery<K> query;
+    protected final transient Query<K> query;
     protected transient boolean notValidated = true;
 
     /**
@@ -39,7 +51,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * .build()
      * </samp>
      */
-    public OpenSearchQueryBuilder(OpenSearchQuery<K> query) {
+    public QueryBuilder(Query<K> query) {
         this.query = query;
     }
 
@@ -59,12 +71,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * Validator of CristinQuery.Builder.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public OpenSearchQueryBuilder<K, Q> validate() throws BadRequestException {
+    public QueryBuilder<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : query.queryParameters.entrySet()) {
+        for (var entry : query.pageParameters.entrySet()) {
             validatesEntrySet(entry);
         }
-        for (var entry : query.luceneParameters.entrySet()) {
+        for (var entry : query.searchParameters.entrySet()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -73,7 +85,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
         if (!invalidKeys.isEmpty()) {
             throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys,validKeys()));
         }
-        validateSort();
+        validatedSort();
         applyRulesAfterValidation();
         notValidated = false;
         return this;
@@ -82,7 +94,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     /**
      * Adds query and path parameters from requestInfo.
      */
-    public final OpenSearchQueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
+    public final QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.setMediaType(requestInfo.getHeaders().get("Accept"));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());
         return fromQueryParameters(requestInfo.getQueryParameters());
@@ -92,7 +104,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     /**
      * Adds parameters from query.
      */
-    public OpenSearchQueryBuilder<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
+    public QueryBuilder<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
         parameters.forEach(this::setEntryValue);
         return this;
     }
@@ -100,7 +112,7 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
     /**
      * Adds parameters from query.
      */
-    public OpenSearchQueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
+    public QueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
@@ -110,13 +122,13 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * @param requiredParameters comma seperated QueryParameterKeys
      */
     @SafeVarargs
-    public final OpenSearchQueryBuilder<K, Q> withRequiredParameters(K... requiredParameters) {
+    public final QueryBuilder<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
         query.otherRequiredKeys.addAll(tmpSet);
         return this;
     }
 
-    public final OpenSearchQueryBuilder<K, Q> withMediaType(String mediaType) {
+    public final QueryBuilder<K, Q> withMediaType(String mediaType) {
         query.setMediaType(mediaType);
         return this;
     }
@@ -126,19 +138,12 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
      * When running docker tests, the current host needs to be specified.
      * @param  uri URI to local docker test instance
      */
-    public final OpenSearchQueryBuilder<K, Q> withOpensearchUri(URI uri) {
+    public final QueryBuilder<K, Q> withOpensearchUri(URI uri) {
         query.setOpenSearchUri(uri);
         return this;
     }
 
-
-
-    /**
-     * Validate sort keys.
-     *
-     * @throws BadRequestException if sort key is invalid
-     */
-    protected abstract void validateSort() throws BadRequestException;
+    protected abstract boolean isKeyValid(String keyName);
 
     /**
      * Sample code for assignDefaultValues.
@@ -170,11 +175,33 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
 
     protected abstract void applyRulesAfterValidation();
 
+    protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
 
     /**
-     * returns T.VALID_LUCENE_PARAMETER_KEYS
+     * Validate sort keys.
+     *
+     * @throws BadRequestException if sort key is invalid
      */
-    protected abstract Collection<String> validKeys();
+    protected void validatedSort() throws BadRequestException {
+        var sortEntries = query.getSort();
+        if (isNull(sortEntries)) {
+            return;
+        }
+        try {
+            query.getSortStream().forEach(this::validateSortEntry);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
+    /**
+     * returns T.VALID_SEARCH_PARAMETER_KEYS
+     */
+    protected Collection<String> validKeys() {
+        return VALID_SEARCH_PARAMETER_KEYS.stream()
+                   .map(ParameterKey::fieldName)
+                   .toList();
+    }
 
     @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {
@@ -192,15 +219,14 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
 
     protected Set<K> required() {
         return query.otherRequiredKeys;
-
     }
 
     @JacocoGenerated
     protected Set<K> requiredMissing() {
         return
             required().stream()
-                .filter(key -> !query.luceneParameters.containsKey(key))
-                .filter(key -> !query.queryParameters.containsKey(key))
+                .filter(key -> !query.searchParameters.containsKey(key))
+                .filter(key -> !query.pageParameters.containsKey(key))
                 .collect(Collectors.toSet());
     }
 
@@ -219,6 +245,27 @@ public abstract class OpenSearchQueryBuilder<K extends Enum<K> & ParameterKey, Q
 
     private void setEntryValue(Map.Entry<String, String> entry) {
         setValue(entry.getKey(), entry.getValue());
+    }
+
+    protected void mergeToPagingKey(K key, String value) {
+        query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+    }
+
+    protected String trimSpace(String value) {
+        return decodeUTF(value)
+            .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
+    }
+
+    protected String ignoreInvalidFields(String value) {
+        return ALL.equals(value) || isNull(value)
+            ? ALL
+            : Arrays.stream(value.split(COMMA))
+                .filter(this::isKeyValid)           // ignoring invalid keys
+                .collect(Collectors.joining(COMMA));
+    }
+
+    public String expandYearToDate(String value) {
+        return value.length() == 4 ? value + JANUARY_FIRST : value;
     }
 
 }
