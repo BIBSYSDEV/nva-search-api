@@ -11,19 +11,19 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.constant.ResourcePaths;
+import no.unit.nva.search2.constant.Resource;
 import no.unit.nva.search2.constant.Words;
 
 public enum ResourceSort {
     INVALID(EMPTY_STRING),
-    CATEGORY(ResourcePaths.PUBLICATION_INSTANCE_TYPE),
-    INSTANCE_TYPE(ResourcePaths.PUBLICATION_INSTANCE_TYPE),
+    CATEGORY(Resource.PUBLICATION_INSTANCE_TYPE),
+    INSTANCE_TYPE(Resource.PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(Words.CREATED_DATE),
     MODIFIED_DATE(Words.MODIFIED_DATE),
     PUBLISHED_DATE(Words.PUBLISHED_DATE),
-    TITLE(ResourcePaths.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
-    UNIT_ID(ResourcePaths.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
-    USER("(?i)(user)|(owner)", ResourcePaths.RESOURCE_OWNER_OWNER_KEYWORD);
+    TITLE(Resource.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
+    UNIT_ID(Resource.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
+    USER("(?i)(user)|(owner)", Resource.RESOURCE_OWNER_OWNER_KEYWORD);
 
     public static final Set<ResourceSort> VALID_SORT_PARAMETER_KEYS =
         Arrays.stream(ResourceSort.values())

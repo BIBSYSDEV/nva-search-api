@@ -43,7 +43,7 @@ import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-public class ResourcePaths {
+public class Resource {
 
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
