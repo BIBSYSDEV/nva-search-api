@@ -12,7 +12,9 @@ import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
+import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
@@ -26,6 +28,8 @@ import static no.unit.nva.search2.enums.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.enums.ResourceSort.INVALID;
 import static no.unit.nva.search2.enums.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -116,6 +120,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .map(ResourceParameter::keyFromString)
                 .map(ParameterKey::searchFields)
                 .flatMap(Collection::stream)
+                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
                 .toArray(String[]::new);
     }
 
@@ -147,6 +152,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
 
         @Override
+        protected boolean isKeyValid(String keyName) {
+            return keyFromString(keyName) != ResourceParameter.INVALID;
+        }
+
+        @Override
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
@@ -158,7 +168,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 }
             });
         }
-
 
         @Override
         protected void setValue(String key, String value) {
@@ -212,16 +221,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
 
         @Override
-        protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ResourceParameter.INVALID;
-        }
-
-        @Override
         protected void validateSortEntry(Entry<String, SortOrder> entry) {
             if (fromSortKey(entry.getKey()) == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
             }
-            entry.getValue();       //  throws error on invalid value
+            attempt(entry::getValue)
+                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
     }
 }
