@@ -12,6 +12,7 @@ public final class Words {
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ASTERISK = "*";
     public static final String BOKMAAL_CODE = "nb";
+    public static final String BUCKETS = "buckets";
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String CONTEXT_TYPE = "contextType";
@@ -31,6 +32,7 @@ public final class Words {
     public static final String IDENTITY = "identity";
     public static final String INSTANCE_TYPE = "instanceType";
     public static final String JANUARY_FIRST = "-01-01";
+    public static final String KEY = "key";
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
     public static final String MAIN_TITLE = "mainTitle";
@@ -44,6 +46,7 @@ public final class Words {
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
     public static final String PROJECTS_ID = "projects.id";
+    public static final String PUBLIC = "public";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
@@ -59,8 +62,9 @@ public final class Words {
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
     public static final String SEARCH_ALL = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
-    public static final String SOURCE = "source";
+    public static final String SLASH = "/";
     public static final String SORT = "SORT";
+    public static final String SOURCE = "source";
     public static final String SPACE = " ";
     public static final String SUFFIX = ")";
     public static final String TEXT_CSV = "text/csv";

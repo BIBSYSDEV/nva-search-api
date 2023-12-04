@@ -1,13 +1,16 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.common.AggregationFormat.Constants.BUCKETS;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SUM_OTHER_DOC_COUNT;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
+import static no.unit.nva.search2.constant.Words.BUCKETS;
 import static no.unit.nva.search2.constant.Words.COUNT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.constant.Words.ID;
+import static no.unit.nva.search2.constant.Words.KEY;
 import static no.unit.nva.search2.constant.Words.LABELS;
 import static no.unit.nva.search2.constant.Words.NAME;
+import static no.unit.nva.search2.constant.Words.SLASH;
 import static no.unit.nva.search2.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +18,6 @@ import com.google.common.collect.Streams;
 import java.util.Map;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonUtils;
-import org.jetbrains.annotations.NotNull;
 
 public final class AggregationFormat {
     public static JsonNode apply(JsonNode aggregations) {
@@ -44,12 +46,10 @@ public final class AggregationFormat {
         return outputAggregationNode;
     }
 
-    @NotNull
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
         return Map.entry(getNormalizedFieldName(entry.getKey()), getBucketOrValue(entry.getValue()));
     }
 
-    @NotNull
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
         return Map.entry(getNormalizedFieldName(entry.getKey()), entry.getValue());
     }
@@ -94,25 +94,22 @@ public final class AggregationFormat {
         return outputAggregationNode;
     }
 
-    @NotNull
     private static String getNormalizedFieldName(String fieldName) {
         return Optional.ofNullable(Constants.AGGREGATION_FIELDS_TO_CHANGE.get(fieldName))
-            .orElse(fieldName.replaceFirst(Constants.PATTERN_IS_WORD_ENDING_WITH_HASHTAG, EMPTY_STRING));
+            .orElse(fieldName.replaceFirst(PATTERN_IS_WORD_ENDING_WITH_HASHTAG, EMPTY_STRING));
     }
 
     static final class Constants {
 
-        public static final String SLASH = "/";
-        public static final String BUCKETS = "buckets";
-
         public static final String BUCKETS_PTR = SLASH + BUCKETS;
-        public static final String BUCKETS_0_KEY_PTR = SLASH + BUCKETS + SLASH + ZERO + SLASH + "key";
+        public static final String BUCKETS_0_KEY_PTR = SLASH + BUCKETS + SLASH + ZERO + SLASH + KEY;
         public static final String ID_BUCKETS = SLASH + ID + SLASH + BUCKETS;
-        public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
 
-        private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE = Map.of(
+        private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE =
+            Map.of(
             "docCount", COUNT,
-            "doc_count", COUNT);
+            "doc_count", COUNT
+            );
     }
 
 }

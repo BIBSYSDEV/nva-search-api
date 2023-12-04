@@ -7,7 +7,12 @@ import java.util.Objects;
 import no.unit.nva.commons.json.JsonSerializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Facet(URI id, String key, Integer count, Map<String, String> labels) implements JsonSerializable {
+public record Facet(
+    URI id,
+    String key,
+    Integer count,
+    Map<String, String> labels
+) implements JsonSerializable {
 
     public Facet {
         Objects.requireNonNull(count);

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.NotNull;
 
 public final class FacetsBuilder {
 
@@ -18,15 +17,15 @@ public final class FacetsBuilder {
             .entrySet().stream()
             .map((entry) -> addIdToFacets(entry, id))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-}
+    }
 
     private static Map<String, List<Facet>> jsonNodeToMapOfFacets(JsonNode aggregations) {
-        final var typeReference = new TypeReference<Map<String, List<Facet>>>() { };
+        final var typeReference = new TypeReference<Map<String, List<Facet>>>() {
+        };
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(aggregations.toPrettyString(), typeReference))
             .orElseThrow();
     }
 
-    @NotNull
     private static Map.Entry<String, List<Facet>> addIdToFacets(Map.Entry<String, List<Facet>> entry, URI id) {
         final var uriwrap = UriWrapper.fromUri(id);
         var facets = entry.getValue().stream()
