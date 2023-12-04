@@ -26,6 +26,7 @@ public final class Words {
     public static final String FROM = "FROM";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
+    public static final String HAS_FILE = "hasFile";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
     public static final String IDENTITY = "identity";
@@ -44,6 +45,7 @@ public final class Words {
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
     public static final String PROJECTS_ID = "projects.id";
+    public static final String PUBLIC = "public";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";

@@ -35,6 +35,8 @@ public final class ImportCandidate {
     public static final String STATUS_TYPE_KEYWORD = "importStatus.candidateStatus.keyword";
     public static final String TYPE_KEYWORD = "type.keyword";
 
+    public static final String ORGANIZATION = "organization";
+    public static final String ORGANIZATIONS = "organizations";
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
         generateSimpleAggregation(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD),
@@ -42,7 +44,7 @@ public final class ImportCandidate {
         generateSimpleAggregation(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
         generateSimpleAggregation(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
         generateSimpleAggregation(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD),
-        generateObjectLabelsAggregation("organization", "organizations"),
+        generateObjectLabelsAggregation(ORGANIZATION, ORGANIZATIONS),
         generateHasFileAggregation()
     );
 }

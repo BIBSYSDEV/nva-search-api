@@ -32,6 +32,7 @@ import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -284,7 +285,7 @@ class ResourcePagedSearchHandlerAwsTest {
     }
 
     public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
-        return Stream.of("text/*", "text/csv");
+        return Stream.of("text/*", Words.TEXT_CSV);
     }
 
     public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {

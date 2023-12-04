@@ -34,6 +34,7 @@ import static no.unit.nva.search2.constant.Resource.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.constant.Resource.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.CREATED_DATE;
@@ -57,6 +58,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import no.unit.nva.search2.constant.Functions;
 import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 
@@ -69,15 +71,14 @@ import nva.commons.core.JacocoGenerated;
 
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParamKind.INVALID),
-    // Parameters converted to Lucene query
+    // Parameters used for filtering
     CONTEXT_TYPE(KEYWORD, MUST, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTOR_ID(KEYWORD, MUST, CONTRIBUTORS_IDENTITY_ID, null,
-                   PATTERN_IS_URI, null),
+    CONTRIBUTOR_ID(KEYWORD, MUST, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
     CONTRIBUTOR(KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
     CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
-    // CONTRIBUTOR_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
+    CONTRIBUTOR_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_IDENTITY),
     // TODO fix definition -> CONTRIBUTOR_SHOULD needs text AND keyword.
     CREATED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, CREATED_DATE),
     CREATED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, CREATED_DATE),
@@ -89,8 +90,9 @@ public enum ResourceParameter implements ParameterKey {
     FUNDING_SOURCE(KEYWORD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(KEYWORD, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    HAS_FILE(ParamKind.BOOLEAN, MUST, Functions.jsonPath(ASSOCIATED_ARTIFACTS, "visibleForNonOwner")),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
-    ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
+    ID_NOT(TEXT, MUST_NOT, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),
     INSTANCE_TYPE(KEYWORD, MUST, PUBLICATION_INSTANCE_TYPE,
                   PATTERN_IS_CATEGORY_KEYS, null, null),
@@ -268,12 +270,12 @@ public enum ResourceParameter implements ParameterKey {
             : INVALID;
     }
 
-    private static boolean ignoreInvalidKey(ResourceParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX;
+    private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
     }
 
-    private static boolean isSearchField(ResourceParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
+    private static boolean isSearchField(ResourceParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 
 }

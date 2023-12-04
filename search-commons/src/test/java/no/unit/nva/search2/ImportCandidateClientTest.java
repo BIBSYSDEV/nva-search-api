@@ -27,6 +27,7 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ImportCandidateParameter;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -107,7 +108,7 @@ class ImportCandidateClientTest {
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
-                .withMediaType("text/csv")
+                .withMediaType(Words.TEXT_CSV)
                 .build()
                 .doSearch(importCandidateClient);
             assertNotNull(csvResult);

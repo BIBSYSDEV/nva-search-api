@@ -180,6 +180,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(value));
+                case HAS_FILE -> query.setSearchingValue(qpKey, toBool(value).toString());
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT,
                     DOI, DOI_NOT, DOI_SHOULD,
@@ -202,6 +203,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 }
                 default -> invalidKeys.add(key);
             }
+        }
+
+        private Boolean inverseBool(String value) {
+            return !toBool(value);
+        }
+
+        private Boolean toBool(String value) {
+            return value.equals("1") ? Boolean.TRUE : Boolean.valueOf(value);
         }
 
         @JacocoGenerated
