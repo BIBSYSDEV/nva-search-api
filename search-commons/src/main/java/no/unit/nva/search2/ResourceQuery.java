@@ -41,7 +41,6 @@ import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -111,7 +110,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return FIELDS;
     }
 
-    @NotNull
     @Override
     protected String[] fieldsToKeyNames(String field) {
         return ALL.equals(field) || isNull(field)
@@ -197,7 +195,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     TITLE, TITLE_NOT, TITLE_SHOULD,
                     TOP_LEVEL_ORGANIZATION,
                     UNIT, UNIT_NOT, UNIT_SHOULD,
-                    USER, USER_NOT, USER_SHOULD -> query.setSearchingValue(qpKey, value);
+                    USER, USER_NOT, USER_SHOULD,
+                    USER_AFFILIATION, USER_AFFILIATION_NOT, USER_AFFILIATION_SHOULD ->
+                    query.setSearchingValue(qpKey, value);
                 case LANG -> {
                     // ignore and continue
                 }

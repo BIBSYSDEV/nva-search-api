@@ -1,16 +1,13 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search2.common.SwsResponse.HitsInfo.Hit;
-import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
-
 import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Objects.nonNull;
+import no.unit.nva.search2.common.SwsResponse.HitsInfo.Hit;
+import nva.commons.core.JacocoGenerated;
 
 public record SwsResponse(
     int took,
@@ -52,7 +49,7 @@ public record SwsResponse(
     }
 
     @JacocoGenerated
-    @NotNull
+
     @Transient
     public Integer getTotalSize() {
         return nonNull(hits)
@@ -61,7 +58,7 @@ public record SwsResponse(
     }
 
     @JacocoGenerated
-    @NotNull
+
     @Transient
     public List<JsonNode> getSearchHits() {
         return
@@ -70,7 +67,6 @@ public record SwsResponse(
                 : List.of();
     }
 
-    @NotNull
     @Transient
     public List<String> getSort() {
         return
