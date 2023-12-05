@@ -105,7 +105,7 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?size=20");
             var query = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .build();
             var response = searchClient.doSearch(query);
@@ -118,7 +118,7 @@ class ResourceClientTest {
             assertThat(aggregations.get("hasFile").size(), is(1));
             assertThat(aggregations.get("hasFile").get(0).count(), is(20));
             assertThat(aggregations.get("fundingSource").size(), is(2));
-            assertThat(aggregations.get("user").size(), is(21));
+            assertThat(aggregations.get("contributorId").size(), is(1));
             assertThat(aggregations.get("topLevelOrganization").size(), is(4));
             assertThat(aggregations.get("topLevelOrganization").get(1).labels().get("nb"),
                        is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
@@ -139,8 +139,6 @@ class ResourceClientTest {
             assertTrue(pagedResult.contains("\"hits\":["));
         }
 
-
-
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
@@ -159,7 +157,6 @@ class ResourceClientTest {
                 logger.info(pagedSearchResourceDto.toJsonString());
             }
 
-
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
@@ -167,11 +164,11 @@ class ResourceClientTest {
 
         @ParameterizedTest
         @MethodSource("uriProvider")
-        void searchWithUriReturnsCSVResponse(URI uri, int expectedCount) throws ApiGatewayException {
+        void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
             var csvResult =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT)
+                    .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
@@ -234,42 +231,44 @@ class ResourceClientTest {
                 URI.create(uriRoot + "useers=hello+world&lang=en"));
         }
 
-        static Stream<? extends Arguments> uriProvider() {
+        static Stream<Arguments> uriProvider() {
             return Stream.of(
                 createArgument("page=0", 20),
-                createArgument("category=ReportResearch&page=0", 10),
-                createArgument("category=ReportResearch,AcademicArticle", 19),
+                createArgument("CATEGORY=ReportResearch&page=0", 10),
+                createArgument("TYPE=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),
                 createArgument("CONTEXT_TYPE=Report", 10),
-                createArgument("CONTEXT_TYPE_NOT=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
+                createArgument("CONTEXT_TYPE_NOT=Report", 10),
                 createArgument("CONTRIBUTOR=Kate+Robinson,Henrik+Langeland", 3),
                 createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2),
+                createArgument("CONTRIBUTOR_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,Peter+Gauer",
                                12),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
                 createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 18),
                 createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 2),
-                createArgument("doi=https://doi.org/10.1371/journal.pone.0047855", 1),
-                createArgument("doi_should=.pone.0047855,pone.0047887", 2),
-                createArgument("funding=AFR:296896", 1),
-                createArgument("funding=NFR:1296896", 2),
-                createArgument("funding=NFR:296896", 2),
-                createArgument("funding_source=Norges+forskningsråd", 2),
-                createArgument("funding_source_not=Norges+forskningsråd", 18),
-                createArgument("funding_source_SHOULD=Norges", 2),
-                createArgument("funding_source=Research+Council+of+Norway+(RCN)", 2),
+                createArgument("DOI=https://doi.org/10.1371/journal.pone.0047855", 1),
+                createArgument("DOI_SHOULD=.pone.0047855,pone.0047887", 2),
+                createArgument("FUNDING=AFR:296896", 1),
+                createArgument("FUNDING=NFR:1296896", 2),
+                createArgument("FUNDING=NFR:296896", 2),
+                createArgument("FUNDING_SOURCE=Norges+forskningsråd", 2),
+                createArgument("FUNDING_SOURCE_NOT=Norges+forskningsråd", 18),
+                createArgument("FUNDING_SOURCE_SHOULD=Norges", 2),
+                createArgument("FUNDING_SOURCE=Research+Council+of+Norway+(RCN)", 2),
                 createArgument("hasFile=1", 19),
-                createArgument("hasFile=true", 19),
-                createArgument("hasFile=0", 1),
+                createArgument("HASFILE=true", 19),
+                createArgument("HAS_FILE=0", 1),
                 createArgument("ID=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
                 createArgument("ID_NOT=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 19),
+                createArgument("ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&query=25e43dc3027e", 10),
                 createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
-                createArgument("id=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
-                createArgument("id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
-                               + "&id_not=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("id_should=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
+                createArgument("ID=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
+                createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
+                               + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
+                createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
                 createArgument("INSTANCE_TYPE=AcademicArticle", 9),
                 createArgument("INSTANCE_TYPE_NOT=AcademicArticle", 11),
                 createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
@@ -285,13 +284,12 @@ class ResourceClientTest {
                                + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 18),
                 createArgument("INSTITUTION_SHOULD=1627.0.0.0", 2),
                 createArgument("INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0", 2),
-                createArgument("INSTITUTION_SHOULD"
-                               + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 2),
+                createArgument("INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 2),
                 createArgument("INSTITUTION_should=194.63.55.0", 1),
                 createArgument("ISBN=9788202535032", 1),
                 createArgument("ISBN_NOT=9788202535032", 19),
                 createArgument("ISBN_SHOULD=9788202535032", 1),
-                createArgument("issn=1872-9460", 0),
+                createArgument("ISSN=1872-9460", 0),
                 createArgument("ISSN=1435-9529", 1),
                 createArgument("ISSN_NOT=1435-9529", 19),
                 createArgument("ISSN_SHOULD=1435-9529", 1),
@@ -318,21 +316,20 @@ class ResourceClientTest {
                 createArgument("MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01", 0),
                 createArgument("PUBLICATION_YEAR=2022", 2),
                 createArgument("PUBLICATION_YEAR_SHOULD=2022", 2),
-                createArgument("fields=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd", 2),
-                createArgument("topLevelOrganization=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+                createArgument("FIELDS=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd", 2),
+                createArgument("TOPLEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
                     , 2),
-                createArgument("published_before=2023-09-29", 5),
-                createArgument("published_since=2023-11-05", 1),
-                createArgument("query=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
-                               + "&id_not=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("query=Forsvarets+høgskole&fields=INSTITUTION", 2),
-                createArgument("query=Forsvarets+høgskole", 2),
-                createArgument("query=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR", 2),
-                createArgument("query=observations&fields=all", 3),
-                createArgument("query=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
-                               + "&fields=INSTITUTION", 1),
-                createArgument("fields=CONTRIBUTOR"
-                               + "&query=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2)
+                createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
+                createArgument("PUBLISHED_SINCE=2023-11-05", 1),
+                createArgument("QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
+                               + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
+                createArgument("QUERY=Forsvarets+høgskole&fields=INSTITUTION", 2),
+                createArgument("QUERY=Forsvarets+høgskole", 2),
+                createArgument("QUERY=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR", 2),
+                createArgument("QUERY=observations&fields=all", 3),
+                createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+                               + "&FIELDS=INSTITUTION", 1),
+                createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2)
             );
         }
     }

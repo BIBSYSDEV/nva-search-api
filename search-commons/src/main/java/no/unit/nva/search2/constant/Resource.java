@@ -6,9 +6,10 @@ import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggrega
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
+import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
-import static no.unit.nva.search2.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.constant.Words.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
@@ -36,8 +37,6 @@ import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
-import static no.unit.nva.search2.constant.Words.USER;
-import static no.unit.nva.search2.constant.Words.USER_AFFILIATION;
 import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
@@ -59,6 +58,7 @@ public class Resource {
         jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR);
     public static final String REFERENCE_DOI_KEYWORD =
         jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD) + PIPE + jsonPath(DOI, KEYWORD);
+    public static final String VISIBLE_FOR_NON_OWNER = jsonPath(ASSOCIATED_ARTIFACTS, "visibleForNonOwner");
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, "isbnList");
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
@@ -75,7 +75,6 @@ public class Resource {
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
         jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = jsonPath(RESOURCE_OWNER, OWNER, KEYWORD);
-
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
         jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD) + PIPE
@@ -110,10 +109,9 @@ public class Resource {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        generateSimpleAggregation(USER, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-        generateSimpleAggregation(USER_AFFILIATION, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
+        generateSimpleAggregation(CONTRIBUTOR_ID, CONTRIBUTORS_IDENTITY_ID)
+            .subAggregation(generateSimpleAggregation(NAME, CONTRIBUTORS_IDENTITY_NAME_KEYWORD)),
         generateSimpleAggregation(TYPE, PUBLICATION_INSTANCE_TYPE),
-        generateSimpleAggregation(CONTEXT_TYPE, PUBLICATION_CONTEXT_TYPE_KEYWORD),
         generateSimpleAggregation(FUNDING_SOURCE, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
             .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),

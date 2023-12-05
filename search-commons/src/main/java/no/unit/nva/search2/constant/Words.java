@@ -16,6 +16,7 @@ public final class Words {
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String CONTEXT_TYPE = "contextType";
+    public static final String CONTRIBUTOR_ID = "contributorId";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COUNT = "count";
     public static final String CREATED_DATE = "createdDate";
@@ -64,7 +65,6 @@ public final class Words {
     public static final String SEARCH_ALL = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SLASH = "/";
-    public static final String SORT = "SORT";
     public static final String SOURCE = "source";
     public static final String SPACE = " ";
     public static final String SUFFIX = ")";
@@ -73,7 +73,6 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
-    public static final String USER = "user";
     public static final String USER_AFFILIATION = "userAffiliation";
     public static final String YEAR = "year";
     public static final String ZERO = "0";

@@ -79,7 +79,10 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
             throw new RuntimeException(response.body());
         }
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
-                   .orElseThrow();
+            .map(result -> {
+                logger.info("Opensearch Response Time: {} ms, TotalSize: {}", result.took(), result.getTotalSize());
+                return result;
+            }).orElseThrow();
     }
 
 }

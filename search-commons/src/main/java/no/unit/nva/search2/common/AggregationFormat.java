@@ -16,6 +16,7 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonUtils;
 
@@ -29,13 +30,13 @@ public final class AggregationFormat {
             .filter(AggregationFormat::ignoreSumOtherDoc)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(entry -> {
-                if (LABELS.equals(entry.getKey())) {
+                if (keyIsLabel(entry)) {
                     outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
-                } else if (NAME.equals(entry.getKey())) {
+                } else if (keyIsName(entry)) {
                     outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-                } else if (entry.getValue().isValueNode()) {
+                } else if (isValueNode(entry)) {
                     outputAggregationNode.set(entry.getKey(), entry.getValue());
-                } else if (entry.getValue().isArray()) {
+                } else if (isArrayNode(entry)) {
                     var arrayNode = JsonUtils.dtoObjectMapper.createArrayNode();
                     entry.getValue().forEach(element -> arrayNode.add(apply(element)));
                     outputAggregationNode.set(entry.getKey(), arrayNode);
@@ -44,6 +45,22 @@ public final class AggregationFormat {
                 }
             });
         return outputAggregationNode;
+    }
+
+    private static boolean isArrayNode(Entry<String, JsonNode> entry) {
+        return entry.getValue().isArray();
+    }
+
+    private static boolean isValueNode(Entry<String, JsonNode> entry) {
+        return entry.getValue().isValueNode();
+    }
+
+    private static boolean keyIsName(Entry<String, JsonNode> entry) {
+        return NAME.equals(entry.getKey());
+    }
+
+    private static boolean keyIsLabel(Entry<String, JsonNode> entry) {
+        return LABELS.equals(entry.getKey());
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -74,7 +91,10 @@ public final class AggregationFormat {
 
     private static JsonNode formatName(JsonNode nodeEntry) {
         var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
-        var keyValue = nodeEntry.at(Constants.BUCKETS_0_KEY_PTR);
+        var keyValue = nodeEntry.at(Constants.BUCKETS_KEY_PTR);
+        if (keyValue.isEmpty()) {
+            keyValue = nodeEntry.at(Constants.KEY_PTR);
+        }
         outputAggregationNode.set(ENGLISH_CODE, keyValue);
         return outputAggregationNode;
     }
@@ -88,7 +108,7 @@ public final class AggregationFormat {
             .map(AggregationFormat::getNormalizedJsonNodeEntry)
             .filter(entry -> !COUNT.equals(entry.getKey()))
             .forEach(node -> {
-                var keyValue = node.getValue().at(Constants.BUCKETS_0_KEY_PTR);
+                var keyValue = node.getValue().at(Constants.BUCKETS_KEY_PTR);
                 outputAggregationNode.set(node.getKey(), keyValue);
             });
         return outputAggregationNode;
@@ -102,7 +122,8 @@ public final class AggregationFormat {
     static final class Constants {
 
         public static final String BUCKETS_PTR = SLASH + BUCKETS;
-        public static final String BUCKETS_0_KEY_PTR = SLASH + BUCKETS + SLASH + ZERO + SLASH + KEY;
+        public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;
+        public static final String BUCKETS_KEY_PTR = SLASH + BUCKETS + KEY_PTR;
         public static final String ID_BUCKETS = SLASH + ID + SLASH + BUCKETS;
 
         private static final Map<String, String> AGGREGATION_FIELDS_TO_CHANGE =
