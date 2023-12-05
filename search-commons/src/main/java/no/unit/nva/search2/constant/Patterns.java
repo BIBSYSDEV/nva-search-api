@@ -10,7 +10,7 @@ public class Patterns {
     public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
     public static final String PATTERN_IS_ASC_DESC_VALUE = "(?i)asc|desc";
     public static final String PATTERN_IS_ASC_OR_DESC_GROUP = "(?i) (asc|desc)";
-    public static final String PATTERN_IS_CATEGORY_KEYS = "(?i)instance.?type|category";
+    public static final String PATTERN_IS_CATEGORY_KEYS = "(?i)type|instance.?type|category";
     public static final String PATTERN_IS_CATEGORY_NOT_KEYS = "(?i)instance.?type.?not|category.?not";
     public static final String PATTERN_IS_CATEGORY_SHOULD_KEYS = "(?i)instance.?type.?should|category.?should";
 

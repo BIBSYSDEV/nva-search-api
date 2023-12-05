@@ -27,6 +27,7 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ImportCandidateParameter;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -59,7 +60,7 @@ class ImportCandidateClientTest {
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-        importCandidateClient = new ImportCandidateClient(cachedJwtProvider, HttpClient.newHttpClient());
+        importCandidateClient = new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
         createIndex();
         populateIndex();
@@ -91,9 +92,6 @@ class ImportCandidateClientTest {
             var swsResponse = importCandidateClient.doSearch(query);
             var pagedResponse = query.toPagedResponse(swsResponse);
 
-            logger.info("returned: " + pagedResponse.hits().size());
-            logger.info("totalHits: " + pagedResponse.totalHits());
-
             assertNotNull(pagedResponse);
             assertThat(pagedResponse.hits().size(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
             assertThat(pagedResponse.totalHits(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
@@ -107,7 +105,7 @@ class ImportCandidateClientTest {
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
-                .withMediaType("text/csv")
+                .withMediaType(Words.TEXT_CSV)
                 .build()
                 .doSearch(importCandidateClient);
             assertNotNull(csvResult);

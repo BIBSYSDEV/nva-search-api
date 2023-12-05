@@ -514,6 +514,72 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /import-candidates2:
+    get:
+      description: "Search for import candidates by given criteria"
+      parameters:
+        - in: query
+          name: query
+          description: "Term to search for in import candidates."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: orderBy
+          description: "Field to order result by."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: sortOrder
+          description: "Order of search results (asc or desc)."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: from
+          description: "Start position from results, 0-based."
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: results
+          description: "Maximum number of import candidates in response."
+          required: false
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchImportCandidatesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedImportCandidateSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /resources:
     get:
       description: "Search for public available publications by given criteria"
@@ -951,42 +1017,62 @@ components:
               description: Publication search results (numberOf = [size])
               items:
                 $ref: '#/components/schemas/Publication'
-    PagedPublicationSearchResponse:
+    PagedSearchResponse:
       type: object
       description: Search meta information, with results
       required:
         - '@context'
         - id
         - totalHits
-        - hits
       properties:
-        '@context':
-          $ref: '#/components/schemas/Context'
         id:
           $ref: '#/components/schemas/Id'
-        nextResults:
-          type: string
-          pattern: 'https:\/\/.*$'
-          description: Link to next page of results, null if this is the last page
-        previousResults:
-          type: string
-          pattern: 'https:\/\/.*$'
-          description: Link to previous page of results, null if this is the first page
         totalHits:
           type: integer
           description: Total number of results from query
         hits:
-          type: array
-          description: Publication search results (numberOf = [size])
-          items:
-            $ref: '#/components/schemas/Publication'
-        nextResultsBySortKey:
+          type: object
+        nextResults:
+          type: string
+          pattern: 'https:\/\/.*$'
+          description: Link to next page of results, null if this is the last page
+        nextSearchAfterResults:
           type: string
           pattern: 'https:\/\/.*$'
           description: Link to next page of results, based on the sort key, null if this is the last page
+        previousResults:
+          type: string
+          pattern: 'https:\/\/.*$'
+          description: Link to previous page of results, null if this is the first page
         aggregations:
           type: object
           description: Entity containing the different facets hit by the search, null if response is beyond the first page.
+        '@context':
+          $ref: '#/components/schemas/Context'
+    PagedPublicationSearchResponse:
+      allOf: # Combines PagedSearchResponse with Publication hits
+        - $ref: '#/components/schemas/PagedSearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: Publication search results (numberOf = [size])
+              items:
+                $ref: '#/components/schemas/Publication'
+    PagedImportCandidateSearchResponse:
+      allOf: # Combines PagedSearchResponse with ImportCandidate hits
+        - $ref: '#/components/schemas/PagedSearchResponse'
+        - type: object
+          required:
+            - hits
+          properties:
+            hits:
+              type: array
+              description: ImportCandidate search results (numberOf = [size])
+              items:
+                $ref: '#/components/schemas/ImportCandidate'
     PublicationSearchCsv:
       type: string
       description: Export publication search results

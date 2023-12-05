@@ -1,7 +1,7 @@
 [versions]
 awsApacheInterceptor = { strictly = 'deb7941e85' }
 awsIon = { strictly = '1.5.1' }
-awsLambdaEvents = { strictly = '3.11.2' }
+awsLambdaEvents = { strictly = '3.11.4' }
 awsLambdaJavaCore = { strictly = '1.2.2' }
 awsSdk2 = { strictly = '2.20.141' }
 com-auth0-jwt = { strictly = '3.18.3' }
@@ -11,11 +11,11 @@ hamcrestJackson = { strictly = '1.2.0' }
 jackson = { strictly = '2.15.2' }
 javers = { strictly = '6.5.1' }
 junit = { strictly = '5.10.0' }
-log4j = { strictly = '2.18.0' }
+log4j = { strictly = '2.22.0' }
 mockito = { strictly = '4.2.0' }
-nvaCommons = { prefer = '1.36.1' }
+nvaCommons = { prefer = '1.36.2' }
 nvaDatamodel = { strictly = '0.20.38' }
-open-csv = { strictly = '5.7.1'}
+open-csv = { strictly = '5.8' }
 openSearchRestClient = { strictly = '2.9.0' }
 opensearch = { strictly = '2.6.0' }
 opensearch-testcontainer  = { strictly = '2.0.0' }

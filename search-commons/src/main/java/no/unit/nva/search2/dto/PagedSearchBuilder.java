@@ -36,6 +36,8 @@ public class PagedSearchBuilder {
 
     public PagedSearchBuilder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset,
                                       Integer size) {
+        requestParameter.remove("page");
+        requestParameter.remove("from");
         this.id = createUriOffsetRef(requestParameter, offset, gatewayUri);
         this.previousResults = createUriOffsetRef(requestParameter, offset - size, gatewayUri);
         this.nextResults = createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
@@ -78,8 +80,9 @@ public class PagedSearchBuilder {
         if (offset < 0) {
             return null;
         }
-
-        params.put("FROM", String.valueOf(offset));
+        if (offset > 0) {
+            params.put("FROM", String.valueOf(offset));
+        }
         return UriWrapper.fromUri(gatewayUri)
             .addQueryParameters(params)
             .getUri();

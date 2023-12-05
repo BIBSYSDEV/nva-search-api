@@ -15,6 +15,7 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
@@ -178,8 +179,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(value));
+                case HAS_FILE -> query.setSearchingValue(qpKey, toBool(value).toString());
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
-                    CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT,
+                    CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
                     FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
@@ -202,6 +204,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 }
                 default -> invalidKeys.add(key);
             }
+        }
+
+        private Boolean toBool(String value) {
+            return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
         }
 
         @JacocoGenerated

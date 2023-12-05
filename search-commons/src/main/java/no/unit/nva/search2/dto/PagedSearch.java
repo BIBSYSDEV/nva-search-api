@@ -2,6 +2,7 @@ package no.unit.nva.search2.dto;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
@@ -12,6 +13,7 @@ import no.unit.nva.commons.json.JsonSerializable;
 public record PagedSearch(
     URI id,
     int totalHits,
+    @JsonInclude()
     List<JsonNode> hits,
     URI nextResults,
     URI nextSearchAfterResults,

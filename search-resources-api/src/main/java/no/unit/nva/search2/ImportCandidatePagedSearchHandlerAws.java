@@ -4,7 +4,6 @@ import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
@@ -17,17 +16,16 @@ import nva.commons.core.JacocoGenerated;
 
 public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
 
-    private final ImportCandidateClient openSearchAwsClient;
+    private final ImportCandidateClient opensearchClient;
     
     @JacocoGenerated
     public ImportCandidatePagedSearchHandlerAws() {
         this(new Environment(), defaultClient());
     }
-    
-    public ImportCandidatePagedSearchHandlerAws(Environment environment,
-                                                ImportCandidateClient openSearchAwsClient) {
+
+    public ImportCandidatePagedSearchHandlerAws(Environment environment, ImportCandidateClient candidateClient) {
         super(Void.class, environment);
-        this.openSearchAwsClient = openSearchAwsClient;
+        this.opensearchClient = candidateClient;
     }
     
     @Override
@@ -35,10 +33,10 @@ public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void
         return
             ImportCandidateQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()
-                .doSearch(openSearchAwsClient);
+                .doSearch(opensearchClient);
     }
     
     @Override

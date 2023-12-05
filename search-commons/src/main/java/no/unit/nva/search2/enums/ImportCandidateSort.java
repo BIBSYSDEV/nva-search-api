@@ -3,6 +3,7 @@ package no.unit.nva.search2.enums;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -14,7 +15,7 @@ import no.unit.nva.search2.constant.ImportCandidate;
 import no.unit.nva.search2.constant.Words;
 
 public enum ImportCandidateSort {
-    INVALID(""),
+    INVALID(EMPTY_STRING),
     COLLABORATION_TYPE(ImportCandidate.COLLABORATION_TYPE_KEYWORD),
     CREATED_DATE(Words.CREATED_DATE),
     INSTANCE_TYPE(ImportCandidate.INSTANCE_TYPE_KEYWORD),

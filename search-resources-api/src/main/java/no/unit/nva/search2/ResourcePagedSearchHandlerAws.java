@@ -4,7 +4,6 @@ import static no.unit.nva.search2.ResourceClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
-import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
@@ -17,16 +16,16 @@ import nva.commons.core.JacocoGenerated;
 
 public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient openSearchAwsClient;
+    private final ResourceClient opensearchClient;
 
     @JacocoGenerated
     public ResourcePagedSearchHandlerAws() {
         this(new Environment(), defaultClient());
     }
 
-    public ResourcePagedSearchHandlerAws(Environment environment, ResourceClient openSearchAwsClient) {
+    public ResourcePagedSearchHandlerAws(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
-        this.openSearchAwsClient = openSearchAwsClient;
+        this.opensearchClient = resourceClient;
     }
 
     @Override
@@ -34,10 +33,10 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()
-                .doSearch(openSearchAwsClient);
+                .doSearch(opensearchClient);
     }
 
     @Override
@@ -45,10 +44,8 @@ public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, Strin
         return HttpURLConnection.HTTP_OK;
     }
 
-
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
-
 }

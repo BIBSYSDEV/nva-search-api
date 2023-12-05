@@ -31,7 +31,7 @@ class UserSettingsClientTest {
     public void setUp() throws IOException, InterruptedException {
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        userSettingsClient = new UserSettingsClient(cachedJwtProvider, httpClient);
+        userSettingsClient = new UserSettingsClient(httpClient, cachedJwtProvider);
         when(httpClient.send(any(), any()))
             .thenReturn(mockedHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE));
     }
