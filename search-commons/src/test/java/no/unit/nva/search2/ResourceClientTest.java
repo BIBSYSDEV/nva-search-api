@@ -67,7 +67,7 @@ class ResourceClientTest {
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-        searchClient = new ResourceClient(cachedJwtProvider, HttpClient.newHttpClient());
+        searchClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider);
         indexName = generateIndexName();
 
         createIndex();
@@ -112,8 +112,6 @@ class ResourceClientTest {
             var aggregations = query.toPagedResponse(response).aggregations();
 
             assertFalse(aggregations.isEmpty());
-            assertThat(aggregations.get("userAffiliation").size(), is(3));
-            assertThat(aggregations.get("contextType").size(), is(3));
             assertThat(aggregations.get("type").size(), is(3));
             assertThat(aggregations.get("hasFile").size(), is(1));
             assertThat(aggregations.get("hasFile").get(0).count(), is(20));

@@ -15,6 +15,7 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
@@ -205,9 +206,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             }
         }
 
-
         private Boolean toBool(String value) {
-            return value.equals("1") ? Boolean.TRUE : Boolean.valueOf(value);
+            return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
         }
 
         @JacocoGenerated

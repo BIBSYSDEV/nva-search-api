@@ -33,7 +33,7 @@ class ResourceClientNoHitsTest {
 
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        resourceClient = new ResourceClient(cachedJwtProvider, httpClient);
+        resourceClient = new ResourceClient(httpClient, cachedJwtProvider);
         var response = mockedHttpResponse(NO_HITS_RESPONSE_JSON);
         when(httpClient.send(any(), any()))
             .thenReturn(response);

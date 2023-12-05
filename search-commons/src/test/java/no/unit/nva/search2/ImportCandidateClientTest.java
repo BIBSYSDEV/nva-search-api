@@ -60,7 +60,7 @@ class ImportCandidateClientTest {
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-        importCandidateClient = new ImportCandidateClient(cachedJwtProvider, HttpClient.newHttpClient());
+        importCandidateClient = new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
         createIndex();
         populateIndex();
@@ -91,9 +91,6 @@ class ImportCandidateClientTest {
 
             var swsResponse = importCandidateClient.doSearch(query);
             var pagedResponse = query.toPagedResponse(swsResponse);
-
-            logger.info("returned: " + pagedResponse.hits().size());
-            logger.info("totalHits: " + pagedResponse.totalHits());
 
             assertNotNull(pagedResponse);
             assertThat(pagedResponse.hits().size(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));

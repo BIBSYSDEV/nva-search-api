@@ -15,7 +15,6 @@ public final class Words {
     public static final String BUCKETS = "buckets";
     public static final String COLON = ":";
     public static final String COMMA = ",";
-    public static final String CONTEXT_TYPE = "contextType";
     public static final String CONTRIBUTOR_ID = "contributorId";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COUNT = "count";
@@ -41,6 +40,7 @@ public final class Words {
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
     public static final String NYNORSK_CODE = "nn";
+    public static final String ONE = "1";
     public static final String ORC_ID = "orcId";
     public static final String OWNER = "owner";
     public static final String OWNER_AFFILIATION = "ownerAffiliation";
@@ -73,7 +73,6 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
-    public static final String USER_AFFILIATION = "userAffiliation";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
 

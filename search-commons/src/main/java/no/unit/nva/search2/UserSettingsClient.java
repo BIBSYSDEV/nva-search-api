@@ -12,29 +12,17 @@ import com.google.common.net.MediaType;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.dto.UserSettings;
-import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserSettingsClient.class);
-    private final CachedJwtProvider jwtProvider;
-    private final HttpClient httpClient;
-    private final HttpResponse.BodyHandler<String> bodyHandler;
-
-    public UserSettingsClient(CachedJwtProvider cachedJwtProvider, HttpClient client) {
-        super();
-        this.jwtProvider = cachedJwtProvider;
-        this.httpClient = client;
-        this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
+    public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+        super(client, cachedJwtProvider);
     }
 
     @Override
@@ -52,9 +40,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
         return query.getOptional(CONTRIBUTOR_ID).stream();
     }
 
-    @JacocoGenerated
     private HttpRequest createRequest(String contributorId) {
-        logger.info(contributorId);
         var userSettingId = UriWrapper.fromHost(readApiHost())
             .addChild("person-preferences")
             .addChild(contributorId)
@@ -68,20 +54,17 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
             .GET().build();
     }
 
-    private HttpResponse<String> fetch(HttpRequest httpRequest) {
-        return attempt(() -> httpClient.send(httpRequest, bodyHandler)).orElseThrow();
-    }
-
-    @JacocoGenerated
-    private UserSettings handleResponse(HttpResponse<String> response) {
+    @Override
+    protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             logger.error("Error fetching user settings: {}", response.body());
             return new UserSettings(Collections.emptyList());
         }
 
-        var settings = attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class));
+        var settings =
+            attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class));
         return settings.isSuccess()
-                   ? settings.get()
-                   : new UserSettings(Collections.emptyList());
+            ? settings.get()
+            : new UserSettings(Collections.emptyList());
     }
 }
