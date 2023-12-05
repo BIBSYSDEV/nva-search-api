@@ -40,7 +40,6 @@ import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -290,7 +289,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .operator(Operator.AND);
     }
 
-    @NotNull
     public static Entry<String, String> stringsToEntry(String... strings) {
         return new Entry<>() {
             @Override
@@ -369,7 +367,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
         }
 
-        @NotNull
         private <T extends Number> T castNumber() {
             return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
         }

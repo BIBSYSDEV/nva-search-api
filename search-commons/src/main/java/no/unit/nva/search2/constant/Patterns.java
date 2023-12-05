@@ -7,8 +7,7 @@ public class Patterns {
 
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
-
-    public static final String PATTERN_IS_ADD_SLASH = "\\\\$1";
+    public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
     public static final String PATTERN_IS_ASC_DESC_VALUE = "(?i)asc|desc";
     public static final String PATTERN_IS_ASC_OR_DESC_GROUP = "(?i) (asc|desc)";
     public static final String PATTERN_IS_CATEGORY_KEYS = "(?i)instance.?type|category";
@@ -42,12 +41,5 @@ public class Patterns {
      * funding source and project_id together separated by ':'
      */
     public static final String PATTERN_IS_FUNDING =  "[\\w]+[:\\s]{1}\\d+";
-
-    /**
-     * Pattern for matching group of opensearch special characters.
-     * - + & | ! ( ) { } [ ] ^ " ~ * ? : \ /
-     *  with the intention of escaping them.
-     */
-    public static final String PATTERN_IS_SPECIAL_CHARACTERS = "([-+&|!\\(\\){}\\[\\]^\\\"\\~*?:\\/])";
 
 }
