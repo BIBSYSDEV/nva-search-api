@@ -1031,7 +1031,7 @@ components:
           type: integer
           description: Total number of results from query
         hits:
-          type: array
+          type: object
         nextResults:
           type: string
           pattern: 'https:\/\/.*$'
