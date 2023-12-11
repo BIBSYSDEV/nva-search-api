@@ -1,5 +1,6 @@
 package no.unit.nva.search2.constant;
 
+import static no.unit.nva.search2.constant.Functions.generateFundingSourceAggregation;
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
@@ -115,6 +116,7 @@ public class Resource {
         generateSimpleAggregation(FUNDING_SOURCE, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
             .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
-        generateHasFileAggregation()
+        generateHasFileAggregation(),
+        generateFundingSourceAggregation()
     );
 }

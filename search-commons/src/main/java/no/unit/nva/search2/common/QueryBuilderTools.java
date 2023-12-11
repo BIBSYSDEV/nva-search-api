@@ -20,8 +20,6 @@ import org.opensearch.index.query.RangeQueryBuilder;
 
 public final class QueryBuilderTools {
 
-    private static final Integer SINGLE_FIELD = 1;
-
     public static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
@@ -53,19 +51,14 @@ public final class QueryBuilderTools {
 
     public static QueryBuilder buildQuery(ParameterKey key, String value) {
         final var values = value.replace(COMMA, SPACE);
-        final var searchFields =
-            key.searchFields().stream()
-                .map(String::trim)
-                .map(trimmed -> !key.fieldType().equals(ParamKind.KEYWORD)
-                    ? trimmed.replace(DOT + KEYWORD, EMPTY_STRING)
-                    : trimmed)
-                .toArray(String[]::new);
+        final var searchFields = getSearchFields(key);
+
         if (hasMultipleFields(searchFields)) {
-            return QueryBuilders
-                .multiMatchQuery(values, searchFields)
+            return QueryBuilders.multiMatchQuery(values, searchFields)
                 .type(Type.BEST_FIELDS)
                 .operator(operatorByKey(key));
         }
+
         var searchField = searchFields[0];
         return QueryBuilders
             .matchQuery(searchField, values)
@@ -74,7 +67,7 @@ public final class QueryBuilderTools {
     }
 
     public static RangeQueryBuilder rangeQuery(ParameterKey key, String value) {
-        final var searchField = key.searchFields().toArray()[0].toString();
+        final var searchField = getFirstSearchField(key);
 
         return switch (key.searchOperator()) {
             case MUST, MUST_NOT, SHOULD -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
@@ -91,7 +84,19 @@ public final class QueryBuilderTools {
         };
     }
 
-    public static boolean hasMultipleFields(String... swsKeys) {
-        return swsKeys.length > SINGLE_FIELD;
+    public static boolean hasMultipleFields(String... keys) {
+        return keys.length > 1;
+    }
+
+    private static String getFirstSearchField(ParameterKey key) {
+        return key.searchFields().toArray()[0].toString();
+    }
+
+    private static String[] getSearchFields(ParameterKey key) {
+        return key.searchFields().stream()
+            .map(String::trim)
+            .map(trimmed -> !key.fieldType().equals(ParamKind.KEYWORD) ? trimmed.replace(DOT + KEYWORD, EMPTY_STRING)
+                : trimmed)
+            .toArray(String[]::new);
     }
 }

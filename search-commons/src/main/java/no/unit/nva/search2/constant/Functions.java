@@ -5,13 +5,16 @@ import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.ID;
+import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.LABELS;
 import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.stream.Stream;
@@ -81,5 +84,15 @@ public final class Functions {
             .subAggregation(
                 generateSimpleAggregation(Words.PUBLIC, jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT))
             );
+    }
+
+    public static NestedAggregationBuilder generateFundingSourceAggregation() {
+        return
+            new NestedAggregationBuilder(FUNDINGS, FUNDINGS)
+                .subAggregation(
+                    generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
+                        .subAggregation(
+                            generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
+                );
     }
 }
