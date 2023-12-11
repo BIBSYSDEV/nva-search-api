@@ -138,6 +138,25 @@ class ResourceClientTest {
         }
 
         @ParameterizedTest
+        @MethodSource("uriPagingProvider")
+        void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
+
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build();
+
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertNotNull(pagedSearchResourceDto);
+            assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(5)));
+        }
+
+        @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
@@ -206,6 +225,16 @@ class ResourceClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .doSearch(searchClient));
+        }
+
+        static Stream<Arguments> uriPagingProvider() {
+            return Stream.of(
+                createArgument("page=0", 20),
+                createArgument("page=1&size=1", 1),
+                createArgument("page=2&size=1", 1),
+                createArgument("page=3&size=1", 1),
+                createArgument("page=0&size=0", 0)
+            );
         }
 
         static Stream<URI> uriSortingProvider() {

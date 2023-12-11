@@ -28,6 +28,7 @@ import static no.unit.nva.search2.enums.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.enums.ImportCandidateSort.fromSortKey;
 import static no.unit.nva.search2.enums.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
@@ -184,15 +185,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected void validateSortEntry(Entry<String, SortOrder> entry) {
-
             if (fromSortKey(entry.getKey()) == INVALID) {
                 throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
             }
-            try {
-                entry.getValue();       //  throws error if invalid value
-            } catch (IllegalStateException e) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
+            attempt(entry::getValue)
+                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
 
         @Override
@@ -206,6 +203,5 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         protected boolean isKeyValid(String keyName) {
             return keyFromString(keyName) != ImportCandidateParameter.INVALID;
         }
-
     }
 }

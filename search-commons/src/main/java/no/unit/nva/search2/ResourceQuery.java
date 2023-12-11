@@ -52,7 +52,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         super();
     }
 
-
     static Builder builder() {
         return new Builder();
     }
