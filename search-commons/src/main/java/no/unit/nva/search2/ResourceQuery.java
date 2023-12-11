@@ -53,7 +53,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         super();
     }
 
-
     static Builder builder() {
         return new Builder();
     }
@@ -77,9 +76,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             builder.searchAfter(sortKeys);
         }
 
-        if (isFirstPage()) {
-            RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
-        }
+        RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
 
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());
