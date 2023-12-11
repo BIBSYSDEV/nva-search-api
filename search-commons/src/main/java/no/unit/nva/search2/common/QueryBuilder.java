@@ -251,6 +251,10 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
     }
 
+    protected void mergeToKey(K key, String value) {
+        query.setSearchingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+    }
+
     protected String trimSpace(String value) {
         return decodeUTF(value)
             .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);

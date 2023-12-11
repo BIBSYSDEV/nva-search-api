@@ -194,11 +194,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     TOP_LEVEL_ORGANIZATION,
                     UNIT, UNIT_NOT, UNIT_SHOULD,
                     USER, USER_NOT, USER_SHOULD,
-                    USER_AFFILIATION, USER_AFFILIATION_NOT, USER_AFFILIATION_SHOULD ->
-                    query.setSearchingValue(qpKey, value);
-                case LANG -> {
-                    // ignore and continue
-                }
+                    USER_AFFILIATION, USER_AFFILIATION_NOT, USER_AFFILIATION_SHOULD -> mergeToKey(qpKey, value);
+                case LANG -> { /* ignore and continue */ }
                 default -> invalidKeys.add(key);
             }
         }
