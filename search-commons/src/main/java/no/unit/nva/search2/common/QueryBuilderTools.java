@@ -8,10 +8,8 @@ import static no.unit.nva.search2.constant.Words.SPACE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ParamKind;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
@@ -24,30 +22,27 @@ public final class QueryBuilderTools {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    public static void addKeywordQuery(ParameterKey key, String value, BoolQueryBuilder bq) {
-        final var searchFields = key.searchFields()
-            .toArray(String[]::new);
-        final var values = Arrays.stream(value.split(COMMA))
-            .map(String::trim)
-            .toArray(String[]::new);
-        final var multipleFields = hasMultipleFields(searchFields);
-
-        Arrays.stream(searchFields).forEach(searchField -> {
-            final var termsQuery = QueryBuilders.termsQuery(searchField, values).boost(key.fieldBoost());
-            switch (key.searchOperator()) {
-                case MUST -> {
-                    if (multipleFields) {
-                        bq.should(termsQuery);
-                    } else {
-                        bq.must(termsQuery);
-                    }
-                }
-                case MUST_NOT -> bq.mustNot(termsQuery);
-                case SHOULD -> bq.should(termsQuery);
-                default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
-            }
-        });
-    }
+    //    public static void addKeywordQuery(ParameterKey key, String value, BoolQueryBuilder bq) {
+    //        final var searchFields = key.searchFields().toArray(String[]::new);
+    //        final var values = Arrays.stream(value.split(COMMA))
+    //            .map(String::trim)
+    //            .toArray(String[]::new);
+    //        final var termsQuery = QueryBuilders.termsQuery(searchField, values).boost(key.fieldBoost());
+    //        Arrays.stream(values).forEach(searchValue -> {
+    //
+    //            final var queryBuilder =
+    //                QueryBuilders.multiMatchQuery(searchValue, searchFields)
+    //                .type(Type.BEST_FIELDS)
+    //                    .operator(Operator.OR);
+    ////                .operator(operatorByKey(key));
+    //            switch (key.searchOperator()) {
+    //                case MUST -> bq.must(queryBuilder);
+    //                case MUST_NOT -> bq.mustNot(queryBuilder);
+    //                case SHOULD -> bq.should(queryBuilder);
+    //                default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
+    //            }
+    //        });
+    //    }
 
     public static QueryBuilder buildQuery(ParameterKey key, String value) {
         final var values = value.replace(COMMA, SPACE);
@@ -92,7 +87,7 @@ public final class QueryBuilderTools {
         return key.searchFields().toArray()[0].toString();
     }
 
-    private static String[] getSearchFields(ParameterKey key) {
+    static String[] getSearchFields(ParameterKey key) {
         return key.searchFields().stream()
             .map(String::trim)
             .map(trimmed -> !key.fieldType().equals(ParamKind.KEYWORD) ? trimmed.replace(DOT + KEYWORD, EMPTY_STRING)

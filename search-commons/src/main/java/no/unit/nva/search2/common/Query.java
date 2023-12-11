@@ -11,6 +11,7 @@ import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PLUS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
@@ -37,13 +38,14 @@ import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -257,22 +259,41 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         var bq = QueryBuilders.boolQuery();
         getOpenSearchParameters()
             .forEach((key, value) -> {
+                final var values = getValues(value);
+                QueryBuilder qb;
                 if (Words.SEARCH_ALL.equals(key.name())) {
-
-                    bq.must(multiMatchQuery(key, getFieldsKey()));
-                } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
-                    QueryBuilderTools.addKeywordQuery(key, value, bq);
+                    qb = multiMatchQuery(key, getFieldsKey());
+                } else if (Words.FUNDING.equals(key.name())) {
+                    qb = QueryBuilders.boolQuery()
+                        .must(
+                            QueryBuilders.termsQuery("fundings.identifier.keyword", values[1]).boost(key.fieldBoost()))
+                        .must(
+                            QueryBuilders.termsQuery("fundings.source.identifier", values[0]).boost(key.fieldBoost()));
+                    //                } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
+                    //                    var localBool = QueryBuilders.boolQuery();
+                    //                    Arrays.stream(getSearchFields(key)).forEach(field ->
+                    //                        localBool.should(QueryBuilders.termsQuery(field, values).boost(key
+                    //                        .fieldBoost())));
+                    //                    qb = localBool;
                 } else {
-                    switch (key.searchOperator()) {
-                        case MUST -> bq.must(QueryBuilderTools.buildQuery(key, value));
-                        case MUST_NOT -> bq.mustNot(QueryBuilderTools.buildQuery(key, value));
-                        case SHOULD -> bq.should(QueryBuilderTools.buildQuery(key, value));
-                        case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
-                        default -> throw new IllegalStateException(UNEXPECTED_VALUE + key.searchOperator());
-                    }
+                    qb = QueryBuilderTools.buildQuery(key, value);
+                }
+                switch (key.searchOperator()) {
+                    case MUST -> bq.must(qb);
+                    case MUST_NOT -> bq.mustNot(qb);
+                    case SHOULD -> bq.should(qb);
+                    case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
+                    default -> throw new IllegalStateException(UNEXPECTED_VALUE + key.searchOperator());
                 }
             });
         return bq;
+    }
+
+    @NotNull
+    private static String[] getValues(String value) {
+        return Arrays.stream(value.split(COMMA + PIPE + COLON))
+            .map(String::trim)
+            .toArray(String[]::new);
     }
 
     /**

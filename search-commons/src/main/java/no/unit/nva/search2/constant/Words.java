@@ -25,6 +25,7 @@ public final class Words {
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
     public static final String FROM = "FROM";
+    public static final String FUNDING = "FUNDING";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HAS_FILE = "hasFile";

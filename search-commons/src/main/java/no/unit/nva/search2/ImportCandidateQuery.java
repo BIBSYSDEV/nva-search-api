@@ -68,9 +68,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             builder.searchAfter(sortKeys);
         }
 
-        if (isFirstPage()) {
-            IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
-        }
+        IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
 
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());

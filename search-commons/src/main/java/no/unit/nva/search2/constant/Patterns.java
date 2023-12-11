@@ -10,9 +10,10 @@ public class Patterns {
     public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
     public static final String PATTERN_IS_ASC_DESC_VALUE = "(?i)asc|desc";
     public static final String PATTERN_IS_ASC_OR_DESC_GROUP = "(?i) (asc|desc)";
-    public static final String PATTERN_IS_CATEGORY_KEYS = "(?i)type|instance.?type|category";
-    public static final String PATTERN_IS_CATEGORY_NOT_KEYS = "(?i)instance.?type.?not|category.?not";
-    public static final String PATTERN_IS_CATEGORY_SHOULD_KEYS = "(?i)instance.?type.?should|category.?should";
+    public static final String PATTERN_IS_CATEGORY_KEYS = "(?i)(type|instance_?type|category)$";
+    public static final String PATTERN_IS_CATEGORY_NOT_KEYS = "(?i)(type_?not|instance_?type_?not|category_?not)$";
+    public static final String PATTERN_IS_CATEGORY_SHOULD_KEYS = "(?i)(type_?should|instance_?type_?should|category_"
+                                                                 + "?should)$";
 
     /**
      * Pattern for matching a date string. yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ
@@ -23,14 +24,14 @@ public class Patterns {
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
-    public static final String PATTERN_IS_PUBLICATION_YEAR_KEYS = "(?i)year.?reported|publication.?year";
-    public static final String PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS = "(?i)year.?reported.?should|publication"
-                                                                         + ".?year.?should";
-    public static final String PATTERN_IS_SEARCH_ALL_KEY = "(?i)search.?all|query";
+    public static final String PATTERN_IS_PUBLICATION_YEAR_KEYS = "(?i)year_?reported|publication_?year";
+    public static final String PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS = "(?i)year_?reported_?should|publication"
+                                                                         + "_?year_?should";
+    public static final String PATTERN_IS_SEARCH_ALL_KEY = "(?i)search_?all|query";
     public static final String PATTERN_IS_SELECTED_GROUP = ":$1";
-    public static final String PATTERN_IS_SIZE_KEY = "(?i)per.?page|results|limit|size";
-    public static final String PATTERN_IS_SORT_KEY = "(?i)order.?by|sort";
-    public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort.?order|order";
+    public static final String PATTERN_IS_SIZE_KEY = "(?i)per_?page|results|limit|size";
+    public static final String PATTERN_IS_SORT_KEY = "(?i)order_?by|sort";
+    public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort_?order|order";
     public static final String PATTERN_IS_SUM_OTHER_DOC_COUNT = PATTERN_IS_IGNORE_CASE + "sum.?other.?doc.?count";
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";

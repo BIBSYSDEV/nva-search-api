@@ -116,7 +116,7 @@ class ResourceClientTest {
             assertThat(aggregations.get("hasFile").size(), is(1));
             assertThat(aggregations.get("hasFile").get(0).count(), is(20));
             assertThat(aggregations.get("fundingSource").size(), is(2));
-            assertThat(aggregations.get("contributorId").size(), is(1));
+            assertThat(aggregations.get("contributorId").size(), is(2));
             assertThat(aggregations.get("topLevelOrganization").size(), is(4));
             assertThat(aggregations.get("topLevelOrganization").get(1).labels().get("nb"),
                        is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
@@ -153,6 +153,8 @@ class ResourceClientTest {
 
             if (expectedCount == 0) {
                 logger.info(pagedSearchResourceDto.toJsonString());
+            } else {
+                logger.info(pagedSearchResourceDto.id().toString());
             }
 
             assertNotNull(pagedSearchResourceDto);
@@ -233,13 +235,14 @@ class ResourceClientTest {
             return Stream.of(
                 createArgument("page=0", 20),
                 createArgument("CATEGORY=ReportResearch&page=0", 10),
-                createArgument("TYPE=ReportResearch,AcademicArticle", 19),
+                createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),
                 createArgument("CONTEXT_TYPE=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
-                createArgument("CONTRIBUTOR=Kate+Robinson,Henrik+Langeland", 3),
-                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
+                createArgument("CONTRIBUTOR=Kate+Robinson,Henrik+Langeland", 1),
+                createArgument("CONTRIBUTOR=Kate+Robinson&CONTRIBUTOR=Henrik+Langeland", 1),
+                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 0),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2),
                 createArgument("CONTRIBUTOR_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,Peter+Gauer",
@@ -249,9 +252,12 @@ class ResourceClientTest {
                 createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 2),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047855", 1),
                 createArgument("DOI_SHOULD=.pone.0047855,pone.0047887", 2),
-                createArgument("FUNDING=AFR:296896", 1),
-                createArgument("FUNDING=NFR:1296896", 2),
-                createArgument("FUNDING=NFR:296896", 2),
+                createArgument("FUNDING=AFR:296896", 0),
+                createArgument("FUNDING=NFR:296896", 1),
+                createArgument("FUNDING=NFR:3333", 0),
+                createArgument("FUNDING_SOURCE=NFR", 2),
+                createArgument("FUNDING_SOURCE=NFR,1234", 1),
+                createArgument("FUNDING_SOURCE=1234", 1),
                 createArgument("FUNDING_SOURCE=Norges+forskningsråd", 2),
                 createArgument("FUNDING_SOURCE_NOT=Norges+forskningsråd", 18),
                 createArgument("FUNDING_SOURCE_SHOULD=Norges", 2),

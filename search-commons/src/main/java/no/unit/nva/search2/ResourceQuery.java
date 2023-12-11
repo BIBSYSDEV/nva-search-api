@@ -20,7 +20,6 @@ import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.FUNDING;
 import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -77,9 +76,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             builder.searchAfter(sortKeys);
         }
 
-        if (isFirstPage()) {
-            RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
-        }
+        RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
 
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());
@@ -221,8 +218,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 }
                 query.removeKey(PAGE);
             }
-            query.getOptional(FUNDING)
-                .ifPresent(funding -> query.setSearchingValue(FUNDING, funding.replaceAll(COLON, COMMA)));
+            //            query.getOptional(FUNDING)
+            //                .ifPresent(funding -> query.setSearchingValue(FUNDING, funding.replaceAll(COLON, COMMA)));
         }
 
         @Override
