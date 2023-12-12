@@ -24,6 +24,19 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools {
 
+    public static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+
+        requestParameter.remove(Words.FROM);
+        var sortedP =
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
+        requestParameter.put(Words.SEARCH_AFTER, sortedP);
+        return fromUri(gatewayUri)
+            .addQueryParameters(requestParameter)
+            .getUri();
+    }
+
     static String[] splitValues(String value) {
         return Arrays.stream(value.split(COMMA))
             .map(String::trim)
@@ -44,34 +57,22 @@ public final class QueryTools {
                 : Collections.emptyList();
     }
 
-    public static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(Words.FROM);
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
-    }
-
-    public static Stream<Entry<ParameterKey, QueryBuilder>> queryToEntry(ParameterKey key, QueryBuilder qb) {
-        final var entry = new Entry<ParameterKey, org.opensearch.index.query.QueryBuilder>() {
+    public static <K extends Enum<K> & ParameterKey> Stream<Entry<K, QueryBuilder>> queryToEntry(K key,
+                                                                                                 QueryBuilder qb) {
+        final var entry = new Entry<K, QueryBuilder>() {
             @Override
-            public ParameterKey getKey() {
+            public K getKey() {
                 return key;
             }
 
             @Override
-            public org.opensearch.index.query.QueryBuilder getValue() {
+            public QueryBuilder getValue() {
                 return qb;
             }
 
             @Override
             @JacocoGenerated
-            public org.opensearch.index.query.QueryBuilder setValue(QueryBuilder value) {
+            public QueryBuilder setValue(QueryBuilder value) {
                 return null;
             }
         };

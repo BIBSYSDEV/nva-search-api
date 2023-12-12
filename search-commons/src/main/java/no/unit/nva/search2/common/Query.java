@@ -220,7 +220,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
 
-
     /**
      * Creates a boolean query, with all the search parameters.
      *
@@ -242,7 +241,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return bq;
     }
 
-    private Stream<Entry<ParameterKey, QueryBuilder>> getQueryBuilders(K key) {
+    private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var values = splitValues(searchParameters.get(key));
         if (isSearchAll(key)) {
             return queryToEntry(key, multiMatchQuery(key, getFieldsKey()));

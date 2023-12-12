@@ -33,7 +33,20 @@ public final class QueryBuilderTools {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    public static <K extends Enum<K> & ParameterKey> Stream<QueryBuilder> buildQuery(K key, String[] values) {
+    public static boolean hasMultipleFields(String... keys) {
+        return keys.length > 1;
+    }
+
+    static String mergeWithColonOrComma(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
+    }
+
+    public static <K extends Enum<K> & ParameterKey> Stream<QueryBuilder> buildQuery(K key, String... values) {
         final var searchFields = getSearchFields(key);
         if (hasMultipleFields(searchFields)) {
             return Arrays.stream(values)
@@ -41,11 +54,10 @@ public final class QueryBuilderTools {
         }
         return Arrays.stream(values)
             .map(singleValue -> getMatchQueryBuilder(key, singleValue));
-
     }
 
-    public static <K extends Enum<K> & ParameterKey> Stream<Entry<ParameterKey, QueryBuilder>> rangeQuery(K key,
-                                                                                                          String value) {
+    public static <K extends Enum<K> & ParameterKey> Stream<Entry<K, QueryBuilder>> rangeQuery(
+        K key, String value) {
         final var searchField = getFirstSearchField(key);
 
         return queryToEntry(key, switch (key.searchOperator()) {
@@ -55,16 +67,17 @@ public final class QueryBuilderTools {
         });
     }
 
-    public static <K extends Enum<K> & ParameterKey> Stream<Entry<ParameterKey, QueryBuilder>> fundingQuery(K key,
-                                                                                                            String value) {
+    public static <K extends Enum<K> & ParameterKey> Stream<Entry<K, QueryBuilder>> fundingQuery(
+        K key, String value) {
         final var values = value.split(COLON);
-        return queryToEntry(key,
-                            QueryBuilders.nestedQuery(
-                                "fundings",
-                                QueryBuilders.boolQuery()
-                                    .must(QueryBuilders.termQuery("fundings.identifier", values[1]))
-                                    .must(QueryBuilders.termQuery("fundings.source.identifier", values[0])),
-                                ScoreMode.None));
+        return queryToEntry(
+            key,
+            QueryBuilders.nestedQuery(
+                "fundings",
+                QueryBuilders.boolQuery()
+                    .must(QueryBuilders.termQuery("fundings.identifier", values[1]))
+                    .must(QueryBuilders.termQuery("fundings.source.identifier", values[0])),
+                ScoreMode.None));
     }
 
     static <K extends Enum<K> & ParameterKey> boolean isNumber(K key) {
@@ -79,8 +92,8 @@ public final class QueryBuilderTools {
         return Words.SEARCH_ALL.equals(key.name());
     }
 
-    private static <K extends Enum<K> & ParameterKey> MatchQueryBuilder getMatchQueryBuilder(K key,
-                                                                                             String singleValue) {
+    private static <K extends Enum<K> & ParameterKey> MatchQueryBuilder getMatchQueryBuilder(
+        K key, String singleValue) {
         final var searchField = getFirstSearchField(key);
         return QueryBuilders
             .matchQuery(searchField, singleValue)
@@ -88,21 +101,11 @@ public final class QueryBuilderTools {
             .operator(operatorByKey(key));
     }
 
-    private static MultiMatchQueryBuilder getMultiMatchQueryBuilder(
-        String singleValue, String[] searchFields) {
+    private static MultiMatchQueryBuilder getMultiMatchQueryBuilder(String singleValue, String... searchFields) {
         return QueryBuilders
             .multiMatchQuery(singleValue, searchFields)
             .type(Type.CROSS_FIELDS)
             .operator(Operator.OR);
-    }
-
-    static String mergeWithColonOrComma(String oldValue, String newValue) {
-        if (nonNull(oldValue)) {
-            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
-            return String.join(delimiter, oldValue, newValue);
-        } else {
-            return newValue;
-        }
     }
 
     private static <K extends Enum<K> & ParameterKey> String[] getSearchFields(K key) {
@@ -124,10 +127,6 @@ public final class QueryBuilderTools {
             case SHOULD, MUST_NOT -> Operator.OR;
             case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         };
-    }
-
-    public static boolean hasMultipleFields(String... keys) {
-        return keys.length > 1;
     }
 
     private static <K extends Enum<K> & ParameterKey> String getFirstSearchField(K key) {
