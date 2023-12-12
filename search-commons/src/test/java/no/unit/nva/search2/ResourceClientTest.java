@@ -271,7 +271,7 @@ class ResourceClientTest {
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
                 createArgument("CONTRIBUTOR=Kate+Robinson,Henrik+Langeland", 1),
                 createArgument("CONTRIBUTOR=Kate+Robinson&CONTRIBUTOR=Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 0),
+                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2),
                 createArgument("CONTRIBUTOR_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,Peter+Gauer",

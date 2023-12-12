@@ -40,7 +40,6 @@ import no.unit.nva.search2.dto.PagedSearchBuilder;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -289,7 +288,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return bq;
     }
 
-    @NotNull
     private static String[] getValues(String value) {
         return Arrays.stream(value.split(COMMA + PIPE + COLON))
             .map(String::trim)
