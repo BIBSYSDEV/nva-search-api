@@ -16,7 +16,6 @@ import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.PLUS;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
@@ -58,16 +57,20 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
+    protected abstract Integer getFrom();
+    protected abstract Integer getSize();
+
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
-
-    protected abstract Integer getFrom();
-
-    protected abstract Integer getSize();
-
     public abstract String getSort();
 
+    /**
+     * Builds URI to query SWS based on post body.
+     *
+     * @return an URI to Sws search without parameters.
+     */
+    protected abstract URI getOpenSearchUri();
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -99,18 +102,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
                 .withAggregations(response.getAggregationsStructured())
                 .build();
-    }
-
-    /**
-     * Builds URI to query SWS based on post body.
-     *
-     * @return an URI to Sws search without parameters.
-     */
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
-                .getUri();
     }
 
 
@@ -245,10 +236,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         final var values = splitValues(searchParameters.get(key));
         if (isSearchAll(key)) {
             return queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+
         } else if (isFundingKey(key)) {
             return QueryBuilderTools.fundingQuery(key, searchParameters.get(key));
         } else if (isNumber(key)) {
-            return QueryBuilderTools.rangeQuery(key, values[0]);
+            return QueryBuilderTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
+
         } else {
             return QueryBuilderTools.buildQuery(key, values)
                 .flatMap(builder -> queryToEntry(key, builder));
@@ -258,7 +251,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private Stream<K> getSearchParameterKeys() {
         return searchParameters.keySet().stream();
     }
-
 
     /**
      * Creates a multi match query, all words needs to be present, within a document.
@@ -274,7 +266,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
             .operator(Operator.AND);
     }
-
 
     @SuppressWarnings({"PMD.ShortMethodName"})
     public class AsType {

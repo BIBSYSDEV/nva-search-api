@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
@@ -15,7 +16,6 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
@@ -29,6 +29,8 @@ import static no.unit.nva.search2.enums.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +39,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
@@ -53,6 +56,46 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    protected Integer getFrom() {
+        return getValue(FROM).as();
+    }
+
+    @Override
+    protected Integer getSize() {
+        return getValue(SIZE).as();
+    }
+
+    @Override
+    protected ResourceParameter getFieldsKey() {
+        return FIELDS;
+    }
+
+    @Override
+    protected String[] fieldsToKeyNames(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            : Arrays.stream(field.split(COMMA))
+                .map(ResourceParameter::keyFromString)
+                .map(ParameterKey::searchFields)
+                .flatMap(Collection::stream)
+                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
+                .toArray(String[]::new);
+    }
+
+    @Override
+    public String getSort() {
+        return getValue(SORT).as();
+    }
+
+    @Override
+    protected URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(Words.RESOURCES, Words.SEARCH)
+                .getUri();
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
@@ -101,39 +144,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return nonNull(promotedPublications) && !promotedPublications.isEmpty();
     }
 
-    @Override
-    protected ResourceParameter getFieldsKey() {
-        return FIELDS;
-    }
-
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
-                .toArray(String[]::new);
-    }
-
-
-    @Override
-    protected Integer getFrom() {
-        return getValue(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return getValue(SIZE).as();
-    }
-
-    @Override
-    public String getSort() {
-        return getValue(SORT).as();
-    }
-
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
 
@@ -170,7 +180,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(value));
-                case HAS_FILE -> query.setSearchingValue(qpKey, toBool(value).toString());
+                case HAS_FILE -> query.setSearchingValue(qpKey, valueToBoolean(value).toString());
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
@@ -194,10 +204,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             }
         }
 
-        private Boolean toBool(String value) {
-            return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
-        }
-
         @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
@@ -210,8 +216,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 }
                 query.removeKey(PAGE);
             }
-            //            query.getOptional(FUNDING)
-            //                .ifPresent(funding -> query.setSearchingValue(FUNDING, funding.replaceAll(COLON, COMMA)));
         }
 
         @Override

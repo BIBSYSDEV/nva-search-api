@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.constant.Words.ONE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
@@ -23,6 +24,10 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools {
+
+    public static Boolean valueToBoolean(String value) {
+        return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
+    }
 
     public static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
 
@@ -57,8 +62,8 @@ public final class QueryTools {
                 : Collections.emptyList();
     }
 
-    public static <K extends Enum<K> & ParameterKey> Stream<Entry<K, QueryBuilder>> queryToEntry(K key,
-                                                                                                 QueryBuilder qb) {
+    public static <K extends Enum<K> & ParameterKey> Stream<Entry<K, QueryBuilder>> queryToEntry(
+        K key, QueryBuilder qb) {
         final var entry = new Entry<K, QueryBuilder>() {
             @Override
             public K getKey() {

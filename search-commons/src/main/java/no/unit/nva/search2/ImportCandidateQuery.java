@@ -54,6 +54,46 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return new Builder();
     }
 
+    @Override
+    protected Integer getFrom() {
+        return getValue(FROM).as();
+    }
+
+    @Override
+    protected Integer getSize() {
+        return getValue(SIZE).as();
+    }
+
+    @Override
+    protected ImportCandidateParameter getFieldsKey() {
+        return ImportCandidateParameter.FIELDS;
+    }
+
+    @Override
+    protected String[] fieldsToKeyNames(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            : Arrays.stream(field.split(COMMA))
+                .map(ImportCandidateParameter::keyFromString)
+                .map(ParameterKey::searchFields)
+                .flatMap(Collection::stream)
+                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
+                .toArray(String[]::new);
+    }
+
+    @Override
+    public String getSort() {
+        return getValue(SORT).as();
+    }
+
+    @Override
+    public URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
+                .getUri();
+    }
+
     public Stream<QueryContentWrapper> createQueryBuilderStream() {
         var queryBuilder =
             this.hasNoSearchValue()
@@ -77,45 +117,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
-    @Override
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
-                .getUri();
-    }
-
-    @Override
-    protected ImportCandidateParameter getFieldsKey() {
-        return ImportCandidateParameter.FIELDS;
-    }
-
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)    // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ImportCandidateParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
-                .toArray(String[]::new);
-    }
-
-    @Override
-    protected Integer getFrom() {
-        return getValue(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return getValue(SIZE).as();
-    }
-
-    @Override
-    public String getSort() {
-        return getValue(SORT).as();
-    }
 
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
