@@ -37,7 +37,6 @@ import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
@@ -258,10 +257,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         getOpenSearchParameters()
             .forEach((key, value) -> {
                 if (Words.SEARCH_ALL.equals(key.name())) {
-
                     bq.must(multiMatchQuery(key, getFieldsKey()));
-                } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
-                    QueryBuilderTools.addKeywordQuery(key, value, bq);
+                    //                } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
+                    //                    QueryBuilderTools.addKeywordQuery(key, value, bq);
                 } else {
                     switch (key.searchOperator()) {
                         case MUST -> bq.must(QueryBuilderTools.buildQuery(key, value));
