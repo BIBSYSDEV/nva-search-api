@@ -2,14 +2,14 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.Query.mergeWithColonOrComma;
-import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.Words.ALL;
+import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
@@ -208,7 +208,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         return isNull(value) || !value.matches(key.valuePattern());
     }
 
-
     protected Set<String> getMissingKeys() {
         return
             requiredMissing()
@@ -247,6 +246,15 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         setValue(entry.getKey(), entry.getValue());
     }
 
+    private String mergeWithColonOrComma(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
+    }
+
     protected void mergeToPagingKey(K key, String value) {
         query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
     }
@@ -256,8 +264,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     }
 
     protected String trimSpace(String value) {
-        return decodeUTF(value)
-            .replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
+        return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }
 
     protected String ignoreInvalidFields(String value) {

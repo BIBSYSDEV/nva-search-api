@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.Query;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,7 +45,7 @@ class ResourceClientNoHitsTest {
 
         var pagedSearchResourceDto =
             ResourceQuery.builder()
-                .fromQueryParameters(Query.queryToMapEntries(uri))
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build()
                 .doSearch(resourceClient);
@@ -58,7 +58,7 @@ class ResourceClientNoHitsTest {
     void uriParamsToResourceParams(URI uri) throws ApiGatewayException {
         var query =
             ResourceQuery.builder()
-                .fromQueryParameters(Query.queryToMapEntries(uri))
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(query.getValue(INSTANCE_TYPE).as());

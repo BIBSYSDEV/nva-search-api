@@ -98,8 +98,7 @@ public enum ResourceParameter implements ParameterKey {
                   PATTERN_IS_CATEGORY_KEYS, null, null),
     INSTANCE_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE,
                       PATTERN_IS_CATEGORY_NOT_KEYS, null, null),
-    INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD,
-                         PUBLICATION_INSTANCE_TYPE,
+    INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_INSTANCE_TYPE,
                          PATTERN_IS_CATEGORY_SHOULD_KEYS, null, null),
     INSTITUTION(KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
@@ -277,5 +276,4 @@ public enum ResourceParameter implements ParameterKey {
     private static boolean isSearchField(ResourceParameter enumParameter) {
         return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
-
 }

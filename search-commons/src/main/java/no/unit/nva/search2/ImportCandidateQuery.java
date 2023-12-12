@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
@@ -16,7 +17,6 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.SEARCH;
-import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_AFTER;
@@ -40,6 +40,7 @@ import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.enums.ImportCandidateParameter;
 import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -53,6 +54,46 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    protected Integer getFrom() {
+        return getValue(FROM).as();
+    }
+
+    @Override
+    protected Integer getSize() {
+        return getValue(SIZE).as();
+    }
+
+    @Override
+    protected ImportCandidateParameter getFieldsKey() {
+        return ImportCandidateParameter.FIELDS;
+    }
+
+    @Override
+    protected String[] fieldsToKeyNames(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            : Arrays.stream(field.split(COMMA))
+                .map(ImportCandidateParameter::keyFromString)
+                .map(ParameterKey::searchFields)
+                .flatMap(Collection::stream)
+                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
+                .toArray(String[]::new);
+    }
+
+    @Override
+    public String getSort() {
+        return getValue(SORT).as();
+    }
+
+    @Override
+    public URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
+                .getUri();
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream() {
@@ -78,50 +119,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
-    @Override
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
-                .getUri();
-    }
-
-    @Override
-    protected ImportCandidateParameter getFieldsKey() {
-        return ImportCandidateParameter.FIELDS;
-    }
-
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)    // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ImportCandidateParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
-                .toArray(String[]::new);
-    }
-
-    @Override
-    protected boolean isFirstPage() {
-        return ZERO.equals(getValue(FROM).toString());
-    }
-
-    @Override
-    protected Integer getFrom() {
-        return getValue(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return getValue(SIZE).as();
-    }
-
-    @Override
-    public String getSort() {
-        return getValue(SORT).as();
-    }
 
     @SuppressWarnings("PMD.GodClass")
     protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
@@ -146,11 +143,14 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
+            var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
+                ? decodeUTF(value)
+                : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, value);
-                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(value));
-                case SORT -> mergeToPagingKey(SORT, trimSpace(value));
-                case SORT_ORDER -> mergeToPagingKey(SORT, value);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, decodedValue);
+                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(decodedValue));
+                case SORT -> mergeToPagingKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToPagingKey(SORT, decodedValue);
                 case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
                     CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
                     CREATED_DATE,
@@ -164,7 +164,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     PUBLISHER, PUBLISHER_NOT, PUBLISHER_SHOULD,
                     SEARCH_ALL,
                     TITLE, TITLE_NOT, TITLE_SHOULD,
-                    TYPE -> query.setSearchingValue(qpKey, value);
+                    TYPE -> query.setSearchingValue(qpKey, decodedValue);
                 default -> invalidKeys.add(key);
             }
         }
