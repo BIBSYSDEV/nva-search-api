@@ -16,7 +16,6 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.SEARCH;
-import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_AFTER;
@@ -101,11 +100,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .flatMap(Collection::stream)
                 .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
                 .toArray(String[]::new);
-    }
-
-    @Override
-    protected boolean isFirstPage() {
-        return ZERO.equals(getValue(FROM).toString());
     }
 
     @Override

@@ -16,7 +16,6 @@ import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
-import static no.unit.nva.search2.constant.Words.ZERO;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
@@ -119,10 +118,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .toArray(String[]::new);
     }
 
-    @Override
-    public boolean isFirstPage() {
-        return ZERO.equals(getValue(FROM).toString());
-    }
 
     @Override
     protected Integer getFrom() {

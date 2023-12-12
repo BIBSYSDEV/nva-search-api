@@ -1,6 +1,7 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
 import static no.unit.nva.search2.enums.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.enums.ResourceParameter.DOI;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
@@ -18,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.Query;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
@@ -36,7 +36,7 @@ class ResourceQueryTest {
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resourceParameters =
             ResourceQuery.builder()
-                .fromQueryParameters(Query.queryToMapEntries(uri))
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         assertNotNull(resourceParameters.getValue(FROM).as());
@@ -59,7 +59,7 @@ class ResourceQueryTest {
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters =
             ResourceQuery.builder()
-                .fromQueryParameters(Query.queryToMapEntries(uri))
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
 
@@ -102,7 +102,7 @@ class ResourceQueryTest {
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resourceParameters = ResourceQuery.builder()
-            .fromQueryParameters(Query.queryToMapEntries(uri))
+            .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, SORT)
             .build();
         assertNotNull(resourceParameters.getValue(FROM).<Long>as());
@@ -114,7 +114,7 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
         assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
-            .fromQueryParameters(Query.queryToMapEntries(uri))
+            .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, DOI)
             .build()
             .getOpenSearchUri());
@@ -124,7 +124,7 @@ class ResourceQueryTest {
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
         assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
-            .fromQueryParameters(Query.queryToMapEntries(uri))
+            .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE)
             .build()
             .getOpenSearchUri());

@@ -1,107 +1,124 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.queryToEntry;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
+import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ParamKind;
-import org.opensearch.index.query.BoolQueryBuilder;
+import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.RangeQueryBuilder;
 
 public final class QueryBuilderTools {
-
-    private static final Integer SINGLE_FIELD = 1;
 
     public static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    //    public static void addKeywordQuery(ParameterKey key, String value, BoolQueryBuilder bq) {
-    //        final var searchFields = key.searchFields().toArray(String[]::new);
-    //        final var values = Arrays.stream(value.split(COMMA))
-    //            .map(String::trim)
-    //            .toArray(String[]::new);
-    //        final var termsQuery = QueryBuilders.termsQuery(searchField, values).boost(key.fieldBoost());
-    //        Arrays.stream(values).forEach(searchValue -> {
-    //
-    //            final var queryBuilder =
-    //                QueryBuilders.multiMatchQuery(searchValue, searchFields)
-    //                .type(Type.BEST_FIELDS)
-    //                    .operator(Operator.OR);
-    ////                .operator(operatorByKey(key));
-    //            switch (key.searchOperator()) {
-    //                case MUST -> bq.must(queryBuilder);
-    //                case MUST_NOT -> bq.mustNot(queryBuilder);
-    //                case SHOULD -> bq.should(queryBuilder);
-    //                default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
-    //            }
-    //        });
-    //    }
-
-    public static QueryBuilder buildQuery(ParameterKey key, String value) {
-        final var values = getSearchTerms(value);
+    public static <K extends Enum<K> & ParameterKey> Stream<QueryBuilder> buildQuery(K key, String[] values) {
         final var searchFields = getSearchFields(key);
         if (hasMultipleFields(searchFields)) {
-            var bqb = new BoolQueryBuilder();
-            Arrays.stream(values)
-                .map(singleValue -> getMultiMatchQueryBuilder(key, singleValue, searchFields))
-                .forEach(bqb::must);
-            return bqb;
+            return Arrays.stream(values)
+                .map(singleValue -> getMultiMatchQueryBuilder(singleValue, searchFields));
         }
+        return Arrays.stream(values)
+            .map(singleValue -> getMatchQueryBuilder(key, singleValue));
 
-        var searchField = searchFields[0];
-        return getMatchQueryBuilder(key, searchField, value);
     }
 
-    private static MatchQueryBuilder getMatchQueryBuilder(ParameterKey key, String searchField, String singleValue) {
+    public static <K extends Enum<K> & ParameterKey> Stream<Entry<ParameterKey, QueryBuilder>> rangeQuery(K key,
+                                                                                                          String value) {
+        final var searchField = getFirstSearchField(key);
+
+        return queryToEntry(key, switch (key.searchOperator()) {
+            case MUST, MUST_NOT, SHOULD -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
+            case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(searchField).gte(value);
+            case LESS_THAN -> QueryBuilders.rangeQuery(searchField).lt(value);
+        });
+    }
+
+    public static <K extends Enum<K> & ParameterKey> Stream<Entry<ParameterKey, QueryBuilder>> fundingQuery(K key,
+                                                                                                            String value) {
+        final var values = value.split(COLON);
+        return queryToEntry(key,
+                            QueryBuilders.nestedQuery(
+                                "fundings",
+                                QueryBuilders.boolQuery()
+                                    .must(QueryBuilders.termQuery("fundings.identifier", values[1]))
+                                    .must(QueryBuilders.termQuery("fundings.source.identifier", values[0])),
+                                ScoreMode.None));
+    }
+
+    static <K extends Enum<K> & ParameterKey> boolean isNumber(K key) {
+        return key.searchOperator() == GREATER_THAN_OR_EQUAL_TO || key.searchOperator() == LESS_THAN;
+    }
+
+    static <K extends Enum<K> & ParameterKey> boolean isFundingKey(K key) {
+        return Words.FUNDING.equals(key.name());
+    }
+
+    static <K extends Enum<K> & ParameterKey> boolean isSearchAll(K key) {
+        return Words.SEARCH_ALL.equals(key.name());
+    }
+
+    private static <K extends Enum<K> & ParameterKey> MatchQueryBuilder getMatchQueryBuilder(K key,
+                                                                                             String singleValue) {
+        final var searchField = getFirstSearchField(key);
         return QueryBuilders
             .matchQuery(searchField, singleValue)
             .boost(key.fieldBoost())
             .operator(operatorByKey(key));
     }
 
-    private static MultiMatchQueryBuilder getMultiMatchQueryBuilder(ParameterKey key, String singleValue,
-                                                                    String[] searchFields) {
+    private static MultiMatchQueryBuilder getMultiMatchQueryBuilder(
+        String singleValue, String[] searchFields) {
         return QueryBuilders
             .multiMatchQuery(singleValue, searchFields)
-            .type(Type.BEST_FIELDS)
-            .operator(operatorByKey(key));
+            .type(Type.CROSS_FIELDS)
+            .operator(Operator.OR);
     }
 
-    private static String[] getSearchTerms(String value) {
-        return value.split(COMMA);
+    static String mergeWithColonOrComma(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
     }
 
-    private static String[] getSearchFields(ParameterKey key) {
+    private static <K extends Enum<K> & ParameterKey> String[] getSearchFields(K key) {
         return key.searchFields().stream()
             .map(String::trim)
-            .map(trimmed -> !key.fieldType().equals(ParamKind.KEYWORD)
+            .map(trimmed -> isNotKeyword(key)
                 ? trimmed.replace(DOT + KEYWORD, EMPTY_STRING)
                 : trimmed)
             .toArray(String[]::new);
     }
 
-    public static RangeQueryBuilder rangeQuery(ParameterKey key, String value) {
-        final var searchField = getFirstSearchField(key);
-
-        return switch (key.searchOperator()) {
-            case MUST, MUST_NOT, SHOULD -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
-            case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(searchField).gte(value);
-            case LESS_THAN -> QueryBuilders.rangeQuery(searchField).lt(value);
-        };
+    private static <K extends Enum<K> & ParameterKey> boolean isNotKeyword(K key) {
+        return !key.fieldType().equals(ParamKind.KEYWORD);
     }
 
-    public static Operator operatorByKey(ParameterKey key) {
+    private static <K extends Enum<K> & ParameterKey> Operator operatorByKey(K key) {
         return switch (key.searchOperator()) {
             case MUST -> Operator.AND;
             case SHOULD, MUST_NOT -> Operator.OR;
@@ -113,15 +130,7 @@ public final class QueryBuilderTools {
         return keys.length > 1;
     }
 
-    private static String getFirstSearchField(ParameterKey key) {
-        return key.searchFields().toArray()[0].toString();
-    }
-
-    static String[] getSearchFields(ParameterKey key) {
-        return key.searchFields().stream()
-            .map(String::trim)
-            .map(trimmed -> !key.fieldType().equals(ParamKind.KEYWORD) ? trimmed.replace(DOT + KEYWORD, EMPTY_STRING)
-                : trimmed)
-            .toArray(String[]::new);
+    private static <K extends Enum<K> & ParameterKey> String getFirstSearchField(K key) {
+        return getSearchFields(key)[0];
     }
 }

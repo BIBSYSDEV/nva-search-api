@@ -2,8 +2,8 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.Query.mergeWithColonOrComma;
 import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryBuilderTools.mergeWithColonOrComma;
 import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;

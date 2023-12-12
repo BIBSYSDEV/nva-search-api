@@ -1,7 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.Query.queryToMapEntries;
+import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -154,6 +154,7 @@ class ResourceClientTest {
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(5)));
+            logger.info(pagedSearchResourceDto.id().toString());
         }
 
         @ParameterizedTest
@@ -233,7 +234,13 @@ class ResourceClientTest {
                 createArgument("page=1&size=1", 1),
                 createArgument("page=2&size=1", 1),
                 createArgument("page=3&size=1", 1),
-                createArgument("page=0&size=0", 0)
+                createArgument("page=0&size=0", 0),
+                createArgument("offset=15&size=2", 2),
+                createArgument("offset=15&limit=2", 2),
+                createArgument("offset=15&results=2", 2),
+                createArgument("offset=15&per_page=2", 2),
+                createArgument("OFFSET=15&PER_PAGE=2", 2),
+                createArgument("offset=15&perPage=2", 2)
             );
         }
 
@@ -271,8 +278,9 @@ class ResourceClientTest {
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
                 createArgument("CONTRIBUTOR=Kate+Robinson,Henrik+Langeland", 1),
                 createArgument("CONTRIBUTOR=Kate+Robinson&CONTRIBUTOR=Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2),
+                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 0),
+                createArgument("CONTRIBUTOR_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,Peter+Gauer",
                                12),
