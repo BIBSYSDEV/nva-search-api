@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
@@ -39,6 +40,7 @@ import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.enums.ImportCandidateParameter;
 import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -141,11 +143,14 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void setValue(String key, String value) {
             var qpKey = keyFromString(key);
+            var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
+                ? decodeUTF(value)
+                : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, value);
-                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(value));
-                case SORT -> mergeToPagingKey(SORT, trimSpace(value));
-                case SORT_ORDER -> mergeToPagingKey(SORT, value);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, decodedValue);
+                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(decodedValue));
+                case SORT -> mergeToPagingKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToPagingKey(SORT, decodedValue);
                 case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
                     CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
                     CREATED_DATE,
@@ -159,7 +164,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     PUBLISHER, PUBLISHER_NOT, PUBLISHER_SHOULD,
                     SEARCH_ALL,
                     TITLE, TITLE_NOT, TITLE_SHOULD,
-                    TYPE -> query.setSearchingValue(qpKey, value);
+                    TYPE -> query.setSearchingValue(qpKey, decodedValue);
                 default -> invalidKeys.add(key);
             }
         }
