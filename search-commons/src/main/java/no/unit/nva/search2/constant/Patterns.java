@@ -9,7 +9,7 @@ public class Patterns {
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
     public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
     public static final String PATTERN_IS_ASC_DESC_VALUE = "(?i)asc|desc";
-    public static final String PATTERN_IS_ASC_OR_DESC_GROUP = "(?i) (asc|desc)";
+    public static final String PATTERN_IS_ASC_OR_DESC_GROUP = "(?i).?(asc|desc)";
     public static final String PATTERN_IS_CATEGORY_KEYS = "(?i)(type|instance_?type|category)$";
     public static final String PATTERN_IS_CATEGORY_NOT_KEYS =
         "(?i)(type_?not|instance_?type_?not|category_?not)$";
