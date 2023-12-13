@@ -35,8 +35,9 @@ public class PagedSearchBuilder {
         );
     }
 
-    public PagedSearchBuilder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset,
-                                      Integer size) {
+    public PagedSearchBuilder withIds(
+        URI gatewayUri, Map<String, String> requestParameter, Integer offset, Integer size
+    ) {
         requestParameter.remove(Words.PAGE);
         requestParameter.remove(Words.FROM);
         this.id = createUriOffsetRef(requestParameter, offset, gatewayUri);
@@ -81,9 +82,7 @@ public class PagedSearchBuilder {
         if (offset < 0) {
             return null;
         }
-        if (offset > 0) {
-            params.put(Words.FROM, String.valueOf(offset));
-        }
+        params.put(Words.FROM, String.valueOf(offset));
         return UriWrapper.fromUri(gatewayUri)
             .addQueryParameters(params)
             .getUri();

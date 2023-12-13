@@ -2,12 +2,8 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryBuilderTools.isFundingKey;
-import static no.unit.nva.search2.common.QueryBuilderTools.isNumber;
-import static no.unit.nva.search2.common.QueryBuilderTools.isSearchAll;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.nextResultsBySortKey;
-import static no.unit.nva.search2.common.QueryTools.queryToEntry;
 import static no.unit.nva.search2.common.QueryTools.splitValues;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
@@ -53,16 +49,20 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
+    protected final transient QueryTools<K> queryTools;
+
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
     protected abstract Integer getFrom();
+
     protected abstract Integer getSize();
 
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
+
     public abstract String getSort();
 
     /**
@@ -76,6 +76,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
+        queryTools = new QueryTools<>();
         mediaType = MediaType.JSON_UTF_8;
     }
 
@@ -103,7 +104,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .withAggregations(response.getAggregationsStructured())
                 .build();
     }
-
 
     /**
      * Query Parameters with string Keys.
@@ -210,7 +210,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
     }
 
-
     /**
      * Creates a boolean query, with all the search parameters.
      *
@@ -234,17 +233,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var values = splitValues(searchParameters.get(key));
-        if (isSearchAll(key)) {
-            return queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
-
-        } else if (isFundingKey(key)) {
-            return QueryBuilderTools.fundingQuery(key, searchParameters.get(key));
-        } else if (isNumber(key)) {
-            return QueryBuilderTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
-
+        if (queryTools.isSearchAll(key)) {
+            return queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+        } else if (queryTools.isFundingKey(key)) {
+            return queryTools.fundingQuery(key, searchParameters.get(key));
+        } else if (queryTools.isNumber(key)) {
+            return queryTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
         } else {
-            return QueryBuilderTools.buildQuery(key, values)
-                .flatMap(builder -> queryToEntry(key, builder));
+            return queryTools.buildQuery(key, values)
+                .flatMap(builder -> queryTools.queryToEntry(key, builder));
         }
     }
 
@@ -318,5 +315,4 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .map(QueryTools::stringsToEntry)
                 .map(QueryTools::entryToSortEntry);
     }
-
 }
