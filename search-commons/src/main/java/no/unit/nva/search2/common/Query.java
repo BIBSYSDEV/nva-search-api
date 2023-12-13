@@ -2,24 +2,19 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryBuilderTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.nextResultsBySortKey;
+import static no.unit.nva.search2.common.QueryTools.splitValues;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.EQUAL;
 import static no.unit.nva.search2.constant.Words.PLUS;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -29,21 +24,19 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.constant.Defaults;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -56,27 +49,32 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
+    protected final transient QueryTools<K> queryTools;
+
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
+    protected abstract Integer getFrom();
+    protected abstract Integer getSize();
+
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
-
-    protected abstract boolean isFirstPage();
-
-    protected abstract Integer getFrom();
-
-    protected abstract Integer getSize();
-
     public abstract String getSort();
 
+    /**
+     * Builds URI to query SWS based on post body.
+     *
+     * @return an URI to Sws search without parameters.
+     */
+    protected abstract URI getOpenSearchUri();
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
+        queryTools = new QueryTools<>();
         mediaType = MediaType.JSON_UTF_8;
     }
 
@@ -103,22 +101,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
                 .withAggregations(response.getAggregationsStructured())
                 .build();
-    }
-
-    /**
-     * Builds URI to query SWS based on post body.
-     *
-     * @return an URI to Sws search without parameters.
-     */
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
-                .getUri();
-    }
-
-    public Map<K, String> getOpenSearchParameters() {
-        return searchParameters;
     }
 
     /**
@@ -151,9 +133,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public Optional<String> getOptional(K key) {
-        return Optional.ofNullable(searchParameters.containsKey(key)
-                                       ? searchParameters.get(key)
-                                       : pageParameters.get(key));
+        return Optional.ofNullable(
+            searchParameters.containsKey(key)
+                ? searchParameters.get(key)
+                : pageParameters.get(key)
+        );
     }
 
     public String removeKey(K key) {
@@ -224,29 +208,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
     }
 
-    protected static String mergeWithColonOrComma(String oldValue, String newValue) {
-        if (nonNull(oldValue)) {
-            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
-            return String.join(delimiter, oldValue, newValue);
-        } else {
-            return newValue;
-        }
-    }
-
-    public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
-        return queryToMapEntries(uri.getQuery());
-    }
-
-    public static Collection<Entry<String, String>> queryToMapEntries(String query) {
-        return
-            nonNull(query)
-                ? Arrays.stream(query.split(AMPERSAND))
-                .map(s -> s.split(EQUAL))
-                .map(Query::stringsToEntry)
-                .toList()
-                : Collections.emptyList();
-    }
-
     /**
      * Creates a boolean query, with all the search parameters.
      *
@@ -255,24 +216,35 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
     protected BoolQueryBuilder boolQuery() {
         var bq = QueryBuilders.boolQuery();
-        getOpenSearchParameters()
-            .forEach((key, value) -> {
-                if (Words.SEARCH_ALL.equals(key.name())) {
-
-                    bq.must(multiMatchQuery(key, getFieldsKey()));
-                } else if (key.fieldType().equals(ParamKind.KEYWORD)) {
-                    QueryBuilderTools.addKeywordQuery(key, value, bq);
-                } else {
-                    switch (key.searchOperator()) {
-                        case MUST -> bq.must(QueryBuilderTools.buildQuery(key, value));
-                        case MUST_NOT -> bq.mustNot(QueryBuilderTools.buildQuery(key, value));
-                        case SHOULD -> bq.should(QueryBuilderTools.buildQuery(key, value));
-                        case GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(QueryBuilderTools.rangeQuery(key, value));
-                        default -> throw new IllegalStateException(UNEXPECTED_VALUE + key.searchOperator());
-                    }
+        getSearchParameterKeys()
+            .flatMap(this::getQueryBuilders)
+            .forEach(entry -> {
+                switch (entry.getKey().searchOperator()) {
+                    case MUST, GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(entry.getValue());
+                    case MUST_NOT -> bq.mustNot(entry.getValue());
+                    case SHOULD -> bq.should(entry.getValue());
+                    default -> throw new IllegalStateException(UNEXPECTED_VALUE + entry.getKey().searchOperator());
                 }
             });
         return bq;
+    }
+
+    private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
+        final var values = splitValues(searchParameters.get(key));
+        if (queryTools.isSearchAll(key)) {
+            return queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+        } else if (queryTools.isFundingKey(key)) {
+            return queryTools.fundingQuery(key, searchParameters.get(key));
+        } else if (queryTools.isNumber(key)) {
+            return queryTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
+        } else {
+            return queryTools.buildQuery(key, values)
+                .flatMap(builder -> queryTools.queryToEntry(key, builder));
+        }
+    }
+
+    private Stream<K> getSearchParameterKeys() {
+        return searchParameters.keySet().stream();
     }
 
     /**
@@ -283,53 +255,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private MultiMatchQueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
         var value = getValue(searchAllKey).toString();
+
         return QueryBuilders
             .multiMatchQuery(value, fields)
             .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
             .operator(Operator.AND);
-    }
-
-    public static Entry<String, String> stringsToEntry(String... strings) {
-        return new Entry<>() {
-            @Override
-            public String getKey() {
-                return strings[0];
-            }
-
-            @Override
-            public String getValue() {
-                return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
-            }
-
-            @Override
-            @JacocoGenerated
-            public String setValue(String value) {
-                return null;
-            }
-        };
-    }
-
-    public static Entry<String, SortOrder> entryToSortEntry(Entry<String, String> entry) {
-        return new Entry<>() {
-            @Override
-            public String getKey() {
-                return entry.getKey();
-            }
-
-            @Override
-            public SortOrder getValue() {
-                var sortOrder = nonNull(entry.getValue()) && !entry.getValue().isEmpty()
-                    ? entry.getValue()
-                    : Defaults.DEFAULT_SORT_ORDER;
-                return SortOrder.fromString(sortOrder);
-            }
-
-            @Override
-            @JacocoGenerated
-            public SortOrder setValue(SortOrder value) {
-                return null;
-            }
-        };
     }
 
     @SuppressWarnings({"PMD.ShortMethodName"})
@@ -380,20 +310,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             ? Stream.of()
             : Arrays.stream(optionalSort.get().split(COMMA))
                 .map(sort -> sort.split(COLON))
-                .map(Query::stringsToEntry)
-                .map(Query::entryToSortEntry);
-    }
-
-    private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(Words.FROM);
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
+                .map(QueryTools::stringsToEntry)
+                .map(QueryTools::entryToSortEntry);
     }
 }

@@ -24,7 +24,8 @@ public final class Words {
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
-    public static final String FROM = "FROM";
+    public static final String FROM = "from";
+    public static final String FUNDING = "FUNDING";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HAS_FILE = "hasFile";
@@ -44,6 +45,7 @@ public final class Words {
     public static final String ORC_ID = "orcId";
     public static final String OWNER = "owner";
     public static final String OWNER_AFFILIATION = "ownerAffiliation";
+    public static final String PAGE = "page";
     public static final String PIPE = "|";
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
@@ -75,5 +77,4 @@ public final class Words {
     public static final String UNDERSCORE = "_";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
-
 }

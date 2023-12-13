@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import no.unit.nva.search2.constant.Words;
 import nva.commons.core.paths.UriWrapper;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,10 +35,11 @@ public class PagedSearchBuilder {
         );
     }
 
-    public PagedSearchBuilder withIds(URI gatewayUri, Map<String, String> requestParameter, Integer offset,
-                                      Integer size) {
-        requestParameter.remove("page");
-        requestParameter.remove("from");
+    public PagedSearchBuilder withIds(
+        URI gatewayUri, Map<String, String> requestParameter, Integer offset, Integer size
+    ) {
+        requestParameter.remove(Words.PAGE);
+        requestParameter.remove(Words.FROM);
         this.id = createUriOffsetRef(requestParameter, offset, gatewayUri);
         this.previousResults = createUriOffsetRef(requestParameter, offset - size, gatewayUri);
         this.nextResults = createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
@@ -80,9 +82,7 @@ public class PagedSearchBuilder {
         if (offset < 0) {
             return null;
         }
-        if (offset > 0) {
-            params.put("FROM", String.valueOf(offset));
-        }
+        params.put(Words.FROM, String.valueOf(offset));
         return UriWrapper.fromUri(gatewayUri)
             .addQueryParameters(params)
             .getUri();

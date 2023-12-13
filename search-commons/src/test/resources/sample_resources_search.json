@@ -344,6 +344,7 @@
           "type": "Contributor",
           "correspondingAuthor": false,
           "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
             "type": "Identity",
             "name": "Dieter Issler"
           },
@@ -441,6 +442,7 @@
           "type": "Contributor",
           "correspondingAuthor": false,
           "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
             "type": "Identity",
             "name": "Dieter Issler"
           },
@@ -536,6 +538,7 @@
           "type": "Contributor",
           "correspondingAuthor": false,
           "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/11111",
             "type": "Identity",
             "name": "Dieter Issler"
           },
