@@ -6,6 +6,7 @@ import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
@@ -54,6 +55,17 @@ public final class Functions {
             .size(Defaults.DEFAULT_AGGREGATION_SIZE);
     }
 
+    public static NestedAggregationBuilder generateFundingSource() {
+
+        return new NestedAggregationBuilder(FUNDING_SOURCE, FUNDINGS)
+            .subAggregation(
+                generateSimpleAggregation(ID, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
+                    .subAggregation(
+                        generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
+                    )
+            );
+    }
+
     public static NestedAggregationBuilder generateObjectLabelsAggregation(String name, String path) {
         return new NestedAggregationBuilder(name, path)
             .subAggregation(generateIdAggregation(path));
@@ -86,13 +98,4 @@ public final class Functions {
             );
     }
 
-    public static NestedAggregationBuilder generateFundingSourceAggregation() {
-        return
-            new NestedAggregationBuilder(FUNDINGS, FUNDINGS)
-                .subAggregation(
-                    generateSimpleAggregation(IDENTIFIER, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
-                        .subAggregation(
-                            generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE)))
-                );
-    }
 }
