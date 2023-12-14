@@ -83,7 +83,7 @@ class ImportCandidateClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ImportCandidateQuery.builder()
+                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)

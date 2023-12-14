@@ -7,6 +7,7 @@ import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CAMEL_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -113,7 +114,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * Adds parameters from query.
      */
     public QueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
-        parameters.forEach(this::setValue);
+        parameters.forEach(this::setKeyValue);
         return this;
     }
 
@@ -171,7 +172,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * }<br>
      * </samp>
      */
-    protected abstract void setValue(String key, String value);
+    protected abstract void setKeyValue(String key, String value);
 
     protected abstract void applyRulesAfterValidation();
 
@@ -243,7 +244,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     }
 
     private void setEntryValue(Map.Entry<String, String> entry) {
-        setValue(entry.getKey(), entry.getValue());
+        setKeyValue(entry.getKey(), entry.getValue());
     }
 
     private String mergeWithColonOrComma(String oldValue, String newValue) {
@@ -255,12 +256,8 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         }
     }
 
-    protected void mergeToPagingKey(K key, String value) {
-        query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
-    }
-
     protected void mergeToKey(K key, String value) {
-        query.setSearchingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+        query.setValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
     }
 
     protected String trimSpace(String value) {
@@ -275,8 +272,20 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                 .collect(Collectors.joining(COMMA));
     }
 
-    public String expandYearToDate(String value) {
+    protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;
+    }
+
+    protected boolean isKeyFormatUnset() {
+        return  query.getKeyFormat() == ParameterKey.KeyFormat.UNSET;
+    }
+
+    protected void assignFormatByKey(String key) {
+        if (key.matches(PATTERN_IS_CAMEL_CASE)) {
+            query.setKeyFormat(ParameterKey.KeyFormat.camelCase);
+        } else {
+            query.setKeyFormat(ParameterKey.KeyFormat.SNAKE_CASE);
+        }
     }
 
 }

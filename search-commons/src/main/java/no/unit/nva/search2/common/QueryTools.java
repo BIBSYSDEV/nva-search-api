@@ -1,5 +1,29 @@
 package no.unit.nva.search2.common;
 
+import no.unit.nva.search2.constant.Defaults;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ParamKind;
+import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
+import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.index.query.MatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.sort.SortOrder;
+
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
@@ -9,34 +33,11 @@ import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.EQUAL;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search2.constant.Defaults;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ParamKind;
-import nva.commons.core.JacocoGenerated;
-import org.apache.lucene.search.join.ScoreMode;
-import org.opensearch.index.query.MatchQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
@@ -82,11 +83,13 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    public static Entry<String, SortOrder> entryToSortEntry(Entry<String, String> entry) {
+    public static Entry<String, SortOrder> entryToSortEntry(Entry<String, String> entry, boolean isCamelCase) {
         return new Entry<>() {
             @Override
             public String getKey() {
-                return entry.getKey();
+                return isCamelCase
+                    ? CaseUtils.toCamelCase(entry.getKey(), false, UNDERSCORE.toCharArray())
+                    : entry.getKey().toLowerCase();
             }
 
             @Override
@@ -105,18 +108,6 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(Words.FROM);
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
-    }
 
     static String[] splitValues(String value) {
         return Arrays.stream(value.split(COMMA))
@@ -186,7 +177,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     boolean isSearchAll(K key) {
-        return Words.SEARCH_ALL.equals(key.name());
+        return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
     }
 
     private boolean hasMultipleFields(String... keys) {

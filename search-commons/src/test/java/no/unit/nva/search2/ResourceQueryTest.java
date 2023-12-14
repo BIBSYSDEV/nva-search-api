@@ -54,6 +54,29 @@ class ResourceQueryTest {
         assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
 
+
+    @ParameterizedTest
+    @MethodSource("uriCamelCaseProvider")
+    void buildOpenSearchUriCamelCase(URI uri) throws BadRequestException {
+        var resourceParameters =
+            ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE, SORT)
+                .build();
+        assertNotNull(resourceParameters.getValue(FROM).as());
+        assertNotNull(resourceParameters.getValue(SIZE).as());
+        var uri2 =
+            UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
+                .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
+
+        logger.info(
+            resourceParameters.toNvaSearchApiRequestParameter()
+                .entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&")));
+        logger.info(uri2.toString());
+        assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
+    }
     @ParameterizedTest
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
@@ -129,6 +152,19 @@ class ResourceQueryTest {
             .build()
             .getOpenSearchUri());
     }
+
+    static Stream<URI> uriCamelCaseProvider() {
+        return Stream.of(
+            URI.create("https://example.com/?CONTEXT_TYPE=Books"),
+            URI.create("https://example.com/?contextType=Books"),
+            URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
+            URI.create("https://example.com/?search_all=Muhammad+Yahya&fields=CONTRIBUTOR"),
+            URI.create("https://example.com/?SEARCH_ALL=Muhammad+Yahya&FIELDS=CONTRIBUTOR"),
+            URI.create("https://example.com/?searchAll=Muhammad+Yahya&fields=CONTRIBUTOR,DOI,context_type")
+        );
+    }
+
+
 
     static Stream<URI> uriProvider() {
         return Stream.of(

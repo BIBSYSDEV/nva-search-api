@@ -63,8 +63,8 @@ public final class Words {
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";
     public static final String SEARCH = "_search";
-    public static final String SEARCH_AFTER = "SEARCH_AFTER";
-    public static final String SEARCH_ALL = "SEARCH_ALL";
+    public static final String SEARCH_AFTER = "search_after";
+    public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SLASH = "/";
     public static final String SOURCE = "source";

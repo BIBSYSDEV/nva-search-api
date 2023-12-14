@@ -87,4 +87,8 @@ public interface ParameterKey {
     enum FieldOperator {
         MUST, MUST_NOT, SHOULD, GREATER_THAN_OR_EQUAL_TO, LESS_THAN
     }
+
+    enum KeyFormat {
+        UNSET, camelCase, SNAKE_CASE
+    }
 }

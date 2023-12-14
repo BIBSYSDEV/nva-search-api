@@ -1,29 +1,18 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.nextResultsBySortKey;
-import static no.unit.nva.search2.common.QueryTools.splitValues;
-import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.COLON;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.PLUS;
-import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.constant.Words;
@@ -31,7 +20,9 @@ import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.ParameterKey.KeyFormat;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -41,6 +32,20 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.splitValues;
+import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.PLUS;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
@@ -52,6 +57,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient QueryTools<K> queryTools;
 
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
+    protected transient KeyFormat keyFormat = KeyFormat.UNSET;
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
@@ -69,6 +75,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * @return an URI to Sws search without parameters.
      */
     protected abstract URI getOpenSearchUri();
+
+    protected abstract boolean isPagingValue(K key);
+
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -113,9 +122,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         Stream.of(searchParameters.entrySet(), pageParameters.entrySet())
             .flatMap(Set::stream)
             .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-            .forEach(entry -> results.put(toNvaSearchApiKey(entry), entry.getValue().replace(Words.SPACE, PLUS)));
+            .forEach(entry -> results.put(toNvaSearchApiKey(entry), toNvaSearchApiValue(entry)));
         return results;
     }
+
 
     /**
      * Get value from Query Parameter Map with key.
@@ -130,6 +140,24 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 : pageParameters.get(key),
             key
         );
+    }
+
+    /**
+     * Add a key value pair to Parameters.
+     *
+     * @param key   to add to.
+     * @param value to assign
+     */
+    public void setValue(K key, String value) {
+        if (nonNull(value)) {
+            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            if (isPagingValue(key)) {
+                pageParameters.put(key, decodedValue);
+            } else {
+                searchParameters.put(key, decodedValue);
+            }
+            searchParameters.put(key, value);
+        }
     }
 
     public Optional<String> getOptional(K key) {
@@ -150,41 +178,28 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return searchParameters.containsKey(key) || pageParameters.containsKey(key);
     }
 
+    protected boolean isCamelCase() {
+        return getKeyFormat() == ParameterKey.KeyFormat.camelCase;
+    }
+
     @JacocoGenerated
     public boolean hasNoSearchValue() {
         return searchParameters.isEmpty();
     }
 
-    /**
-     * Add a key value pair to searchable Parameters.
-     *
-     * @param key   to add to.
-     * @param value to assign
-     */
-    public void setSearchingValue(K key, String value) {
-        if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
-            searchParameters.put(key, decodedValue);
-        }
+    protected KeyFormat getKeyFormat() {
+        return keyFormat;
     }
 
-    /**
-     * Add a key value pair to non-searchable Parameters.
-     *
-     * @param key   to add to.
-     * @param value to assign
-     */
-    public void setPagingValue(K key, String value) {
-        if (nonNull(value)) {
-            pageParameters.put(key, key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value);
-        }
+    protected void setKeyFormat(KeyFormat keyFormat) {
+        this.keyFormat = keyFormat;
     }
 
     private MediaType getMediaType() {
         return mediaType;
     }
 
-    public void setMediaType(String mediaType) {
+    protected void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
@@ -196,16 +211,28 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return gatewayUri;
     }
 
-    public void setNvaSearchApiUri(URI gatewayUri) {
+    protected void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
     }
 
-    public void setOpenSearchUri(URI openSearchUri) {
+    protected void setOpenSearchUri(URI openSearchUri) {
         this.openSearchUri = openSearchUri;
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
+        if (isCamelCase()) {
+            return CaseUtils.toCamelCase(entry.getKey().name(), false, UNDERSCORE.toCharArray());
+        }
         return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
+    }
+
+    protected String toNvaSearchApiValue(Entry<K, String> entry) {
+        if (isCamelCase() && (entry.getKey().fieldName().equals("fields") || entry.getKey().fieldName().equals("sort"))) {
+            return CaseUtils.toCamelCase(entry.getValue(), false, UNDERSCORE.toCharArray())
+                .replace(Words.SPACE, PLUS);
+        } else {
+            return entry.getValue().replace(Words.SPACE, PLUS);
+        }
     }
 
     /**
@@ -262,6 +289,23 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .operator(Operator.AND);
     }
 
+
+    private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+        var searchAfter = isCamelCase()
+            ? CaseUtils.toCamelCase(Words.SEARCH_AFTER, false, UNDERSCORE.toCharArray())
+            : Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
+        requestParameter.remove(Words.FROM);
+        var sortParameter =
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
+        requestParameter.put(searchAfter, sortParameter);
+        return fromUri(gatewayUri)
+            .addQueryParameters(requestParameter)
+            .getUri();
+    }
+
+
     @SuppressWarnings({"PMD.ShortMethodName"})
     public class AsType {
 
@@ -305,12 +349,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
         var optionalSort = Optional.ofNullable(getSort());
-
+        var isCamelCase = getKeyFormat() == KeyFormat.camelCase;
         return optionalSort.isEmpty()
             ? Stream.of()
             : Arrays.stream(optionalSort.get().split(COMMA))
                 .map(sort -> sort.split(COLON))
                 .map(QueryTools::stringsToEntry)
-                .map(QueryTools::entryToSortEntry);
+                .map(entry -> QueryTools.entryToSortEntry(entry, isCamelCase));
     }
 }
+
