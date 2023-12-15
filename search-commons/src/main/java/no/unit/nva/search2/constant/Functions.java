@@ -3,15 +3,20 @@ package no.unit.nva.search2.constant;
 import static no.unit.nva.search2.constant.Words.ADMINSTRATIVE_AGREEMENT;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
+import static no.unit.nva.search2.constant.Words.IDENTITY;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.LABELS;
+import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
@@ -48,10 +53,10 @@ public final class Functions {
         return ENVIRONMENT.readEnv(API_HOST);
     }
 
-    public static TermsAggregationBuilder generateSimpleAggregation(String term, String field) {
+    public static TermsAggregationBuilder generateSimpleAggregation(String term, String... fields) {
         return AggregationBuilders
             .terms(term)
-            .field(field)
+            .field(jsonPath(fields))
             .size(Defaults.DEFAULT_AGGREGATION_SIZE);
     }
 
@@ -59,12 +64,22 @@ public final class Functions {
 
         return new NestedAggregationBuilder(FUNDING_SOURCE, FUNDINGS)
             .subAggregation(
-                generateSimpleAggregation(ID, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
+                generateSimpleAggregation(ID, FUNDINGS, SOURCE, IDENTIFIER)
                     .subAggregation(
                         generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
                     )
             );
     }
+
+    public static NestedAggregationBuilder generateContributor() {
+        return new NestedAggregationBuilder(CONTRIBUTOR, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS))
+            .subAggregation(
+                generateSimpleAggregation(ID, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID)
+                    .subAggregation(
+                        generateSimpleAggregation(NAME, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD))
+            );
+    }
+
 
     public static NestedAggregationBuilder generateObjectLabelsAggregation(String name, String path) {
         return new NestedAggregationBuilder(name, path)

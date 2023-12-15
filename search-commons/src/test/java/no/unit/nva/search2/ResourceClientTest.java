@@ -116,7 +116,7 @@ class ResourceClientTest {
             assertThat(aggregations.get("hasFile").size(), is(1));
             assertThat(aggregations.get("hasFile").get(0).count(), is(20));
             assertThat(aggregations.get("fundingSource").size(), is(2));
-            assertThat(aggregations.get("contributorId").size(), is(2));
+            assertThat(aggregations.get("contributor").size(), is(12));
             assertThat(aggregations.get("topLevelOrganization").size(), is(4));
             assertThat(aggregations.get("topLevelOrganization").get(1).labels().get("nb"),
                        is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
@@ -155,6 +155,7 @@ class ResourceClientTest {
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(5)));
             logger.info(pagedSearchResourceDto.id().toString());
+
         }
 
         @ParameterizedTest
@@ -278,10 +279,10 @@ class ResourceClientTest {
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
                                + "https://api.dev.nva.aws.unit.no/cristin/person/1136255", 0),
-                createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 18),
+                createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 17),
                 createArgument("CONTRIBUTOR_NAME=Kate+Robinson,Henrik+Langeland", 1),
                 createArgument("CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 0),
+                createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 1),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
@@ -313,19 +314,19 @@ class ResourceClientTest {
                 createArgument("INSTANCE_TYPE=AcademicArticle", 9),
                 createArgument("INSTANCE_TYPE_NOT=AcademicArticle", 11),
                 createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
-                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 1),
-                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 19),
-                createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole", 2),
+                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 2),
+                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 18),
+                createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole", 3),
                 createArgument("INSTITUTION=1627.0.0.0", 0),
-                createArgument("INSTITUTION=Forsvarets+høgskole", 2),
-                createArgument("INSTITUTION=Norwegian+Defence+University+College", 2),
-                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 2),
-                createArgument("INSTITUTION_NOT=Forsvarets+høgskole", 18),
+                createArgument("INSTITUTION=Forsvarets+høgskole", 3),
+                createArgument("INSTITUTION=Norwegian+Defence+University+College", 3),
+                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 3),
+                createArgument("INSTITUTION_NOT=Forsvarets+høgskole", 17),
                 createArgument("INSTITUTION_NOT"
-                               + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 18),
-                createArgument("INSTITUTION_SHOULD=1627.0.0.0", 2),
-                createArgument("INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0", 2),
-                createArgument("INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 2),
+                               + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 17),
+                createArgument("INSTITUTION_SHOULD=1627.0.0.0", 3),
+                createArgument("INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0", 3),
+                createArgument("INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 5),
                 createArgument("INSTITUTION_should=194.63.55.0", 1),
                 createArgument("ISBN=9788202535032", 1),
                 createArgument("ISBN_NOT=9788202535032", 19),
@@ -334,9 +335,9 @@ class ResourceClientTest {
                 createArgument("ISSN=1435-9529", 1),
                 createArgument("ISSN_NOT=1435-9529", 19),
                 createArgument("ISSN_SHOULD=1435-9529", 1),
-                createArgument("ORCID=https://sandbox.orcid.org/0000-0003-4147-3499", 2),
-                createArgument("ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499", 18),
-                createArgument("ORCID_SHOULD=4147-3499", 2),
+                createArgument("ORCID=https://sandbox.orcid.org/0000-0003-4147-3499", 3),
+                createArgument("ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499", 17),
+                createArgument("ORCID_SHOULD=4147-3499", 3),
                 createArgument("PARENT_PUBLICATION=test", 0),
                 createArgument("PARENT_PUBLICATION_SHOULD=test", 0),
                 createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 1),
@@ -348,8 +349,8 @@ class ResourceClientTest {
                 createArgument("TITLE_SHOULD=Simple", 3),
                 createArgument(
                     "TOP_LEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", 2),
-                createArgument("UNIT=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0", 2),
-                createArgument("UNIT_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0", 18),
+                createArgument("UNIT=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0", 3),
+                createArgument("UNIT_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0", 17),
                 createArgument("UNIT_SHOULD=194.63.55.0", 1),
                 createArgument("USER=1136254@20754.0.0.0", 2),
                 createArgument("USER_NOT=1136254@20754.0.0.0", 18),
@@ -357,20 +358,20 @@ class ResourceClientTest {
                 createArgument("MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01", 0),
                 createArgument("PUBLICATION_YEAR=2022", 2),
                 createArgument("PUBLICATION_YEAR_SHOULD=2022", 2),
-                createArgument("FIELDS=category,title,CONTRIBUTOR_NAME&query=Kjetil+Møkkelgjerd", 2),
+                createArgument("FIELDS=category,title,CONTRIBUTOR_NAME&query=Kjetil+Møkkelgjerd", 3),
                 createArgument("TOPLEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
                                2),
                 createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
                 createArgument("PUBLISHED_SINCE=2023-11-05", 1),
                 createArgument("QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("QUERY=Forsvarets+høgskole&fields=INSTITUTION", 2),
-                createArgument("QUERY=Forsvarets+høgskole", 2),
-                createArgument("QUERY=Kjetil+Møkkelgjerd&fields=contributorName", 2),
+                createArgument("QUERY=Forsvarets+høgskole&fields=INSTITUTION", 3),
+                createArgument("QUERY=Forsvarets+høgskole", 3),
+                createArgument("QUERY=Kjetil+Møkkelgjerd&fields=contributorName", 3),
                 createArgument("QUERY=observations&fields=all", 3),
                 createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
-                               + "&FIELDS=INSTITUTION", 1),
-                createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2)
+                               + "&FIELDS=INSTITUTION", 2),
+                createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3)
             );
         }
     }

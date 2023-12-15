@@ -1,8 +1,10 @@
 package no.unit.nva.search2.constant;
 
+import static no.unit.nva.search2.constant.Functions.generateContributor;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
+import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
@@ -104,9 +106,8 @@ public class Resource {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        //        generateSimpleAggregation(CONTRIBUTOR_ID, CONTRIBUTORS_IDENTITY_ID)
-        //            .subAggregation(generateSimpleAggregation(NAME, CONTRIBUTORS_IDENTITY_NAME_KEYWORD)),
-        //        generateSimpleAggregation(TYPE, PUBLICATION_INSTANCE_TYPE),
+        generateSimpleAggregation(TYPE, PUBLICATION_INSTANCE_TYPE),
+        generateContributor(),
         generateFundingSource(),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
         generateHasFileAggregation()

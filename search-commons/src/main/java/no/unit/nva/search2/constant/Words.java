@@ -15,7 +15,7 @@ public final class Words {
     public static final String BUCKETS = "buckets";
     public static final String COLON = ":";
     public static final String COMMA = ",";
-    public static final String CONTRIBUTOR_ID = "contributorId";
+    public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COUNT = "count";
     public static final String CREATED_DATE = "createdDate";

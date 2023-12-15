@@ -1011,6 +1011,412 @@
         },
         {
           "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Forsvarets høgskole",
+                "en": "Norwegian Defence University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/209.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høgskolen i Innlandet",
+                "en": "Inland Norway University of Applied Sciences"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136918",
+            "type": "Identity",
+            "name": "Isar Kristoffer Buzza",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4999-4483",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Supervisor"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7501.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "RURALIS – Institutt for rural- og regionalforskning",
+                "en": "RURALIS – Institute for Rural and Regional Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1990.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Diakonhjemmet sykehus",
+                "en": "Diakonhjemmet Hospital"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1128464",
+            "type": "Identity",
+            "name": "Terje Hellesvik",
+            "orcId": "https://sandbox.orcid.org/0000-0002-8617-3281",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/39463",
+            "type": "Identity",
+            "name": "Siri Coldevin Vikan",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Oslo",
+                "en": "University of Oslo"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/997998",
+            "type": "Identity",
+            "name": "Mona Ullah",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1615.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Høyskolen Kristiania",
+                "en": "Kristiania University College"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136806",
+            "type": "Identity",
+            "name": "Ketil Aasarød",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/217.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Universitetet i Stavanger",
+                "en": "University of Stavanger"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/42557",
+            "type": "Identity",
+            "name": "Jan E. Garshol",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 8
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/854279",
+            "type": "Identity",
+            "name": "Tor Arne Torgersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 9
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/860951",
+            "type": "Identity",
+            "name": "Stig Norland",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 10
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/34322",
+            "type": "Identity",
+            "name": "Torbjørn Kvåle",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 11
+        },
+        {
+          "type": "Contributor",
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
@@ -1209,6 +1615,43 @@
       "abstract": "Snow avalanches are a significant natural hazard and common phenomenon in Norway. Each year, avalanches result in fatalities, evacuations, and interruptions or damage to infrastructure networks such as roads, railways, and electrical transmission lines. Persistent avalanche hazard in steep terrain is a major factor considered during land-use planning and development. During the snow season, daily or weekly variations in the avalanche danger identified in regional and applied bulletins influence the operation of transportation networks. Applied research on avalanches and their societal impacts has been conducted at the Norwegian Geotechnical Institute (NGI) since 1973. This research has been funded in part by an annual grant from the Norwegian parliament, administered by the Norwegian Water Resources and Energy Directorate (NVE – Norges vassdrags- og energi-direktorat). Recent research activities have improved our understanding of avalanche formation, movement, and impacts. Enhanced knowledge of the individual processes leading to avalanche initiation, avalanche dynamics, and avalanche impacts has been applied to developing tools to help predict avalanche occurrence, runout distance, and impact pressures. While much has been accomplished within the avalanche research community in recent years, many key questions remain. This project plan: (1) presents the research goals for the 2020-2022 period, (2) outlines the projects organization – including potential for external collaboration, and (3) presents the work-package structure and specific research tasks to be undertaken by the applied avalanche research group at NGI over the next three years.",
       "alternativeAbstracts": {},
       "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
         {
           "type": "Contributor",
           "correspondingAuthor": false,
@@ -1799,6 +2242,43 @@
       "contributors": [
         {
           "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1306838",
+            "type": "Identity",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 7
+        },
+        {
+          "type": "Contributor",
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
@@ -2181,7 +2661,6 @@
         }
       }
     ],
-
     "status": "PUBLISHED"
   },
   {
