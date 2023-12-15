@@ -56,11 +56,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
     protected abstract Integer getFrom();
+
     protected abstract Integer getSize();
 
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
+
     public abstract String getSort();
 
     /**
@@ -149,6 +151,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     public boolean isPresent(K key) {
         return searchParameters.containsKey(key) || pageParameters.containsKey(key);
     }
+
+    public boolean hasOneValue(K key) {
+        return getOptional(key)
+            .map(value -> !value.contains(COMMA))
+            .orElse(false);
+    }
+
 
     @JacocoGenerated
     public boolean hasNoSearchValue() {

@@ -17,7 +17,7 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR_ID;
+import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
@@ -106,7 +106,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
-        if (isPresent(CONTRIBUTOR_ID)) {
+        if (isLookingForOneContributor()) {
             assert queryBuilder instanceof BoolQueryBuilder;
             addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
         }
@@ -126,6 +126,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    private boolean isLookingForOneContributor() {
+        return hasOneValue(CONTRIBUTOR);
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
@@ -187,7 +191,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(decodedValue));
                 case HAS_FILE -> query.setSearchingValue(qpKey, valueToBoolean(decodedValue).toString());
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
-                    CONTRIBUTOR_ID, CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                    CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                    CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
                     FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
