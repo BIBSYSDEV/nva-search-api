@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
@@ -34,7 +35,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.Query;
@@ -134,7 +134,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
         var promotedPublications = userSettingsClient.doSearch(this).promotedPublications();
-        if (hasPromotedPublications(promotedPublications)) {
+        if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 bq.should(
@@ -144,10 +144,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 );
             }
         }
-    }
-
-    private boolean hasPromotedPublications(List<String> promotedPublications) {
-        return nonNull(promotedPublications) && !promotedPublications.isEmpty();
     }
 
     @SuppressWarnings("PMD.GodClass")

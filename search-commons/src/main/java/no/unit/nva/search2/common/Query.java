@@ -81,10 +81,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
-        final var response = queryClient.doSearch((Q) this);
+        final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
-            ? toCsvText((SwsResponse) response)
-            : toPagedResponse((SwsResponse) response).toJsonString();
+            ? toCsvText(response)
+            : toPagedResponse(response).toJsonString();
     }
 
     protected String toCsvText(SwsResponse response) {

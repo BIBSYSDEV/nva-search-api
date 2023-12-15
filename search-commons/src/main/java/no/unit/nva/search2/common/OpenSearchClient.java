@@ -13,6 +13,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.CachedJwtProvider;
@@ -31,11 +33,14 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final HttpClient httpClient;
     protected final BodyHandler<String> bodyHandler;
     protected final CachedJwtProvider jwtProvider;
+    protected final Instant requestStart;
 
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
         this.httpClient = httpClient;
         this.jwtProvider = jwtProvider;
+        requestStart = Instant.now();
+
     }
 
     public abstract R doSearch(Q query);
@@ -79,9 +84,11 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .findFirst().orElseThrow();
     }
 
-    protected static FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
         return result -> {
-            logger.info("Opensearch Response Time: {} ms, TotalSize: {}", result.took(), result.getTotalSize());
+            var duration = Duration.between(requestStart, Instant.now()).toMillis();
+            logger.info("Opensearch Response Time: {} ms, Request Duration: {} ms, TotalSize: {}",
+                        result.took(), duration, result.getTotalSize());
             return result;
         };
     }

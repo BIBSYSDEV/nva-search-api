@@ -1,6 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.constant.Defaults;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ParamKind;
@@ -44,6 +44,14 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
     }
 
+    public static boolean hasContent(String value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
+    public static boolean hasContent(Collection<?> value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
     public static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
@@ -53,13 +61,12 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public static Collection<Entry<String, String>> queryToMapEntries(String query) {
-        return
-            nonNull(query)
-                ? Arrays.stream(query.split(AMPERSAND))
-                .map(s -> s.split(EQUAL))
-                .map(QueryTools::stringsToEntry)
-                .toList()
-                : Collections.emptyList();
+        return nonNull(query)
+            ? Arrays.stream(query.split(AMPERSAND))
+            .map(keyValue -> keyValue.split(EQUAL))
+            .map(QueryTools::stringsToEntry)
+            .toList()
+            : Collections.emptyList();
     }
 
     public static Entry<String, String> stringsToEntry(String... strings) {
@@ -91,10 +98,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
             @Override
             public SortOrder getValue() {
-                var sortOrder = nonNull(entry.getValue()) && !entry.getValue().isEmpty()
+                final var orderString = hasContent(entry.getValue())
                     ? entry.getValue()
-                    : Defaults.DEFAULT_SORT_ORDER;
-                return SortOrder.fromString(sortOrder);
+                    : DEFAULT_SORT_ORDER;
+                return SortOrder.fromString(orderString);
             }
 
             @Override
@@ -108,11 +115,11 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
 
         requestParameter.remove(Words.FROM);
-        var sortedP =
+        var sortParameters =
             response.getSort().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
+        requestParameter.put(Words.SEARCH_AFTER, sortParameters);
         return fromUri(gatewayUri)
             .addQueryParameters(requestParameter)
             .getUri();
