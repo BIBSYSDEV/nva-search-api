@@ -2,7 +2,6 @@ package no.unit.nva.search2.dto;
 
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +11,17 @@ import nva.commons.core.paths.UriWrapper;
 
 public final class FacetsBuilder {
 
-    public static Map<String, List<Facet>> build(JsonNode aggregations, URI id) {
-        return jsonNodeToMapOfFacets(aggregations)
+    public static Map<String, List<Facet>> build(String aggregations, URI id) {
+        return toMapOfFacets(aggregations)
             .entrySet().stream()
             .map((entry) -> addIdToFacets(entry, id))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private static Map<String, List<Facet>> jsonNodeToMapOfFacets(JsonNode aggregations) {
+    private static Map<String, List<Facet>> toMapOfFacets(String aggregations) {
         final var typeReference = new TypeReference<Map<String, List<Facet>>>() {
         };
-        return attempt(() -> JsonUtils.dtoObjectMapper.readValue(aggregations.toPrettyString(), typeReference))
+        return attempt(() -> JsonUtils.dtoObjectMapper.readValue(aggregations, typeReference))
             .orElseThrow();
     }
 

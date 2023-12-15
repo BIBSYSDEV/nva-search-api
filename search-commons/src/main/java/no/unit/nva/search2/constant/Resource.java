@@ -1,7 +1,8 @@
 package no.unit.nva.search2.constant;
 
+import static no.unit.nva.search2.constant.Functions.generateContributor;
+import static no.unit.nva.search2.constant.Functions.generateFundingSource;
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
-import static no.unit.nva.search2.constant.Functions.generateLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
@@ -9,13 +10,11 @@ import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.constant.Words.CONTRIBUTOR_ID;
 import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.IDENTITY;
@@ -107,11 +106,9 @@ public class Resource {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        generateSimpleAggregation(CONTRIBUTOR_ID, CONTRIBUTORS_IDENTITY_ID)
-            .subAggregation(generateSimpleAggregation(NAME, CONTRIBUTORS_IDENTITY_NAME_KEYWORD)),
         generateSimpleAggregation(TYPE, PUBLICATION_INSTANCE_TYPE),
-        generateSimpleAggregation(FUNDING_SOURCE, jsonPath(FUNDINGS, SOURCE, IDENTIFIER))
-            .subAggregation(generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))),
+        generateContributor(),
+        generateFundingSource(),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
         generateHasFileAggregation()
     );

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import no.unit.nva.search2.constant.Words;
 import nva.commons.core.paths.UriWrapper;
-import org.jetbrains.annotations.Nullable;
 
 public class PagedSearchBuilder {
 
@@ -61,7 +60,7 @@ public class PagedSearchBuilder {
         return this;
     }
 
-    public PagedSearchBuilder withAggregations(JsonNode aggregations) {
+    public PagedSearchBuilder withAggregations(String aggregations) {
 
         if (isNull(aggregations)) {
             return this;
@@ -70,7 +69,6 @@ public class PagedSearchBuilder {
         return this;
     }
 
-    @Nullable
     private URI createNextResults(Map<String, String> requestParameter, Integer offset, Integer totalSize,
                                   URI gatewayUri) {
         return offset < totalSize

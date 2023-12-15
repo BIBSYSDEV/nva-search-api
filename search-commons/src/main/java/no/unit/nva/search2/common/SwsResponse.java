@@ -77,9 +77,9 @@ public record SwsResponse(
     }
 
     @Transient
-    public JsonNode getAggregationsStructured() {
+    public String getAggregationsStructured() {
         return nonNull(aggregations)
-            ? AggregationFormat.apply(aggregations)
+            ? AggregationFormat.apply(aggregations).toString()
             : null;
     }
 

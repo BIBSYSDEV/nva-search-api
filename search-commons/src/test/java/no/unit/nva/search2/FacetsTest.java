@@ -14,12 +14,20 @@ public class FacetsTest {
     protected static final Logger logger = LoggerFactory.getLogger(FacetsTest.class);
 
     @Test
-    void shoulCheckMapping() {
+    void shouldCheckMapping() {
         var jsonString = fileToString("sample_aggregations.json");
         var jsonNode = stringToJsonNode(jsonString);
 
         assert jsonNode != null;
         logger.info(AggregationFormat.apply(jsonNode).toPrettyString());
+    }
+
+    @Test
+    void shouldCheckOldMapping() {
+        var jsonString = fileToString("sample_aggregation.json");
+        assert jsonString != null;
+
+        logger.info(jsonString);
     }
 
 
