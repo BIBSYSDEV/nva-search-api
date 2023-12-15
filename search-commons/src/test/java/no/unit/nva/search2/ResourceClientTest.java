@@ -184,7 +184,7 @@ class ResourceClientTest {
 
         @ParameterizedTest
         @MethodSource("uriProvider")
-        void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
+        void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
@@ -276,14 +276,14 @@ class ResourceClientTest {
                 createArgument("CONTEXT_TYPE=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
-                createArgument("CONTRIBUTOR=Kate+Robinson,Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR=Kate+Robinson&CONTRIBUTOR=Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 2),
-                createArgument("CONTRIBUTOR=Peter+Gauer,Kjetil+Møkkelgjerd", 0),
-                createArgument("CONTRIBUTOR_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
-                createArgument("CONTRIBUTOR_SHOULD=Gauer,Møkkelgjerd", 8),
-                createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254,Peter+Gauer",
-                               12),
+                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                               + "https://api.dev.nva.aws.unit.no/cristin/person/1136255", 0),
+                createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 18),
+                createArgument("CONTRIBUTOR_NAME=Kate+Robinson,Henrik+Langeland", 1),
+                createArgument("CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland", 1),
+                createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 0),
+                createArgument("CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
+                createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
                 createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 18),
                 createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 2),
@@ -357,16 +357,16 @@ class ResourceClientTest {
                 createArgument("MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01", 0),
                 createArgument("PUBLICATION_YEAR=2022", 2),
                 createArgument("PUBLICATION_YEAR_SHOULD=2022", 2),
-                createArgument("FIELDS=category,title,CONTRIBUTOR&query=Kjetil+Møkkelgjerd", 2),
-                createArgument("TOPLEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-                    , 2),
+                createArgument("FIELDS=category,title,CONTRIBUTOR_NAME&query=Kjetil+Møkkelgjerd", 2),
+                createArgument("TOPLEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+                               2),
                 createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
                 createArgument("PUBLISHED_SINCE=2023-11-05", 1),
                 createArgument("QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
                 createArgument("QUERY=Forsvarets+høgskole&fields=INSTITUTION", 2),
                 createArgument("QUERY=Forsvarets+høgskole", 2),
-                createArgument("QUERY=Kjetil+Møkkelgjerd&fields=CONTRIBUTOR", 2),
+                createArgument("QUERY=Kjetil+Møkkelgjerd&fields=contributorName", 2),
                 createArgument("QUERY=observations&fields=all", 3),
                 createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
                                + "&FIELDS=INSTITUTION", 1),
