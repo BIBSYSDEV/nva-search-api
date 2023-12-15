@@ -99,7 +99,7 @@ class ImportCandidateClientTest {
 
         @ParameterizedTest
         @MethodSource("uriProvider")
-        void searchWithUriReturnsCSVResponse(URI uri) throws ApiGatewayException {
+        void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
 
             var csvResult = ImportCandidateQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
