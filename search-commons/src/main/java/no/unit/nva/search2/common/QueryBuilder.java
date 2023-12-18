@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.KeyFormat;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builder for OpenSearchQuery.
- * @param <K> Enum of QueryParameterKeys
+ * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
 public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
@@ -44,11 +45,11 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     protected transient boolean notValidated = true;
 
     /**
-     * Constructor of CristinQuery.Builder.
+     * Constructor of QueryBuilder.
      * <p>Usage:</p>
-     * <samp>new CristinQuery.Builder()<br>
+     * <samp>Query.builder()<br>
      * .fromRequestInfo(requestInfo)<br>
-     * .withRequiredParameters(IDENTITY,PAGE_CURRENT,PAGE_ITEMS_PER_PAGE)<br>
+     * .withRequiredParameters(FROM, SIZE)<br>
      * .build()
      * </samp>
      */
@@ -277,14 +278,14 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     }
 
     protected boolean isKeyFormatUnset() {
-        return  query.getKeyFormat() == ParameterKey.KeyFormat.UNSET;
+        return query.getKeyFormat() == KeyFormat.UNSET;
     }
 
     protected void assignFormatByKey(String key) {
         if (key.matches(PATTERN_IS_CAMEL_CASE)) {
-            query.setKeyFormat(ParameterKey.KeyFormat.camelCase);
+            query.setKeyFormat(KeyFormat.camelCase);
         } else {
-            query.setKeyFormat(ParameterKey.KeyFormat.SNAKE_CASE);
+            query.setKeyFormat(KeyFormat.SNAKE_CASE);
         }
     }
 

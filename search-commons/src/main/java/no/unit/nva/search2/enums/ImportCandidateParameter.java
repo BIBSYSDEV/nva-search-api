@@ -127,8 +127,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     ImportCandidateParameter(
-        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+        ParamKind kind, FieldOperator operator, String fieldsToSearch,
+        String keyPattern, String valuePattern, Float boost
+    ) {
 
         this.key = this.name().toLowerCase(Locale.getDefault());
         this.fieldOperator = operator;

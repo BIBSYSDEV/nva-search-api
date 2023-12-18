@@ -1,17 +1,5 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
-import no.unit.nva.search2.enums.ParameterKey;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_AGGREGATIONS;
@@ -31,6 +19,16 @@ import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT_ORDER;
 import static no.unit.nva.search2.enums.ImportCandidateSort.fromSortKey;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
+import no.unit.nva.search2.enums.ParameterKey;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
@@ -70,8 +68,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    public String getSort() {
-        return getValue(SORT).as();
+    public AsType getSort() {
+        return getValue(SORT);
     }
 
     @Override

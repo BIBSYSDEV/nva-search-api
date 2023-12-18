@@ -37,7 +37,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
     }
 
     private Stream<String> createQueryBuilderStream(ResourceQuery query) {
-        return query.getOptional(CONTRIBUTOR).stream();
+        return query.getValue(CONTRIBUTOR).optional().stream();
     }
 
     private HttpRequest createRequest(String contributorId) {

@@ -3,7 +3,7 @@ package no.unit.nva.search2.common;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.splitValues;
+import static no.unit.nva.search2.common.QueryTools.splitByComma;
 import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
@@ -68,7 +68,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract String[] fieldsToKeyNames(String field);
 
-    public abstract String getSort();
+    public abstract AsType getSort();
 
     /**
      * Builds URI to query SWS based on post body.
@@ -156,16 +156,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             } else {
                 searchParameters.put(key, decodedValue);
             }
-            searchParameters.put(key, value);
         }
-    }
-
-    public Optional<String> getOptional(K key) {
-        return Optional.ofNullable(
-            searchParameters.containsKey(key)
-                ? searchParameters.get(key)
-                : pageParameters.get(key)
-        );
     }
 
     public String removeKey(K key) {
@@ -178,17 +169,18 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return searchParameters.containsKey(key) || pageParameters.containsKey(key);
     }
 
-    protected boolean isCamelCase() {
-        return getKeyFormat() == ParameterKey.KeyFormat.camelCase;
+    private boolean isCamelCase() {
+        return getKeyFormat() == KeyFormat.camelCase;
     }
 
-    public boolean hasOneValue(K key) {
-        return getOptional(key)
+    protected boolean hasOneValue(K key) {
+        return getValue(key).optional()
             .map(value -> !value.contains(COMMA))
             .orElse(false);
     }
+
     @JacocoGenerated
-    public boolean hasNoSearchValue() {
+    protected boolean hasNoSearchValue() {
         return searchParameters.isEmpty();
     }
 
@@ -204,7 +196,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return mediaType;
     }
 
-    public void setMediaType(String mediaType) {
+    protected void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
@@ -216,7 +208,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return gatewayUri;
     }
 
-    public void setNvaSearchApiUri(URI gatewayUri) {
+    protected void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
     }
 
@@ -261,8 +253,18 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return bq;
     }
 
+    // SORTING
+    protected Stream<Entry<String, SortOrder>> getSortStream() {
+        return getSort().optional().stream()
+            .map(items -> items.split(COMMA))
+            .flatMap(Arrays::stream)
+            .map(sort -> sort.split(COLON))
+            .map(QueryTools::stringsToEntry)
+            .map(entry -> QueryTools.entryToSortEntry(entry, isCamelCase()));
+    }
+
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
-        final var values = splitValues(searchParameters.get(key));
+        final var values = splitByComma(searchParameters.get(key));
         if (queryTools.isSearchAll(key)) {
             return queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
         } else if (queryTools.isFundingKey(key)) {
@@ -294,7 +296,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .operator(Operator.AND);
     }
 
-
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
         var searchAfter = isCamelCase()
             ? CaseUtils.toCamelCase(Words.SEARCH_AFTER, false, UNDERSCORE.toCharArray())
@@ -309,7 +310,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .addQueryParameters(requestParameter)
             .getUri();
     }
-
 
     @SuppressWarnings({"PMD.ShortMethodName"})
     public class AsType {
@@ -337,6 +337,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return key;
         }
 
+        public Optional<String> optional() {
+            return Optional.ofNullable(value);
+        }
+
         @Override
         public String toString() {
             return value;
@@ -349,17 +353,5 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         private <T extends Number> T castNumber() {
             return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
         }
-    }
-
-    // SORTING
-    protected Stream<Entry<String, SortOrder>> getSortStream() {
-        var optionalSort = Optional.ofNullable(getSort());
-        var isCamelCase = getKeyFormat() == KeyFormat.camelCase;
-        return optionalSort.isEmpty()
-            ? Stream.of()
-            : Arrays.stream(optionalSort.get().split(COMMA))
-                .map(sort -> sort.split(COLON))
-                .map(QueryTools::stringsToEntry)
-                .map(entry -> QueryTools.entryToSortEntry(entry, isCamelCase));
     }
 }
