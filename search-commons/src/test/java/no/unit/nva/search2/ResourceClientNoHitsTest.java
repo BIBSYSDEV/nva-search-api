@@ -75,8 +75,9 @@ class ResourceClientNoHitsTest {
 
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
-            URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis&sort=INSTANCE_TYPE&sortOrder=asc&sort=created_date&order"
-                       + "=desc"),
+            URI.create(
+                "https://example.com/?INSTANCE_TYPE=PhdThesis&sort=INSTANCE_TYPE"
+                + "&sortOrder=asc&sort=created_date&order=desc"),
             URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis"),
             URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis&orderBy=INSTANCE_TYPE:asc,created_date:desc"),
             URI.create("https://example.com/?INSTANCE_TYPE=PhdThesis&sort=INSTANCE_TYPE+asc&sort=created_date+desc"));
@@ -86,7 +87,7 @@ class ResourceClientNoHitsTest {
         return Stream.of(
             URI.create("https://example.com/testsearch?INSTANCE_TYPE=hello+world&lang=en"),
             URI.create("https://example.com/testsearch?title=hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/testsearch?contributor=hello+world&published_before=2020-01-01"),
+            URI.create("https://example.com/testsearch?contributorName=hello+world&published_before=2020-01-01"),
             URI.create("https://example.com/testsearch?user=hello+world&lang=en"));
     }
 }

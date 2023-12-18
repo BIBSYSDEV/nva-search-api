@@ -1,38 +1,5 @@
 package no.unit.nva.search2.common;
 
-import com.google.common.net.MediaType;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.PagedSearch;
-import no.unit.nva.search2.dto.PagedSearchBuilder;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import no.unit.nva.search2.enums.ParameterKey.KeyFormat;
-import nva.commons.core.JacocoGenerated;
-import org.apache.commons.text.CaseUtils;
-import org.joda.time.DateTime;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -46,6 +13,37 @@ import static no.unit.nva.search2.constant.Words.PLUS;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import com.google.common.net.MediaType;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.dto.PagedSearch;
+import no.unit.nva.search2.dto.PagedSearchBuilder;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
+import org.joda.time.DateTime;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
@@ -62,11 +60,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
     protected abstract Integer getFrom();
+
     protected abstract Integer getSize();
 
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
+
     public abstract String getSort();
 
     /**
@@ -88,10 +88,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
-        final var response = queryClient.doSearch((Q) this);
+        final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
-            ? toCsvText((SwsResponse) response)
-            : toPagedResponse((SwsResponse) response).toJsonString();
+            ? toCsvText(response)
+            : toPagedResponse(response).toJsonString();
     }
 
     protected String toCsvText(SwsResponse response) {
@@ -125,7 +125,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .forEach(entry -> results.put(toNvaSearchApiKey(entry), toNvaSearchApiValue(entry)));
         return results;
     }
-
 
     /**
      * Get value from Query Parameter Map with key.
@@ -182,6 +181,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return getKeyFormat() == ParameterKey.KeyFormat.camelCase;
     }
 
+    public boolean hasOneValue(K key) {
+        return getOptional(key)
+            .map(value -> !value.contains(COMMA))
+            .orElse(false);
+    }
     @JacocoGenerated
     public boolean hasNoSearchValue() {
         return searchParameters.isEmpty();
@@ -199,7 +203,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return mediaType;
     }
 
-    protected void setMediaType(String mediaType) {
+    public void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
@@ -211,7 +215,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return gatewayUri;
     }
 
-    protected void setNvaSearchApiUri(URI gatewayUri) {
+    public void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
     }
 
@@ -358,4 +362,3 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .map(entry -> QueryTools.entryToSortEntry(entry, isCamelCase));
     }
 }
-

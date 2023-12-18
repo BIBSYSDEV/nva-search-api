@@ -44,16 +44,15 @@ class UserSettingsClientTest {
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-            var result = userSettingsClient.doSearch(resourceAwsQuery).promotedPublications();
+        var result = userSettingsClient.doSearch(resourceAwsQuery).promotedPublications();
         logger.info(result.toString());
         assertNotNull(result);
     }
 
-
     static Stream<URI> uriProvider() {
         return Stream.of(
             URI.create("https://example.com/?title=http://hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/?contributor=hello+:+world&published_before=2020-01-01"),
+            URI.create("https://example.com/?contributorName=hello+:+world&published_before=2020-01-01"),
             URI.create("https://example.com/"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
             URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
@@ -61,5 +60,4 @@ class UserSettingsClientTest {
             URI.create("https://example.com/?category=PhdThesis&orderBy=UNIT_ID:asc,title:desc"),
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
-
 }

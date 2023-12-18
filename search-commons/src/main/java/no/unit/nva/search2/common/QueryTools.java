@@ -1,6 +1,29 @@
 package no.unit.nva.search2.common;
 
-import no.unit.nva.search2.constant.Defaults;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.search2.constant.Words.AMPERSAND;
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.DOT;
+import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.ONE;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ParamKind;
@@ -15,34 +38,18 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
-import static no.unit.nva.search2.constant.Words.AMPERSAND;
-import static no.unit.nva.search2.constant.Words.COLON;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.EQUAL;
-import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.constant.Words.ONE;
-import static no.unit.nva.search2.constant.Words.UNDERSCORE;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
-
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
     public static Boolean valueToBoolean(String value) {
         return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
+    }
+
+    public static boolean hasContent(String value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
+    public static boolean hasContent(Collection<?> value) {
+        return nonNull(value) && !value.isEmpty();
     }
 
     public static String decodeUTF(String encoded) {
@@ -54,13 +61,12 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public static Collection<Entry<String, String>> queryToMapEntries(String query) {
-        return
-            nonNull(query)
-                ? Arrays.stream(query.split(AMPERSAND))
-                .map(s -> s.split(EQUAL))
-                .map(QueryTools::stringsToEntry)
-                .toList()
-                : Collections.emptyList();
+        return nonNull(query)
+            ? Arrays.stream(query.split(AMPERSAND))
+            .map(keyValue -> keyValue.split(EQUAL))
+            .map(QueryTools::stringsToEntry)
+            .toList()
+            : Collections.emptyList();
     }
 
     public static Entry<String, String> stringsToEntry(String... strings) {
@@ -94,10 +100,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
             @Override
             public SortOrder getValue() {
-                var sortOrder = nonNull(entry.getValue()) && !entry.getValue().isEmpty()
+                final var orderString = hasContent(entry.getValue())
                     ? entry.getValue()
-                    : Defaults.DEFAULT_SORT_ORDER;
-                return SortOrder.fromString(sortOrder);
+                    : DEFAULT_SORT_ORDER;
+                return SortOrder.fromString(orderString);
             }
 
             @Override
@@ -108,6 +114,18 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
+    static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+
+        requestParameter.remove(Words.FROM);
+        var sortParameters =
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
+        requestParameter.put(Words.SEARCH_AFTER, sortParameters);
+        return fromUri(gatewayUri)
+            .addQueryParameters(requestParameter)
+            .getUri();
+    }
 
     static String[] splitValues(String value) {
         return Arrays.stream(value.split(COMMA))
