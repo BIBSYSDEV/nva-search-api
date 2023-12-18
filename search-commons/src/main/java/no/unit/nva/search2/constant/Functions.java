@@ -64,7 +64,7 @@ public final class Functions {
 
         return new NestedAggregationBuilder(FUNDING_SOURCE, FUNDINGS)
             .subAggregation(
-                generateSimpleAggregation(ID, FUNDINGS, SOURCE, IDENTIFIER)
+                generateSimpleAggregation(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
                     .subAggregation(
                         generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
                     )
@@ -74,7 +74,7 @@ public final class Functions {
     public static NestedAggregationBuilder generateContributor() {
         return new NestedAggregationBuilder(CONTRIBUTOR, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS))
             .subAggregation(
-                generateSimpleAggregation(ID, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID)
+                generateSimpleAggregation(ID, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID, KEYWORD)
                     .subAggregation(
                         generateSimpleAggregation(NAME, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD))
             );
@@ -88,7 +88,7 @@ public final class Functions {
 
     static TermsAggregationBuilder generateIdAggregation(String object) {
         return new TermsAggregationBuilder(ID)
-            .field(jsonPath(object, ID))
+            .field(jsonPath(object, ID, KEYWORD))
             .size(Defaults.DEFAULT_AGGREGATION_SIZE)
             .subAggregation(generateLabelsAggregation(object));
     }

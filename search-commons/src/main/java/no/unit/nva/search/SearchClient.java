@@ -33,7 +33,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String DOI_REQUESTS_QUERY_NAME = "DoiRequestsQuery";
     public static final String PUBLISHING_REQUESTS_QUERY_NAME = "PublishingRequestsQuery";
     public static final String TICKET_STATUS = "status";
-    public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id";
+    public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id.keyword";
 
     /**
      * Creates a new SearchClient.
@@ -115,7 +115,7 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public String exportSearchWithDocumentQuery(SearchDocumentsQuery query, String index)
-        throws ApiGatewayException, IOException {
+        throws ApiGatewayException {
         var searchResponseDto = searchWithSearchDocumentQuery(query, index);
         return CsvTransformer.transform(searchResponseDto);
     }
