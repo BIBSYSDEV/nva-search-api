@@ -32,6 +32,7 @@ import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.KeyFormat;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;

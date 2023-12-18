@@ -1,6 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -9,6 +10,7 @@ import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.EQUAL;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;

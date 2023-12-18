@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
@@ -152,7 +153,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+    protected class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
 
         Builder() {
             super(new ResourceQuery());
@@ -167,9 +168,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case FROM -> setKeyValue(key.fieldName(), DEFAULT_OFFSET);
+                    case SIZE -> setKeyValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setKeyValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -177,20 +178,20 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
 
         @Override
-        protected void setValue(String key, String value) {
+        protected void setKeyValue(String key, String value) {
             var qpKey = keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
                 ? decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, decodedValue);
-                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(decodedValue));
-                case SORT -> mergeToPagingKey(SORT, trimSpace(decodedValue));
-                case SORT_ORDER -> mergeToPagingKey(SORT, decodedValue);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setValue(qpKey, decodedValue);
+                case FIELDS -> query.setValue(qpKey, ignoreInvalidFields(decodedValue));
+                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(decodedValue));
-                case HAS_FILE -> query.setSearchingValue(qpKey, valueToBoolean(decodedValue).toString());
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setValue(qpKey, expandYearToDate(decodedValue));
+                case HAS_FILE -> query.setValue(qpKey, valueToBoolean(decodedValue).toString());
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
@@ -223,7 +224,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 if (query.isPresent(FROM)) {
                     var page = query.getValue(PAGE).<Number>as();
                     var perPage = query.getValue(SIZE).<Number>as();
-                    query.setPagingValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    query.setValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.removeKey(PAGE);
             }
