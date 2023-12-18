@@ -427,7 +427,8 @@ public class OpensearchTest {
                                     "sample_publication_with_several_of_the_same_affiliation.json");
 
                 var query = queryWithTermAndAggregation(
-                    "topLevelOrganizations.id:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0\"",
+                    "topLevelOrganizations.id.keyword:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0"
+                    + ".0\"",
                     ApplicationConstants.RESOURCES_AGGREGATIONS);
 
                 var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
@@ -441,7 +442,7 @@ public class OpensearchTest {
                                     "sample_publication_with_several_of_the_same_affiliation.json");
 
                 var query = queryWithTermAndAggregation(
-                    "fundings.source.identifier:\"NFR\"",
+                    "fundings.source.identifier.keyword:\"NFR\"",
                     ApplicationConstants.RESOURCES_AGGREGATIONS);
 
                 var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
@@ -587,8 +588,7 @@ public class OpensearchTest {
 
                 var actualAggregations = searchResponseDto.getAggregations();
 
-                var typeAggregation = actualAggregations.at("/type/"
-                                                            + "buckets");
+                var typeAggregation = actualAggregations.at("/type/buckets");
                 assertThat(typeAggregation.size(), greaterThan(0));
                 assertAggregation(typeAggregation, "GeneralSupportCase", 1);
 
