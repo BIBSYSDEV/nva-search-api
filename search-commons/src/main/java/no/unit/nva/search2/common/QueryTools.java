@@ -14,6 +14,7 @@ import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -122,20 +123,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(Words.FROM);
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
-    }
-
-    static String[] splitValues(String value) {
+    static String[] splitByComma(String value) {
         return Arrays.stream(value.split(COMMA))
             .map(String::trim)
             .toArray(String[]::new);
