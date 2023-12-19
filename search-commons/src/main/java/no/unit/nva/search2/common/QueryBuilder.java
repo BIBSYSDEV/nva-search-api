@@ -26,7 +26,6 @@ import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.KeyFormat;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
+@SuppressWarnings({"PMD.GodClass"})
 public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
@@ -185,12 +185,9 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * @throws BadRequestException if sort key is invalid
      */
     protected void validatedSort() throws BadRequestException {
-        var sortEntries = query.getSort();
-        if (isNull(sortEntries)) {
-            return;
-        }
         try {
-            query.getSortStream().forEach(this::validateSortEntry);
+            query.getSortStream()
+                .forEach(this::validateSortEntry);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
@@ -205,7 +202,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                    .toList();
     }
 
-    @JacocoGenerated
+
     protected boolean invalidQueryParameter(K key, String value) {
         return isNull(value) || !value.matches(key.valuePattern());
     }
@@ -222,7 +219,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         return query.otherRequiredKeys;
     }
 
-    @JacocoGenerated
     protected Set<K> requiredMissing() {
         return
             required().stream()
@@ -231,7 +227,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                 .collect(Collectors.toSet());
     }
 
-    @JacocoGenerated
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         final var value = entry.getValue();
@@ -282,6 +277,9 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     }
 
     protected void assignFormatByKey(String key) {
+        if (!isKeyFormatUnset()) {
+            return;
+        }
         if (key.matches(PATTERN_IS_CAMEL_CASE)) {
             query.setKeyFormat(KeyFormat.camelCase);
         } else {

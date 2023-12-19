@@ -10,8 +10,8 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.SEARCH;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
@@ -52,7 +52,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected ImportCandidateParameter getFieldsKey() {
-        return ImportCandidateParameter.FIELDS;
+        return FIELDS;
     }
 
     @Override
@@ -82,7 +82,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected boolean isPagingValue(ImportCandidateParameter key) {
-        return key.ordinal() >= PAGE.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream() {

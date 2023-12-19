@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.constant.Words;
@@ -33,6 +34,7 @@ import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
 import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -44,7 +46,7 @@ import org.opensearch.search.sort.SortOrder;
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
     /**
-     * '1', 'true' 'True' -> true any other value -> False
+     * '1', 'true' 'True' -> true any other value -> False.
      *
      * @param value a string that is expected to be 1/true or 0/false
      * @return Boolean because we need the text 'true' or 'false'
@@ -104,7 +106,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             public String getKey() {
                 return isCamelCase
                     ? CaseUtils.toCamelCase(entry.getKey(), false, UNDERSCORE.toCharArray())
-                    : entry.getKey().toLowerCase();
+                    : entry.getKey().toLowerCase(Locale.getDefault());
             }
 
             @Override
@@ -121,6 +123,14 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                 return null;
             }
         };
+    }
+
+    public boolean isBoolean(K key) {
+        return ParamKind.BOOLEAN.equals(key.fieldType());
+    }
+
+    public boolean isTitleQuery(K key) {
+        return key.searchFields().contains("entityDescription.mainTitle");
     }
 
     static String[] splitByComma(String value) {
@@ -170,6 +180,20 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         });
     }
 
+    Stream<Entry<K, QueryBuilder>> boolQuery(K key, String value) {
+        return queryToEntry(key,
+                            QueryBuilders.termQuery(getFirstSearchField(key), Boolean.valueOf(value)));
+    }
+
+    public Stream<Entry<K, QueryBuilder>> freeTextQuery(K key, String value) {
+        var qb = QueryBuilders
+            .matchQuery(getFirstSearchField(key), value)
+            .fuzziness(Fuzziness.AUTO)
+            .boost(key.fieldBoost())
+            .operator(operatorByKey(key));
+        return queryToEntry(key, qb);
+    }
+
     Stream<Entry<K, QueryBuilder>> fundingQuery(K key, String value) {
         final var values = value.split(COLON);
         return queryToEntry(
@@ -194,6 +218,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
     }
 
+    boolean isText(K key) {
+        return ParamKind.TEXT.equals(key.fieldType());
+    }
+
     private boolean hasMultipleFields(String... keys) {
         return keys.length > 1;
     }
@@ -207,10 +235,14 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
     private MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
         final var searchField = getFirstSearchField(key);
-        return QueryBuilders
+        var qb = QueryBuilders
             .matchQuery(searchField, singleValue)
             .boost(key.fieldBoost())
             .operator(operatorByKey(key));
+
+        return isText(key)
+            ? qb.fuzziness(Fuzziness.AUTO)
+            : qb;
     }
 
     private String[] getSearchFields(K key) {
@@ -223,7 +255,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isNotKeyword(K key) {
-        return !key.fieldType().equals(ParamKind.KEYWORD);
+        return !ParamKind.KEYWORD.equals(key.fieldType());
     }
 
     private Operator operatorByKey(K key) {

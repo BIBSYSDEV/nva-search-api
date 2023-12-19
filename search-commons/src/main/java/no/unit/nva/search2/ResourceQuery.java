@@ -13,7 +13,6 @@ import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT;
@@ -40,7 +39,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         super();
     }
 
-    static ResourceQueryBuilder builder() {
+    public static ResourceQueryBuilder builder() {
         return new ResourceQueryBuilder();
     }
 
@@ -86,7 +85,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     @Override
     protected boolean isPagingValue(ResourceParameter key) {
-        return key.ordinal() >= PAGE.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {

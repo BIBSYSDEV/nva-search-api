@@ -24,6 +24,7 @@ public final class Words {
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
+    public static final String FIELDS = "fields";
     public static final String FROM = "from";
     public static final String FUNDING = "FUNDING";
     public static final String FUNDINGS = "fundings";
@@ -67,6 +68,7 @@ public final class Words {
     public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SLASH = "/";
+    public static final String SORT = "sort";
     public static final String SOURCE = "source";
     public static final String SPACE = " ";
     public static final String SUFFIX = ")";

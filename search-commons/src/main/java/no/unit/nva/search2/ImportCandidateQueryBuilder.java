@@ -1,14 +1,5 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
-import no.unit.nva.search2.enums.ParameterKey;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.sort.SortOrder;
-
-import java.util.Collection;
-import java.util.Map;
-
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
@@ -26,7 +17,15 @@ import static no.unit.nva.search2.enums.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.enums.ImportCandidateSort.fromSortKey;
 import static no.unit.nva.search2.enums.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.attempt.Try.attempt;
+import java.util.Collection;
+import java.util.Map;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
+import no.unit.nva.search2.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.sort.SortOrder;
 
+@SuppressWarnings({"PMD.GodClass"})
 public class ImportCandidateQueryBuilder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
 
     ImportCandidateQueryBuilder() {

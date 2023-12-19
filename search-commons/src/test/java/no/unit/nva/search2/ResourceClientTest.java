@@ -1,6 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.ResourceQuery.builder;
 import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
@@ -103,7 +104,7 @@ class ResourceClientTest {
         @Test
         void shoulCheckFacets() throws BadRequestException {
             var uri = URI.create("https://x.org/?size=20");
-            var query = ResourceQuery.builder()
+            var query = builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -127,7 +128,7 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?id=018b857b77b7");
 
             var pagedResult =
-                ResourceQuery.builder()
+                builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -142,7 +143,7 @@ class ResourceClientTest {
         void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                ResourceQuery.builder()
+                builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -163,7 +164,7 @@ class ResourceClientTest {
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                ResourceQuery.builder()
+                builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -187,7 +188,7 @@ class ResourceClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult =
-                ResourceQuery.builder()
+                builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -201,7 +202,7 @@ class ResourceClientTest {
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ResourceQuery.builder()
+                builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -221,7 +222,7 @@ class ResourceClientTest {
         void failToSearchUri(URI uri) {
             assertThrows(
                 BadRequestException.class,
-                () -> ResourceQuery.builder()
+                () -> builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -275,7 +276,7 @@ class ResourceClientTest {
                 createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),
                 createArgument("CONTEXT_TYPE=Report", 10),
-                createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
+                createArgument("contextTypeShould=Report", 10),
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
                                + "https://api.dev.nva.aws.unit.no/cristin/person/1136255", 0),
@@ -284,7 +285,7 @@ class ResourceClientTest {
                 createArgument("CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland", 1),
                 createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 1),
                 createArgument("CONTRIBUTOR_NAME=Gauer,Møkkelgjerd", 1),
-                createArgument("CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
+                createArgument("contributorNameShould=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
                 createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 18),
@@ -296,7 +297,7 @@ class ResourceClientTest {
                 createArgument("FUNDING=NFR:3333", 0),
                 createArgument("FUNDING_SOURCE=NFR", 2),
                 createArgument("FUNDING_SOURCE=NFR,1234", 1),
-                createArgument("FUNDING_SOURCE=1234", 1),
+                createArgument("fundingSource=1234", 1),
                 createArgument("FUNDING_SOURCE=Norges+forskningsråd", 2),
                 createArgument("FUNDING_SOURCE_NOT=Norges+forskningsråd", 18),
                 createArgument("FUNDING_SOURCE_SHOULD=Norges", 2),
@@ -307,7 +308,7 @@ class ResourceClientTest {
                 createArgument("ID=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
                 createArgument("ID_NOT=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 19),
                 createArgument("ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&query=25e43dc3027e", 10),
-                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
+                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 2),
                 createArgument("ID=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
                 createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
@@ -338,7 +339,7 @@ class ResourceClientTest {
                 createArgument("ISSN_SHOULD=1435-9529", 1),
                 createArgument("ORCID=https://sandbox.orcid.org/0000-0003-4147-3499", 3),
                 createArgument("ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499", 17),
-                createArgument("ORCID_SHOULD=4147-3499", 3),
+                createArgument("ORCID_SHOULD=4147-3499", 5),
                 createArgument("PARENT_PUBLICATION=test", 0),
                 createArgument("PARENT_PUBLICATION_SHOULD=test", 0),
                 createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 1),
@@ -346,6 +347,7 @@ class ResourceClientTest {
                 createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 1),
                 createArgument("SEARCH_ALL=Fakultet+for+arkitektur", 1),
                 createArgument("TITLE=Kjetils+ticket+test", 1),
+                createArgument("TITLE=Kjetil+ticket+test", 1),
                 createArgument("TITLE_NOT=Kjetils+ticket+test", 17),
                 createArgument("TITLE_SHOULD=Simple", 3),
                 createArgument(

@@ -1,6 +1,5 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
@@ -19,11 +18,11 @@ import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import static nva.commons.core.attempt.Try.attempt;
 import java.util.Map.Entry;
 import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.sort.SortOrder;
 
+@SuppressWarnings({"PMD.GodClass"})
 public class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, ResourceQuery> {
 
     /**
@@ -57,22 +56,18 @@ public class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, Resour
 
     @Override
     protected void setKeyValue(String key, String value) {
-        if (isKeyFormatUnset()) {
-            assignFormatByKey(key);
-        }
+        assignFormatByKey(key);
         var qpKey = keyFromString(key);
-        var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-            ? decodeUTF(value)
-            : value;
+
         switch (qpKey) {
-            case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setValue(qpKey, decodedValue);
-            case FIELDS -> query.setValue(qpKey, ignoreInvalidFields(decodedValue));
-            case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
-            case SORT_ORDER -> mergeToKey(SORT, decodedValue);
+            case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setValue(qpKey, value);
+            case FIELDS -> query.setValue(qpKey, ignoreInvalidFields(value));
+            case SORT -> mergeToKey(SORT, trimSpace(value));
+            case SORT_ORDER -> mergeToKey(SORT, value);
             case CREATED_BEFORE, CREATED_SINCE,
                 MODIFIED_BEFORE, MODIFIED_SINCE,
-                PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setValue(qpKey, expandYearToDate(decodedValue));
-            case HAS_FILE -> query.setValue(qpKey, valueToBoolean(decodedValue).toString());
+                PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setValue(qpKey, expandYearToDate(value));
+            case HAS_FILE -> query.setValue(qpKey, valueToBoolean(value).toString());
             case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                 CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                 CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
@@ -91,7 +86,7 @@ public class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, Resour
                 TOP_LEVEL_ORGANIZATION,
                 UNIT, UNIT_NOT, UNIT_SHOULD,
                 USER, USER_NOT, USER_SHOULD,
-                USER_AFFILIATION, USER_AFFILIATION_NOT, USER_AFFILIATION_SHOULD -> mergeToKey(qpKey, decodedValue);
+                USER_AFFILIATION, USER_AFFILIATION_NOT, USER_AFFILIATION_SHOULD -> mergeToKey(qpKey, value);
             case LANG -> { /* ignore and continue */ }
             default -> invalidKeys.add(key);
         }

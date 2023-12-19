@@ -9,7 +9,11 @@ import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApi
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.FIELDS;
+import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PLUS;
+import static no.unit.nva.search2.constant.Words.SORT;
+import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
@@ -78,7 +82,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected abstract URI getOpenSearchUri();
 
     protected abstract boolean isPagingValue(K key);
-
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -224,7 +227,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiValue(Entry<K, String> entry) {
-        if (isCamelCase() && (entry.getKey().fieldName().equals("fields") || entry.getKey().fieldName().equals("sort"))) {
+        if (isCamelCase() && (FIELDS.equals(entry.getKey().fieldName()) || SORT.equals(entry.getKey().fieldName()))) {
             return CaseUtils.toCamelCase(entry.getValue(), false, UNDERSCORE.toCharArray())
                 .replace(Words.SPACE, PLUS);
         } else {
@@ -258,7 +261,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return getSort().optional().stream()
             .map(items -> items.split(COMMA))
             .flatMap(Arrays::stream)
-            .map(sort -> sort.split(COLON))
+            .map(sort -> sort.split(COLON + PIPE + SPACE))
             .map(QueryTools::stringsToEntry)
             .map(entry -> QueryTools.entryToSortEntry(entry, isCamelCase()));
     }
@@ -271,6 +274,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return queryTools.fundingQuery(key, searchParameters.get(key));
         } else if (queryTools.isNumber(key)) {
             return queryTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
+        } else if (queryTools.isBoolean(key)) {
+            return queryTools.boolQuery(key, searchParameters.get(key)); //assumes one value
         } else {
             return queryTools.buildQuery(key, values)
                 .flatMap(builder -> queryTools.queryToEntry(key, builder));
@@ -339,6 +344,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
         public Optional<String> optional() {
             return Optional.ofNullable(value);
+        }
+
+        public boolean isEmpty() {
+            return isNull(value) || value.isEmpty();
         }
 
         @Override
