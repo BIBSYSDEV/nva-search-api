@@ -229,9 +229,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected String toNvaSearchApiValue(Entry<K, String> entry) {
         if (isCamelCase() && (FIELDS.equals(entry.getKey().fieldName()) || SORT.equals(entry.getKey().fieldName()))) {
             return CaseUtils.toCamelCase(entry.getValue(), false, UNDERSCORE.toCharArray())
-                .replace(Words.SPACE, PLUS);
+                .replace(SPACE, PLUS);
         } else {
-            return entry.getValue().replace(Words.SPACE, PLUS);
+            return entry.getValue().replace(SPACE, PLUS);
         }
     }
 
