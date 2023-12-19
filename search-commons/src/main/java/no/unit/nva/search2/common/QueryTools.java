@@ -46,7 +46,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     /**
      * '1', 'true' 'True' -> true any other value -> False
      *
-     * @param value
+     * @param value a string that is expected to be 1/true or 0/false
      * @return Boolean because we need the text 'true' or 'false'
      */
     public static Boolean valueToBoolean(String value) {
