@@ -283,6 +283,7 @@ class ResourceClientTest {
                 createArgument("CONTRIBUTOR_NAME=Kate+Robinson,Henrik+Langeland", 1),
                 createArgument("CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland", 1),
                 createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 1),
+                createArgument("CONTRIBUTOR_NAME=Gauer,Møkkelgjerd", 1),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),

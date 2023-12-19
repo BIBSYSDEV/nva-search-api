@@ -4,9 +4,6 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "keyword"
-        },
         "labels": {
           "type": "nested"
         }
@@ -22,12 +19,7 @@
           "properties": {
             "identity": {
               "type": "nested",
-              "include_in_parent": true,
-              "properties": {
-                "id": {
-                  "type": "keyword"
-                }
-              }
+              "include_in_parent": true
             }
           }
         },
@@ -37,40 +29,15 @@
           "properties": {
             "publicationInstance": {
               "type": "nested",
-              "include_in_parent": true,
-              "properties": {
-                "type": {
-                  "type": "keyword"
-                }
-              }
+              "include_in_parent": true
             },
             "publicationContext": {
               "type": "nested",
               "include_in_parent": true,
               "properties": {
-                "id": {
-                  "type": "keyword"
-                },
-                "identifier": {
-                  "type": "keyword"
-                },
-                "name": {
-                  "type": "keyword"
-                },
                 "publisher": {
                   "type": "nested",
-                  "include_in_parent": true,
-                  "properties": {
-                    "id": {
-                      "type": "keyword"
-                    },
-                    "identifier": {
-                      "type": "keyword"
-                    },
-                    "name": {
-                      "type": "keyword"
-                    }
-                  }
+                  "include_in_parent": true
                 }
               }
             }
@@ -86,9 +53,6 @@
           "type": "nested",
           "include_in_parent": true,
           "properties": {
-            "identifier": {
-              "type": "keyword"
-            },
             "labels": {
               "type": "nested",
               "include_in_parent": true
@@ -99,27 +63,11 @@
     },
     "projects": {
       "type": "nested",
-      "include_in_parent": true,
-      "properties": {
-        "id": {
-          "type": "keyword"
-        },
-        "name": {
-          "type": "keyword"
-        }
-      }
+      "include_in_parent": true
     },
     "associatedArtifacts": {
       "type": "nested",
-      "include_in_parent": true,
-      "properties": {
-        "identifier": {
-          "type": "keyword"
-        },
-        "name": {
-          "type": "keyword"
-        }
-      }
+      "include_in_parent": true
     }
   }
 }

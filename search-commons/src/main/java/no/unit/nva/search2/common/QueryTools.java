@@ -3,14 +3,17 @@ package no.unit.nva.search2.common;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
-import static no.unit.nva.search2.constant.Words.UNDERSCORE;
+import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -119,7 +122,20 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    static String[] splitByComma(String value) {
+    static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+
+        requestParameter.remove(Words.FROM);
+        var sortedP =
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
+        requestParameter.put(Words.SEARCH_AFTER, sortedP);
+        return fromUri(gatewayUri)
+            .addQueryParameters(requestParameter)
+            .getUri();
+    }
+
+    static String[] splitValues(String value) {
         return Arrays.stream(value.split(COMMA))
             .map(String::trim)
             .toArray(String[]::new);
@@ -171,10 +187,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return queryToEntry(
             key,
             QueryBuilders.nestedQuery(
-                "fundings",
+                FUNDINGS,
                 QueryBuilders.boolQuery()
-                    .must(QueryBuilders.termQuery("fundings.identifier", values[1]))
-                    .must(QueryBuilders.termQuery("fundings.source.identifier", values[0])),
+                    .must(QueryBuilders.termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))
+                    .must(QueryBuilders.termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
                 ScoreMode.None));
     }
 
