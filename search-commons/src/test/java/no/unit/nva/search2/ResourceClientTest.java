@@ -272,6 +272,7 @@ class ResourceClientTest {
         static Stream<Arguments> uriProvider() {
             return Stream.of(
                 createArgument("page=0", 20),
+                createArgument("page=3", 0),
                 createArgument("CATEGORY=ReportResearch&page=0", 10),
                 createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),

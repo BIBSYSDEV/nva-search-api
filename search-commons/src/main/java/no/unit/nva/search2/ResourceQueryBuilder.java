@@ -19,7 +19,6 @@ import static nva.commons.core.attempt.Try.attempt;
 import java.util.Map.Entry;
 import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.enums.ResourceParameter;
-import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings({"PMD.GodClass"})
@@ -92,7 +91,6 @@ public class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, Resour
         }
     }
 
-    @JacocoGenerated
     @Override
     protected void applyRulesAfterValidation() {
         // convert page to offset if offset is not set
