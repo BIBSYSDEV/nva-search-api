@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.resource;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
@@ -11,24 +11,25 @@ import no.unit.nva.search2.common.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
-public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateQuery> {
+public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery> {
 
-    public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+    private final UserSettingsClient userSettingsClient;
+
+    public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
+        this.userSettingsClient = new UserSettingsClient(client, cachedJwtProvider);
     }
 
     @JacocoGenerated
-    public static ImportCandidateClient defaultClient() {
-        var cachedJwtProvider =
-            OpenSearchClient.getCachedJwtProvider(new SecretsReader());
-
-        return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
+    public static ResourceClient defaultClient() {
+        var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
+        return new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
     @Override
-    public SwsResponse doSearch(ImportCandidateQuery query) {
+    public SwsResponse doSearch(ResourceQuery query) {
         return
-            query.createQueryBuilderStream()
+            query.createQueryBuilderStream(userSettingsClient)
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
@@ -36,6 +37,7 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
     }
 
     @Override
+    @JacocoGenerated // hard to test statusCode != OK
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

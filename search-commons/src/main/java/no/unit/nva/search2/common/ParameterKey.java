@@ -1,4 +1,4 @@
-package no.unit.nva.search2.enums;
+package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;

@@ -1,4 +1,4 @@
-package no.unit.nva.search2.enums;
+package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -11,29 +11,27 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.constant.ImportCandidate;
 import no.unit.nva.search2.constant.Words;
 
-public enum ImportCandidateSort {
+enum SortParameter {
     INVALID(EMPTY_STRING),
-    COLLABORATION_TYPE(ImportCandidate.COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE(Constants.COLLABORATION_TYPE_KEYWORD),
     CREATED_DATE(Words.CREATED_DATE),
-    INSTANCE_TYPE(ImportCandidate.INSTANCE_TYPE_KEYWORD),
-    PUBLICATION_YEAR(ImportCandidate.PUBLICATION_YEAR_KEYWORD),
-    TITLE(ImportCandidate.MAIN_TITLE_KEYWORD),
-    TYPE(ImportCandidate.TYPE_KEYWORD);
+    INSTANCE_TYPE(Constants.INSTANCE_TYPE_KEYWORD),
+    PUBLICATION_YEAR(Constants.PUBLICATION_YEAR_KEYWORD),
+    TITLE(Constants.MAIN_TITLE_KEYWORD),
+    TYPE(Constants.TYPE_KEYWORD);
 
-    public static final Set<ImportCandidateSort> VALID_SORT_PARAMETER_KEYS =
-        Arrays.stream(ImportCandidateSort.values())
-            .sorted(ImportCandidateSort::compareAscending)
+    public static final Set<SortParameter> VALID_SORT_PARAMETER_KEYS =
+        Arrays.stream(SortParameter.values())
+            .sorted(SortParameter::compareAscending)
             .skip(1)    // skip INVALID
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
     private final String fieldName;
 
-
-    ImportCandidateSort(String fieldName) {
+    SortParameter(String fieldName) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.fieldName = fieldName;
     }
@@ -46,27 +44,27 @@ public enum ImportCandidateSort {
         return fieldName;
     }
 
-    public static ImportCandidateSort fromSortKey(String keyName) {
-        var result = Arrays.stream(ImportCandidateSort.values())
-            .filter(ImportCandidateSort.equalTo(keyName))
+    public static SortParameter fromSortKey(String keyName) {
+        var result = Arrays.stream(SortParameter.values())
+            .filter(SortParameter.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
 
-    public static Predicate<ImportCandidateSort> equalTo(String name) {
+    public static Predicate<SortParameter> equalTo(String name) {
         return key -> name.matches(key.getKeyPattern());
     }
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ImportCandidateSort::name)
+            .map(SortParameter::name)
             .map(String::toLowerCase)
             .toList();
     }
 
-    private static int compareAscending(ImportCandidateSort key1, ImportCandidateSort key2) {
+    private static int compareAscending(SortParameter key1, SortParameter key2) {
         return key1.ordinal() - key2.ordinal();
     }
 

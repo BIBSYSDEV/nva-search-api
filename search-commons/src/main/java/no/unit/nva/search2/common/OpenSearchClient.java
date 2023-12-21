@@ -43,7 +43,8 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected abstract R handleResponse(HttpResponse<String> response);
 
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
-        return attempt(() -> httpClient.send(httpRequest, bodyHandler)).orElseThrow();
+        return attempt(() -> httpClient.send(httpRequest, bodyHandler))
+            .orElseThrow();
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {

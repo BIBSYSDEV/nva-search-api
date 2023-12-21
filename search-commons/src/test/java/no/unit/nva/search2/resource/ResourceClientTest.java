@@ -1,11 +1,11 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
-import static no.unit.nva.search2.enums.ResourceParameter.SORT;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -260,6 +260,8 @@ class ResourceClientTest {
         static Stream<URI> uriInvalidProvider() {
             final var uriRoot = "https://x.org/?";
             return Stream.of(
+                URI.create(uriRoot + "sort=epler"),
+                URI.create(uriRoot + "sort=CATEGORY:DEdd"),
                 URI.create(uriRoot + "categories=hello+world&lang=en"),
                 URI.create(uriRoot + "tittles=hello+world&modified_before=2019-01-01"),
                 URI.create(uriRoot + "conttributors=hello+world&published_before=2020-01-01"),
@@ -277,6 +279,7 @@ class ResourceClientTest {
                 createArgument("CONTEXT_TYPE=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
+                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 0),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
                                + "https://api.dev.nva.aws.unit.no/cristin/person/1136255", 0),
                 createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 17),

@@ -1,17 +1,17 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
-import static no.unit.nva.search2.enums.ResourceParameter.CREATED_BEFORE;
-import static no.unit.nva.search2.enums.ResourceParameter.DOI;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.enums.ResourceParameter.MODIFIED_BEFORE;
-import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
-import static no.unit.nva.search2.enums.ResourceParameter.PUBLISHED_BEFORE;
-import static no.unit.nva.search2.enums.ResourceParameter.PUBLISHED_SINCE;
-import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
-import static no.unit.nva.search2.enums.ResourceParameter.SORT;
+import static no.unit.nva.search2.resource.ResourceParameter.CREATED_BEFORE;
+import static no.unit.nva.search2.resource.ResourceParameter.DOI;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.resource.ResourceParameter.MODIFIED_BEFORE;
+import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search2.resource.ResourceParameter.PUBLISHED_BEFORE;
+import static no.unit.nva.search2.resource.ResourceParameter.PUBLISHED_SINCE;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;

@@ -1,4 +1,4 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
@@ -8,9 +8,12 @@ import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PIPE;
 import java.util.List;
+import java.util.Locale;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-public final class ImportCandidate {
+@JacocoGenerated
+final class Constants {
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";
     public static final String CANDIDATE_STATUS = "candidateStatus";
@@ -37,6 +40,10 @@ public final class ImportCandidate {
 
     public static final String ORGANIZATION = "organization";
     public static final String ORGANIZATIONS = "organizations";
+
+    public static final String DEFAULT_IMPORT_CANDIDATE_SORT =
+        SortParameter.CREATED_DATE.name().toLowerCase(Locale.getDefault());
+
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
         generateSimpleAggregation(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD),

@@ -44,10 +44,14 @@ dependencies {
 test {
     useJUnitPlatform()
     environment "API_HOST", "localhost"
-    environment("SEARCH_INFRASTRUCTURE_API_HOST", "localhost")
-    environment("SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost")
-    environment("SEARCH_INFRASTRUCTURE_API_URI", "https://localhost")
+    environment "SEARCH_INFRASTRUCTURE_API_HOST", "localhost"
+    environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
+    environment "SEARCH_INFRASTRUCTURE_API_URI", "https://localhost"
     environment "IDENTITY_SERVICE_SECRET_NAME", "secretName"
     environment "IDENTITY_SERVICE_SECRET_KEY", "secretKey"
+    environment "ALLOWED_ORIGIN", "*"
+    environment "COGNITO_URI", "https://example.org"
+    environment "COGNITO_HOST", "https://example.org"
+    environment "EXPORT_SEARCH_RESULTS_SIZE", "100"
+    environment "BACKEND_CLIENT_SECRET_NAME", "secret"
 }
-

@@ -1,15 +1,14 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.resource;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -17,17 +16,20 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
-import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
-import static no.unit.nva.search2.enums.ResourceParameter.SORT;
-import static no.unit.nva.search2.enums.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.enums.ResourceSort.INVALID;
-import static no.unit.nva.search2.enums.ResourceSort.fromSortKey;
-import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
+import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
+import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
+import static no.unit.nva.search2.resource.SortParameter.INVALID;
+import static no.unit.nva.search2.resource.SortParameter.fromSortKey;
+import static no.unit.nva.search2.resource.SortParameter.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
@@ -37,13 +39,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.ParameterKey;
+import no.unit.nva.search2.common.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import no.unit.nva.search2.enums.ResourceParameter;
+import no.unit.nva.search2.dto.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -56,7 +58,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         super();
     }
 
-    static Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -88,8 +90,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    public String getSort() {
-        return getValue(SORT).as();
+    public AsType getSort() {
+        return getValue(SORT);
     }
 
     @Override
@@ -98,6 +100,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             fromUri(openSearchUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
                 .getUri();
+    }
+
+    @Override
+    protected boolean isPagingValue(ResourceParameter key) {
+        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
@@ -113,11 +120,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         var builder = new SearchSourceBuilder().query(queryBuilder);
 
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
-            builder.searchAfter(sortKeys);
-        }
+        handleSearchAfter(builder);
 
         RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
 
@@ -125,16 +128,30 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         builder.from(getValue(FROM).as());
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
+        logger.info(builder.toString());
+
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    private void handleSearchAfter(SearchSourceBuilder builder) {
+        var searchAfter = removeKey(SEARCH_AFTER);
+        if (nonNull(searchAfter)) {
+            var sortKeys = searchAfter.split(COMMA);
+            builder.searchAfter(sortKeys);
+        }
     }
 
     private boolean isLookingForOneContributor() {
         return hasOneValue(CONTRIBUTOR);
     }
 
+    @JacocoGenerated
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        var promotedPublications = userSettingsClient.doSearch(this).promotedPublications();
-        if (hasPromotedPublications(promotedPublications)) {
+        var promotedPublications =
+            attempt(() -> userSettingsClient.doSearch(this))
+                .or(() -> new UserSettings(List.of()))
+                .get().promotedPublications();
+        if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 bq.should(
@@ -146,12 +163,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    private boolean hasPromotedPublications(List<String> promotedPublications) {
-        return nonNull(promotedPublications) && !promotedPublications.isEmpty();
-    }
-
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+    public static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
 
         Builder() {
             super(new ResourceQuery());
@@ -182,14 +195,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 ? decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, decodedValue);
-                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(decodedValue));
-                case SORT -> mergeToPagingKey(SORT, trimSpace(decodedValue));
-                case SORT_ORDER -> mergeToPagingKey(SORT, decodedValue);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
+                case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(decodedValue));
-                case HAS_FILE -> query.setSearchingValue(qpKey, valueToBoolean(decodedValue).toString());
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
+                case HAS_FILE -> query.setKeyValue(qpKey, valueToBoolean(decodedValue).toString());
                 case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
@@ -222,7 +235,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 if (query.isPresent(FROM)) {
                     var page = query.getValue(PAGE).<Number>as();
                     var perPage = query.getValue(SIZE).<Number>as();
-                    query.setPagingValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.removeKey(PAGE);
             }

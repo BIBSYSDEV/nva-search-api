@@ -1,4 +1,4 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.resource;
 
 import static no.unit.nva.search2.constant.Functions.generateContributor;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
@@ -38,10 +38,16 @@ import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
+import java.util.Locale;
+import no.unit.nva.search2.constant.Words;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-public class Resource {
+@JacocoGenerated
+final class Constants {
 
+    public static final String DEFAULT_RESOURCE_SORT =
+        SortParameter.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);

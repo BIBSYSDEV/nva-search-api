@@ -1,6 +1,9 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.common.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
@@ -13,39 +16,49 @@ import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.constant.Defaults;
+import no.unit.nva.search2.common.ParameterKey.ParamKind;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
+    /**
+     * '1', 'true' 'True' -> true any other value -> False.
+     *
+     * @param value a string that is expected to be 1/true or 0/false
+     * @return Boolean because we need the text 'true' or 'false'
+     */
     public static Boolean valueToBoolean(String value) {
         return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
+    }
+
+    public static boolean hasContent(String value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
+    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
+    public static boolean hasContent(Collection<?> value) {
+        return nonNull(value) && !value.isEmpty();
     }
 
     public static String decodeUTF(String encoded) {
@@ -57,13 +70,12 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public static Collection<Entry<String, String>> queryToMapEntries(String query) {
-        return
-            nonNull(query)
-                ? Arrays.stream(query.split(AMPERSAND))
-                .map(s -> s.split(EQUAL))
-                .map(QueryTools::stringsToEntry)
-                .toList()
-                : Collections.emptyList();
+        return nonNull(query)
+            ? Arrays.stream(query.split(AMPERSAND))
+            .map(keyValue -> keyValue.split(EQUAL))
+            .map(QueryTools::stringsToEntry)
+            .toList()
+            : Collections.emptyList();
     }
 
     public static Entry<String, String> stringsToEntry(String... strings) {
@@ -95,10 +107,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
             @Override
             public SortOrder getValue() {
-                var sortOrder = nonNull(entry.getValue()) && !entry.getValue().isEmpty()
+                final var orderString = hasContent(entry.getValue())
                     ? entry.getValue()
-                    : Defaults.DEFAULT_SORT_ORDER;
-                return SortOrder.fromString(sortOrder);
+                    : DEFAULT_SORT_ORDER;
+                return SortOrder.fromString(orderString);
             }
 
             @Override
@@ -109,26 +121,17 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    static URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-
-        requestParameter.remove(Words.FROM);
-        var sortedP =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        requestParameter.put(Words.SEARCH_AFTER, sortedP);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
+    public boolean isBoolean(K key) {
+        return ParamKind.BOOLEAN.equals(key.fieldType());
     }
 
-    static String[] splitValues(String value) {
+    static String[] splitByCommaAndTrim(String value) {
         return Arrays.stream(value.split(COMMA))
             .map(String::trim)
             .toArray(String[]::new);
     }
 
-    public Stream<Entry<K, QueryBuilder>> queryToEntry(K key, QueryBuilder qb) {
+    Stream<Entry<K, QueryBuilder>> queryToEntry(K key, QueryBuilder qb) {
         final var entry = new Entry<K, QueryBuilder>() {
             @Override
             public K getKey() {
@@ -169,6 +172,16 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         });
     }
 
+    Stream<Entry<K, QueryBuilder>> boolQuery(K key, String value) {
+        return queryToEntry(key,
+                            QueryBuilders.termQuery(getFirstSearchField(key), Boolean.valueOf(value)));
+    }
+
+    Stream<Entry<K, QueryBuilder>> multiTermQuery(K key, String... values) {
+        var builder = new TermsQueryBuilder(getFirstSearchField(key), values);
+        return queryToEntry(key, builder);
+    }
+
     Stream<Entry<K, QueryBuilder>> fundingQuery(K key, String value) {
         final var values = value.split(COLON);
         return queryToEntry(
@@ -190,7 +203,11 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     boolean isSearchAll(K key) {
-        return Words.SEARCH_ALL.equals(key.name());
+        return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
+    }
+
+    boolean isText(K key) {
+        return ParamKind.TEXT.equals(key.fieldType());
     }
 
     private boolean hasMultipleFields(String... keys) {
@@ -204,12 +221,16 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             .operator(Operator.OR);
     }
 
-    private MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
+    MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
         final var searchField = getFirstSearchField(key);
-        return QueryBuilders
+        var qb = QueryBuilders
             .matchQuery(searchField, singleValue)
             .boost(key.fieldBoost())
             .operator(operatorByKey(key));
+
+        return isText(key)
+            ? qb.fuzziness(Fuzziness.AUTO)
+            : qb;
     }
 
     private String[] getSearchFields(K key) {
@@ -222,7 +243,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isNotKeyword(K key) {
-        return !key.fieldType().equals(ParamKind.KEYWORD);
+        return !ParamKind.KEYWORD.equals(key.fieldType());
     }
 
     private Operator operatorByKey(K key) {
@@ -233,7 +254,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    private String getFirstSearchField(K key) {
+    public String getFirstSearchField(K key) {
         return getSearchFields(key)[0];
     }
 }

@@ -1,11 +1,11 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,7 +28,6 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -175,6 +174,8 @@ class ImportCandidateClientTest {
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
+                URI.create("https://example.com/?size=8&sort=epler"),
+                URI.create("https://example.com/?size=8&sort=type:DEdd"),
                 URI.create("https://example.com/?categories=hello+world"),
                 URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01"),
                 URI.create("https://example.com/?conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),

@@ -2,7 +2,6 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
@@ -12,7 +11,7 @@ import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
-import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
+import static no.unit.nva.search2.resource.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,17 +20,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Builder for OpenSearchQuery.
- * @param <K> Enum of QueryParameterKeys
+ * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
 public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
@@ -43,11 +40,11 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     protected transient boolean notValidated = true;
 
     /**
-     * Constructor of CristinQuery.Builder.
+     * Constructor of QueryBuilder.
      * <p>Usage:</p>
-     * <samp>new CristinQuery.Builder()<br>
+     * <samp>Query.builder()<br>
      * .fromRequestInfo(requestInfo)<br>
-     * .withRequiredParameters(IDENTITY,PAGE_CURRENT,PAGE_ITEMS_PER_PAGE)<br>
+     * .withRequiredParameters(FROM, SIZE)<br>
      * .build()
      * </samp>
      */
@@ -94,7 +91,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     /**
      * Adds query and path parameters from requestInfo.
      */
-    public final QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
+    public QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.setMediaType(requestInfo.getHeaders().get("Accept"));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());
         return fromQueryParameters(requestInfo.getQueryParameters());
@@ -183,12 +180,9 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * @throws BadRequestException if sort key is invalid
      */
     protected void validatedSort() throws BadRequestException {
-        var sortEntries = query.getSort();
-        if (isNull(sortEntries)) {
-            return;
-        }
         try {
-            query.getSortStream().forEach(this::validateSortEntry);
+            query.getSortStream()
+                .forEach(this::validateSortEntry);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
@@ -203,7 +197,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                    .toList();
     }
 
-    @JacocoGenerated
+
     protected boolean invalidQueryParameter(K key, String value) {
         return isNull(value) || !value.matches(key.valuePattern());
     }
@@ -220,7 +214,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         return query.otherRequiredKeys;
     }
 
-    @JacocoGenerated
     protected Set<K> requiredMissing() {
         return
             required().stream()
@@ -229,15 +222,12 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                 .collect(Collectors.toSet());
     }
 
-    @JacocoGenerated
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         final var value = entry.getValue();
         if (invalidQueryParameter(key, value)) {
             final var keyName =  key.fieldName();
-            final var errorMessage = nonNull(key.errorMessage())
-                ? key.errorMessage().formatted(keyName, value)
-                : invalidQueryParametersMessage(keyName, value);
+            final var errorMessage = key.errorMessage().formatted(keyName, value);
             throw new BadRequestException(errorMessage);
         }
     }
@@ -255,12 +245,8 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         }
     }
 
-    protected void mergeToPagingKey(K key, String value) {
-        query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
-    }
-
     protected void mergeToKey(K key, String value) {
-        query.setSearchingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+        query.setKeyValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
     }
 
     protected String trimSpace(String value) {
@@ -275,7 +261,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                 .collect(Collectors.joining(COMMA));
     }
 
-    public String expandYearToDate(String value) {
+    protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;
     }
 
