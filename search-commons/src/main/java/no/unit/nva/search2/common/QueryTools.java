@@ -35,7 +35,6 @@ import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.common.unit.Fuzziness;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;

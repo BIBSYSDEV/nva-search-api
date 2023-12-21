@@ -1,7 +1,5 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SUM_OTHER_DOC_COUNT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.constant.Words.BUCKETS;
 import static no.unit.nva.search2.constant.Words.COUNT;

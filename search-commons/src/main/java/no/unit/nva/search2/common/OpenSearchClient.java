@@ -36,10 +36,6 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final CachedJwtProvider jwtProvider;
     protected Instant requestStart;
 
-    {
-        new ThreadLocal<Instant>().get();
-    }
-
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
         this.httpClient = httpClient;

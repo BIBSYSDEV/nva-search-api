@@ -2,7 +2,6 @@ package no.unit.nva.search2.dto;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
@@ -63,14 +62,15 @@ public class PagedSearchBuilder {
     }
 
     public PagedSearchBuilder withAggregations(String aggregations) {
-        if(nonNull(aggregations)) {
+        if (nonNull(aggregations)) {
             this.aggregations = FacetsBuilder.build(aggregations, this.id);
         }
         return this;
     }
 
-    private URI createNextResults(Map<String, String> requestParameter, Integer offset, Integer totalSize,
-                                  URI gatewayUri) {
+    private URI createNextResults(
+        Map<String, String> requestParameter, Integer offset,
+        Integer totalSize, URI gatewayUri) {
         return offset < totalSize
             ? createUriOffsetRef(requestParameter, offset, gatewayUri)
             : null;
