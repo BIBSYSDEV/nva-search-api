@@ -7,6 +7,7 @@ import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -107,8 +109,10 @@ class ResourceClientTest {
             var query = builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
+                .withMediaType(MediaType.JSON_UTF_8.toString())
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .build();
+            query.setNvaSearchApiUri(randomUri());
             var response = searchClient.doSearch(query);
             var aggregations = query.toPagedResponse(response).aggregations();
 

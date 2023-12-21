@@ -54,7 +54,6 @@ class ResourceQueryTest {
         assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
 
-
     @ParameterizedTest
     @MethodSource("uriCamelCaseProvider")
     void buildOpenSearchUriCamelCase(URI uri) throws BadRequestException {
@@ -77,6 +76,7 @@ class ResourceQueryTest {
         logger.info(uri2.toString());
         assertNotEquals(uri, resourceParameters.getNvaSearchApiUri());
     }
+
     @ParameterizedTest
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {

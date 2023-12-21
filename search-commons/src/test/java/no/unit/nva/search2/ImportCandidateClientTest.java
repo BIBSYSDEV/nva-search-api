@@ -35,6 +35,7 @@ import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
@@ -78,6 +79,19 @@ class ImportCandidateClientTest {
 
     @Nested
     class ImportCandidateTest {
+
+        @Test
+        public void failedRequest() throws BadRequestException {
+            var query =
+                ImportCandidateQuery.builder()
+                    .fromQueryParameters(Map.of("contributor", "Strigfd Norland"))
+                    .withOpensearchUri(URI.create("https://localhost:9200/"))
+                    .withRequiredParameters(FROM, SIZE)
+                    .build();
+
+            assertThrows(RuntimeException.class, () -> importCandidateClient.doSearch(query));
+        }
+
 
         @ParameterizedTest
         @MethodSource("uriProvider")

@@ -26,6 +26,7 @@ import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.KeyFormat;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     /**
      * Adds query and path parameters from requestInfo.
      */
+    @JacocoGenerated   // due to project setup and tool choices, it is flagged as not testet, but it is.
     public final QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.setMediaType(requestInfo.getHeaders().get("Accept"));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());

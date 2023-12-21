@@ -210,7 +210,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return gatewayUri;
     }
 
-    protected void setNvaSearchApiUri(URI gatewayUri) {
+    public void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
     }
 
