@@ -14,16 +14,16 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
+public class ResourcePagedHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
-    public ResourcePagedSearchHandlerAws() {
+    public ResourcePagedHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public ResourcePagedSearchHandlerAws(Environment environment, ResourceClient resourceClient) {
+    public ResourcePagedHandler(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
         this.opensearchClient = resourceClient;
     }

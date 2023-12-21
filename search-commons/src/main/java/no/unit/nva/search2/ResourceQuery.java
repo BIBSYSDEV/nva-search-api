@@ -101,11 +101,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         var builder = new SearchSourceBuilder().query(queryBuilder);
 
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
-            builder.searchAfter(sortKeys);
-        }
+        handleSearchAfter(builder);
 
         RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
 
@@ -114,6 +110,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    private void handleSearchAfter(SearchSourceBuilder builder) {
+        var searchAfter = removeKey(SEARCH_AFTER);
+        if (nonNull(searchAfter)) {
+            var sortKeys = searchAfter.split(COMMA);
+            builder.searchAfter(sortKeys);
+        }
     }
 
     private boolean isLookingForOneContributor() {

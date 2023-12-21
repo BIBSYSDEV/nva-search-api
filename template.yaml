@@ -265,7 +265,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.ResourcePagedSearchHandlerAws::handleRequest
+      Handler: no.unit.nva.search2.ResourcePagedHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -289,7 +289,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.ImportCandidatePagedSearchHandlerAws::handleRequest
+      Handler: no.unit.nva.search2.ImportCandidatePagedHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:

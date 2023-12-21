@@ -11,7 +11,7 @@ import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.apigateway.MediaTypes;
 import nva.commons.core.JacocoGenerated;
 
-@JacocoGenerated
+@JacocoGenerated // Class is never instantiated, just constants are used
 public final class Defaults {
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;

@@ -14,16 +14,16 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class ImportCandidatePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
+public class ImportCandidatePagedHandler extends ApiGatewayHandler<Void, String> {
 
     private final ImportCandidateClient opensearchClient;
     
     @JacocoGenerated
-    public ImportCandidatePagedSearchHandlerAws() {
+    public ImportCandidatePagedHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public ImportCandidatePagedSearchHandlerAws(Environment environment, ImportCandidateClient candidateClient) {
+    public ImportCandidatePagedHandler(Environment environment, ImportCandidateClient candidateClient) {
         super(Void.class, environment);
         this.opensearchClient = candidateClient;
     }

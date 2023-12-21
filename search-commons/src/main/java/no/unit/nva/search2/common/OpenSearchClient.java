@@ -20,6 +20,7 @@ import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search2.dto.ResponseInfo;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
@@ -33,14 +34,16 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final HttpClient httpClient;
     protected final BodyHandler<String> bodyHandler;
     protected final CachedJwtProvider jwtProvider;
-    protected final Instant requestStart;
+    protected Instant requestStart;
+
+    {
+        new ThreadLocal<Instant>().get();
+    }
 
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
         this.httpClient = httpClient;
         this.jwtProvider = jwtProvider;
-        requestStart = Instant.now();
-
     }
 
     public abstract R doSearch(Q query);
@@ -53,6 +56,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.info(qbs.source().query().toString());
+        requestStart = Instant.now();
         return HttpRequest
             .newBuilder(qbs.requestUri())
             .headers(
@@ -84,11 +88,13 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .findFirst().orElseThrow();
     }
 
-    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult(
+        int statusCode
+    ) {
+
         return result -> {
             var duration = Duration.between(requestStart, Instant.now()).toMillis();
-            logger.info("Opensearch Response Time: {} ms, Request Duration: {} ms, TotalSize: {}",
-                        result.took(), duration, result.getTotalSize());
+            logger.info(new ResponseInfo(result.getTotalSize(), statusCode, result.took(),duration).toJsonString());
             return result;
         };
     }

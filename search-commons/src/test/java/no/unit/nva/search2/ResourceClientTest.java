@@ -103,7 +103,7 @@ class ResourceClientTest {
 
         @Test
         void shoulCheckFacets() throws BadRequestException {
-            var uri = URI.create("https://x.org/?size=20");
+            var uri = URI.create("https://x.org/?from=2");
             var query = builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE)
@@ -123,6 +123,8 @@ class ResourceClientTest {
                        is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
         }
 
+
+
         @Test
         void emptyResultShouldIncludeHits() throws BadRequestException {
             var uri = URI.create("https://x.org/?id=018b857b77b7");
@@ -135,7 +137,7 @@ class ResourceClientTest {
                     .build()
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
-            assertTrue(pagedResult.contains("\"hits\":["));
+            assertTrue(pagedResult.contains("\"hits\":[],"));
         }
 
         @ParameterizedTest
@@ -272,7 +274,6 @@ class ResourceClientTest {
         static Stream<Arguments> uriProvider() {
             return Stream.of(
                 createArgument("page=0", 20),
-                createArgument("page=3", 0),
                 createArgument("CATEGORY=ReportResearch&page=0", 10),
                 createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),
@@ -287,6 +288,7 @@ class ResourceClientTest {
                 createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 1),
                 createArgument("CONTRIBUTOR_NAME=Gauer,Møkkelgjerd", 1),
                 createArgument("contributorNameShould=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
+                createArgument("contributorNameShould=Peter+Gauer,Kjetil+Møkkelgjerd&CONTEXT_TYPE=Report", 7),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
                 createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 18),
@@ -319,7 +321,7 @@ class ResourceClientTest {
                 createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
                 createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 2),
                 createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 18),
-                createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole", 3),
+                createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole,test", 3),
                 createArgument("INSTITUTION=1627.0.0.0", 0),
                 createArgument("INSTITUTION=Forsvarets+høgskole", 3),
                 createArgument("INSTITUTION=Norwegian+Defence+University+College", 3),

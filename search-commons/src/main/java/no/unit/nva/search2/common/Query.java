@@ -3,8 +3,7 @@ package no.unit.nva.search2.common;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.splitByComma;
-import static no.unit.nva.search2.constant.ErrorMessages.UNEXPECTED_VALUE;
+import static no.unit.nva.search2.common.QueryTools.splitByCommaAndTrim;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -249,8 +248,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 switch (entry.getKey().searchOperator()) {
                     case MUST, GREATER_THAN_OR_EQUAL_TO, LESS_THAN -> bq.must(entry.getValue());
                     case MUST_NOT -> bq.mustNot(entry.getValue());
-                    case SHOULD -> bq.should(entry.getValue());
-                    default -> throw new IllegalStateException(UNEXPECTED_VALUE + entry.getKey().searchOperator());
+                    case SHOULD -> bq.must(entry.getValue());
                 }
             });
         return bq;
@@ -267,7 +265,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
-        final var values = splitByComma(searchParameters.get(key));
+        final var values = splitByCommaAndTrim(searchParameters.get(key));
         if (queryTools.isSearchAll(key)) {
             return queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
         } else if (queryTools.isFundingKey(key)) {
@@ -276,6 +274,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return queryTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
         } else if (queryTools.isBoolean(key)) {
             return queryTools.boolQuery(key, searchParameters.get(key)); //assumes one value
+        } else if (key.searchOperator() == ParameterKey.FieldOperator.SHOULD) {
+            var builder = QueryBuilders.boolQuery();
+            Arrays.stream(values)
+                .map(value -> queryTools.getMatchQueryBuilder(key, value))
+                .forEach(builder::should);
+            return queryTools.queryToEntry(key, builder);
         } else {
             return queryTools.buildQuery(key, values)
                 .flatMap(builder -> queryTools.queryToEntry(key, builder));
@@ -331,7 +335,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             if (isNull(value)) {
                 return null;
             }
-            return (T) switch (key.fieldType()) {
+            return (T) switch (getKey().fieldType()) {
                 case DATE -> castDateTime();
                 case NUMBER -> castNumber();
                 default -> value;
@@ -344,10 +348,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
         public Optional<String> optional() {
             return Optional.ofNullable(value);
-        }
-
-        public boolean isEmpty() {
-            return isNull(value) || value.isEmpty();
         }
 
         @Override

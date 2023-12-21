@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ImportCandidatePagedSearchHandlerAwsTest {
+class ImportCandidatePagedHandlerTest {
     
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -51,7 +51,7 @@ class ImportCandidatePagedSearchHandlerAwsTest {
         "sample_opensearch_importCandidate_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundTripImportCandidateResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private ImportCandidatePagedSearchHandlerAws handler;
+    private ImportCandidatePagedHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ImportCandidateClient mockedSearchClient;
@@ -60,7 +60,7 @@ class ImportCandidatePagedSearchHandlerAwsTest {
     void setUp() {
 
         mockedSearchClient = mock(ImportCandidateClient.class);
-        handler = new ImportCandidatePagedSearchHandlerAws(new Environment(), mockedSearchClient);
+        handler = new ImportCandidatePagedHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }

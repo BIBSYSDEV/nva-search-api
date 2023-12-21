@@ -25,11 +25,13 @@ import static no.unit.nva.search2.constant.Words.TYPE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
+@JacocoGenerated // Class is never instantiated, just constants are used
 public final class Functions {
 
     static final Environment ENVIRONMENT = new Environment();

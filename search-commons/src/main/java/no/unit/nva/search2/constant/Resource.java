@@ -38,9 +38,12 @@ import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
+
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-public class Resource {
+@JacocoGenerated // Class is never instantiated, just constants are used
+public final class Resource {
 
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =

@@ -35,6 +35,7 @@ import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.common.unit.Fuzziness;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -59,6 +60,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return nonNull(value) && !value.isEmpty();
     }
 
+    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
     public static boolean hasContent(Collection<?> value) {
         return nonNull(value) && !value.isEmpty();
     }
@@ -129,11 +131,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return ParamKind.BOOLEAN.equals(key.fieldType());
     }
 
-    public boolean isTitleQuery(K key) {
-        return key.searchFields().contains("entityDescription.mainTitle");
-    }
-
-    static String[] splitByComma(String value) {
+    static String[] splitByCommaAndTrim(String value) {
         return Arrays.stream(value.split(COMMA))
             .map(String::trim)
             .toArray(String[]::new);
@@ -166,6 +164,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             return Arrays.stream(values)
                 .map(singleValue -> getMultiMatchQueryBuilder(singleValue, searchFields));
         }
+
         return Arrays.stream(values)
             .map(singleValue -> getMatchQueryBuilder(key, singleValue));
     }
@@ -183,15 +182,6 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     Stream<Entry<K, QueryBuilder>> boolQuery(K key, String value) {
         return queryToEntry(key,
                             QueryBuilders.termQuery(getFirstSearchField(key), Boolean.valueOf(value)));
-    }
-
-    public Stream<Entry<K, QueryBuilder>> freeTextQuery(K key, String value) {
-        var qb = QueryBuilders
-            .matchQuery(getFirstSearchField(key), value)
-            .fuzziness(Fuzziness.AUTO)
-            .boost(key.fieldBoost())
-            .operator(operatorByKey(key));
-        return queryToEntry(key, qb);
     }
 
     Stream<Entry<K, QueryBuilder>> fundingQuery(K key, String value) {
@@ -233,7 +223,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             .operator(Operator.OR);
     }
 
-    private MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
+    MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
         final var searchField = getFirstSearchField(key);
         var qb = QueryBuilders
             .matchQuery(searchField, singleValue)

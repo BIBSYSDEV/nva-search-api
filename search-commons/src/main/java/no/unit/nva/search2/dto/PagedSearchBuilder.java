@@ -1,6 +1,8 @@
 package no.unit.nva.search2.dto;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
@@ -61,11 +63,9 @@ public class PagedSearchBuilder {
     }
 
     public PagedSearchBuilder withAggregations(String aggregations) {
-
-        if (isNull(aggregations)) {
-            return this;
+        if(nonNull(aggregations)) {
+            this.aggregations = FacetsBuilder.build(aggregations, this.id);
         }
-        this.aggregations = FacetsBuilder.build(aggregations, this.id);
         return this;
     }
 

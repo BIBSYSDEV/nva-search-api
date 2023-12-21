@@ -79,7 +79,7 @@ public record SwsResponse(
     @Transient
     public String getAggregationsStructured() {
         return nonNull(aggregations)
-            ? AggregationFormat.apply(aggregations).toString()
+            ? new AggregationFormat().apply(aggregations).toString()
             : null;
     }
 

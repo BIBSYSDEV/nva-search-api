@@ -41,7 +41,7 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
             throw new RuntimeException(response.body());
         }
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
-            .map(logAndReturnResult())
+            .map(logAndReturnResult(response.statusCode()))
             .orElseThrow();
     }
 }
