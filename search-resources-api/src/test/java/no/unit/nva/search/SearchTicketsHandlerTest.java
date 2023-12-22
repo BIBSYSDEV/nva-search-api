@@ -7,12 +7,13 @@ import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
 import static no.unit.nva.search.RequestUtil.VIEWING_SCOPE_KEY;
-import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
 import static no.unit.nva.search.SearchTicketsHandler.ROLE_CREATOR;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.apigateway.AccessRight.APPROVE_DOI_REQUEST;
+import static nva.commons.apigateway.AccessRight.USER;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -249,7 +250,7 @@ class SearchTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
                    .withRequestContextValue(PATH, path)
                    .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -275,7 +276,7 @@ class SearchTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
                    .withRequestContextValue(PATH, path)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
                    .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
@@ -291,7 +292,7 @@ class SearchTicketsHandlerTest {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withUserName(USERNAME)
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, AccessRight.USER.toString())
+                   .withAccessRights(customerId, USER)
                    .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
                    .withRequestContextValue(PATH, SAMPLE_PATH)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -304,7 +305,6 @@ class SearchTicketsHandlerTest {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                    .withUserName(USERNAME)
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, "SomeOtherAccessRight")
                    .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
                    .withRequestContextValue(PATH, MESSAGES_PATH)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -323,7 +323,7 @@ class SearchTicketsHandlerTest {
                    .withQueryParameters(Map.of(VIEWING_SCOPE_KEY, viewingScope))
                    .withUserName(USERNAME)
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
                    .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
                    .withRequestContextValue(PATH, MESSAGES_PATH)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -341,7 +341,7 @@ class SearchTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
                    .withRequestContextValue(PATH, SAMPLE_PATH)
                    .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
