@@ -2,9 +2,9 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.QueryTools.splitByCommaAndTrim;
+import static no.unit.nva.search2.common.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.decodeUTF;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.hasContent;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -30,11 +30,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryRange;
+import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.builder.OpensearchQueryTools;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
+import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -51,7 +56,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected final transient QueryTools<K> queryTools;
+    protected final transient OpensearchQueryTools<K> opensearchQueryTools;
 
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
@@ -80,7 +85,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
-        queryTools = new QueryTools<>();
+        opensearchQueryTools = new OpensearchQueryTools<>();
         mediaType = MediaType.JSON_UTF_8;
     }
 
@@ -219,44 +224,31 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         getSearchParameterKeys()
             .flatMap(this::getQueryBuilders)
             .forEach(entry -> {
-                switch (entry.getKey().searchOperator()) {
-                    case MUST, GREATER_THAN_OR_EQUAL_TO, LESS_THAN, SHOULD -> bq.must(entry.getValue());
-                    case MUST_NOT -> bq.mustNot(entry.getValue());
+                if (entry.getKey().searchOperator().equals(MUST_NOT)) {
+                    bq.mustNot(entry.getValue());
+                } else {
+                    bq.must(entry.getValue());
                 }
             });
         return bq;
     }
 
-    // SORTING
-    protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().optional().stream()
-            .map(items -> items.split(COMMA))
-            .flatMap(Arrays::stream)
-            .map(sort -> sort.split(COLON + PIPE + SPACE))
-            .map(QueryTools::stringsToEntry)
-            .map(QueryTools::entryToSortEntry);
-    }
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
-        final var values = splitByCommaAndTrim(searchParameters.get(key));
-        if (queryTools.isSearchAll(key)) {
-            return queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
-        } else if (queryTools.isFundingKey(key)) {
-            return queryTools.fundingQuery(key, searchParameters.get(key));
-        } else if (queryTools.isNumber(key)) {
-            return queryTools.rangeQuery(key, values[0]); //assumes one value, can be extended -> 'FROM X TO Y'
-        } else if (queryTools.isBoolean(key)) {
-            return queryTools.boolQuery(key, searchParameters.get(key)); //assumes one value
-        } else if (key.searchOperator() == ParameterKey.FieldOperator.SHOULD) {
-            return queryTools.multiTermQuery(key, values);
+        final var value =searchParameters.get(key);
+        if (opensearchQueryTools.isSearchAll(key)) {
+            return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+        } else if (opensearchQueryTools.isFundingKey(key)) {
+            return opensearchQueryTools.fundingQuery(key, value);
+        } else if (opensearchQueryTools.isBoolean(key)) {
+            return opensearchQueryTools.boolQuery(key, value); //assumes one value
+        } else if (opensearchQueryTools.isNumber(key)) {
+            return new OpensearchQueryRange<K>().buildQuery(key, value);
+        } else if (opensearchQueryTools.isText(key)) {
+            return new OpensearchQueryText<K>().buildQuery(key, value);
         } else {
-            return queryTools.buildQuery(key, values)
-                .flatMap(builder -> queryTools.queryToEntry(key, builder));
+            return new OpensearchQueryKeyword<K>().buildQuery(key, value);
         }
-    }
-
-    private Stream<K> getSearchParameterKeys() {
-        return searchParameters.keySet().stream();
     }
 
     /**
@@ -271,7 +263,22 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return QueryBuilders
             .multiMatchQuery(value, fields)
             .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+            .fuzziness(Fuzziness.AUTO)
             .operator(Operator.AND);
+    }
+
+    // SORTING
+    protected Stream<Entry<String, SortOrder>> getSortStream() {
+        return getSort().optional().stream()
+            .map(items -> items.split(COMMA))
+            .flatMap(Arrays::stream)
+            .map(sort -> sort.split(COLON + PIPE + SPACE))
+            .map(OpensearchQueryTools::stringsToEntry)
+            .map(OpensearchQueryTools::entryToSortEntry);
+    }
+
+    private Stream<K> getSearchParameterKeys() {
+        return searchParameters.keySet().stream();
     }
 
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {

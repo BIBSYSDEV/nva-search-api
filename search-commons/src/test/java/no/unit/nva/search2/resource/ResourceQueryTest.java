@@ -1,7 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.queryToMapEntries;
 import static no.unit.nva.search2.resource.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.DOI;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;

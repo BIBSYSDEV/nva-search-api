@@ -2,9 +2,9 @@ package no.unit.nva.search2.resource;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.decodeUTF;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.hasContent;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.valueToBoolean;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;

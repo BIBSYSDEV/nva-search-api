@@ -7,6 +7,7 @@ import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 import no.unit.nva.search2.common.SwsResponse.HitsInfo.Hit;
+import no.unit.nva.search2.common.builder.AggregationFormat;
 import nva.commons.core.JacocoGenerated;
 
 public record SwsResponse(

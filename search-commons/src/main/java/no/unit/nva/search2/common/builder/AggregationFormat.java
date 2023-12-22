@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2.common.builder;
 
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.constant.Words.BUCKETS;

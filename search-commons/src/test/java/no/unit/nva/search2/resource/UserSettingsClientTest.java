@@ -2,7 +2,7 @@ package no.unit.nva.search2.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.queryToMapEntries;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
