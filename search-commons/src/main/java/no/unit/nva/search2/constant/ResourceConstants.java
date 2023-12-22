@@ -1,4 +1,4 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search2.constant;
 
 import static no.unit.nva.search2.constant.Functions.generateContributor;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
@@ -39,18 +39,19 @@ import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
 import java.util.Locale;
-import no.unit.nva.search2.constant.Words;
+
+import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 @JacocoGenerated
-final class Constants {
+public final class ResourceConstants {
 
     public static final String DEFAULT_RESOURCE_SORT =
-        SortParameter.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
+        ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD);
+        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
         jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, LABELS);
     public static final String CONTRIBUTORS_IDENTITY_ID =
@@ -73,13 +74,13 @@ final class Constants {
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
         jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
     public static final String PUBLICATION_INSTANCE_TYPE =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE, KEYWORD);
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT + TYPE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + Words.MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
         jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
-    public static final String RESOURCE_OWNER_OWNER_KEYWORD = jsonPath(RESOURCE_OWNER, OWNER, KEYWORD);
+    public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
         jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD) + PIPE

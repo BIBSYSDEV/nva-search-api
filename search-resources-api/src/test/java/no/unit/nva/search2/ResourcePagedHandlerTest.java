@@ -1,10 +1,35 @@
 package no.unit.nva.search2;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.ExportCsv;
+import no.unit.nva.search2.common.FakeGatewayResponse;
+import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.dto.PagedSearch;
+import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.GatewayResponse;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
+import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -18,30 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.ExportCsv;
-import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search2.common.SwsResponse;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.PagedSearch;
-import no.unit.nva.search2.resource.SearchClient;
-import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.GatewayResponse;
-import nva.commons.core.Environment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 class ResourcePagedHandlerTest {
 
@@ -54,12 +55,12 @@ class ResourcePagedHandlerTest {
     private ResourcePagedHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
-    private SearchClient mockedSearchClient;
+    private ResourceClient mockedSearchClient;
 
     @BeforeEach
     void setUp() {
 
-        mockedSearchClient = mock(SearchClient.class);
+        mockedSearchClient = mock(ResourceClient.class);
         handler = new ResourcePagedHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();

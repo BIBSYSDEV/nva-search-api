@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common.builder;
 
-import no.unit.nva.search2.common.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 

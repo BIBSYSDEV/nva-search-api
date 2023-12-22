@@ -1,8 +1,8 @@
-package no.unit.nva.search2.common.builder;
+package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.common.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import no.unit.nva.search2.common.ParameterKey;
-import no.unit.nva.search2.common.ParameterKey.ParamKind;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ParamKind;
 import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
@@ -34,7 +34,7 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 
-public final class OpensearchQueryTools<K extends Enum<K> & ParameterKey> {
+public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
 
     /**
@@ -68,7 +68,7 @@ public final class OpensearchQueryTools<K extends Enum<K> & ParameterKey> {
         return nonNull(query)
             ? Arrays.stream(query.split(AMPERSAND))
             .map(keyValue -> keyValue.split(EQUAL))
-            .map(OpensearchQueryTools::stringsToEntry)
+            .map(QueryTools::stringsToEntry)
             .toList()
             : Collections.emptyList();
     }

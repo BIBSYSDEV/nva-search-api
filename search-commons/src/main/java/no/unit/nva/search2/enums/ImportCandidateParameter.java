@@ -1,13 +1,20 @@
-package no.unit.nva.search2.importcandidate;
+package no.unit.nva.search2.enums;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.common.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.common.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.common.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.common.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.common.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.common.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.SORT_KEY;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.ADDITIONAL_IDENTIFIERS_KEYWORD;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.COLLABORATION_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.INSTANCE_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.PUBLICATION_YEAR_KEYWORD;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.PUBLISHER_ID_KEYWORD;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.STATUS_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
@@ -19,13 +26,7 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.Q;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
-import static no.unit.nva.search2.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.INSTANCE_TYPE_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -33,7 +34,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.common.ParameterKey;
+
+import no.unit.nva.search2.constant.ImportcandidateConstants;
 import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 
@@ -53,18 +55,18 @@ public enum ImportCandidateParameter implements ParameterKey {
     CATEGORY_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(TEXT, SHOULD, PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(ParamKind.DATE, Words.CREATED_DATE),
-    CONTRIBUTOR(KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_SHOULD(TEXT, SHOULD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR(KEYWORD, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_SHOULD(TEXT, SHOULD, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     COLLABORATION_TYPE(KEYWORD, MUST, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_NOT(KEYWORD, MUST_NOT, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_SHOULD(TEXT, SHOULD, COLLABORATION_TYPE_KEYWORD),
-    DOI(KEYWORD, Constants.DOI_KEYWORD),
-    DOI_NOT(TEXT, MUST_NOT, Constants.DOI_KEYWORD),
-    DOI_SHOULD(TEXT, SHOULD, Constants.DOI_KEYWORD),
-    ID(KEYWORD, Constants.IDENTIFIER),
-    ID_NOT(KEYWORD, MUST_NOT, Constants.IDENTIFIER),
-    ID_SHOULD(TEXT, SHOULD, Constants.IDENTIFIER),
+    DOI(KEYWORD, ImportcandidateConstants.DOI_KEYWORD),
+    DOI_NOT(TEXT, MUST_NOT, ImportcandidateConstants.DOI_KEYWORD),
+    DOI_SHOULD(TEXT, SHOULD, ImportcandidateConstants.DOI_KEYWORD),
+    ID(KEYWORD, ImportcandidateConstants.IDENTIFIER),
+    ID_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.IDENTIFIER),
+    ID_SHOULD(TEXT, SHOULD, ImportcandidateConstants.IDENTIFIER),
     IMPORT_STATUS(KEYWORD, STATUS_TYPE_KEYWORD),
     IMPORT_STATUS_NOT(KEYWORD, MUST_NOT, STATUS_TYPE_KEYWORD),
     IMPORT_STATUS_SHOULD(TEXT, SHOULD, STATUS_TYPE_KEYWORD),
@@ -77,10 +79,10 @@ public enum ImportCandidateParameter implements ParameterKey {
     PUBLISHER(KEYWORD, MUST, PUBLISHER_ID_KEYWORD),
     PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLISHER_ID_KEYWORD),
     PUBLISHER_SHOULD(TEXT, SHOULD, PUBLISHER_ID_KEYWORD),
-    TITLE(TEXT, Constants.MAIN_TITLE_KEYWORD, 2F),
-    TITLE_NOT(TEXT, MUST_NOT, Constants.MAIN_TITLE_KEYWORD),
-    TITLE_SHOULD(TEXT, SHOULD, Constants.MAIN_TITLE_KEYWORD),
-    TYPE(KEYWORD, Constants.TYPE_KEYWORD),
+    TITLE(TEXT, ImportcandidateConstants.MAIN_TITLE_KEYWORD, 2F),
+    TITLE_NOT(TEXT, MUST_NOT, ImportcandidateConstants.MAIN_TITLE_KEYWORD),
+    TITLE_SHOULD(TEXT, SHOULD, ImportcandidateConstants.MAIN_TITLE_KEYWORD),
+    TYPE(KEYWORD, ImportcandidateConstants.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(ParamKind.CUSTOM),

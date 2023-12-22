@@ -2,9 +2,9 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.decodeUTF;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.hasContent;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.constant.Words.COLON;
@@ -29,12 +29,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.common.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryRange;
+import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
+import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -51,7 +56,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected final transient OpensearchQueryTools<K> opensearchQueryTools;
+    protected final transient QueryTools<K> opensearchQueryTools;
 
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
@@ -80,7 +85,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
-        opensearchQueryTools = new OpensearchQueryTools<>();
+        opensearchQueryTools = new QueryTools<>();
         mediaType = MediaType.JSON_UTF_8;
     }
 
@@ -268,8 +273,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .map(items -> items.split(COMMA))
             .flatMap(Arrays::stream)
             .map(sort -> sort.split(COLON + PIPE + SPACE))
-            .map(OpensearchQueryTools::stringsToEntry)
-            .map(OpensearchQueryTools::entryToSortEntry);
+            .map(QueryTools::stringsToEntry)
+            .map(QueryTools::entryToSortEntry);
     }
 
     private Stream<K> getSearchParameterKeys() {

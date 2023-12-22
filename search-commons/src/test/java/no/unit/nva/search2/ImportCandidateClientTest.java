@@ -1,11 +1,11 @@
-package no.unit.nva.search2.importcandidate;
+package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.queryToMapEntries;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,6 +27,7 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
 import no.unit.nva.search2.constant.Words;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;

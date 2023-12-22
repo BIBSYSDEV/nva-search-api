@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common.builder;
 
-import no.unit.nva.search2.common.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey;
 import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;

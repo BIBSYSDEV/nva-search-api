@@ -1,11 +1,11 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.queryToMapEntries;
-import static no.unit.nva.search2.resource.ResourceParameter.FROM;
-import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
+import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;

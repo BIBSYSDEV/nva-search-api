@@ -1,4 +1,4 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
@@ -11,25 +11,24 @@ import no.unit.nva.search2.common.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
-public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery> {
+public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateQuery> {
 
-    private final UserSettingsClient userSettingsClient;
-
-    public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+    public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
-        this.userSettingsClient = new UserSettingsClient(client, cachedJwtProvider);
     }
 
     @JacocoGenerated
-    public static ResourceClient defaultClient() {
-        var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
-        return new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider);
+    public static ImportCandidateClient defaultClient() {
+        var cachedJwtProvider =
+            OpenSearchClient.getCachedJwtProvider(new SecretsReader());
+
+        return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
     @Override
-    public SwsResponse doSearch(ResourceQuery query) {
+    public SwsResponse doSearch(ImportCandidateQuery query) {
         return
-            query.createQueryBuilderStream(userSettingsClient)
+            query.createQueryBuilderStream()
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)

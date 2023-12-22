@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common.builder;
 
-import no.unit.nva.search2.common.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;

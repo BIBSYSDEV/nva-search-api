@@ -1,10 +1,8 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search2;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.decodeUTF;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.hasContent;
-import static no.unit.nva.search2.common.builder.OpensearchQueryTools.valueToBoolean;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -14,47 +12,45 @@ import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
-import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
-import static no.unit.nva.search2.resource.ResourceParameter.FROM;
-import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.resource.SortParameter.INVALID;
-import static no.unit.nva.search2.resource.SortParameter.fromSortKey;
-import static no.unit.nva.search2.resource.SortParameter.validSortKeys;
+import static no.unit.nva.search2.constant.Words.SEARCH;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.DEFAULT_IMPORT_CANDIDATE_SORT;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search2.constant.ImportcandidateConstants.IMPORT_CANDIDATES_INDEX_NAME;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FIELDS;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.PAGE;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT_ORDER;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.keyFromString;
+import static no.unit.nva.search2.enums.ImportCandidateSort.INVALID;
+import static no.unit.nva.search2.enums.ImportCandidateSort.fromSortKey;
+import static no.unit.nva.search2.enums.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.ParameterKey;
-import no.unit.nva.search2.common.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.UserSettings;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ResourceQuery extends Query<ResourceParameter> {
+public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
-    private ResourceQuery() {
+    ImportCandidateQuery() {
         super();
     }
 
@@ -73,7 +69,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected ResourceParameter getFieldsKey() {
+    protected ImportCandidateParameter getFieldsKey() {
         return FIELDS;
     }
 
@@ -82,7 +78,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return ALL.equals(field) || isNull(field)
             ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameter::keyFromString)
+                .map(ImportCandidateParameter::keyFromString)
                 .map(ParameterKey::searchFields)
                 .flatMap(Collection::stream)
                 .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
@@ -95,40 +91,33 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected URI getOpenSearchUri() {
+    public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
+                .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
                 .getUri();
     }
 
     @Override
-    protected boolean isPagingValue(ResourceParameter key) {
+    protected boolean isPagingValue(ImportCandidateParameter key) {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
-    public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
+    public Stream<QueryContentWrapper> createQueryBuilderStream() {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
-        if (isLookingForOneContributor()) {
-            assert queryBuilder instanceof BoolQueryBuilder;
-            addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
-        }
-
         var builder = new SearchSourceBuilder().query(queryBuilder);
 
         handleSearchAfter(builder);
 
-        RESOURCES_AGGREGATIONS.forEach(builder::aggregation);
+        IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
 
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
-
-        logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -141,38 +130,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    private boolean isLookingForOneContributor() {
-        return hasOneValue(CONTRIBUTOR);
-    }
-
-    @JacocoGenerated
-    private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        var promotedPublications =
-            attempt(() -> userSettingsClient.doSearch(this))
-                .or(() -> new UserSettings(List.of()))
-                .get().promotedPublications();
-        if (hasContent(promotedPublications)) {
-            removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                bq.should(
-                    QueryBuilders
-                        .matchQuery(ID, promotedPublications.get(i))
-                        .boost(3.14F + promotedPublications.size() - i)
-                );
-            }
-        }
-    }
-
     @SuppressWarnings("PMD.GodClass")
-    public static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+    public static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
 
         Builder() {
-            super(new ResourceQuery());
-        }
-
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ResourceParameter.INVALID;
+            super(new ImportCandidateQuery());
         }
 
         @Override
@@ -181,7 +143,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 switch (key) {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
                     default -> {
                     }
                 }
@@ -199,30 +161,20 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case CREATED_BEFORE, CREATED_SINCE,
-                    MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
-                case HAS_FILE -> query.setKeyValue(qpKey, valueToBoolean(decodedValue).toString());
-                case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
+                case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
+                    CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
+                    CREATED_DATE,
+                    COLLABORATION_TYPE, COLLABORATION_TYPE_NOT, COLLABORATION_TYPE_SHOULD,
                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
-                    CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
-                    FUNDING, FUNDING_SOURCE, FUNDING_SOURCE_NOT, FUNDING_SOURCE_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
+                    IMPORT_STATUS, IMPORT_STATUS_NOT, IMPORT_STATUS_SHOULD,
                     INSTANCE_TYPE, INSTANCE_TYPE_NOT, INSTANCE_TYPE_SHOULD,
-                    INSTITUTION, INSTITUTION_NOT, INSTITUTION_SHOULD,
-                    ISBN, ISBN_NOT, ISBN_SHOULD, ISSN, ISSN_NOT, ISSN_SHOULD,
-                    ORCID, ORCID_NOT, ORCID_SHOULD,
-                    PARENT_PUBLICATION, PARENT_PUBLICATION_SHOULD,
-                    PROJECT, PROJECT_NOT, PROJECT_SHOULD,
-                    PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
+                    PUBLICATION_YEAR, PUBLICATION_YEAR_BEFORE, PUBLICATION_YEAR_SINCE,
+                    PUBLISHER, PUBLISHER_NOT, PUBLISHER_SHOULD,
                     SEARCH_ALL,
                     TITLE, TITLE_NOT, TITLE_SHOULD,
-                    TOP_LEVEL_ORGANIZATION,
-                    UNIT, UNIT_NOT, UNIT_SHOULD,
-                    USER, USER_NOT, USER_SHOULD,
-                    USER_AFFILIATION, USER_AFFILIATION_NOT, USER_AFFILIATION_SHOULD -> mergeToKey(qpKey, decodedValue);
-                case LANG -> { /* ignore and continue */ }
+                    TYPE -> mergeToKey(qpKey, decodedValue);
                 default -> invalidKeys.add(key);
             }
         }
@@ -248,6 +200,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return VALID_LUCENE_PARAMETER_KEYS.stream()
+                .map(ParameterKey::fieldName)
+                .toList();
+        }
+
+        @Override
+        protected boolean isKeyValid(String keyName) {
+            return keyFromString(keyName) != ImportCandidateParameter.INVALID;
         }
     }
 }

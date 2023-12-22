@@ -1,20 +1,20 @@
-package no.unit.nva.search2.handlers;
+package no.unit.nva.search2;
 
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.importcandidate.ImportCandidateClient.defaultClient;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-import java.net.HttpURLConnection;
-import java.util.List;
-import no.unit.nva.search2.importcandidate.ImportCandidateClient;
-import no.unit.nva.search2.importcandidate.ImportCandidateQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+
+import java.net.HttpURLConnection;
+import java.util.List;
+
+import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
 
 public class ImportCandidateHandler extends ApiGatewayHandler<Void, String> {
 
