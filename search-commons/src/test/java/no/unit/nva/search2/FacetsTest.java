@@ -5,7 +5,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.streamToString;
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search2.common.AggregationFormat;
+import no.unit.nva.search2.common.builder.AggregationFormat;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
