@@ -2,7 +2,7 @@ package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.queryToMapEntries;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;

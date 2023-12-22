@@ -49,7 +49,7 @@ public final class Words {
     public static final String PIPE = "|";
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
-    public static final String PROJECTS_ID = "projects.id";
+    public static final String PROJECTS_ID = "projects.id.keyword";
     public static final String PUBLIC = "public";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";

@@ -1,7 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.common.builder.OpensearchQueryTools.queryToMapEntries;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
@@ -279,7 +279,7 @@ class ResourceClientTest {
                 createArgument("CONTEXT_TYPE=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
                 createArgument("CONTEXT_TYPE_NOT=Report", 10),
-                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 0),
+                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3),
                 createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
                                + "https://api.dev.nva.aws.unit.no/cristin/person/1136255", 0),
                 createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 17),
@@ -290,7 +290,7 @@ class ResourceClientTest {
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
-                createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 18),
+                createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 19),
                 createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 2),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047855", 1),
                 createArgument("DOI_SHOULD=.pone.0047855,pone.0047887", 2),
@@ -310,7 +310,7 @@ class ResourceClientTest {
                 createArgument("ID=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
                 createArgument("ID_NOT=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 19),
                 createArgument("ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&query=25e43dc3027e", 10),
-                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
+                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 2),
                 createArgument("ID=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
                 createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
@@ -318,10 +318,10 @@ class ResourceClientTest {
                 createArgument("INSTANCE_TYPE=AcademicArticle", 9),
                 createArgument("INSTANCE_TYPE_NOT=AcademicArticle", 11),
                 createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
-                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 2),
-                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 18),
+                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 5),
+                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 15),
                 createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole", 3),
-                createArgument("INSTITUTION=1627.0.0.0", 0),
+                createArgument("INSTITUTION=1627.0.0.0", 3),
                 createArgument("INSTITUTION=Forsvarets+høgskole", 3),
                 createArgument("INSTITUTION=Norwegian+Defence+University+College", 3),
                 createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 3),
@@ -344,9 +344,13 @@ class ResourceClientTest {
                 createArgument("ORCID_SHOULD=4147-3499", 3),
                 createArgument("PARENT_PUBLICATION=test", 0),
                 createArgument("PARENT_PUBLICATION_SHOULD=test", 0),
-                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 1),
-                createArgument("PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 19),
-                createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 1),
+                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 2),
+                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
+                    "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 1),
+                createArgument("PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
+                    "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 17),
+                createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
+                    "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 3),
                 createArgument("SEARCH_ALL=Fakultet+for+arkitektur", 1),
                 createArgument("TITLE=Kjetils+ticket+test", 1),
                 createArgument("TITLE_NOT=Kjetils+ticket+test", 17),
@@ -374,7 +378,7 @@ class ResourceClientTest {
                 createArgument("QUERY=Kjetil+Møkkelgjerd&fields=contributorName", 3),
                 createArgument("QUERY=observations&fields=all", 3),
                 createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
-                               + "&FIELDS=INSTITUTION", 2),
+                               + "&FIELDS=INSTITUTION", 5),
                 createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3)
             );
         }
