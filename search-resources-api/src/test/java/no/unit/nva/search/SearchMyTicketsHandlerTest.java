@@ -3,11 +3,11 @@ package no.unit.nva.search;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.RequestUtil.DOMAIN_NAME;
 import static no.unit.nva.search.RequestUtil.PATH;
-import static no.unit.nva.search.SearchTicketsHandler.ACCESS_RIGHTS_TO_VIEW_TICKETS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search.models.SearchTicketsQuery.VIEWING_SCOPE_QUERY_NAME;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.apigateway.AccessRight.APPROVE_DOI_REQUEST;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -29,6 +29,7 @@ import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.restclients.IdentityClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.core.Environment;
 import nva.commons.core.ioutils.IoUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,7 +143,7 @@ class SearchMyTicketsHandlerTest {
             .withUserName(OWNER_ID)
             .withHeaders(defaultQueryHeaders())
             .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+            .withAccessRights(customerId, APPROVE_DOI_REQUEST)
             .withRequestContextValue(PATH, "tickets")
             .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
             .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
@@ -155,7 +156,7 @@ class SearchMyTicketsHandlerTest {
             .withUserName(USERNAME)
             .withHeaders(defaultQueryHeaders())
             .withCurrentCustomer(customerId)
-            .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+            .withAccessRights(customerId, APPROVE_DOI_REQUEST)
             .withRequestContextValue(PATH, "tickets")
             .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
             .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
@@ -168,7 +169,7 @@ class SearchMyTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, ACCESS_RIGHTS_TO_VIEW_TICKETS)
+                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
                    .withRequestContextValue(PATH, "tickets")
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
                    .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)

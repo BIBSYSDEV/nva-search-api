@@ -9,6 +9,7 @@ import static no.unit.nva.search.constants.ApplicationConstants.STATUS_TERMS_AGG
 import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.TYPE_TERMS_AGGREGATION;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static nva.commons.apigateway.AccessRight.APPROVE_DOI_REQUEST;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringToStream;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -47,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponseDto> {
 
-    public static final String ACCESS_RIGHTS_TO_VIEW_TICKETS = "APPROVE_DOI_REQUEST";
     public static final String ROLE_CURATOR = "curator";
     public static final String PARAM_ROLE = "role";
     public static final String ROLE_CREATOR = "creator";
@@ -95,7 +95,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     }
 
     private static boolean userHasAccessRights(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(ACCESS_RIGHTS_TO_VIEW_TICKETS);
+        return requestInfo.userIsAuthorized(APPROVE_DOI_REQUEST);
     }
 
     private SearchResponseDto handleSearch(RequestInfo requestInfo, String indexName)
