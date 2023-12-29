@@ -9,7 +9,7 @@ import static no.unit.nva.search.constants.ApplicationConstants.STATUS_TERMS_AGG
 import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.TYPE_TERMS_AGGREGATION;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
-import static nva.commons.apigateway.AccessRight.APPROVE_DOI_REQUEST;
+import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringToStream;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -95,7 +95,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
     }
 
     private static boolean userHasAccessRights(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(APPROVE_DOI_REQUEST);
+        return requestInfo.userIsAuthorized(MANAGE_DOI);
     }
 
     private SearchResponseDto handleSearch(RequestInfo requestInfo, String indexName)

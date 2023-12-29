@@ -12,7 +12,7 @@ import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWith
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static nva.commons.apigateway.AccessRight.APPROVE_DOI_REQUEST;
+import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.USER;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -250,7 +250,7 @@ class SearchTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
+                   .withAccessRights(customerId, MANAGE_DOI)
                    .withRequestContextValue(PATH, path)
                    .withQueryParameters(Map.of("from", from.toString(), "results", resultSize.toString()))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -276,7 +276,7 @@ class SearchTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
+                   .withAccessRights(customerId, MANAGE_DOI)
                    .withRequestContextValue(PATH, path)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
                    .withTopLevelCristinOrgId(TOP_LEVEL_CRISTIN_ORG_ID)
@@ -323,7 +323,7 @@ class SearchTicketsHandlerTest {
                    .withQueryParameters(Map.of(VIEWING_SCOPE_KEY, viewingScope))
                    .withUserName(USERNAME)
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
+                   .withAccessRights(customerId, MANAGE_DOI)
                    .withTopLevelCristinOrgId(CUSTOMER_CRISTIN_ID)
                    .withRequestContextValue(PATH, MESSAGES_PATH)
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
@@ -341,7 +341,7 @@ class SearchTicketsHandlerTest {
                    .withUserName(USERNAME)
                    .withHeaders(defaultQueryHeaders())
                    .withCurrentCustomer(customerId)
-                   .withAccessRights(customerId, APPROVE_DOI_REQUEST)
+                   .withAccessRights(customerId, MANAGE_DOI)
                    .withRequestContextValue(PATH, SAMPLE_PATH)
                    .withQueryParameters(Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
                    .withRequestContextValue(DOMAIN_NAME, SAMPLE_DOMAIN_NAME)
