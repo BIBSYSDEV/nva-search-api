@@ -16,7 +16,7 @@ import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PIPE;
 
 @JacocoGenerated
-public final class Importcandidate {
+public final class ImportCandidate {
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";
     public static final String CANDIDATE_STATUS = "candidateStatus";
