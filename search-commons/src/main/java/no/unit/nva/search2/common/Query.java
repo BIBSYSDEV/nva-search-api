@@ -86,7 +86,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
         opensearchQueryTools = new QueryTools<>();
-        mediaType = MediaType.JSON_UTF_8;
+        setMediaType(MediaType.JSON_UTF_8.toString());
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
@@ -176,7 +176,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .orElse(false);
     }
 
-    @JacocoGenerated
     protected boolean hasNoSearchValue() {
         return searchParameters.isEmpty();
     }
@@ -197,6 +196,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return gatewayUri;
     }
 
+    @JacocoGenerated
     public void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
     }

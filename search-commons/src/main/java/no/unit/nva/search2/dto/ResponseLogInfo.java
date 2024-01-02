@@ -24,10 +24,6 @@ public record ResponseLogInfo(
         private Builder() {
         }
 
-        public static Builder builder() {
-            return new Builder();
-        }
-
         public Builder withTotalHits(int totalHits) {
             this.totalHits = totalHits;
             return this;
