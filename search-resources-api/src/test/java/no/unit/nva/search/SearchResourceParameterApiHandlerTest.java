@@ -10,6 +10,7 @@ import static no.unit.nva.search.RequestUtil.PATH;
 import static no.unit.nva.search.RequestUtil.SEARCH_TERM_KEY;
 import static no.unit.nva.search.RequestUtil.SORTORDER_KEY;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -387,7 +388,7 @@ public class SearchResourceParameterApiHandlerTest {
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_TERM_KEY, SAMPLE_SEARCH_TERM))
-                   .withHeaders(Map.of("Accept", contentType))
+                   .withHeaders(Map.of(ACCEPT, contentType))
                    .withRequestContext(getRequestContext())
                    .build();
     }

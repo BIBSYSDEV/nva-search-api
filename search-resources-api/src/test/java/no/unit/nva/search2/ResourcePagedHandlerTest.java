@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_ALL;
@@ -212,7 +213,7 @@ class ResourcePagedHandlerTest {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_ALL.fieldName(), "entityDescription.contributors.identity.id:12345",
                        "results", "10", "from", "0"))
-            .withHeaders(Map.of("Accept", "application/json"))
+            .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
             .withUserName(randomString())
             .build();
@@ -227,7 +228,7 @@ class ResourcePagedHandlerTest {
                             + "+OR+"
                             + "(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
-                .withHeaders(Map.of("Accept", "application/json"))
+                .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withUserName(randomString())
                 .build();
     }
@@ -235,7 +236,7 @@ class ResourcePagedHandlerTest {
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_ALL.fieldName(), SAMPLE_SEARCH_TERM))
-            .withHeaders(Map.of("Accept", contentType))
+            .withHeaders(Map.of(ACCEPT, contentType))
             .withRequestContext(getRequestContext())
             .build();
     }

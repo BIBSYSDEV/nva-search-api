@@ -2,6 +2,7 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
@@ -96,7 +97,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      */
     @JacocoGenerated
     public QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.setMediaType(requestInfo.getHeaders().get("Accept"));
+        query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
