@@ -1,6 +1,6 @@
 package no.unit.nva.search2.enums;
 
-import no.unit.nva.search2.constant.ImportcandidateConstants;
+import no.unit.nva.search2.constant.Importcandidate;
 import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 
@@ -13,13 +13,13 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.ADDITIONAL_IDENTIFIERS_KEYWORD;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.COLLABORATION_TYPE_KEYWORD;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.INSTANCE_TYPE_KEYWORD;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.PUBLICATION_YEAR_KEYWORD;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search2.constant.ImportcandidateConstants.STATUS_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.Importcandidate.ADDITIONAL_IDENTIFIERS_KEYWORD;
+import static no.unit.nva.search2.constant.Importcandidate.COLLABORATION_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.Importcandidate.INSTANCE_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.Importcandidate.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.Importcandidate.PUBLICATION_YEAR_KEYWORD;
+import static no.unit.nva.search2.constant.Importcandidate.PUBLISHER_ID_KEYWORD;
+import static no.unit.nva.search2.constant.Importcandidate.STATUS_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
@@ -55,21 +55,21 @@ public enum ImportCandidateParameter implements ParameterKey {
     CATEGORY_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(TEXT, SHOULD, PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(ParamKind.DATE, Words.CREATED_DATE),
-    CONTRIBUTOR(KEYWORD, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_SHOULD(TEXT, SHOULD, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NAME(KEYWORD, ImportcandidateConstants.CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NAME_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NAME_SHOULD(TEXT, SHOULD, ImportcandidateConstants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR(KEYWORD, Importcandidate.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, Importcandidate.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_SHOULD(TEXT, SHOULD, Importcandidate.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NAME(KEYWORD, Importcandidate.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_NOT(KEYWORD, MUST_NOT, Importcandidate.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_SHOULD(TEXT, SHOULD, Importcandidate.CONTRIBUTORS_IDENTITY_NAME),
     COLLABORATION_TYPE(KEYWORD, MUST, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_NOT(KEYWORD, MUST_NOT, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_SHOULD(TEXT, SHOULD, COLLABORATION_TYPE_KEYWORD),
-    DOI(KEYWORD, ImportcandidateConstants.DOI_KEYWORD),
-    DOI_NOT(TEXT, MUST_NOT, ImportcandidateConstants.DOI_KEYWORD),
-    DOI_SHOULD(TEXT, SHOULD, ImportcandidateConstants.DOI_KEYWORD),
-    ID(KEYWORD, ImportcandidateConstants.IDENTIFIER),
-    ID_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.IDENTIFIER),
-    ID_SHOULD(TEXT, SHOULD, ImportcandidateConstants.IDENTIFIER),
+    DOI(KEYWORD, Importcandidate.DOI_KEYWORD),
+    DOI_NOT(TEXT, MUST_NOT, Importcandidate.DOI_KEYWORD),
+    DOI_SHOULD(TEXT, SHOULD, Importcandidate.DOI_KEYWORD),
+    ID(KEYWORD, Importcandidate.IDENTIFIER),
+    ID_NOT(KEYWORD, MUST_NOT, Importcandidate.IDENTIFIER),
+    ID_SHOULD(TEXT, SHOULD, Importcandidate.IDENTIFIER),
     IMPORT_STATUS(KEYWORD, STATUS_TYPE_KEYWORD),
     IMPORT_STATUS_NOT(KEYWORD, MUST_NOT, STATUS_TYPE_KEYWORD),
     IMPORT_STATUS_SHOULD(TEXT, SHOULD, STATUS_TYPE_KEYWORD),
@@ -82,10 +82,10 @@ public enum ImportCandidateParameter implements ParameterKey {
     PUBLISHER(KEYWORD, MUST, PUBLISHER_ID_KEYWORD),
     PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLISHER_ID_KEYWORD),
     PUBLISHER_SHOULD(TEXT, SHOULD, PUBLISHER_ID_KEYWORD),
-    TITLE(TEXT, ImportcandidateConstants.MAIN_TITLE_KEYWORD, 2F),
-    TITLE_NOT(TEXT, MUST_NOT, ImportcandidateConstants.MAIN_TITLE_KEYWORD),
-    TITLE_SHOULD(TEXT, SHOULD, ImportcandidateConstants.MAIN_TITLE_KEYWORD),
-    TYPE(KEYWORD, ImportcandidateConstants.TYPE_KEYWORD),
+    TITLE(TEXT, Importcandidate.MAIN_TITLE_KEYWORD, 2F),
+    TITLE_NOT(TEXT, MUST_NOT, Importcandidate.MAIN_TITLE_KEYWORD),
+    TITLE_SHOULD(TEXT, SHOULD, Importcandidate.MAIN_TITLE_KEYWORD),
+    TYPE(KEYWORD, Importcandidate.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(ParamKind.CUSTOM),

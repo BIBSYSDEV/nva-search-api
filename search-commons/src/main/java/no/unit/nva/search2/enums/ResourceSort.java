@@ -1,6 +1,6 @@
 package no.unit.nva.search2.enums;
 
-import no.unit.nva.search2.constant.ResourceConstants;
+import no.unit.nva.search2.constant.Resource;
 import no.unit.nva.search2.constant.Words;
 
 import java.util.Arrays;
@@ -18,14 +18,14 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 public enum ResourceSort {
     INVALID(EMPTY_STRING),
-    CATEGORY(ResourceConstants.PUBLICATION_INSTANCE_TYPE),
-    INSTANCE_TYPE(ResourceConstants.PUBLICATION_INSTANCE_TYPE),
+    CATEGORY(Resource.PUBLICATION_INSTANCE_TYPE),
+    INSTANCE_TYPE(Resource.PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(Words.CREATED_DATE),
     MODIFIED_DATE(Words.MODIFIED_DATE),
     PUBLISHED_DATE(Words.PUBLISHED_DATE),
-    TITLE(ResourceConstants.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
-    UNIT_ID(ResourceConstants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
-    USER("(?i)(user)|(owner)", ResourceConstants.RESOURCE_OWNER_OWNER_KEYWORD);
+    TITLE(Resource.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
+    UNIT_ID(Resource.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
+    USER("(?i)(user)|(owner)", Resource.RESOURCE_OWNER_OWNER_KEYWORD);
 
     public static final Set<ResourceSort> VALID_SORT_PARAMETER_KEYS =
         Arrays.stream(ResourceSort.values())

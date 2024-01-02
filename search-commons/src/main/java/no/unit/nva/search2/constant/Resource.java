@@ -46,7 +46,7 @@ import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
 
 @JacocoGenerated
-public final class ResourceConstants {
+public final class Resource {
 
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());

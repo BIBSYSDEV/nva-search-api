@@ -1,6 +1,6 @@
 package no.unit.nva.search2.enums;
 
-import no.unit.nva.search2.constant.ImportcandidateConstants;
+import no.unit.nva.search2.constant.Importcandidate;
 import no.unit.nva.search2.constant.Words;
 
 import java.util.Arrays;
@@ -18,12 +18,12 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 public enum ImportCandidateSort {
     INVALID(EMPTY_STRING),
-    COLLABORATION_TYPE(ImportcandidateConstants.COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE(Importcandidate.COLLABORATION_TYPE_KEYWORD),
     CREATED_DATE(Words.CREATED_DATE),
-    INSTANCE_TYPE(ImportcandidateConstants.INSTANCE_TYPE_KEYWORD),
-    PUBLICATION_YEAR(ImportcandidateConstants.PUBLICATION_YEAR_KEYWORD),
-    TITLE(ImportcandidateConstants.MAIN_TITLE_KEYWORD),
-    TYPE(ImportcandidateConstants.TYPE_KEYWORD);
+    INSTANCE_TYPE(Importcandidate.INSTANCE_TYPE_KEYWORD),
+    PUBLICATION_YEAR(Importcandidate.PUBLICATION_YEAR_KEYWORD),
+    TITLE(Importcandidate.MAIN_TITLE_KEYWORD),
+    TYPE(Importcandidate.TYPE_KEYWORD);
 
     public static final Set<ImportCandidateSort> VALID_SORT_PARAMETER_KEYS =
         Arrays.stream(ImportCandidateSort.values())
