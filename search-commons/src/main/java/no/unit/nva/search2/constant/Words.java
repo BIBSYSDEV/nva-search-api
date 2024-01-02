@@ -5,6 +5,7 @@ import nva.commons.core.JacocoGenerated;
 @JacocoGenerated
 public final class Words {
 
+    public static final String ABSTRACT = "abstract";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
@@ -70,6 +71,7 @@ public final class Words {
     public static final String SOURCE = "source";
     public static final String SPACE = " ";
     public static final String SUFFIX = ")";
+    public static final String TAGS = "tags";
     public static final String TEXT_CSV = "text/csv";
     public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
