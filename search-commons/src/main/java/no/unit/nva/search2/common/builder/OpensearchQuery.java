@@ -34,9 +34,9 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
 
     }
 
-    protected abstract Stream<Map.Entry<K, QueryBuilder>> valueQuery(K key, String value) ;
+    protected abstract Stream<Map.Entry<K, QueryBuilder>> valueQuery(K key, String value);
 
-    protected abstract Stream<Map.Entry<K, QueryBuilder>> multiValueQuery(K key, String... values) ;
+    protected abstract Stream<Map.Entry<K, QueryBuilder>> multiValueQuery(K key, String... values);
 
     protected Stream<Map.Entry<K, QueryBuilder>> queryToEntry(K key, QueryBuilder qb) {
         final var entry = new Map.Entry<K, QueryBuilder>() {

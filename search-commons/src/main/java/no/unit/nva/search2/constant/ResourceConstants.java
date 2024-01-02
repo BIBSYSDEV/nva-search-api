@@ -1,5 +1,12 @@
 package no.unit.nva.search2.constant;
 
+import no.unit.nva.search2.enums.ResourceSort;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+
+import java.util.List;
+import java.util.Locale;
+
 import static no.unit.nva.search2.constant.Functions.generateContributor;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
@@ -37,12 +44,6 @@ import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
-import java.util.List;
-import java.util.Locale;
-
-import no.unit.nva.search2.enums.ResourceSort;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 @JacocoGenerated
 public final class ResourceConstants {

@@ -159,9 +159,9 @@ class ImportCandidateClientTest {
             return Stream.of(
                 URI.create("https://example.com/?size=8"),
                 URI.create("https://example.com/?category=AcademicArticle&size=5"),
-                URI.create("https://example.com/?CONTRIBUTOR=Andrew+Morrison&size=1"),
-                URI.create("https://example.com/?CONTRIBUTOR_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
-                URI.create("https://example.com/?CONTRIBUTOR_NOT=George+Rigos&size=7"),
+                URI.create("https://example.com/?CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
+                URI.create("https://example.com/?CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
+                URI.create("https://example.com/?CONTRIBUTOR_NAME_NOT=George+Rigos&size=7"),
                 URI.create("https://example.com/?PUBLICATION_YEAR_BEFORE=2023&size=5"),
                 URI.create("https://example.com/?publication_year=2022&size=1"),
                 URI.create("https://example.com/?PublicationYearBefore=2024&publication_year_since=2023&size=3"),

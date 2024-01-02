@@ -235,7 +235,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
-        final var value =searchParameters.get(key);
+        final var value = searchParameters.get(key);
         if (opensearchQueryTools.isSearchAll(key)) {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
         } else if (opensearchQueryTools.isFundingKey(key)) {

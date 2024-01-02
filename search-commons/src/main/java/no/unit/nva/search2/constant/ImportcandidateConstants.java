@@ -1,5 +1,12 @@
 package no.unit.nva.search2.constant;
 
+import no.unit.nva.search2.enums.ImportCandidateSort;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+
+import java.util.List;
+import java.util.Locale;
+
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
@@ -7,12 +14,6 @@ import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PIPE;
-import java.util.List;
-import java.util.Locale;
-
-import no.unit.nva.search2.enums.ImportCandidateSort;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 @JacocoGenerated
 public final class ImportcandidateConstants {
@@ -21,10 +22,10 @@ public final class ImportcandidateConstants {
     public static final String CANDIDATE_STATUS = "candidateStatus";
     public static final String COLLABORATION_TYPE = "collaborationType";
     public static final String COLLABORATION_TYPE_KEYWORD = COLLABORATION_TYPE + DOT + KEYWORD;
-    public static final String CONTRIBUTORS_IDENTITY_ID = "contributors.identity.id";
-    public static final String CONTRIBUTORS_IDENTITY_NAME = "contributors.identity.name";
+    public static final String CONTRIBUTORS_IDENTITY_ID = "contributors.identity.id.keyword";
+    public static final String CONTRIBUTORS_IDENTITY_NAME = "contributors.identity.name.keyword";
     public static final String CONTRIBUTOR_IDENTITY_KEYWORDS =
-        CONTRIBUTORS_IDENTITY_ID + DOT + KEYWORD + PIPE + CONTRIBUTORS_IDENTITY_NAME + DOT + KEYWORD;
+        CONTRIBUTORS_IDENTITY_ID + PIPE + CONTRIBUTORS_IDENTITY_NAME;
     public static final String DOI_KEYWORD = DOI + DOT + KEYWORD;
     public static final String IDENTIFIER = "id.keyword";
     public static final String IMPORTED_BY_USER = "importedByUser";

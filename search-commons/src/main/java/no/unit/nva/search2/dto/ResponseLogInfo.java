@@ -13,7 +13,7 @@ public record ResponseLogInfo(
     }
 
     private ResponseLogInfo(Builder builder) {
-        this( builder.opensearchResponseTime, builder.responseTime, builder.totalHits);
+        this(builder.opensearchResponseTime, builder.responseTime, builder.totalHits);
     }
 
     public static final class Builder {

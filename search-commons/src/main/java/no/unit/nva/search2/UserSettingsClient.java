@@ -38,10 +38,12 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
                 .orElse(new UserSettings(Collections.emptyList()));
     }
 
+    @JacocoGenerated
     private Stream<String> createQueryBuilderStream(ResourceQuery query) {
         return query.getValue(CONTRIBUTOR).optional().stream();
     }
 
+    @JacocoGenerated
     private HttpRequest createRequest(String contributorId) {
         var userSettingId = UriWrapper.fromHost(readApiHost())
             .addChild("person-preferences")

@@ -27,7 +27,8 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
 
         return queryToEntry(key, switch (key.searchOperator()) {
             case MUST, MUST_NOT, SHOULD -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
-            case LESS_THAN, GREATER_THAN_OR_EQUAL_TO -> QueryBuilders.rangeQuery(searchField).from(values[0]).to(values[1]);
+            case LESS_THAN, GREATER_THAN_OR_EQUAL_TO ->
+                QueryBuilders.rangeQuery(searchField).from(values[0]).to(values[1]);
         });
     }
 }

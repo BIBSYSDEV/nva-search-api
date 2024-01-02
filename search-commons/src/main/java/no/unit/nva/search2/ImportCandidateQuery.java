@@ -166,6 +166,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     CREATED_DATE,
                     COLLABORATION_TYPE, COLLABORATION_TYPE_NOT, COLLABORATION_TYPE_SHOULD,
                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
+                    CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
                     ID, ID_NOT, ID_SHOULD,
                     IMPORT_STATUS, IMPORT_STATUS_NOT, IMPORT_STATUS_SHOULD,

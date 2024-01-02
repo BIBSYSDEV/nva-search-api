@@ -1,12 +1,17 @@
 package no.unit.nva.search2.enums;
 
+import no.unit.nva.search2.constant.Words;
+import nva.commons.core.JacocoGenerated;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -22,7 +27,25 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search2.constant.ResourceConstants.*;
+import static no.unit.nva.search2.constant.ResourceConstants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.CONTRIBUTORS_IDENTITY_ID;
+import static no.unit.nva.search2.constant.ResourceConstants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
+import static no.unit.nva.search2.constant.ResourceConstants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search2.constant.ResourceConstants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
+import static no.unit.nva.search2.constant.ResourceConstants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
+import static no.unit.nva.search2.constant.ResourceConstants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
+import static no.unit.nva.search2.constant.ResourceConstants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
+import static no.unit.nva.search2.constant.ResourceConstants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.PARENT_PUBLICATION_ID;
+import static no.unit.nva.search2.constant.ResourceConstants.PUBLICATION_CONTEXT_ISBN_LIST;
+import static no.unit.nva.search2.constant.ResourceConstants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.ResourceConstants.REFERENCE_DOI_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.constant.ResourceConstants.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.constant.Words.DOT;
@@ -32,17 +55,12 @@ import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
 import static no.unit.nva.search2.constant.Words.Q;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
-import no.unit.nva.search2.constant.Words;
-import nva.commons.core.JacocoGenerated;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 
 /**
  * Enum for all the parameters that can be used to query the search index.

@@ -37,7 +37,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         }
     }
 
-     public MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
+    public MatchQueryBuilder getMatchQueryBuilder(K key, String singleValue) {
         final var searchField = getFirstSearchField(key);
         return QueryBuilders
             .matchQuery(searchField, singleValue)

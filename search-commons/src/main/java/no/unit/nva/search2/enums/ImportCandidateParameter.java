@@ -1,13 +1,18 @@
 package no.unit.nva.search2.enums;
 
+import no.unit.nva.search2.constant.ImportcandidateConstants;
+import no.unit.nva.search2.constant.Words;
+import nva.commons.core.JacocoGenerated;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 import static no.unit.nva.search2.constant.ImportcandidateConstants.ADDITIONAL_IDENTIFIERS_KEYWORD;
 import static no.unit.nva.search2.constant.ImportcandidateConstants.COLLABORATION_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.ImportcandidateConstants.INSTANCE_TYPE_KEYWORD;
@@ -26,18 +31,13 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.Q;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
-import no.unit.nva.search2.constant.ImportcandidateConstants;
-import no.unit.nva.search2.constant.Words;
-import nva.commons.core.JacocoGenerated;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.SORT_KEY;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -58,6 +58,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     CONTRIBUTOR(KEYWORD, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_SHOULD(TEXT, SHOULD, ImportcandidateConstants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NAME(KEYWORD, ImportcandidateConstants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_NOT(KEYWORD, MUST_NOT, ImportcandidateConstants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_SHOULD(TEXT, SHOULD, ImportcandidateConstants.CONTRIBUTORS_IDENTITY_NAME),
     COLLABORATION_TYPE(KEYWORD, MUST, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_NOT(KEYWORD, MUST_NOT, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_SHOULD(TEXT, SHOULD, COLLABORATION_TYPE_KEYWORD),
