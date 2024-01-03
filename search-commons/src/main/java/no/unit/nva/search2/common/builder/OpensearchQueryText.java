@@ -39,7 +39,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         }
     }
 
-    private static DisMaxQueryBuilder getDisMaxQueryBuilder(String[] values, String[] searchFields) {
+    private static DisMaxQueryBuilder getDisMaxQueryBuilder(String[] values, String... searchFields) {
         var disMax = QueryBuilders.disMaxQuery();
         Arrays.stream(values).forEach(
             value -> Arrays.stream(searchFields).forEach(
@@ -47,12 +47,12 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         return disMax;
     }
 
-    private Stream<MatchQueryBuilder> getMatchQueryBuilderStream(K key, String[] values) {
+    private Stream<MatchQueryBuilder> getMatchQueryBuilderStream(K key, String... values) {
         return Arrays.stream(values)
             .map(singleValue -> getMatchQueryBuilder(key, singleValue));
     }
 
-    private Stream<MultiMatchQueryBuilder> getMultiMatchQueryBuilderStream(String[] values, String[] searchFields) {
+    private Stream<MultiMatchQueryBuilder> getMultiMatchQueryBuilderStream(String[] values, String... searchFields) {
         return Arrays.stream(values)
             .map(singleValue -> getMultiMatchQueryBuilder(singleValue, searchFields));
     }

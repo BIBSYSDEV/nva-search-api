@@ -96,7 +96,6 @@ class ResourceClientTest {
                 .path("topLevelOrganizations")
                 .path("type").textValue();
             assertThat(topLevelOrgType, is(equalTo("nested")));
-
             logger.info(mapping.toString());
         }
 
@@ -155,7 +154,6 @@ class ResourceClientTest {
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(5)));
             logger.info(pagedSearchResourceDto.id().toString());
-
         }
 
         @ParameterizedTest
@@ -347,11 +345,11 @@ class ResourceClientTest {
                 createArgument("PARENT_PUBLICATION_SHOULD=test", 0),
                 createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 2),
                 createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
-                    "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 1),
-                createArgument("PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
-                    "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 17),
-                createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
-                    "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 3),
+                               "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 1),
+                createArgument("PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
+                               + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 17),
+                createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
+                               + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 3),
                 createArgument("SEARCH_ALL=Fakultet+for+arkitektur", 1),
                 createArgument("TITLE=Kjetils+ticket+test", 1),
                 createArgument("TITLE_NOT=Kjetils+ticket+test", 19),

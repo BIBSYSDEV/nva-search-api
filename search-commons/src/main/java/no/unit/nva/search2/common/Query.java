@@ -184,7 +184,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return mediaType;
     }
 
-    protected void setMediaType(String mediaType) {
+    final protected void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
@@ -282,7 +282,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-        var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
         requestParameter.remove(Words.FROM);
         var sortParameter =
             response.getSort().stream()
@@ -291,6 +290,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         if (!hasContent(sortParameter)) {
             return null;
         }
+        var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
         requestParameter.put(searchAfter, sortParameter);
         return fromUri(gatewayUri)
             .addQueryParameters(requestParameter)

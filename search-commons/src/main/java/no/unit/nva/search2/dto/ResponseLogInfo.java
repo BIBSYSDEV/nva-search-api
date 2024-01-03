@@ -12,9 +12,6 @@ public record ResponseLogInfo(
         return new Builder();
     }
 
-    private ResponseLogInfo(Builder builder) {
-        this(builder.opensearchResponseTime, builder.responseTime, builder.totalHits);
-    }
 
     public static final class Builder {
         private int totalHits;
@@ -40,7 +37,7 @@ public record ResponseLogInfo(
         }
 
         public String toJsonString() {
-            return new ResponseLogInfo(this).toJsonString();
+            return new ResponseLogInfo(opensearchResponseTime, responseTime, totalHits).toJsonString();
         }
     }
 }
