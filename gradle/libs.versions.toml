@@ -13,8 +13,8 @@ javers = { strictly = '6.5.1' }
 junit = { strictly = '5.10.0' }
 log4j = { strictly = '2.22.0' }
 mockito = { strictly = '4.2.0' }
-nvaCommons = { prefer = '1.36.2' }
-nvaDatamodel = { strictly = '0.20.38' }
+nvaCommons = { prefer = '1.36.7' }
+nvaDatamodel = { strictly = '0.20.73' }
 open-csv = { strictly = '5.8' }
 openSearchRestClient = { strictly = '2.9.0' }
 opensearch = { strictly = '2.6.0' }
