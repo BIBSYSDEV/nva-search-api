@@ -1,6 +1,21 @@
 package no.unit.nva.search2.common;
 
+import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
+import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandler;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
@@ -11,23 +26,6 @@ import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandler;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.stream.Stream;
-
-import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureAuthUri;
-import static no.unit.nva.search2.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
-import static nva.commons.core.attempt.Try.attempt;
 
 public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
@@ -54,7 +52,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
-        logger.info(qbs.source().query().toString());
+        logger.debug(qbs.source().query().toString());
         requestStart = Instant.now();
         return HttpRequest
             .newBuilder(qbs.requestUri())

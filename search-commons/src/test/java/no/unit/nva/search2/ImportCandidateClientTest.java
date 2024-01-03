@@ -27,8 +27,8 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
 import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -167,7 +167,7 @@ class ImportCandidateClientTest {
                 URI.create("https://example.com/?PublicationYearBefore=2024&publication_year_since=2023&size=3"),
                 URI.create("https://example.com/?title=In+reply:+Why+big+data&size=1"),
                 URI.create("https://example.com/?title=chronic+diseases&size=1"),
-                URI.create("https://example.com/?title_should=antibacterial+Fishing&size=2"),
+                URI.create("https://example.com/?title_should=antibacterial,Fishing&size=2"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title&size=1"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
                 URI.create("https://example.com/?query=European&fields=all&size=3"));

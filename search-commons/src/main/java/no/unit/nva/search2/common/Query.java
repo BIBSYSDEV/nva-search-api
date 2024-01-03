@@ -2,7 +2,6 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
@@ -12,6 +11,7 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PLUS;
 import static no.unit.nva.search2.constant.Words.SPACE;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
@@ -29,14 +29,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
 import org.opensearch.common.unit.Fuzziness;
@@ -224,7 +224,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         getSearchParameterKeys()
             .flatMap(this::getQueryBuilders)
             .forEach(entry -> {
-                if (entry.getKey().searchOperator().equals(MUST_NOT)) {
+                if (MUST_NOT.equals(entry.getKey().searchOperator())) {
                     bq.mustNot(entry.getValue());
                 } else {
                     bq.must(entry.getValue());

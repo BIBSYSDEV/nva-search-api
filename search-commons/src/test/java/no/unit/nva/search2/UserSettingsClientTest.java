@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.stream.Stream;
-
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +45,7 @@ class UserSettingsClientTest {
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         var result = userSettingsClient.doSearch(resourceAwsQuery).promotedPublications();
-        logger.info(result.toString());
+        logger.debug(result.toString());
         assertNotNull(result);
     }
 

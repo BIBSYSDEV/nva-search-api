@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
@@ -45,8 +44,8 @@ class ResourceQueryTest {
         var uri2 =
             UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
                 .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
-        
-        logger.info(
+
+        logger.debug(
             resourceParameters.toNvaSearchApiRequestParameter()
                 .entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())

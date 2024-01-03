@@ -173,7 +173,7 @@ class ResourceClientTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             if (expectedCount == 0) {
-                logger.info(pagedSearchResourceDto.toJsonString());
+                logger.debug(pagedSearchResourceDto.toJsonString());
             } else {
                 logger.info(pagedSearchResourceDto.id().toString());
             }
@@ -207,7 +207,7 @@ class ResourceClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build();
 
-            logger.info(query.getValue(SORT).toString());
+            logger.debug(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
             logger.info(pagedSearchResourceDto.id().toString());
@@ -308,13 +308,14 @@ class ResourceClientTest {
                 createArgument("HASFILE=true", 19),
                 createArgument("HAS_FILE=0", 1),
                 createArgument("ID=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
+                createArgument("ID=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
+                createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
                 createArgument("ID_NOT=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 19),
                 createArgument("ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&query=25e43dc3027e", 10),
-                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 2),
-                createArgument("ID=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
+                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39,"
+                               + "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 2),
                 createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
                 createArgument("INSTANCE_TYPE=AcademicArticle", 9),
                 createArgument("INSTANCE_TYPE_NOT=AcademicArticle", 11),
                 createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
@@ -330,7 +331,7 @@ class ResourceClientTest {
                                + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 17),
                 createArgument("INSTITUTION_SHOULD=1627.0.0.0", 3),
                 createArgument("INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0", 3),
-                createArgument("INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 5),
+                createArgument("INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 3),
                 createArgument("INSTITUTION_should=194.63.55.0", 1),
                 createArgument("ISBN=9788202535032", 1),
                 createArgument("ISBN_NOT=9788202535032", 19),
@@ -353,7 +354,8 @@ class ResourceClientTest {
                     "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 3),
                 createArgument("SEARCH_ALL=Fakultet+for+arkitektur", 1),
                 createArgument("TITLE=Kjetils+ticket+test", 1),
-                createArgument("TITLE_NOT=Kjetils+ticket+test", 17),
+                createArgument("TITLE_NOT=Kjetils+ticket+test", 19),
+                createArgument("TITLE_NOT=Kjetils", 18),
                 createArgument("TITLE_SHOULD=Simple", 3),
                 createArgument(
                     "TOP_LEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", 2),
