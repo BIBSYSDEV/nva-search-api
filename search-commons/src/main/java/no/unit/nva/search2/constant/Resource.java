@@ -71,8 +71,10 @@ public final class Resource {
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "printIssn" + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + TYPE + DOT + KEYWORD;
+    public static final String PUBLICATION_INSTANCE_DOT =
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
     public static final String PUBLICATION_INSTANCE_TYPE =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT + TYPE + DOT + KEYWORD;
+        PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + Words.MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS;
@@ -90,7 +92,6 @@ public final class Resource {
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD + PIPE
         + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD;
 
-
     public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN =
         PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD + PIPE + PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD;
 
@@ -105,37 +106,9 @@ public final class Resource {
         + FUNDINGS_SOURCE_LABELS + DOT + SAMI_CODE + DOT + KEYWORD;
 
     public static final String PARENT_PUBLICATION_ID =
-        ENTITY_DESCRIPTION
-        + DOT
-        + REFERENCE
-        + DOT
-        + PUBLICATION_INSTANCE
-        + DOT
-        + "corrigendumFor"
-        + DOT
-        + KEYWORD
-        + PIPE
-        + ENTITY_DESCRIPTION
-        + DOT
-        + REFERENCE
-        + DOT
-        + PUBLICATION_INSTANCE
-        + DOT
-        + "manifestations"
-        + DOT
-        + ID
-        + DOT
-        + KEYWORD
-        + PIPE
-        + ENTITY_DESCRIPTION
-        + DOT
-        + REFERENCE
-        + DOT
-        + PUBLICATION_CONTEXT
-        + DOT
-        + ID
-        + DOT
-        + KEYWORD;
+        PUBLICATION_INSTANCE_DOT + "corrigendumFor" + DOT + KEYWORD + PIPE
+        + PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD + PIPE
+        + PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
