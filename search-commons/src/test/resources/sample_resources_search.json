@@ -432,6 +432,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
+    "doi": "https://doi.org/10.1371/journal.pone.1234567",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",

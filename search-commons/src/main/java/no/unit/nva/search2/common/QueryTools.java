@@ -1,8 +1,6 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AMPERSAND;
@@ -13,6 +11,8 @@ import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;
@@ -24,10 +24,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-
+import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ParamKind;
-import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
@@ -173,7 +172,8 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public boolean isText(K key) {
-        return ParamKind.TEXT.equals(key.fieldType());
+        return ParamKind.TEXT.equals(key.fieldType())
+               || ParamKind.FUZZY_TEXT.equals(key.fieldType());
     }
 
 }

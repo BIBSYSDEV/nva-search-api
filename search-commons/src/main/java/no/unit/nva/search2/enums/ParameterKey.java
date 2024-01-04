@@ -1,10 +1,5 @@
 package no.unit.nva.search2.enums;
 
-import nva.commons.core.JacocoGenerated;
-
-import java.util.Collection;
-import java.util.function.Predicate;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
@@ -15,6 +10,9 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
+import java.util.Collection;
+import java.util.function.Predicate;
+import nva.commons.core.JacocoGenerated;
 
 public interface ParameterKey {
 
@@ -44,7 +42,7 @@ public interface ParameterKey {
     static ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case INVALID, NUMBER, BOOLEAN, CUSTOM -> ValueEncoding.NONE;
-            case DATE, KEYWORD, TEXT, SORT_KEY -> ValueEncoding.DECODE;
+            case DATE, KEYWORD, FUZZY_TEXT, TEXT, SORT_KEY -> ValueEncoding.DECODE;
         };
     }
 
@@ -56,7 +54,7 @@ public interface ParameterKey {
             case NUMBER -> INVALID_NUMBER;
             // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case SORT_KEY -> INVALID_VALUE_WITH_SORT;
-            case KEYWORD, TEXT, CUSTOM -> INVALID_VALUE;
+            case KEYWORD, FUZZY_TEXT, TEXT, CUSTOM -> INVALID_VALUE;
             case INVALID -> "Status INVALID should not raise an exception, Exception";
         };
     }
@@ -68,7 +66,7 @@ public interface ParameterKey {
             case DATE -> PATTERN_IS_DATE;
             case NUMBER -> PATTERN_IS_NUMBER;
             // case RANGE -> PATTERN_IS_RANGE;
-            case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
+            case KEYWORD, CUSTOM, FUZZY_TEXT, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
             case INVALID -> PATTERN_IS_NONE_OR_ONE;
         };
     }
@@ -83,7 +81,7 @@ public interface ParameterKey {
     }
 
     enum ParamKind {
-        BOOLEAN, DATE, NUMBER, KEYWORD, TEXT, SORT_KEY, CUSTOM, INVALID
+        INVALID, BOOLEAN, DATE, NUMBER, KEYWORD, FUZZY_TEXT, TEXT, SORT_KEY, CUSTOM
     }
 
     enum FieldOperator {

@@ -1,16 +1,5 @@
 package no.unit.nva.search2.enums;
 
-import no.unit.nva.search2.constant.Words;
-import nva.commons.core.JacocoGenerated;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -58,9 +47,19 @@ import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.FUZZY_TEXT;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.constant.Words;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -80,7 +79,7 @@ public enum ResourceParameter implements ParameterKey {
     CONTRIBUTOR_SHOULD(KEYWORD, SHOULD, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
     CONTRIBUTOR_NAME(TEXT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_NOT(TEXT, MUST_NOT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-    CONTRIBUTOR_NAME_SHOULD(TEXT, SHOULD, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
+    CONTRIBUTOR_NAME_SHOULD(FUZZY_TEXT, SHOULD, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CREATED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, CREATED_DATE),
     CREATED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, CREATED_DATE),
     DOI(KEYWORD, REFERENCE_DOI_KEYWORD),
@@ -105,11 +104,11 @@ public enum ResourceParameter implements ParameterKey {
     INSTITUTION(TEXT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    ISBN(TEXT, PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_NOT(TEXT, MUST_NOT, PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN(KEYWORD, PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_SHOULD(TEXT, SHOULD, PUBLICATION_CONTEXT_ISBN_LIST),
-    ISSN(TEXT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    ISSN_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    ISSN(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    ISSN_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ORCID(KEYWORD, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
@@ -123,9 +122,9 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT_SHOULD(KEYWORD, SHOULD, PROJECTS_ID),
     PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
-    TITLE(TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, 2F),
+    TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, 2F),
     TITLE_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TITLE_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_MAIN_TITLE),
+    TITLE_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_DESCRIPTION_MAIN_TITLE),
     TOP_LEVEL_ORGANIZATION(KEYWORD, MUST, TOP_LEVEL_ORGANIZATIONS + DOT + Words.ID + DOT + Words.KEYWORD),
     UNIT(KEYWORD, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),

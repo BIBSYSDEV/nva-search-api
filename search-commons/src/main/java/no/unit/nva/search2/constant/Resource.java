@@ -1,18 +1,10 @@
 package no.unit.nva.search2.constant;
 
-import no.unit.nva.search2.enums.ResourceSort;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-
-import java.util.List;
-import java.util.Locale;
-
 import static no.unit.nva.search2.constant.Functions.generateContributor;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
-import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
@@ -44,6 +36,11 @@ import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
+import java.util.List;
+import java.util.Locale;
+import no.unit.nva.search2.enums.ResourceSort;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 @JacocoGenerated
 public final class Resource {
@@ -54,40 +51,40 @@ public final class Resource {
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
-        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, LABELS);
+        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + AFFILIATIONS + DOT + LABELS;
     public static final String CONTRIBUTORS_IDENTITY_ID =
-        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID, KEYWORD);
+        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD);
+        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ORC_ID, KEYWORD);
+        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
-        jsonPath(ENTITY_DESCRIPTION, PUBLICATION_DATE, YEAR);
+        ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, DOI, KEYWORD) + PIPE + jsonPath(DOI, KEYWORD);
-    public static final String VISIBLE_FOR_NON_OWNER = jsonPath(ASSOCIATED_ARTIFACTS, "visibleForNonOwner");
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD; //+ PIPE + DOI + DOT + KEYWORD;
+    public static final String VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + "visibleForNonOwner";
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, "isbnList");
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "isbnList";
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, "onlineIssn", KEYWORD);
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "onlineIssn" + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, "printIssn", KEYWORD);
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "printIssn" + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_INSTANCE_TYPE =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT + TYPE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + Words.MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
-    public static final String FUNDINGS_SOURCE_LABELS = jsonPath(FUNDINGS, SOURCE, LABELS);
+    public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS;
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
-        jsonPath(RESOURCE_OWNER, OWNER_AFFILIATION, KEYWORD);
+        RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
-        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD) + PIPE
-        + jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, NYNORSK_CODE, KEYWORD) + PIPE
-        + jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, BOKMAAL_CODE, KEYWORD) + PIPE
-        + jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, SAMI_CODE, KEYWORD);
+        CONTRIBUTORS_AFFILIATION_LABELS + DOT + ENGLISH_CODE + DOT + KEYWORD + PIPE
+        + CONTRIBUTORS_AFFILIATION_LABELS + DOT + NYNORSK_CODE + DOT + KEYWORD + PIPE
+        + CONTRIBUTORS_AFFILIATION_LABELS + DOT + BOKMAAL_CODE + DOT + KEYWORD + PIPE
+        + CONTRIBUTORS_AFFILIATION_LABELS + DOT + SAMI_CODE + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION =
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD + PIPE
@@ -98,19 +95,47 @@ public final class Resource {
         PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD + PIPE + PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD;
 
     public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
-        jsonPath(FUNDINGS, IDENTIFIER_KEYWORD + PIPE + FUNDINGS, SOURCE, IDENTIFIER, KEYWORD);
+        FUNDINGS + DOT + IDENTIFIER_KEYWORD + PIPE + FUNDINGS + DOT + SOURCE + DOT + IDENTIFIER + DOT + KEYWORD;
 
     public static final String FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS =
         FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER + PIPE
-        + jsonPath(FUNDINGS_SOURCE_LABELS, ENGLISH_CODE, KEYWORD) + PIPE
-        + jsonPath(FUNDINGS_SOURCE_LABELS, NYNORSK_CODE, KEYWORD) + PIPE
-        + jsonPath(FUNDINGS_SOURCE_LABELS, BOKMAAL_CODE, KEYWORD) + PIPE
-        + jsonPath(FUNDINGS_SOURCE_LABELS, SAMI_CODE, KEYWORD);
+        + FUNDINGS_SOURCE_LABELS + DOT + ENGLISH_CODE + DOT + KEYWORD + PIPE
+        + FUNDINGS_SOURCE_LABELS + DOT + NYNORSK_CODE + DOT + KEYWORD + PIPE
+        + FUNDINGS_SOURCE_LABELS + DOT + BOKMAAL_CODE + DOT + KEYWORD + PIPE
+        + FUNDINGS_SOURCE_LABELS + DOT + SAMI_CODE + DOT + KEYWORD;
 
     public static final String PARENT_PUBLICATION_ID =
-        jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, "corrigendumFor", KEYWORD) + PIPE
-        + jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, "manifestations", ID, KEYWORD) + PIPE
-        + jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD);
+        ENTITY_DESCRIPTION
+        + DOT
+        + REFERENCE
+        + DOT
+        + PUBLICATION_INSTANCE
+        + DOT
+        + "corrigendumFor"
+        + DOT
+        + KEYWORD
+        + PIPE
+        + ENTITY_DESCRIPTION
+        + DOT
+        + REFERENCE
+        + DOT
+        + PUBLICATION_INSTANCE
+        + DOT
+        + "manifestations"
+        + DOT
+        + ID
+        + DOT
+        + KEYWORD
+        + PIPE
+        + ENTITY_DESCRIPTION
+        + DOT
+        + REFERENCE
+        + DOT
+        + PUBLICATION_CONTEXT
+        + DOT
+        + ID
+        + DOT
+        + KEYWORD;
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(

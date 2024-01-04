@@ -170,13 +170,13 @@ class ResourceClientTest {
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
+            assertNotNull(pagedSearchResourceDto);
             if (expectedCount == 0) {
-                logger.debug(pagedSearchResourceDto.toJsonString());
+                logger.info(pagedSearchResourceDto.toJsonString());
             } else {
                 logger.info(pagedSearchResourceDto.id().toString());
             }
 
-            assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
         }
@@ -271,8 +271,6 @@ class ResourceClientTest {
         static Stream<Arguments> uriProvider() {
             return Stream.of(
                 createArgument("page=0", 20),
-                createArgument("CATEGORY=ReportResearch&page=0", 10),
-                createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),
                 createArgument("CONTEXT_TYPE=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
@@ -289,9 +287,10 @@ class ResourceClientTest {
                 createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
                 createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 19),
-                createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 2),
+                createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 1),
                 createArgument("DOI=https://doi.org/10.1371/journal.pone.0047855", 1),
-                createArgument("DOI_SHOULD=.pone.0047855,pone.0047887", 2),
+                createArgument("DOI_SHOULD=10.1371/journal.pone.0047887", 1),
+                createArgument("DOI_SHOULD=0047855,0047887", 2),
                 createArgument("FUNDING=AFR:296896", 0),
                 createArgument("FUNDING=NFR:296896", 1),
                 createArgument("FUNDING=NFR:3333", 0),
@@ -314,11 +313,13 @@ class ResourceClientTest {
                                + "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 2),
                 createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("INSTANCE_TYPE=AcademicArticle", 9),
+                createArgument("CaTeGoRy=ReportResearch&page=0", 10),
+                createArgument("type_should=ReportResearch,AcademicArticle", 19),
+                createArgument("instanceType=AcademicArticle", 9),
                 createArgument("INSTANCE_TYPE_NOT=AcademicArticle", 11),
                 createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
-                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 5),
-                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 15),
+                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 2),
+                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 18),
                 createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole", 3),
                 createArgument("INSTITUTION=1627.0.0.0", 3),
                 createArgument("INSTITUTION=Forsvarets+høgskole", 3),
