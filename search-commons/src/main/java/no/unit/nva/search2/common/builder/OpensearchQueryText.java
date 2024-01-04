@@ -48,6 +48,4 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         return Arrays.stream(fieldNames)
             .map(fieldName -> QueryBuilders.matchPhraseQuery(fieldName, singleValue));
     }
-
-
 }
