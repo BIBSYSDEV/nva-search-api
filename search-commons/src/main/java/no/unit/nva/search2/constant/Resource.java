@@ -61,7 +61,7 @@ public final class Resource {
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD; //+ PIPE + DOI + DOT + KEYWORD;
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
     public static final String VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + "visibleForNonOwner";
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "isbnList";
