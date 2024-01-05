@@ -1,12 +1,5 @@
 package no.unit.nva.search2.constant;
 
-import no.unit.nva.search2.enums.ImportCandidateSort;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-
-import java.util.List;
-import java.util.Locale;
-
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
@@ -14,8 +7,11 @@ import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PIPE;
+import java.util.List;
+import java.util.Locale;
+import no.unit.nva.search2.enums.ImportCandidateSort;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-@JacocoGenerated
 public final class ImportCandidate {
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";

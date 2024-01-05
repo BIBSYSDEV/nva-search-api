@@ -3,9 +3,11 @@ package no.unit.nva.search2;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.enums.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.enums.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.enums.ResourceParameter.DOI;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.FUNDING;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
@@ -40,7 +42,7 @@ class ResourceQueryTest {
     private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
 
     @Test
-    void openSearchFailedResponse() throws IOException, InterruptedException, BadRequestException {
+    void openSearchFailedResponse() throws IOException, InterruptedException {
         HttpClient httpClient = mock(HttpClient.class);
         var response = mock(HttpResponse.class);
         when(httpClient.send(any(), any())).thenReturn(response);
@@ -54,6 +56,19 @@ class ResourceQueryTest {
                 .withRequiredParameters(SIZE, FROM)
                 .fromQueryParameters(toMapEntries).build()
                 .doSearch(resourceClient)
+        );
+    }
+
+    @Test
+    void missingRequiredException() {
+        var toMapEntries =
+            queryToMapEntries(URI.create("https://example.com/?doi=2&Title=wqerasdfg"));
+        assertThrows(
+            BadRequestException.class,
+            () -> ResourceQuery.builder()
+                .withRequiredParameters(ABSTRACT, FUNDING)
+                .fromQueryParameters(toMapEntries)
+                .build()
         );
     }
 

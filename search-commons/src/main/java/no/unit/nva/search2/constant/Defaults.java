@@ -6,9 +6,7 @@ import java.net.URI;
 import java.util.List;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.apigateway.MediaTypes;
-import nva.commons.core.JacocoGenerated;
 
-@JacocoGenerated
 public final class Defaults {
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;

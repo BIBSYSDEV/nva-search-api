@@ -7,10 +7,8 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import nva.commons.core.JacocoGenerated;
 
-@JacocoGenerated
-public class ErrorMessages {
+public final class ErrorMessages {
     public static final String INVALID_VALUE = "Parameter [%s] has invalid value [%s]";
     public static final String INVALID_VALUE_WITH_SORT =
         "Sort has invalid field value [%s]. Valid values are: %s";
@@ -23,7 +21,6 @@ public class ErrorMessages {
         + " Valid parameters: %s"
         + " Also pass through to OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
         + "search_after]";
-    public static final String UNEXPECTED_VALUE = "Unexpected value: ";
 
     /**
      * Formats and emits a message with valid parameter names.
@@ -37,16 +34,6 @@ public class ErrorMessages {
                    .formatted(invalidKeys,queryParameters);
     }
 
-    /**
-     * Creates an error message containing which parameter that has invalid value and what the value is supposed to be.
-     *
-     * @param queryParameterName name of parameter with invalid value
-     * @param inValidValue        what values are allowed for this parameter
-     * @return formatted string containing a message with allowed values for this parameter
-     */
-    public static String invalidQueryParametersMessage(String queryParameterName, String inValidValue) {
-        return String.format(INVALID_VALUE, queryParameterName, inValidValue);
-    }
 
     public static String requiredMissingMessage(Set<String> missingKeys) {
         return String.format(MISSING_PARAMETER, prettifyList(missingKeys));

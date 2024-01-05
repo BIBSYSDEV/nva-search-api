@@ -31,7 +31,7 @@ import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder
 import org.opensearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
-@JacocoGenerated
+
 public final class Functions {
 
     static final Environment ENVIRONMENT = new Environment();
@@ -43,6 +43,7 @@ public final class Functions {
         return String.join(DOT, args);
     }
 
+    @JacocoGenerated
     public static String readSearchInfrastructureAuthUri() {
         return ENVIRONMENT.readEnv(SEARCH_INFRASTRUCTURE_AUTH_URI);
     }

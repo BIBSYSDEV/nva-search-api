@@ -1,8 +1,5 @@
 package no.unit.nva.search2.constant;
 
-import nva.commons.core.JacocoGenerated;
-
-@JacocoGenerated
 public final class Words {
 
     public static final String ABSTRACT = "abstract";

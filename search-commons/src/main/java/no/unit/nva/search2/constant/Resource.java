@@ -42,10 +42,8 @@ import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
 import java.util.Locale;
 import no.unit.nva.search2.enums.ResourceSort;
-import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
-@JacocoGenerated
 public final class Resource {
 
     public static final String DEFAULT_RESOURCE_SORT =
