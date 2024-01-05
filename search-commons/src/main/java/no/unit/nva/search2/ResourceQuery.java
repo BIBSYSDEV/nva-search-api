@@ -190,7 +190,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setSearchingValue(qpKey, expandYearToDate(decodedValue));
                 case HAS_FILE -> query.setSearchingValue(qpKey, valueToBoolean(decodedValue).toString());
-                case CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
+                case ABSTRACT, ABSTRACT_NOT, ABSTRACT_SHOULD,
+                    CONTEXT_TYPE, CONTEXT_TYPE_NOT, CONTEXT_TYPE_SHOULD,
                     CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
                     CONTRIBUTOR_NAME, CONTRIBUTOR_NAME_NOT, CONTRIBUTOR_NAME_SHOULD,
                     DOI, DOI_NOT, DOI_SHOULD,
@@ -204,6 +205,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     PROJECT, PROJECT_NOT, PROJECT_SHOULD,
                     PUBLICATION_YEAR, PUBLICATION_YEAR_SHOULD,
                     SEARCH_ALL,
+                    TAGS, TAGS_NOT, TAGS_SHOULD,
                     TITLE, TITLE_NOT, TITLE_SHOULD,
                     TOP_LEVEL_ORGANIZATION,
                     UNIT, UNIT_NOT, UNIT_SHOULD,
