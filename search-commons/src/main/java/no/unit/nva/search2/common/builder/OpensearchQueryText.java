@@ -33,6 +33,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         var builder = Arrays.stream(values)
             .flatMap(singleValue -> getMatchFraseBuilderStream(singleValue, searchFields))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
+        builder.boost(key.fieldBoost());
         return queryToEntry(key, builder);
     }
 
@@ -41,7 +42,10 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         return Arrays.stream(values)
             .map(singleValue -> getMatchFraseBuilderStream(singleValue, searchFields)
                 .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add))
-            .flatMap(builder -> queryToEntry(key, builder));
+            .flatMap(builder -> {
+                builder.boost(key.fieldBoost());
+                return queryToEntry(key, builder);
+            });
     }
 
     private Stream<MatchPhraseQueryBuilder> getMatchFraseBuilderStream(String singleValue, String... fieldNames) {

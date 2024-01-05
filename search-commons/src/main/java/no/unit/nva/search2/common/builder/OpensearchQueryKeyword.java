@@ -39,7 +39,7 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
         var disMax = QueryBuilders.disMaxQuery();
         Arrays.stream(getSearchFields(key))
-            .forEach(field -> disMax.add(new TermsQueryBuilder(field, values))
+            .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost()))
             );
         return Stream.of(disMax);
     }
@@ -47,7 +47,7 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String value) {
         var disMax = QueryBuilders.disMaxQuery();
         Arrays.stream(getSearchFields(key))
-            .forEach(field -> disMax.add(new TermQueryBuilder(field, value))
+            .forEach(field -> disMax.add(new TermQueryBuilder(field, value).boost(key.fieldBoost()))
             );
         return Stream.of(disMax);
     }
