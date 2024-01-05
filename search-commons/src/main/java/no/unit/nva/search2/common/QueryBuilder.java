@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import no.unit.nva.search2.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -205,7 +204,8 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
 
 
     protected boolean invalidQueryParameter(K key, String value) {
-        return isNull(value) || !value.matches(key.valuePattern());
+        return isNull(value) || Arrays.stream(value.split(COMMA))
+            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
     }
 
     protected Set<String> getMissingKeys() {

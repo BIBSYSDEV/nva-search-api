@@ -14,13 +14,7 @@ import org.opensearch.index.query.QueryBuilders;
 public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override
-    protected Stream<Map.Entry<K, QueryBuilder>> valueQuery(K key, String value) {
-        return buildAllMustMatchQuery(key, value);
-    }
-
-    @Override
-    protected Stream<Map.Entry<K, QueryBuilder>> multiValueQuery(K key, String... values) {
-
+    protected Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
         if (FieldOperator.SHOULD.equals(key.searchOperator())) {
             return buildShouldMatchQuery(key, values);
         } else {
@@ -29,22 +23,22 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
     }
 
     private Stream<Entry<K, QueryBuilder>> buildShouldMatchQuery(K key, String... values) {
-        final var searchFields = getSearchFields(key);
+        final var searchFields = queryTools.getSearchFields(key);
         var builder = Arrays.stream(values)
             .flatMap(singleValue -> getMatchFraseBuilderStream(singleValue, searchFields))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
         builder.boost(key.fieldBoost());
-        return queryToEntry(key, builder);
+        return queryTools.queryToEntry(key, builder);
     }
 
     private Stream<Entry<K, QueryBuilder>> buildAllMustMatchQuery(K key, String... values) {
-        final var searchFields = getSearchFields(key);
+        final var searchFields = queryTools.getSearchFields(key);
         return Arrays.stream(values)
             .map(singleValue -> getMatchFraseBuilderStream(singleValue, searchFields)
                 .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add))
             .flatMap(builder -> {
                 builder.boost(key.fieldBoost());
-                return queryToEntry(key, builder);
+                return queryTools.queryToEntry(key, builder);
             });
     }
 

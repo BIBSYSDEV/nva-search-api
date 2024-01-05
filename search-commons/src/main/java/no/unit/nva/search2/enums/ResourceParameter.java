@@ -45,6 +45,7 @@ import static no.unit.nva.search2.constant.Words.PROJECTS_ID;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
 import static no.unit.nva.search2.constant.Words.Q;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
@@ -120,6 +121,7 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT(KEYWORD, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, MUST_NOT, PROJECTS_ID),
     PROJECT_SHOULD(KEYWORD, SHOULD, PROJECTS_ID),
+    PUBLISHED_BETWEEN(ParamKind.DATE, BETWEEN, PUBLISHED_DATE),
     PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
     TAGS(TEXT, ENTITY_TAGS),

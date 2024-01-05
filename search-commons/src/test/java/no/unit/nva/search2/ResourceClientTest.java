@@ -353,8 +353,8 @@ class ResourceClientTest {
                 createArgument("PARENT_PUBLICATION=test", 0),
                 createArgument("PARENT_PUBLICATION_SHOULD=test", 0),
                 createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 2),
-                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813," +
-                               "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 1),
+                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
+                               + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 1),
                 createArgument("PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
                                + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 17),
                 createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
@@ -378,6 +378,7 @@ class ResourceClientTest {
                 createArgument("FIELDS=category,title,CONTRIBUTOR_NAME&query=Kjetil+Møkkelgjerd", 3),
                 createArgument("TOPLEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
                                2),
+                createArgument("PUBLISHED_BETWEEN=2023-10-15,2023-11-05", 2),
                 createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
                 createArgument("PUBLISHED_SINCE=2023-11-05", 1),
                 createArgument("QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"

@@ -129,7 +129,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         RESOURCES_AGGREGATIONS
             .forEach(builder::aggregation);
 
-        logger.debug(builder.toString());
+        logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
