@@ -49,12 +49,11 @@ public interface ParameterKey {
     @JacocoGenerated
     static String getErrorMessage(ParamKind kind) {
         return switch (kind) {
-            case BOOLEAN -> INVALID_VALUE;
+            case BOOLEAN, KEYWORD, FUZZY_TEXT, TEXT, CUSTOM -> INVALID_VALUE;
             case DATE -> INVALID_DATE;
             case NUMBER -> INVALID_NUMBER;
-            // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
+            //            case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case SORT_KEY -> INVALID_VALUE_WITH_SORT;
-            case KEYWORD, FUZZY_TEXT, TEXT, CUSTOM -> INVALID_VALUE;
             case INVALID -> "Status INVALID should not raise an exception, Exception";
         };
     }

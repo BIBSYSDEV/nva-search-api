@@ -220,17 +220,21 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
     protected BoolQueryBuilder boolQuery() {
-        var bq = QueryBuilders.boolQuery();
+        var boolQueryBuilder = QueryBuilders.boolQuery();
         getSearchParameterKeys()
             .flatMap(this::getQueryBuilders)
             .forEach(entry -> {
-                if (MUST_NOT.equals(entry.getKey().searchOperator())) {
-                    bq.mustNot(entry.getValue());
+                if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
                 } else {
-                    bq.must(entry.getValue());
+                    boolQueryBuilder.must(entry.getValue());
                 }
             });
-        return bq;
+        return boolQueryBuilder;
+    }
+
+    private boolean isMustNot(K key) {
+        return MUST_NOT.equals(key.searchOperator());
     }
 
 

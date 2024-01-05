@@ -71,11 +71,11 @@ Parameters:
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
-    Default: 10
+    Default: '10'
   MinConcurrency:
     Type: String
     Description: Minimum capacity for provisioned concurrency
-    Default: 1
+    Default: '1'
   Suffix:
     Type: String
     Default: ''
@@ -265,7 +265,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.ResourcePagedSearchHandlerAws::handleRequest
+      Handler: no.unit.nva.search2.SearchResourceHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -289,7 +289,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.ImportCandidatePagedSearchHandlerAws::handleRequest
+      Handler: no.unit.nva.search2.SearchImportCandidateHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:

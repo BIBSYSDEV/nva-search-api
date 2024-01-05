@@ -1,51 +1,49 @@
 package no.unit.nva.search2;
 
+import static no.unit.nva.search2.ResourceClient.defaultClient;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
+import java.net.HttpURLConnection;
+import java.util.List;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-import java.net.HttpURLConnection;
-import java.util.List;
+public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
-import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
+    private final ResourceClient opensearchClient;
 
-public class ImportCandidateHandler extends ApiGatewayHandler<Void, String> {
-
-    private final ImportCandidateClient opensearchClient;
-    
     @JacocoGenerated
-    public ImportCandidateHandler() {
+    public SearchResourceHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public ImportCandidateHandler(Environment environment, ImportCandidateClient candidateClient) {
+    public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
-        this.opensearchClient = candidateClient;
+        this.opensearchClient = resourceClient;
     }
-    
+
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ImportCandidateQuery.builder()
+            ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()
                 .doSearch(opensearchClient);
     }
-    
+
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpURLConnection.HTTP_OK;
     }
-    
+
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
