@@ -271,6 +271,14 @@ class ResourceClientTest {
         static Stream<Arguments> uriProvider() {
             return Stream.of(
                 createArgument("page=0", 20),
+                createArgument("ABSTRACT=NAKSIN&page=0", 3),
+                createArgument("ABSTRACT_NOT=NAKSIN&page=0", 17),
+                createArgument("ABSTRACT_SHOULD=probability+hazard&page=0", 6),
+                createArgument("TAGS=NAKSIN,Avalanche-RnD&page=0", 1),
+                createArgument("TAGS_NOT=NAKSIN&page=0", 19),
+                createArgument("TAGS_SHOULD=NAKSIN,Avalanche-RnD&page=0", 9),
+                createArgument("CATEGORY=ReportResearch&page=0", 10),
+                createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
                 createArgument("CONTEXT_TYPE=Anthology", 1),
                 createArgument("CONTEXT_TYPE=Report", 10),
                 createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
