@@ -273,7 +273,7 @@ class ResourceClientTest {
                 createArgument("page=0", 20),
                 createArgument("ABSTRACT=NAKSIN&page=0", 3),
                 createArgument("ABSTRACT_NOT=NAKSIN&page=0", 17),
-                createArgument("ABSTRACT_SHOULD=probability+hazard&page=0", 6),
+                createArgument("ABSTRACT_SHOULD=probability,hazard&page=0", 6),
                 createArgument("TAGS=NAKSIN,Avalanche-RnD&page=0", 1),
                 createArgument("TAGS_NOT=NAKSIN&page=0", 19),
                 createArgument("TAGS_SHOULD=NAKSIN,Avalanche-RnD&page=0", 9),

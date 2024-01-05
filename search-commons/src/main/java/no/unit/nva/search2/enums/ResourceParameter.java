@@ -20,10 +20,12 @@ import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_AFFILIATION_ID_
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
+import static no.unit.nva.search2.constant.Resource.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
+import static no.unit.nva.search2.constant.Resource.ENTITY_TAGS;
 import static no.unit.nva.search2.constant.Resource.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
 import static no.unit.nva.search2.constant.Resource.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
 import static no.unit.nva.search2.constant.Resource.IDENTIFIER_KEYWORD;
@@ -34,16 +36,14 @@ import static no.unit.nva.search2.constant.Resource.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.constant.Resource.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.constant.Resource.TOP_LEVEL_ORG_ID;
 import static no.unit.nva.search2.constant.Resource.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.CREATED_DATE;
-import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.constant.Words.PROJECTS_ID;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
 import static no.unit.nva.search2.constant.Words.Q;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
@@ -59,7 +59,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import no.unit.nva.search2.constant.Words;
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -72,9 +71,9 @@ import nva.commons.core.JacocoGenerated;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParamKind.INVALID),
     // Parameters used for filtering
-    ABSTRACT(TEXT, ENTITY_DESCRIPTION + DOT + Words.ABSTRACT),
-    ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION + DOT + Words.ABSTRACT),
-    ABSTRACT_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION + DOT + Words.ABSTRACT),
+    ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
+    ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
+    ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),
     CONTEXT_TYPE(KEYWORD, MUST, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_TYPE_KEYWORD),
@@ -102,8 +101,8 @@ public enum ResourceParameter implements ParameterKey {
     INSTANCE_TYPE(KEYWORD, MUST, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null),
     INSTANCE_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null),
     INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_SHOULD_KEYS, null, null),
-    INSTITUTION(KEYWORD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION(TEXT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     ISBN(KEYWORD, PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_ISBN_LIST),
@@ -123,13 +122,13 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT_SHOULD(KEYWORD, SHOULD, PROJECTS_ID),
     PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
-    TAGS(KEYWORD, ENTITY_DESCRIPTION + DOT + Words.TAGS),
-    TAGS_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION + DOT + Words.TAGS),
-    TAGS_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION + DOT + Words.TAGS),
+    TAGS(TEXT, ENTITY_TAGS),
+    TAGS_NOT(TEXT, MUST_NOT, ENTITY_TAGS),
+    TAGS_SHOULD(TEXT, SHOULD, ENTITY_TAGS),
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, 2F),
     TITLE_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(KEYWORD, MUST, TOP_LEVEL_ORGANIZATIONS + DOT + Words.ID + DOT + Words.KEYWORD),
+    TOP_LEVEL_ORGANIZATION(KEYWORD, MUST, TOP_LEVEL_ORG_ID),
     UNIT(KEYWORD, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, SHOULD, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
