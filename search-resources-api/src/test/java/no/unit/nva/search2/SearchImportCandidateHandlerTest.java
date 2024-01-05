@@ -67,24 +67,6 @@ class SearchImportCandidateHandlerTest {
     }
 
     @Test
-    void shouldHandleFailedResponse() throws IOException {
-        prepareRestHighLevelClientOkResponse();
-
-        handler.handleRequest(getInputStream(), outputStream, contextMock);
-
-        var gatewayResponse =
-            FakeGatewayResponse.of(outputStream);
-        var actualBody =
-            gatewayResponse.body();
-        var expected =
-            getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
-
-        assertNotNull(gatewayResponse.headers());
-        assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertThat(actualBody.hits(), is(equalTo(expected.hits())));
-    }
-
-    @Test
     void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
         prepareRestHighLevelClientOkResponse();
 

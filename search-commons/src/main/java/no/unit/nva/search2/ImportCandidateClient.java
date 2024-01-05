@@ -36,7 +36,6 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
     }
 
     @Override
-    @JacocoGenerated // hard to test statusCode != OK
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

@@ -14,10 +14,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -35,6 +39,7 @@ import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
@@ -78,6 +83,27 @@ class ImportCandidateClientTest {
 
     @Nested
     class ImportCandidateTest {
+
+        @Test
+        void openSearchFailedResponse() throws IOException, InterruptedException {
+            HttpClient httpClient = mock(HttpClient.class);
+            var response = mock(HttpResponse.class);
+            when(httpClient.send(any(), any())).thenReturn(response);
+            when(response.statusCode()).thenReturn(500);
+            when(response.body()).thenReturn("EXPECTED ERROR");
+            var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
+            var importCandidateClient = new ImportCandidateClient(httpClient, setupMockedCachedJwtProvider());
+
+            assertThrows(
+                RuntimeException.class,
+                () -> ImportCandidateQuery.builder()
+                    .withRequiredParameters(SIZE, FROM)
+                    .fromQueryParameters(toMapEntries).build()
+                    .doSearch(importCandidateClient)
+            );
+        }
+
+
 
         @ParameterizedTest
         @MethodSource("uriProvider")

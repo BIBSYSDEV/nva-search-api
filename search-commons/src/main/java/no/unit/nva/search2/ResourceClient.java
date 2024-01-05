@@ -37,7 +37,6 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     }
 
     @Override
-    @JacocoGenerated // hard to test statusCode != OK
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
