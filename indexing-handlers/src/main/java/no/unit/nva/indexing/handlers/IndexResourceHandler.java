@@ -23,17 +23,20 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
         "EXPANDED_RESOURCES_BUCKET");
     public static final String INDEXING_ERROR_MSG = "Failure adding document to index. Resource path: {}. "
                                                     + "Exception message: {}";
-    private final S3Driver s3Driver;
+    private static final String ERRORS_BUCKET = "ERRORS_BUCKET";
+    private final S3Driver resourcesS3Driver;
     private final IndexingClient indexingClient;
+    private final S3Driver errorsS3Driver;
 
     @JacocoGenerated
     public IndexResourceHandler() {
-        this(new S3Driver(EXPANDED_RESOURCES_BUCKET), defaultIndexingClient());
+        this(new S3Driver(EXPANDED_RESOURCES_BUCKET), new S3Driver(ERRORS_BUCKET), defaultIndexingClient());
     }
 
-    public IndexResourceHandler(S3Driver s3Driver, IndexingClient indexingClient) {
+    public IndexResourceHandler(S3Driver resourcesS3Driver, S3Driver errorsS3Driver, IndexingClient indexingClient) {
         super(EventReference.class);
-        this.s3Driver = s3Driver;
+        this.resourcesS3Driver = resourcesS3Driver;
+        this.errorsS3Driver = errorsS3Driver;
         this.indexingClient = indexingClient;
     }
 
@@ -56,11 +59,12 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
 
     private RuntimeException handleFailure(UnixPath resourceRelativePath, Exception exception) {
         LOGGER.error(INDEXING_ERROR_MSG, resourceRelativePath, exception.getMessage());
+        attempt(() -> errorsS3Driver.insertFile(resourceRelativePath, exception.toString()));
         return new RuntimeException(exception);
     }
 
     private IndexDocument fetchFileFromS3Bucket(UnixPath resourceRelativePath) {
-        String resource = s3Driver.getFile(resourceRelativePath);
+        String resource = resourcesS3Driver.getFile(resourceRelativePath);
         return IndexDocument.fromJsonString(resource);
     }
 }
