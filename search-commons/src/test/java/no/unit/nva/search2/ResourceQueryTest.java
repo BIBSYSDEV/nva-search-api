@@ -86,7 +86,7 @@ class ResourceQueryTest {
             UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
                 .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
 
-        logger.debug(
+        logger.info(
             resourceParameters.toNvaSearchApiRequestParameter()
                 .entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
@@ -157,6 +157,7 @@ class ResourceQueryTest {
         assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, DOI)
+            .validate()
             .build()
             .getOpenSearchUri());
     }

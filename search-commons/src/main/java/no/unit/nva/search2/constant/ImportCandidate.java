@@ -10,9 +10,14 @@ import static no.unit.nva.search2.constant.Words.PIPE;
 import java.util.List;
 import java.util.Locale;
 import no.unit.nva.search2.enums.ImportCandidateSort;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 public final class ImportCandidate {
+
+    @JacocoGenerated
+    public ImportCandidate() {
+    }
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";
     public static final String CANDIDATE_STATUS = "candidateStatus";

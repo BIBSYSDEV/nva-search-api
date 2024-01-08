@@ -1,6 +1,12 @@
 package no.unit.nva.search2.constant;
 
+import nva.commons.core.JacocoGenerated;
+
 public final class Patterns {
+
+    @JacocoGenerated
+    public Patterns() {
+    }
 
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";

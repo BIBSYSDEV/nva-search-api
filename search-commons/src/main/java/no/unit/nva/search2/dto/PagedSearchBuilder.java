@@ -20,7 +20,7 @@ public class PagedSearchBuilder {
 
     @SuppressWarnings("PMD.NullAssignment")
     public PagedSearch build() {
-        if (isNull(this.nextResults)) {
+        if (isNull(this.nextResults) || !nextResults.getQuery().contains("sort")) {
             this.nextSearchAfterResults = null;       // null values are not serialized
         }
         return new PagedSearch(

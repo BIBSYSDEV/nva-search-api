@@ -7,8 +7,14 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import nva.commons.core.JacocoGenerated;
 
 public final class ErrorMessages {
+
+    @JacocoGenerated
+    public ErrorMessages() {
+    }
+
     public static final String INVALID_VALUE = "Parameter [%s] has invalid value [%s]";
     public static final String INVALID_VALUE_WITH_SORT =
         "Sort has invalid field value [%s]. Valid values are: %s";

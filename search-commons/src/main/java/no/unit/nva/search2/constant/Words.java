@@ -1,6 +1,12 @@
 package no.unit.nva.search2.constant;
 
+import nva.commons.core.JacocoGenerated;
+
 public final class Words {
+
+    @JacocoGenerated
+    public Words() {
+    }
 
     public static final String ABSTRACT = "abstract";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";

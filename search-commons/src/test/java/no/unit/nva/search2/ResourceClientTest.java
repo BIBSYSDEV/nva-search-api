@@ -174,7 +174,7 @@ class ResourceClientTest {
             if (expectedCount == 0) {
                 logger.info(pagedSearchResourceDto.toJsonString());
             } else {
-                logger.info(pagedSearchResourceDto.id().toString());
+                logger.info(pagedSearchResourceDto.toString());
             }
 
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
@@ -205,10 +205,10 @@ class ResourceClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build();
 
-            logger.debug(query.getValue(SORT).toString());
+            logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
-            logger.info(pagedSearchResourceDto.id().toString());
+            logger.info(pagedSearchResourceDto.toString());
             assertNotNull(pagedSearchResourceDto.id());
             assertNotNull(pagedSearchResourceDto.context());
             assertTrue(pagedSearchResourceDto.totalHits() >= 0);
