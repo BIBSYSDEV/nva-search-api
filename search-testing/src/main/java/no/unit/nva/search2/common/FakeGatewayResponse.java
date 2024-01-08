@@ -1,4 +1,4 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search2.common;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-import no.unit.nva.search2.common.SwsResponse;
+
 import no.unit.nva.search2.dto.PagedSearch;
 
 @SuppressWarnings("PMD.ShortMethodName")

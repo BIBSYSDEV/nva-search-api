@@ -2,8 +2,7 @@ package no.unit.nva.search2.constant;
 
 import nva.commons.core.JacocoGenerated;
 
-@JacocoGenerated
-public class Patterns {
+public final class Patterns {
 
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
@@ -20,7 +19,6 @@ public class Patterns {
      * Pattern for matching a date string. yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ
      */
     public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
-    public static final String PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND = "(?i)doc.?count.?error.?upper.?bound";
     public static final String PATTERN_IS_FROM_KEY = "(?i)offset|from";
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
@@ -34,8 +32,6 @@ public class Patterns {
     public static final String PATTERN_IS_SIZE_KEY = "(?i)per_?page|results|limit|size";
     public static final String PATTERN_IS_SORT_KEY = "(?i)order_?by|sort";
     public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort_?order|order";
-    public static final String PATTERN_IS_SUM_OTHER_DOC_COUNT =
-        PATTERN_IS_IGNORE_CASE + "sum.?other.?doc.?count";
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
 
@@ -43,4 +39,10 @@ public class Patterns {
      * Pattern for matching a funding string. funding source and project_id together separated by ':'
      */
     public static final String PATTERN_IS_FUNDING = "[\\w]+[:\\s]{1}\\d+";
+
+    @JacocoGenerated
+    public Patterns() {
+    }
+
+
 }

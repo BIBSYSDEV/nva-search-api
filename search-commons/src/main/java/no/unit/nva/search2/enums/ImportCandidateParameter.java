@@ -1,5 +1,17 @@
 package no.unit.nva.search2.enums;
 
+import no.unit.nva.search2.constant.ImportCandidate;
+import no.unit.nva.search2.constant.Words;
+import nva.commons.core.JacocoGenerated;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ImportCandidate.ADDITIONAL_IDENTIFIERS_KEYWORD;
 import static no.unit.nva.search2.constant.ImportCandidate.COLLABORATION_TYPE_KEYWORD;
@@ -26,16 +38,6 @@ import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.SORT_KEY;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.constant.ImportCandidate;
-import no.unit.nva.search2.constant.Words;
-import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -56,6 +58,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     CONTRIBUTOR(KEYWORD, ImportCandidate.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, ImportCandidate.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_SHOULD(TEXT, SHOULD, ImportCandidate.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NAME(KEYWORD, ImportCandidate.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_NOT(KEYWORD, MUST_NOT, ImportCandidate.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_SHOULD(TEXT, SHOULD, ImportCandidate.CONTRIBUTORS_IDENTITY_NAME),
     COLLABORATION_TYPE(KEYWORD, MUST, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_NOT(KEYWORD, MUST_NOT, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_SHOULD(TEXT, SHOULD, COLLABORATION_TYPE_KEYWORD),

@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_ALL;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
-import no.unit.nva.search.common.FakeGatewayResponse;
+import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.SwsResponse;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
@@ -42,7 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ResourcePagedSearchHandlerAwsTest {
+class SearchResourceHandlerTest {
 
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -50,7 +51,7 @@ class ResourcePagedSearchHandlerAwsTest {
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private ResourcePagedSearchHandlerAws handler;
+    private SearchResourceHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
@@ -59,7 +60,7 @@ class ResourcePagedSearchHandlerAwsTest {
     void setUp() {
 
         mockedSearchClient = mock(ResourceClient.class);
-        handler = new ResourcePagedSearchHandlerAws(new Environment(), mockedSearchClient);
+        handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -210,7 +211,7 @@ class ResourcePagedSearchHandlerAwsTest {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_ALL.fieldName(), "entityDescription.contributors.identity.id:12345",
                        "results", "10", "from", "0"))
-            .withHeaders(Map.of("Accept", "application/json"))
+            .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
             .withUserName(randomString())
             .build();
@@ -225,7 +226,7 @@ class ResourcePagedSearchHandlerAwsTest {
                             + "+OR+"
                             + "(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
-                .withHeaders(Map.of("Accept", "application/json"))
+                .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withUserName(randomString())
                 .build();
     }
@@ -233,7 +234,7 @@ class ResourcePagedSearchHandlerAwsTest {
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
                 Map.of(SEARCH_ALL.fieldName(), SAMPLE_SEARCH_TERM))
-            .withHeaders(Map.of("Accept", contentType))
+            .withHeaders(Map.of(ACCEPT, contentType))
             .withRequestContext(getRequestContext())
             .build();
     }

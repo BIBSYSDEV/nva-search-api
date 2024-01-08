@@ -45,7 +45,7 @@ class UserSettingsClientTest {
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
         var result = userSettingsClient.doSearch(resourceAwsQuery).promotedPublications();
-        logger.info(result.toString());
+        logger.debug(result.toString());
         assertNotNull(result);
     }
 

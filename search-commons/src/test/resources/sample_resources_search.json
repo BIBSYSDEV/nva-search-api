@@ -113,6 +113,13 @@
     "modelVersion": "0.20.54",
     "modifiedDate": "2023-11-06T08:48:11.943422687Z",
     "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/1433422",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
     "publishedDate": "2023-11-06T08:48:11.936406187Z",
     "publisher": {
       "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
@@ -402,6 +409,13 @@
     "identifier": "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
     "modelVersion": "0.20.54",
     "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
     "publishedDate": "2023-09-29T12:14:46Z",
     "publisher": {
       "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
@@ -418,6 +432,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
+    "doi": "https://doi.org/10.1371/journal.pone.1234567",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -498,6 +513,19 @@
     "identifier": "018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
     "modelVersion": "0.20.54",
     "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334631",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334813",
+        "type": "ResearchProject",
+        "name": "Utvikling av osteloffen"
+      }
+    ],
+
     "publishedDate": "2023-09-29T12:11:12Z",
     "publisher": {
       "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",

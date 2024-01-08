@@ -14,10 +14,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -35,6 +39,7 @@ import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
@@ -78,6 +83,27 @@ class ImportCandidateClientTest {
 
     @Nested
     class ImportCandidateTest {
+
+        @Test
+        void openSearchFailedResponse() throws IOException, InterruptedException {
+            HttpClient httpClient = mock(HttpClient.class);
+            var response = mock(HttpResponse.class);
+            when(httpClient.send(any(), any())).thenReturn(response);
+            when(response.statusCode()).thenReturn(500);
+            when(response.body()).thenReturn("EXPECTED ERROR");
+            var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
+            var importCandidateClient = new ImportCandidateClient(httpClient, setupMockedCachedJwtProvider());
+
+            assertThrows(
+                RuntimeException.class,
+                () -> ImportCandidateQuery.builder()
+                    .withRequiredParameters(SIZE, FROM)
+                    .fromQueryParameters(toMapEntries).build()
+                    .doSearch(importCandidateClient)
+            );
+        }
+
+
 
         @ParameterizedTest
         @MethodSource("uriProvider")
@@ -159,15 +185,15 @@ class ImportCandidateClientTest {
             return Stream.of(
                 URI.create("https://example.com/?size=8"),
                 URI.create("https://example.com/?category=AcademicArticle&size=5"),
-                URI.create("https://example.com/?CONTRIBUTOR=Andrew+Morrison&size=1"),
-                URI.create("https://example.com/?CONTRIBUTOR_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
-                URI.create("https://example.com/?CONTRIBUTOR_NOT=George+Rigos&size=7"),
+                URI.create("https://example.com/?CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
+                URI.create("https://example.com/?CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
+                URI.create("https://example.com/?CONTRIBUTOR_NAME_NOT=George+Rigos&size=7"),
                 URI.create("https://example.com/?PUBLICATION_YEAR_BEFORE=2023&size=5"),
                 URI.create("https://example.com/?publication_year=2022&size=1"),
                 URI.create("https://example.com/?PublicationYearBefore=2024&publication_year_since=2023&size=3"),
                 URI.create("https://example.com/?title=In+reply:+Why+big+data&size=1"),
                 URI.create("https://example.com/?title=chronic+diseases&size=1"),
-                URI.create("https://example.com/?title_should=antibacterial+Fishing&size=2"),
+                URI.create("https://example.com/?title_should=antibacterial,Fishing&size=2"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title&size=1"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
                 URI.create("https://example.com/?query=European&fields=all&size=3"));
@@ -175,6 +201,8 @@ class ImportCandidateClientTest {
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
+                URI.create("https://example.com/?size=8&sort=epler"),
+                URI.create("https://example.com/?size=8&sort=type:DEdd"),
                 URI.create("https://example.com/?categories=hello+world"),
                 URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01"),
                 URI.create("https://example.com/?conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),

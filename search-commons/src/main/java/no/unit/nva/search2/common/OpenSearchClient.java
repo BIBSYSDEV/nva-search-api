@@ -13,11 +13,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search2.dto.ResponseLogInfo;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
@@ -31,6 +34,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final HttpClient httpClient;
     protected final BodyHandler<String> bodyHandler;
     protected final CachedJwtProvider jwtProvider;
+    protected Instant requestStart;
 
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
@@ -48,6 +52,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.debug(qbs.source().query().toString());
+        requestStart = Instant.now();
         return HttpRequest
             .newBuilder(qbs.requestUri())
             .headers(
@@ -79,11 +84,20 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .findFirst().orElseThrow();
     }
 
-    protected static FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
         return result -> {
-            logger.info("Opensearch Response Time: {} ms, TotalSize: {}", result.took(), result.getTotalSize());
+            logger.info(
+                ResponseLogInfo.builder()
+                    .withResponseTime(getRequestDuration())
+                    .withOpensearchResponseTime(result.took())
+                    .withTotalHits(result.getTotalSize())
+                    .toJsonString());
             return result;
         };
+    }
+
+    private long getRequestDuration() {
+        return Duration.between(requestStart, Instant.now()).toMillis();
     }
 
 }

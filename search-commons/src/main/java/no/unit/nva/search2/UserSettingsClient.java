@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.dto.UserSettings;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
@@ -25,6 +26,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
         super(client, cachedJwtProvider);
     }
 
+    @JacocoGenerated
     @Override
     public UserSettings doSearch(ResourceQuery query) {
         return
@@ -36,10 +38,12 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
                 .orElse(new UserSettings(Collections.emptyList()));
     }
 
+    @JacocoGenerated
     private Stream<String> createQueryBuilderStream(ResourceQuery query) {
-        return query.getOptional(CONTRIBUTOR).stream();
+        return query.getValue(CONTRIBUTOR).optional().stream();
     }
 
+    @JacocoGenerated
     private HttpRequest createRequest(String contributorId) {
         var userSettingId = UriWrapper.fromHost(readApiHost())
             .addChild("person-preferences")
@@ -54,6 +58,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
             .GET().build();
     }
 
+    @JacocoGenerated
     @Override
     protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {

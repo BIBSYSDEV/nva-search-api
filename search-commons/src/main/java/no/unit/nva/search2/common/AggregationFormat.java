@@ -1,7 +1,5 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SUM_OTHER_DOC_COUNT;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.constant.Words.BUCKETS;
 import static no.unit.nva.search2.constant.Words.COUNT;
@@ -19,15 +17,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonUtils;
+import nva.commons.core.JacocoGenerated;
 
+@JacocoGenerated   // no constructor, but all lines are tested.
 public final class AggregationFormat {
     public static JsonNode apply(JsonNode aggregations) {
 
         var outputAggregationNode =  JsonUtils.dtoObjectMapper.createObjectNode();
 
         Streams.stream(aggregations.fields())
-            .filter(AggregationFormat::ignoreDocCountErrors)
-            .filter(AggregationFormat::ignoreSumOtherDoc)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(entry -> {
                 if (keyIsLabel(entry)) {
@@ -71,14 +69,6 @@ public final class AggregationFormat {
         return Map.entry(getNormalizedFieldName(entry.getKey()), entry.getValue());
     }
 
-    private static boolean ignoreSumOtherDoc(Map.Entry<String, JsonNode> item) {
-        return !item.getKey().matches(PATTERN_IS_SUM_OTHER_DOC_COUNT);
-    }
-
-    private static boolean ignoreDocCountErrors(Map.Entry<String, JsonNode> item) {
-        return !item.getKey().matches(PATTERN_IS_DOC_COUNT_ERROR_UPPER_BOUND);
-    }
-
     private static JsonNode getBucketOrValue(JsonNode node) {
         if (node.at(Constants.ID_BUCKETS).isArray()) {
             return node.at(Constants.ID_BUCKETS);
@@ -103,8 +93,6 @@ public final class AggregationFormat {
         var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
 
         Streams.stream(value.fields())
-            .filter(AggregationFormat::ignoreDocCountErrors)
-            .filter(AggregationFormat::ignoreSumOtherDoc)
             .map(AggregationFormat::getNormalizedJsonNodeEntry)
             .filter(entry -> !COUNT.equals(entry.getKey()))
             .forEach(node -> {
@@ -119,6 +107,7 @@ public final class AggregationFormat {
             .orElse(fieldName.replaceFirst(PATTERN_IS_WORD_ENDING_WITH_HASHTAG, EMPTY_STRING));
     }
 
+    @JacocoGenerated
     static final class Constants {
 
         public static final String BUCKETS_PTR = SLASH + BUCKETS;

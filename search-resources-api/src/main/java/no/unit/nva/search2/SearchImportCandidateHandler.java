@@ -1,9 +1,9 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.ResourceClient.defaultClient;
+import static no.unit.nva.search2.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
@@ -14,36 +14,36 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class ResourcePagedSearchHandlerAws extends ApiGatewayHandler<Void, String> {
+public class SearchImportCandidateHandler extends ApiGatewayHandler<Void, String> {
 
-    private final ResourceClient opensearchClient;
-
+    private final ImportCandidateClient opensearchClient;
+    
     @JacocoGenerated
-    public ResourcePagedSearchHandlerAws() {
+    public SearchImportCandidateHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public ResourcePagedSearchHandlerAws(Environment environment, ResourceClient resourceClient) {
+    public SearchImportCandidateHandler(Environment environment, ImportCandidateClient candidateClient) {
         super(Void.class, environment);
-        this.opensearchClient = resourceClient;
+        this.opensearchClient = candidateClient;
     }
-
+    
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ResourceQuery.builder()
+            ImportCandidateQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()
                 .doSearch(opensearchClient);
     }
-
+    
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpURLConnection.HTTP_OK;
     }
-
+    
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
