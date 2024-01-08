@@ -289,9 +289,11 @@ Resources:
             Path: /resources2
             Method: get
             RestApiId: !Ref NvaSearchApi
+
   SearchAwsImportCandidatesFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Description: Lambda for searching Import Candidates
       CodeUri: search-resources-api
       Handler: no.unit.nva.search2.SearchImportCandidateHandler::handleRequest
       Runtime: java17

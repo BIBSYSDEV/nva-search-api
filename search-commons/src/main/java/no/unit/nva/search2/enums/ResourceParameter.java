@@ -9,7 +9,6 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_KEYS;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SIZE_KEY;
@@ -140,8 +139,8 @@ public enum ResourceParameter implements ParameterKey {
     USER_AFFILIATION(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    PUBLICATION_YEAR(NUMBER, MUST, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
-                     PATTERN_IS_PUBLICATION_YEAR_KEYS, null, null),
+    PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
+    PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                             PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS, null, null),
     // Query parameters passed to SWS/Opensearch
