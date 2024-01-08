@@ -184,7 +184,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return mediaType;
     }
 
-    final protected void setMediaType(String mediaType) {
+    final void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = MediaType.CSV_UTF_8;
         } else {
