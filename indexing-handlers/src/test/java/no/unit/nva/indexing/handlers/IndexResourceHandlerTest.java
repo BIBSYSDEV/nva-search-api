@@ -9,6 +9,8 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,7 +53,8 @@ public class IndexResourceHandlerTest {
         createSampleResource(null, RESOURCES_INDEX);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
         createSampleResource(SortableIdentifier.next(), null);
-    private S3Driver s3Driver;
+    private S3Driver resourcesS3Driver;
+    private S3Driver errorsS3Driver;
     private IndexResourceHandler indexResourceHandler;
     private Context context;
     private ByteArrayOutputStream output;
@@ -60,9 +63,10 @@ public class IndexResourceHandlerTest {
     @BeforeEach
     void init() {
         FakeS3Client fakeS3Client = new FakeS3Client();
-        s3Driver = new S3Driver(fakeS3Client, "ignored");
+        resourcesS3Driver = new S3Driver(fakeS3Client, "resources");
+        errorsS3Driver = new S3Driver(fakeS3Client, "errors");
         indexingClient = new FakeIndexingClient();
-        indexResourceHandler = new IndexResourceHandler(s3Driver, indexingClient);
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
 
         context = Mockito.mock(Context.class);
         output = new ByteArrayOutputStream();
@@ -82,7 +86,7 @@ public class IndexResourceHandlerTest {
     void shouldThrowExceptionOnCommunicationProblemWithService() throws Exception {
         final var expectedErrorMessage = randomString();
         indexingClient = indexingClientThrowingException(expectedErrorMessage);
-        indexResourceHandler = new IndexResourceHandler(s3Driver, indexingClient);
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
         URI resourceLocation = prepareEventStorageResourceFile();
         InputStream input = createEventBridgeEvent(resourceLocation);
         assertThrows(RuntimeException.class,
@@ -93,12 +97,24 @@ public class IndexResourceHandlerTest {
     void shouldLogErrorContainingRelativeResourceLocationOnCommunicationProblemWithService() throws Exception {
         final var appender = LogUtils.getTestingAppender(IndexResourceHandler.class);
         indexingClient = indexingClientThrowingException(randomString());
-        indexResourceHandler = new IndexResourceHandler(s3Driver, indexingClient);
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
         var resourceLocation = prepareEventStorageResourceFile();
         var input = createEventBridgeEvent(resourceLocation);
         assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
         var expectedResourceLocationString = UriWrapper.fromUri(resourceLocation).toS3bucketPath().toString();
         assertThat(appender.getMessages(), containsString(expectedResourceLocationString));
+    }
+
+    @Test
+    void shouldStoreIndexDocumentIdentifierToErrorBucketWhenFailingIndexing() throws Exception {
+        indexingClient = indexingClientThrowingException(randomString());
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
+        var resourceLocation = prepareEventStorageResourceFile();
+        var input = createEventBridgeEvent(resourceLocation);
+        assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
+        var expectedResourceLocationString = UriWrapper.fromUri(resourceLocation).toS3bucketPath().toString();
+
+        assertThat(errorsS3Driver.getFile(UnixPath.of(expectedResourceLocationString)), is(notNullValue()));
     }
 
     @Test
@@ -161,7 +177,7 @@ public class IndexResourceHandlerTest {
     private URI prepareEventStorageResourceFile(IndexDocument resource) throws IOException {
         URI resourceLocation = RandomDataGenerator.randomUri();
         UnixPath resourcePath = UriWrapper.fromUri(resourceLocation).toS3bucketPath();
-        s3Driver.insertFile(resourcePath, resource.toJsonString());
+        resourcesS3Driver.insertFile(resourcePath, resource.toJsonString());
         return resourceLocation;
     }
 
