@@ -15,10 +15,6 @@ import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 public final class ImportCandidate {
 
-    @JacocoGenerated
-    public ImportCandidate() {
-    }
-
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";
     public static final String CANDIDATE_STATUS = "candidateStatus";
     public static final String COLLABORATION_TYPE = "collaborationType";
@@ -58,4 +54,9 @@ public final class ImportCandidate {
         generateObjectLabelsAggregation(ORGANIZATION, ORGANIZATIONS),
         generateHasFileAggregation()
     );
+
+    @JacocoGenerated
+    public ImportCandidate() {
+    }
+
 }

@@ -10,10 +10,6 @@ import nva.commons.core.JacocoGenerated;
 
 public final class Defaults {
 
-    @JacocoGenerated
-    public Defaults() {
-    }
-
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final String DEFAULT_OFFSET = "0";
     public static final String DEFAULT_VALUE_PER_PAGE = "15";
@@ -25,4 +21,9 @@ public final class Defaults {
 
     public static final List<MediaType> DEFAULT_RESPONSE_MEDIA_TYPES =
         List.of(MediaType.JSON_UTF_8, MediaTypes.APPLICATION_JSON_LD, MediaType.CSV_UTF_8);
+
+    @JacocoGenerated
+    public Defaults() {
+    }
+
 }

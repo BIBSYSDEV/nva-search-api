@@ -4,10 +4,6 @@ import nva.commons.core.JacocoGenerated;
 
 public final class Words {
 
-    @JacocoGenerated
-    public Words() {
-    }
-
     public static final String ABSTRACT = "abstract";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
     public static final String AFFILIATIONS = "affiliations";
@@ -82,4 +78,8 @@ public final class Words {
     public static final String UNDERSCORE = "_";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
+
+    @JacocoGenerated
+    public Words() {
+    }
 }

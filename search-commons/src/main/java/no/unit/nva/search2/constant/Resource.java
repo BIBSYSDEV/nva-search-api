@@ -47,10 +47,6 @@ import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 public final class Resource {
 
-    @JacocoGenerated
-    public Resource() {
-    }
-
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
@@ -127,4 +123,8 @@ public final class Resource {
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
         generateHasFileAggregation()
     );
+
+    @JacocoGenerated
+    public Resource() {
+    }
 }

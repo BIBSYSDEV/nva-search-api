@@ -34,9 +34,6 @@ import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Functions {
 
-    @JacocoGenerated
-    public Functions() {
-    }
 
     static final Environment ENVIRONMENT = new Environment();
     private static final String SEARCH_INFRASTRUCTURE_AUTH_URI = "SEARCH_INFRASTRUCTURE_AUTH_URI";
@@ -120,4 +117,7 @@ public final class Functions {
             );
     }
 
+    @JacocoGenerated
+    public Functions() {
+    }
 }

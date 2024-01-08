@@ -4,10 +4,6 @@ import nva.commons.core.JacocoGenerated;
 
 public final class Patterns {
 
-    @JacocoGenerated
-    public Patterns() {
-    }
-
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
     public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
@@ -43,4 +39,10 @@ public final class Patterns {
      * Pattern for matching a funding string. funding source and project_id together separated by ':'
      */
     public static final String PATTERN_IS_FUNDING = "[\\w]+[:\\s]{1}\\d+";
+
+    @JacocoGenerated
+    public Patterns() {
+    }
+
+
 }

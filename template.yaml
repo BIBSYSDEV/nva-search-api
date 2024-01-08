@@ -75,11 +75,11 @@ Parameters:
   MaxConcurrency:
     Type: String
     Description: Maximum capacity for provisioned concurrency
-    Default: '10'
+    Default: 10
   MinConcurrency:
     Type: String
     Description: Minimum capacity for provisioned concurrency
-    Default: '1'
+    Default: 1
   Suffix:
     Type: String
     Default: ''
