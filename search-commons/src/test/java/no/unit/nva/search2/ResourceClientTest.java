@@ -153,7 +153,7 @@ class ResourceClientTest {
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(5)));
-            logger.info(pagedSearchResourceDto.id().toString());
+            logger.debug(pagedSearchResourceDto.id().toString());
         }
 
         @ParameterizedTest
@@ -172,9 +172,9 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             if (expectedCount == 0) {
-                logger.info(pagedSearchResourceDto.toJsonString());
+                logger.debug(pagedSearchResourceDto.toJsonString());
             } else {
-                logger.info(pagedSearchResourceDto.toString());
+                logger.debug(pagedSearchResourceDto.toString());
             }
 
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
@@ -208,7 +208,6 @@ class ResourceClientTest {
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
-            logger.info(pagedSearchResourceDto.toString());
             assertNotNull(pagedSearchResourceDto.id());
             assertNotNull(pagedSearchResourceDto.context());
             assertTrue(pagedSearchResourceDto.totalHits() >= 0);
