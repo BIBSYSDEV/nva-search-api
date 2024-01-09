@@ -1,18 +1,8 @@
 package no.unit.nva.search2;
 
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.util.stream.Stream;
-
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.common.QueryToolsTest.queryToMapEntries;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -23,6 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.util.stream.Stream;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class ResourceClientNoHitsTest {
 

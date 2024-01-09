@@ -3,26 +3,22 @@ package no.unit.nva.search2.common;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
-import static no.unit.nva.search2.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.EQUAL;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
+import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
-import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -45,7 +41,9 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
      * @return Boolean because we need the text 'true' or 'false'
      */
     public static Boolean valueToBoolean(String value) {
-        return ONE.equals(value) ? Boolean.TRUE : Boolean.valueOf(value);
+        return (ONE.equals(value) || PUBLISHED_FILE.equals(value))
+            ? Boolean.TRUE
+            : Boolean.valueOf(value);
     }
 
     public static boolean hasContent(String value) {
@@ -78,20 +76,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             .toArray(String[]::new);
     }
 
-    public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
-        return queryToMapEntries(uri.getQuery());
-    }
-
-    public static Collection<Entry<String, String>> queryToMapEntries(String query) {
-        return nonNull(query)
-            ? Arrays.stream(query.split(AMPERSAND))
-            .map(keyValue -> keyValue.split(EQUAL))
-            .map(QueryTools::stringsToEntry)
-            .toList()
-            : Collections.emptyList();
-    }
-
-    public static Entry<String, String> stringsToEntry(String... strings) {
+    public static Entry<String, SortOrder> entryToSortEntry(String... strings) {
         return new Entry<>() {
             @Override
             public String getKey() {
@@ -99,30 +84,9 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             }
 
             @Override
-            public String getValue() {
-                return attempt(() -> strings[1]).orElse((f) -> EMPTY_STRING);
-            }
-
-            @Override
-            @JacocoGenerated
-            public String setValue(String value) {
-                return null;
-            }
-        };
-    }
-
-    public static Entry<String, SortOrder> entryToSortEntry(Entry<String, String> entry) {
-        return new Entry<>() {
-            @Override
-            public String getKey() {
-                return entry.getKey();
-            }
-
-            @Override
             public SortOrder getValue() {
-                final var orderString = hasContent(entry.getValue())
-                    ? entry.getValue()
-                    : DEFAULT_SORT_ORDER;
+                final var orderString = attempt(() -> strings[1])
+                    .orElse((f) -> DEFAULT_SORT_ORDER);
                 return SortOrder.fromString(orderString);
             }
 

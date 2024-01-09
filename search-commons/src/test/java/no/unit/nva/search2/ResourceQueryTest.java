@@ -2,7 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.search2.common.QueryToolsTest.queryToMapEntries;
 import static no.unit.nva.search2.enums.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.enums.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.enums.ResourceParameter.DOI;
