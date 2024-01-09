@@ -6,9 +6,7 @@ import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PLUS;
 import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
@@ -173,9 +171,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected boolean hasOneValue(K key) {
-        return getValue(key).optional()
-            .map(value -> !value.contains(COMMA))
-            .orElse(false);
+        return getValue(key).optionalStream().anyMatch(p -> !p.contains(COMMA));
     }
 
     protected boolean hasNoSearchValue() {
@@ -237,10 +233,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().optional().stream()
+        return getSort().optionalStream()
             .map(items -> items.split(COMMA))
             .flatMap(Arrays::stream)
-            .map(sort -> sort.split(COLON + PIPE + SPACE))
             .map(QueryTools::entryToSortEntry);
     }
 
@@ -328,8 +323,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return key;
         }
 
-        public Optional<String> optional() {
-            return Optional.ofNullable(value);
+        public Stream<String> optionalStream() {
+            return Optional.ofNullable(value).stream();
         }
 
         @Override

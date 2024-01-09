@@ -9,8 +9,10 @@ import static no.unit.nva.search2.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
+import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
@@ -74,6 +76,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                 ? trimmed.replace(DOT + KEYWORD, EMPTY_STRING)
                 : trimmed)
             .toArray(String[]::new);
+    }
+
+    public static Entry<String, SortOrder> entryToSortEntry(Object sortString) {
+        return entryToSortEntry(sortString.toString().split(COLON + PIPE + SPACE));
     }
 
     public static Entry<String, SortOrder> entryToSortEntry(String... strings) {
