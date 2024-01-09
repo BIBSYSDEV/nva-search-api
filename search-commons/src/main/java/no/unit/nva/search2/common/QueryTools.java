@@ -41,7 +41,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
      * @return Boolean because we need the text 'true' or 'false'
      */
     public static Boolean valueToBoolean(String value) {
-        return (ONE.equals(value) || PUBLISHED_FILE.equals(value))
+        return ONE.equals(value) || PUBLISHED_FILE.equals(value)
             ? Boolean.TRUE
             : Boolean.valueOf(value);
     }
