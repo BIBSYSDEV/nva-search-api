@@ -1,9 +1,13 @@
 package no.unit.nva.search2.constant;
 
+import static no.unit.nva.search2.constant.Words.COLON;
+import static no.unit.nva.search2.constant.Words.PIPE;
+import static no.unit.nva.search2.constant.Words.SPACE;
 import nva.commons.core.JacocoGenerated;
 
 public final class Patterns {
 
+    public static final String COLON_OR_SPACE = COLON + PIPE + SPACE;
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
     public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
     public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
@@ -23,8 +27,6 @@ public final class Patterns {
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
-    public static final String PATTERN_IS_PUBLICATION_YEAR_KEYS =
-        "(?i)year_?reported|publication_?year";
     public static final String PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS =
         "(?i)year_?reported_?should|publication_?year_?should";
     public static final String PATTERN_IS_SEARCH_ALL_KEY = "(?i)search_?all|query";
