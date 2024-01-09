@@ -6,9 +6,7 @@ import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PLUS;
 import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
@@ -62,6 +60,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
+    public abstract AsType getSort();
+
     protected abstract Integer getFrom();
 
     protected abstract Integer getSize();
@@ -69,8 +69,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected abstract K getFieldsKey();
 
     protected abstract String[] fieldsToKeyNames(String field);
-
-    public abstract AsType getSort();
 
     /**
      * Builds URI to query SWS based on post body.
@@ -151,7 +149,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     public void setKeyValue(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            var decodedValue = key.valueEncoding() != ValueEncoding.NONE
+                ? decodeUTF(value)
+                : value;
             if (isPagingValue(key)) {
                 pageParameters.put(key, decodedValue);
             } else {
@@ -171,9 +171,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected boolean hasOneValue(K key) {
-        return getValue(key).optional()
-            .map(value -> !value.contains(COMMA))
-            .orElse(false);
+        return getValue(key)
+            .optionalStream()
+            .anyMatch(p -> !p.contains(COMMA));
     }
 
     protected boolean hasNoSearchValue() {
@@ -233,6 +233,14 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return boolQueryBuilder;
     }
 
+    // SORTING
+    protected Stream<Entry<String, SortOrder>> getSortStream() {
+        return getSort().optionalStream()
+            .map(items -> items.split(COMMA))
+            .flatMap(Arrays::stream)
+            .map(QueryTools::objectToSortEntry);
+    }
+
     private boolean isMustNot(K key) {
         return MUST_NOT.equals(key.searchOperator());
     }
@@ -269,16 +277,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
             .fuzziness(Fuzziness.AUTO)
             .operator(Operator.AND);
-    }
-
-    // SORTING
-    protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().optional().stream()
-            .map(items -> items.split(COMMA))
-            .flatMap(Arrays::stream)
-            .map(sort -> sort.split(COLON + PIPE + SPACE))
-            .map(QueryTools::stringsToEntry)
-            .map(QueryTools::entryToSortEntry);
     }
 
     private Stream<K> getSearchParameterKeys() {
@@ -327,8 +325,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return key;
         }
 
-        public Optional<String> optional() {
-            return Optional.ofNullable(value);
+        public Stream<String> optionalStream() {
+            return Optional.ofNullable(value).stream();
         }
 
         @Override
