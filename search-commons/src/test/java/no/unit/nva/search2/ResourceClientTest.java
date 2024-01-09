@@ -1,7 +1,13 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.QueryToolsTest.queryToMapEntries;
+import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -111,13 +117,14 @@ class ResourceClientTest {
             var aggregations = query.toPagedResponse(response).aggregations();
 
             assertFalse(aggregations.isEmpty());
-            assertThat(aggregations.get("type").size(), is(3));
-            assertThat(aggregations.get("hasFile").size(), is(1));
-            assertThat(aggregations.get("hasFile").get(0).count(), is(20));
-            assertThat(aggregations.get("fundingSource").size(), is(2));
-            assertThat(aggregations.get("contributor").size(), is(12));
-            assertThat(aggregations.get("topLevelOrganization").size(), is(4));
-            assertThat(aggregations.get("topLevelOrganization").get(1).labels().get("nb"),
+            assertThat(aggregations.get(TYPE).size(), is(3));
+            assertThat(aggregations.get(HAS_FILE).size(), is(1));
+            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(20));
+            assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
+            assertThat(aggregations.get(PUBLISHER).size(), is(1));
+            assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
+            assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(4));
+            assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
                        is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
         }
 
@@ -152,7 +159,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(5)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(6)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 

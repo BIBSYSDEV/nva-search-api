@@ -12,10 +12,10 @@ import java.util.Collections;
 import java.util.Map.Entry;
 import nva.commons.core.JacocoGenerated;
 
-public final class QueryToolsTest {
+public final class EntrySetTools {
 
     @JacocoGenerated
-    public QueryToolsTest() {
+    public EntrySetTools() {
     }
 
     public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
@@ -26,7 +26,7 @@ public final class QueryToolsTest {
         return nonNull(query)
             ? Arrays.stream(query.split(AMPERSAND))
             .map(keyValue -> keyValue.split(EQUAL))
-            .map(QueryToolsTest::stringsToEntry)
+            .map(EntrySetTools::stringsToEntry)
             .toList()
             : Collections.emptyList();
     }

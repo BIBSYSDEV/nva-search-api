@@ -18,7 +18,10 @@ import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.LABELS;
 import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.constant.Words.REFERENCE;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.TYPE;
@@ -73,6 +76,15 @@ public final class Functions {
                         generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
                     )
             );
+    }
+
+    public static TermsAggregationBuilder generatePublisher() {
+        return
+            generateSimpleAggregation(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID,
+                                      KEYWORD)
+                .subAggregation(
+                    generateSimpleAggregation(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                                              KEYWORD));
     }
 
     public static NestedAggregationBuilder generateContributor() {

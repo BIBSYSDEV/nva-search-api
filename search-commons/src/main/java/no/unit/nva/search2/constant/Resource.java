@@ -4,6 +4,7 @@ import static no.unit.nva.search2.constant.Functions.generateContributor;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
 import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
+import static no.unit.nva.search2.constant.Functions.generatePublisher;
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
 import static no.unit.nva.search2.constant.Words.ABSTRACT;
 import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
@@ -50,33 +51,36 @@ public final class Resource {
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
+    public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
+    public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
+    public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
+        ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
-        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + AFFILIATIONS + DOT + LABELS + DOT;
+        ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS + DOT;
     public static final String CONTRIBUTORS_IDENTITY_ID =
-        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
+        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
+        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
+        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
     public static final String VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + "visibleForNonOwner";
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "isbnList";
+        ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "onlineIssn" + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + "onlineIssn" + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + "printIssn" + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + "printIssn" + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + TYPE + DOT + KEYWORD;
-    public static final String PUBLICATION_INSTANCE_DOT =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
+        ENTITY_PUBLICATION_CONTEXT_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_INSTANCE_TYPE =
-        PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
+        ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
@@ -111,13 +115,14 @@ public final class Resource {
         + FUNDINGS_SOURCE_LABELS + SAMI_CODE + DOT + KEYWORD;
 
     public static final String PARENT_PUBLICATION_ID =
-        PUBLICATION_INSTANCE_DOT + "corrigendumFor" + DOT + KEYWORD + PIPE
-        + PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD + PIPE
-        + PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
+        ENTITY_PUBLICATION_INSTANCE_DOT + "corrigendumFor" + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
         generateSimpleAggregation(TYPE, PUBLICATION_INSTANCE_TYPE),
+        generatePublisher(),
         generateContributor(),
         generateFundingSource(),
         generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
