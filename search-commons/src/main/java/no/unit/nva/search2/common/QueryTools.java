@@ -3,16 +3,15 @@ package no.unit.nva.search2.common;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
+import static no.unit.nva.search2.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
-import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
-import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
@@ -34,7 +33,6 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
-
 
     /**
      * '1', 'true' 'True' -> true any other value -> False.
@@ -78,11 +76,11 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             .toArray(String[]::new);
     }
 
-    public static Entry<String, SortOrder> entryToSortEntry(Object sortString) {
-        return entryToSortEntry(sortString.toString().split(COLON + PIPE + SPACE));
+    public static Entry<String, SortOrder> objectToSortEntry(Object sortString) {
+        return stringsToSortEntry(sortString.toString().split(COLON_OR_SPACE));
     }
 
-    public static Entry<String, SortOrder> entryToSortEntry(String... strings) {
+    public static Entry<String, SortOrder> stringsToSortEntry(String... strings) {
         return new Entry<>() {
             @Override
             public String getKey() {

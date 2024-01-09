@@ -171,7 +171,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected boolean hasOneValue(K key) {
-        return getValue(key).optionalStream().anyMatch(p -> !p.contains(COMMA));
+        return getValue(key)
+            .optionalStream()
+            .anyMatch(p -> !p.contains(COMMA));
     }
 
     protected boolean hasNoSearchValue() {
@@ -236,7 +238,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return getSort().optionalStream()
             .map(items -> items.split(COMMA))
             .flatMap(Arrays::stream)
-            .map(QueryTools::entryToSortEntry);
+            .map(QueryTools::objectToSortEntry);
     }
 
     private boolean isMustNot(K key) {
