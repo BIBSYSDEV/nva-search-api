@@ -12,12 +12,16 @@ import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.models.CuratorSearchType.DOI;
+import static no.unit.nva.search.models.CuratorSearchType.PUBLISHING;
+import static no.unit.nva.search.models.CuratorSearchType.SUPPORT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -34,11 +38,13 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.constants.ApplicationConstants;
+import no.unit.nva.search.models.CuratorSearchType;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.models.SearchDocumentsQuery;
@@ -506,6 +512,7 @@ public class OpensearchTest {
                 Thread.sleep(DELAY_AFTER_INDEXING);
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(), List.of(),
+                                                                allCuratorSearchTypes(),
                                                                 false);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
@@ -526,7 +533,9 @@ public class OpensearchTest {
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(INCLUDED_ORGANIZATION_ID), false);
+                                                                List.of(INCLUDED_ORGANIZATION_ID),
+                                                                allCuratorSearchTypes(),
+                                                                false);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 
@@ -545,7 +554,9 @@ public class OpensearchTest {
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(topLevelOrg), false);
+                                                                List.of(topLevelOrg),
+                                                                allCuratorSearchTypes(),
+                                                                false);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 
@@ -563,7 +574,9 @@ public class OpensearchTest {
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(topLevelOrg), true);
+                                                                List.of(topLevelOrg),
+                                                                allCuratorSearchTypes(),
+                                                                true);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 
@@ -580,6 +593,7 @@ public class OpensearchTest {
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, aggregations,
                                                                 List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                allCuratorSearchTypes(),
                                                                 false);
                 var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                                  indexName);
@@ -608,7 +622,9 @@ public class OpensearchTest {
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(INCLUDED_ORGANIZATION_ID), false);
+                                                                List.of(INCLUDED_ORGANIZATION_ID),
+                                                                allCuratorSearchTypes(),
+                                                                false);
                 var response = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                         indexName);
 
@@ -628,7 +644,9 @@ public class OpensearchTest {
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                                List.of(INCLUDED_ORGANIZATION_ID), false);
+                                                                List.of(INCLUDED_ORGANIZATION_ID),
+                                                                allCuratorSearchTypes(),
+                                                                false);
                 var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                                        indexName);
 
@@ -644,6 +662,7 @@ public class OpensearchTest {
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
                                                                 List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                allCuratorSearchTypes(),
                                                                 false);
                 var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                                        indexName);
@@ -663,6 +682,7 @@ public class OpensearchTest {
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
                                                                 List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                allCuratorSearchTypes(),
                                                                 false);
                 var searchResourcesResponse = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                                        indexName);
@@ -682,12 +702,55 @@ public class OpensearchTest {
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
                                                                 List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                allCuratorSearchTypes(),
                                                                 false);
                 var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                                                  indexName);
 
                 assertThat(searchResponseDto, notNullValue());
                 assertThat(searchResponseDto.getAggregations(), nullValue());
+            }
+
+            @Test
+            void shouldOnlyReturnPublishingRequestsWhenUserOnlyHasAccessToPublishingRequest() throws ApiGatewayException,
+                                                                             InterruptedException {
+
+                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
+                                    "sample_ticket_general_support_case_of_published_publication.json");
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                Set.of(PUBLISHING),
+                                                                false);
+                var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                 indexName);
+
+                assertThat(searchResponseDto, notNullValue());
+                assertThat(searchResponseDto.getHits().size(),  is(equalTo(1)));
+            }
+
+            @Test
+            void shouldNotReturnAnyDocumentsWhenNoAllowedCuratorSearchTypes() throws ApiGatewayException,
+                                                                                                     InterruptedException {
+
+                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
+                                    "sample_ticket_general_support_case_of_published_publication.json");
+
+                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
+                                                                DESC, SAMPLE_REQUEST_URI, emptyList(),
+                                                                List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
+                                                                Set.of(),
+                                                                false);
+                var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
+                                                                                 indexName);
+
+                assertThat(searchResponseDto, notNullValue());
+                assertThat(searchResponseDto.getHits(), is(empty()));
+            }
+
+            private static Set<CuratorSearchType> allCuratorSearchTypes() {
+                return Set.of(DOI, PUBLISHING, SUPPORT);
             }
         }
     }
