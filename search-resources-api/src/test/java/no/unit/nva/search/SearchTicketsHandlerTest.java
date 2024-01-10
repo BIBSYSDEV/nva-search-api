@@ -47,7 +47,6 @@ import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
 import no.unit.nva.indexing.testutils.SearchResponseUtil;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
 import nva.commons.core.ioutils.IoUtils;
@@ -161,15 +160,6 @@ class SearchTicketsHandlerTest {
         var response = GatewayResponse.fromOutputStream(outputStream, Problem.class);
         assertThat(response.getStatusCode(), is(equalTo(HttpURLConnection.HTTP_FORBIDDEN)));
 
-        var searchRequest = restHighLevelClientWrapper.getSearchRequest();
-        assertThat(searchRequest, is(nullValue()));
-    }
-
-    @Test
-    void shouldNotSendQueryAndReturnForbiddenWhenUserDoesNotHaveTheAppropriateAccessRigth() throws IOException {
-        handler.handleRequest(queryWithoutAppropriateAccessRight(), outputStream, context);
-        var response = GatewayResponse.fromOutputStream(outputStream, Problem.class);
-        assertThat(response.getStatusCode(), is(equalTo(HttpURLConnection.HTTP_FORBIDDEN)));
         var searchRequest = restHighLevelClientWrapper.getSearchRequest();
         assertThat(searchRequest, is(nullValue()));
     }

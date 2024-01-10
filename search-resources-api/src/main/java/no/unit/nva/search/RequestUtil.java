@@ -5,7 +5,9 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import no.unit.nva.search.models.CuratorSearchType;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchTicketsQuery;
 import nva.commons.apigateway.RequestInfo;
@@ -159,7 +161,8 @@ public class RequestUtil {
 
     public static SearchTicketsQuery toQueryTicketsWithViewingScope(
         RequestInfo requestInfo,
-        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations) {
+        List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> aggregations,
+        Set<CuratorSearchType> allowedSearchTypes) {
         var topLevelOrg = requestInfo.getTopLevelOrgCristinId().orElseThrow();
         return new SearchTicketsQuery(
             getSearchTerm(requestInfo),
@@ -170,6 +173,7 @@ public class RequestUtil {
             getRequestUri(requestInfo),
             aggregations,
             getViewingScope(requestInfo).orElse(List.of(topLevelOrg)),
+            allowedSearchTypes,
             getExcludeSubUnits(requestInfo)
         );
     }
