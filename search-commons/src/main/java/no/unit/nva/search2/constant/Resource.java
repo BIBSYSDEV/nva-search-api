@@ -1,21 +1,25 @@
 package no.unit.nva.search2.constant;
 
-import static no.unit.nva.search2.constant.Functions.generateContributor;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.Functions.generateAssociatedArtifactsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateFundingSource;
-import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
+import static no.unit.nva.search2.constant.Functions.generateLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
-import static no.unit.nva.search2.constant.Functions.generatePublisher;
-import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
+import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Words.ABSTRACT;
+import static no.unit.nva.search2.constant.Words.ADMINSTRATIVE_AGREEMENT;
 import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.constant.Words.FUNDING;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.IDENTITY;
@@ -31,20 +35,30 @@ import static no.unit.nva.search2.constant.Words.PIPE;
 import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.constant.Words.PUBLICATION_DATE;
 import static no.unit.nva.search2.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.REFERENCE;
 import static no.unit.nva.search2.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.constant.Words.SERIES;
 import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.TAGS;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.YEAR;
+import static no.unit.nva.search2.enums.ResourceParameter.TITLE;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.IncludeExclude;
 
 public final class Resource {
 
@@ -119,15 +133,79 @@ public final class Resource {
         + ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD + PIPE
         + ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
 
+
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        generateSimpleAggregation(TYPE, PUBLICATION_INSTANCE_TYPE),
-        generatePublisher(),
-        generateContributor(),
-        generateFundingSource(),
-        generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS),
-        generateHasFileAggregation()
+        nestedTermBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
+            .subAggregation(generateContributor())
+            .subAggregation(generateReference()),
+        nestedTermBuilder(FUNDING,FUNDINGS)
+            .subAggregation(
+                termBuilder(ID,null, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
+                .subAggregation(
+                    generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
+                )
+            ),
+        nestedTermBuilder(ASSOCIATED_ARTIFACTS+1, ASSOCIATED_ARTIFACTS)
+              .subAggregation(termBuilder(HAS_FILE, new IncludeExclude(PUBLISHED_FILE, EMPTY_STRING),
+                  ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT)
+            ),
+        generateAssociatedArtifactsAggregation(),
+//        generateAssociatedArtifactsAggregation(),
+//        generateFundingSource(),
+        generateObjectLabelsAggregation(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
     );
+
+
+    public static NestedAggregationBuilder generateContributor() {
+        return new NestedAggregationBuilder(CONTRIBUTOR, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS))
+            .subAggregation(
+                termBuilder(ID,null, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID, KEYWORD)
+                    .subAggregation(
+                        termBuilder(NAME, null, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD))
+            );
+    }
+
+
+
+    private static AbstractAggregationBuilder<?> generateReference() {
+        return nestedTermBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
+            .subAggregation(
+                nestedTermBuilder(PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT)
+                    .subAggregation(
+                        termBuilder(PUBLISHER,null,  ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                            KEYWORD)
+                    )
+                    .subAggregation(
+                        termBuilder(SERIES,null,  ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, "title", KEYWORD)
+                    )
+            )
+            .subAggregation(
+                nestedTermBuilder(PUBLICATION_INSTANCE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE)
+                    .subAggregation(
+                        termBuilder(TYPE,null,        ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE,
+                            KEYWORD)
+                    )
+            );
+    }
+
+
+    private static AbstractAggregationBuilder<?> termBuilder(String name, IncludeExclude include, String ... fields) {
+        var builder = AggregationBuilders
+            .terms(name)
+            .field(jsonPath(fields))
+            .size(Defaults.DEFAULT_AGGREGATION_SIZE);
+        if (nonNull(include)) {
+            builder.includeExclude(include);
+        }
+        return builder;
+    }
+
+    private static AbstractAggregationBuilder<?> nestedTermBuilder(String name, String ... fields) {
+        return new NestedAggregationBuilder(name, jsonPath(fields));
+    }
+
+
 
     @JacocoGenerated
     public Resource() {

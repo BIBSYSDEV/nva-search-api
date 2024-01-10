@@ -87,7 +87,7 @@ public final class Functions {
                                               KEYWORD));
     }
 
-    public static NestedAggregationBuilder generateContributor() {
+    public static NestedAggregationBuilder generateContributor2() {
         return new NestedAggregationBuilder(CONTRIBUTOR, jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS))
             .subAggregation(
                 generateSimpleAggregation(ID, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID, KEYWORD)
@@ -117,15 +117,15 @@ public final class Functions {
         return nestedAggregation;
     }
 
-    public static TermsAggregationBuilder generateHasFileAggregation() {
+    public static TermsAggregationBuilder generateAssociatedArtifactsAggregation() {
         var include = new IncludeExclude(PUBLISHED_FILE, EMPTY_STRING);
         return AggregationBuilders
-            .terms(HAS_FILE)
+            .terms(ASSOCIATED_ARTIFACTS)
             .field(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD))
             .includeExclude(include)
             .size(Defaults.DEFAULT_AGGREGATION_SIZE)
             .subAggregation(
-                generateSimpleAggregation(Words.PUBLIC, jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT))
+                generateSimpleAggregation(HAS_FILE, jsonPath(ASSOCIATED_ARTIFACTS, ADMINSTRATIVE_AGREEMENT))
             );
     }
 

@@ -67,6 +67,7 @@ public final class Words {
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
     public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+    public static final String SERIES = "series";
     public static final String SLASH = "/";
     public static final String SOURCE = "source";
     public static final String SPACE = " ";

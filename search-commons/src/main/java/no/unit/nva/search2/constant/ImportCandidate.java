@@ -1,6 +1,6 @@
 package no.unit.nva.search2.constant;
 
-import static no.unit.nva.search2.constant.Functions.generateHasFileAggregation;
+import static no.unit.nva.search2.constant.Functions.generateAssociatedArtifactsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
 import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
 import static no.unit.nva.search2.constant.Words.DOI;
@@ -52,7 +52,7 @@ public final class ImportCandidate {
         generateSimpleAggregation(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
         generateSimpleAggregation(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD),
         generateObjectLabelsAggregation(ORGANIZATION, ORGANIZATIONS),
-        generateHasFileAggregation()
+        generateAssociatedArtifactsAggregation()
     );
 
     @JacocoGenerated
