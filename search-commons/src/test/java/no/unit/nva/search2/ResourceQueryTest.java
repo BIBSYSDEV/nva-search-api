@@ -1,10 +1,13 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.queryToMapEntries;
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.enums.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.enums.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.enums.ResourceParameter.DOI;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.FUNDING;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
@@ -16,12 +19,19 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -30,6 +40,37 @@ import org.slf4j.LoggerFactory;
 class ResourceQueryTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
+
+    @Test
+    void openSearchFailedResponse() throws IOException, InterruptedException {
+        HttpClient httpClient = mock(HttpClient.class);
+        var response = mock(HttpResponse.class);
+        when(httpClient.send(any(), any())).thenReturn(response);
+        when(response.statusCode()).thenReturn(500);
+        when(response.body()).thenReturn("EXPECTED ERROR");
+        var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
+        var resourceClient = new ResourceClient(httpClient, setupMockedCachedJwtProvider());
+        assertThrows(
+            RuntimeException.class,
+            () -> ResourceQuery.builder()
+                .withRequiredParameters(SIZE, FROM)
+                .fromQueryParameters(toMapEntries).build()
+                .doSearch(resourceClient)
+        );
+    }
+
+    @Test
+    void missingRequiredException() {
+        var toMapEntries =
+            queryToMapEntries(URI.create("https://example.com/?doi=2&Title=wqerasdfg"));
+        assertThrows(
+            BadRequestException.class,
+            () -> ResourceQuery.builder()
+                .withRequiredParameters(ABSTRACT, FUNDING)
+                .fromQueryParameters(toMapEntries)
+                .build()
+        );
+    }
 
     @ParameterizedTest
     @MethodSource("uriProvider")
@@ -44,7 +85,7 @@ class ResourceQueryTest {
         var uri2 =
             UriWrapper.fromUri(resourceParameters.getNvaSearchApiUri())
                 .addQueryParameters(resourceParameters.toNvaSearchApiRequestParameter()).getUri();
-        
+
         logger.info(
             resourceParameters.toNvaSearchApiRequestParameter()
                 .entrySet().stream()
@@ -116,6 +157,7 @@ class ResourceQueryTest {
         assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, DOI)
+            .validate()
             .build()
             .getOpenSearchUri());
     }

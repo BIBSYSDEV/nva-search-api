@@ -19,7 +19,7 @@ public class FacetsTest {
         var jsonNode = stringToJsonNode(jsonString);
 
         assert jsonNode != null;
-        logger.info(AggregationFormat.apply(jsonNode).toPrettyString());
+        logger.debug(AggregationFormat.apply(jsonNode).toPrettyString());
     }
 
     @Test
@@ -27,7 +27,7 @@ public class FacetsTest {
         var jsonString = fileToString("sample_aggregation.json");
         assert jsonString != null;
 
-        logger.info(jsonString);
+        logger.debug(jsonString);
     }
 
 

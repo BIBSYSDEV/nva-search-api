@@ -61,6 +61,10 @@ Parameters:
   ResourcesBucket:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/PersistedEntriesBucketName
+  IndexingErrorsBucketName:
+    Type: 'String'
+    Default: 'indexing-errors'
+    Description: Name of bucket for failed index documents
   EventsBucketsName:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: '/NVA/Events/EventsBucketName'
@@ -265,7 +269,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.ResourcePagedSearchHandlerAws::handleRequest
+      Handler: no.unit.nva.search2.SearchResourceHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -285,11 +289,13 @@ Resources:
             Path: /resources2
             Method: get
             RestApiId: !Ref NvaSearchApi
+
   SearchAwsImportCandidatesFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Description: Lambda for searching Import Candidates
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.ImportCandidatePagedSearchHandlerAws::handleRequest
+      Handler: no.unit.nva.search2.SearchImportCandidateHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -468,6 +474,7 @@ Resources:
       Environment:
         Variables:
           EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
+          ERRORS_BUCKET: !Ref IndexingErrorsBucket
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
@@ -722,4 +729,15 @@ Resources:
           - Id: DeleteContentAfter3Days
             Status: Enabled
             ExpirationInDays: 3
+
+  IndexingErrorsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub "${IndexingErrorsBucketName}-${AWS::AccountId}"
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteContentAfter100Days
+            Status: Enabled
+            ExpirationInDays: 100
 

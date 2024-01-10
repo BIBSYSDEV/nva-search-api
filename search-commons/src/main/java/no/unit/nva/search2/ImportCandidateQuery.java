@@ -3,11 +3,11 @@ package no.unit.nva.search2;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.ImportCandidate.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.ImportCandidate.IMPORT_CANDIDATES_INDEX_NAME;
 import static no.unit.nva.search2.constant.Words.ALL;
@@ -17,11 +17,13 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.SEARCH;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT_ORDER;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.keyFromString;
 import static no.unit.nva.search2.enums.ImportCandidateSort.INVALID;
@@ -52,7 +54,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         super();
     }
 
-    static Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -68,7 +70,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected ImportCandidateParameter getFieldsKey() {
-        return ImportCandidateParameter.FIELDS;
+        return FIELDS;
     }
 
     @Override
@@ -84,8 +86,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    public String getSort() {
-        return getValue(SORT).as();
+    public AsType getSort() {
+        return getValue(SORT);
     }
 
     @Override
@@ -96,6 +98,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .getUri();
     }
 
+    @Override
+    protected boolean isPagingValue(ImportCandidateParameter key) {
+        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+    }
+
     public Stream<QueryContentWrapper> createQueryBuilderStream() {
         var queryBuilder =
             this.hasNoSearchValue()
@@ -104,11 +111,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         var builder = new SearchSourceBuilder().query(queryBuilder);
 
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
-            builder.searchAfter(sortKeys);
-        }
+        handleSearchAfter(builder);
 
         IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
 
@@ -119,9 +122,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
+    private void handleSearchAfter(SearchSourceBuilder builder) {
+        var searchAfter = removeKey(SEARCH_AFTER);
+        if (nonNull(searchAfter)) {
+            var sortKeys = searchAfter.split(COMMA);
+            builder.searchAfter(sortKeys);
+        }
+    }
 
     @SuppressWarnings("PMD.GodClass")
-    protected static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
+    public static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
 
         Builder() {
             super(new ImportCandidateQuery());
@@ -147,25 +157,12 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setPagingValue(qpKey, decodedValue);
-                case FIELDS -> query.setPagingValue(qpKey, ignoreInvalidFields(decodedValue));
-                case SORT -> mergeToPagingKey(SORT, trimSpace(decodedValue));
-                case SORT_ORDER -> mergeToPagingKey(SORT, decodedValue);
-                case ADDITIONAL_IDENTIFIERS, ADDITIONAL_IDENTIFIERS_NOT, ADDITIONAL_IDENTIFIERS_SHOULD,
-                    CATEGORY, CATEGORY_NOT, CATEGORY_SHOULD,
-                    CREATED_DATE,
-                    COLLABORATION_TYPE, COLLABORATION_TYPE_NOT, COLLABORATION_TYPE_SHOULD,
-                    CONTRIBUTOR, CONTRIBUTOR_NOT, CONTRIBUTOR_SHOULD,
-                    DOI, DOI_NOT, DOI_SHOULD,
-                    ID, ID_NOT, ID_SHOULD,
-                    IMPORT_STATUS, IMPORT_STATUS_NOT, IMPORT_STATUS_SHOULD,
-                    INSTANCE_TYPE, INSTANCE_TYPE_NOT, INSTANCE_TYPE_SHOULD,
-                    PUBLICATION_YEAR, PUBLICATION_YEAR_BEFORE, PUBLICATION_YEAR_SINCE,
-                    PUBLISHER, PUBLISHER_NOT, PUBLISHER_SHOULD,
-                    SEARCH_ALL,
-                    TITLE, TITLE_NOT, TITLE_SHOULD,
-                    TYPE -> query.setSearchingValue(qpKey, decodedValue);
-                default -> invalidKeys.add(key);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
+                case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
+                case INVALID -> invalidKeys.add(key);
+                default -> mergeToKey(qpKey, decodedValue);
             }
         }
 
@@ -177,7 +174,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 if (query.isPresent(FROM)) {
                     var page = query.getValue(PAGE).<Number>as();
                     var perPage = query.getValue(SIZE).<Number>as();
-                    query.setPagingValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.removeKey(PAGE);
             }

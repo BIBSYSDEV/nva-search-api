@@ -18,19 +18,25 @@ import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.LABELS;
 import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.constant.Words.REFERENCE;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
+
 public final class Functions {
+
 
     static final Environment ENVIRONMENT = new Environment();
     private static final String SEARCH_INFRASTRUCTURE_AUTH_URI = "SEARCH_INFRASTRUCTURE_AUTH_URI";
@@ -41,6 +47,7 @@ public final class Functions {
         return String.join(DOT, args);
     }
 
+    @JacocoGenerated
     public static String readSearchInfrastructureAuthUri() {
         return ENVIRONMENT.readEnv(SEARCH_INFRASTRUCTURE_AUTH_URI);
     }
@@ -69,6 +76,15 @@ public final class Functions {
                         generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
                     )
             );
+    }
+
+    public static TermsAggregationBuilder generatePublisher() {
+        return
+            generateSimpleAggregation(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID,
+                                      KEYWORD)
+                .subAggregation(
+                    generateSimpleAggregation(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                                              KEYWORD));
     }
 
     public static NestedAggregationBuilder generateContributor() {
@@ -113,4 +129,7 @@ public final class Functions {
             );
     }
 
+    @JacocoGenerated
+    public Functions() {
+    }
 }

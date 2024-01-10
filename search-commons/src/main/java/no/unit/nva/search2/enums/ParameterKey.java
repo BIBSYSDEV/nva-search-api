@@ -42,19 +42,18 @@ public interface ParameterKey {
     static ValueEncoding getEncoding(ParamKind kind) {
         return switch (kind) {
             case INVALID, NUMBER, BOOLEAN, CUSTOM -> ValueEncoding.NONE;
-            case DATE, KEYWORD, TEXT, SORT_KEY -> ValueEncoding.DECODE;
+            case DATE, KEYWORD, FUZZY_TEXT, TEXT, SORT_KEY -> ValueEncoding.DECODE;
         };
     }
 
     @JacocoGenerated
     static String getErrorMessage(ParamKind kind) {
         return switch (kind) {
-            case BOOLEAN -> INVALID_VALUE;
+            case BOOLEAN, KEYWORD, FUZZY_TEXT, TEXT, CUSTOM -> INVALID_VALUE;
             case DATE -> INVALID_DATE;
             case NUMBER -> INVALID_NUMBER;
-            // case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
+            //            case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
             case SORT_KEY -> INVALID_VALUE_WITH_SORT;
-            case KEYWORD, TEXT, CUSTOM -> INVALID_VALUE;
             case INVALID -> "Status INVALID should not raise an exception, Exception";
         };
     }
@@ -66,7 +65,7 @@ public interface ParameterKey {
             case DATE -> PATTERN_IS_DATE;
             case NUMBER -> PATTERN_IS_NUMBER;
             // case RANGE -> PATTERN_IS_RANGE;
-            case KEYWORD, CUSTOM, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
+            case KEYWORD, CUSTOM, FUZZY_TEXT, TEXT, SORT_KEY -> PATTERN_IS_NON_EMPTY;
             case INVALID -> PATTERN_IS_NONE_OR_ONE;
         };
     }
@@ -81,10 +80,10 @@ public interface ParameterKey {
     }
 
     enum ParamKind {
-        BOOLEAN, DATE, NUMBER, KEYWORD, TEXT, SORT_KEY, CUSTOM, INVALID
+        INVALID, BOOLEAN, DATE, NUMBER, KEYWORD, FUZZY_TEXT, TEXT, SORT_KEY, CUSTOM
     }
 
     enum FieldOperator {
-        MUST, MUST_NOT, SHOULD, GREATER_THAN_OR_EQUAL_TO, LESS_THAN
+        MUST, MUST_NOT, SHOULD, GREATER_THAN_OR_EQUAL_TO, LESS_THAN, BETWEEN
     }
 }

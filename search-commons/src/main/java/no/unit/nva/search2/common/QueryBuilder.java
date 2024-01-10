@@ -2,7 +2,7 @@ package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ErrorMessages.invalidQueryParametersMessage;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builder for OpenSearchQuery.
- * @param <K> Enum of QueryParameterKeys
+ * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
 public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
@@ -43,11 +43,11 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     protected transient boolean notValidated = true;
 
     /**
-     * Constructor of CristinQuery.Builder.
+     * Constructor of QueryBuilder.
      * <p>Usage:</p>
-     * <samp>new CristinQuery.Builder()<br>
+     * <samp>Query.builder()<br>
      * .fromRequestInfo(requestInfo)<br>
-     * .withRequiredParameters(IDENTITY,PAGE_CURRENT,PAGE_ITEMS_PER_PAGE)<br>
+     * .withRequiredParameters(FROM, SIZE)<br>
      * .build()
      * </samp>
      */
@@ -94,8 +94,9 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     /**
      * Adds query and path parameters from requestInfo.
      */
-    public final QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.setMediaType(requestInfo.getHeaders().get("Accept"));
+    @JacocoGenerated
+    public QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
+        query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
@@ -112,6 +113,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     /**
      * Adds parameters from query.
      */
+    @JacocoGenerated
     public QueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
@@ -183,12 +185,9 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * @throws BadRequestException if sort key is invalid
      */
     protected void validatedSort() throws BadRequestException {
-        var sortEntries = query.getSort();
-        if (isNull(sortEntries)) {
-            return;
-        }
         try {
-            query.getSortStream().forEach(this::validateSortEntry);
+            query.getSortStream()
+                .forEach(this::validateSortEntry);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
@@ -203,9 +202,10 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                    .toList();
     }
 
-    @JacocoGenerated
+
     protected boolean invalidQueryParameter(K key, String value) {
-        return isNull(value) || !value.matches(key.valuePattern());
+        return isNull(value) || Arrays.stream(value.split(COMMA))
+            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
     }
 
     protected Set<String> getMissingKeys() {
@@ -220,7 +220,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         return query.otherRequiredKeys;
     }
 
-    @JacocoGenerated
     protected Set<K> requiredMissing() {
         return
             required().stream()
@@ -229,15 +228,12 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                 .collect(Collectors.toSet());
     }
 
-    @JacocoGenerated
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
         final var key = entry.getKey();
         final var value = entry.getValue();
         if (invalidQueryParameter(key, value)) {
             final var keyName =  key.fieldName();
-            final var errorMessage = nonNull(key.errorMessage())
-                ? key.errorMessage().formatted(keyName, value)
-                : invalidQueryParametersMessage(keyName, value);
+            final var errorMessage = key.errorMessage().formatted(keyName, value);
             throw new BadRequestException(errorMessage);
         }
     }
@@ -255,12 +251,8 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         }
     }
 
-    protected void mergeToPagingKey(K key, String value) {
-        query.setPagingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
-    }
-
     protected void mergeToKey(K key, String value) {
-        query.setSearchingValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+        query.setKeyValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
     }
 
     protected String trimSpace(String value) {
@@ -275,7 +267,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
                 .collect(Collectors.joining(COMMA));
     }
 
-    public String expandYearToDate(String value) {
+    protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;
     }
 

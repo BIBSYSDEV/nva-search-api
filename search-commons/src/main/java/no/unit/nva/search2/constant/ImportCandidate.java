@@ -8,6 +8,9 @@ import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PIPE;
 import java.util.List;
+import java.util.Locale;
+import no.unit.nva.search2.enums.ImportCandidateSort;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 public final class ImportCandidate {
@@ -16,10 +19,10 @@ public final class ImportCandidate {
     public static final String CANDIDATE_STATUS = "candidateStatus";
     public static final String COLLABORATION_TYPE = "collaborationType";
     public static final String COLLABORATION_TYPE_KEYWORD = COLLABORATION_TYPE + DOT + KEYWORD;
-    public static final String CONTRIBUTORS_IDENTITY_ID = "contributors.identity.id";
-    public static final String CONTRIBUTORS_IDENTITY_NAME = "contributors.identity.name";
+    public static final String CONTRIBUTORS_IDENTITY_ID = "contributors.identity.id.keyword";
+    public static final String CONTRIBUTORS_IDENTITY_NAME = "contributors.identity.name.keyword";
     public static final String CONTRIBUTOR_IDENTITY_KEYWORDS =
-        CONTRIBUTORS_IDENTITY_ID + DOT + KEYWORD + PIPE + CONTRIBUTORS_IDENTITY_NAME + DOT + KEYWORD;
+        CONTRIBUTORS_IDENTITY_ID + PIPE + CONTRIBUTORS_IDENTITY_NAME;
     public static final String DOI_KEYWORD = DOI + DOT + KEYWORD;
     public static final String IDENTIFIER = "id.keyword";
     public static final String IMPORTED_BY_USER = "importedByUser";
@@ -37,6 +40,10 @@ public final class ImportCandidate {
 
     public static final String ORGANIZATION = "organization";
     public static final String ORGANIZATIONS = "organizations";
+
+    public static final String DEFAULT_IMPORT_CANDIDATE_SORT =
+        ImportCandidateSort.CREATED_DATE.name().toLowerCase(Locale.getDefault());
+
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
         generateSimpleAggregation(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD),
@@ -47,4 +54,9 @@ public final class ImportCandidate {
         generateObjectLabelsAggregation(ORGANIZATION, ORGANIZATIONS),
         generateHasFileAggregation()
     );
+
+    @JacocoGenerated
+    public ImportCandidate() {
+    }
+
 }

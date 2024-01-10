@@ -2,7 +2,6 @@ package no.unit.nva.search2.constant;
 
 import nva.commons.core.JacocoGenerated;
 
-@JacocoGenerated
 public final class Words {
 
     public static final String ABSTRACT = "abstract";
@@ -50,8 +49,9 @@ public final class Words {
     public static final String PIPE = "|";
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
-    public static final String PROJECTS_ID = "projects.id";
+    public static final String PROJECTS_ID = "projects.id.keyword";
     public static final String PUBLIC = "public";
+    public static final String PUBLISHER = "publisher";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
@@ -65,7 +65,7 @@ public final class Words {
     public static final String SAMI_CODE = "sme";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
-    public static final String SEARCH_ALL = "SEARCH_ALL";
+    public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SLASH = "/";
     public static final String SOURCE = "source";
@@ -79,4 +79,8 @@ public final class Words {
     public static final String UNDERSCORE = "_";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
+
+    @JacocoGenerated
+    public Words() {
+    }
 }
