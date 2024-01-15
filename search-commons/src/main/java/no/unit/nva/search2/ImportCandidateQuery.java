@@ -117,6 +117,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());
+        builder.trackTotalHits(true);
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
