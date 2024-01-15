@@ -124,6 +124,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         handleSearchAfter(builder);
         builder.size(getValue(SIZE).as());
         builder.from(getValue(FROM).as());
+        builder.trackTotalHits(true);
         getSortStream()
             .forEach(entry -> builder.sort(getFieldName(entry), entry.getValue()));
         RESOURCES_AGGREGATIONS

@@ -14,6 +14,9 @@ import static no.unit.nva.search.SearchClient.prepareWithSecretReader;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_TICKET_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.models.CuratorSearchType.DOI;
+import static no.unit.nva.search.models.CuratorSearchType.PUBLISHING;
+import static no.unit.nva.search.models.CuratorSearchType.SUPPORT;
 import static no.unit.nva.search.models.SearchTicketsQuery.VIEWING_SCOPE_QUERY_NAME;
 import static no.unit.nva.testutils.RandomDataGenerator.randomInteger;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -38,9 +41,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.models.CuratorSearchType;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
@@ -128,7 +133,7 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
+        searchClient.searchWithSearchTicketQuery(generateTicketQueryForSearchType(Set.of(DOI)),
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingDoiRequest = extractQueryBuilderValuesForDoiRequests(sentRequest);
@@ -144,7 +149,7 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
+        searchClient.searchWithSearchTicketQuery(generateTicketQueryForSearchType(Set.of(SUPPORT)),
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationConversation = extractQueryBuilderValuesForPublicationConversation(sentRequest);
@@ -159,7 +164,7 @@ class SearchClientTest {
         var restClientWrapper = getSearchClientReturningZeroHits(sentRequestBuffer);
         var searchClient = new SearchClient(restClientWrapper, cachedJwtProvider);
 
-        searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
+        searchClient.searchWithSearchTicketQuery(generateTicketQueryForSearchType(Set.of(PUBLISHING)),
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
         var rulesForIncludingPublicationRequest = extractQueryBuilderValuesForPublicationRequest(sentRequest);
@@ -220,6 +225,7 @@ class SearchClientTest {
                                                         SAMPLE_REQUEST_URI,
                                                         emptyList(),
                                                         generateSampleViewingScope(),
+                                                        Set.of(),
                                                         false);
 
         searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
@@ -240,7 +246,8 @@ class SearchClientTest {
         var searchTicketsQuery = new SearchTicketsQuery(SAMPLE_TERM, SAMPLE_NUMBER_OF_RESULTS, resultsFrom,
                                                         SAMPLE_ORDERBY,
                                                         DESC, SAMPLE_REQUEST_URI, emptyList(),
-                                                        generateSampleViewingScope(), false);
+                                                        generateSampleViewingScope(),
+                                                        Set.of(),false);
         searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
                                                  OPENSEARCH_TICKET_ENDPOINT_INDEX);
         var sentRequest = sentRequestBuffer.get();
@@ -448,6 +455,20 @@ class SearchClientTest {
                                       SAMPLE_REQUEST_URI,
                                       SAMPLE_AGGREGATIONS,
                                       generateSampleViewingScope(),
+                                      Set.of(),
+                                      false);
+    }
+
+    private SearchTicketsQuery generateTicketQueryForSearchType(Set<CuratorSearchType> searchTypes) {
+        return new SearchTicketsQuery(SAMPLE_TERM,
+                                      SAMPLE_NUMBER_OF_RESULTS,
+                                      SAMPLE_FROM,
+                                      SAMPLE_ORDERBY,
+                                      DESC,
+                                      SAMPLE_REQUEST_URI,
+                                      SAMPLE_AGGREGATIONS,
+                                      generateSampleViewingScope(),
+                                      searchTypes,
                                       false);
     }
 

@@ -9,7 +9,10 @@ import static no.unit.nva.search.constants.ApplicationConstants.STATUS_TERMS_AGG
 import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.TYPE_TERMS_AGGREGATION;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.search.models.CuratorSearchType.DOI;
+import static no.unit.nva.search.models.CuratorSearchType.PUBLISHING;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
+import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringToStream;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -19,11 +22,14 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.auth.uriretriever.AuthorizedBackendUriRetriever;
+import no.unit.nva.search.models.CuratorSearchType;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -93,16 +99,10 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
                    .must(QueryBuilders.matchQuery(mustField, owner).operator(Operator.AND))
                    .mustNot(QueryBuilders.matchQuery(notInField, owner).operator(Operator.AND));
     }
-
-    private static boolean userHasAccessRights(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(MANAGE_DOI);
-    }
-
     private SearchResponseDto handleSearch(RequestInfo requestInfo, String indexName)
         throws ApiGatewayException {
         var role = requestInfo.getQueryParameterOpt(PARAM_ROLE).orElse(ROLE_CURATOR);
         if (ROLE_CURATOR.equals(role)) {
-            assertCuratorHasAppropriateAccessRights(requestInfo);
             return handleCuratorSearch(requestInfo, indexName);
         } else {
             return handleCreatorSearch(requestInfo, indexName);
@@ -125,9 +125,24 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
 
     private SearchResponseDto handleCuratorSearch(RequestInfo requestInfo, String indexName)
         throws ApiGatewayException {
-        var query = toQueryTicketsWithViewingScope(requestInfo, TICKETS_AGGREGATIONS);
+        var allowedSearchTypes = getAllowedCuratorSearchTypes(requestInfo);
+        var query = toQueryTicketsWithViewingScope(requestInfo, TICKETS_AGGREGATIONS, allowedSearchTypes);
         assertUserIsAllowedViewingScope(requestInfo.getTopLevelOrgCristinId().orElseThrow(), query);
         return searchClient.searchWithSearchTicketQuery(query, indexName);
+    }
+
+    private Set<CuratorSearchType> getAllowedCuratorSearchTypes(RequestInfo requestInfo) {
+        var allowed = new HashSet<CuratorSearchType>();
+        if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
+            allowed.add(DOI);
+        }
+        if (requestInfo.userIsAuthorized(AccessRight.SUPPORT)) {
+            allowed.add(CuratorSearchType.SUPPORT);
+        }
+        if (requestInfo.userIsAuthorized(MANAGE_PUBLISHING_REQUESTS)) {
+            allowed.add(PUBLISHING);
+        }
+        return allowed;
     }
 
     private void assertUserIsAllowedViewingScope(URI topLevelOrg, SearchTicketsQuery query)
@@ -149,13 +164,6 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
                                       topLevelOrg.toString(),
                                       illegal.stream().collect(Collectors.joining(
                                           COMMA_AND_SPACE.toString()))));
-            throw new ForbiddenException();
-        }
-    }
-
-    private void assertCuratorHasAppropriateAccessRights(RequestInfo requestInfo)
-        throws ForbiddenException {
-        if (!userHasAccessRights(requestInfo)) {
             throw new ForbiddenException();
         }
     }
