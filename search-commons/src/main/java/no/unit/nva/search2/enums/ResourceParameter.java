@@ -15,6 +15,7 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
+import static no.unit.nva.search2.constant.Resource.ATTACHMENT_VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
@@ -36,7 +37,6 @@ import static no.unit.nva.search2.constant.Resource.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.TOP_LEVEL_ORG_ID;
-import static no.unit.nva.search2.constant.Resource.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.constant.Words.MODIFIED_DATE;
@@ -93,8 +93,8 @@ public enum ResourceParameter implements ParameterKey {
     FUNDING_SOURCE(TEXT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    HAS_FILE(ParamKind.BOOLEAN, MUST, VISIBLE_FOR_NON_OWNER),
-    HAS_FILE_SHOULD(ParamKind.BOOLEAN, SHOULD, VISIBLE_FOR_NON_OWNER),
+    HAS_FILE(ParamKind.BOOLEAN, MUST, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
+    HAS_FILE_SHOULD(ParamKind.BOOLEAN, SHOULD, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),

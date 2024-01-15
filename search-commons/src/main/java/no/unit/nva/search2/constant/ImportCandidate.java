@@ -1,8 +1,7 @@
 package no.unit.nva.search2.constant;
 
-import static no.unit.nva.search2.constant.Functions.generateAssociatedArtifactsAggregation;
-import static no.unit.nva.search2.constant.Functions.generateObjectLabelsAggregation;
-import static no.unit.nva.search2.constant.Functions.generateSimpleAggregation;
+import static no.unit.nva.search2.constant.Functions.generateTopLevelOrganisationAggregation;
+import static no.unit.nva.search2.constant.Resource.generateAssociatedArtifactsAggregation;
 import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
@@ -38,20 +37,17 @@ public final class ImportCandidate {
     public static final String STATUS_TYPE_KEYWORD = "importStatus.candidateStatus.keyword";
     public static final String TYPE_KEYWORD = "type.keyword";
 
-    public static final String ORGANIZATION = "organization";
-    public static final String ORGANIZATIONS = "organizations";
-
     public static final String DEFAULT_IMPORT_CANDIDATE_SORT =
         ImportCandidateSort.CREATED_DATE.name().toLowerCase(Locale.getDefault());
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
-        generateSimpleAggregation(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD),
-        generateSimpleAggregation(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
-        generateSimpleAggregation(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
-        generateSimpleAggregation(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
-        generateSimpleAggregation(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD),
-        generateObjectLabelsAggregation(ORGANIZATION, ORGANIZATIONS),
+        Functions.branchBuilder(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD),
+        Functions.branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
+        Functions.branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
+        Functions.branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
+        Functions.branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD),
+        generateTopLevelOrganisationAggregation(),
         generateAssociatedArtifactsAggregation()
     );
 

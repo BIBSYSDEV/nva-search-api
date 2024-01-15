@@ -5,7 +5,6 @@ import nva.commons.core.JacocoGenerated;
 public final class Words {
 
     public static final String ABSTRACT = "abstract";
-    public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
     public static final String AMPERSAND = "&";
@@ -17,7 +16,6 @@ public final class Words {
     public static final String COMMA = ",";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
-    public static final String COUNT = "count";
     public static final String CREATED_DATE = "createdDate";
     public static final String DOI = "doi";
     public static final String DOT = ".";
@@ -32,7 +30,6 @@ public final class Words {
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
     public static final String IDENTITY = "identity";
-    public static final String INSTANCE_TYPE = "instanceType";
     public static final String JANUARY_FIRST = "-01-01";
     public static final String KEY = "key";
     public static final String KEYWORD = "keyword";
@@ -50,7 +47,6 @@ public final class Words {
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
     public static final String PROJECTS_ID = "projects.id.keyword";
-    public static final String PUBLIC = "public";
     public static final String PUBLISHER = "publisher";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
@@ -78,6 +74,7 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
+    public static final String VISIBLE_FOR_NON_OWNER = "visibleForNonOwner";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
 
