@@ -118,10 +118,10 @@ class ResourceClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(HAS_FILE).size(), is(1));
-            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(20));
+            assertThat(aggregations.get(HAS_FILE).size(), is(2));
+            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(19));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
-            assertThat(aggregations.get(PUBLISHER).size(), is(1));
+            assertThat(aggregations.get(PUBLISHER).size(), is(2));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(4));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
@@ -159,7 +159,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(6)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(8)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 

@@ -1,5 +1,6 @@
 package no.unit.nva.search2.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.net.URI;
 import java.util.Map;
@@ -10,6 +11,7 @@ import no.unit.nva.commons.json.JsonSerializable;
 public record Facet(
     URI id,
     String key,
+    @JsonAlias("doc_count")
     Integer count,
     Map<String, String> labels
 ) implements JsonSerializable {
