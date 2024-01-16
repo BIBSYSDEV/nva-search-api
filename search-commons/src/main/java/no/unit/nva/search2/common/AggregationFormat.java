@@ -9,6 +9,7 @@ import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEY;
 import static no.unit.nva.search2.constant.Words.LABELS;
+import static no.unit.nva.search2.constant.Words.LICENSE;
 import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.SERIES;
@@ -131,7 +132,6 @@ public final class AggregationFormat {
     @JacocoGenerated
     static final class Constants {
 
-        public static final String LICENSE = "license";
         public static final Map<String, String> facetPaths = Map.of(
             TYPE, "/entityDescription/reference/publicationInstance/type",
             SERIES, "/entityDescription/reference/publicationContext/series",
