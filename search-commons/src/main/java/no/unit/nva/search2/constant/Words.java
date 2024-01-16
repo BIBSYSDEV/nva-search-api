@@ -34,6 +34,8 @@ public final class Words {
     public static final String KEY = "key";
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
+    public static final String LICENSE = "license";
+
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";

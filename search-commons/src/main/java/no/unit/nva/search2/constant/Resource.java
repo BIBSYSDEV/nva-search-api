@@ -22,6 +22,7 @@ import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.IDENTITY;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.LABELS;
+import static no.unit.nva.search2.constant.Words.LICENSE;
 import static no.unit.nva.search2.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
@@ -53,8 +54,6 @@ import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Resource {
-
-    public static final String LICENSE = "license";
 
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
