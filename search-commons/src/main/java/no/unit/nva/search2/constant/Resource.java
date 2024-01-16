@@ -1,10 +1,10 @@
 package no.unit.nva.search2.constant;
 
 import static no.unit.nva.search2.constant.Functions.branchBuilder;
-import static no.unit.nva.search2.constant.Functions.generateLabelsAggregation;
-import static no.unit.nva.search2.constant.Functions.generateTopLevelOrganisationAggregation;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
-import static no.unit.nva.search2.constant.Functions.splittedBranchBuilder;
+import static no.unit.nva.search2.constant.Functions.labels;
+import static no.unit.nva.search2.constant.Functions.nestedBranchBuilder;
+import static no.unit.nva.search2.constant.Functions.topLevelOrganisationsHierarchy;
 import static no.unit.nva.search2.constant.Words.ABSTRACT;
 import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
@@ -39,6 +39,7 @@ import static no.unit.nva.search2.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.constant.Words.SERIES;
 import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.TAGS;
+import static no.unit.nva.search2.constant.Words.TITLE;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.VISIBLE_FOR_NON_OWNER;
@@ -49,6 +50,7 @@ import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Resource {
 
@@ -125,72 +127,95 @@ public final class Resource {
         + ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD + PIPE
         + ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
 
-
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        generateAssociatedArtifactsAggregation(),
-        generateEntityHierarchyAggregation(),
-        generateFundingSourceAggregation(),
-        generateTopLevelOrganisationAggregation()
+        associatedArtifactsHierarchy(),
+        entityDescriptionHierarchy(),
+        fundingSourceHierarchy(),
+        topLevelOrganisationsHierarchy()
     );
 
-    public static NestedAggregationBuilder generateAssociatedArtifactsAggregation() {
+    public static NestedAggregationBuilder associatedArtifactsHierarchy() {
         return
-            splittedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                .subAggregation(branchBuilder(HAS_FILE, ATTACHMENT_VISIBLE_FOR_NON_OWNER))
-                .subAggregation(branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD)
-                );
+            nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+                .subAggregation(visibleForNonOwners())
+                .subAggregation(license());
     }
 
-    public static AbstractAggregationBuilder<?> generateFundingSourceAggregation() {
+    public static NestedAggregationBuilder fundingSourceHierarchy() {
         return
-            splittedBranchBuilder(FUNDINGS, FUNDINGS)
+            nestedBranchBuilder(FUNDINGS, FUNDINGS)
                 .subAggregation(
                     branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
                         .subAggregation(
-                            generateLabelsAggregation(jsonPath(FUNDINGS, SOURCE))
+                            labels(jsonPath(FUNDINGS, SOURCE))
                         )
                 );
     }
 
-    public static AbstractAggregationBuilder<?> generateEntityHierarchyAggregation() {
-        return splittedBranchBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
-            .subAggregation(generateContributor())
-            .subAggregation(generateReference());
+    public static NestedAggregationBuilder entityDescriptionHierarchy() {
+        return
+            nestedBranchBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
+                .subAggregation(contributor())
+                .subAggregation(reference());
     }
 
-    public static AbstractAggregationBuilder<?> generateContributor() {
-        return splittedBranchBuilder(CONTRIBUTOR, ENTITY_DESCRIPTION, CONTRIBUTORS)
+    private static NestedAggregationBuilder contributor() {
+        return nestedBranchBuilder(CONTRIBUTOR, ENTITY_DESCRIPTION, CONTRIBUTORS)
             .subAggregation(
                 branchBuilder(ID, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, ID, KEYWORD)
                     .subAggregation(
-                        branchBuilder(NAME, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD))
+                        branchBuilder(NAME, ENTITY_DESCRIPTION, CONTRIBUTORS, IDENTITY, NAME, KEYWORD)
+                    )
             );
     }
 
-    public static AbstractAggregationBuilder<?> generateReference() {
+    private static NestedAggregationBuilder reference() {
         return
-            splittedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
+            nestedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
                 .subAggregation(
-                    splittedBranchBuilder(PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT)
-                        .subAggregation(
-                            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER,
-                                          NAME, KEYWORD)
-                        )
-                        .subAggregation(
-                            branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, "title",
-                                          KEYWORD)
-                        )
+                    publicationContext()
+                        .subAggregation(publisher())
+                        .subAggregation(series())
                 )
                 .subAggregation(
-                    splittedBranchBuilder(PUBLICATION_INSTANCE, ENTITY_DESCRIPTION, REFERENCE,
-                                          PUBLICATION_INSTANCE)            // Splitted or just a branch?
-                        .subAggregation(
-                            branchBuilder(TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE, KEYWORD)
-                        )
+                    publicationInstance()            // Splitted or just a branch?
+                        .subAggregation(instanceType())
                 );
     }
 
+    private static NestedAggregationBuilder publicationContext() {
+        return
+            nestedBranchBuilder(PUBLICATION_CONTEXT, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT);
+    }
+
+    private static NestedAggregationBuilder publicationInstance() {
+        return
+            nestedBranchBuilder(PUBLICATION_INSTANCE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE);
+    }
+
+    private static TermsAggregationBuilder instanceType() {
+        return
+            branchBuilder(TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE, KEYWORD);
+    }
+
+    private static TermsAggregationBuilder series() {
+        return
+            branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD);
+    }
+
+    private static TermsAggregationBuilder publisher() {
+        return
+            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD);
+    }
+
+    private static TermsAggregationBuilder license() {
+        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD);
+    }
+
+    private static TermsAggregationBuilder visibleForNonOwners() {
+        return branchBuilder(HAS_FILE, ATTACHMENT_VISIBLE_FOR_NON_OWNER);
+    }
 
     @JacocoGenerated
     public Resource() {

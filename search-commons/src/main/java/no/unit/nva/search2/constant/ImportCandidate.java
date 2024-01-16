@@ -1,7 +1,8 @@
 package no.unit.nva.search2.constant;
 
-import static no.unit.nva.search2.constant.Functions.generateTopLevelOrganisationAggregation;
-import static no.unit.nva.search2.constant.Resource.generateAssociatedArtifactsAggregation;
+import static no.unit.nva.search2.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.constant.Functions.topLevelOrganisationsHierarchy;
+import static no.unit.nva.search2.constant.Resource.associatedArtifactsHierarchy;
 import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
@@ -11,12 +12,14 @@ import java.util.Locale;
 import no.unit.nva.search2.enums.ImportCandidateSort;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class ImportCandidate {
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";
     public static final String CANDIDATE_STATUS = "candidateStatus";
     public static final String COLLABORATION_TYPE = "collaborationType";
+    public static final String IMPORT_STATUS = "importStatus";
     public static final String COLLABORATION_TYPE_KEYWORD = COLLABORATION_TYPE + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_ID = "contributors.identity.id.keyword";
     public static final String CONTRIBUTORS_IDENTITY_NAME = "contributors.identity.name.keyword";
@@ -42,14 +45,20 @@ public final class ImportCandidate {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         IMPORT_CANDIDATES_AGGREGATIONS = List.of(
-        Functions.branchBuilder(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD),
-        Functions.branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
-        Functions.branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
-        Functions.branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
-        Functions.branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD),
-        generateTopLevelOrganisationAggregation(),
-        generateAssociatedArtifactsAggregation()
+        branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
+        branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
+        branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
+        importStatusHierarchy(),
+        topLevelOrganisationsHierarchy(),
+        associatedArtifactsHierarchy()
     );
+
+    private static TermsAggregationBuilder importStatusHierarchy() {
+        return
+            branchBuilder(IMPORT_STATUS, IMPORT_STATUS)
+                .subAggregation(branchBuilder(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD))
+                .subAggregation(branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD));
+    }
 
     @JacocoGenerated
     public ImportCandidate() {

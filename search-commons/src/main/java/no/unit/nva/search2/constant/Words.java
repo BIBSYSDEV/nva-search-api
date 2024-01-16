@@ -70,6 +70,7 @@ public final class Words {
     public static final String SUFFIX = ")";
     public static final String TAGS = "tags";
     public static final String TEXT_CSV = "text/csv";
+    public static final String TITLE = "title";
     public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
