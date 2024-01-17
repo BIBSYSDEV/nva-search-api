@@ -135,10 +135,10 @@ public final class AggregationFormat {
         public static final Map<String, String> facetPaths = Map.of(
             TYPE, "/entityDescription/reference/publicationInstance/type",
             SERIES, "/entityDescription/reference/publicationContext/series",
+            LICENSE, "/associatedArtifacts/license",
+            HAS_FILE, "/associatedArtifacts/hasFile",
             PUBLISHER, "/entityDescription/reference/publicationContext/publisher",
             CONTRIBUTOR, "/entityDescription/contributor/id",
-            HAS_FILE, "/associatedArtifacts/hasFile",
-            LICENSE, "/associatedArtifacts/license",
             FUNDING_SOURCE, "/fundings/id",
             TOP_LEVEL_ORGANIZATION, "/topLevelOrganizations/id"
         );

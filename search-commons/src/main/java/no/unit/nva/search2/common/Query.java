@@ -55,8 +55,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
     protected final transient QueryTools<K> opensearchQueryTools;
-
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
+    private transient QueryBuilder filters;
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
@@ -84,6 +84,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
         opensearchQueryTools = new QueryTools<>();
+
         setMediaType(MediaType.JSON_UTF_8.toString());
     }
 
@@ -196,6 +197,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return gatewayUri;
     }
 
+
     @JacocoGenerated
     public void setNvaSearchApiUri(URI gatewayUri) {
         this.gatewayUri = gatewayUri;
@@ -230,7 +232,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                     boolQueryBuilder.must(entry.getValue());
                 }
             });
+        boolQueryBuilder.filter(getFilters());
         return boolQueryBuilder;
+    }
+
+    private QueryBuilder getFilters() {
+        return filters;
     }
 
     // SORTING

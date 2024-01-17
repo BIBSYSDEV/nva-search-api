@@ -46,6 +46,7 @@ import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.UserSettings;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.PublicationStatus;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -55,12 +56,22 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
+    private org.opensearch.index.query.QueryBuilder filter;
+
     private ResourceQuery() {
         super();
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static ResourceQueryBuilder builder() {
+        return new ResourceQueryBuilder();
+    }
+
+    public org.opensearch.index.query.QueryBuilder getFilter() {
+        return filter;
+    }
+
+    public void setFilter(org.opensearch.index.query.QueryBuilder filter) {
+        this.filter = filter;
     }
 
     @Override
@@ -119,7 +130,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
         }
 
+
         var builder = new SearchSourceBuilder().query(queryBuilder);
+
+        builder.postFilter(getFilter());
+
 
         handleSearchAfter(builder);
         builder.size(getValue(SIZE).as());
@@ -169,10 +184,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    @SuppressWarnings("PMD.GodClass")
-    public static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
 
-        Builder() {
+    @SuppressWarnings("PMD.GodClass")
+    public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+
+        ResourceQueryBuilder() {
             super(new ResourceQuery());
         }
 
@@ -237,5 +253,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
+
+        public ResourceQueryBuilder withStatus(PublicationStatus... status) {
+            //TODO make filters....
+            //query.setFilter();
+            return this;
+        }
+
     }
 }

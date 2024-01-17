@@ -15,6 +15,7 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URI;
+import static no.unit.nva.search2.constant.Resource.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search2.constant.Resource.ATTACHMENT_VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_ID;
@@ -25,12 +26,14 @@ import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_CONTRIBUT
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
+import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_REFERENCE_SERIES;
 import static no.unit.nva.search2.constant.Resource.ENTITY_TAGS;
 import static no.unit.nva.search2.constant.Resource.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
 import static no.unit.nva.search2.constant.Resource.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
 import static no.unit.nva.search2.constant.Resource.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PARENT_PUBLICATION_ID;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_ISBN_LIST;
+import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.constant.Resource.REFERENCE_DOI_KEYWORD;
@@ -43,6 +46,7 @@ import static no.unit.nva.search2.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.constant.Words.PROJECTS_ID;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
 import static no.unit.nva.search2.constant.Words.Q;
+import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
@@ -110,6 +114,9 @@ public enum ResourceParameter implements ParameterKey {
     ISSN(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    LICENSE(KEYWORD, MUST, ASSOCIATED_ARTIFACTS_LICENSE),
+    LICENSE_NOT(KEYWORD, MUST_NOT, ASSOCIATED_ARTIFACTS_LICENSE),
+    LICENSE_SHOULD(KEYWORD, SHOULD, ASSOCIATED_ARTIFACTS_LICENSE),
     ORCID(KEYWORD, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_SHOULD(TEXT, SHOULD, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
@@ -120,9 +127,15 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT(KEYWORD, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, MUST_NOT, PROJECTS_ID),
     PROJECT_SHOULD(KEYWORD, SHOULD, PROJECTS_ID),
+    PUBLISH_STATUS(KEYWORD, MUST, STATUS),
+    PUBLISH_STATUS_NOT(KEYWORD, MUST_NOT, STATUS),
+    PUBLISH_STATUS_SHOULD(KEYWORD, SHOULD, STATUS),
     PUBLISHED_BETWEEN(ParamKind.DATE, BETWEEN, PUBLISHED_DATE),
     PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
+    PUBLISHER(KEYWORD, MUST, PUBLICATION_CONTEXT_PUBLISHER),
+    PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_PUBLISHER),
+    PUBLISHER_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_PUBLISHER),
     TAGS(TEXT, ENTITY_TAGS),
     TAGS_NOT(TEXT, MUST_NOT, ENTITY_TAGS),
     TAGS_SHOULD(TEXT, SHOULD, ENTITY_TAGS),
@@ -143,6 +156,9 @@ public enum ResourceParameter implements ParameterKey {
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                             PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS, null, null),
+    SERIES(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    SERIES_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    SERIES_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(ParamKind.CUSTOM),

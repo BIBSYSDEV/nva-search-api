@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.PublicationStatus;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
@@ -135,7 +136,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         return this;
     }
 
-
     /**
      * When running docker tests, the current host needs to be specified.
      * @param  uri URI to local docker test instance
@@ -143,6 +143,9 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     public final QueryBuilder<K, Q> withOpensearchUri(URI uri) {
         query.setOpenSearchUri(uri);
         return this;
+    }
+
+    public QueryBuilder<K, Q> withStatus(PublicationStatus... publicationStatus) {
     }
 
     protected abstract boolean isKeyValid(String keyName);
