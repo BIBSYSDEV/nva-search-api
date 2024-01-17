@@ -111,7 +111,7 @@ class ResourceClientTest {
         void shoulCheckFacets() throws BadRequestException {
             var uri1 = URI.create("https://x.org/?size=20&aggregation=all");
             var uri2 = URI.create("https://x.org/?size=20&aggregation=entityDescription,associatedArtifacts," +
-                "topLevelOrganizations,fundings");
+                "topLevelOrganizations,fundings,status");
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withRequiredParameters(FROM, SIZE)
@@ -176,7 +176,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(8)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(9)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 

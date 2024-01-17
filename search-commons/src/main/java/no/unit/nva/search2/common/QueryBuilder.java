@@ -4,7 +4,6 @@ import no.unit.nva.search2.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,12 +129,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     public final QueryBuilder<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
         query.otherRequiredKeys.addAll(tmpSet);
-        return this;
-    }
-
-
-    public final QueryBuilder<K, Q> withRequiredFilters(BoolQueryBuilder... requiredFilters) {
-        query.setFilters(requiredFilters);
         return this;
     }
 

@@ -138,8 +138,13 @@ public final class Resource {
         associatedArtifactsHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
+        publishStatusHierarchy(),
         topLevelOrganisationsHierarchy()
     );
+
+    private static TermsAggregationBuilder publishStatusHierarchy() {
+        return branchBuilder(STATUS, STATUS, KEYWORD);
+    }
 
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {
         return

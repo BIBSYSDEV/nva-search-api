@@ -253,7 +253,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                     boolQueryBuilder.must(entry.getValue());
                 }
             });
-        boolQueryBuilder.filter(getFilters());
         return boolQueryBuilder;
     }
 
@@ -342,7 +341,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return (T) switch (getKey().fieldType()) {
                 case DATE -> castDateTime();
                 case NUMBER -> castNumber();
-//                case CUSTOM -> value.split(COMMA);
                 default -> value;
             };
         }

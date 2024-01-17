@@ -35,7 +35,6 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
-//                .withRequiredFilters()
                 .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()

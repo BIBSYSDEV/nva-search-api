@@ -14,6 +14,7 @@ import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.SERIES;
 import static no.unit.nva.search2.constant.Words.SLASH;
+import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.ZERO;
@@ -135,6 +136,7 @@ public final class AggregationFormat {
         public static final Map<String, String> facetPaths = Map.of(
             TYPE, "/entityDescription/reference/publicationInstance/type",
             SERIES, "/entityDescription/reference/publicationContext/series",
+            STATUS, "/status",
             LICENSE, "/associatedArtifacts/license",
             HAS_FILE, "/associatedArtifacts/hasFile",
             PUBLISHER, "/entityDescription/reference/publicationContext/publisher",
