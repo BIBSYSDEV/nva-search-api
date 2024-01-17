@@ -168,7 +168,8 @@ class ResourceClientTest {
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .build();
+                    .build()
+                    .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);

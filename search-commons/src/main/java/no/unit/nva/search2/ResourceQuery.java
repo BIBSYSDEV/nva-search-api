@@ -1,5 +1,31 @@
 package no.unit.nva.search2;
 
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.dto.UserSettings;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.PublicationStatus;
+import no.unit.nva.search2.enums.ResourceParameter;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -26,7 +52,6 @@ import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT_ORDER;
@@ -37,36 +62,13 @@ import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Stream;
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.UserSettings;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import no.unit.nva.search2.enums.PublicationStatus;
-import no.unit.nva.search2.enums.ResourceParameter;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.AbstractQueryBuilder;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
 
     private ResourceQuery() {
         super();
+        assignStatusImpossibleWhiteList();
     }
 
     public static ResourceQueryBuilder builder() {
@@ -132,7 +134,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
         var queryBuilder =
             this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery().queryName(SEARCH_ALL.name())
+                ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
         if (isLookingForOneContributor()) {
@@ -144,9 +146,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .query(queryBuilder)
             .size(getValue(SIZE).as())
             .from(getValue(FROM).as())
+            .postFilter(getFilters())
             .trackTotalHits(true);
 
-        handleSearchAllFilter(queryBuilder, builder);
         handleSearchAfter(builder);
 
         getSortStream()
@@ -159,13 +161,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         logger.debug(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
-    }
-
-    private void handleSearchAllFilter(AbstractQueryBuilder<? extends AbstractQueryBuilder<?>> queryBuilder,
-                                       SearchSourceBuilder builder) {
-        if (SEARCH_ALL.name().equals(queryBuilder.queryName())){
-            builder.postFilter(getFilters());
-        }
     }
 
     public boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
@@ -216,6 +211,16 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
+    /**
+     * Add a filter to the query that will never match any document.
+     *
+     * <p>This is ensure that the query will never return any document.
+     * unless the query explicitly assign a whiteList.
+     * <p>See
+     */
+    private void assignStatusImpossibleWhiteList() {
+        addFilter(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
+    }
 
     @SuppressWarnings("PMD.GodClass")
     public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, ResourceQuery> {
