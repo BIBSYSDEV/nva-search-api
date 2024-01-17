@@ -61,7 +61,7 @@ class ResourceClientTest {
     protected static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
-    public static final long DELAY_AFTER_INDEXING = 1000L;
+    public static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
@@ -412,6 +412,7 @@ class ResourceClientTest {
                 createArgument("PUBLISHED_BETWEEN=2023-10-15,2023-11-05", 2),
                 createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
                 createArgument("PUBLISHED_SINCE=2023-11-05", 1),
+                createArgument("PUBLISH_STATUS_NOT=PUBLISHED", 1),
                 createArgument("SERIES=NGI-Rapport", 9),
                 createArgument("SERIES_NOT=NGI-Rapport", 11),
                 createArgument("SERIES_SHOULD=NGI-Rapport", 9),
