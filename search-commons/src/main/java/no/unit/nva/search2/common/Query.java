@@ -18,6 +18,7 @@ import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,7 +223,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         this.filters = List.of(filters);
     }
 
-    protected void addFilter(BoolQueryBuilder builder) {
+    protected void addFilter(TermsQueryBuilder builder) {
         this.filters.removeIf(filter -> filter.getName().equals(builder.getName()));
         this.filters.add(builder);
     }

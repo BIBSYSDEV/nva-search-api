@@ -10,6 +10,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Resource.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
 import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
@@ -25,6 +26,7 @@ import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.PAGE;
 import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.enums.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT;
 import static no.unit.nva.search2.enums.ResourceParameter.SORT_ORDER;
@@ -52,6 +54,7 @@ import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.enums.PublicationStatus;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.AbstractQueryBuilder;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
@@ -120,15 +123,16 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         final var values = Arrays.stream(publicationStatus)
             .map(PublicationStatus::toString)
             .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(STATUS, values);
-        this.addFilter(QueryBuilders.boolQuery().must(filter).queryName(STATUS));
+        final var filter = new TermsQueryBuilder(PUBLICATION_STATUS, values)
+            .queryName(STATUS);
+        this.addFilter(filter);
         return this;
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
         var queryBuilder =
             this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery()
+                ? QueryBuilders.matchAllQuery().queryName(SEARCH_ALL.name())
                 : boolQuery();
 
         if (isLookingForOneContributor()) {
@@ -140,12 +144,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .query(queryBuilder)
             .size(getValue(SIZE).as())
             .from(getValue(FROM).as())
-            .trackTotalHits(true)
-            .postFilter(getFilters());
+            .trackTotalHits(true);
 
+        handleSearchAllFilter(queryBuilder, builder);
         handleSearchAfter(builder);
+
         getSortStream()
             .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
+
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(builder::aggregation);
@@ -153,6 +159,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         logger.debug(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    private void handleSearchAllFilter(AbstractQueryBuilder<? extends AbstractQueryBuilder<?>> queryBuilder,
+                                       SearchSourceBuilder builder) {
+        if (SEARCH_ALL.name().equals(queryBuilder.queryName())){
+            builder.postFilter(getFilters());
+        }
     }
 
     public boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {

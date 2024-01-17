@@ -39,6 +39,7 @@ import static no.unit.nva.search2.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.constant.Words.SERIES;
 import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.constant.Words.TAGS;
 import static no.unit.nva.search2.constant.Words.TITLE;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
@@ -80,6 +81,7 @@ public final class Resource {
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
     public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
+    public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =

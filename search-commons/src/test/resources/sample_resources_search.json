@@ -535,7 +535,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED"
+    "status": "PUBLISHED_METADATA"
   },
   {
     "type": "Publication",

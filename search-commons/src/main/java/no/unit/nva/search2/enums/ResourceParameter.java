@@ -46,6 +46,7 @@ import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_ISBN_LIS
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
 import static no.unit.nva.search2.constant.Resource.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_KEYWORD;
@@ -56,7 +57,6 @@ import static no.unit.nva.search2.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.constant.Words.PROJECTS_ID;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
 import static no.unit.nva.search2.constant.Words.Q;
-import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
@@ -130,9 +130,9 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT(KEYWORD, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, MUST_NOT, PROJECTS_ID),
     PROJECT_SHOULD(KEYWORD, SHOULD, PROJECTS_ID),
-    PUBLISH_STATUS(KEYWORD, MUST, STATUS),
-    PUBLISH_STATUS_NOT(KEYWORD, MUST_NOT, STATUS),
-    PUBLISH_STATUS_SHOULD(KEYWORD, SHOULD, STATUS),
+    PUBLISH_STATUS(KEYWORD, MUST, PUBLICATION_STATUS),
+    PUBLISH_STATUS_NOT(KEYWORD, MUST_NOT, PUBLICATION_STATUS),
+    PUBLISH_STATUS_SHOULD(KEYWORD, SHOULD, PUBLICATION_STATUS),
     PUBLISHED_BETWEEN(ParamKind.DATE, BETWEEN, PUBLISHED_DATE),
     PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),

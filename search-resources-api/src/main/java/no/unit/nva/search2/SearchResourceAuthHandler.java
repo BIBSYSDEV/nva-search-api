@@ -1,22 +1,24 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.search2.ResourceClient.defaultClient;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search2.enums.PublicationStatus.PUBLSHED;
-import static no.unit.nva.search2.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-import java.net.HttpURLConnection;
-import java.util.List;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+
+import java.net.HttpURLConnection;
+import java.util.List;
+
+import static no.unit.nva.search2.ResourceClient.defaultClient;
+import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search2.enums.PublicationStatus.DELETED;
+import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search2.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search2.enums.ResourceParameter.FROM;
+import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
@@ -41,7 +43,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
                 .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()
-                .withRequiredStatus(PUBLSHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
                 .doSearch(opensearchClient);
     }
 
