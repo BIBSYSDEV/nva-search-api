@@ -18,6 +18,8 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.STATUS;
+import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.enums.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
@@ -38,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryBuilder;
@@ -46,22 +49,27 @@ import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.UserSettings;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.PublicationStatus;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
+
     private ResourceQuery() {
         super();
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static ResourceQueryBuilder builder() {
+        return new ResourceQueryBuilder();
     }
+
 
     @Override
     protected Integer getFrom() {
@@ -108,6 +116,15 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
+    public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
+        final var values = Arrays.stream(publicationStatus)
+            .map(PublicationStatus::toString)
+            .toArray(String[]::new);
+        final var filter = new TermsQueryBuilder(STATUS, values);
+        this.addFilter(QueryBuilders.boolQuery().must(filter).queryName(STATUS));
+        return this;
+    }
+
     public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
         var queryBuilder =
             this.hasNoSearchValue()
@@ -119,15 +136,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
         }
 
-        var builder = new SearchSourceBuilder().query(queryBuilder);
+        var builder = new SearchSourceBuilder()
+            .query(queryBuilder)
+            .size(getValue(SIZE).as())
+            .from(getValue(FROM).as())
+            .trackTotalHits(true)
+            .postFilter(getFilters());
 
         handleSearchAfter(builder);
-        builder.size(getValue(SIZE).as());
-        builder.from(getValue(FROM).as());
-        builder.trackTotalHits(true);
         getSortStream()
-            .forEach(entry -> builder.sort(getFieldName(entry), entry.getValue()));
+            .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
         RESOURCES_AGGREGATIONS
+            .stream().filter(this::isRequestedAggregation)
             .forEach(builder::aggregation);
 
         logger.debug(builder.toString());
@@ -135,7 +155,21 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
-    private static String getFieldName(Entry<String, SortOrder> entry) {
+    public boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
+        return Optional.ofNullable(aggregationBuilder)
+            .map(AggregationBuilder::getName)
+            .map(this::isDefined)
+            .orElse(false);
+    }
+
+    private boolean isDefined(String key) {
+        return getValue(AGGREGATION).optionalStream()
+            .flatMap(item-> Arrays.stream(item.split(COMMA)).sequential())
+            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    }
+
+
+    private static String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
     }
 
@@ -169,10 +203,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    @SuppressWarnings("PMD.GodClass")
-    public static class Builder extends QueryBuilder<ResourceParameter, ResourceQuery> {
 
-        Builder() {
+    @SuppressWarnings("PMD.GodClass")
+    public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+
+        ResourceQueryBuilder() {
             super(new ResourceQuery());
         }
 
@@ -237,5 +272,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
+
     }
 }

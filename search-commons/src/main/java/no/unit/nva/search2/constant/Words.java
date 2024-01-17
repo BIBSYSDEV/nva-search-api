@@ -35,7 +35,6 @@ public final class Words {
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
     public static final String LICENSE = "license";
-
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
@@ -69,6 +68,7 @@ public final class Words {
     public static final String SLASH = "/";
     public static final String SOURCE = "source";
     public static final String SPACE = " ";
+    public static final String STATUS = "status";
     public static final String SUFFIX = ")";
     public static final String TAGS = "tags";
     public static final String TEXT_CSV = "text/csv";

@@ -1,5 +1,6 @@
 package no.unit.nva.search2.dto;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,4 +25,10 @@ public record PagedSearch(
         return PAGINATED_SEARCH_RESULT_CONTEXT;
     }
 
+    @Override
+    public Map<String, List<Facet>> aggregations() {
+        return nonNull(aggregations)
+            ? aggregations
+            : Map.of();
+    }
 }
