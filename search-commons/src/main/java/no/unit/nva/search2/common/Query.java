@@ -219,7 +219,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected void setFilters(QueryBuilder... filters) {
-        this.filters = List.of(filters);
+        this.filters.clear();
+        this.filters.addAll(List.of(filters));
     }
 
     protected void addFilter(TermsQueryBuilder builder) {

@@ -55,10 +55,8 @@ public final class AggregationFormat {
                     outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
                 } else if (keyIsName(entry)) {
                     outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-                } else if (isValueNode(entry)) {
-                    outputAggregationNode.set(entry.getKey(), entry.getValue());
                 } else {
-                    outputAggregationNode.set(entry.getKey(), fixNodes(entry.getValue()));
+                    outputAggregationNode.set(entry.getKey(), entry.getValue());
                 }
             });
             return outputAggregationNode.isEmpty()
@@ -71,10 +69,6 @@ public final class AggregationFormat {
         return Constants.facetPaths.entrySet().stream().map(
             entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
         );
-    }
-
-    private static boolean isValueNode(Entry<String, JsonNode> entry) {
-        return entry.getValue().isValueNode();
     }
 
     private static boolean keyIsName(Entry<String, JsonNode> entry) {

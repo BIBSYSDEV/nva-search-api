@@ -8,6 +8,14 @@ import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TYPE;
+import static no.unit.nva.search2.enums.PublicationStatus.DELETED;
+import static no.unit.nva.search2.enums.PublicationStatus.DRAFT;
+import static no.unit.nva.search2.enums.PublicationStatus.DRAFT_FOR_DELETION;
+import static no.unit.nva.search2.enums.PublicationStatus.NEW;
+import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search2.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -38,7 +46,6 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.PublicationStatus;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -117,13 +124,13 @@ class ResourceClientTest {
                 .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .build()
-                .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .build()
-                .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response1 = searchClient.doSearch(query1);
             var response2 = searchClient.doSearch(query2);
 
@@ -156,6 +163,7 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
+                    .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION )
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -171,7 +179,7 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -192,7 +200,7 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -214,10 +222,11 @@ class ResourceClientTest {
             var csvResult =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
+                    .withRequiredStatus(PUBLISHED_METADATA)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -228,9 +237,10 @@ class ResourceClientTest {
             var query =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
+                    .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .build();
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);

@@ -70,11 +70,19 @@ import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
- * This enum needs to implement these parameters
+ * <p>
+ *     Parameter values can be read as camelCase or snake_case (e.g. 'createdSince' or 'created_since').
+ * </p>
+ * <p>
+ *     Values are: (INVALID,) ABSTRACT, CONTEXT_TYPE, CONTRIBUTOR, CONTRIBUTOR_NAME, CREATED_BEFORE, CREATED_SINCE,
+ *     DOI, FUNDING, FUNDING_SOURCE, HAS_FILE, ID, INSTANCE_TYPE, INSTITUTION, ISBN, ISSN, LICENSE, MODIFIED_BEFORE,
+ *     MODIFIED_SINCE, PARENT_PUBLICATION, PROJECT, PUBLISH_STATUS, PUBLISHED_BETWEEN, PUBLISHED_BEFORE,
+ *     PUBLISHED_SINCE, PUBLISHER, TAGS, TITLE, TOP_LEVEL_ORGANIZATION, UNIT, USER, USER_AFFILIATION,
+ *     PUBLICATION_YEAR_BEFORE, PUBLICATION_YEAR_SINCE, SERIES, SEARCH_ALL, FIELDS, AGGREGATION, PAGE, FROM, SIZE,
+ *     SORT, SORT_ORDER, SEARCH_AFTER (, LANG)
+ * </p>
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
- *
  */
-
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParamKind.INVALID),
     // Parameters used for filtering

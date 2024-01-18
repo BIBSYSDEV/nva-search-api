@@ -16,6 +16,12 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
+/**
+ * ImportCandidateSort is an enum that represents the different sort keys that can be used when sorting import candidates.
+ * <p>
+ * Values are: INVALID, COLLABORATION_TYPE, CREATED_DATE, INSTANCE_TYPE, PUBLICATION_YEAR, TITLE, TYPE
+ * </p>
+ */
 public enum ImportCandidateSort {
     INVALID(EMPTY_STRING),
     COLLABORATION_TYPE(ImportCandidate.COLLABORATION_TYPE_KEYWORD),

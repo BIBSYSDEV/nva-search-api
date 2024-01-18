@@ -40,11 +40,17 @@ import static no.unit.nva.search2.enums.ParameterKey.ParamKind.SORT_KEY;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 
 /**
- * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
- * parameters
+ * Enum for all the parameters that can be used to query the search index for import candidates.
+ * <p>
+ *     Parameter values can be read as camelCase or snake_case (e.g. additionalIdentifiers or additional_identifiers).
+ * </p>
+ * <p>
+ *     Values are: (INVALID,) ADDITIONAL_IDENTIFIERS, CATEGORY, CREATED_DATE, CONTRIBUTOR, CONTRIBUTOR_NAME,
+ *     COLLABORATION_TYPE, DOI, ID, IMPORT_STATUS, INSTANCE_TYPE, PUBLICATION_YEAR, PUBLISHER, TITLE, TYPE,
+ *     SEARCH_ALL, FIELDS, PAGE, FROM, SIZE, SORT, SORT_ORDER, SEARCH_AFTER
+ * </p>
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
  */
-
 public enum ImportCandidateParameter implements ParameterKey {
     INVALID(TEXT),
     // Parameters converted to Lucene query

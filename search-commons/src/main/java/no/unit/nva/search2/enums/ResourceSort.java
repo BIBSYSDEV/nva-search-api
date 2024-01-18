@@ -16,6 +16,12 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
+/**
+ * ResourceSort is an enum that represents the different sort keys that can be used when sorting resources.
+ * <p>
+ * Values are: INVALID, CATEGORY, INSTANCE_TYPE, CREATED_DATE, MODIFIED_DATE, PUBLISHED_DATE, TITLE, UNIT_ID, USER
+ * </p>
+ */
 public enum ResourceSort {
     INVALID(EMPTY_STRING),
     CATEGORY(Resource.PUBLICATION_INSTANCE_TYPE),

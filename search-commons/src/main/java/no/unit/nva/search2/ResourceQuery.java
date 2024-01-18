@@ -230,12 +230,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     /**
      * Add a (default) filter to the query that will never match any document.
      *
-     * <p>This whitelist the ResourceQuery form any forgetful developer (me)</p>
+     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
      * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
      * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
-        addFilter(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
+        setFilters(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     @SuppressWarnings("PMD.GodClass")
