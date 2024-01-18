@@ -426,7 +426,7 @@ class ResourceClientTest {
                 createArgument("QUERY=Kjetil+Møkkelgjerd&fields=contributorName", 3),
                 createArgument("QUERY=observations&fields=all", 3),
                 createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
-                               + "&FIELDS=INSTITUTION", 5),
+                               + "&FIELDS=INSTITUTION", 2),
                 createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3)
             );
         }
