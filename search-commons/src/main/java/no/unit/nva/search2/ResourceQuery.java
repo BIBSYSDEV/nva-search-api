@@ -14,6 +14,8 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
@@ -121,6 +123,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
+    /**
+     * Required Status filter.
+     *
+     * <p>Only STATUES specified here will be available for the Query.</p>
+     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
+     * <p>See {@link PublicationStatus} for available values.</p>
+     * @param publicationStatus the required statues
+     */
     public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
         final var values = Arrays.stream(publicationStatus)
             .map(PublicationStatus::toString)
@@ -154,13 +164,19 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         getSortStream()
             .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
 
-        RESOURCES_AGGREGATIONS
-            .stream().filter(this::isRequestedAggregation)
-            .forEach(builder::aggregation);
+        builder.aggregation(getAggregationsWithFilter());
 
         logger.debug(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    private FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggrFilter = AggregationBuilders.filter("filter", getFilters());
+        RESOURCES_AGGREGATIONS
+            .stream().filter(this::isRequestedAggregation)
+            .forEach(aggrFilter::subAggregation);
+        return aggrFilter;
     }
 
     public boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
@@ -212,11 +228,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     /**
-     * Add a filter to the query that will never match any document.
+     * Add a (default) filter to the query that will never match any document.
      *
-     * <p>This is ensure that the query will never return any document.
-     * unless the query explicitly assign a whiteList.
-     * <p>See
+     * <p>This whitelist the ResourceQuery form any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
+     * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
         addFilter(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));

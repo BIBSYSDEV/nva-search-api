@@ -116,12 +116,14 @@ class ResourceClientTest {
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                .build();
+                .build()
+                .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                .build();
+                .build()
+                .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
             var response1 = searchClient.doSearch(query1);
             var response2 = searchClient.doSearch(query2);
 

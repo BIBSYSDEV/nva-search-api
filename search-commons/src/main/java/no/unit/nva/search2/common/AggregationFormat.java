@@ -134,15 +134,15 @@ public final class AggregationFormat {
     static final class Constants {
 
         public static final Map<String, String> facetPaths = Map.of(
-            TYPE, "/entityDescription/reference/publicationInstance/type",
-            SERIES, "/entityDescription/reference/publicationContext/series",
-            STATUS, "/status",
-            LICENSE, "/associatedArtifacts/license",
-            HAS_FILE, "/associatedArtifacts/hasFile",
-            PUBLISHER, "/entityDescription/reference/publicationContext/publisher",
-            CONTRIBUTOR, "/entityDescription/contributor/id",
-            FUNDING_SOURCE, "/fundings/id",
-            TOP_LEVEL_ORGANIZATION, "/topLevelOrganizations/id"
+            TYPE, "/filter/entityDescription/reference/publicationInstance/type",
+            SERIES, "/filter/entityDescription/reference/publicationContext/series",
+            STATUS, "/filter/status",
+            LICENSE, "/filter/associatedArtifacts/license",
+            HAS_FILE, "/filter/associatedArtifacts/hasFile",
+            PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
+            CONTRIBUTOR, "/filter/entityDescription/contributor/id",
+            FUNDING_SOURCE, "/filter/fundings/id",
+            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
         );
 
         public static final String DOC_COUNT = "doc_count";
