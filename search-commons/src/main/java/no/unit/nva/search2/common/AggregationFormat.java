@@ -14,6 +14,7 @@ import static no.unit.nva.search2.constant.Words.NAME;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.SERIES;
 import static no.unit.nva.search2.constant.Words.SLASH;
+import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.ZERO;
@@ -133,14 +134,15 @@ public final class AggregationFormat {
     static final class Constants {
 
         public static final Map<String, String> facetPaths = Map.of(
-            TYPE, "/entityDescription/reference/publicationInstance/type",
-            SERIES, "/entityDescription/reference/publicationContext/series",
-            PUBLISHER, "/entityDescription/reference/publicationContext/publisher",
-            CONTRIBUTOR, "/entityDescription/contributor/id",
-            HAS_FILE, "/associatedArtifacts/hasFile",
-            LICENSE, "/associatedArtifacts/license",
-            FUNDING_SOURCE, "/fundings/id",
-            TOP_LEVEL_ORGANIZATION, "/topLevelOrganizations/id"
+            TYPE, "/filter/entityDescription/reference/publicationInstance/type",
+            SERIES, "/filter/entityDescription/reference/publicationContext/series",
+            STATUS, "/filter/status",
+            LICENSE, "/filter/associatedArtifacts/license",
+            HAS_FILE, "/filter/associatedArtifacts/hasFile",
+            PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
+            CONTRIBUTOR, "/filter/entityDescription/contributor/id",
+            FUNDING_SOURCE, "/filter/fundings/id",
+            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
         );
 
         public static final String DOC_COUNT = "doc_count";

@@ -129,6 +129,329 @@
       "owner": "1136254@20754.0.0.0",
       "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
     },
+    "status": "DELETED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "https://nva.sikt.no/ontology/publication#hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "UA",
+            "labels": {
+              "nn": "Divisjon for utdanning og administrasjon",
+              "nb": "Divisjon utdanning og administrasjon",
+              "en": "The Education and Administration Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "FK",
+            "labels": {
+              "nn": "Divisjon for forskings- og kunnskapsressursar",
+              "nb": "Divisjon forsknings- og kunnskapsressurser",
+              "en": "The Research and Education Resources Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.4.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "ORG",
+            "labels": {
+              "nn": "Avdeling for organisasjonsutvikling",
+              "nb": "Avdeling for organisasjonsutvikling",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "KUNDE",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Avdeling for kunde og kommunikasjon",
+              "nb": "Avdeling for kunde og kommunikasjon",
+              "en": "The Customer and Communication Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.5.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "VIRK",
+            "labels": {
+              "nn": "Avdeling for verksemdstyring",
+              "nb": "Avdeling for virksomhetsstyring",
+              "en": "The Corporate Governance Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "DI",
+            "labels": {
+              "nn": "Divisjon for data og infrastruktur",
+              "nb": "Divisjon data og infrastruktur",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+        "type": "Organization",
+        "countryCode": "IQ",
+        "labels": {
+          "nb": "Al-Iraqia Universitet",
+          "nn": "Universitet i Irak",
+          "en": "Al-Iraqia University"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "https://nva.sikt.no/ontology/publication#hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "KS",
+            "labels": {
+              "nb": "Krigsskolen (KS)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.7.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "IFF",
+            "labels": {
+              "nb": "Institutt for forsvarsstudier"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.5.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "FIH",
+            "labels": {
+              "nb": "Cyberingeniørskolen"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.2.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "LKSK",
+            "labels": {
+              "nb": "Luftkrigsskolen (LKSK)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.8.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "FSK",
+            "labels": {
+              "nb": "Institutt for militær ledelse og operasjoner"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.9.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "BEFAL",
+            "labels": {
+              "nb": "Befalsskolen",
+              "en": "Officer Candidate School"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.3.0.0",
+            "type": "Organization",
+            "https://bibsysdev.github.io/src/organization-ontology.ttl#acronym": "SKSK",
+            "labels": {
+              "nb": "Sjøkrigsskolen (SKSK)"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
+        }
+      }
+    ]
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "95ffa438-7367-49aa-ade7-5851daa6a8a3",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "mimeType": "image/jpeg",
+        "name": "osteloff.jpg",
+        "publishedDate": "2023-11-06T08:48:11.786959336Z",
+        "publisherAuthority": false,
+        "size": 4656,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-11-06T08:46:26.204053625Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+              "type": "Organization",
+              "countryCode": "IQ",
+              "labels": {
+                "nn": "Al-Iraqia University",
+                "nb": "Al-Iraqia University",
+                "en": "Al-Iraqia University"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Avdeling for kunde og kommunikasjon",
+                "nb": "Avdeling for kunde og kommunikasjon",
+                "en": "The Customer and Communication Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "en": "Norwegian Defence University College",
+                "nb": "Forsvarets høgskole"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "mainTitle": "Kjetils ticket test",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "6",
+        "month": "11",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.1371/journal.pone.0047887",
+        "publicationContext": {
+          "type": "Report",
+          "isbnList": [
+            "9788202535032"
+          ],
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelOne",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries"
+          }
+        },
+        "publicationInstance": {
+          "type": "ReportResearch",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false
+          }
+        }
+      }
+    },
+    "identifier": "018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "modelVersion": "0.20.54",
+    "modifiedDate": "2023-11-06T08:48:11.943422687Z",
+    "nviType": "NonNviCandidate",
+    "projects": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/project/1433422",
+        "type": "ResearchProject",
+        "name": "Utvikling av eplekaken"
+      }
+    ],
+    "publishedDate": "2023-11-06T08:48:11.936406187Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1136254@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
     "status": "PUBLISHED",
     "topLevelOrganizations": [
       {
@@ -535,7 +858,7 @@
       "owner": "ngi@7452.0.0.0",
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
-    "status": "PUBLISHED"
+    "status": "PUBLISHED_METADATA"
   },
   {
     "type": "Publication",

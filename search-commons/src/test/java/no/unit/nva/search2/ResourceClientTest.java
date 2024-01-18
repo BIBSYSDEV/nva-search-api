@@ -18,6 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,6 +38,7 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.enums.PublicationStatus;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -59,7 +61,7 @@ class ResourceClientTest {
     protected static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
-    public static final long DELAY_AFTER_INDEXING = 1000L;
+    public static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
@@ -107,14 +109,30 @@ class ResourceClientTest {
 
         @Test
         void shoulCheckFacets() throws BadRequestException {
-            var uri = URI.create("https://x.org/?size=20");
-            var query = ResourceQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
+            var uri1 = URI.create("https://x.org/?size=20&aggregation=all");
+            var uri2 = URI.create("https://x.org/?size=20&aggregation=entityDescription,associatedArtifacts," +
+                "topLevelOrganizations,fundings,status");
+            var query1 = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri1))
                 .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                .build();
-            var response = searchClient.doSearch(query);
-            var aggregations = query.toPagedResponse(response).aggregations();
+                .build()
+                .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
+            var query2 = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri2))
+                .withRequiredParameters(FROM, SIZE)
+                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
+            var response1 = searchClient.doSearch(query1);
+            var response2 = searchClient.doSearch(query2);
+
+            assertNotNull(response1);
+            assertNotNull(response2);
+
+            assertEquals(response1.aggregations(),response2.aggregations());
+
+            var aggregations = query1.toPagedResponse(response1).aggregations();
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(3));
@@ -152,14 +170,15 @@ class ResourceClientTest {
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .build();
+                    .build()
+                    .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(8)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(9)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
@@ -172,7 +191,8 @@ class ResourceClientTest {
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .build();
+                    .build()
+                    .withRequiredStatus(PublicationStatus.PUBLISHED, PublicationStatus.PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -235,17 +255,17 @@ class ResourceClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0", 20),
-                createArgument("page=1&size=1", 1),
-                createArgument("page=2&size=1", 1),
-                createArgument("page=3&size=1", 1),
-                createArgument("page=0&size=0", 0),
-                createArgument("offset=15&size=2", 2),
-                createArgument("offset=15&limit=2", 2),
-                createArgument("offset=15&results=2", 2),
-                createArgument("offset=15&per_page=2", 2),
-                createArgument("OFFSET=15&PER_PAGE=2", 2),
-                createArgument("offset=15&perPage=2", 2)
+                createArgument("page=0&aggregation=all", 20),
+                createArgument("page=1&aggregation=all&size=1", 1),
+                createArgument("page=2&aggregation=all&size=1", 1),
+                createArgument("page=3&aggregation=all&size=1", 1),
+                createArgument("page=0&aggregation=all&size=0", 0),
+                createArgument("offset=15&aggregation=all&size=2", 2),
+                createArgument("offset=15&aggregation=all&limit=2", 2),
+                createArgument("offset=15&aggregation=all&results=2", 2),
+                createArgument("offset=15&aggregation=all&per_page=2", 2),
+                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
+                createArgument("offset=15&aggregation=all&perPage=2", 2)
             );
         }
 
@@ -351,6 +371,9 @@ class ResourceClientTest {
                 createArgument("ISSN=1435-9529", 1),
                 createArgument("ISSN_NOT=1435-9529", 19),
                 createArgument("ISSN_SHOULD=1435-9529", 1),
+                createArgument("LICENSE=https://creativecommons.org/licenses/by/4.0", 5),
+                createArgument("LICENSE_NOT=https://creativecommons.org/licenses/by/4.0", 15),
+                createArgument("LICENSE_SHOULD=https://creativecommons.org/licenses/by/4.0", 5),
                 createArgument("ORCID=https://sandbox.orcid.org/0000-0003-4147-3499", 3),
                 createArgument("ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499", 17),
                 createArgument("ORCID_SHOULD=4147-3499", 3),
@@ -363,6 +386,9 @@ class ResourceClientTest {
                                + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 17),
                 createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
                                + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 3),
+                createArgument("PUBLISHER=NGI+–+Norges+Geotekniske+institutt", 9),
+                createArgument("PUBLISHER_NOT=NGI+–+Norges+Geotekniske+institutt", 11),
+                createArgument("PUBLISHER_SHOULD=NGI+–+Norges+Geotekniske+institutt", 9),
                 createArgument("SEARCH_ALL=Fakultet+for+arkitektur", 1),
                 createArgument("TAGS=NAKSIN,Avalanche-RnD&page=0", 1),
                 createArgument("TAGS_NOT=NAKSIN&page=0", 19),
@@ -389,6 +415,10 @@ class ResourceClientTest {
                 createArgument("PUBLISHED_BETWEEN=2023-10-15,2023-11-05", 2),
                 createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
                 createArgument("PUBLISHED_SINCE=2023-11-05", 1),
+                createArgument("PUBLISH_STATUS_NOT=PUBLISHED", 1),
+                createArgument("SERIES=NGI-Rapport", 9),
+                createArgument("SERIES_NOT=NGI-Rapport", 11),
+                createArgument("SERIES_SHOULD=NGI-Rapport", 9),
                 createArgument("QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
                                + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
                 createArgument("QUERY=Forsvarets+høgskole&fields=INSTITUTION", 3),

@@ -39,6 +39,7 @@ import static no.unit.nva.search2.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.constant.Words.SERIES;
 import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.constant.Words.TAGS;
 import static no.unit.nva.search2.constant.Words.TITLE;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
@@ -55,6 +56,7 @@ import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Resource {
 
+    //entityDescription/reference/publicationContext/publisher
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
@@ -78,6 +80,8 @@ public final class Resource {
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
     public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
+    public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
+    public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
@@ -88,13 +92,16 @@ public final class Resource {
         ENTITY_PUBLICATION_CONTEXT_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_INSTANCE_TYPE =
         ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
+    public static final String PUBLICATION_CONTEXT_PUBLISHER =
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD;
+    public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + TITLE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
-
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
     public static final String TOP_LEVEL_ORG_ID = TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD;
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
@@ -131,8 +138,13 @@ public final class Resource {
         associatedArtifactsHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
+        publishStatusHierarchy(),
         topLevelOrganisationsHierarchy()
     );
+
+    private static TermsAggregationBuilder publishStatusHierarchy() {
+        return branchBuilder(STATUS, STATUS, KEYWORD);
+    }
 
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {
         return

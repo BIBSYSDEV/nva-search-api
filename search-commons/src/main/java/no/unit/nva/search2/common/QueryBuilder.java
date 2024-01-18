@@ -1,5 +1,22 @@
 package no.unit.nva.search2.common;
 
+import no.unit.nva.search2.enums.ParameterKey;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
@@ -13,21 +30,6 @@ import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.enums.ParameterKey;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Builder for OpenSearchQuery.
@@ -134,7 +136,6 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
         query.setMediaType(mediaType);
         return this;
     }
-
 
     /**
      * When running docker tests, the current host needs to be specified.
