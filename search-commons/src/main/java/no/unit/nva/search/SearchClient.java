@@ -5,7 +5,6 @@ import static no.unit.nva.search.models.SearchResponseDto.createIdWithQuery;
 import static no.unit.nva.search.models.SearchResponseDto.fromSearchResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
@@ -14,8 +13,6 @@ import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.search.SearchRequest;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 
 public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
 
@@ -33,7 +30,6 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
     public static final String DOI_REQUESTS_QUERY_NAME = "DoiRequestsQuery";
     public static final String PUBLISHING_REQUESTS_QUERY_NAME = "PublishingRequestsQuery";
     public static final String TICKET_STATUS = "status";
-    public static final String CONTRIBUTOR_ID_FIELD = "entityDescription.contributors.identity.id.keyword";
 
     /**
      * Creates a new SearchClient.
@@ -73,25 +69,6 @@ public class SearchClient extends AuthenticatedOpenSearchClientWrapper {
         }
     }
 
-    public SearchResponseDto searchWithSearchPromotedPublicationsForContributorQuery(String owner,
-                                                                                     List<String> promotedPublications,
-                                                                                     SearchDocumentsQuery query,
-                                                                                     String index)
-        throws ApiGatewayException {
-        try {
-            var queryBuilder = new BoolQueryBuilder().must(QueryBuilders.matchQuery(CONTRIBUTOR_ID_FIELD, owner));
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                queryBuilder.should(
-                    QueryBuilders.matchQuery("id", promotedPublications.get(i)).boost(promotedPublications.size() - i));
-            }
-
-            var searchRequest = query.toSearchRequestWithBoolQuery(index, queryBuilder);
-
-            return doSearch(searchRequest, query.getRequestUri(), query.getSearchTerm());
-        } catch (IOException e) {
-            throw new BadGatewayException(NO_RESPONSE_FROM_INDEX);
-        }
-    }
 
     public SearchResponseDto searchWithSearchTicketQuery(SearchTicketsQuery searchTicketsQuery, String... index)
         throws ApiGatewayException {

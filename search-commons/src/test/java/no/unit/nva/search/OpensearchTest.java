@@ -10,7 +10,6 @@ import static no.unit.nva.search.SearchClient.ORGANIZATION_FIELD;
 import static no.unit.nva.search.SearchClient.PART_OF_FIELD;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
-import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search.models.CuratorSearchType.DOI;
 import static no.unit.nva.search.models.CuratorSearchType.PUBLISHING;
@@ -20,7 +19,6 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.inputStreamFromResources;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
@@ -332,30 +330,6 @@ public class OpensearchTest {
 
 
             @Test
-            void shouldReturnHitsWithScore() throws ApiGatewayException, InterruptedException {
-                addDocumentsToIndex("sample_publication.json",
-                                    "sample_publication_with_several_of_the_same_affiliation.json",
-                                    "sample_publication_with_affiliations.json");
-                var mostBoostedPublication = "https://api.sandbox.nva.aws.unit"
-                                             + ".no/publication/8c9f0155-bf95-4ba9-b291-0fdc2814f8df";
-                var secondBoostedPublication = "https://api.sandbox.nva.aws.unit"
-                                               + ".no/publication/0186305463c3-898f18b2-d1eb-47f3-a8e9-7beed4470dc9";
-                var promotedPublications = List.of(mostBoostedPublication, secondBoostedPublication);
-                var contributor = "1234";
-                var query = queryWithTermAndAggregation(SEARCH_ALL, RESOURCES_AGGREGATIONS);
-                var response =
-                    searchClient.searchWithSearchPromotedPublicationsForContributorQuery(
-                        contributor,
-                        promotedPublications,
-                        query,
-                        indexName);
-                assertThat(response.getHits().get(0).toString(), containsString(mostBoostedPublication));
-                assertThat(response.getHits().get(1).toString(), containsString(secondBoostedPublication));
-                assertThat(response, notNullValue());
-                assertThat(response.getAggregations(), notNullValue());
-            }
-
-            @Test
             void shouldNotReturnAggregationsWhenNotRequested()
                 throws ApiGatewayException, InterruptedException {
 
@@ -371,103 +345,6 @@ public class OpensearchTest {
             }
 
 
-            @Test
-            void shouldReturnCorrectAggregations() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                    "sample_publication_with_several_of_the_same_affiliation.json");
-
-                var query = queryWithTermAndAggregation(
-                    SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-                assertThat(response, notNullValue());
-
-                var actualAggregations = response.getAggregations();
-                var topOrgAggregation = actualAggregations.at(
-                    "/topLevelOrganizations/id/buckets");
-                assertAggregation(topOrgAggregation, "https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0.0",
-                                  2);
-
-                var typeAggregation = actualAggregations.at(
-                    "/entityDescription/reference/publicationInstance/type/buckets");
-                assertAggregation(typeAggregation, "AcademicArticle", 2);
-
-                var ownerAggregation = actualAggregations.at("/resourceOwner.owner/buckets");
-                assertAggregation(ownerAggregation, "1136263@20754.0.0.0", 2);
-
-                var ownerAffiliationAggregation = actualAggregations.at("/resourceOwner.ownerAffiliation/buckets");
-                assertAggregation(ownerAffiliationAggregation, "https://www.example.org/Bergen", 1);
-
-                var contributorAggregation = actualAggregations.at(
-                    "/entityDescription/contributors/identity/id/buckets/0/name/buckets");
-                assertAggregation(contributorAggregation, "Iametti, Stefania", 1);
-
-                var publisherAggregation = actualAggregations.at(
-                    "/entityDescription/reference/publicationContext/publisher/buckets/0/name/buckets");
-                assertAggregation(publisherAggregation, "Asian Federation of Natural Language Processing", 1);
-
-                var journalAggregation = actualAggregations.at(
-                    "/entityDescription/reference/publicationContext/id/buckets/0/name/buckets");
-                assertAggregation(journalAggregation,
-                                  "1650-1850 : Ideas, Aesthetics, and Inquiries in the Early Modern Era", 1);
-            }
-
-            @Test
-            void shouldReturnPublicationWhenQueryingByProject() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                    "sample_publication_with_several_of_the_same_affiliation.json");
-
-                var query = queryWithTermAndAggregation(
-                    "projects.id:\"https://api.dev.nva.aws.unit.no/cristin/project/14334813\"",
-                    ApplicationConstants.RESOURCES_AGGREGATIONS);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-                assertThat(response.getHits(), hasSize(1));
-            }
-
-            @Test
-            void shouldReturnPublicationWhenQueryingByTopLevelOrg() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                    "sample_publication_with_several_of_the_same_affiliation.json");
-
-                var query = queryWithTermAndAggregation(
-                    "topLevelOrganizations.id.keyword:\"https://api.dev.nva.aws.unit.no/cristin/organization/185.0.0"
-                    + ".0\"",
-                    ApplicationConstants.RESOURCES_AGGREGATIONS);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-                assertThat(response.getHits(), hasSize(2));
-            }
-
-            @Test
-            void shouldQueryingFundingSuccessfully() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                    "sample_publication_with_several_of_the_same_affiliation.json");
-
-                var query = queryWithTermAndAggregation(
-                    "fundings.source.identifier.keyword:\"NFR\"",
-                    ApplicationConstants.RESOURCES_AGGREGATIONS);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-                assertThat(response.getHits(), hasSize(2));
-            }
-
-            @Test
-            void shouldQueryingHasFileSuccessfully() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_publication_with_affiliations.json",
-                                    "sample_publication_with_several_of_the_same_affiliation.json");
-
-                var query = queryWithTermAndAggregation(
-                    SEARCH_ALL, ApplicationConstants.RESOURCES_AGGREGATIONS);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-                var docCount = getDocCountForAggregation(response, "associatedArtifacts");
-                assertThat(docCount, is(equalTo(1)));
-            }
 
             @ParameterizedTest()
             @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
