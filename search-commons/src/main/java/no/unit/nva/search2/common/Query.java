@@ -37,7 +37,6 @@ import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
-import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -275,7 +274,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return QueryBuilders
             .multiMatchQuery(value, fields)
             .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-            .fuzziness(Fuzziness.AUTO)
             .operator(Operator.AND);
     }
 
