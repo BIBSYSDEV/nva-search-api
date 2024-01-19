@@ -68,6 +68,8 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 public final class ResourceQuery extends Query<ResourceParameter> {
 
 
+    public static final String FILTER = "filter";
+
     private ResourceQuery() {
         super();
         assignStatusImpossibleWhiteList();
@@ -145,12 +147,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : boolQuery();
-
-        if (isLookingForOneContributor()) {
-            assert queryBuilder instanceof BoolQueryBuilder;
-            addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
-        }
+                : makeBoolQuery(userSettingsClient);
 
         var builder = new SearchSourceBuilder()
             .query(queryBuilder)
@@ -171,8 +168,16 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
+    private BoolQueryBuilder makeBoolQuery(UserSettingsClient userSettingsClient) {
+        var queryBuilder = boolQuery();
+        if (isLookingForOneContributor()) {
+            addPromotedPublications(userSettingsClient, queryBuilder);
+        }
+        return queryBuilder;
+    }
+
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter("filter", getFilters());
+        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -209,7 +214,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return hasOneValue(CONTRIBUTOR);
     }
 
-    @JacocoGenerated
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
         var promotedPublications =
             attempt(() -> userSettingsClient.doSearch(this))

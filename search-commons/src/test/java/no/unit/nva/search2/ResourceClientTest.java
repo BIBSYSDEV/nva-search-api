@@ -2,6 +2,7 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.constant.Words.HAS_FILE;
@@ -31,6 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -70,8 +75,10 @@ class ResourceClientTest {
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     public static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+    private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
+    
     private static String indexName;
 
     @BeforeAll
@@ -82,7 +89,13 @@ class ResourceClientTest {
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-        searchClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider);
+        var mochedHttpClient = mock(HttpClient.class);
+
+        var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+        var response = mockedHttpResponse("user_settings.json");
+        when(mochedHttpClient.send(any(), any()))
+            .thenReturn(response);
+        searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, cachedJwtProvider);
         indexName = generateIndexName();
 
         createIndex();
@@ -151,6 +164,71 @@ class ResourceClientTest {
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(4));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
                        is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
+        }
+
+        @Test
+        void userSettingsNotFound1() throws IOException, InterruptedException, BadRequestException {
+            var mochedHttpClient = mock(HttpClient.class);
+            var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+            var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 200);
+            when(mochedHttpClient.send(any(), any()))
+                .thenReturn(mockedResponse);
+            var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
+                setupMockedCachedJwtProvider());
+
+            var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
+            var response = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .doSearch(searchClient);
+
+            assertNotNull(response);
+        }
+
+        @Test
+        void userSettingsNotFound2() throws IOException, InterruptedException, BadRequestException {
+            var mochedHttpClient = mock(HttpClient.class);
+            var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+            var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 404);
+            when(mochedHttpClient.send(any(), any()))
+                .thenReturn(mockedResponse);
+            var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
+                setupMockedCachedJwtProvider());
+
+            var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
+            var response = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .doSearch(searchClient);
+
+            assertNotNull(response);
+        }
+
+        @Test
+        void userSettingsFailsFound1() throws IOException, InterruptedException, BadRequestException {
+            var mochedHttpClient = mock(HttpClient.class);
+            var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+            when(mochedHttpClient.send(any(), any()))
+                .thenThrow(new IOException("Not found"));
+            var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
+                setupMockedCachedJwtProvider());
+
+            var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
+            var response = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .doSearch(searchClient);
+
+            assertNotNull(response);
         }
 
         @Test

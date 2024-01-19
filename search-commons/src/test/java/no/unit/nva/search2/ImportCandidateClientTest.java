@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.enums.ImportCandidateParameter.CREATED_DATE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
@@ -166,6 +167,18 @@ class ImportCandidateClientTest {
                              .doSearch(importCandidateClient));
         }
 
+        @ParameterizedTest
+        @MethodSource("uriInvalidProvider")
+        void failToSetREQUIRED(URI uri) {
+            assertThrows(BadRequestException.class,
+                () -> ImportCandidateQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE, CREATED_DATE)
+                    .build()
+                    .doSearch(importCandidateClient));
+        }
+
         static Stream<URI> uriSortingProvider() {
             return Stream.of(
                 URI.create(
@@ -196,11 +209,14 @@ class ImportCandidateClientTest {
                 URI.create("https://example.com/?title_should=antibacterial,Fishing&size=2"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title&size=1"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
-                URI.create("https://example.com/?query=European&fields=all&size=3"));
+                URI.create("https://example.com/?query=European&fields=all&size=3"),
+                URI.create("https://example.com/?query=European&size=3"));
         }
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
+                URI.create("https://example.com/?size=7&sort="),
+                URI.create("https://example.com/?query=European&fields"),
                 URI.create("https://example.com/?size=8&sort=epler"),
                 URI.create("https://example.com/?size=8&sort=type:DEdd"),
                 URI.create("https://example.com/?categories=hello+world"),

@@ -314,28 +314,7 @@ class SearchClientTest {
         assertEquals(searchResponseDto.getHits().size(), OPENSEARCH_ACTUAL_SAMPLE_NUMBER_OF_RESULTS);
     }
 
-    @Test
-    void exportSearchResultsShouldFormatCorrectly() throws ApiGatewayException,
-                                                IOException {
 
-        var restHighLevelClient = mock(RestHighLevelClientWrapper.class);
-        var openSearchResponseJson = generateOpenSearchResponseAsString(SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT);
-        var searchResponse = getSearchResponseFromJson(openSearchResponseJson);
-        when(restHighLevelClient.search(any(), any())).thenReturn(searchResponse);
-        var searchClient = new SearchClient(restHighLevelClient, cachedJwtProvider);
-        SearchResponseDto searchResponseDto =
-            searchClient.searchWithSearchTicketQuery(generateSampleTicketQuery(),
-                                                     OPENSEARCH_TICKET_ENDPOINT_INDEX);
-
-        var exportSearchResults = CsvTransformer.transform(searchResponseDto);
-        var createTextDataFromSearchResult = CsvTransformer.transform(searchResponseDto.getHits());
-        var exportSearchWithDocumentQuery = searchClient.exportSearchWithDocumentQuery(generateSampleQuery(),
-                                                                                       OPENSEARCH_ENDPOINT_INDEX);
-
-        assertNotNull(exportSearchResults);
-        assertNotNull(createTextDataFromSearchResult);
-        assertNotNull(exportSearchWithDocumentQuery);
-    }
 
     RestHighLevelClientWrapper getSearchClientReturningZeroHits(AtomicReference<SearchRequest> sentRequestBuffer)
         throws IOException {

@@ -60,7 +60,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Set<K> otherRequiredKeys;
     protected final transient QueryTools<K> opensearchQueryTools;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
-    private transient List<QueryBuilder> filters = new ArrayList<>();
+    private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 

@@ -145,7 +145,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    default -> {
+                    default -> { /* do nothing */
                     }
                 }
             });
