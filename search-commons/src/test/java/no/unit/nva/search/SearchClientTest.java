@@ -73,8 +73,6 @@ class SearchClientTest {
     public static final String SAMPLE_TERM = "SampleSearchTerm";
     public static final String EXPECTED_TICKETS_AGGREGATIONS =
         "sample_opensearch_ticket_response_searchresponsedto_aggregations.json";
-    public static final String SAMPLE_OPENSEARCH_RESPONSE_RESPONSE_EXPORT
-        = "sample_opensearch_response_export.json";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
     private static final int SAMPLE_FROM = 0;
@@ -381,7 +379,7 @@ class SearchClientTest {
                    .filter(queryClause -> isNull(queryClause.queryName())
                                           || !queryClause.queryName().equals(VIEWING_SCOPE_QUERY_NAME))
                    .map(queryClause -> (BoolQueryBuilder) queryClause)
-                   .map(query -> query.should())
+                   .map(BoolQueryBuilder::should)
                    .flatMap(List::stream)
                    .map(q -> (BoolQueryBuilder) q);
     }
