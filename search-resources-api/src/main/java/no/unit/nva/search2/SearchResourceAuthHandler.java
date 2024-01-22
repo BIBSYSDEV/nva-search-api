@@ -2,9 +2,11 @@ package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
@@ -35,8 +37,11 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-        //TODO verify user access rights?
+    protected String processInput(Void input, RequestInfo requestInfo, Context context)
+        throws BadRequestException, UnauthorizedException {
+
+        validateAccessRight(requestInfo);
+
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
@@ -44,6 +49,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
                 .validate()
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+                .withOrganization(requestInfo.getCurrentCustomer())
                 .doSearch(opensearchClient);
     }
 
@@ -55,5 +61,11 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
+    }
+
+    private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
+        if (!requestInfo.userIsAuthorized(AccessRight.MANAGE_OWN_AFFILIATION)) {
+            throw new UnauthorizedException();
+        }
     }
 }
