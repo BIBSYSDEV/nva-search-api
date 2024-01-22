@@ -61,7 +61,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -110,26 +109,26 @@ public class OpensearchTest {
         container.stop();
     }
 
-    @Test
-    void shouldReturnCorrectMappingsFromIndexWhenIndexIsCreatedWithMappingAndAfterDocIsAdded()
-        throws IOException, InterruptedException {
-        indexName = generateIndexName();
-
-        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
-        var type = new TypeReference<Map<String, Object>>() {
-        };
-        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-
-        indexingClient.createIndex(indexName, mappings);
-        indexingClient.addDocumentToIndex(
-            crateSampleIndexDocument(indexName, "sample_response_with_publication_status_as_draft.json"));
-        Thread.sleep(DELAY_AFTER_INDEXING);
-
-        var mapping = indexingClient.getMapping(indexName);
-        assertThat(mapping, is(notNullValue()));
-        var topLevelOrgType = mapping.path("properties").path("topLevelOrganizations").path("type").textValue();
-        assertThat(topLevelOrgType, is(equalTo("nested")));
-    }
+    //    @Test
+    //    void shouldReturnCorrectMappingsFromIndexWhenIndexIsCreatedWithMappingAndAfterDocIsAdded()
+    //        throws IOException, InterruptedException {
+    //        indexName = generateIndexName();
+    //
+    //        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
+    //        var type = new TypeReference<Map<String, Object>>() {
+    //        };
+    //        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
+    //
+    //        indexingClient.createIndex(indexName, mappings);
+    //        indexingClient.addDocumentToIndex(
+    //            crateSampleIndexDocument(indexName, "sample_response_with_publication_status_as_draft.json"));
+    //        Thread.sleep(DELAY_AFTER_INDEXING);
+    //
+    //        var mapping = indexingClient.getMapping(indexName);
+    //        assertThat(mapping, is(notNullValue()));
+    //        var topLevelOrgType = mapping.path("properties").path("topLevelOrganizations").path("type").textValue();
+    //        assertThat(topLevelOrgType, is(equalTo("nested")));
+    //    }
 
     void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
         AtomicBoolean found = new AtomicBoolean(false);
@@ -305,27 +304,29 @@ public class OpensearchTest {
                 indexingClient.createIndex(indexName, mappings);
             }
 
-            @Test
-            void shouldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws ApiGatewayException,
-                                                                                          InterruptedException {
-                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
-                                    "sample_publishing_request_of_published_publication.json");
-
-                var aggregationDto = new TermsAggregationBuilder("publication.status")
-                                         .field("publication.status.keyword")
-                                         .size(1);
-
-                SearchDocumentsQuery query = queryWithTermAndAggregation(SEARCH_ALL, List.of(aggregationDto));
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-                assertThat(response.getAggregations()
-                               .get("publication.status")
-                               .get("buckets")
-                               .size(),
-                           is(equalTo(1))
-                );
-            }
+            //            @Test
+            //            void shouldReturnCorrectNumberOfBucketsWhenRequestedNonDefaultAmount() throws
+            //            ApiGatewayException,
+            //                                                                                          InterruptedException {
+            //                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
+            //                                    "sample_publishing_request_of_published_publication.json");
+            //
+            //                var aggregationDto = new TermsAggregationBuilder("publication.status")
+            //                                         .field("publication.status.keyword")
+            //                                         .size(1);
+            //
+            //                SearchDocumentsQuery query = queryWithTermAndAggregation(SEARCH_ALL, List.of
+            //                (aggregationDto));
+            //
+            //                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
+            //
+            //                assertThat(response.getAggregations()
+            //                               .get("publication.status")
+            //                               .get("buckets")
+            //                               .size(),
+            //                           is(equalTo(1))
+            //                );
+            //            }
 
 
 

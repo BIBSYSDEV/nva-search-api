@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -129,28 +128,30 @@ class ResourceClientTest {
 
         @Test
         void shouldCheckFacets() throws BadRequestException {
+            var hostAddress = URI.create(container.getHttpHostAddress());
+
             var uri1 = URI.create("https://x.org/?size=20&aggregation=all");
-            var uri2 = URI.create("https://x.org/?size=20&aggregation=entityDescription,associatedArtifacts," +
-                "topLevelOrganizations,fundings,status");
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
+                .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
-            var query2 = ResourceQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri2))
-                .withRequiredParameters(FROM, SIZE)
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response1 = searchClient.doSearch(query1);
-            var response2 = searchClient.doSearch(query2);
-
             assertNotNull(response1);
+
+            var uri2 = URI.create("https://x.org/?size=20&aggregation=entityDescription,associatedArtifacts," +
+                                  "topLevelOrganizations,fundings,status");
+            var query2 = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri2))
+                .withOpensearchUri(hostAddress)
+                .withRequiredParameters(FROM, SIZE)
+                .build()
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+            var response2 = searchClient.doSearch(query2);
             assertNotNull(response2);
 
-            assertEquals(response1.aggregations(),response2.aggregations());
+            assertEquals(response1.aggregations(), response2.aggregations());
 
             var aggregations = query1.toPagedResponse(response1).aggregations();
 
@@ -179,8 +180,8 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .doSearch(searchClient);
@@ -201,8 +202,8 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .doSearch(searchClient);
@@ -222,8 +223,8 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .doSearch(searchClient);
@@ -238,13 +239,33 @@ class ResourceClientTest {
             var pagedResult =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE)
                     .build()
                     .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION )
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
+        }
+
+        @Test
+        void withOrganizationDoWork() throws BadRequestException {
+            var uri = URI.create("https://x.org/");
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE)
+                    .build()
+                    .withRequiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                    .withOrganization(
+                        URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+
+            var response = searchClient.doSearch(query);
+            assertNotNull(response);
+
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+            assertEquals(2, pagedSearchResourceDto.totalHits());
         }
 
         @ParameterizedTest
