@@ -81,6 +81,7 @@ public final class Resource {
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
     public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
+    public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";

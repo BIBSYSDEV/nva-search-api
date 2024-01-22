@@ -47,6 +47,7 @@ import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_PUBLISHE
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_TYPE_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
+import static no.unit.nva.search2.constant.Resource.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCE_OWNER_OWNER_KEYWORD;
@@ -139,6 +140,9 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER(KEYWORD, MUST, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_PUBLISHER),
+    PUBLISHER_ID(KEYWORD, MUST, PUBLISHER_ID_KEYWORD),
+    PUBLISHER_ID_NOT(KEYWORD, MUST_NOT, PUBLISHER_ID_KEYWORD),
+    PUBLISHER_ID_SHOULD(KEYWORD, SHOULD, PUBLISHER_ID_KEYWORD),
     TAGS(TEXT, ENTITY_TAGS),
     TAGS_NOT(TEXT, MUST_NOT, ENTITY_TAGS),
     TAGS_SHOULD(TEXT, SHOULD, ENTITY_TAGS),

@@ -96,7 +96,7 @@ class ResourceClientTest {
     class ResourceQueries {
 
         @Test
-        void shoulCheckMapping() {
+        void shouldCheckMapping() {
 
             var mapping = indexingClient.getMapping(indexName);
             assertThat(mapping, is(notNullValue()));
@@ -108,7 +108,7 @@ class ResourceClientTest {
         }
 
         @Test
-        void shoulCheckFacets() throws BadRequestException {
+        void shouldCheckFacets() throws BadRequestException {
             var uri1 = URI.create("https://x.org/?size=20&aggregation=all");
             var uri2 = URI.create("https://x.org/?size=20&aggregation=entityDescription,associatedArtifacts," +
                 "topLevelOrganizations,fundings,status");
@@ -427,7 +427,10 @@ class ResourceClientTest {
                 createArgument("QUERY=observations&fields=all", 3),
                 createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
                                + "&FIELDS=INSTITUTION", 2),
-                createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3)
+                createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3),
+                createArgument("PUBLISHER_ID=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2),
+                createArgument("PUBLISHER_ID_NOT=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 18),
+                createArgument("PUBLISHER_ID_SHOULD=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2)
             );
         }
     }
