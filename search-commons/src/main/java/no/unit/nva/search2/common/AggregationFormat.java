@@ -6,7 +6,6 @@ import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.constant.Words.HAS_FILE;
-import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEY;
 import static no.unit.nva.search2.constant.Words.LABELS;
 import static no.unit.nva.search2.constant.Words.LICENSE;
@@ -88,9 +87,6 @@ public final class AggregationFormat {
     }
 
     private static JsonNode getBucketOrValue(JsonNode node) {
-        if (node.at(Constants.ID_BUCKETS).isArray()) {
-            return node.at(Constants.ID_BUCKETS);
-        }
         if (node.has(BUCKETS)) {
             return node.at(Constants.BUCKETS_PTR);
         }
@@ -100,9 +96,6 @@ public final class AggregationFormat {
     private static JsonNode formatName(JsonNode nodeEntry) {
         var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
         var keyValue = nodeEntry.at(Constants.BUCKETS_KEY_PTR);
-        if (keyValue.toString().isEmpty()) {
-            keyValue = nodeEntry.at(Constants.KEY_PTR);
-        }
         outputAggregationNode.set(ENGLISH_CODE, keyValue);
         return outputAggregationNode;
     }
@@ -143,7 +136,6 @@ public final class AggregationFormat {
         public static final String BUCKETS_PTR = SLASH + BUCKETS;
         public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;
         public static final String BUCKETS_KEY_PTR = SLASH + BUCKETS + KEY_PTR;
-        public static final String ID_BUCKETS = SLASH + ID + SLASH + BUCKETS;
     }
 
 }

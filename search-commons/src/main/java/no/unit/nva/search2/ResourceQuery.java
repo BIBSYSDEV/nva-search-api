@@ -145,10 +145,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     /**
      * Filter on organization.
-     * <P>Only documents belonging to organization specified are searchable (for )
+     * <P>Only documents belonging to organization specified are searchable (for the user)
      * </p>
      *
-     * @param organization
+     * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
     public ResourceQuery withOrganization(URI organization) {

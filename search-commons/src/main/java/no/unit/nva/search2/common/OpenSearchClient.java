@@ -49,8 +49,8 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
         return attempt(() -> httpClient.send(httpRequest, bodyHandler))
             .orElse(httpResponseFailure -> {
-                logger.error(httpResponseFailure.getException().getMessage());
-                return httpResponseFailure.orElseThrow();
+                logger.error(httpResponseFailure.getException().toString());
+                return null;
             });
     }
 
