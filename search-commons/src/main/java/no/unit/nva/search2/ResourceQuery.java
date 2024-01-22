@@ -12,6 +12,7 @@ import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
@@ -39,6 +40,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Resource.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
+import static no.unit.nva.search2.constant.Resource.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
@@ -47,6 +49,7 @@ import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
@@ -139,6 +142,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(PUBLICATION_STATUS, values)
             .queryName(STATUS);
+        this.addFilter(filter);
+        return this;
+    }
+
+    public ResourceQuery withOrganization(URI organization) {
+        final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
+                               .queryName(PUBLISHER);
         this.addFilter(filter);
         return this;
     }
