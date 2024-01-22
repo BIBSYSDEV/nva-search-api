@@ -267,6 +267,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.fieldName(), ALL);
                     default -> {
                     }
                 }
