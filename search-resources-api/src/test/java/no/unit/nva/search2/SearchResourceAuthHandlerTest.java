@@ -53,12 +53,12 @@ class SearchResourceAuthHandlerTest {
     }
 
     @Test
-    void shouldOnlyReturnPublicationsFromUsersOrganizationWhenQuerying() throws IOException, URISyntaxException {
+    void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying() throws IOException, URISyntaxException {
         prepareRestHighLevelClientOkResponse();
 
         var organization = new URI("https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
 
-        handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_OWN_AFFILIATION),
+        handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_RESOURCES_STANDARD),
                               outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -67,6 +67,19 @@ class SearchResourceAuthHandlerTest {
         assertNotNull(gatewayResponse.headers());
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
         assertThat(actualBody.hits().size(), is(equalTo(2)));
+    }
+
+    @Test
+    void shouldReturnOkWhenUserIsEditor() throws IOException {
+        prepareRestHighLevelClientOkResponse();
+
+        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.MANAGE_OWN_AFFILIATION);
+        handler.handleRequest(input, outputStream, contextMock);
+
+        var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_OK, gatewayResponse.statusCode());
     }
 
     @Test
