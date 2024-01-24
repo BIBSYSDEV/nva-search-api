@@ -15,7 +15,7 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
 
     @Override
     protected Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        if (FieldOperator.SHOULD.equals(key.searchOperator())) {
+        if (FieldOperator.SHOULD.equals(key.searchOperator()) || key.isNested()) {
             return buildAnyComboMustHitQuery(key, values)
                 .flatMap(builder -> queryTools.queryToEntry(key, builder));
         } else {

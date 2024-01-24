@@ -109,15 +109,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
-        var builder = new SearchSourceBuilder().query(queryBuilder);
+        var builder = new SearchSourceBuilder()
+            .query(queryBuilder)
+            .size(getValue(SIZE).as())
+            .from(getValue(FROM).as())
+            .trackTotalHits(true);
 
         handleSearchAfter(builder);
 
         IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
 
-        builder.size(getValue(SIZE).as());
-        builder.from(getValue(FROM).as());
-        builder.trackTotalHits(true);
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));

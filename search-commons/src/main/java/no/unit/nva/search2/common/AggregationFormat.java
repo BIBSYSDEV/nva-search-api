@@ -65,7 +65,7 @@ public final class AggregationFormat {
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
-        return Constants.facetPaths.entrySet().stream().map(
+        return Constants.facetResourcePaths.entrySet().stream().map(
             entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
         );
     }
@@ -120,7 +120,7 @@ public final class AggregationFormat {
     @JacocoGenerated
     static final class Constants {
 
-        public static final Map<String, String> facetPaths = Map.of(
+        public static final Map<String, String> facetResourcePaths = Map.of(
             TYPE, "/filter/entityDescription/reference/publicationInstance/type",
             SERIES, "/filter/entityDescription/reference/publicationContext/series",
             STATUS, "/filter/status",

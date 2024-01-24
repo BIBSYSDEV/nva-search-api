@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -60,6 +61,8 @@ import static no.unit.nva.search2.constant.Words.PUBLISHED_DATE;
 import static no.unit.nva.search2.constant.Words.Q;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
@@ -93,19 +96,18 @@ public enum ResourceParameter implements ParameterKey {
     CONTEXT_TYPE(KEYWORD, MUST, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTOR(KEYWORD, MUST, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_SHOULD(KEYWORD, SHOULD, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_NAME(TEXT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-    CONTRIBUTOR_NAME_NOT(TEXT, MUST_NOT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-    CONTRIBUTOR_NAME_SHOULD(FUZZY_TEXT, SHOULD, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-    CREATED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, CREATED_DATE),
-    CREATED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, CREATED_DATE),
+    CONTRIBUTOR(KEYWORD, MUST, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, true),
+    CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, true),
+    CONTRIBUTOR_SHOULD(KEYWORD, SHOULD, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, true),
+    CONTRIBUTOR_NAME(TEXT, MUST, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, true),
+    CONTRIBUTOR_NAME_NOT(TEXT, MUST_NOT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, true),
+    CONTRIBUTOR_NAME_SHOULD(FUZZY_TEXT, SHOULD, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, true),
+    CREATED_BEFORE(ParamKind.DATE, LESS_THAN, CREATED_DATE),
+    CREATED_SINCE(ParamKind.DATE, GREATER_THAN_OR_EQUAL_TO, CREATED_DATE),
     DOI(KEYWORD, REFERENCE_DOI_KEYWORD),
     DOI_NOT(KEYWORD, MUST_NOT, REFERENCE_DOI_KEYWORD),
     DOI_SHOULD(TEXT, SHOULD, REFERENCE_DOI_KEYWORD),
-    FUNDING(KEYWORD, MUST, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null,
-            PATTERN_IS_FUNDING, null),
+    FUNDING(KEYWORD, MUST, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null, null),
     FUNDING_SOURCE(TEXT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
@@ -114,9 +116,9 @@ public enum ResourceParameter implements ParameterKey {
     ID(KEYWORD, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),
-    INSTANCE_TYPE(KEYWORD, MUST, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null),
-    INSTANCE_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null),
-    INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_SHOULD_KEYS, null, null),
+    INSTANCE_TYPE(KEYWORD, MUST, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS),
+    INSTANCE_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS),
+    INSTANCE_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_SHOULD_KEYS),
     INSTITUTION(TEXT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
@@ -129,61 +131,61 @@ public enum ResourceParameter implements ParameterKey {
     LICENSE(KEYWORD, MUST, ASSOCIATED_ARTIFACTS_LICENSE),
     LICENSE_NOT(KEYWORD, MUST_NOT, ASSOCIATED_ARTIFACTS_LICENSE),
     LICENSE_SHOULD(KEYWORD, SHOULD, ASSOCIATED_ARTIFACTS_LICENSE),
+    MODIFIED_BEFORE(ParamKind.DATE, LESS_THAN, MODIFIED_DATE),
+    MODIFIED_SINCE(ParamKind.DATE, GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
     ORCID(KEYWORD, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_SHOULD(TEXT, SHOULD, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
-    MODIFIED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, MODIFIED_DATE),
-    MODIFIED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
     PARENT_PUBLICATION(KEYWORD, MUST, PARENT_PUBLICATION_ID),
     PARENT_PUBLICATION_SHOULD(TEXT, SHOULD, PARENT_PUBLICATION_ID),
     PROJECT(KEYWORD, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, MUST_NOT, PROJECTS_ID),
     PROJECT_SHOULD(KEYWORD, SHOULD, PROJECTS_ID),
-    PUBLISH_STATUS(KEYWORD, MUST, PUBLICATION_STATUS),
-    PUBLISH_STATUS_NOT(KEYWORD, MUST_NOT, PUBLICATION_STATUS),
-    PUBLISH_STATUS_SHOULD(KEYWORD, SHOULD, PUBLICATION_STATUS),
+    PUBLICATION_YEAR_BEFORE(NUMBER, LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
+    PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
+        PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS),
+    PUBLICATION_YEAR_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
+    PUBLISHED_BEFORE(ParamKind.DATE, LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_BETWEEN(ParamKind.DATE, BETWEEN, PUBLISHED_DATE),
-    PUBLISHED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
-    PUBLISHED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
+    PUBLISHED_SINCE(ParamKind.DATE, GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
     PUBLISHER(KEYWORD, MUST, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_ID(KEYWORD, MUST, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(KEYWORD, MUST_NOT, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(KEYWORD, SHOULD, PUBLISHER_ID_KEYWORD),
-    TAGS(TEXT, ENTITY_TAGS),
-    TAGS_NOT(TEXT, MUST_NOT, ENTITY_TAGS),
-    TAGS_SHOULD(TEXT, SHOULD, ENTITY_TAGS),
+    SERIES(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    SERIES_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    SERIES_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    STATUS(KEYWORD, MUST, PUBLICATION_STATUS),
+    STATUS_NOT(KEYWORD, MUST_NOT, PUBLICATION_STATUS),
+    STATUS_SHOULD(KEYWORD, SHOULD, PUBLICATION_STATUS),
+    TAGS(TEXT, MUST, ENTITY_TAGS, true),
+    TAGS_NOT(TEXT, MUST_NOT, ENTITY_TAGS, true),
+    TAGS_SHOULD(TEXT, SHOULD, ENTITY_TAGS, true),
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, 2F),
     TITLE_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(KEYWORD, MUST, TOP_LEVEL_ORG_ID),
+    TOP_LEVEL_ORGANIZATION(KEYWORD, MUST, TOP_LEVEL_ORG_ID, true),
     UNIT(KEYWORD, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, SHOULD, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_NOT(KEYWORD, MUST_NOT, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_SHOULD(TEXT, SHOULD, RESOURCE_OWNER_OWNER_KEYWORD),
     USER_AFFILIATION(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
-    PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
-    PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
-                            PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS, null, null),
-    SERIES(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_SERIES),
-    SERIES_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_SERIES),
-    SERIES_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    USER_NOT(KEYWORD, MUST_NOT, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER_SHOULD(TEXT, SHOULD, RESOURCE_OWNER_OWNER_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY),
     FIELDS(CUSTOM),
     // Pagination parameters
     AGGREGATION(CUSTOM),
     PAGE(NUMBER),
-    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
-    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
-    SORT(ParamKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(CUSTOM, MUST, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY),
+    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY),
+    SORT(ParamKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY),
+    SORT_ORDER(CUSTOM, MUST, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null, null),
     SEARCH_AFTER(CUSTOM),
     // ignored parameter
     LANG(CUSTOM);
@@ -205,33 +207,41 @@ public enum ResourceParameter implements ParameterKey {
     private final String errorMsg;
     private final ParamKind paramkind;
     private final Float boost;
+    private final Boolean isNested;
 
     ResourceParameter(ParamKind kind) {
-        this(kind, MUST, null, null, null, null);
+        this(kind, MUST, null, null, null, null, null);
     }
 
     ResourceParameter(ParamKind kind, String fieldsToSearch) {
-        this(kind, MUST, fieldsToSearch, null, null, null);
+        this(kind, MUST, fieldsToSearch, null, null, null, null);
     }
 
     ResourceParameter(ParamKind kind, String fieldsToSearch, Float boost) {
-        this(kind, MUST, fieldsToSearch, null, null, boost);
+        this(kind, MUST, fieldsToSearch, null, null, boost, null);
     }
 
     ResourceParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
-        this(kind, operator, fieldsToSearch, null, null, null);
+        this(kind, operator, fieldsToSearch, null, null, null, null);
     }
 
-    ResourceParameter(
-        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+    ResourceParameter(ParamKind paramKind, FieldOperator operator, String fieldsToSearch, String keyPattern) {
+        this(paramKind, operator, fieldsToSearch, keyPattern, null, null, null);
+    }
+
+    ResourceParameter(ParamKind paramKind, FieldOperator operator, String fieldsToSearch, boolean isNested) {
+        this(paramKind, operator, fieldsToSearch, null, null, null, isNested);
+    }
+
+    ResourceParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern,
+                      String valuePattern, Float boost, Boolean isNested) {
 
         this.key = this.name().toLowerCase(Locale.getDefault());
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{key};
+            : new String[] {key};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
@@ -239,7 +249,9 @@ public enum ResourceParameter implements ParameterKey {
             ? keyPattern
             : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
+        this.isNested = !isNull(isNested) && isNested;
     }
+
 
     @Override
     public String fieldName() {
@@ -279,6 +291,11 @@ public enum ResourceParameter implements ParameterKey {
     @Override
     public FieldOperator searchOperator() {
         return fieldOperator;
+    }
+
+    @Override
+    public Boolean isNested() {
+        return isNested;
     }
 
     @Override

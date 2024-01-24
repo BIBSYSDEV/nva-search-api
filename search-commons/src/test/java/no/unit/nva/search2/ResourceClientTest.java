@@ -404,149 +404,21 @@ class ResourceClientTest {
         }
 
         static Stream<Arguments> uriProvider() {
-            return Stream.of(
-                createArgument("page=0", 20),
-                createArgument("ABSTRACT=NAKSIN&page=0", 3),
-                createArgument("ABSTRACT_NOT=NAKSIN&page=0", 17),
-                createArgument("ABSTRACT_SHOULD=probability,hazard&page=0", 6),
-                createArgument("CATEGORY=ReportResearch&page=0", 10),
-                createArgument("TYPE_should=ReportResearch,AcademicArticle", 19),
-                createArgument("CONTEXT_TYPE=Anthology", 1),
-                createArgument("CONTEXT_TYPE=Report", 10),
-                createArgument("CONTEXT_TYPE_SHOULD=Report", 10),
-                createArgument("CONTEXT_TYPE_NOT=Report", 10),
-                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3),
-                createArgument("CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                               + "https://api.dev.nva.aws.unit.no/cristin/person/1136255", 0),
-                createArgument("CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 17),
-                createArgument("CONTRIBUTOR_NAME=Kate+Robinson,Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland", 1),
-                createArgument("CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd", 1),
-                createArgument("CONTRIBUTOR_NAME=Gauer,Møkkelgjerd", 1),
-                createArgument("CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd", 8),
-                createArgument("CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd", 8),
-                createArgument("DOI=https://doi.org/10.1371/journal.pone.0047887", 1),
-                createArgument("DOI_NOT=https://doi.org/10.1371/journal.pone.0047887", 19),
-                createArgument("DOI_SHOULD=https://doi.org/10.1371/journal.pone.0047887", 1),
-                createArgument("DOI=https://doi.org/10.1371/journal.pone.0047855", 1),
-                createArgument("DOI_SHOULD=10.1371/journal.pone.0047887", 1),
-                createArgument("DOI_SHOULD=0047855,0047887", 2),
-                createArgument("FUNDING=AFR:296896", 0),
-                createArgument("FUNDING=NFR:296896", 1),
-                createArgument("FUNDING=NFR:3333", 0),
-                createArgument("FUNDING_SOURCE=NFR", 2),
-                createArgument("FUNDING_SOURCE=NFR,1234", 1),
-                createArgument("FUNDING_SOURCE=1234", 1),
-                createArgument("FUNDING_SOURCE=Norges+forskningsråd", 2),
-                createArgument("FUNDING_SOURCE_NOT=Norges+forskningsråd", 18),
-                createArgument("FUNDING_SOURCE_SHOULD=Norges", 2),
-                createArgument("FUNDING_SOURCE=Research+Council+of+Norway+(RCN)", 2),
-                createArgument("hasFile=PublishedFile", 19),
-                createArgument("hasFile=1", 19),
-                createArgument("HASFILE=true", 19),
-                createArgument("HAS_FILE=0", 1),
-                createArgument("ID=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 1),
-                createArgument("ID=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
-                createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 1),
-                createArgument("ID_NOT=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39", 19),
-                createArgument("ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&query=25e43dc3027e", 10),
-                createArgument("ID_SHOULD=018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39,"
-                               + "018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 2),
-                createArgument("ID_SHOULD=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
-                               + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("CaTeGoRy=ReportResearch&page=0", 10),
-                createArgument("type_should=ReportResearch,AcademicArticle", 19),
-                createArgument("instanceType=AcademicArticle", 9),
-                createArgument("INSTANCE_TYPE_NOT=AcademicArticle", 11),
-                createArgument("INSTANCE_TYPE_SHOULD=AcademicArticle", 9),
-                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 2),
-                createArgument("INSTITUTION_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", 18),
-                createArgument("INSTITUTION_SHOULD=Forsvarets+høgskole", 3),
-                createArgument("INSTITUTION=1627.0.0.0", 3),
-                createArgument("INSTITUTION=Forsvarets+høgskole", 3),
-                createArgument("INSTITUTION=Norwegian+Defence+University+College", 3),
-                createArgument("INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 3),
-                createArgument("INSTITUTION_NOT=Forsvarets+høgskole", 17),
-                createArgument("INSTITUTION_NOT"
-                               + "=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 17),
-                createArgument("INSTITUTION_SHOULD=1627.0.0.0", 3),
-                createArgument("INSTITUTION_SHOULD=1627.0.0.0,20754.6.0.0", 3),
-                createArgument("INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0", 3),
-                createArgument("INSTITUTION_should=194.63.55.0", 1),
-                createArgument("ISBN=9788202535032", 1),
-                createArgument("ISBN_NOT=9788202535032", 19),
-                createArgument("ISBN_SHOULD=9788202535032", 1),
-                createArgument("ISSN=1872-9460", 0),
-                createArgument("ISSN=1435-9529", 1),
-                createArgument("ISSN_NOT=1435-9529", 19),
-                createArgument("ISSN_SHOULD=1435-9529", 1),
-                createArgument("LICENSE=https://creativecommons.org/licenses/by/4.0", 5),
-                createArgument("LICENSE_NOT=https://creativecommons.org/licenses/by/4.0", 15),
-                createArgument("LICENSE_SHOULD=https://creativecommons.org/licenses/by/4.0", 5),
-                createArgument("ORCID=https://sandbox.orcid.org/0000-0003-4147-3499", 3),
-                createArgument("ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499", 17),
-                createArgument("ORCID_SHOULD=4147-3499", 3),
-                createArgument("PARENT_PUBLICATION=test", 0),
-                createArgument("PARENT_PUBLICATION_SHOULD=test", 0),
-                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813", 2),
-                createArgument("PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
-                               + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 1),
-                createArgument("PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
-                               + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 17),
-                createArgument("PROJECT_SHOULD=https://api.dev.nva.aws.unit.no/cristin/project/14334813,"
-                               + "https://api.dev.nva.aws.unit.no/cristin/project/14334631", 3),
-                createArgument("PUBLISHER=NGI+–+Norges+Geotekniske+institutt", 9),
-                createArgument("PUBLISHER_NOT=NGI+–+Norges+Geotekniske+institutt", 11),
-                createArgument("PUBLISHER_SHOULD=NGI+–+Norges+Geotekniske+institutt", 9),
-                createArgument("SEARCH_ALL=Fakultet+for+arkitektur", 1),
-                createArgument("TAGS=NAKSIN,Avalanche-RnD&page=0", 1),
-                createArgument("TAGS_NOT=NAKSIN&page=0", 19),
-                createArgument("TAGS_SHOULD=NAKSIN,Avalanche-RnD&page=0", 9),
-                createArgument("TITLE=Kjetils+ticket+test", 1),
-                createArgument("TITLE_NOT=Kjetils+ticket+test", 19),
-                createArgument("TITLE_NOT=Kjetils", 18),
-                createArgument("TITLE_SHOULD=Simple", 3),
-                createArgument(
-                    "TOP_LEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", 2),
-                createArgument("UNIT=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0", 3),
-                createArgument("UNIT_NOT=https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0", 17),
-                createArgument("UNIT_SHOULD=194.63.55.0", 1),
-                createArgument("USER=1136254@20754.0.0.0", 2),
-                createArgument("USER_NOT=1136254@20754.0.0.0", 18),
-                createArgument("USER_SHOULD=1136254@", 2),
-                createArgument("MODIFIED_BEFORE=1872-01-01&MODIFIED_SINCE=9460-01-01", 0),
-                createArgument("PUBLICATION_YEAR_BEFORE=2022", 4),
-                createArgument("PUBLICATION_YEAR_SINCE=2023", 14),
-                createArgument("PUBLICATION_YEAR_SHOULD=2022", 2),
-                createArgument("FIELDS=category,title,CONTRIBUTOR_NAME&query=Kjetil+Møkkelgjerd", 3),
-                createArgument("TOPLEVEL_ORGANIZATION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
-                               2),
-                createArgument("PUBLISHED_BETWEEN=2023-10-15,2023-11-05", 2),
-                createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
-                createArgument("PUBLISHED_SINCE=2023-11-05", 1),
-                createArgument("PUBLISH_STATUS_NOT=PUBLISHED", 1),
-                createArgument("SERIES=NGI-Rapport", 9),
-                createArgument("SERIES_NOT=NGI-Rapport", 11),
-                createArgument("SERIES_SHOULD=NGI-Rapport", 9),
-                createArgument("QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642"
-                               + "&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642", 0),
-                createArgument("QUERY=Forsvarets+høgskole&fields=INSTITUTION", 3),
-                createArgument("QUERY=Forsvarets+høgskole", 3),
-                createArgument("QUERY=Kjetil+Møkkelgjerd&fields=contributorName", 3),
-                createArgument("QUERY=observations&fields=all", 3),
-                createArgument("QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
-                               + "&FIELDS=INSTITUTION", 2),
-                createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3),
-                createArgument("PUBLISHER_ID=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2),
-                createArgument("PUBLISHER_ID_NOT=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 18),
-                createArgument("PUBLISHER_ID_SHOULD=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2)
-            );
+            return loadMapFromResource("resource_valid_test_url.json").entrySet().stream()
+                .map(entry -> createArgument(entry.getKey(),  entry.getValue()));
         }
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
         final var uriRoot = "https://x.org/?size=20&";
         return Arguments.of(URI.create(uriRoot + searchUri), expectedCount);
+    }
+
+    private static Map<String, Integer> loadMapFromResource(String resource) {
+        var mappingsJson = stringFromResources(Path.of(resource));
+        var type = new TypeReference<Map<String, Integer>>() {
+        };
+        return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
     private static void populateIndex() {

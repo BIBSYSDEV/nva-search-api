@@ -32,6 +32,8 @@ public interface ParameterKey {
 
     FieldOperator searchOperator();
 
+    Boolean isNested();
+
     String errorMessage();
 
     static Predicate<ParameterKey> equalTo(String name) {

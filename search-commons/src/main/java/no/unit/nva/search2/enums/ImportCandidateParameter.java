@@ -93,14 +93,14 @@ public enum ImportCandidateParameter implements ParameterKey {
     TITLE_SHOULD(TEXT, SHOULD, ImportCandidate.MAIN_TITLE_KEYWORD),
     TYPE(KEYWORD, ImportCandidate.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null, null),
     FIELDS(ParamKind.CUSTOM),
     // Pagination parameters
     PAGE(NUMBER),
-    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
-    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
-    SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(ParamKind.CUSTOM, MUST, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null, null),
+    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null, null),
+    SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null, null),
+    SORT_ORDER(ParamKind.CUSTOM, MUST, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null, null),
     SEARCH_AFTER(ParamKind.CUSTOM);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
@@ -120,33 +120,34 @@ public enum ImportCandidateParameter implements ParameterKey {
     private final String errorMsg;
     private final ParamKind paramkind;
     private final Float boost;
+    private final Boolean isNested;
 
     ImportCandidateParameter(ParamKind kind) {
-        this(kind, MUST, null, null, null, null);
+        this(kind, MUST, null, null, null, null, null);
     }
 
     ImportCandidateParameter(ParamKind kind, String fieldsToSearch) {
-        this(kind, MUST, fieldsToSearch, null, null, null);
+        this(kind, MUST, fieldsToSearch, null, null, null, null);
     }
 
     ImportCandidateParameter(ParamKind kind, String fieldsToSearch, Float boost) {
-        this(kind, MUST, fieldsToSearch, null, null, boost);
+        this(kind, MUST, fieldsToSearch, null, null, boost, null);
     }
 
     ImportCandidateParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
-        this(kind, operator, fieldsToSearch, null, null, null);
+        this(kind, operator, fieldsToSearch, null, null, null, null);
     }
 
     ImportCandidateParameter(
         ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+        Float boost, Boolean isNested) {
 
         this.key = this.name().toLowerCase(Locale.getDefault());
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{key};
+            : new String[] {key};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
@@ -154,6 +155,7 @@ public enum ImportCandidateParameter implements ParameterKey {
             ? keyPattern
             : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
+        this.isNested = isNested;
     }
 
     @Override
@@ -194,6 +196,11 @@ public enum ImportCandidateParameter implements ParameterKey {
     @Override
     public FieldOperator searchOperator() {
         return fieldOperator;
+    }
+
+    @Override
+    public Boolean isNested() {
+        return isNested;
     }
 
     @Override
