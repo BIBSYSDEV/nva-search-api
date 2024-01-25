@@ -53,51 +53,6 @@ public class MockedHttpResponse {
             public URI uri() {
                 return null;
             }
-            
-            @Override
-            public HttpClient.Version version() {
-                return null;
-            }
-        };
-    }
-
-    public static HttpResponse<Object> mockedHttpResponse(String filename, int statusCode) {
-        return new HttpResponse<>() {
-            @Override
-            public int statusCode() {
-                return statusCode;
-            }
-
-            @Override
-            public HttpRequest request() {
-                return null;
-            }
-
-            @Override
-            public Optional<HttpResponse<Object>> previousResponse() {
-                return Optional.empty();
-            }
-
-            @Override
-            public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
-                                      (s, s2) -> true);
-            }
-
-            @Override
-            public String body() {
-                return stringFromResources(Path.of(filename));
-            }
-
-            @Override
-            public Optional<SSLSession> sslSession() {
-                return Optional.empty();
-            }
-
-            @Override
-            public URI uri() {
-                return null;
-            }
 
             @Override
             public HttpClient.Version version() {
