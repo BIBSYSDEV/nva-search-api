@@ -415,7 +415,7 @@ class ResourceClientTest {
                 createArgument("PUBLISHED_BETWEEN=2023-10-15,2023-11-05", 2),
                 createArgument("PUBLISHED_BEFORE=2023-09-29", 5),
                 createArgument("PUBLISHED_SINCE=2023-11-05", 1),
-                createArgument("PUBLISH_STATUS_NOT=PUBLISHED", 1),
+                createArgument("STATUS_NOT=PUBLISHED", 1),
                 createArgument("SERIES=NGI-Rapport", 9),
                 createArgument("SERIES_NOT=NGI-Rapport", 11),
                 createArgument("SERIES_SHOULD=NGI-Rapport", 9),

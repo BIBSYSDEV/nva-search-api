@@ -78,410 +78,66 @@ paths:
     get:
       description: "Search for public available publications by given criteria"
       parameters:
-      - in: query
-        name: category
-        description: "Returns documents with this category code, only one category code is allowed."
-        example: "JournalArticle"
-        required: false
-        schema:
-          $ref: "#/components/schemas/CategoryEnum"
-      - in: query
-        name: category_not
-        description: "Returns documents without these category codes. Support list of Enums, seperated by space (+)."
-        example: "JournalArticle"
-        required: false
-        schema:
-          $ref: "#/components/schemas/CategoryEnum"
-      - in: query
-        name: category_should
-        description: "Returns documents with these category codes. Support list of Enums, seperated by space (+)."
-        example: "JournalArticle"
-        required: false
-        schema:
-          $ref: "#/components/schemas/CategoryEnum"
-      - in: query
-        name: contributor_id
-        description: "person id (URI)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: contributor
-        description: "returns document with Author's name or person id(URI)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: contributor_not
-        description: "returns document without Author's names or person ids(URI), seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: contributor_should
-        description: "returns document with Author's names or person ids(URI), seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: created_before
-        description: "Results created before and inclusive the given date, (yyyy-mm-dd)"
-        example: "2005-03-17"
-        required: false
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: created_since
-        description: "Results created since and inclusive the given date, (yyyy-mm-dd)
-        "
-        example: "2005-03-17"
-        required: false
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: doi
-        description: "returns document with this DOI id"
-        example: "10.1000/123456"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: doi_not
-        description: "returns document without these DOI ids, seperated by space (+)."
-        example: "10.1000/123456"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: doi_should
-        description: "returns document with these DOI ids, seperated by space (+)."
-        example: "10.1000/123456"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: fields
-        description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
-        example: category,contributor,funding
-        required: false
-        schema:
-          type: string
-          enum: [all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution ,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported]
-      - in: query
-        name: funding
-        description: "Funding source code e.g: NFR, and project_code together separated by ':'"
-        example: "NFR:1234"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: funding_source
-        description: "returns document with this funding source code"
-        example: "NFR"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: funding_source_not
-        description: "returns document without these funding source codes, seperated by space (+)."
-        example: "NFR"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: funding_source_should
-        description: "returns document with these funding source codes, seperated by space (+)."
-        example: "NFR"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: id
-        description: "returns document with the identifier (UUID)"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: id_not
-        description: "returns document without these identifiers (UUID), seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: id_should
-        description: "returns document with these identifiers (UUID), seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: institution
-        description: "returns document with Id, name or acronym of the institution the contributors belong to"
-        example:  [185, UiO, University of Oslo]
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: institution_not
-        description: "returns document without Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
-        example:  [185, UiO, University of Oslo]
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: institution_should
-        description: "returns document with Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
-        example:  [185, UiO, University of Oslo]
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: isbn
-        description: "returns document with this ISBN id"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: isbn_not
-        description: "returns document without these ISBN ids, seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: isbn_should
-        description: "returns document with these ISBN ids, seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: issn
-        description: "returns document with this issn"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: issn_not
-        description: "returns document without these issn, seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: issn_should
-        description: "returns document with these issn, seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: orcid
-        description: "returns document with this ORCID id"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: orcid_not
-        description: "returns document without these ORCID ids, seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: orcid_should
-        description: "returns document with these ORCID ids, seperated by space (+)."
-        required: false
-        schema:
-          type: string
-      - in: query
-        deprecated: true
-        name: lang
-        description: "Two letter language code. Using the 'lang' parameter, this is no longer in use, and are ignored"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: modified_before
-        description: "Results modified before and inclusive the given date, (yyyy-mm-dd)"
-        example: "2005-03-17"
-        required: false
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: modified_since
-        description: "Results modified since and inclusive the given date, (yyyy-mm-dd)"
-        example: "2005-03-17"
-        required: false
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: order
-        description: "SortOrder is either 'asc' or 'desc'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
-        example: "asc"
-        required: false
-        schema:
-          type: string
-          enum: [ asc, desc ]
-      - in: query
-        name: page
-        description: "Page number, zero based, see from and size."
-        example: "0"
-        required: false
-        schema:
-          type: number
-      - in: query
-        name: from
-        description: "Start result from item no. zero based [offset] is also accepted. Default is 0"
-        example: "0"
-        required: false
-        schema:
-          type: number
-      - in: query
-        name: size
-        description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15"
-        example: "15"
-        required: false
-        schema:
-          type: number
-      - in: query
-        name: project
-        description: "returns document with this project id (URI)"
-        example: "NFR"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: project_not
-        description: "returns document without these project ids (URI), seperated by space (+)."
-        example: "NFR"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: project_should
-        description: "returns document with these project ids (URI), seperated by space (+)."
-        example: "NFR"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: published_before
-        description: "Results published before and inclusive the given date, (yyyy-mm-dd)"
-        example: "2005-03-17"
-        required: false
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: published_since
-        description: "Results published since and inclusive the given date, (yyyy-mm-dd)"
-        example: "2005-03-17"
-        required: false
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: query
-        description: "free text search, all words are searched for in all fields, only documents containing all words are returned"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: sort
-        description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
-        required: false
-        example: "category:asc,created_date:desc"
-        schema:
-          type: string
-          enum:
-            - category:asc
-            - category:desc
-            - created_date:asc
-            - created_date:desc
-            - modified_date:asc
-            - modified_date:desc
-            - published_date:asc
-            - published_date:desc
-            - title:asc
-            - title:desc
-            - unit_id:asc
-            - unit_id:desc
-      - in: query
-        name: title
-        description: "returns document with these words in the title"
-        example: "covid-19"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: title_not
-        description: "returns document without these words in the title, seperated by space (+)."
-        example: "covid-19"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: title_should
-        description: "returns document with any of these words in the title, seperated by space (+)."
-        example: "covid-19"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: unit
-        description: "returns document with these words in the Id"
-        example: 185.53.18.10
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: unit_not
-        description: "returns document without these words in the Id, seperated by space (+)."
-        example: 185.53.18.10
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: unit_should
-        description: "returns document with any of these words in the Id, seperated by space (+)."
-        example: 185.53.18.10
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: user
-        description: "returns document with this resource owner (user id (URI))"
-        example: "askeladd:185"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: user_not
-        description: "returns document without these resource owners (user id (URI)), seperated by space (+)."
-        example: "askeladd:185"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: user_should
-        description: "returns document with any of these resource owners (user id (URI)), seperated by space (+)."
-        example: "askeladd:185"
-        required: false
-        schema:
-          type: string
-      - in: query
-        name: publication_year
-        description: "returns document with this publication year"
-        example: "2022"
-        required: false
-        schema:
-          type: number
-      - in: query
-        name: publication_year_should
-        description: "returns document with any of these publication years, seperated by space (+)."
-        example: "2022 2023"
-        required: false
-        schema:
-          type: number
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
+        - $ref: '#/components/parameters/contributorIdParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/createdBeforeParam'
+        - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idShouldParam'
+        - $ref: '#/components/parameters/institutionParam'
+        - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionShouldParam'
+        - $ref: '#/components/parameters/isbnParam'
+        - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnShouldParam'
+        - $ref: '#/components/parameters/issnParam'
+        - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnShouldParam'
+        - $ref: '#/components/parameters/orcidParam'
+        - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidShouldParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/modifiedBeforeParam'
+        - $ref: '#/components/parameters/modifiedSinceParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/projectParam'
+        - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publishedBeforeParam'
+        - $ref: '#/components/parameters/publishedSinceParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/statusShouldParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/titleShouldParam'
+        - $ref: '#/components/parameters/unitParam'
+        - $ref: '#/components/parameters/unitNotParam'
+        - $ref: '#/components/parameters/unitShouldParam'
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/userNotParam'
+        - $ref: '#/components/parameters/userShouldParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
@@ -517,6 +173,67 @@ paths:
   /customer/resources:
     get:
       description: "Search for publications by customer"
+      parameters:
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
+        - $ref: '#/components/parameters/contributorIdParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/createdBeforeParam'
+        - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idShouldParam'
+        - $ref: '#/components/parameters/institutionParam'
+        - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionShouldParam'
+        - $ref: '#/components/parameters/isbnParam'
+        - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnShouldParam'
+        - $ref: '#/components/parameters/issnParam'
+        - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnShouldParam'
+        - $ref: '#/components/parameters/orcidParam'
+        - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidShouldParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/modifiedBeforeParam'
+        - $ref: '#/components/parameters/modifiedSinceParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/projectParam'
+        - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publishedBeforeParam'
+        - $ref: '#/components/parameters/publishedSinceParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/statusShouldParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/titleShouldParam'
+        - $ref: '#/components/parameters/unitParam'
+        - $ref: '#/components/parameters/unitNotParam'
+        - $ref: '#/components/parameters/unitShouldParam'
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/userNotParam'
+        - $ref: '#/components/parameters/userShouldParam'
       security:
         - CognitoUserPool: [
           "https://api.nva.unit.no/scopes/backend",
@@ -759,6 +476,491 @@ paths:
                 $ref: "#/components/schemas/Problem"
 
 components:
+  parameters:
+    categoryParam:
+      name: category
+      in: query
+      description: "Returns documents with this category code, only one category code is allowed."
+      example: "JournalArticle"
+      required: false
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    categoryNotParam:
+      name: category_not
+      in: query
+      description: "Returns documents without these category codes. Support list of Enums, seperated by space (+)."
+      example: "JournalArticle"
+      required: false
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    categoryShouldParam:
+      name: category_should
+      in: query
+      description: "Returns documents with these category codes. Support list of Enums, seperated by space (+)."
+      example: "JournalArticle"
+      required: false
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    contributorIdParam:
+      name: contributor_id
+      in: query
+      description: "person id (URI)."
+      required: false
+      schema:
+        type: string
+    contributorParam:
+      name: contributor
+      in: query
+      description: "returns document with Author's name or person id(URI)."
+      required: false
+      schema:
+        type: string
+    contributorNotParam:
+      name: contributor_not
+      in: query
+      description: "returns document without Author's names or person ids(URI), seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    contributorShouldParam:
+      name: contributor_should
+      in: query
+      description: "returns document with Author's names or person ids(URI), seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    createdBeforeParam:
+      name: created_before
+      in: query
+      description: "Results created before and inclusive the given date, (yyyy-mm-dd)"
+      example: "2005-03-17"
+      required: false
+      schema:
+        type: string
+        format: date
+    createdSinceParam:
+      name: created_since
+      in: query
+      description: "Results created since and inclusive the given date, (yyyy-mm-dd)"
+      example: "2005-03-17"
+      required: false
+      schema:
+        type: string
+        format: date
+    doiParam:
+      name: doi
+      in: query
+      description: "returns document with this DOI id"
+      example: "10.1000/123456"
+      required: false
+      schema:
+        type: string
+    doiNotParam:
+      name: doi_not
+      in: query
+      description: "returns document without these DOI ids, seperated by space (+)."
+      example: "10.1000/123456"
+      required: false
+      schema:
+        type: string
+    doiShouldParam:
+      name: doi_should
+      in: query
+      description: "returns document with these DOI ids, seperated by space (+)."
+      example: "10.1000/123456"
+      required: false
+      schema:
+        type: string
+    fieldsParam:
+      name: fields
+      in: query
+      description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
+      example: category,contributor,funding
+      required: false
+      schema:
+        type: string
+        enum: [ all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution ,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported ]
+    fundingParam:
+      name: funding
+      in: query
+      description: "Funding source code e.g: NFR, and project_code together separated by ':'"
+      example: "NFR:1234"
+      required: false
+      schema:
+        type: string
+    fundingSourceParam:
+      name: funding_source
+      in: query
+      description: "returns document with this funding source code"
+      example: "NFR"
+      required: false
+      schema:
+        type: string
+    fundingSourceNotParam:
+      name: funding_source_not
+      in: query
+      description: "returns document without these funding source codes, seperated by space (+)."
+      example: "NFR"
+      required: false
+      schema:
+        type: string
+    fundingSourceShouldParam:
+      name: funding_source_should
+      in: query
+      description: "returns document with these funding source codes, seperated by space (+)."
+      example: "NFR"
+      required: false
+      schema:
+        type: string
+    idParam:
+      name: id
+      in: query
+      description: "returns document with the identifier (UUID)"
+      required: false
+      schema:
+        type: string
+    idNotParam:
+      name: id_not
+      in: query
+      description: "returns document without these identifiers (UUID), seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    idShouldParam:
+      name: id_should
+      in: query
+      description: "returns document with these identifiers (UUID), seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    institutionParam:
+      name: institution
+      in: query
+      description: "returns document with Id, name or acronym of the institution the contributors belong to"
+      example: [ 185, UiO, University of Oslo ]
+      required: false
+      schema:
+        type: string
+    institutionNotParam:
+      name: institution_not
+      in: query
+      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
+      example: [ 185, UiO, University of Oslo ]
+      required: false
+      schema:
+        type: string
+    institutionShouldParam:
+      name: institution_should
+      in: query
+      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
+      example: [ 185, UiO, University of Oslo ]
+      required: false
+      schema:
+        type: string
+    isbnParam:
+      name: isbn
+      in: query
+      description: "returns document with this ISBN id"
+      required: false
+      schema:
+        type: string
+    isbnNotParam:
+      name: isbn_not
+      in: query
+      description: "returns document without these ISBN ids, seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    isbnShouldParam:
+      name: isbn_should
+      in: query
+      description: "returns document with these ISBN ids, seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    issnParam:
+      name: issn
+      in: query
+      description: "returns document with this issn"
+      required: false
+      schema:
+        type: string
+    issnNotParam:
+      name: issn_not
+      in: query
+      description: "returns document without these issn, seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    issnShouldParam:
+      name: issn_should
+      in: query
+      description: "returns document with these issn, seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    orcidParam:
+      name: orcid
+      in: query
+      description: "returns document with this ORCID id"
+      required: false
+      schema:
+        type: string
+    orcidNotParam:
+      name: orcid_not
+      in: query
+      description: "returns document without these ORCID ids, seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    orcidShouldParam:
+      name: orcid_should
+      in: query
+      description: "returns document with these ORCID ids, seperated by space (+)."
+      required: false
+      schema:
+        type: string
+    langParam:
+      deprecated: true
+      name: lang
+      in: query
+      description: "Two letter language code. Using the 'lang' parameter, this is no longer in use, and are ignored"
+      required: false
+      schema:
+        type: string
+    modifiedBeforeParam:
+      name: modified_before
+      in: query
+      description: "Results modified before and inclusive the given date, (yyyy-mm-dd)"
+      example: "2005-03-17"
+      required: false
+      schema:
+        type: string
+        format: date
+    modifiedSinceParam:
+      name: modified_since
+      in: query
+      description: "Results modified since and inclusive the given date, (yyyy-mm-dd)"
+      example: "2005-03-17"
+      required: false
+      schema:
+        type: string
+        format: date
+    orderParam:
+      name: order
+      in: query
+      description: "SortOrder is either 'asc' or 'desc'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
+      example: "asc"
+      required: false
+      schema:
+        type: string
+        enum: [ asc, desc ]
+    pageParam:
+      name: page
+      in: query
+      description: "Page number, zero based, see from and size."
+      example: "0"
+      required: false
+      schema:
+        type: number
+    fromParam:
+      name: from
+      in: query
+      description: "Start result from item no. zero based [offset] is also accepted. Default is 0"
+      example: "0"
+      required: false
+      schema:
+        type: number
+    sizeParam:
+      name: size
+      in: query
+      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15"
+      example: "15"
+      required: false
+      schema:
+        type: number
+    projectParam:
+      name: project
+      in: query
+      description: "returns document with this project id (URI)"
+      example: "NFR"
+      required: false
+      schema:
+        type: string
+    projectNotParam:
+      name: project_not
+      in: query
+      description: "returns document without these project ids (URI), seperated by space (+)."
+      example: "NFR"
+      required: false
+      schema:
+        type: string
+    projectShouldParam:
+      name: project_should
+      in: query
+      description: "returns document with these project ids (URI), seperated by space (+)."
+      example: "NFR"
+      required: false
+      schema:
+        type: string
+    publicationYearParam:
+      name: publication_year
+      in: query
+      description: "returns document with this publication year"
+      example: "2022"
+      required: false
+      schema:
+        type: number
+    publicationYearShouldParam:
+      name: publication_year_should
+      in: query
+      description: "returns document with any of these publication years, seperated by space (+)."
+      example: "2022 2023"
+      required: false
+      schema:
+        type: number
+    publishedBeforeParam:
+      name: published_before
+      in: query
+      description: "Results published before and inclusive the given date, (yyyy-mm-dd)"
+      example: "2005-03-17"
+      required: false
+      schema:
+        type: string
+        format: date
+    publishedSinceParam:
+      name: published_since
+      in: query
+      description: "Results published since and inclusive the given date, (yyyy-mm-dd)"
+      example: "2005-03-17"
+      required: false
+      schema:
+        type: string
+        format: date
+    queryParam:
+      name: query
+      in: query
+      description: "free text search, all words are searched for in all fields, only documents containing all words are returned"
+      required: false
+      schema:
+        type: string
+    sortParam:
+      name: sort
+      in: query
+      description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
+      required: false
+      example: "category:asc,created_date:desc"
+      schema:
+        type: string
+        enum:
+          - category:asc
+          - category:desc
+          - created_date:asc
+          - created_date:desc
+          - modified_date:asc
+          - modified_date:desc
+          - published_date:asc
+          - published_date:desc
+          - title:asc
+          - title:desc
+          - unit_id:asc
+          - unit_id:desc
+    statusParam:
+      name: status
+      in: query
+      description: "returns documents with given status."
+      example: "PUBLISHED"
+      required: false
+      schema:
+        type: string
+    statusNotParam:
+      name: status_not
+      in: query
+      description: "returns documents without given status."
+      example: "PUBLISHED"
+      required: false
+      schema:
+        type: string
+    statusShouldParam:
+      name: status_should
+      in: query
+      description: "returns documents without any of the given statuses, separated by space (+)."
+      example: "PUBLISHED"
+      required: false
+      schema:
+        type: string
+    titleParam:
+      name: title
+      in: query
+      description: "returns document with these words in the title"
+      example: "covid-19"
+      required: false
+      schema:
+        type: string
+    titleNotParam:
+      name: title_not
+      in: query
+      description: "returns document without these words in the title, seperated by space (+)."
+      example: "covid-19"
+      required: false
+      schema:
+        type: string
+    titleShouldParam:
+      name: title_should
+      in: query
+      description: "returns document with any of these words in the title, seperated by space (+)."
+      example: "covid-19"
+      required: false
+      schema:
+        type: string
+    unitParam:
+      name: unit
+      in: query
+      description: "returns document with these words in the Id"
+      example: 185.53.18.10
+      required: false
+      schema:
+        type: string
+    unitNotParam:
+      name: unit_not
+      in: query
+      description: "returns document without these words in the Id, seperated by space (+)."
+      example: 185.53.18.10
+      required: false
+      schema:
+        type: string
+    unitShouldParam:
+      name: unit_should
+      in: query
+      description: "returns document with any of these words in the Id, seperated by space (+)."
+      example: 185.53.18.10
+      required: false
+      schema:
+        type: string
+    userParam:
+      name: user
+      in: query
+      description: "returns document with this resource owner (user id (URI))"
+      example: "askeladd:185"
+      required: false
+      schema:
+        type: string
+    userNotParam:
+      name: user_not
+      in: query
+      description: "returns document without these resource owners (user id (URI)), seperated by space (+)."
+      example: "askeladd:185"
+      required: false
+      schema:
+        type: string
+    userShouldParam:
+      name: user_should
+      in: query
+      description: "returns document with any of these resource owners (user id (URI)), seperated by space (+)."
+      example: "askeladd:185"
+      required: false
+      schema:
+        type: string
   schemas:
     Publication:
       type: object
