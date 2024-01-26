@@ -64,8 +64,11 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        if (!requestInfo.userIsAuthorized(AccessRight.MANAGE_OWN_AFFILIATION)) {
-            throw new UnauthorizedException();
+        if (requestInfo.userIsAuthorized(AccessRight.MANAGE_OWN_AFFILIATION)
+            || requestInfo.userIsAuthorized(AccessRight.MANAGE_RESOURCES_STANDARD)) {
+            return;
         }
+
+        throw new UnauthorizedException();
     }
 }

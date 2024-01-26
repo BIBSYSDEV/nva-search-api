@@ -379,7 +379,7 @@ class SearchClientTest {
                    .filter(queryClause -> isNull(queryClause.queryName())
                                           || !queryClause.queryName().equals(VIEWING_SCOPE_QUERY_NAME))
                    .map(queryClause -> (BoolQueryBuilder) queryClause)
-                   .map(BoolQueryBuilder::should)
+                    .map(BoolQueryBuilder::should)
                    .flatMap(List::stream)
                    .map(q -> (BoolQueryBuilder) q);
     }

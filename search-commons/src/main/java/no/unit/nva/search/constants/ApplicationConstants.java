@@ -1,6 +1,8 @@
 package no.unit.nva.search.constants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 import org.opensearch.index.query.QueryBuilders;
@@ -10,9 +12,6 @@ import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 public final class ApplicationConstants {
 
@@ -64,7 +63,6 @@ public final class ApplicationConstants {
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ADMINSTRATIVE_AGREEMENT = "administrativeAgreement";
     public static final String PUBLISHED_FILE = "PublishedFile";
-
 
     private ApplicationConstants() {
 
