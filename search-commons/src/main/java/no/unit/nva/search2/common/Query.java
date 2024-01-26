@@ -44,7 +44,9 @@ import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.CRISTIN_SOURCE;
 import static no.unit.nva.search2.constant.Words.PLUS;
+import static no.unit.nva.search2.constant.Words.SCOPUS_SOURCE;
 import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static nva.commons.core.attempt.Try.attempt;
@@ -273,6 +275,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
+        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
+            return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
+        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
+            return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
         } else if (opensearchQueryTools.isBoolean(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
         } else if (opensearchQueryTools.isNumber(key)) {

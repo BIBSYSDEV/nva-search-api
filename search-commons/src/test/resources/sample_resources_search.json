@@ -2242,7 +2242,12 @@
       {
         "type": "AdditionalIdentifier",
         "sourceName": "Cristin",
-        "value": "2185090"
+        "value": "123455"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Scopus",
+        "value": "someId"
       }
     ],
     "associatedArtifacts": [
@@ -2361,7 +2366,12 @@
       {
         "type": "AdditionalIdentifier",
         "sourceName": "Cristin",
-        "value": "2179561"
+        "value": "someId"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Scopus",
+        "value": "123455"
       }
     ],
     "associatedArtifacts": [

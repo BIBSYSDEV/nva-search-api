@@ -32,6 +32,10 @@
           "type": "keyword"
         }
       }
+    },
+    "additionalIdentifiers": {
+      "type": "nested",
+      "include_in_parent": true
     }
   }
 }
