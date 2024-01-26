@@ -53,7 +53,7 @@ public class MockedHttpResponse {
             public URI uri() {
                 return null;
             }
-            
+
             @Override
             public HttpClient.Version version() {
                 return null;
