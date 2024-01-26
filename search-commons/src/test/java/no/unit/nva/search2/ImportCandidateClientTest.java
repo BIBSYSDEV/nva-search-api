@@ -23,9 +23,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -44,7 +42,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
@@ -129,10 +126,8 @@ class ImportCandidateClientTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
-
-            Collection<Entry<String, String>> parameters = queryToMapEntries(uri);
             var csvResult = ImportCandidateQuery.builder()
-                .fromQueryParameters(parameters)
+                .fromQueryParameters(queryToMapEntries(uri))
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .withMediaType(Words.TEXT_CSV)
