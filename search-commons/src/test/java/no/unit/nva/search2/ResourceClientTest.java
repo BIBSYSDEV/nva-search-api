@@ -16,7 +16,6 @@ import static no.unit.nva.search2.enums.PublicationStatus.NEW;
 import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
@@ -77,7 +76,6 @@ class ResourceClientTest {
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
-    
     private static String indexName;
 
     @BeforeAll

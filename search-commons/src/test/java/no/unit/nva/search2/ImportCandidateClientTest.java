@@ -127,7 +127,6 @@ class ImportCandidateClientTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
-
             var csvResult = ImportCandidateQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withOpensearchUri(URI.create(container.getHttpHostAddress()))
@@ -210,7 +209,8 @@ class ImportCandidateClientTest {
                 URI.create("https://example.com/?query=antibacterial&fields=category,title&size=1"),
                 URI.create("https://example.com/?query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
                 URI.create("https://example.com/?query=European&fields=all&size=3"),
-                URI.create("https://example.com/?query=European&size=3"));
+                URI.create("https://example.com/?CRISTIN_IDENTIFIER=3212342&size=1"),
+                URI.create("https://example.com/?SCOPUS_IDENTIFIER=3212342&size=1"));
         }
 
         static Stream<URI> uriInvalidProvider() {

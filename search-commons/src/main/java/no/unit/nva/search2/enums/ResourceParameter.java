@@ -90,6 +90,8 @@ import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParamKind.INVALID),
     // Parameters used for filtering
+    CRISTIN_IDENTIFIER(KEYWORD),
+    SCOPUS_IDENTIFIER(KEYWORD),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),

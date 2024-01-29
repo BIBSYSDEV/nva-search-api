@@ -1,33 +1,6 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.PLUS;
-import static no.unit.nva.search2.constant.Words.SPACE;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
@@ -47,6 +20,37 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.CRISTIN_SOURCE;
+import static no.unit.nva.search2.constant.Words.PLUS;
+import static no.unit.nva.search2.constant.Words.SCOPUS_SOURCE;
+import static no.unit.nva.search2.constant.Words.SPACE;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
@@ -272,6 +276,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
+        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
+            return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
+        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
+            return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
         } else if (opensearchQueryTools.isBoolean(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
         } else if (opensearchQueryTools.isNumber(key)) {

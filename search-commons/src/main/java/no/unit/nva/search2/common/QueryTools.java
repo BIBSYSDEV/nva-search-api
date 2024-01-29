@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
@@ -12,6 +13,8 @@ import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
+import static no.unit.nva.search2.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.constant.Words.VALUE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
@@ -141,6 +144,15 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                 ScoreMode.None));
     }
 
+    public Stream<Entry<K, QueryBuilder>> additionalIdentifierQuery(K key, String value, String source) {
+        return queryToEntry(key, QueryBuilders.nestedQuery(
+            ADDITIONAL_IDENTIFIERS,
+            QueryBuilders.boolQuery()
+                .must(QueryBuilders.termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), value))
+                .must(QueryBuilders.termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
+            ScoreMode.None));
+    }
+
     public boolean isBoolean(K key) {
         return ParamKind.BOOLEAN.equals(key.fieldType());
     }
@@ -153,6 +165,14 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
     public boolean isFundingKey(K key) {
         return Words.FUNDING.equals(key.name());
+    }
+
+    public boolean isCristinIdentifier(K key) {
+        return Words.CRISTIN_IDENTIFIER.equals(key.name());
+    }
+
+    public boolean isScopusIdentifier(K key) {
+        return Words.SCOPUS_IDENTIFIER.equals(key.name());
     }
 
     public boolean isSearchAll(K key) {
