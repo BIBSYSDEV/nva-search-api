@@ -68,6 +68,10 @@
     "associatedArtifacts": {
       "type": "nested",
       "include_in_parent": true
+    },
+    "additionalIdentifiers": {
+      "type": "nested",
+      "include_in_parent": true
     }
   }
 }

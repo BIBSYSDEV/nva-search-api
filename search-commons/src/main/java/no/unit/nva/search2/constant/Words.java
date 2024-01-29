@@ -4,6 +4,13 @@ import nva.commons.core.JacocoGenerated;
 
 public final class Words {
 
+    public static final String CRISTIN_IDENTIFIER = "CRISTIN_IDENTIFIER";
+    public static final String SCOPUS_IDENTIFIER = "SCOPUS_IDENTIFIER";
+    public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
+    public static final String VALUE = "value";
+    public static final String SOURCE_NAME = "sourceName";
+    public static final String CRISTIN_SOURCE = "Cristin";
+    public static final String SCOPUS_SOURCE = "Scopus";
     public static final String ABSTRACT = "abstract";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";

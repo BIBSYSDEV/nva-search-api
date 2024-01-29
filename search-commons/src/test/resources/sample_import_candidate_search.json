@@ -26,6 +26,11 @@
         "sourceName": "Scopus",
         "type": "AdditionalIdentifier",
         "value": "2-s2.0-85104787031"
+      },
+      {
+        "sourceName": "Cristin",
+        "type": "AdditionalIdentifier",
+        "value": "3212342"
       }
     ],
     "publicationYear": "2021",
@@ -188,7 +193,7 @@
       {
         "sourceName": "Scopus",
         "type": "AdditionalIdentifier",
-        "value": "2-s2.0-85098160364"
+        "value": "3212342"
       }
     ],
     "publicationYear": "2021",

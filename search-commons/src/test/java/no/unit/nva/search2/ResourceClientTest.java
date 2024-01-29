@@ -430,7 +430,9 @@ class ResourceClientTest {
                 createArgument("FIELDS=CONTRIBUTOR&QUERY=https://api.dev.nva.aws.unit.no/cristin/person/1136254", 3),
                 createArgument("PUBLISHER_ID=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2),
                 createArgument("PUBLISHER_ID_NOT=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 18),
-                createArgument("PUBLISHER_ID_SHOULD=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2)
+                createArgument("PUBLISHER_ID_SHOULD=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478", 2),
+                createArgument("CRISTIN_IDENTIFIER=123455", 1),
+                createArgument("SCOPUS_IDENTIFIER=123455", 1)
             );
         }
     }
