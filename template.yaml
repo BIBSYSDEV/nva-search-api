@@ -25,7 +25,7 @@ Globals:
 
 Parameters:
   AwsRegion:
-    Type: 'String'
+    Type: String
     Description: AWS Region
     Default: ${AWS::Region}
   CognitoUri:
@@ -62,24 +62,24 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /NVA/Events/PersistedEntriesBucketName
   IndexingErrorsBucketName:
-    Type: 'String'
+    Type: String
     Default: 'indexing-errors'
     Description: Name of bucket for failed index documents
   EventsBucketsName:
-    Type: 'AWS::SSM::Parameter::Value<String>'
+    Type: AWS::SSM::Parameter::Value<String>
     Default: '/NVA/Events/EventsBucketName'
   KeyBatchesBucketName:
-    Type: 'String'
+    Type: String
     Default: 'key-batches'
     Description: Name of bucket for key batches
   MaxConcurrency:
-    Type: String
+    Type: Number
     Description: Maximum capacity for provisioned concurrency
-    Default: 10
+    Default: '10'
   MinConcurrency:
-    Type: String
+    Type: Number
     Description: Minimum capacity for provisioned concurrency
-    Default: 1
+    Default: '1'
   Suffix:
     Type: String
     Default: ''
@@ -238,6 +238,33 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  SearchResourcesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for searching Resources
+      CodeUri: search-resources-api
+      Handler: no.unit.nva.search2.SearchResourceHandler::handleRequest
+      Runtime: java17
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Enabled: true
+        Role: !GetAtt CustomCodeDeployServiceRole.Arn
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: 1
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+      Events:
+        GetResources:
+          Type: Api
+          Properties:
+            Path: /resources
+            Method: get
+            RestApiId: !Ref NvaSearchApi
+
+
   SearchAwsResourcesFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -341,7 +368,6 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
-
   SearchTicketsApiFunctionScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
@@ -363,7 +389,6 @@ Resources:
         TargetValue: 0.70
         PredefinedMetricSpecification:
           PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
-
 
   NvaPublicationBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
@@ -551,7 +576,6 @@ Resources:
               detail:
                 responsePayload:
                   topic: [ "ImportCandidates.ExpandedEntry.Deleted" ]
-
 
   ResourcesIndexerDLQ:
     Type: AWS::SQS::Queue
