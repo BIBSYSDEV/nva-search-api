@@ -1,15 +1,5 @@
 package no.unit.nva.search2.enums;
 
-import nva.commons.core.JacocoGenerated;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
@@ -71,6 +61,14 @@ import static no.unit.nva.search2.enums.ParameterKey.ParamKind.FUZZY_TEXT;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -90,18 +88,18 @@ import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParamKind.INVALID),
     // Parameters used for filtering
-    CRISTIN_IDENTIFIER(KEYWORD),
-    SCOPUS_IDENTIFIER(KEYWORD),
+    CRISTIN_IDENTIFIER(CUSTOM),
+    SCOPUS_IDENTIFIER(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),
     CONTEXT_TYPE(KEYWORD, MUST, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTOR(KEYWORD, MUST, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, true),
+    CONTRIBUTOR(KEYWORD, MUST, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, false),
     CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, true),
     CONTRIBUTOR_SHOULD(KEYWORD, SHOULD, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, true),
-    CONTRIBUTOR_NAME(TEXT, MUST, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, true),
+    CONTRIBUTOR_NAME(TEXT, MUST, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, false),
     CONTRIBUTOR_NAME_NOT(TEXT, MUST_NOT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, true),
     CONTRIBUTOR_NAME_SHOULD(FUZZY_TEXT, SHOULD, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, true),
     CREATED_BEFORE(ParamKind.DATE, LESS_THAN, CREATED_DATE),
@@ -113,8 +111,8 @@ public enum ResourceParameter implements ParameterKey {
     FUNDING_SOURCE(TEXT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    HAS_FILE(ParamKind.BOOLEAN, MUST, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
-    HAS_FILE_SHOULD(ParamKind.BOOLEAN, SHOULD, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
+    HAS_FILE(KEYWORD, MUST, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
+    HAS_FILE_SHOULD(KEYWORD, SHOULD, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),
@@ -162,7 +160,7 @@ public enum ResourceParameter implements ParameterKey {
     STATUS(KEYWORD, MUST, PUBLICATION_STATUS),
     STATUS_NOT(KEYWORD, MUST_NOT, PUBLICATION_STATUS),
     STATUS_SHOULD(KEYWORD, SHOULD, PUBLICATION_STATUS),
-    TAGS(TEXT, MUST, ENTITY_TAGS, true),
+    TAGS(TEXT, MUST, ENTITY_TAGS, false),
     TAGS_NOT(TEXT, MUST_NOT, ENTITY_TAGS, true),
     TAGS_SHOULD(TEXT, SHOULD, ENTITY_TAGS, true),
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, 2F),

@@ -65,8 +65,10 @@ public final class AggregationFormat {
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
-        return Constants.facetResourcePaths.entrySet().stream().map(
-            entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
+        return Constants.facetResourcePaths
+            .entrySet().stream()
+            //            .filter(pre -> pre.getKey())
+            .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
         );
     }
 

@@ -2861,18 +2861,6 @@
       }
     ],
     "associatedArtifacts": [
-      {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "d3e2bc70-d6f3-4403-946d-56e4735bc5fa",
-        "license": "https://creativecommons.org/licenses/by/4.0",
-        "mimeType": "application/pdf",
-        "name": "Egeland-Eriksen_et_al_International+Journal+of+Hydrogen+Energy_2023.pdf",
-        "publishedDate": "2023-11-06T07:48:26.143738738Z",
-        "publisherAuthority": false,
-        "size": 2993341,
-        "visibleForNonOwner": true
-      }
     ],
     "createdDate": "2023-09-21T15:37:31Z",
     "entityDescription": {
@@ -2930,7 +2918,7 @@
     ],
     "associatedArtifacts": [
       {
-        "type": "PublishedFile",
+        "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
         "license": "https://creativecommons.org/licenses/by/4.0",

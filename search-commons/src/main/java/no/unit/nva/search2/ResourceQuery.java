@@ -166,8 +166,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         var builder = new SearchSourceBuilder()
             .query(queryBuilder)
-            .size(getValue(SIZE).as())
-            .from(getValue(FROM).as())
+            .size(getSize())
+            .from(getFrom())
             .postFilter(getFilters())
             .trackTotalHits(true);
 
@@ -276,8 +276,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
                     case AGGREGATION -> setValue(key.fieldName(), ALL);
-                    default -> { //do nothing
-                    }
+                    default -> { /* ignore and continue */ }
                 }
             });
         }

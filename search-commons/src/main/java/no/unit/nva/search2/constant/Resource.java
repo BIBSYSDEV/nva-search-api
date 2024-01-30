@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.script.Script;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -191,7 +192,7 @@ public final class Resource {
                         .subAggregation(series())
                 )
                 .subAggregation(
-                    publicationInstance()            // Splitted or just a branch?
+                    publicationInstance()            // Split or just a branch?
                         .subAggregation(instanceType())
                 );
     }
@@ -218,7 +219,16 @@ public final class Resource {
 
     private static TermsAggregationBuilder publisher() {
         return
-            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD);
+            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, TYPE, KEYWORD)
+                .subAggregation(
+                    branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD)
+                        .script(Script.parse("String txt = doc['FieldName'].value;\n"
+                                             + "      return txt.splitOnToken('\\\\')[5];"))
+                        .subAggregation(
+                            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                                          KEYWORD)
+                        )
+                );
     }
 
     private static TermsAggregationBuilder license() {
@@ -226,7 +236,11 @@ public final class Resource {
     }
 
     private static TermsAggregationBuilder visibleForNonOwners() {
-        return branchBuilder(HAS_FILE, ATTACHMENT_VISIBLE_FOR_NON_OWNER);
+        return branchBuilder(HAS_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
+            .missing("None")
+            .subAggregation(
+                branchBuilder("labels", ATTACHMENT_VISIBLE_FOR_NON_OWNER)
+                    .missing("false"));
     }
 
     @JacocoGenerated
