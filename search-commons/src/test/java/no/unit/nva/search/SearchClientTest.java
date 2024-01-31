@@ -415,11 +415,11 @@ class SearchClientTest {
 
     private SearchDocumentsQuery generateSampleQuery() {
         return new SearchDocumentsQuery(SAMPLE_TERM,
-                                        SAMPLE_NUMBER_OF_RESULTS,
-                                        SAMPLE_FROM,
-                                        SAMPLE_ORDERBY,
-                                        DESC,
-                                        SAMPLE_REQUEST_URI,
+            SAMPLE_NUMBER_OF_RESULTS,
+            SAMPLE_FROM,
+            SAMPLE_ORDERBY,
+            DESC,
+            SAMPLE_REQUEST_URI,
                                         SAMPLE_AGGREGATIONS);
     }
 
