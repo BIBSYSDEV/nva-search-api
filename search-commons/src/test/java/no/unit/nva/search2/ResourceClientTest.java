@@ -7,7 +7,9 @@ import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.constant.Words.RESOURCES;
 import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search2.enums.PublicationStatus.DRAFT;
@@ -69,12 +71,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class ResourceClientTest {
 
-    protected static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
-    public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
-    public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
-    public static final long DELAY_AFTER_INDEXING = 1500L;
-    private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
+    private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
+    private static final String TEST_RESOURCES_MAPPINGS_JSON = "test_resources_mappings.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_valid_test_url.json";
+    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
+    private static final long DELAY_AFTER_INDEXING = 1500L;
+    private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
     private static String indexName;
@@ -87,14 +92,12 @@ class ResourceClientTest {
         var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-        var mochedHttpClient = mock(HttpClient.class);
 
+        var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
         var response = mockedHttpResponse("user_settings.json");
-        when(mochedHttpClient.send(any(), any()))
-            .thenReturn(response);
+        when(mochedHttpClient.send(any(), any())).thenReturn(response);
         searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, cachedJwtProvider);
-        indexName = generateIndexName();
 
         createIndex();
         populateIndex();
@@ -105,7 +108,7 @@ class ResourceClientTest {
     @AfterAll
     static void afterAll() throws IOException, InterruptedException {
         logger.info("Stopping container");
-        indexingClient.deleteIndex(indexName);
+        indexingClient.deleteIndex(RESOURCES);
         Thread.sleep(DELAY_AFTER_INDEXING);
         container.stop();
     }
@@ -116,11 +119,11 @@ class ResourceClientTest {
         @Test
         void shouldCheckMapping() {
 
-            var mapping = indexingClient.getMapping(indexName);
+            var mapping = indexingClient.getMapping(RESOURCES);
             assertThat(mapping, is(notNullValue()));
             var topLevelOrgType = mapping.path("properties")
-                .path("topLevelOrganizations")
-                .path("type").textValue();
+                .path(TOP_LEVEL_ORGANIZATIONS)
+                .path(TYPE).textValue();
             assertThat(topLevelOrgType, is(equalTo("nested")));
             logger.info(mapping.toString());
         }
@@ -129,7 +132,7 @@ class ResourceClientTest {
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
 
-            var uri1 = URI.create("https://x.org/?size=20&aggregation=all");
+            var uri1 = URI.create(REQUEST_BASE_URL + "aggregation=all");
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withOpensearchUri(hostAddress)
@@ -139,8 +142,8 @@ class ResourceClientTest {
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
-            var uri2 = URI.create("https://x.org/?size=20&aggregation=entityDescription,associatedArtifacts," +
-                                  "topLevelOrganizations,fundings,status");
+            var uri2 = URI.create(REQUEST_BASE_URL +
+                "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status");
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -378,50 +381,47 @@ class ResourceClientTest {
         }
 
         static Stream<URI> uriSortingProvider() {
-            final var uriRoot = "https://x.org/?category=AcademicChapter&";
+
             return Stream.of(
-                URI.create(uriRoot + "sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(uriRoot + "sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(uriRoot + "sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(uriRoot + "size=10&from=0&sort=modified_date"),
-                URI.create(uriRoot + "orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(uriRoot + "orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
-                URI.create(uriRoot + "sort=published_date+asc&sort=category+desc"));
+                URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=category&order=desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "size=10&from=0&sort=modified_date"),
+                URI.create(REQUEST_BASE_URL + "orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
+                URI.create(REQUEST_BASE_URL + "sort=published_date+asc&sort=category+desc"));
         }
 
         static Stream<URI> uriInvalidProvider() {
-            final var uriRoot = "https://x.org/?";
             return Stream.of(
-                URI.create(uriRoot + "sort=epler"),
-                URI.create(uriRoot + "sort=CATEGORY:DEdd"),
-                URI.create(uriRoot + "categories=hello+world&lang=en"),
-                URI.create(uriRoot + "tittles=hello+world&modified_before=2019-01-01"),
-                URI.create(uriRoot + "conttributors=hello+world&published_before=2020-01-01"),
-                URI.create(uriRoot + "category=PhdThesis&sort=beunited+asc"),
-                URI.create(uriRoot + "funding=NFR,296896"),
-                URI.create(uriRoot + "useers=hello+world&lang=en"));
+                URI.create(REQUEST_BASE_URL + "sort=epler"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
+                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
+                URI.create(REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
+                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
+                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
+                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
         }
 
         static Stream<Arguments> uriProvider() {
-            return loadMapFromResource("resource_valid_test_url.json").entrySet().stream()
+            return loadMapFromResource(RESOURCE_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(),  entry.getValue()));
         }
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
-        final var uriRoot = "https://x.org/?size=20&";
-        return Arguments.of(URI.create(uriRoot + searchUri), expectedCount);
+        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
     }
 
     private static Map<String, Integer> loadMapFromResource(String resource) {
         var mappingsJson = stringFromResources(Path.of(resource));
-        var type = new TypeReference<Map<String, Integer>>() {
-        };
+        var type = new TypeReference<Map<String, Integer>>() {};
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
     private static void populateIndex() {
-        var jsonFile = stringFromResources(Path.of("sample_resources_search.json"));
+        var jsonFile = stringFromResources(Path.of(SAMPLE_RESOURCES_SEARCH_JSON));
         var jsonNodes =
             attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
 
@@ -430,7 +430,7 @@ class ResourceClientTest {
 
     private static void addDocumentToIndex(JsonNode node) {
         try {
-            var attributes = new EventConsumptionAttributes(indexName, SortableIdentifier.next());
+            var attributes = new EventConsumptionAttributes(RESOURCES, SortableIdentifier.next());
             indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -438,14 +438,11 @@ class ResourceClientTest {
     }
 
     private static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
+        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS_JSON));
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-        indexingClient.createIndex(indexName, mappings);
+        indexingClient.createIndex(RESOURCES, mappings);
     }
 
-    private static String generateIndexName() {
-        return "resources";
-    }
 }

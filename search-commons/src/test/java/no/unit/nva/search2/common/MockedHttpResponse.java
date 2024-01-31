@@ -1,5 +1,7 @@
 package no.unit.nva.search2.common;
 
+import static no.unit.nva.search2.TestConstants.CONTENT_TYPE;
+import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,7 +16,9 @@ import javax.net.ssl.SSLSession;
 import org.jetbrains.annotations.NotNull;
 
 public class MockedHttpResponse {
-    
+
+
+
     @NotNull
     public static HttpResponse<Object> mockedHttpResponse(String filename) {
         return new HttpResponse<>() {
@@ -35,8 +39,9 @@ public class MockedHttpResponse {
             
             @Override
             public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
-                                      (s, s2) -> true);
+                return HttpHeaders.of(
+                    Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
+                    (s, s2) -> true);
             }
             
             @Override
@@ -80,7 +85,8 @@ public class MockedHttpResponse {
 
             @Override
             public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
+                return HttpHeaders.of(
+                    Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
                     (s, s2) -> true);
             }
 
