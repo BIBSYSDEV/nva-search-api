@@ -2747,7 +2747,11 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "type": "UnconfirmedJournal"
+          "type": "Degree",
+          "course": {
+            "type": "UnconfirmedCourse",
+            "code": "FYS5960"
+          }
         },
         "publicationInstance": {
           "type": "AcademicArticle",
