@@ -2,7 +2,11 @@ package no.unit.nva.search2.enums;
 
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.constant.Words.DOT;
+import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.UNDERSCORE;
+import static no.unit.nva.search2.constant.Words.YEAR;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,7 +25,7 @@ public enum ResourceSort {
     CREATED_DATE(Words.CREATED_DATE),
     MODIFIED_DATE(Words.MODIFIED_DATE),
     PUBLISHED_DATE(Words.PUBLISHED_DATE),
-    PUBLICATION_DATE("entityDescription.publicationDate.year"),
+    PUBLICATION_DATE(ENTITY_DESCRIPTION + DOT + Words.PUBLICATION_DATE + DOT + YEAR + DOT + KEYWORD),
     TITLE(Resource.ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD),
     UNIT_ID(Resource.CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER("(?i)(user)|(owner)", Resource.RESOURCE_OWNER_OWNER_KEYWORD);
