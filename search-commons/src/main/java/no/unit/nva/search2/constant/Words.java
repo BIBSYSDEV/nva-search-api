@@ -19,10 +19,12 @@ public final class Words {
     public static final String ASTERISK = "*";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
+    public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
+    public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
     public static final String DOI = "doi";
     public static final String DOT = ".";
@@ -33,6 +35,7 @@ public final class Words {
     public static final String FUNDING = "FUNDING";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
+    public static final String HANDLE = "handle";
     public static final String HAS_FILE = "hasFile";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
