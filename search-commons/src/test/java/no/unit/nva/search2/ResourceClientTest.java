@@ -159,9 +159,9 @@ class ResourceClientTest {
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(3));
             assertThat(aggregations.get(HAS_FILE).size(), is(2));
-            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(19));
+            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(18));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
-            assertThat(aggregations.get(PUBLISHER).size(), is(2));
+            assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(4));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
@@ -382,13 +382,13 @@ class ResourceClientTest {
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
-                URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "size=10&from=0&sort=modified_date"),
-                URI.create(REQUEST_BASE_URL + "orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(REQUEST_BASE_URL + "orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
-                URI.create(REQUEST_BASE_URL + "sort=published_date+asc&sort=category+desc"));
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&size=10&from=0&sort=modified_date"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date+asc&sort=category+desc"));
         }
 
         static Stream<URI> uriInvalidProvider() {

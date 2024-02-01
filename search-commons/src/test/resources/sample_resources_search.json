@@ -7,18 +7,6 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
     "associatedArtifacts": [
-      {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "95ffa438-7367-49aa-ade7-5851daa6a8a3",
-        "license": "https://creativecommons.org/licenses/by/4.0",
-        "mimeType": "image/jpeg",
-        "name": "osteloff.jpg",
-        "publishedDate": "2023-11-06T08:48:11.786959336Z",
-        "publisherAuthority": false,
-        "size": 4656,
-        "visibleForNonOwner": true
-      }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
     "entityDescription": {
@@ -91,7 +79,7 @@
             "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
             "type": "Publisher",
             "isbnPrefix": "978-91-27",
-            "name": "Natur och kultur",
+            "name": "Natur och kultur -deleted",
             "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
             "scientificValue": "LevelOne",
             "valid": true
@@ -411,7 +399,7 @@
             "9788202535032"
           ],
           "publisher": {
-            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2022",
             "type": "Publisher",
             "isbnPrefix": "978-91-27",
             "name": "Natur och kultur",
@@ -698,8 +686,12 @@
         "publicationContext": {
           "type": "Report",
           "publisher": {
-            "type": "UnconfirmedPublisher",
-            "name": "NGI – Norges Geotekniske institutt",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelOne",
             "valid": true
           },
           "series": {
@@ -3102,37 +3094,14 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "id": "https://api.dev.nva.aws.unit.no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c",
-          "type": "Anthology",
-          "entityDescription": {
-            "type": "EntityDescription",
-            "contributors": [
-              {
-                "type": "Contributor",
-                "identity": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
-                  "type": "Identity",
-                  "name": "Kjetil Møkkelgjerd",
-                  "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
-                  "verificationStatus": "Verified"
-                }
-              }
-            ],
-            "mainTitle": "Kjetils Antologi",
-            "reference": {
-              "type": "Reference",
-              "publicationContext": {
-                "type": "Book",
-                "publisher": {
-                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/f20577b8-0947-481b-96d4-f5de9ecf7c5f/2023",
-                  "type": "Publisher",
-                  "valid": true
-                },
-                "series": {
-                  "type": "UnconfirmedSeries"
-                }
-              }
-            }
+          "type": "Book",
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
+            "type": "Publisher",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries"
           }
         },
         "publicationInstance": {

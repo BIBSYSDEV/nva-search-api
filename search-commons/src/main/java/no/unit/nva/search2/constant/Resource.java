@@ -218,17 +218,19 @@ public final class Resource {
     }
 
     private static TermsAggregationBuilder publisher() {
+        final var path = jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD);
+        final var script = uriAsUuid(path);
         return
-            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, TYPE, KEYWORD)
+            branchBuilder(PUBLISHER, path)
+                .script(script)
                 .subAggregation(
-                    branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD)
-                        .script(Script.parse("String txt = doc['FieldName'].value;\n"
-                                             + "      return txt.splitOnToken('\\\\')[5];"))
-                        .subAggregation(
-                            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
-                                          KEYWORD)
-                        )
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                        KEYWORD)
                 );
+    }
+
+    private static Script uriAsUuid(String path) {
+        return Script.parse("doc['" + path + "'].value.splitOnToken('/')[5];");
     }
 
     private static TermsAggregationBuilder license() {
@@ -236,11 +238,7 @@ public final class Resource {
     }
 
     private static TermsAggregationBuilder visibleForNonOwners() {
-        return branchBuilder(HAS_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
-            .missing("None")
-            .subAggregation(
-                branchBuilder("labels", ATTACHMENT_VISIBLE_FOR_NON_OWNER)
-                    .missing("false"));
+        return branchBuilder(HAS_FILE, ATTACHMENT_VISIBLE_FOR_NON_OWNER);
     }
 
     @JacocoGenerated
