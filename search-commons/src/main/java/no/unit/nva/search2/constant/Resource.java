@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.script.Script;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -197,7 +198,7 @@ public final class Resource {
                         .subAggregation(series())
                 )
                 .subAggregation(
-                    publicationInstance()            // Splitted or just a branch?
+                    publicationInstance()            // Split or just a branch?
                         .subAggregation(instanceType())
                 );
     }
@@ -223,8 +224,19 @@ public final class Resource {
     }
 
     private static TermsAggregationBuilder publisher() {
+        final var path = jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD);
+        final var script = uriAsUuid(path);
         return
-            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD);
+            branchBuilder(PUBLISHER, path)
+                .script(script)
+                .subAggregation(
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                                  KEYWORD)
+                );
+    }
+
+    private static Script uriAsUuid(String path) {
+        return Script.parse("doc['" + path + "'].value.splitOnToken('/')[5];");
     }
 
     private static TermsAggregationBuilder license() {

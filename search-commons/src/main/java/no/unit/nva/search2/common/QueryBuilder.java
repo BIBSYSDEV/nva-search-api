@@ -1,22 +1,5 @@
 package no.unit.nva.search2.common;
 
-import no.unit.nva.search2.enums.ParameterKey;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.sort.SortOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
@@ -30,6 +13,21 @@ import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.enums.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.enums.ParameterKey;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder for OpenSearchQuery.
@@ -123,6 +121,10 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
 
     /**
      * Defines which parameters are required.
+     * <p>In order to improve ease of use, you can add a default value to
+     * each required parameter, and it will be used, if it is not proved by the requester.
+     * Implement default values in  {@link #assignDefaultValues()}</p>
+     *
      * @param requiredParameters comma seperated QueryParameterKeys
      */
     @SafeVarargs
@@ -149,15 +151,13 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     protected abstract boolean isKeyValid(String keyName);
 
     /**
-     * Sample code for assignDefaultValues.
+     * DefaultValues are only assigned if they are set as required, otherwise ignored.
      * <p>Usage:</p>
      * <samp>requiredMissing().forEach(key -> { <br>
      *     switch (key) {<br>
-     *         case LANGUAGE:<br>
-     *             query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
-     *             break;<br>
-     *         default:<br>
-     *             break;<br>
+     *         case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
+     *         default -> { // do nothing
+     *             }<br>
      *     }});<br>
      * </samp>
      */

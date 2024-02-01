@@ -7,18 +7,6 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
     "associatedArtifacts": [
-      {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "95ffa438-7367-49aa-ade7-5851daa6a8a3",
-        "license": "https://creativecommons.org/licenses/by/4.0",
-        "mimeType": "image/jpeg",
-        "name": "osteloff.jpg",
-        "publishedDate": "2023-11-06T08:48:11.786959336Z",
-        "publisherAuthority": false,
-        "size": 4656,
-        "visibleForNonOwner": true
-      }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
     "entityDescription": {
@@ -91,7 +79,7 @@
             "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
             "type": "Publisher",
             "isbnPrefix": "978-91-27",
-            "name": "Natur och kultur",
+            "name": "Natur och kultur -deleted",
             "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
             "scientificValue": "LevelOne",
             "valid": true
@@ -324,6 +312,95 @@
   },
   {
     "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "d0fd5eb6-0afb-4871-a5e2-3a3135d27333",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "Repanovici_Landoy_2014.pdf",
+        "publishedDate": "2023-12-18T08:21:11.661364114Z",
+        "publisherAuthority": true,
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "size": 6026249,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-12-18T08:21:11.463306145Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "In this paper, the authors report on collaboration between two universities from 2003 and beyond. The collaborations have been carried out in four main spheres: in the area of Staff training programmes, in the area of Development and research in information literacy, in the area of Developing Models of Digital Repositories and also in the domain of Research in Library Leadership. This cooperation started in 2003 when the authors worked on developing the first Leonardo da Vinci program in the field of continued education, and is still ongoing. The collaborations have been funded by different national and international funding agencies, as well as from the institutions of the authors.",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Angela Repanovici"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Ane Landøy"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Digital Library in a Collaborative Context: Romania and Norway 2003-2012",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2014"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.4018/978-1-4666-4365-9.ch021",
+        "publicationContext": {
+          "type": "Anthology"
+        },
+        "publicationInstance": {
+          "type": "NonFictionChapter",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/1956/7948",
+    "identifier": "018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
+    "modelVersion": "0.20.78",
+    "modifiedDate": "2023-12-18T08:21:11.463306145Z",
+    "publishedDate": "2023-12-18T08:21:11.463306145Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/a228aba6-932b-4f53-b2de-31ad8daf9f8d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "bora@184.0.0.0",
+      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/184.0.0.0"
+    },
+    "rightsHolder": "Copyright 2014, IGI Global",
+    "status": "PUBLISHED"
+  },
+  {
+    "type": "Publication",
     "publicationContextUris": [
       "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
     ],
@@ -411,7 +488,7 @@
             "9788202535032"
           ],
           "publisher": {
-            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2022",
             "type": "Publisher",
             "isbnPrefix": "978-91-27",
             "name": "Natur och kultur",
@@ -698,8 +775,12 @@
         "publicationContext": {
           "type": "Report",
           "publisher": {
-            "type": "UnconfirmedPublisher",
-            "name": "NGI – Norges Geotekniske institutt",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023",
+            "type": "Publisher",
+            "isbnPrefix": "978-91-27",
+            "name": "Natur och kultur",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
+            "scientificValue": "LevelOne",
             "valid": true
           },
           "series": {
@@ -2934,7 +3015,7 @@
     ],
     "associatedArtifacts": [
       {
-        "type": "PublishedFile",
+        "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
         "license": "https://creativecommons.org/licenses/by/4.0",
@@ -3118,37 +3199,14 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "id": "https://api.dev.nva.aws.unit.no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c",
-          "type": "Anthology",
-          "entityDescription": {
-            "type": "EntityDescription",
-            "contributors": [
-              {
-                "type": "Contributor",
-                "identity": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
-                  "type": "Identity",
-                  "name": "Kjetil Møkkelgjerd",
-                  "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
-                  "verificationStatus": "Verified"
-                }
-              }
-            ],
-            "mainTitle": "Kjetils Antologi",
-            "reference": {
-              "type": "Reference",
-              "publicationContext": {
-                "type": "Book",
-                "publisher": {
-                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/f20577b8-0947-481b-96d4-f5de9ecf7c5f/2023",
-                  "type": "Publisher",
-                  "valid": true
-                },
-                "series": {
-                  "type": "UnconfirmedSeries"
-                }
-              }
-            }
+          "type": "Book",
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
+            "type": "Publisher",
+            "valid": true
+          },
+          "series": {
+            "type": "UnconfirmedSeries"
           }
         },
         "publicationInstance": {

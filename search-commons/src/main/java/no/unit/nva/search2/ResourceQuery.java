@@ -1,34 +1,5 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.UserSettings;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import no.unit.nva.search2.enums.PublicationStatus;
-import no.unit.nva.search2.enums.ResourceParameter;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -67,9 +38,38 @@ import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.dto.UserSettings;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.PublicationStatus;
+import no.unit.nva.search2.enums.ResourceParameter;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
+    public static final String FILTER = "filter";
 
     private ResourceQuery() {
         super();
@@ -79,7 +79,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     public static ResourceQueryBuilder builder() {
         return new ResourceQueryBuilder();
     }
-
 
     @Override
     protected Integer getFrom() {
@@ -133,6 +132,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      * <p>See {@link PublicationStatus} for available values.</p>
      * @param publicationStatus the required statues
+     * @return ResourceQuery (builder pattern)
      */
     public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
         final var values = Arrays.stream(publicationStatus)
@@ -144,9 +144,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return this;
     }
 
+    /**
+     * Filter on organization.
+     * <P>Only documents belonging to organization specified are searchable (for the user)
+     * </p>
+     *
+     * @param organization uri of publisher
+     * @return ResourceQuery (builder pattern)
+     */
     public ResourceQuery withOrganization(URI organization) {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-                               .queryName(PUBLISHER);
+            .queryName(PUBLISHER);
         this.addFilter(filter);
         return this;
     }
@@ -155,17 +163,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : boolQuery();
-
-        if (isLookingForOneContributor()) {
-            assert queryBuilder instanceof BoolQueryBuilder;
-            addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
-        }
+                : makeBoolQuery(userSettingsClient);
 
         var builder = new SearchSourceBuilder()
             .query(queryBuilder)
-            .size(getValue(SIZE).as())
-            .from(getValue(FROM).as())
+            .size(getSize())
+            .from(getFrom())
             .postFilter(getFilters())
             .trackTotalHits(true);
 
@@ -181,8 +184,16 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
+    private BoolQueryBuilder makeBoolQuery(UserSettingsClient userSettingsClient) {
+        var queryBuilder = boolQuery();
+        if (isLookingForOneContributor()) {
+            addPromotedPublications(userSettingsClient, queryBuilder);
+        }
+        return queryBuilder;
+    }
+
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter("filter", getFilters());
+        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -198,10 +209,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private boolean isDefined(String key) {
         return getValue(AGGREGATION).optionalStream()
-            .flatMap(item-> Arrays.stream(item.split(COMMA)).sequential())
+            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
             .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }
-
 
     private static String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
@@ -219,7 +229,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return hasOneValue(CONTRIBUTOR);
     }
 
-    @JacocoGenerated
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
         var promotedPublications =
             attempt(() -> userSettingsClient.doSearch(this))
@@ -234,6 +243,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                         .boost(3.14F + promotedPublications.size() - i)
                 );
             }
+            logger.info(
+                bq.should().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))
+            );
         }
     }
 
@@ -268,8 +282,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
                     case AGGREGATION -> setValue(key.fieldName(), ALL);
-                    default -> {
-                    }
+                    default -> { /* ignore and continue */ }
                 }
             });
         }
@@ -312,11 +325,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void validateSortEntry(Entry<String, SortOrder> entry) {
             if (fromSortKey(entry.getKey()) == INVALID) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
+                throw new IllegalArgumentException(
+                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys())
+                );
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
-
     }
 }
