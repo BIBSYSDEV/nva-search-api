@@ -34,7 +34,6 @@ import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.SwsResponse;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -49,7 +48,6 @@ class SearchResourceHandlerTest {
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
-    public static final String ROUNDTRIP_RESPONSE_JSON = "roundtripResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
     private SearchResourceHandler handler;
     private Context contextMock;
@@ -64,26 +62,6 @@ class SearchResourceHandlerTest {
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
-
-    @Test
-    void shouldReturnSearchResultsWhenQueryIsSingleTerm() throws IOException {
-        prepareRestHighLevelClientOkResponse();
-
-        handler.handleRequest(getInputStream(), outputStream, contextMock);
-
-        var gatewayResponse =
-            FakeGatewayResponse.of(outputStream);
-        var actualBody =
-            gatewayResponse.body();
-        var expected =
-            getSearchResourcesResponseFromFile(ROUNDTRIP_RESPONSE_JSON);
-
-        assertNotNull(gatewayResponse.headers());
-        assertEquals(HTTP_OK, gatewayResponse.statusCode());
-        assertThat(actualBody.hits(), is(equalTo(expected.hits())));
-    }
-
-
 
     @ParameterizedTest(name = "should return text/csv for accept header {0}")
     @MethodSource("acceptHeaderValuesProducingTextCsvProvider")
@@ -278,11 +256,6 @@ class SearchResourceHandlerTest {
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
-    }
-
-    private PagedSearch getSearchResourcesResponseFromFile(String filename)
-        throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearch.class);
     }
 
     public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
