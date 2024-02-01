@@ -275,6 +275,7 @@ class ResourceClientTest {
                 URI.create(uriRoot + "sort=created_date&sortOrder=asc&sort=category&order=desc"),
                 URI.create(uriRoot + "sort=modified_date&sortOrder=asc&sort=category"),
                 URI.create(uriRoot + "sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(uriRoot + "sort=PUBLICATION_DATE:asc"),
                 URI.create(uriRoot + "size=10&from=0&sort=modified_date"),
                 URI.create(uriRoot + "orderBy=UNIT_ID:asc,title:desc"),
                 URI.create(uriRoot + "orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
