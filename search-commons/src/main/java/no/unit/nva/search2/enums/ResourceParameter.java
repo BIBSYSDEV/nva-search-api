@@ -21,6 +21,7 @@ import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_AFFILIATION_ID_
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
+import static no.unit.nva.search2.constant.Resource.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -92,6 +93,9 @@ public enum ResourceParameter implements ParameterKey {
     CONTRIBUTOR_NAME(TEXT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_NOT(TEXT, MUST_NOT, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_SHOULD(FUZZY_TEXT, SHOULD, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
+    COURSE(KEYWORD, MUST, COURSE_CODE_KEYWORD),
+    COURSE_NOT(KEYWORD, MUST_NOT, COURSE_CODE_KEYWORD),
+    COURSE_SHOULD(KEYWORD, SHOULD, COURSE_CODE_KEYWORD),
     CREATED_BEFORE(ParamKind.DATE, FieldOperator.LESS_THAN, CREATED_DATE),
     CREATED_SINCE(ParamKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, CREATED_DATE),
     DOI(KEYWORD, REFERENCE_DOI_KEYWORD),
