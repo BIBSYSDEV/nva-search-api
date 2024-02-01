@@ -332,6 +332,10 @@ class ResourceClientTest {
                 createArgument("FUNDING_SOURCE_NOT=Norges+forskningsråd", 18),
                 createArgument("FUNDING_SOURCE_SHOULD=Norges", 2),
                 createArgument("FUNDING_SOURCE=Research+Council+of+Norway+(RCN)", 2),
+                createArgument("handle=https://hdl.handle.net/10852/105181", 1),
+                createArgument("handleNot=https://hdl.handle.net/10852/105181", 19),
+                createArgument("handle_should=https://hdl.handle.net/10852/105181,"
+                               + "https://hdl.handle.net/10852/105159", 2),
                 createArgument("hasFile=PublishedFile", 19),
                 createArgument("hasFile=1", 19),
                 createArgument("HASFILE=true", 19),
