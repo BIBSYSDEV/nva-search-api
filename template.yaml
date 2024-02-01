@@ -73,11 +73,11 @@ Parameters:
     Default: 'key-batches'
     Description: Name of bucket for key batches
   MaxConcurrency:
-    Type: Number
+    Type: String
     Description: Maximum capacity for provisioned concurrency
     Default: '10'
   MinConcurrency:
-    Type: Number
+    Type: String
     Description: Minimum capacity for provisioned concurrency
     Default: '1'
   Suffix:
