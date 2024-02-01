@@ -31,6 +31,7 @@ import static no.unit.nva.search2.constant.Resource.ENTITY_DESCRIPTION_REFERENCE
 import static no.unit.nva.search2.constant.Resource.ENTITY_TAGS;
 import static no.unit.nva.search2.constant.Resource.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
 import static no.unit.nva.search2.constant.Resource.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
+import static no.unit.nva.search2.constant.Resource.HANDLE_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PARENT_PUBLICATION_ID;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_CONTEXT_ISBN_LIST;
@@ -105,6 +106,9 @@ public enum ResourceParameter implements ParameterKey {
     FUNDING_SOURCE(TEXT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
+    HANDLE(KEYWORD, MUST, HANDLE_KEYWORD),
+    HANDLE_NOT(KEYWORD, MUST_NOT, HANDLE_KEYWORD),
+    HANDLE_SHOULD(KEYWORD, SHOULD, HANDLE_KEYWORD),
     HAS_FILE(ParamKind.BOOLEAN, MUST, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
     HAS_FILE_SHOULD(ParamKind.BOOLEAN, SHOULD, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
