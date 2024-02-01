@@ -76,6 +76,8 @@ paths:
 
   /resources:
     get:
+      tags:
+        - external
       description: "Search for public available publications by given criteria"
       parameters:
         - $ref: '#/components/parameters/abstractParam'
