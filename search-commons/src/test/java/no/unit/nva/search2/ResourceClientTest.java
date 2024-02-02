@@ -170,7 +170,7 @@ class ResourceClientTest {
         }
 
         @Test
-        void userSettingsNotFound1() throws IOException, InterruptedException, BadRequestException {
+        void userSettingsNotFoundReturn200() throws IOException, InterruptedException, BadRequestException {
             var mochedHttpClient = mock(HttpClient.class);
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 200);
@@ -192,7 +192,7 @@ class ResourceClientTest {
         }
 
         @Test
-        void userSettingsNotFound2() throws IOException, InterruptedException, BadRequestException {
+        void userSettingsNotFoundReturn404() throws IOException, InterruptedException, BadRequestException {
             var mochedHttpClient = mock(HttpClient.class);
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 404);
@@ -214,7 +214,7 @@ class ResourceClientTest {
         }
 
         @Test
-        void userSettingsFailsFound1() throws IOException, InterruptedException, BadRequestException {
+        void userSettingsFailsIOException() throws IOException, InterruptedException, BadRequestException {
             var mochedHttpClient = mock(HttpClient.class);
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             when(mochedHttpClient.send(any(), any()))
