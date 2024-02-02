@@ -9,18 +9,24 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.constant.Functions.jsonPath;
 import static no.unit.nva.search2.constant.Resource.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
 import static no.unit.nva.search2.constant.Resource.PUBLISHER_ID_KEYWORD;
+import static no.unit.nva.search2.constant.Resource.PUBLISHER_UUID;
 import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.constant.Resource.uriAsUuid;
 import static no.unit.nva.search2.constant.Words.ALL;
 import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
+import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.constant.Words.REFERENCE;
 import static no.unit.nva.search2.constant.Words.STATUS;
 import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
@@ -70,6 +76,7 @@ import org.opensearch.search.sort.SortOrder;
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static final String FILTER = "filter";
+
 
     private ResourceQuery() {
         super();
@@ -126,7 +133,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     /**
-     * Required Status filter.
+     * Filter on Required Status.
      *
      * <p>Only STATUES specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
@@ -166,6 +173,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 : makeBoolQuery(userSettingsClient);
 
         var builder = new SearchSourceBuilder()
+            .scriptField(
+                PUBLISHER_UUID,
+                uriAsUuid(jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
+            )
             .query(queryBuilder)
             .size(getSize())
             .from(getFrom())
@@ -200,7 +211,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return aggrFilter;
     }
 
-    public boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
+    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
         return Optional.ofNullable(aggregationBuilder)
             .map(AggregationBuilder::getName)
             .map(this::isDefined)
@@ -213,7 +224,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }
 
-    private static String getSortFieldName(Entry<String, SortOrder> entry) {
+    private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
     }
 
@@ -259,7 +270,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
-        addFilter(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
+        setFilters(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     @SuppressWarnings("PMD.GodClass")

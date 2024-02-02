@@ -88,6 +88,7 @@ public final class Resource {
     public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
+    public static final String PUBLISHER_UUID = PUBLISHER + DOT + "uuid";
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
@@ -224,19 +225,18 @@ public final class Resource {
     }
 
     private static TermsAggregationBuilder publisher() {
-        final var path = jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD);
-        final var script = uriAsUuid(path);
         return
-            branchBuilder(PUBLISHER, path)
-                .script(script)
+            branchBuilder(PUBLISHER, PUBLISHER_UUID)
                 .subAggregation(
                     branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
                                   KEYWORD)
                 );
     }
 
-    private static Script uriAsUuid(String path) {
-        return Script.parse("doc['" + path + "'].value.splitOnToken('/')[5];");
+    public static Script uriAsUuid(String path) {
+        return Script.parse(
+            "if (doc['" + path + "'].size() > 0) return doc['" + path + "'].value.splitOnToken('/')[5];"
+        );
     }
 
     private static TermsAggregationBuilder license() {
