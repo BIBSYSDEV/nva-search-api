@@ -6,8 +6,7 @@ import no.unit.nva.search2.common.SwsResponse;
 public record ResponseLogInfo(
     long opensearchTime,
     long processingTime,
-    int totalHits,
-    int payloadSize
+    int totalHits
 
 )  implements JsonSerializable {
 
@@ -18,7 +17,6 @@ public record ResponseLogInfo(
 
     public static final class Builder {
 
-        private int responseSize;
         private int totalHits;
         private long responseTime;
         private long opensearchResponseTime;
@@ -41,24 +39,17 @@ public record ResponseLogInfo(
             return this;
         }
 
-        public Builder withResponseSize(int responseSize) {
-            this.responseSize = responseSize;
-            return this;
-        }
-
         public Builder withSwsResponse(SwsResponse response) {
             return
                 this.withOpensearchResponseTime(response.took())
-                    .withTotalHits(response.getTotalSize())
-                    .withResponseSize(response.toString().length());
+                    .withTotalHits(response.getTotalSize());
         }
 
         public String toJsonString() {
             return new ResponseLogInfo(
                 opensearchResponseTime,
                 responseTime,
-                totalHits,
-                responseSize
+                totalHits
             ).toJsonString();
         }
     }
