@@ -37,8 +37,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.enums.ImportCandidateParameter;
 import no.unit.nva.search2.enums.ParameterKey;
@@ -133,7 +133,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @SuppressWarnings("PMD.GodClass")
-    public static class Builder extends QueryBuilder<ImportCandidateParameter, ImportCandidateQuery> {
+    public static class Builder extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
 
         Builder() {
             super(new ImportCandidateQuery());

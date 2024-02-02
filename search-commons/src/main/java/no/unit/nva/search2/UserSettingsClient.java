@@ -22,6 +22,10 @@ import nva.commons.core.paths.UriWrapper;
 
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
 
+    public static final String ERROR_FETCHING_USER_SETTINGS = "Error fetching user settings: {}";
+    public static final String PERSON_PREFERENCES = "person-preferences";
+    public static final String FETCHING_USER_SETTING_FOR = "Fetching userSetting for: {}";
+
     public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
     }
@@ -42,8 +46,9 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
     }
 
     private HttpRequest createRequest(String contributorId) {
+        logger.info(FETCHING_USER_SETTING_FOR, contributorId);
         var userSettingId = UriWrapper.fromHost(readApiHost())
-            .addChild("person-preferences")
+            .addChild(PERSON_PREFERENCES)
             .addChild(contributorId)
             .getUri();
         return HttpRequest
@@ -58,15 +63,15 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
     @Override
     protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
-            logger.error("Error fetching user settings: {}", response.body());
+            logger.error(ERROR_FETCHING_USER_SETTINGS, response.body());
             return null;
         }
 
         return attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
-            .orElse(this::handleSerilizeError);
+            .orElse(this::handleSerializeError);
     }
 
-    private UserSettings handleSerilizeError(Failure<UserSettings> userSettingsFailure) {
+    private UserSettings handleSerializeError(Failure<UserSettings> userSettingsFailure) {
         logger.error(userSettingsFailure.getException().getMessage());
         return null;
     }

@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
+public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
     protected final transient Query<K> query;
@@ -51,7 +51,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * .build()
      * </samp>
      */
-    public QueryBuilder(Query<K> query) {
+    public ParameterValidator(Query<K> query) {
         this.query = query;
     }
 
@@ -71,7 +71,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * Validator of CristinQuery.Builder.
      * @throws BadRequestException if parameters are invalid or missing
      */
-    public QueryBuilder<K, Q> validate() throws BadRequestException {
+    public ParameterValidator<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
         for (var entry : query.pageParameters.entrySet()) {
             validatesEntrySet(entry);
@@ -95,7 +95,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * Adds query and path parameters from requestInfo.
      */
     @JacocoGenerated
-    public QueryBuilder<K, Q> fromRequestInfo(RequestInfo requestInfo) {
+    public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());
         return fromQueryParameters(requestInfo.getQueryParameters());
@@ -105,7 +105,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
     /**
      * Adds parameters from query.
      */
-    public QueryBuilder<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
+    public ParameterValidator<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
         parameters.forEach(this::setEntryValue);
         return this;
     }
@@ -114,7 +114,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * Adds parameters from query.
      */
     @JacocoGenerated
-    public QueryBuilder<K, Q> fromQueryParameters(Map<String, String> parameters) {
+    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
@@ -128,13 +128,13 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * @param requiredParameters comma seperated QueryParameterKeys
      */
     @SafeVarargs
-    public final QueryBuilder<K, Q> withRequiredParameters(K... requiredParameters) {
+    public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
         query.otherRequiredKeys.addAll(tmpSet);
         return this;
     }
 
-    public final QueryBuilder<K, Q> withMediaType(String mediaType) {
+    public final ParameterValidator<K, Q> withMediaType(String mediaType) {
         query.setMediaType(mediaType);
         return this;
     }
@@ -143,7 +143,7 @@ public abstract class QueryBuilder<K extends Enum<K> & ParameterKey, Q extends Q
      * When running docker tests, the current host needs to be specified.
      * @param  uri URI to local docker test instance
      */
-    public final QueryBuilder<K, Q> withOpensearchUri(URI uri) {
+    public final ParameterValidator<K, Q> withOpensearchUri(URI uri) {
         query.setOpenSearchUri(uri);
         return this;
     }
