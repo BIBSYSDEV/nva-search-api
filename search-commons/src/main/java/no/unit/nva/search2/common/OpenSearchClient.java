@@ -96,9 +96,9 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             logger.info(
                 ResponseLogInfo.builder()
                     .withResponseTime(getRequestDuration())
-                    .withOpensearchResponseTime(result.took())
-                    .withTotalHits(result.getTotalSize())
-                    .toJsonString());
+                    .withSwsResponse(result)
+                    .toJsonString()
+            );
             return result;
         };
     }
