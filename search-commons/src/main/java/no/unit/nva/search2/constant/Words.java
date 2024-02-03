@@ -22,6 +22,7 @@ public final class Words {
     public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";
+    public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";

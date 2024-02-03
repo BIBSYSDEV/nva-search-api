@@ -1,5 +1,7 @@
 package no.unit.nva.search2.common;
 
+import static no.unit.nva.search2.constant.Words.CONTENT_TYPE;
+import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,7 +16,7 @@ import javax.net.ssl.SSLSession;
 import org.jetbrains.annotations.NotNull;
 
 public class MockedHttpResponse {
-    
+
     @NotNull
     public static HttpResponse<Object> mockedHttpResponse(String filename) {
         return new HttpResponse<>() {
@@ -35,20 +37,67 @@ public class MockedHttpResponse {
             
             @Override
             public HttpHeaders headers() {
-                return HttpHeaders.of(Map.of("Content-Type", Collections.singletonList("application/json")),
-                                      (s, s2) -> true);
+                return HttpHeaders.of(
+                    Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
+                    (s, s2) -> true);
             }
-            
+
             @Override
             public String body() {
                 return stringFromResources(Path.of(filename));
             }
-            
+
             @Override
             public Optional<SSLSession> sslSession() {
                 return Optional.empty();
             }
-            
+
+            @Override
+            public URI uri() {
+                return null;
+            }
+
+            @Override
+            public HttpClient.Version version() {
+                return null;
+            }
+        };
+    }
+
+    public static HttpResponse<Object> mockedHttpResponse(String filename, int statusCode) {
+        return new HttpResponse<>() {
+            @Override
+            public int statusCode() {
+                return statusCode;
+            }
+
+            @Override
+            public HttpRequest request() {
+                return null;
+            }
+
+            @Override
+            public Optional<HttpResponse<Object>> previousResponse() {
+                return Optional.empty();
+            }
+
+            @Override
+            public HttpHeaders headers() {
+                return HttpHeaders.of(
+                    Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
+                    (s, s2) -> true);
+            }
+
+            @Override
+            public String body() {
+                return stringFromResources(Path.of(filename));
+            }
+
+            @Override
+            public Optional<SSLSession> sslSession() {
+                return Optional.empty();
+            }
+
             @Override
             public URI uri() {
                 return null;

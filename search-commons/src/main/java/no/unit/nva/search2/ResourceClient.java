@@ -20,6 +20,12 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
         this.userSettingsClient = new UserSettingsClient(client, cachedJwtProvider);
     }
 
+    public ResourceClient(HttpClient client, UserSettingsClient userSettingsClient,
+                          CachedJwtProvider cachedJwtProvider) {
+        super(client, cachedJwtProvider);
+        this.userSettingsClient = userSettingsClient;
+    }
+
     @JacocoGenerated
     public static ResourceClient defaultClient() {
         var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
