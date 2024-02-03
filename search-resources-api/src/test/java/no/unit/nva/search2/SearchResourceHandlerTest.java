@@ -34,7 +34,6 @@ import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.SwsResponse;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -257,11 +256,6 @@ class SearchResourceHandlerTest {
 
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
-    }
-
-    private PagedSearch getSearchResourcesResponseFromFile(String filename)
-        throws JsonProcessingException {
-        return objectMapperWithEmpty.readValue(stringFromResources(Path.of(filename)), PagedSearch.class);
     }
 
     public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
