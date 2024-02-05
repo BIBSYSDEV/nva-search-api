@@ -10,6 +10,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Resource.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.constant.Resource.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
 import static no.unit.nva.search2.constant.Resource.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
@@ -18,7 +19,6 @@ import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.STATUS;
@@ -229,9 +229,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var uuid = UriWrapper.fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
-                    .matchQuery(ID, UUID.fromString(uuid))
+                    .matchQuery(IDENTIFIER_KEYWORD, uuid)
                     .boost(3.14F + promotedPublications.size() - i);
-
                 logger.info(qb.toString());
                 bq.should(qb);
             }
