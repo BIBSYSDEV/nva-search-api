@@ -1,34 +1,5 @@
 package no.unit.nva.search2;
 
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.UserSettings;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import no.unit.nva.search2.enums.PublicationStatus;
-import no.unit.nva.search2.enums.ResourceParameter;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -39,6 +10,7 @@ import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.constant.Resource.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.constant.Resource.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.PUBLICATION_STATUS;
 import static no.unit.nva.search2.constant.Resource.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.constant.Resource.RESOURCES_AGGREGATIONS;
@@ -47,7 +19,6 @@ import static no.unit.nva.search2.constant.Words.ASTERISK;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.COMMA;
 import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.constant.Words.STATUS;
@@ -67,6 +38,33 @@ import static no.unit.nva.search2.enums.ResourceSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryBuilder;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.dto.UserSettings;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.enums.PublicationStatus;
+import no.unit.nva.search2.enums.ResourceParameter;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
@@ -228,11 +226,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
-                bq.should(
-                    QueryBuilders
-                        .matchQuery(ID, promotedPublications.get(i))
-                        .boost(3.14F + promotedPublications.size() - i)
-                );
+                var uuid = fromUri(promotedPublications.get(i)).getLastPathElement();
+                var qb = QueryBuilders
+                    .matchQuery(IDENTIFIER_KEYWORD, uuid)
+                    .boost(3.14F + promotedPublications.size() - i);
+                logger.info(qb.toString());
+                bq.should(qb);
             }
         }
     }
