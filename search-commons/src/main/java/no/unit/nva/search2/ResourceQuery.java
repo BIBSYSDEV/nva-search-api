@@ -56,7 +56,6 @@ import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
 import no.unit.nva.search2.enums.PublicationStatus;
 import no.unit.nva.search2.enums.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -227,7 +226,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
-                var uuid = UriWrapper.fromUri(promotedPublications.get(i)).getLastPathElement();
+                var uuid = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, uuid)
                     .boost(3.14F + promotedPublications.size() - i);
