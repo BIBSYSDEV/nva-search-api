@@ -9,9 +9,11 @@ import static no.unit.nva.search2.constant.Functions.readApiHost;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
@@ -45,13 +47,14 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
 
     @JacocoGenerated
     private HttpRequest createRequest(String contributorId) {
-        var userSettingId = UriWrapper.fromHost(readApiHost())
+        var personId = URLEncoder.encode(contributorId, Charset.defaultCharset());
+        var userSettingUri = UriWrapper.fromHost(readApiHost())
             .addChild("person-preferences")
-            .addChild(contributorId)
+            .addChild(personId)
             .getUri();
-        logger.info(contributorId);
+        //        logger.info(userSettingUri.toString());
         return HttpRequest
-            .newBuilder(userSettingId)
+            .newBuilder(userSettingUri)
             .headers(
                 ACCEPT, MediaType.JSON_UTF_8.toString(),
                 CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
