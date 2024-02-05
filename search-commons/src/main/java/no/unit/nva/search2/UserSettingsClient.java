@@ -49,6 +49,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
             .addChild("person-preferences")
             .addChild(contributorId)
             .getUri();
+        logger.info(contributorId);
         return HttpRequest
             .newBuilder(userSettingId)
             .headers(
