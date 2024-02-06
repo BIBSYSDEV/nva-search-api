@@ -9,27 +9,26 @@ import static no.unit.nva.search2.constant.Functions.readApiHost;
 import static no.unit.nva.search2.enums.ResourceParameter.CONTRIBUTOR;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.dto.UserSettings;
-import nva.commons.core.attempt.Failure;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
-
-    public static final String ERROR_FETCHING_USER_SETTINGS = "Error fetching user settings: {}";
-    public static final String PERSON_PREFERENCES = "person-preferences";
-    public static final String FETCHING_USER_SETTING_FOR = "Fetching userSetting for: {}";
 
     public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
     }
 
+    @JacocoGenerated
     @Override
     public UserSettings doSearch(ResourceQuery query) {
         return
@@ -41,18 +40,21 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
                 .orElse(new UserSettings(Collections.emptyList()));
     }
 
+    @JacocoGenerated
     private Stream<String> createQueryBuilderStream(ResourceQuery query) {
         return query.getValue(CONTRIBUTOR).optionalStream();
     }
 
+    @JacocoGenerated
     private HttpRequest createRequest(String contributorId) {
-        logger.info(FETCHING_USER_SETTING_FOR, contributorId);
-        var userSettingId = UriWrapper.fromHost(readApiHost())
-            .addChild(PERSON_PREFERENCES)
-            .addChild(contributorId)
+        var personId = URLEncoder.encode(contributorId, Charset.defaultCharset());
+        var userSettingUri = UriWrapper.fromHost(readApiHost())
+            .addChild("person-preferences")
+            .addChild(personId)
             .getUri();
+        //        logger.info(userSettingUri.toString());
         return HttpRequest
-            .newBuilder(userSettingId)
+            .newBuilder(userSettingUri)
             .headers(
                 ACCEPT, MediaType.JSON_UTF_8.toString(),
                 CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
@@ -60,19 +62,18 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
             .GET().build();
     }
 
+    @JacocoGenerated
     @Override
     protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
-            logger.error(ERROR_FETCHING_USER_SETTINGS, response.body());
-            return null;
+            logger.error("Error fetching user settings: {}", response.body());
+            return new UserSettings(Collections.emptyList());
         }
 
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
-            .orElse(this::handleSerializeError);
-    }
-
-    private UserSettings handleSerializeError(Failure<UserSettings> userSettingsFailure) {
-        logger.error(userSettingsFailure.getException().getMessage());
-        return null;
+        var settings =
+            attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class));
+        return settings.isSuccess()
+            ? settings.get()
+            : new UserSettings(Collections.emptyList());
     }
 }
