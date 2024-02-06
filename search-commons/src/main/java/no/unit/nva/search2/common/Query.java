@@ -286,9 +286,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isScopusIdentifier(key)) {
 
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
+
         } else if (opensearchQueryTools.isBoolean(key)) {
 
-            return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            return opensearchQueryTools.boolQuery(key, value);
+
         } else if (opensearchQueryTools.isNumber(key)) {
 
             return new OpensearchQueryRange<K>().buildQuery(key, value);
