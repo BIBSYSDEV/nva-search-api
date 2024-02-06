@@ -226,9 +226,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
-                var uuid = fromUri(promotedPublications.get(i)).getLastPathElement();
+                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
-                    .matchQuery(IDENTIFIER_KEYWORD, uuid)
+                    .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
                     .boost(3.14F + promotedPublications.size() - i);
                 logger.info(qb.toString());
                 bq.should(qb);
