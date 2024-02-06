@@ -290,6 +290,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
         } else if (opensearchQueryTools.isNumber(key)) {
+
             return new OpensearchQueryRange<K>().buildQuery(key, value);
         } else if (opensearchQueryTools.isText(key)) {
 
