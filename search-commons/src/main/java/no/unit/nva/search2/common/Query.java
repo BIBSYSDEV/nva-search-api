@@ -12,7 +12,6 @@ import static no.unit.nva.search2.constant.Words.PLUS;
 import static no.unit.nva.search2.constant.Words.SCOPUS_SOURCE;
 import static no.unit.nva.search2.constant.Words.SPACE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT_KEYWORD;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
@@ -268,9 +267,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .map(QueryTools::objectToSortEntry);
     }
 
-    private boolean isTextAndKeyword(K key) {
-        return TEXT_KEYWORD.equals(key.fieldType());
-    }
 
     private boolean isMustNot(K key) {
         return MUST_NOT.equals(key.searchOperator());

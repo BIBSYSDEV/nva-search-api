@@ -147,7 +147,7 @@ class ResourceClientTest {
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response2 = searchClient.doSearch(query2);
