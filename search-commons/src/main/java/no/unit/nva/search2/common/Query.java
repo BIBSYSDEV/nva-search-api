@@ -284,7 +284,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
 
         } else if (opensearchQueryTools.isScopusIdentifier(key)) {
-
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
 
         } else if (opensearchQueryTools.isBoolean(key)) {
