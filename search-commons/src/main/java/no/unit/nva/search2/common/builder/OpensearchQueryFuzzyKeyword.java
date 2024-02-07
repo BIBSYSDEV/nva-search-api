@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search2.enums.ParameterKey;
-import nva.commons.core.JacocoGenerated;
 import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -12,7 +11,6 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 
-@JacocoGenerated    // TODO implement tests
 public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override
