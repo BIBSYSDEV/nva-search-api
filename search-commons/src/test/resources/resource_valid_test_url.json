@@ -62,6 +62,7 @@
   "INSTITUTION_SHOULD=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0": 3,
   "INSTITUTION_should=194.63.55.0": 1,
   "ISBN=9788202535032": 1,
+  "ISBN=978820253503": 1,
   "ISBN_NOT=9788202535032": 20,
   "ISBN_SHOULD=9788202535032": 1,
   "ISSN=1435-9529": 1,

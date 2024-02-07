@@ -5,6 +5,7 @@ import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.builder.OpensearchQueryTextKeyword;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
@@ -249,6 +250,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .forEach(entry -> {
                 if (isMustNot(entry.getKey())) {
                     boolQueryBuilder.mustNot(entry.getValue());
+                    //                } else if (isTextAndKeyword(entry.getKey())) {
+                    //                    boolQueryBuilder.should(entry.getValue());
                 } else {
                     boolQueryBuilder.must(entry.getValue());
                 }
@@ -271,20 +274,30 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
-        if (opensearchQueryTools.isSearchAll(key)) {
+        if (opensearchQueryTools.isSearchAllKey(key)) {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isCristinIdentifier(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isScopusIdentifier(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isBoolean(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isNumber(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isText(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isTextAndKeywordKey(key)) {
+            return new OpensearchQueryTextKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
         }
@@ -325,7 +338,18 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .getUri();
     }
 
+    private void logSearchKeys() {
+        logger.info(
+            getSearchParameterKeys()
+                .map(Enum::name)
+                .collect(Collectors.joining(", ", "{\"keys\":[", "]}"))
+        );
+    }
 
+    /**
+     * AutoConvert value to Date, Number (or String)
+     * <p>Also holds key and can return value as <samp>optional stream</samp></p>
+     */
     @SuppressWarnings({"PMD.ShortMethodName"})
     public class AsType {
 

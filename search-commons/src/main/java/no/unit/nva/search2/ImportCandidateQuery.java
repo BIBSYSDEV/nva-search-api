@@ -109,15 +109,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
-        var builder = new SearchSourceBuilder().query(queryBuilder);
+        var builder = new SearchSourceBuilder()
+            .query(queryBuilder)
+            .size(getSize())
+            .from(getFrom())
+            .trackTotalHits(true);
 
         handleSearchAfter(builder);
 
         IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
 
-        builder.size(getValue(SIZE).as());
-        builder.from(getValue(FROM).as());
-        builder.trackTotalHits(true);
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
@@ -145,7 +146,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    default -> {
+                    default -> { /* do nothing */
                     }
                 }
             });

@@ -18,6 +18,7 @@ import static no.unit.nva.search2.constant.Words.VALUE;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.TEXT_KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URLDecoder;
@@ -175,7 +176,12 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.SCOPUS_IDENTIFIER.equals(key.name());
     }
 
-    public boolean isSearchAll(K key) {
+    @JacocoGenerated    /// not implemented yet
+    public boolean isTextAndKeywordKey(K key) {
+        return TEXT_KEYWORD.equals(key.fieldType());
+    }
+
+    public boolean isSearchAllKey(K key) {
         return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
     }
 
