@@ -7,11 +7,16 @@ import static no.unit.nva.search2.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.constant.Words.COLON;
 import static no.unit.nva.search2.constant.Words.DOT;
+import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.constant.Words.ID;
 import static no.unit.nva.search2.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.ONE;
+import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.constant.Words.REFERENCE;
 import static no.unit.nva.search2.constant.Words.SOURCE;
 import static no.unit.nva.search2.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.constant.Words.VALUE;
@@ -54,17 +59,13 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return nonNull(value) && !value.isEmpty();
     }
 
-    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
+//    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
     public static boolean hasContent(Collection<?> value) {
         return nonNull(value) && !value.isEmpty();
     }
 
     public static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
-    }
-
-    private boolean isNotKeyword(K key) {
-        return !ParameterKey.ParamKind.KEYWORD.equals(key.fieldType());
     }
 
     public String getFirstSearchField(K key) {
@@ -154,11 +155,16 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             ScoreMode.None));
     }
 
-    public boolean isBoolean(K key) {
+
+    private boolean isNotKeyword(K key) {
+        return !ParameterKey.ParamKind.KEYWORD.equals(key.fieldType());
+    }
+
+    public boolean isBooleanKey(K key) {
         return ParamKind.BOOLEAN.equals(key.fieldType());
     }
 
-    public boolean isNumber(K key) {
+    public boolean isNumberKey(K key) {
         return key.searchOperator() == GREATER_THAN_OR_EQUAL_TO
                || key.searchOperator() == LESS_THAN
                || key.searchOperator() == BETWEEN;
@@ -168,27 +174,23 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.FUNDING.equals(key.name());
     }
 
-    public boolean isCristinIdentifier(K key) {
+    public boolean isCristinIdentifierKey(K key) {
         return Words.CRISTIN_IDENTIFIER.equals(key.name());
     }
 
-    public boolean isScopusIdentifier(K key) {
+    public boolean isScopusIdentifierKey(K key) {
         return Words.SCOPUS_IDENTIFIER.equals(key.name());
     }
 
-    public boolean isPublisher(K key) {
-        return Words.PUBLISHER.equals(key.name());
-    }
-
-    public boolean isTextAndKeyword(K key) {
+    public boolean isTextAndKeywordKey(K key) {
         return TEXT_KEYWORD.equals(key.fieldType());
     }
 
-    public boolean isSearchAll(K key) {
+    public boolean isSearchAllKey(K key) {
         return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
     }
 
-    public boolean isText(K key) {
+    public boolean isTextKey(K key) {
         return ParamKind.TEXT.equals(key.fieldType())
                || ParamKind.FUZZY_TEXT.equals(key.fieldType());
     }

@@ -70,6 +70,8 @@ import org.opensearch.search.sort.SortOrder;
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static final String FILTER = "filter";
+    public static final float π = 3.14F;
+    public static final float Φ = 1.618F;
 
     private ResourceQuery() {
         super();
@@ -240,7 +242,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(3.14F + promotedPublications.size() - i);
+                    .boost(π + promotedPublications.size() - i);
                 bq.should(qb);
             }
             logger.info(

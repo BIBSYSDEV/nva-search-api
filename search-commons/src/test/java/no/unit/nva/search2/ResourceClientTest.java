@@ -75,7 +75,7 @@ class ResourceClientTest {
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final String TEST_RESOURCES_MAPPINGS_JSON = "test_resources_mappings.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_valid_test_url.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "test_resource_urls.json";
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);

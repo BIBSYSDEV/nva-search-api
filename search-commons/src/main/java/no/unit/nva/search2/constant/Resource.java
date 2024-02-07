@@ -91,7 +91,6 @@ public final class Resource {
     public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
-    public static final String PUBLISHER_UUID = PUBLISHER + "_uuid";
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
@@ -240,11 +239,7 @@ public final class Resource {
     }
 
     public static Script uriAsUuid(String... paths) {
-        var path = jsonPath(paths);
-        //        return Script.parse(
-        //            "if (doc['" + path + "'].size()>=0) { return doc['" + path + "'].value.splitOnToken('/')[5]; }"
-        //        );
-
+        var path = String.join(DOT, paths);
         var script = """
             if (doc[params['path']].size()==0) { return null;}
             def path_parts = doc[params['path']].value.splitOnToken('/');

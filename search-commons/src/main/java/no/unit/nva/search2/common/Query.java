@@ -274,28 +274,28 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
-        if (opensearchQueryTools.isSearchAll(key)) {
+        if (opensearchQueryTools.isSearchAllKey(key)) {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
 
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
 
-        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
+        } else if (opensearchQueryTools.isCristinIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
 
-        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
+        } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
 
-        } else if (opensearchQueryTools.isBoolean(key)) {
+        } else if (opensearchQueryTools.isBooleanKey(key)) {
             return opensearchQueryTools.boolQuery(key, value);
             //
-        } else if (opensearchQueryTools.isNumber(key)) {
+        } else if (opensearchQueryTools.isNumberKey(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
             //
-        } else if (opensearchQueryTools.isText(key)) {
+        } else if (opensearchQueryTools.isTextKey(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
             //
-        } else if (opensearchQueryTools.isTextAndKeyword(key)) {
+        } else if (opensearchQueryTools.isTextAndKeywordKey(key)) {
             return new OpensearchQueryTextKeyword<K>().buildQuery(key, value);
             //
         } else {
