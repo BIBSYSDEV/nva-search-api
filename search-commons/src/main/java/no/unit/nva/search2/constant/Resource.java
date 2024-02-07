@@ -10,6 +10,7 @@ import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.constant.Words.CODE;
+import static no.unit.nva.search2.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.constant.Words.COURSE;
@@ -49,6 +50,7 @@ import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Words.YEAR;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -197,6 +199,7 @@ public final class Resource {
             nestedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
                 .subAggregation(
                     publicationContext()
+                        .subAggregation(pubicationContextType())
                         .subAggregation(publisher())
                         .subAggregation(series())
                 )
@@ -224,6 +227,12 @@ public final class Resource {
     private static TermsAggregationBuilder series() {
         return
             branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD);
+    }
+
+
+    private static TermsAggregationBuilder pubicationContextType() {
+        return
+            branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
     }
 
     private static TermsAggregationBuilder publisher() {

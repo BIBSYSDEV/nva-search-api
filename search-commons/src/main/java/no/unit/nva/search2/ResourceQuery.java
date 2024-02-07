@@ -70,8 +70,8 @@ import org.opensearch.search.sort.SortOrder;
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static final String FILTER = "filter";
-    public static final float π = 3.14F;
-    public static final float Φ = 1.618F;
+    public static final float PI = 3.14F;        // π
+    //public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used in the future for boosting.
 
     private ResourceQuery() {
         super();
@@ -238,11 +238,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .get().promotedPublications();
         if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
+            for (float i = 0; i < promotedPublications.size(); i++) {
+                var sortableIdentifier = fromUri(promotedPublications.get(Math.round(i))).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(π + promotedPublications.size() - i);
+                    .boost(PI + 1F - (i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(
