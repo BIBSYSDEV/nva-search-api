@@ -39,7 +39,6 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -71,7 +70,6 @@ import org.opensearch.search.sort.SortOrder;
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static final String FILTER = "filter";
-    protected List<String> promotedPublications = new ArrayList<>(0);
 
     private ResourceQuery() {
         super();
@@ -181,7 +179,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         builder.aggregation(getAggregationsWithFilter());
 
-        logger.debug(builder.toString());
+        logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -232,7 +230,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        promotedPublications =
+        var promotedPublications =
             attempt(() -> userSettingsClient.doSearch(this))
                 .or(() -> new UserSettings(List.of()))
                 .get().promotedPublications();

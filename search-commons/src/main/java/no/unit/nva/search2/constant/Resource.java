@@ -51,10 +51,13 @@ import static no.unit.nva.search2.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Words.YEAR;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.script.Script;
+import org.opensearch.script.ScriptType;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
@@ -88,7 +91,7 @@ public final class Resource {
     public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
-    public static final String PUBLISHER_UUID = PUBLISHER + DOT + "uuid";
+    public static final String PUBLISHER_UUID = PUBLISHER + "_uuid";
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
@@ -226,17 +229,29 @@ public final class Resource {
 
     private static TermsAggregationBuilder publisher() {
         return
-            branchBuilder(PUBLISHER, PUBLISHER_UUID)
+            AggregationBuilders
+                .terms(PUBLISHER)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
+                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
                 .subAggregation(
                     branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
                                   KEYWORD)
                 );
     }
 
-    public static Script uriAsUuid(String path) {
-        return Script.parse(
-            "if (doc['" + path + "'].size() > 0) return doc['" + path + "'].value.splitOnToken('/')[5];"
-        );
+    public static Script uriAsUuid(String... paths) {
+        var path = jsonPath(paths);
+        //        return Script.parse(
+        //            "if (doc['" + path + "'].size()>=0) { return doc['" + path + "'].value.splitOnToken('/')[5]; }"
+        //        );
+
+        var script = """
+            if (doc[params['path']].size()==0) { return null;}
+            def path_parts = doc[params['path']].value.splitOnToken('/');
+            if (path_parts.length == 0) { return null; }
+            return path_parts[path_parts.length - 2];""";
+        return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+
     }
 
     private static TermsAggregationBuilder license() {
