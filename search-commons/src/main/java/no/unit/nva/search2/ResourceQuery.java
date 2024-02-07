@@ -238,11 +238,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .get().promotedPublications();
         if (hasContent(promotedPublications)) {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
-            for (float i = 0; i < promotedPublications.size(); i++) {
-                var sortableIdentifier = fromUri(promotedPublications.get(Math.round(i))).getLastPathElement();
+            for (int i = 0; i < promotedPublications.size(); i++) {
+                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(PI + 1F - (i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(
