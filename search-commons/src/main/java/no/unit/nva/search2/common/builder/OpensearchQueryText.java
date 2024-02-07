@@ -6,10 +6,8 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.enums.ParameterKey;
 import no.unit.nva.search2.enums.ParameterKey.FieldOperator;
-import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.MatchPhraseQueryBuilder;
-import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
