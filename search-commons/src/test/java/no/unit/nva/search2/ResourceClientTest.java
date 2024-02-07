@@ -288,7 +288,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(9)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(10)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
