@@ -71,7 +71,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static final String FILTER = "filter";
     public static final float PI = 3.14F;        // π
-    //public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used in the future for boosting.
+    public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used in the future for boosting.
 
     private ResourceQuery() {
         super();
