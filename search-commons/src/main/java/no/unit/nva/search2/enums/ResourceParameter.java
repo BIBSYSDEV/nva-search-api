@@ -1,6 +1,7 @@
 package no.unit.nva.search2.enums;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.constant.Defaults.PHI;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -56,6 +57,7 @@ import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
 import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.SHOULD;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.CUSTOM;
+import static no.unit.nva.search2.enums.ParameterKey.ParamKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.FUZZY_TEXT;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.KEYWORD;
 import static no.unit.nva.search2.enums.ParameterKey.ParamKind.NUMBER;
@@ -120,10 +122,10 @@ public enum ResourceParameter implements ParameterKey {
     INSTITUTION(TEXT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, MUST_NOT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    ISBN(TEXT, PUBLICATION_CONTEXT_ISBN_LIST),
+    ISBN(FUZZY_KEYWORD, PUBLICATION_CONTEXT_ISBN_LIST, PHI),
     ISBN_NOT(TEXT, MUST_NOT, PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_SHOULD(TEXT, SHOULD, PUBLICATION_CONTEXT_ISBN_LIST),
-    ISSN(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
+    ISSN(FUZZY_KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN, PHI),
     ISSN_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     LICENSE(KEYWORD, MUST, ASSOCIATED_ARTIFACTS_LICENSE),

@@ -5,7 +5,7 @@ import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.common.builder.OpensearchQueryTextKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
@@ -62,7 +62,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Set<K> otherRequiredKeys;
     protected final transient QueryTools<K> opensearchQueryTools;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
-    private transient List<QueryBuilder> filters = new ArrayList<>();
+    private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
@@ -95,6 +95,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
+        logSearchKeys();
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
@@ -221,7 +222,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected void setFilters(QueryBuilder... filters) {
-        this.filters = List.of(filters);
+        this.filters.clear();
+        this.filters.addAll(List.of(filters));
     }
 
     protected void addFilter(QueryBuilder builder) {
@@ -295,8 +297,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isText(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isTextAndKeywordKey(key)) {
-            return new OpensearchQueryTextKeyword<K>().buildQuery(key, value);
+        } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
+            return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
