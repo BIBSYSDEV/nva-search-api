@@ -177,6 +177,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.SCOPUS_IDENTIFIER.equals(key.name());
     }
 
+    @JacocoGenerated    /// not implemented yet
     public boolean isTextAndKeywordKey(K key) {
         return TEXT_KEYWORD.equals(key.fieldType());
     }

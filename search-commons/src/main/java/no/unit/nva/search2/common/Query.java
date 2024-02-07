@@ -34,7 +34,6 @@ import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.common.builder.OpensearchQueryTextKeyword;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
 import no.unit.nva.search2.dto.PagedSearchBuilder;
@@ -295,8 +294,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isTextKey(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
             //
-        } else if (opensearchQueryTools.isTextAndKeywordKey(key)) {
-            return new OpensearchQueryTextKeyword<K>().buildQuery(key, value);
+            //        } else if (opensearchQueryTools.isTextAndKeywordKey(key)) {
+            //            return new OpensearchQueryTextKeyword<K>().buildQuery(key, value);
             //
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
