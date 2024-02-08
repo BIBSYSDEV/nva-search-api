@@ -1,7 +1,23 @@
 package no.unit.nva.search2.common;
 
 import com.google.common.net.MediaType;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
@@ -20,22 +36,6 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -61,7 +61,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Set<K> otherRequiredKeys;
     protected final transient QueryTools<K> opensearchQueryTools;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
-    private transient List<QueryBuilder> filters = new ArrayList<>();
+    private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
@@ -94,6 +94,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
+        logSearchKeys();
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return MediaType.CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
@@ -220,7 +221,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected void setFilters(QueryBuilder... filters) {
-        this.filters = List.of(filters);
+        this.filters.clear();
+        this.filters.addAll(List.of(filters));
     }
 
     protected void addFilter(QueryBuilder builder) {
@@ -271,20 +273,30 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
-        if (opensearchQueryTools.isSearchAll(key)) {
+        if (opensearchQueryTools.isSearchAllKey(key)) {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isCristinIdentifier(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isScopusIdentifier(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isBoolean(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isNumber(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isText(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
+            return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
         }
@@ -325,7 +337,18 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .getUri();
     }
 
+    private void logSearchKeys() {
+        logger.info(
+            getSearchParameterKeys()
+                .map(Enum::name)
+                .collect(Collectors.joining(", ", "{\"keys\":[", "]}"))
+        );
+    }
 
+    /**
+     * AutoConvert value to Date, Number (or String)
+     * <p>Also holds key and can return value as <samp>optional stream</samp></p>
+     */
     @SuppressWarnings({"PMD.ShortMethodName"})
     public class AsType {
 

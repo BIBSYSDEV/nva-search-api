@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryBuilder;
@@ -68,6 +69,9 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
+    public static final String FILTER = "filter";
+    public static final float PI = 3.14F;        // π
+    public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used in the future for boosting.
 
     private ResourceQuery() {
         super();
@@ -125,12 +129,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     /**
-     * Required Status filter.
+     * Filter on Required Status.
      *
      * <p>Only STATUES specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      * <p>See {@link PublicationStatus} for available values.</p>
      * @param publicationStatus the required statues
+     * @return ResourceQuery (builder pattern)
      */
     public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
         final var values = Arrays.stream(publicationStatus)
@@ -142,9 +147,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return this;
     }
 
+    /**
+     * Filter on organization.
+     * <P>Only documents belonging to organization specified are searchable (for the user)
+     * </p>
+     *
+     * @param organization uri of publisher
+     * @return ResourceQuery (builder pattern)
+     */
     public ResourceQuery withOrganization(URI organization) {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-                               .queryName(PUBLISHER);
+            .queryName(PUBLISHER);
         this.addFilter(filter);
         return this;
     }
@@ -153,17 +166,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : boolQuery();
-
-        if (isLookingForOneContributor()) {
-            assert queryBuilder instanceof BoolQueryBuilder;
-            addPromotedPublications(userSettingsClient, (BoolQueryBuilder) queryBuilder);
-        }
+                : makeBoolQuery(userSettingsClient);
 
         var builder = new SearchSourceBuilder()
             .query(queryBuilder)
-            .size(getValue(SIZE).as())
-            .from(getValue(FROM).as())
+            .size(getSize())
+            .from(getFrom())
             .postFilter(getFilters())
             .trackTotalHits(true);
 
@@ -179,15 +187,23 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
+    private BoolQueryBuilder makeBoolQuery(UserSettingsClient userSettingsClient) {
+        var queryBuilder = boolQuery();
+        if (isLookingForOneContributor()) {
+            addPromotedPublications(userSettingsClient, queryBuilder);
+        }
+        return queryBuilder;
+    }
+
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter("filter", getFilters());
+        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
     }
 
-    public boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
+    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
         return Optional.ofNullable(aggregationBuilder)
             .map(AggregationBuilder::getName)
             .map(this::isDefined)
@@ -196,12 +212,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private boolean isDefined(String key) {
         return getValue(AGGREGATION).optionalStream()
-            .flatMap(item-> Arrays.stream(item.split(COMMA)).sequential())
+            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
             .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }
 
-
-    private static String getSortFieldName(Entry<String, SortOrder> entry) {
+    private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
     }
 
@@ -217,7 +232,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return hasOneValue(CONTRIBUTOR);
     }
 
-    @JacocoGenerated
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
         var promotedPublications =
             attempt(() -> userSettingsClient.doSearch(this))
@@ -229,10 +243,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(3.14F + promotedPublications.size() - i);
-                logger.info(qb.toString());
+                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
+            logger.info(
+                bq.should().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))
+            );
         }
     }
 
@@ -244,7 +262,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
-        addFilter(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
+        setFilters(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     @SuppressWarnings("PMD.GodClass")
@@ -267,8 +285,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
                     case AGGREGATION -> setValue(key.fieldName(), ALL);
-                    default -> {
-                    }
+                    default -> { /* ignore and continue */ }
                 }
             });
         }
@@ -311,7 +328,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void validateSortEntry(Entry<String, SortOrder> entry) {
             if (fromSortKey(entry.getKey()) == INVALID) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
+                throw new IllegalArgumentException(
+                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys())
+                );
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));

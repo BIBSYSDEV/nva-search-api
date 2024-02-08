@@ -4,7 +4,6 @@ import static no.unit.nva.search2.ResourceClient.defaultClient;
 import static no.unit.nva.search2.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.enums.ResourceParameter.FROM;
 import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -36,7 +35,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withRequiredParameters(FROM, SIZE)
                 .validate()
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
