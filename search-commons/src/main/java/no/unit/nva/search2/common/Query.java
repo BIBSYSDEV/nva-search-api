@@ -1,6 +1,21 @@
 package no.unit.nva.search2.common;
 
 import com.google.common.net.MediaType;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
@@ -21,22 +36,6 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -279,19 +278,19 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
+        } else if (opensearchQueryTools.isCristinIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
+        } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isBoolean(key)) {
+        } else if (opensearchQueryTools.isBooleanKey(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isNumber(key)) {
+        } else if (opensearchQueryTools.isNumberKey(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isText(key)) {
+        } else if (opensearchQueryTools.isTextKey(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
