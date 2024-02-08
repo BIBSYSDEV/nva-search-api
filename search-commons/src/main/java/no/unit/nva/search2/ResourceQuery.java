@@ -169,12 +169,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 ? QueryBuilders.matchAllQuery()
                 : makeBoolQuery(userSettingsClient);
 
-        var builder = new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .postFilter(getFilters())
-            .trackTotalHits(true);
+        var builder = getSourceBuilder(queryBuilder);
 
         handleSearchAfter(builder);
 

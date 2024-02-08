@@ -142,12 +142,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
-        var builder = new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .postFilter(getFilters())
-            .trackTotalHits(true);
+        var builder = getSourceBuilder(queryBuilder);
 
         handleSearchAfter(builder);
 
