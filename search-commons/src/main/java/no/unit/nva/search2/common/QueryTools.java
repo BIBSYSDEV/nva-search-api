@@ -54,17 +54,13 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return nonNull(value) && !value.isEmpty();
     }
 
-    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
+//    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
     public static boolean hasContent(Collection<?> value) {
         return nonNull(value) && !value.isEmpty();
     }
 
     public static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
-    }
-
-    private boolean isNotKeyword(K key) {
-        return !ParameterKey.ParamKind.KEYWORD.equals(key.fieldType());
     }
 
     public String getFirstSearchField(K key) {
@@ -154,11 +150,16 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             ScoreMode.None));
     }
 
-    public boolean isBoolean(K key) {
+
+    private boolean isNotKeyword(K key) {
+        return !ParameterKey.ParamKind.KEYWORD.equals(key.fieldType());
+    }
+
+    public boolean isBooleanKey(K key) {
         return ParamKind.BOOLEAN.equals(key.fieldType());
     }
 
-    public boolean isNumber(K key) {
+    public boolean isNumberKey(K key) {
         return key.searchOperator() == GREATER_THAN_OR_EQUAL_TO
                || key.searchOperator() == LESS_THAN
                || key.searchOperator() == BETWEEN;
@@ -168,11 +169,11 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.FUNDING.equals(key.name());
     }
 
-    public boolean isCristinIdentifier(K key) {
+    public boolean isCristinIdentifierKey(K key) {
         return Words.CRISTIN_IDENTIFIER.equals(key.name());
     }
 
-    public boolean isScopusIdentifier(K key) {
+    public boolean isScopusIdentifierKey(K key) {
         return Words.SCOPUS_IDENTIFIER.equals(key.name());
     }
 
@@ -184,7 +185,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
     }
 
-    public boolean isText(K key) {
+    public boolean isTextKey(K key) {
         return ParamKind.TEXT.equals(key.fieldType())
                || ParamKind.FUZZY_TEXT.equals(key.fieldType());
     }

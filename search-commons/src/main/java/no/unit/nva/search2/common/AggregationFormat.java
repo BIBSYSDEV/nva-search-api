@@ -2,6 +2,7 @@ package no.unit.nva.search2.common;
 
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.constant.Words.BUCKETS;
+import static no.unit.nva.search2.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
@@ -129,6 +130,7 @@ public final class AggregationFormat {
             HAS_FILE, "/filter/associatedArtifacts/hasFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
+            CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",
             TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
         );

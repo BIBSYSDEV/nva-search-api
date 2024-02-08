@@ -8,11 +8,29 @@ import org.junit.jupiter.api.Test;
 class OpensearchQueryToolsTest {
 
     @Test
-    void rangeQuery() {
+    void invalidRangeQueryMust() {
         var queryRange = new OpensearchQueryRange<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, "test")
+        );
+    }
+
+    @Test
+    void invalidRangeQueryMustNot() {
+        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
+        );
+    }
+
+    @Test
+    void invalidRangeQueryShould() {
+        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_SHOULD, "test")
         );
     }
 

@@ -47,8 +47,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryBuilder;
 import no.unit.nva.search2.common.QueryContentWrapper;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.UserSettings;
@@ -78,10 +78,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         assignStatusImpossibleWhiteList();
     }
 
-    public static ResourceQueryBuilder builder() {
-        return new ResourceQueryBuilder();
+    public static ResourceParameterValidator builder() {
+        return new ResourceParameterValidator();
     }
-
 
     @Override
     protected Integer getFrom() {
@@ -266,9 +265,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @SuppressWarnings("PMD.GodClass")
-    public static class ResourceQueryBuilder extends QueryBuilder<ResourceParameter, ResourceQuery> {
+    public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
 
-        ResourceQueryBuilder() {
+        ResourceParameterValidator() {
             super(new ResourceQuery());
         }
 
@@ -335,6 +334,5 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
-
     }
 }

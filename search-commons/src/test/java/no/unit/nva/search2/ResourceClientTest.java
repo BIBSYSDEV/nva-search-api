@@ -75,7 +75,7 @@ class ResourceClientTest {
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final String TEST_RESOURCES_MAPPINGS_JSON = "test_resources_mappings.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_valid_test_url.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "test_resource_urls.json";
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
@@ -147,7 +147,7 @@ class ResourceClientTest {
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response2 = searchClient.doSearch(query2);
@@ -162,7 +162,7 @@ class ResourceClientTest {
             assertThat(aggregations.get(HAS_FILE).size(), is(2));
             assertThat(aggregations.get(HAS_FILE).get(0).count(), is(20));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
-            assertThat(aggregations.get(PUBLISHER).get(0).count(), is(8));
+            assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(4));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
@@ -288,7 +288,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(9)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(10)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 

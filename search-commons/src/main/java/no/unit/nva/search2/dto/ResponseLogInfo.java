@@ -1,11 +1,13 @@
 package no.unit.nva.search2.dto;
 
 import no.unit.nva.commons.json.JsonSerializable;
+import no.unit.nva.search2.common.SwsResponse;
 
 public record ResponseLogInfo(
-    long opensearchResponseTime,
-    long responseTime,
+    long opensearchTime,
+    long processingTime,
     int totalHits
+
 )  implements JsonSerializable {
 
     public static Builder builder() {
@@ -14,6 +16,7 @@ public record ResponseLogInfo(
 
 
     public static final class Builder {
+
         private int totalHits;
         private long responseTime;
         private long opensearchResponseTime;
@@ -26,18 +29,28 @@ public record ResponseLogInfo(
             return this;
         }
 
-        public Builder withResponseTime(long responseTime) {
-            this.responseTime = responseTime;
+        public Builder withResponseTime(long milliseconds) {
+            this.responseTime = milliseconds;
             return this;
         }
 
-        public Builder withOpensearchResponseTime(long opensearchResponseTime) {
-            this.opensearchResponseTime = opensearchResponseTime;
+        public Builder withOpensearchResponseTime(long milliseconds) {
+            this.opensearchResponseTime = milliseconds;
             return this;
+        }
+
+        public Builder withSwsResponse(SwsResponse response) {
+            return
+                this.withOpensearchResponseTime(response.took())
+                    .withTotalHits(response.getTotalSize());
         }
 
         public String toJsonString() {
-            return new ResponseLogInfo(opensearchResponseTime, responseTime, totalHits).toJsonString();
+            return new ResponseLogInfo(
+                opensearchResponseTime,
+                responseTime,
+                totalHits
+            ).toJsonString();
         }
     }
 }

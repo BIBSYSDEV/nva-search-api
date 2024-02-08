@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
+import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
@@ -47,7 +48,13 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected abstract R handleResponse(HttpResponse<String> response);
 
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
-        return attempt(() -> httpClient.send(httpRequest, bodyHandler)).orElseThrow();
+        return attempt(() -> httpClient.send(httpRequest, bodyHandler))
+            .orElse(responseFailure -> {
+                logger.error(
+                    new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString()
+                );
+                return null;
+            });
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
@@ -89,9 +96,9 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             logger.info(
                 ResponseLogInfo.builder()
                     .withResponseTime(getRequestDuration())
-                    .withOpensearchResponseTime(result.took())
-                    .withTotalHits(result.getTotalSize())
-                    .toJsonString());
+                    .withSwsResponse(result)
+                    .toJsonString()
+            );
             return result;
         };
     }
@@ -100,4 +107,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         return Duration.between(requestStart, Instant.now()).toMillis();
     }
 
+    record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {
+
+    }
 }

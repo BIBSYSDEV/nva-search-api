@@ -10,6 +10,7 @@ import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.constant.Words.CODE;
+import static no.unit.nva.search2.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.constant.Words.COURSE;
@@ -49,11 +50,16 @@ import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.constant.Words.TYPE;
 import static no.unit.nva.search2.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.constant.Words.YEAR;
+
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import no.unit.nva.search2.enums.ResourceSort;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.script.Script;
+import org.opensearch.script.ScriptType;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
@@ -193,11 +199,12 @@ public final class Resource {
             nestedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
                 .subAggregation(
                     publicationContext()
+                        .subAggregation(pubicationContextType())
                         .subAggregation(publisher())
                         .subAggregation(series())
                 )
                 .subAggregation(
-                    publicationInstance()            // Splitted or just a branch?
+                    publicationInstance()            // Split or just a branch?
                         .subAggregation(instanceType())
                 );
     }
@@ -222,9 +229,33 @@ public final class Resource {
             branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD);
     }
 
+
+    private static TermsAggregationBuilder pubicationContextType() {
+        return
+            branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
+    }
+
     private static TermsAggregationBuilder publisher() {
         return
-            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD);
+            AggregationBuilders
+                .terms(PUBLISHER)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
+                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+                .subAggregation(
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
+                                  KEYWORD)
+                );
+    }
+
+    public static Script uriAsUuid(String... paths) {
+        var path = String.join(DOT, paths);
+        var script = """
+            if (doc[params['path']].size()==0) { return null;}
+            def path_parts = doc[params['path']].value.splitOnToken('/');
+            if (path_parts.length == 0) { return null; }
+            return path_parts[path_parts.length - 2];""";
+        return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+
     }
 
     private static TermsAggregationBuilder license() {

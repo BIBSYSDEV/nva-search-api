@@ -270,7 +270,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return MUST_NOT.equals(key.searchOperator());
     }
 
-
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
         if (opensearchQueryTools.isSearchAllKey(key)) {
@@ -279,19 +278,19 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
+        } else if (opensearchQueryTools.isCristinIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
+        } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isBoolean(key)) {
+        } else if (opensearchQueryTools.isBooleanKey(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isNumber(key)) {
+        } else if (opensearchQueryTools.isNumberKey(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isText(key)) {
+        } else if (opensearchQueryTools.isTextKey(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
