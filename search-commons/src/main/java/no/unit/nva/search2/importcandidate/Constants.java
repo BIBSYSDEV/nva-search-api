@@ -1,4 +1,10 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.importcandidate;
+
+import java.util.List;
+import java.util.Locale;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 import static no.unit.nva.search2.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.constant.Functions.topLevelOrganisationsHierarchy;
@@ -7,14 +13,8 @@ import static no.unit.nva.search2.constant.Words.DOI;
 import static no.unit.nva.search2.constant.Words.DOT;
 import static no.unit.nva.search2.constant.Words.KEYWORD;
 import static no.unit.nva.search2.constant.Words.PIPE;
-import java.util.List;
-import java.util.Locale;
-import no.unit.nva.search2.enums.ImportCandidateSort;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
-public final class ImportCandidate {
+public final class Constants {
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";
     public static final String CANDIDATE_STATUS = "candidateStatus";
@@ -61,7 +61,7 @@ public final class ImportCandidate {
     }
 
     @JacocoGenerated
-    public ImportCandidate() {
+    public Constants() {
     }
 
 }

@@ -32,6 +32,7 @@ public final class Words {
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
+    public static final String FILTER = "filter";
     public static final String FROM = "from";
     public static final String FUNDING = "FUNDING";
     public static final String FUNDINGS = "fundings";

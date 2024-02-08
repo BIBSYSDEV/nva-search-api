@@ -1,22 +1,5 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.FROM;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SIZE;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SORT;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
@@ -32,7 +15,9 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
+import no.unit.nva.search2.importcandidate.ImportCandidateClient;
+import no.unit.nva.search2.importcandidate.ImportCandidateParameter;
+import no.unit.nva.search2.importcandidate.ImportCandidateQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -46,6 +31,24 @@ import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ImportCandidateClientTest {
 

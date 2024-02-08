@@ -1,24 +1,5 @@
 package no.unit.nva.search2;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.enums.ImportCandidateParameter.SEARCH_ALL;
-import static no.unit.nva.testutils.RandomDataGenerator.randomString;
-import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,6 +16,7 @@ import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.SwsResponse;
 import no.unit.nva.search2.constant.Words;
 import no.unit.nva.search2.dto.PagedSearch;
+import no.unit.nva.search2.importcandidate.ImportCandidateClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
 import nva.commons.core.Environment;
@@ -42,6 +24,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.search2.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_ALL;
+import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SearchImportCandidateHandlerTest {
     
