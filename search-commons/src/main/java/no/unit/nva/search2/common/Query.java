@@ -1,36 +1,8 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.CRISTIN_SOURCE;
-import static no.unit.nva.search2.constant.Words.PLUS;
-import static no.unit.nva.search2.constant.Words.SCOPUS_SOURCE;
-import static no.unit.nva.search2.constant.Words.SPACE;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
@@ -49,6 +21,37 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.constant.Words.CRISTIN_SOURCE;
+import static no.unit.nva.search2.constant.Words.PLUS;
+import static no.unit.nva.search2.constant.Words.SCOPUS_SOURCE;
+import static no.unit.nva.search2.constant.Words.SPACE;
+import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
@@ -249,8 +252,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .forEach(entry -> {
                 if (isMustNot(entry.getKey())) {
                     boolQueryBuilder.mustNot(entry.getValue());
-                    //                } else if (isTextAndKeyword(entry.getKey())) {
-                    //                    boolQueryBuilder.should(entry.getValue());
                 } else {
                     boolQueryBuilder.must(entry.getValue());
                 }
@@ -266,7 +267,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .map(QueryTools::objectToSortEntry);
     }
 
-
     private boolean isMustNot(K key) {
         return MUST_NOT.equals(key.searchOperator());
     }
@@ -275,28 +275,28 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         final var value = searchParameters.get(key);
         if (opensearchQueryTools.isSearchAllKey(key)) {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
-
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
-
-        } else if (opensearchQueryTools.isCristinIdentifierKey(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
-
-        } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
-
-        } else if (opensearchQueryTools.isBooleanKey(key)) {
-            return opensearchQueryTools.boolQuery(key, value);
-            //
-        } else if (opensearchQueryTools.isNumberKey(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isBoolean(key)) {
+            return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isNumber(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
-            //
-        } else if (opensearchQueryTools.isTextKey(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isText(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
-            //
-            //        } else if (opensearchQueryTools.isTextAndKeywordKey(key)) {
-            //            return new OpensearchQueryTextKeyword<K>().buildQuery(key, value);
-            //
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
+            return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
         }
