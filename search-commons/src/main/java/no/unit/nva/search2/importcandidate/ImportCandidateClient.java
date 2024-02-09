@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.importcandidate;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;

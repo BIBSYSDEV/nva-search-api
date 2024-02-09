@@ -1,8 +1,5 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
-import static no.unit.nva.search2.constant.Words.PREFIX;
-import static no.unit.nva.search2.constant.Words.QUOTE;
-import static no.unit.nva.search2.constant.Words.SUFFIX;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Collection;
 import java.util.Set;
@@ -44,10 +41,10 @@ public final class ErrorMessages {
     private static String prettifyList(Set<String> queryParameters) {
         return queryParameters.size() > 1
                    ? queryParameters.stream()
-                         .map(parameterName -> QUOTE + parameterName + QUOTE)
-                         .collect(Collectors.joining(", ", PREFIX, SUFFIX))
+                         .map(parameterName -> Words.QUOTE + parameterName + Words.QUOTE)
+                         .collect(Collectors.joining(", ", Words.PREFIX, Words.SUFFIX))
                    : queryParameters.stream()
-                         .collect(Collectors.joining(EMPTY_STRING, QUOTE, QUOTE));
+                         .collect(Collectors.joining(EMPTY_STRING, Words.QUOTE, Words.QUOTE));
     }
 
     @JacocoGenerated

@@ -1,19 +1,19 @@
-package no.unit.nva.search2.enums;
+package no.unit.nva.search2.common.enums;
 
 import java.util.Collection;
 import java.util.function.Predicate;
 import nva.commons.core.JacocoGenerated;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
-import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
-import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE;
-import static no.unit.nva.search2.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_BOOLEAN;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_DATE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_NUMBER;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_BOOLEAN;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_DATE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NUMBER;
 
 public interface ParameterKey {
 

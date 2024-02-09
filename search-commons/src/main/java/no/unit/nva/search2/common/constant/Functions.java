@@ -1,14 +1,5 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
-import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
-import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.constant.Words.ID;
-import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.constant.Words.LABELS;
-import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
-import static no.unit.nva.search2.constant.Words.SAMI_CODE;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
@@ -28,7 +19,7 @@ public final class Functions {
     }
 
     public static String jsonPath(String... args) {
-        return String.join(DOT, args);
+        return String.join(Words.DOT, args);
     }
 
     @JacocoGenerated
@@ -37,7 +28,7 @@ public final class Functions {
     }
 
     private static Stream<String> languageCodes() {
-        return Stream.of(BOKMAAL_CODE, ENGLISH_CODE, NYNORSK_CODE, SAMI_CODE);
+        return Stream.of(Words.BOKMAAL_CODE, Words.ENGLISH_CODE, Words.NYNORSK_CODE, Words.SAMI_CODE);
     }
 
     public static String readSearchInfrastructureApiUri() {
@@ -50,21 +41,21 @@ public final class Functions {
 
     public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
         return
-            nestedBranchBuilder(TOP_LEVEL_ORGANIZATIONS, TOP_LEVEL_ORGANIZATIONS)
+            nestedBranchBuilder(Words.TOP_LEVEL_ORGANIZATIONS, Words.TOP_LEVEL_ORGANIZATIONS)
                 .subAggregation(
-                    branchBuilder(ID, TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD)
+                    branchBuilder(Words.ID, Words.TOP_LEVEL_ORGANIZATIONS, Words.ID, Words.KEYWORD)
                         .subAggregation(
-                            labels(TOP_LEVEL_ORGANIZATIONS)
+                            labels(Words.TOP_LEVEL_ORGANIZATIONS)
                         )
                 );
     }
 
     public static NestedAggregationBuilder labels(String jsonPath) {
         var nestedAggregation =
-            nestedBranchBuilder(LABELS, jsonPath, LABELS);
+            nestedBranchBuilder(Words.LABELS, jsonPath, Words.LABELS);
 
         languageCodes()
-            .map(code -> branchBuilder(code, jsonPath, LABELS, code, KEYWORD))
+            .map(code -> branchBuilder(code, jsonPath, Words.LABELS, code, Words.KEYWORD))
             .forEach(nestedAggregation::subAggregation);
 
         return nestedAggregation;
