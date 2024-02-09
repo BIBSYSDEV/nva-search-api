@@ -1,5 +1,9 @@
 package no.unit.nva.search2.enums;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+import nva.commons.core.JacocoGenerated;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.constant.ErrorMessages.INVALID_NUMBER;
@@ -10,9 +14,6 @@ import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_NUMBER;
-import java.util.Collection;
-import java.util.function.Predicate;
-import nva.commons.core.JacocoGenerated;
 
 public interface ParameterKey {
 
@@ -76,7 +77,7 @@ public interface ParameterKey {
 
 
     enum ValueEncoding {
-        NONE, DECODE
+        NONE, DECODE, DECODE_SANITIZED
     }
 
     enum ParamKind {

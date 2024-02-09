@@ -1,5 +1,21 @@
 package no.unit.nva.search2;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.ParameterValidator;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryContentWrapper;
+import no.unit.nva.search2.enums.ImportCandidateParameter;
+import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -32,21 +48,6 @@ import static no.unit.nva.search2.enums.ImportCandidateSort.validSortKeys;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.QueryContentWrapper;
-import no.unit.nva.search2.enums.ImportCandidateParameter;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
@@ -109,11 +110,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryBuilders.matchAllQuery()
                 : boolQuery();
 
-        var builder = new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .trackTotalHits(true);
+        var builder = getSourceBuilder(queryBuilder);
 
         handleSearchAfter(builder);
 
