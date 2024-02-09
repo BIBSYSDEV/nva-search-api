@@ -1,16 +1,15 @@
 package no.unit.nva.search2.common.constant;
 
-import nva.commons.core.JacocoGenerated;
-
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
+import nva.commons.core.JacocoGenerated;
 
 public final class Patterns {
 
     public static final String COLON_OR_SPACE = COLON + PIPE + SPACE;
     public static final String PATTERN_IS_IGNORE_CASE = "(?i)";
-    public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "true|false|1|0$";
+    public static final String PATTERN_IS_BOOLEAN = PATTERN_IS_IGNORE_CASE + "(true|false|1|0)";
     public static final String PATTERN_IS_WORD_ENDING_WITH_HASHTAG = "[A-za-z0-9]*#";
     public static final String PATTERN_IS_ASC_DESC_VALUE = "(?i)asc|desc";
     public static final String PATTERN_IS_ASC_OR_DESC_GROUP = "(?i) (asc|desc)";

@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.search2.common.FakeGatewayResponse;
-import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;

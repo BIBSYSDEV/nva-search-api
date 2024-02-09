@@ -1,7 +1,7 @@
 package no.unit.nva.search2.importcandidate;
 
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 
 import java.util.Arrays;

@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search2.common.FakeGatewayResponse;
-import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;

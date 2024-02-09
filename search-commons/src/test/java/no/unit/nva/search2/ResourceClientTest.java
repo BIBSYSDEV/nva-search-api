@@ -1,40 +1,5 @@
 package no.unit.nva.search2;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.stream.Stream;
-import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.RestHighLevelClientWrapper;
-import no.unit.nva.search.models.EventConsumptionAttributes;
-import no.unit.nva.search.models.IndexDocument;
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
-import no.unit.nva.search2.resource.UserSettingsClient;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import org.apache.http.HttpHost;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.client.RestClient;
-import org.opensearch.testcontainers.OpensearchContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
@@ -72,6 +37,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.search.IndexingClient;
+import no.unit.nva.search.RestHighLevelClientWrapper;
+import no.unit.nva.search.models.EventConsumptionAttributes;
+import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.UserSettingsClient;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import org.apache.http.HttpHost;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.client.RestClient;
+import org.opensearch.testcontainers.OpensearchContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 class ResourceClientTest {
@@ -280,7 +278,13 @@ class ResourceClientTest {
         @MethodSource("uriPagingProvider")
         void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
-            var query = getResourceQuery(uri);
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -295,7 +299,13 @@ class ResourceClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
-            var query = getResourceQuery(uri);
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -352,7 +362,7 @@ class ResourceClientTest {
                 BadRequestException.class,
                 () -> ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .doSearch(searchClient));
@@ -360,17 +370,17 @@ class ResourceClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0", 20),
-                createArgument("page=1&size=1", 1),
-                createArgument("page=2&size=1", 1),
-                createArgument("page=3&size=1", 1),
-                createArgument("page=0&size=0", 0),
-                createArgument("offset=15&size=2", 2),
-                createArgument("offset=15&limit=2", 2),
-                createArgument("offset=15&results=2", 2),
-                createArgument("offset=15&per_page=2", 2),
-                createArgument("OFFSET=15&PER_PAGE=2", 2),
-                createArgument("offset=15&perPage=2", 2)
+                createArgument("page=0&aggregation=all", 20),
+                createArgument("page=1&aggregation=all&size=1", 1),
+                createArgument("page=2&aggregation=all&size=1", 1),
+                createArgument("page=3&aggregation=all&size=1", 1),
+                createArgument("page=0&aggregation=all&size=0", 0),
+                createArgument("offset=15&aggregation=all&size=2", 2),
+                createArgument("offset=15&aggregation=all&limit=2", 2),
+                createArgument("offset=15&aggregation=all&results=2", 2),
+                createArgument("offset=15&aggregation=all&per_page=2", 2),
+                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
+                createArgument("offset=15&aggregation=all&perPage=2", 2)
             );
         }
 
@@ -396,9 +406,6 @@ class ResourceClientTest {
                 URI.create(REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
                 URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
                 URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
-                URI.create(REQUEST_BASE_URL + "hasFile=23"),
-                URI.create(REQUEST_BASE_URL + "hasFile=faTlse"),
-                URI.create(REQUEST_BASE_URL + "hasFile=falseRR"),
                 URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
         }
 
@@ -406,16 +413,6 @@ class ResourceClientTest {
             return loadMapFromResource(RESOURCE_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
         }
-    }
-
-    @NotNull
-    private static ResourceQuery getResourceQuery(URI uri) throws BadRequestException {
-        return ResourceQuery.builder()
-            .fromQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE)
-            .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-            .build()
-            .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {

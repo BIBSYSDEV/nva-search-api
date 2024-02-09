@@ -8,7 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import no.unit.nva.search2.common.dto.PagedSearch;
+import no.unit.nva.search2.common.records.PagedSearch;
+import no.unit.nva.search2.common.records.SwsResponse;
 
 @SuppressWarnings("PMD.ShortMethodName")
 public record FakeGatewayResponse<T>(
