@@ -76,7 +76,7 @@ public interface ParameterKey {
 
 
     enum ValueEncoding {
-        NONE, DECODE
+        NONE, DECODE, DECODE_SANITIZED
     }
 
     enum ParamKind {
