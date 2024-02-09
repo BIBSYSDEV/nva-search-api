@@ -1,8 +1,8 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
-import static no.unit.nva.search2.constant.Words.COLON;
-import static no.unit.nva.search2.constant.Words.PIPE;
-import static no.unit.nva.search2.constant.Words.SPACE;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
 import nva.commons.core.JacocoGenerated;
 
 public final class Patterns {

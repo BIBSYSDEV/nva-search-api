@@ -1,8 +1,8 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
-import static no.unit.nva.search2.constant.Words.PREFIX;
-import static no.unit.nva.search2.constant.Words.QUOTE;
-import static no.unit.nva.search2.constant.Words.SUFFIX;
+import static no.unit.nva.search2.common.constant.Words.PREFIX;
+import static no.unit.nva.search2.common.constant.Words.QUOTE;
+import static no.unit.nva.search2.common.constant.Words.SUFFIX;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Collection;
 import java.util.Set;

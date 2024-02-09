@@ -1,4 +1,4 @@
-package no.unit.nva.search2.dto;
+package no.unit.nva.search2.common.records;
 
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;

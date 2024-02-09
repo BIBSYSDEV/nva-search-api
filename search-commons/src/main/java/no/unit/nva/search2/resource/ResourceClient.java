@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search2.resource;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
@@ -7,7 +7,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
-import no.unit.nva.search2.common.SwsResponse;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 

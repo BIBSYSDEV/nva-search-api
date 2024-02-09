@@ -1,10 +1,10 @@
 package no.unit.nva.search2.common.builder;
 
-import static no.unit.nva.search2.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.QueryTools;
-import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
 
 /**

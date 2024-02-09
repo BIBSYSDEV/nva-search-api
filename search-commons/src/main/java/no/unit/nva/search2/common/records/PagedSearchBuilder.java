@@ -1,11 +1,11 @@
-package no.unit.nva.search2.dto;
+package no.unit.nva.search2.common.records;
 
 import static java.util.Objects.isNull;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.common.constant.Words;
 import nva.commons.core.paths.UriWrapper;
 
 public class PagedSearchBuilder {

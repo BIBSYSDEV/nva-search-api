@@ -1,4 +1,4 @@
-package no.unit.nva.search2.dto;
+package no.unit.nva.search2.common.records;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

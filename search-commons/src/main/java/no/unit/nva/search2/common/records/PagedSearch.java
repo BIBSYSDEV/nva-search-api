@@ -1,7 +1,7 @@
-package no.unit.nva.search2.dto;
+package no.unit.nva.search2.common.records;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import static no.unit.nva.search2.common.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
