@@ -67,6 +67,9 @@ import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 public final class Constants {
 
     //entityDescription/reference/publicationContext/publisher
+    public static final String FILTER = "filter";
+    public static final float PI = 3.14F;        // π -> used for boosting.
+    public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;

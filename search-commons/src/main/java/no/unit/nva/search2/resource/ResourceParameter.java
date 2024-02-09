@@ -1,7 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.resource.ResourceQuery.PHI;
+import static no.unit.nva.search2.resource.Constants.PHI;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
