@@ -1,4 +1,4 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;

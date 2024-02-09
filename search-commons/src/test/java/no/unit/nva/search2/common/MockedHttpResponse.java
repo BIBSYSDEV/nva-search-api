@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.Words.CONTENT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import java.net.URI;

@@ -1,14 +1,14 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
-import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
-import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.constant.Words.ID;
-import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.constant.Words.LABELS;
-import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
-import static no.unit.nva.search2.constant.Words.SAMI_CODE;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.LABELS;
+import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;

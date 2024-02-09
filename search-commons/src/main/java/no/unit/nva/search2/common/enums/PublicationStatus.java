@@ -1,4 +1,4 @@
-package no.unit.nva.search2.enums;
+package no.unit.nva.search2.common.enums;
 
 /**
  * PublicationStatus is an enum that represents the different states a publication can be in.

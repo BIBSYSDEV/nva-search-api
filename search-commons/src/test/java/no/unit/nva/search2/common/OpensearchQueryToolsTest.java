@@ -2,7 +2,7 @@ package no.unit.nva.search2.common;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
-import no.unit.nva.search2.enums.ResourceParameter;
+import no.unit.nva.search2.resource.ResourceParameter;
 import org.junit.jupiter.api.Test;
 
 class OpensearchQueryToolsTest {

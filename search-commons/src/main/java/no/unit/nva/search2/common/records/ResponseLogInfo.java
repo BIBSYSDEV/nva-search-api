@@ -1,7 +1,6 @@
-package no.unit.nva.search2.dto;
+package no.unit.nva.search2.common.records;
 
 import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.search2.common.SwsResponse;
 
 public record ResponseLogInfo(
     long opensearchTime,

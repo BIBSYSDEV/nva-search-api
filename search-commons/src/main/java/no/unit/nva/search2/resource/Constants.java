@@ -1,60 +1,61 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.resource;
 
-import static no.unit.nva.search2.constant.Functions.branchBuilder;
-import static no.unit.nva.search2.constant.Functions.jsonPath;
-import static no.unit.nva.search2.constant.Functions.labels;
-import static no.unit.nva.search2.constant.Functions.nestedBranchBuilder;
-import static no.unit.nva.search2.constant.Functions.topLevelOrganisationsHierarchy;
-import static no.unit.nva.search2.constant.Words.ABSTRACT;
-import static no.unit.nva.search2.constant.Words.AFFILIATIONS;
-import static no.unit.nva.search2.constant.Words.ASSOCIATED_ARTIFACTS;
-import static no.unit.nva.search2.constant.Words.BOKMAAL_CODE;
-import static no.unit.nva.search2.constant.Words.CODE;
-import static no.unit.nva.search2.constant.Words.CONTEXT_TYPE;
-import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.constant.Words.COURSE;
-import static no.unit.nva.search2.constant.Words.DOI;
-import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search2.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.constant.Words.HANDLE;
-import static no.unit.nva.search2.constant.Words.HAS_FILE;
-import static no.unit.nva.search2.constant.Words.ID;
-import static no.unit.nva.search2.constant.Words.IDENTIFIER;
-import static no.unit.nva.search2.constant.Words.IDENTITY;
-import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.constant.Words.LABELS;
-import static no.unit.nva.search2.constant.Words.LICENSE;
-import static no.unit.nva.search2.constant.Words.MAIN_TITLE;
-import static no.unit.nva.search2.constant.Words.NAME;
-import static no.unit.nva.search2.constant.Words.NYNORSK_CODE;
-import static no.unit.nva.search2.constant.Words.ORC_ID;
-import static no.unit.nva.search2.constant.Words.OWNER;
-import static no.unit.nva.search2.constant.Words.OWNER_AFFILIATION;
-import static no.unit.nva.search2.constant.Words.PIPE;
-import static no.unit.nva.search2.constant.Words.PUBLICATION_CONTEXT;
-import static no.unit.nva.search2.constant.Words.PUBLICATION_DATE;
-import static no.unit.nva.search2.constant.Words.PUBLICATION_INSTANCE;
-import static no.unit.nva.search2.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.constant.Words.REFERENCE;
-import static no.unit.nva.search2.constant.Words.RESOURCE_OWNER;
-import static no.unit.nva.search2.constant.Words.SAMI_CODE;
-import static no.unit.nva.search2.constant.Words.SERIES;
-import static no.unit.nva.search2.constant.Words.SOURCE;
-import static no.unit.nva.search2.constant.Words.STATUS;
-import static no.unit.nva.search2.constant.Words.TAGS;
-import static no.unit.nva.search2.constant.Words.TITLE;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.constant.Words.TYPE;
-import static no.unit.nva.search2.constant.Words.VISIBLE_FOR_NON_OWNER;
-import static no.unit.nva.search2.constant.Words.YEAR;
+import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Functions.labels;
+import static no.unit.nva.search2.common.constant.Functions.nestedBranchBuilder;
+import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
+import static no.unit.nva.search2.common.constant.Words.ABSTRACT;
+import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
+import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.common.constant.Words.CODE;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.common.constant.Words.COURSE;
+import static no.unit.nva.search2.common.constant.Words.DOI;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.common.constant.Words.HANDLE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
+import static no.unit.nva.search2.common.constant.Words.IDENTITY;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.LABELS;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
+import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
+import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.common.constant.Words.ORC_ID;
+import static no.unit.nva.search2.common.constant.Words.OWNER;
+import static no.unit.nva.search2.common.constant.Words.OWNER_AFFILIATION;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
+import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.REFERENCE;
+import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
+import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.common.constant.Words.SERIES;
+import static no.unit.nva.search2.common.constant.Words.SOURCE;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.TAGS;
+import static no.unit.nva.search2.common.constant.Words.TITLE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.VISIBLE_FOR_NON_OWNER;
+import static no.unit.nva.search2.common.constant.Words.YEAR;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import no.unit.nva.search2.enums.ResourceSort;
+
+import no.unit.nva.search2.common.constant.Defaults;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.script.Script;
 import org.opensearch.script.ScriptType;
@@ -63,7 +64,7 @@ import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
-public final class Resource {
+public final class Constants {
 
     //entityDescription/reference/publicationContext/publisher
     public static final String DEFAULT_RESOURCE_SORT =
@@ -267,6 +268,6 @@ public final class Resource {
     }
 
     @JacocoGenerated
-    public Resource() {
+    public Constants() {
     }
 }

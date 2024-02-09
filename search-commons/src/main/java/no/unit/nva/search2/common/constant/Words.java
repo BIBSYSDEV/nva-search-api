@@ -1,4 +1,4 @@
-package no.unit.nva.search2.constant;
+package no.unit.nva.search2.common.constant;
 
 import nva.commons.core.JacocoGenerated;
 

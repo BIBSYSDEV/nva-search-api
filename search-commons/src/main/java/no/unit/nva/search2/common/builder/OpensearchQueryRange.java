@@ -1,9 +1,9 @@
 package no.unit.nva.search2.common.builder;
 
-import static no.unit.nva.search2.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.search2.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search2.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
