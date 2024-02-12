@@ -4,14 +4,9 @@ import nva.commons.core.JacocoGenerated;
 
 public final class Words {
 
-    public static final String CRISTIN_IDENTIFIER = "CRISTIN_IDENTIFIER";
-    public static final String SCOPUS_IDENTIFIER = "SCOPUS_IDENTIFIER";
-    public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
-    public static final String VALUE = "value";
-    public static final String SOURCE_NAME = "sourceName";
-    public static final String CRISTIN_SOURCE = "Cristin";
-    public static final String SCOPUS_SOURCE = "Scopus";
+
     public static final String ABSTRACT = "abstract";
+    public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
     public static final String AMPERSAND = "&";
@@ -28,6 +23,8 @@ public final class Words {
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
+    public static final String CRISTIN_IDENTIFIER = "CRISTIN_IDENTIFIER";
+    public static final String CRISTIN_SOURCE = "Cristin";
     public static final String DOI = "doi";
     public static final String DOT = ".";
     public static final String ENGLISH_CODE = "en";
@@ -39,6 +36,7 @@ public final class Words {
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
     public static final String HAS_FILE = "hasFile";
+    public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
     public static final String IDENTITY = "identity";
@@ -60,18 +58,20 @@ public final class Words {
     public static final String PLUS = "+";
     public static final String PREFIX = "(";
     public static final String PROJECTS_ID = "projects.id.keyword";
-    public static final String PUBLISHER = "publisher";
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String PUBLISHED_FILE = "PublishedFile";
+    public static final String PUBLISHER = "publisher";
     public static final String Q = "q";
     public static final String QUOTE = "'";
     public static final String REFERENCE = "reference";
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";
+    public static final String SCOPUS_IDENTIFIER = "SCOPUS_IDENTIFIER";
+    public static final String SCOPUS_SOURCE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
     public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
@@ -79,6 +79,7 @@ public final class Words {
     public static final String SERIES = "series";
     public static final String SLASH = "/";
     public static final String SOURCE = "source";
+    public static final String SOURCE_NAME = "sourceName";
     public static final String SPACE = " ";
     public static final String STATUS = "status";
     public static final String SUFFIX = ")";
@@ -89,6 +90,7 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
+    public static final String VALUE = "value";
     public static final String VISIBLE_FOR_NON_OWNER = "visibleForNonOwner";
     public static final String YEAR = "year";
     public static final String ZERO = "0";

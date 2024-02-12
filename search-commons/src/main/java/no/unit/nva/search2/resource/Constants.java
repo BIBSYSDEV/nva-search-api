@@ -1,5 +1,17 @@
 package no.unit.nva.search2.resource;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import no.unit.nva.search2.common.constant.Defaults;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.script.Script;
+import org.opensearch.script.ScriptType;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
@@ -51,22 +63,10 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import no.unit.nva.search2.common.constant.Defaults;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-
 public final class Constants {
 
     //entityDescription/reference/publicationContext/publisher
+    public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
