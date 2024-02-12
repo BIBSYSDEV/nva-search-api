@@ -38,7 +38,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
                 .map(this::fetch)
                 .map(this::handleResponse)
                 .findFirst()
-                .orElseThrow();
+                .orElse(new UserSettings(Collections.emptyList()));
     }
 
     @JacocoGenerated
