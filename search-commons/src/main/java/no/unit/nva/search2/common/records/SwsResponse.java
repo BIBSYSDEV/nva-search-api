@@ -1,15 +1,14 @@
 package no.unit.nva.search2.common.records;
 
-import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
-
 import no.unit.nva.search2.common.AggregationFormat;
 import no.unit.nva.search2.common.records.SwsResponse.HitsInfo.Hit;
-import nva.commons.core.JacocoGenerated;
+
+import static java.util.Objects.nonNull;
 
 public record SwsResponse(
     int took,
@@ -17,7 +16,6 @@ public record SwsResponse(
     ShardsInfo _shards,
     HitsInfo hits,
     JsonNode aggregations) {
-
 
     public record ShardsInfo(
         Long total,
@@ -31,11 +29,9 @@ public record SwsResponse(
         TotalInfo total,
         double max_score,
         List<Hit> hits) {
-
         public record TotalInfo(
             Integer value,
             String relation) {
-
         }
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -46,11 +42,8 @@ public record SwsResponse(
             double _score,
             JsonNode _source,
             List<String> sort) {
-
         }
     }
-
-    @JacocoGenerated
 
     @Transient
     public Integer getTotalSize() {
@@ -58,8 +51,6 @@ public record SwsResponse(
             ? hits.total.value
             : 0;
     }
-
-    @JacocoGenerated
 
     @Transient
     public List<JsonNode> getSearchHits() {
@@ -84,5 +75,4 @@ public record SwsResponse(
             ? AggregationFormat.apply(aggregations).toString()
             : null;
     }
-
 }

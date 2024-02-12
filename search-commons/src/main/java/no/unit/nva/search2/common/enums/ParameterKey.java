@@ -1,5 +1,8 @@
 package no.unit.nva.search2.common.enums;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_NUMBER;
@@ -10,9 +13,6 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NUMBER;
-import java.util.Collection;
-import java.util.function.Predicate;
-import nva.commons.core.JacocoGenerated;
 
 public interface ParameterKey {
 
@@ -20,7 +20,7 @@ public interface ParameterKey {
 
     Float fieldBoost();
 
-    ParamKind fieldType();
+    ParameterKind fieldType();
 
     String fieldPattern();
 
@@ -38,52 +38,39 @@ public interface ParameterKey {
         return key -> name.matches(key.fieldPattern());
     }
 
-    @JacocoGenerated
-    static ValueEncoding getEncoding(ParamKind kind) {
-        return switch (kind) {
-            case INVALID, NUMBER, BOOLEAN, CUSTOM -> ValueEncoding.NONE;
-            case DATE, KEYWORD, FUZZY_TEXT, TEXT, FUZZY_KEYWORD, SORT_KEY -> ValueEncoding.DECODE;
-        };
-    }
-
-    @JacocoGenerated
-    static String getErrorMessage(ParamKind kind) {
-        return switch (kind) {
-            case BOOLEAN, KEYWORD, FUZZY_TEXT, TEXT, FUZZY_KEYWORD, CUSTOM -> INVALID_VALUE;
-            case DATE -> INVALID_DATE;
-            case NUMBER -> INVALID_NUMBER;
-            //            case RANGE -> ERROR_MESSAGE_INVALID_VALUE_WITH_RANGE;
-            case SORT_KEY -> INVALID_VALUE_WITH_SORT;
-            case INVALID -> "Status INVALID should not raise an exception, Exception";
-        };
-    }
-
-    @JacocoGenerated
-    static String getValuePattern(ParamKind kind, String pattern) {
-        return nonNull(pattern) ? pattern : switch (kind) {
-            case BOOLEAN -> PATTERN_IS_BOOLEAN;
-            case DATE -> PATTERN_IS_DATE;
-            case NUMBER -> PATTERN_IS_NUMBER;
-            // case RANGE -> PATTERN_IS_RANGE;
-            case KEYWORD, CUSTOM, FUZZY_TEXT, TEXT, FUZZY_KEYWORD, SORT_KEY -> PATTERN_IS_NON_EMPTY;
-            case INVALID -> PATTERN_IS_NONE_OR_ONE;
-        };
-    }
-
     static int compareAscending(Enum<?> key1, Enum<?> key2) {
         return key1.ordinal() - key2.ordinal();
     }
 
-
-    enum ValueEncoding {
-        NONE, DECODE
+    static ValueEncoding getEncoding(ParameterKind kind) {
+        return switch (kind) {
+            case DATE,
+                KEYWORD,
+                FUZZY_TEXT,
+                TEXT,
+                FUZZY_KEYWORD,
+                SORT_KEY -> ValueEncoding.DECODE;
+            default -> ValueEncoding.NONE;
+        };
     }
 
-    enum ParamKind {
-        INVALID, BOOLEAN, DATE, NUMBER, KEYWORD, FUZZY_KEYWORD, TEXT, FUZZY_TEXT, SORT_KEY, CUSTOM
+    static String getErrorMessage(ParameterKind kind) {
+        return switch (kind) {
+            case DATE -> INVALID_DATE;
+            case NUMBER -> INVALID_NUMBER;
+            case SORT_KEY -> INVALID_VALUE_WITH_SORT;
+            case INVALID -> "Status INVALID should not raise an exception, Exception";
+            default -> INVALID_VALUE;
+        };
     }
 
-    enum FieldOperator {
-        MUST, MUST_NOT, SHOULD, GREATER_THAN_OR_EQUAL_TO, LESS_THAN, BETWEEN
+    static String getValuePattern(ParameterKind kind, String pattern) {
+        return nonNull(pattern) ? pattern : switch (kind) {
+            case BOOLEAN -> PATTERN_IS_BOOLEAN;
+            case DATE -> PATTERN_IS_DATE;
+            case NUMBER -> PATTERN_IS_NUMBER;
+            case INVALID -> PATTERN_IS_NONE_OR_ONE;
+            default -> PATTERN_IS_NON_EMPTY;
+        };
     }
 }
