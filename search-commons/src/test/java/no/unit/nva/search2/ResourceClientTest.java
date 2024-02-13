@@ -1,5 +1,39 @@
 package no.unit.nva.search2;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Stream;
+import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.search.IndexingClient;
+import no.unit.nva.search.RestHighLevelClientWrapper;
+import no.unit.nva.search.models.EventConsumptionAttributes;
+import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.UserSettingsClient;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import org.apache.http.HttpHost;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.opensearch.client.RestClient;
+import org.opensearch.testcontainers.OpensearchContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
@@ -37,39 +71,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.stream.Stream;
-import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.RestHighLevelClientWrapper;
-import no.unit.nva.search.models.EventConsumptionAttributes;
-import no.unit.nva.search.models.IndexDocument;
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
-import no.unit.nva.search2.resource.UserSettingsClient;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import org.apache.http.HttpHost;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.client.RestClient;
-import org.opensearch.testcontainers.OpensearchContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 class ResourceClientTest {
@@ -312,7 +313,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             if (expectedCount == 0) {
-                logger.debug(pagedSearchResourceDto.toJsonString());
+                logger.info(pagedSearchResourceDto.toJsonString());
             } else {
                 logger.debug(pagedSearchResourceDto.toString());
             }

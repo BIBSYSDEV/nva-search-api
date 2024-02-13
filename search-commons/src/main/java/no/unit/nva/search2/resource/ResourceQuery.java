@@ -181,7 +181,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         builder.aggregation(getAggregationsWithFilter());
 
-        logger.debug(builder.toString());
+        logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
