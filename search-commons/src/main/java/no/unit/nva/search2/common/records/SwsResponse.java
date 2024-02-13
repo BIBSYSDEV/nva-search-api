@@ -47,17 +47,12 @@ public record SwsResponse(
 
     @Transient
     public Integer getTotalSize() {
-        return nonNull(hits)
-            ? hits.total.value
-            : 0;
+        return hits.total.value;
     }
 
     @Transient
     public List<JsonNode> getSearchHits() {
-        return
-            nonNull(hits) && nonNull(hits.hits)
-                ? hits.hits().stream().map(Hit::_source).toList()
-                : List.of();
+        return hits.hits().stream().map(Hit::_source).toList();
     }
 
     @Transient

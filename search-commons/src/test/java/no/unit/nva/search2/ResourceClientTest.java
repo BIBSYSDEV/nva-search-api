@@ -366,8 +366,48 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
                     .doSearch(searchClient));
         }
+
+        @ParameterizedTest
+        @MethodSource("uriProviderNoHit")
+        void searchSingleTermReturnsOpenSearchSwsResponseNoHit(URI uri) throws ApiGatewayException {
+            var pagedSearchResourceDto =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                    .doSearch(searchClient);
+
+            assertNotNull(pagedSearchResourceDto);
+        }
+
+        @ParameterizedTest
+        @MethodSource("uriSortingProviderNoHit")
+        void uriParamsToResourceParamsNoHit(URI uri) throws ApiGatewayException {
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertNotNull(pagedSearchResourceDto.id());
+            assertNotNull(pagedSearchResourceDto.context());
+            assertNotNull(response.getSort());
+            assertNotNull(response.aggregations());
+            assertEquals(0L, response.getSearchHits().size());
+            assertEquals(0, response.getTotalSize());
+            assertEquals(0L, pagedSearchResourceDto.totalHits());
+            assertEquals(0, pagedSearchResourceDto.hits().size());
+        }
+
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
@@ -408,6 +448,24 @@ class ResourceClientTest {
                 URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
                 URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
                 URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+        }
+
+        static Stream<URI> uriSortingProviderNoHit() {
+            return Stream.of(
+                URI.create(REQUEST_BASE_URL + "INSTANCE_TYPE=PhdThesiss&aggregation=none"),
+                URI.create(REQUEST_BASE_URL
+                           + "INSTANCE_TYPE=PhdThesiss&aggregation=none&orderBy=INSTANCE_TYPE:asc,created_date:desc"),
+                URI.create(REQUEST_BASE_URL
+                           + "INSTANCE_TYPE=PhdThesiss&aggregation=none&sort=INSTANCE_TYPE+asc&sort=created_date+desc"
+                ));
+        }
+
+        static Stream<URI> uriProviderNoHit() {
+            return Stream.of(
+                URI.create(REQUEST_BASE_URL + "INSTANCE_TYPE=hello+world&lang=en"),
+                URI.create(REQUEST_BASE_URL + "title=hello+world&modified_before=2019-01-01"),
+                URI.create(REQUEST_BASE_URL + "contributorName=hello+world&published_before=2020-01-01"),
+                URI.create(REQUEST_BASE_URL + "user=hello+world&lang=en"));
         }
 
         static Stream<Arguments> uriProvider() {

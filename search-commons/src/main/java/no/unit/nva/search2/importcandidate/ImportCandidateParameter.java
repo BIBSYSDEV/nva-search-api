@@ -29,6 +29,7 @@ import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL;
 import static no.unit.nva.search2.common.enums.FieldOperator.ANY;
 import static no.unit.nva.search2.common.enums.FieldOperator.NONE;
+import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search2.common.enums.ParameterKind.SORT_KEY;
@@ -38,7 +39,6 @@ import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_K
 import static no.unit.nva.search2.importcandidate.Constants.INSTANCE_TYPE_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 
 /**
@@ -50,23 +50,23 @@ import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 public enum ImportCandidateParameter implements ParameterKey {
     INVALID(TEXT),
     // Parameters converted to Lucene query
-    CRISTIN_IDENTIFIER(KEYWORD),
-    SCOPUS_IDENTIFIER(KEYWORD),
+    ADDITIONAL_IDENTIFIERS(KEYWORD, ALL, ADDITIONAL_IDENTIFIERS_KEYWORD),
     ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NONE, ADDITIONAL_IDENTIFIERS_KEYWORD),
     ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, ANY, ADDITIONAL_IDENTIFIERS_KEYWORD),
     CATEGORY(KEYWORD, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, NONE, PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_SHOULD(TEXT, ANY, PUBLICATION_INSTANCE_TYPE),
-    CREATED_DATE(ParameterKind.DATE, Words.CREATED_DATE),
-    CONTRIBUTOR(KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CATEGORY_SHOULD(KEYWORD, ANY, PUBLICATION_INSTANCE_TYPE),
+    COLLABORATION_TYPE(KEYWORD, ALL, COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE_NOT(KEYWORD, NONE, COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE_SHOULD(TEXT, ANY, COLLABORATION_TYPE_KEYWORD),
+    CONTRIBUTOR(FUZZY_KEYWORD, ALL, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS, 2F),
     CONTRIBUTOR_NOT(KEYWORD, NONE, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_SHOULD(TEXT, ANY, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_NAME(KEYWORD, Constants.CONTRIBUTORS_IDENTITY_NAME),
     CONTRIBUTOR_NAME_NOT(KEYWORD, NONE, Constants.CONTRIBUTORS_IDENTITY_NAME),
     CONTRIBUTOR_NAME_SHOULD(TEXT, ANY, Constants.CONTRIBUTORS_IDENTITY_NAME),
-    COLLABORATION_TYPE(KEYWORD, ALL, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_NOT(KEYWORD, NONE, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_SHOULD(TEXT, ANY, COLLABORATION_TYPE_KEYWORD),
+    CREATED_DATE(ParameterKind.DATE, Words.CREATED_DATE),
+    CRISTIN_IDENTIFIER(KEYWORD),
     DOI(KEYWORD, Constants.DOI_KEYWORD),
     DOI_NOT(TEXT, NONE, Constants.DOI_KEYWORD),
     DOI_SHOULD(TEXT, ANY, Constants.DOI_KEYWORD),
@@ -78,16 +78,14 @@ public enum ImportCandidateParameter implements ParameterKey {
     IMPORT_STATUS_SHOULD(TEXT, ANY, STATUS_TYPE_KEYWORD),
     INSTANCE_TYPE(KEYWORD, ALL, INSTANCE_TYPE_KEYWORD),
     INSTANCE_TYPE_NOT(KEYWORD, NONE, INSTANCE_TYPE_KEYWORD),
-    INSTANCE_TYPE_SHOULD(TEXT, ANY, INSTANCE_TYPE_KEYWORD),
+    INSTANCE_TYPE_SHOULD(KEYWORD, ANY, INSTANCE_TYPE_KEYWORD),
     PUBLICATION_YEAR(KEYWORD, ALL, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
-    PUBLISHER(KEYWORD, ALL, PUBLISHER_ID_KEYWORD),
-    PUBLISHER_NOT(KEYWORD, NONE, PUBLISHER_ID_KEYWORD),
-    PUBLISHER_SHOULD(TEXT, ANY, PUBLISHER_ID_KEYWORD),
-    TITLE(TEXT, Constants.MAIN_TITLE_KEYWORD, 2F),
+    SCOPUS_IDENTIFIER(KEYWORD),
+    TITLE(TEXT, ALL, Constants.MAIN_TITLE_KEYWORD, 2F),
     TITLE_NOT(TEXT, NONE, Constants.MAIN_TITLE_KEYWORD),
-    TITLE_SHOULD(TEXT, ANY, Constants.MAIN_TITLE_KEYWORD),
+    TITLE_SHOULD(TEXT, ANY, Constants.MAIN_TITLE_KEYWORD, 2F),
     TYPE(KEYWORD, Constants.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, ALL, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
@@ -126,8 +124,8 @@ public enum ImportCandidateParameter implements ParameterKey {
         this(kind, ALL, fieldsToSearch, null, null, null);
     }
 
-    ImportCandidateParameter(ParameterKind kind, String fieldsToSearch, Float boost) {
-        this(kind, ALL, fieldsToSearch, null, null, boost);
+    ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
+        this(kind, operator, fieldsToSearch, null, null, boost);
     }
 
     ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {

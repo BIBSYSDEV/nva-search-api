@@ -16,6 +16,8 @@
   "CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland": 1,
   "CONTRIBUTOR_NAME=Kate+Robinson,Henrik+Langeland": 1,
   "CONTRIBUTOR_NAME=Peter+Gauer,Kjetil+Møkkelgjerd": 1,
+  "CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd": 8,
+  "CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd": 8,
   "CRISTIN_IDENTIFIER=123455": 1,
   "CaTeGoRy=ReportResearch&page=0": 10,
   "DOI=https://doi.org/10.1371/journal.pone.0047855": 1,

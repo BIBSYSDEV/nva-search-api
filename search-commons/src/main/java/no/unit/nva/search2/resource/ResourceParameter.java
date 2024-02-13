@@ -104,6 +104,7 @@ public enum ResourceParameter implements ParameterKey {
     CONTRIBUTOR_SHOULD(FUZZY_KEYWORD, ANY, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, PHI),
     CONTRIBUTOR_NAME(FUZZY_KEYWORD, ALL, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, PHI),
     CONTRIBUTOR_NAME_NOT(FUZZY_KEYWORD, NONE, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
+    CONTRIBUTOR_NAME_SHOULD(FUZZY_KEYWORD, ANY, CONTRIBUTORS_IDENTITY_NAME_KEYWORD, PHI),
     COURSE(KEYWORD, ALL, COURSE_CODE_KEYWORD),
     COURSE_NOT(KEYWORD, NONE, COURSE_CODE_KEYWORD),
     COURSE_SHOULD(KEYWORD, ANY, COURSE_CODE_KEYWORD),
@@ -224,13 +225,14 @@ public enum ResourceParameter implements ParameterKey {
         this(kind, ALL, fieldsToSearch, null, null, null);
     }
 
-    ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
-        this(kind, ALL, fieldsToSearch, null, null, boost);
-    }
-
     ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
         this(kind, operator, fieldsToSearch, null, null, null);
     }
+
+    ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
+        this(kind, operator, fieldsToSearch, null, null, boost);
+    }
+
 
     ResourceParameter(
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,

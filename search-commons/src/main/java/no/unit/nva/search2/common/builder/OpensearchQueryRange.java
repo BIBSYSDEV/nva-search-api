@@ -3,6 +3,7 @@ package no.unit.nva.search2.common.builder;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
@@ -15,6 +16,7 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
         return queryAsEntryStream(key, values);
     }
 
+    @JacocoGenerated    // never used
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
