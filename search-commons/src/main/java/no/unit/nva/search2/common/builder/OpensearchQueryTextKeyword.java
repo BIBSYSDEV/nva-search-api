@@ -3,6 +3,7 @@ package no.unit.nva.search2.common.builder;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.DisMaxQueryBuilder;
