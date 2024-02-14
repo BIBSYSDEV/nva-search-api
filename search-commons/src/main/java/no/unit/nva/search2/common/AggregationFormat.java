@@ -4,6 +4,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDIN
 import static no.unit.nva.search2.common.constant.Words.BUCKETS;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
@@ -122,11 +124,14 @@ public final class AggregationFormat {
     @JacocoGenerated
     static final class Constants {
 
-        public static final Map<String, String> facetResourcePaths = Map.of(
+        private static final Map<String, String> facetResourcePaths1 = Map.of(
             TYPE, "/filter/entityDescription/reference/publicationInstance/type",
+            COURSE, "/filter/entityDescription/reference/publicationContext/course",
             SERIES, "/filter/entityDescription/reference/publicationContext/series",
             STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license",
+            LICENSE, "/filter/associatedArtifacts/license"
+        );
+        private static final Map<String, String> facetResourcePaths2 = Map.of(
             HAS_FILE, "/filter/associatedArtifacts/hasFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
@@ -134,6 +139,10 @@ public final class AggregationFormat {
             FUNDING_SOURCE, "/filter/fundings/id",
             TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
         );
+
+        public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)
+            .flatMap(map -> map.entrySet().stream())
+            .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
 
         public static final String DOC_COUNT = "doc_count";
         public static final String BUCKETS_PTR = SLASH + BUCKETS;
