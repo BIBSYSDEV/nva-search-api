@@ -22,11 +22,11 @@ import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKey.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -49,7 +49,7 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.common.enums.FieldOperator.MUST_NOT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
@@ -341,7 +341,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         logger.info(
             getSearchParameterKeys()
                 .map(Enum::name)
-                .collect(Collectors.joining(", ", "{\"keys\":[", "]}"))
+                .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }
 

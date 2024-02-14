@@ -1,9 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import nva.commons.core.JacocoGenerated;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -11,15 +7,14 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.FieldOperator;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.INSTANCE_TYPE_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
@@ -31,13 +26,20 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.MUST;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.SHOULD;
-import static no.unit.nva.search2.common.enums.ParameterKey.ParamKind.KEYWORD;
-import static no.unit.nva.search2.common.enums.ParameterKey.ParamKind.NUMBER;
-import static no.unit.nva.search2.common.enums.ParameterKey.ParamKind.SORT_KEY;
-import static no.unit.nva.search2.common.enums.ParameterKey.ParamKind.TEXT;
+import static no.unit.nva.search2.common.enums.FieldOperator.MUST;
+import static no.unit.nva.search2.common.enums.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.common.enums.FieldOperator.SHOULD;
+import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
+import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
+import static no.unit.nva.search2.common.enums.ParameterKind.SORT_KEY;
+import static no.unit.nva.search2.common.enums.ParameterKind.TEXT;
+import static no.unit.nva.search2.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.INSTANCE_TYPE_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -55,7 +57,7 @@ public enum ImportCandidateParameter implements ParameterKey {
     CATEGORY(KEYWORD, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, MUST_NOT, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(TEXT, SHOULD, PUBLICATION_INSTANCE_TYPE),
-    CREATED_DATE(ParamKind.DATE, Words.CREATED_DATE),
+    CREATED_DATE(ParameterKind.DATE, Words.CREATED_DATE),
     CONTRIBUTOR(KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_NOT(KEYWORD, MUST_NOT, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_SHOULD(TEXT, SHOULD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
@@ -89,14 +91,14 @@ public enum ImportCandidateParameter implements ParameterKey {
     TYPE(KEYWORD, Constants.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    FIELDS(ParamKind.CUSTOM),
+    FIELDS(ParameterKind.CUSTOM),
     // Pagination parameters
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
     SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(ParamKind.CUSTOM, MUST, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
-    SEARCH_AFTER(ParamKind.CUSTOM);
+    SORT_ORDER(ParameterKind.CUSTOM, MUST, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    SEARCH_AFTER(ParameterKind.CUSTOM);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -113,27 +115,27 @@ public enum ImportCandidateParameter implements ParameterKey {
     private final String[] fieldsToSearch;
     private final FieldOperator fieldOperator;
     private final String errorMsg;
-    private final ParamKind paramkind;
+    private final ParameterKind paramkind;
     private final Float boost;
 
-    ImportCandidateParameter(ParamKind kind) {
+    ImportCandidateParameter(ParameterKind kind) {
         this(kind, MUST, null, null, null, null);
     }
 
-    ImportCandidateParameter(ParamKind kind, String fieldsToSearch) {
+    ImportCandidateParameter(ParameterKind kind, String fieldsToSearch) {
         this(kind, MUST, fieldsToSearch, null, null, null);
     }
 
-    ImportCandidateParameter(ParamKind kind, String fieldsToSearch, Float boost) {
+    ImportCandidateParameter(ParameterKind kind, String fieldsToSearch, Float boost) {
         this(kind, MUST, fieldsToSearch, null, null, boost);
     }
 
-    ImportCandidateParameter(ParamKind kind, FieldOperator operator, String fieldsToSearch) {
+    ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
         this(kind, operator, fieldsToSearch, null, null, null);
     }
 
     ImportCandidateParameter(
-        ParamKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
+        ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
         this.key = this.name().toLowerCase(Locale.getDefault());
@@ -162,7 +164,7 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     @Override
-    public ParamKind fieldType() {
+    public ParameterKind fieldType() {
         return paramkind;
     }
 

@@ -1,5 +1,18 @@
 package no.unit.nva.search2;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.util.stream.Stream;
+import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.UserSettingsClient;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
@@ -10,19 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.util.stream.Stream;
-
-import no.unit.nva.search2.resource.ResourceQuery;
-import no.unit.nva.search2.resource.UserSettingsClient;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class UserSettingsClientTest {
 
@@ -54,13 +54,11 @@ class UserSettingsClientTest {
 
     static Stream<URI> uriProvider() {
         return Stream.of(
-            URI.create("https://example.com/?title=http://hello+world&modified_before=2019-01-01"),
-            URI.create("https://example.com/?contributorName=hello+:+world&published_before=2020-01-01"),
-            URI.create("https://example.com/"),
-            URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
-            URI.create("https://example.com/?category=PhdThesis&sort=title&sortOrder=asc&sort=category"),
-            URI.create("https://example.com/?category=PhdThesis&size=10&from=0&sort=category"),
-            URI.create("https://example.com/?category=PhdThesis&orderBy=UNIT_ID:asc,title:desc"),
+            URI.create("https://example.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
+            URI.create("https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
+            URI.create(
+                "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
+                + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
             URI.create("https://example.com/?query=hello+world&fields=all"));
     }
 }
