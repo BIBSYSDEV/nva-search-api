@@ -1,8 +1,8 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.Words.AMPERSAND;
-import static no.unit.nva.search2.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
+import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;

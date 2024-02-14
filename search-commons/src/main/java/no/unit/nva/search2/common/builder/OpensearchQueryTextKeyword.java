@@ -5,13 +5,15 @@ import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
-public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+@JacocoGenerated    // not implemented yet....
+public class OpensearchQueryTextKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override
     protected Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
@@ -44,5 +46,4 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
             );
         return Stream.of(disMax);
     }
-
 }

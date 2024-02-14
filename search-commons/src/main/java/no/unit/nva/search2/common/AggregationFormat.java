@@ -1,23 +1,23 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
-import static no.unit.nva.search2.constant.Words.BUCKETS;
-import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.constant.Words.HAS_FILE;
-import static no.unit.nva.search2.constant.Words.ID;
-import static no.unit.nva.search2.constant.Words.KEY;
-import static no.unit.nva.search2.constant.Words.LABELS;
-import static no.unit.nva.search2.constant.Words.LICENSE;
-import static no.unit.nva.search2.constant.Words.NAME;
-import static no.unit.nva.search2.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.constant.Words.SERIES;
-import static no.unit.nva.search2.constant.Words.SLASH;
-import static no.unit.nva.search2.constant.Words.STATUS;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.constant.Words.TYPE;
-import static no.unit.nva.search2.constant.Words.ZERO;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
+import static no.unit.nva.search2.common.constant.Words.BUCKETS;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.KEY;
+import static no.unit.nva.search2.common.constant.Words.LABELS;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
+import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.SERIES;
+import static no.unit.nva.search2.common.constant.Words.SLASH;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Streams;
@@ -55,10 +55,8 @@ public final class AggregationFormat {
                     outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
                 } else if (keyIsName(entry)) {
                     outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-                } else if (isValueNode(entry)) {
-                    outputAggregationNode.set(entry.getKey(), entry.getValue());
                 } else {
-                    outputAggregationNode.set(entry.getKey(), fixNodes(entry.getValue()));
+                    outputAggregationNode.set(entry.getKey(), entry.getValue());
                 }
             });
             return outputAggregationNode.isEmpty()
@@ -68,13 +66,10 @@ public final class AggregationFormat {
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
-        return Constants.facetPaths.entrySet().stream().map(
-            entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
+        return Constants.facetResourcePaths
+            .entrySet().stream()
+            .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
         );
-    }
-
-    private static boolean isValueNode(Entry<String, JsonNode> entry) {
-        return entry.getValue().isValueNode();
     }
 
     private static boolean keyIsName(Entry<String, JsonNode> entry) {
@@ -94,9 +89,6 @@ public final class AggregationFormat {
     }
 
     private static JsonNode getBucketOrValue(JsonNode node) {
-        if (node.at(Constants.ID_BUCKETS).isArray()) {
-            return node.at(Constants.ID_BUCKETS);
-        }
         if (node.has(BUCKETS)) {
             return node.at(Constants.BUCKETS_PTR);
         }
@@ -106,9 +98,6 @@ public final class AggregationFormat {
     private static JsonNode formatName(JsonNode nodeEntry) {
         var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
         var keyValue = nodeEntry.at(Constants.BUCKETS_KEY_PTR);
-        if (keyValue.toString().isEmpty()) {
-            keyValue = nodeEntry.at(Constants.KEY_PTR);
-        }
         outputAggregationNode.set(ENGLISH_CODE, keyValue);
         return outputAggregationNode;
     }
@@ -133,7 +122,7 @@ public final class AggregationFormat {
     @JacocoGenerated
     static final class Constants {
 
-        public static final Map<String, String> facetPaths = Map.of(
+        public static final Map<String, String> facetResourcePaths = Map.of(
             TYPE, "/filter/entityDescription/reference/publicationInstance/type",
             SERIES, "/filter/entityDescription/reference/publicationContext/series",
             STATUS, "/filter/status",
@@ -141,6 +130,7 @@ public final class AggregationFormat {
             HAS_FILE, "/filter/associatedArtifacts/hasFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
+            CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",
             TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
         );
@@ -149,7 +139,6 @@ public final class AggregationFormat {
         public static final String BUCKETS_PTR = SLASH + BUCKETS;
         public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;
         public static final String BUCKETS_KEY_PTR = SLASH + BUCKETS + KEY_PTR;
-        public static final String ID_BUCKETS = SLASH + ID + SLASH + BUCKETS;
     }
 
 }
