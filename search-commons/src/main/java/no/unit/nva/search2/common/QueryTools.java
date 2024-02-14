@@ -1,5 +1,20 @@
 package no.unit.nva.search2.common;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import nva.commons.core.JacocoGenerated;
+import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.sort.SortOrder;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
@@ -15,26 +30,12 @@ import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.BETWEEN;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.common.enums.ParameterKey.FieldOperator.LESS_THAN;
-import static no.unit.nva.search2.common.enums.ParameterKey.ParamKind.FUZZY_KEYWORD;
+import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
+import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKey.ParamKind;
-import nva.commons.core.JacocoGenerated;
-import org.apache.lucene.search.join.ScoreMode;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
@@ -152,11 +153,11 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
 
     private boolean isNotKeyword(K key) {
-        return !ParameterKey.ParamKind.KEYWORD.equals(key.fieldType());
+        return !ParameterKind.KEYWORD.equals(key.fieldType());
     }
 
     public boolean isBooleanKey(K key) {
-        return ParamKind.BOOLEAN.equals(key.fieldType());
+        return ParameterKind.BOOLEAN.equals(key.fieldType());
     }
 
     public boolean isNumberKey(K key) {
@@ -186,8 +187,8 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public boolean isTextKey(K key) {
-        return ParamKind.TEXT.equals(key.fieldType())
-               || ParamKind.FUZZY_TEXT.equals(key.fieldType());
+        return ParameterKind.TEXT.equals(key.fieldType())
+               || ParameterKind.FUZZY_TEXT.equals(key.fieldType());
     }
 
 }
