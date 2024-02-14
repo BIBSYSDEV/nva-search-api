@@ -1,9 +1,8 @@
 package no.unit.nva.search2.common.builder;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.DisMaxQueryBuilder;
@@ -16,14 +15,15 @@ import org.opensearch.index.query.TermsQueryBuilder;
 public class OpensearchQueryTextKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override
-    protected Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        if (FieldOperator.SHOULD.equals(key.searchOperator())) {
-            return buildAnyComboMustHitQuery(key, values)
-                .flatMap(builder -> queryTools.queryToEntry(key, builder));
-        } else {
-            return buildEachValueMustHitQuery(key, values)
-                .flatMap(builder -> queryTools.queryToEntry(key, builder));
-        }
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+        return buildAnyComboMustHitQuery(key, values)
+            .flatMap(builder -> queryTools.queryToEntry(key, builder));
+    }
+
+    @Override
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
+        return buildEachValueMustHitQuery(key, values)
+            .flatMap(builder -> queryTools.queryToEntry(key, builder));
     }
 
     private Stream<QueryBuilder> buildEachValueMustHitQuery(K key, String... values) {
