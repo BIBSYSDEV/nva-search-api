@@ -89,6 +89,9 @@ paths:
         - $ref: '#/components/parameters/contributorShouldParam'
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseShouldParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
@@ -185,6 +188,9 @@ paths:
         - $ref: '#/components/parameters/contributorShouldParam'
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseShouldParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
@@ -281,6 +287,9 @@ paths:
         - $ref: '#/components/parameters/contributorShouldParam'
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseShouldParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
@@ -574,6 +583,30 @@ components:
       schema:
         type: string
         format: date
+    courseParam:
+      name: course
+      in: query
+      description: "returns documents with this course code"
+      example: "GENV395"
+      required: false
+      schema:
+        type: string
+    courseNotParam:
+      name: course
+      in: query
+      description: "returns documents without this course code"
+      example: "GENV395"
+      required: false
+      schema:
+        type: string
+    courseShouldParam:
+      name: course
+      in: query
+      description: "returns documents without these course codes, seperated by space (+)"
+      example: "GENV395"
+      required: false
+      schema:
+        type: string
     doiParam:
       name: doi
       in: query
@@ -618,7 +651,7 @@ components:
     fundingSourceParam:
       name: funding_source
       in: query
-      description: "returns document with this funding source code"
+      description: "returns document with this funding source code or project code"
       example: "NFR"
       required: false
       schema:
