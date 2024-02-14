@@ -15,7 +15,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
 
     @Override
     protected Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        if (FieldOperator.SHOULD.equals(key.searchOperator()) || key.isNested()) {
+        if (FieldOperator.SHOULD.equals(key.searchOperator())) {
             return buildShouldMatchQuery(key, values);
         } else {
             return buildAllMustMatchQuery(key, values);
