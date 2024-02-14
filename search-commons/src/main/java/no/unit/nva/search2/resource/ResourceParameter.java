@@ -64,6 +64,7 @@ import static no.unit.nva.search2.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_
 import static no.unit.nva.search2.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PARENT_PUBLICATION_ID;
+import static no.unit.nva.search2.resource.Constants.PHI;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
@@ -74,7 +75,6 @@ import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
-import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
