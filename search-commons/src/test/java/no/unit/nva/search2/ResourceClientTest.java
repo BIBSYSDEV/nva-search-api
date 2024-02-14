@@ -3,26 +3,26 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.constant.Words.HAS_FILE;
-import static no.unit.nva.search2.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.constant.Words.RESOURCES;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.constant.Words.TYPE;
-import static no.unit.nva.search2.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search2.enums.PublicationStatus.DRAFT;
-import static no.unit.nva.search2.enums.PublicationStatus.DRAFT_FOR_DELETION;
-import static no.unit.nva.search2.enums.PublicationStatus.NEW;
-import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search2.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search2.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search2.enums.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search2.enums.ResourceParameter.FROM;
-import static no.unit.nva.search2.enums.ResourceParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.enums.ResourceParameter.SIZE;
-import static no.unit.nva.search2.enums.ResourceParameter.SORT;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.RESOURCES;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.enums.PublicationStatus.DELETED;
+import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT;
+import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
+import static no.unit.nva.search2.common.enums.PublicationStatus.NEW;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,7 +51,10 @@ import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
-import no.unit.nva.search2.constant.Words;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -75,7 +78,7 @@ class ResourceClientTest {
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final String TEST_RESOURCES_MAPPINGS_JSON = "test_resources_mappings.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_valid_test_url.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "test_resource_urls.json";
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
@@ -131,18 +134,19 @@ class ResourceClientTest {
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
 
-            var uri1 = URI.create(REQUEST_BASE_URL + "aggregation=all");
+            var uri1 = URI.create(REQUEST_BASE_URL);
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withOpensearchUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
-            var uri2 = URI.create(REQUEST_BASE_URL +
-                "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status");
+            var uri2 =
+                URI.create(REQUEST_BASE_URL +
+                           "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status");
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -157,9 +161,9 @@ class ResourceClientTest {
             var aggregations = query1.toPagedResponse(response1).aggregations();
 
             assertFalse(aggregations.isEmpty());
-            assertThat(aggregations.get(TYPE).size(), is(3));
+            assertThat(aggregations.get(TYPE).size(), is(4));
             assertThat(aggregations.get(HAS_FILE).size(), is(2));
-            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(18));
+            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(20));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
@@ -169,14 +173,14 @@ class ResourceClientTest {
         }
 
         @Test
-        void userSettingsNotFound1() throws IOException, InterruptedException, BadRequestException {
+        void userSettingsNotFoundReturn200() throws IOException, InterruptedException, BadRequestException {
             var mochedHttpClient = mock(HttpClient.class);
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 200);
             when(mochedHttpClient.send(any(), any()))
                 .thenReturn(mockedResponse);
             var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
-                setupMockedCachedJwtProvider());
+                                                  setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
@@ -191,14 +195,14 @@ class ResourceClientTest {
         }
 
         @Test
-        void userSettingsNotFound2() throws IOException, InterruptedException, BadRequestException {
+        void userSettingsNotFoundReturn404() throws IOException, InterruptedException, BadRequestException {
             var mochedHttpClient = mock(HttpClient.class);
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 404);
             when(mochedHttpClient.send(any(), any()))
                 .thenReturn(mockedResponse);
             var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
-                setupMockedCachedJwtProvider());
+                                                  setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
@@ -213,13 +217,13 @@ class ResourceClientTest {
         }
 
         @Test
-        void userSettingsFailsFound1() throws IOException, InterruptedException, BadRequestException {
+        void userSettingsFailsIOException() throws IOException, InterruptedException, BadRequestException {
             var mochedHttpClient = mock(HttpClient.class);
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             when(mochedHttpClient.send(any(), any()))
                 .thenThrow(new IOException("Not found"));
             var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
-                setupMockedCachedJwtProvider());
+                                                  setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
@@ -243,7 +247,8 @@ class ResourceClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED, DRAFT_FOR_DELETION )
+                    .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
+                                        DRAFT_FOR_DELETION)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -286,7 +291,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(9)));
+            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(10)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
@@ -387,7 +392,8 @@ class ResourceClientTest {
                 URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date&sortOrder=asc&sort=category"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&size=10&from=0&sort=modified_date"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
+                URI.create(REQUEST_BASE_URL
+                           + "category=Ma&orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date+asc&sort=category+desc"));
         }
 
@@ -405,7 +411,7 @@ class ResourceClientTest {
 
         static Stream<Arguments> uriProvider() {
             return loadMapFromResource(RESOURCE_VALID_TEST_URL_JSON).entrySet().stream()
-                .map(entry -> createArgument(entry.getKey(),  entry.getValue()));
+                .map(entry -> createArgument(entry.getKey(), entry.getValue()));
         }
     }
 
@@ -415,7 +421,8 @@ class ResourceClientTest {
 
     private static Map<String, Integer> loadMapFromResource(String resource) {
         var mappingsJson = stringFromResources(Path.of(resource));
-        var type = new TypeReference<Map<String, Integer>>() {};
+        var type = new TypeReference<Map<String, Integer>>() {
+        };
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 

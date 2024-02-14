@@ -1,22 +1,23 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
-import static no.unit.nva.search2.constant.Words.BUCKETS;
-import static no.unit.nva.search2.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.constant.Words.HAS_FILE;
-import static no.unit.nva.search2.constant.Words.KEY;
-import static no.unit.nva.search2.constant.Words.LABELS;
-import static no.unit.nva.search2.constant.Words.LICENSE;
-import static no.unit.nva.search2.constant.Words.NAME;
-import static no.unit.nva.search2.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.constant.Words.SERIES;
-import static no.unit.nva.search2.constant.Words.SLASH;
-import static no.unit.nva.search2.constant.Words.STATUS;
-import static no.unit.nva.search2.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.constant.Words.TYPE;
-import static no.unit.nva.search2.constant.Words.ZERO;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
+import static no.unit.nva.search2.common.constant.Words.BUCKETS;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.KEY;
+import static no.unit.nva.search2.common.constant.Words.LABELS;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
+import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.SERIES;
+import static no.unit.nva.search2.common.constant.Words.SLASH;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Streams;
@@ -67,7 +68,6 @@ public final class AggregationFormat {
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
         return Constants.facetResourcePaths
             .entrySet().stream()
-            //            .filter(pre -> pre.getKey())
             .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
         );
     }
@@ -130,6 +130,7 @@ public final class AggregationFormat {
             HAS_FILE, "/filter/associatedArtifacts/hasFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
+            CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",
             TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
         );

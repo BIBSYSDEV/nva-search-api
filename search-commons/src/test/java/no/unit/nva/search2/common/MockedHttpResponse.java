@@ -1,6 +1,6 @@
 package no.unit.nva.search2.common;
 
-import static no.unit.nva.search2.TestConstants.CONTENT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import java.net.URI;
@@ -16,8 +16,6 @@ import javax.net.ssl.SSLSession;
 import org.jetbrains.annotations.NotNull;
 
 public class MockedHttpResponse {
-
-
 
     @NotNull
     public static HttpResponse<Object> mockedHttpResponse(String filename) {
@@ -43,17 +41,17 @@ public class MockedHttpResponse {
                     Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
                     (s, s2) -> true);
             }
-            
+
             @Override
             public String body() {
                 return stringFromResources(Path.of(filename));
             }
-            
+
             @Override
             public Optional<SSLSession> sslSession() {
                 return Optional.empty();
             }
-            
+
             @Override
             public URI uri() {
                 return null;

@@ -1,19 +1,5 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.constant.Words.COMMA;
-import static no.unit.nva.search2.constant.Words.CRISTIN_SOURCE;
-import static no.unit.nva.search2.constant.Words.PLUS;
-import static no.unit.nva.search2.constant.Words.SCOPUS_SOURCE;
-import static no.unit.nva.search2.constant.Words.SPACE;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.MUST_NOT;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
@@ -31,14 +17,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.dto.PagedSearch;
-import no.unit.nva.search2.dto.PagedSearchBuilder;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ValueEncoding;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.PagedSearch;
+import no.unit.nva.search2.common.records.PagedSearchBuilder;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -49,6 +37,21 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.PLUS;
+import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
+import static no.unit.nva.search2.common.enums.FieldOperator.MUST_NOT;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
@@ -268,30 +271,32 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return MUST_NOT.equals(key.searchOperator());
     }
 
-
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
-        if (opensearchQueryTools.isSearchAll(key)) {
+        if (opensearchQueryTools.isSearchAllKey(key)) {
             return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
-
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFundingKey(key)) {
             return opensearchQueryTools.fundingQuery(key, value);
-
-        } else if (opensearchQueryTools.isCristinIdentifier(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isCristinIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
-
-        } else if (opensearchQueryTools.isScopusIdentifier(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
-
-        } else if (opensearchQueryTools.isBoolean(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isBooleanKey(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
-
-        } else if (opensearchQueryTools.isNumber(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isNumberKey(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
-
-        } else if (opensearchQueryTools.isText(key)) {
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isTextKey(key)) {
             return new OpensearchQueryText<K>().buildQuery(key, value);
-
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
+            return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
         }
@@ -336,7 +341,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         logger.info(
             getSearchParameterKeys()
                 .map(Enum::name)
-                .collect(Collectors.joining(", ", "{\"keys\":[", "]}"))
+                .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }
 

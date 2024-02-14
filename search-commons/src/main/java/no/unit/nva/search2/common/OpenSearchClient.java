@@ -3,8 +3,8 @@ package no.unit.nva.search2.common;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.constant.Functions.readSearchInfrastructureAuthUri;
-import static no.unit.nva.search2.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
@@ -17,10 +17,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
+import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
-import no.unit.nva.search2.dto.ResponseLogInfo;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
+import no.unit.nva.search2.common.records.ResponseLogInfo;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
@@ -48,8 +51,10 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
         return attempt(() -> httpClient.send(httpRequest, bodyHandler))
-            .orElse(httpResponseFailure -> {
-                logger.error(httpResponseFailure.getException().toString());
+            .orElse(responseFailure -> {
+                logger.error(
+                    new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString()
+                );
                 return null;
             });
     }
@@ -93,9 +98,9 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             logger.info(
                 ResponseLogInfo.builder()
                     .withResponseTime(getRequestDuration())
-                    .withOpensearchResponseTime(result.took())
-                    .withTotalHits(result.getTotalSize())
-                    .toJsonString());
+                    .withSwsResponse(result)
+                    .toJsonString()
+            );
             return result;
         };
     }
@@ -104,4 +109,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         return Duration.between(requestStart, Instant.now()).toMillis();
     }
 
+    record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {
+
+    }
 }

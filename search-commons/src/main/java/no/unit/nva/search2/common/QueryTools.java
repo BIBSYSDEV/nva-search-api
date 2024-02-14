@@ -1,39 +1,41 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search2.constant.Functions.jsonPath;
-import static no.unit.nva.search2.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search2.constant.Words.COLON;
-import static no.unit.nva.search2.constant.Words.DOT;
-import static no.unit.nva.search2.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.constant.Words.IDENTIFIER;
-import static no.unit.nva.search2.constant.Words.KEYWORD;
-import static no.unit.nva.search2.constant.Words.ONE;
-import static no.unit.nva.search2.constant.Words.PUBLISHED_FILE;
-import static no.unit.nva.search2.constant.Words.SOURCE;
-import static no.unit.nva.search2.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search2.constant.Words.VALUE;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.BETWEEN;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.enums.ParameterKey.FieldOperator.LESS_THAN;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search2.constant.Words;
-import no.unit.nva.search2.enums.ParameterKey;
-import no.unit.nva.search2.enums.ParameterKey.ParamKind;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
+
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.ONE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.common.constant.Words.SOURCE;
+import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
+import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
+import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
@@ -53,17 +55,13 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return nonNull(value) && !value.isEmpty();
     }
 
-    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
+//    @JacocoGenerated    // used by PromotedPublication, which is not tested here.
     public static boolean hasContent(Collection<?> value) {
         return nonNull(value) && !value.isEmpty();
     }
 
     public static String decodeUTF(String encoded) {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
-    }
-
-    private boolean isNotKeyword(K key) {
-        return !ParameterKey.ParamKind.KEYWORD.equals(key.fieldType());
     }
 
     public String getFirstSearchField(K key) {
@@ -153,11 +151,16 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             ScoreMode.None));
     }
 
-    public boolean isBoolean(K key) {
-        return ParamKind.BOOLEAN.equals(key.fieldType());
+
+    private boolean isNotKeyword(K key) {
+        return !ParameterKind.KEYWORD.equals(key.fieldType());
     }
 
-    public boolean isNumber(K key) {
+    public boolean isBooleanKey(K key) {
+        return ParameterKind.BOOLEAN.equals(key.fieldType());
+    }
+
+    public boolean isNumberKey(K key) {
         return key.searchOperator() == GREATER_THAN_OR_EQUAL_TO
                || key.searchOperator() == LESS_THAN
                || key.searchOperator() == BETWEEN;
@@ -167,21 +170,25 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Words.FUNDING.equals(key.name());
     }
 
-    public boolean isCristinIdentifier(K key) {
+    public boolean isCristinIdentifierKey(K key) {
         return Words.CRISTIN_IDENTIFIER.equals(key.name());
     }
 
-    public boolean isScopusIdentifier(K key) {
+    public boolean isScopusIdentifierKey(K key) {
         return Words.SCOPUS_IDENTIFIER.equals(key.name());
     }
 
-    public boolean isSearchAll(K key) {
+    public boolean isFuzzyKeywordKey(K key) {
+        return FUZZY_KEYWORD.equals(key.fieldType());
+    }
+
+    public boolean isSearchAllKey(K key) {
         return Words.SEARCH_ALL_KEY_NAME.equals(key.name());
     }
 
-    public boolean isText(K key) {
-        return ParamKind.TEXT.equals(key.fieldType())
-               || ParamKind.FUZZY_TEXT.equals(key.fieldType());
+    public boolean isTextKey(K key) {
+        return ParameterKind.TEXT.equals(key.fieldType())
+               || ParameterKind.FUZZY_TEXT.equals(key.fieldType());
     }
 
 }
