@@ -133,6 +133,8 @@ public final class Constants {
     public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN =
         PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD + PIPE + PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD;
 
+    public static final String FUNDING_IDENTIFIER_KEYWORD = FUNDINGS + DOT + IDENTIFIER_KEYWORD;
+
     public static final String FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER =
         FUNDINGS + DOT + IDENTIFIER_KEYWORD + PIPE + FUNDINGS + DOT + SOURCE + DOT + IDENTIFIER + DOT + KEYWORD;
 
@@ -201,10 +203,10 @@ public final class Constants {
             nestedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
                 .subAggregation(
                     publicationContext()
-                        .subAggregation(pubicationContextType())
+                        .subAggregation(publicationContextType())
                         .subAggregation(publisher())
                         .subAggregation(series())
-                        .subAggregation(cources())
+                        .subAggregation(courses())
                 )
                 .subAggregation(
                     publicationInstance()            // Split or just a branch?
@@ -235,13 +237,13 @@ public final class Constants {
                 );
     }
 
-    private static TermsAggregationBuilder cources() {
+    private static TermsAggregationBuilder courses() {
         return
             branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     }
 
 
-    private static TermsAggregationBuilder pubicationContextType() {
+    private static TermsAggregationBuilder publicationContextType() {
         return
             branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
     }

@@ -20,6 +20,9 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_N
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_SHOULD_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_NOT;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
@@ -61,6 +64,7 @@ import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENC
 import static no.unit.nva.search2.resource.Constants.ENTITY_TAGS;
 import static no.unit.nva.search2.resource.Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
 import static no.unit.nva.search2.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
+import static no.unit.nva.search2.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PARENT_PUBLICATION_ID;
@@ -86,8 +90,8 @@ import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    CRISTIN_IDENTIFIER(KEYWORD),
-    SCOPUS_IDENTIFIER(KEYWORD),
+    CRISTIN_IDENTIFIER(CUSTOM),
+    SCOPUS_IDENTIFIER(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),
@@ -110,6 +114,11 @@ public enum ResourceParameter implements ParameterKey {
     DOI_SHOULD(TEXT, SHOULD, REFERENCE_DOI_KEYWORD),
     FUNDING(KEYWORD, MUST, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null,
         PATTERN_IS_FUNDING, null),
+    FUNDING_IDENTIFIER(KEYWORD, MUST, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
+    FUNDING_IDENTIFIER_NOT(KEYWORD, MUST_NOT, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
+                           null),
+    FUNDING_IDENTIFIER_SHOULD(FUZZY_KEYWORD, SHOULD, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_SHOULD,
+                              null, null),
     FUNDING_SOURCE(TEXT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),

@@ -92,14 +92,21 @@ paths:
         - $ref: '#/components/parameters/courseParam'
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
         - $ref: '#/components/parameters/fieldsParam'
         - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
         - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceNotParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idShouldParam'
@@ -188,6 +195,7 @@ paths:
         - $ref: '#/components/parameters/contributorShouldParam'
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
         - $ref: '#/components/parameters/courseParam'
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseShouldParam'
@@ -196,9 +204,15 @@ paths:
         - $ref: '#/components/parameters/doiShouldParam'
         - $ref: '#/components/parameters/fieldsParam'
         - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
         - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceNotParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idShouldParam'
@@ -290,14 +304,21 @@ paths:
         - $ref: '#/components/parameters/courseParam'
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
         - $ref: '#/components/parameters/fieldsParam'
         - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
         - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceNotParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idShouldParam'
@@ -607,6 +628,14 @@ components:
       required: false
       schema:
         type: string
+    cristinIdentifierParam:
+      name: cristin_identifier
+      in: query
+      description: "Returns documents with the cristin identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
     doiParam:
       name: doi
       in: query
@@ -648,6 +677,30 @@ components:
       required: false
       schema:
         type: string
+    fundingIdentifierParam:
+      name: funding_identifier
+      in: query
+      description: "Returns documents with the funding identifier, also known as grant identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    fundingIdentifierNotParam:
+      name: funding_identifier_not
+      in: query
+      description: "Returns documents without the funding identifier, also known as grant identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    fundingIdentifierShouldParam:
+      name: funding_identifier_should
+      in: query
+      description: "Returns documents with the funding identifiers, also known as grant identifiers, seperated by space (+)."
+      example: "1234,4321"
+      required: false
+      schema:
+        type: string
     fundingSourceParam:
       name: funding_source
       in: query
@@ -669,6 +722,30 @@ components:
       in: query
       description: "returns document with these funding source codes, seperated by space (+)."
       example: "NFR"
+      required: false
+      schema:
+        type: string
+    grantIdentifierParam:
+      name: grant_id
+      in: query
+      description: "Returns documents with the grant id, also known as funding identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    grantIdentifierNotParam:
+      name: grant_id_not
+      in: query
+      description: "Returns documents without the grant id, also known as funding identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    grantIdentifierShouldParam:
+      name: grant_id_should
+      in: query
+      description: "Returns documents with the grant id, also known as funding identifiers, seperated by space (+)."
+      example: "1234,4321"
       required: false
       schema:
         type: string
