@@ -3206,7 +3206,9 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries"
+            "type": "UnconfirmedSeries",
+            "title": "Kjetils bokserie",
+            "issn" : "0801-6461"
           }
         },
         "publicationInstance": {
