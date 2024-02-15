@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.search2.ResourceClientTest.REQUEST_BASE_URL;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREATED_DATE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
@@ -58,6 +57,7 @@ class ImportCandidateClientTest {
     public static final String SAMPLE_IMPORT_CANDIDATES = "sample_import_candidate_search.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     public static final long DELAY_AFTER_INDEXING = 1000L;
+    private static final String REQUEST_BASE_URL = "https://x.org/?";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     private static IndexingClient indexingClient;
     private static ImportCandidateClient importCandidateClient;

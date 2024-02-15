@@ -46,7 +46,9 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.resource.Constants.FILTER;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.PI;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
@@ -69,9 +71,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
-    public static final String FILTER = "filter";
-    public static final float PI = 3.14F;        // π
-    public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used in the future for boosting.
 
     private ResourceQuery() {
         super();

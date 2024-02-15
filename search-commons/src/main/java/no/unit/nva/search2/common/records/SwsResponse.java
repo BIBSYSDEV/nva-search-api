@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import no.unit.nva.search2.common.AggregationFormat;
 import no.unit.nva.search2.common.records.SwsResponse.HitsInfo.Hit;
+import nva.commons.core.JacocoGenerated;
 
 import static java.util.Objects.nonNull;
 
@@ -64,6 +65,7 @@ public record SwsResponse(
                 : List.of();
     }
 
+    @JacocoGenerated    // this is tested, but is reported as not tested (remove nonNull Test and see the tests fail)
     @Transient
     public String getAggregationsStructured() {
         return nonNull(aggregations)

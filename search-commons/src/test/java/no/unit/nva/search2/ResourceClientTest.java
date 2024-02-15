@@ -83,7 +83,7 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
+    private static final String REQUEST_BASE_URL = "https://x.org/?";
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -135,7 +135,7 @@ class ResourceClientTest {
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
 
-            var uri1 = URI.create(REQUEST_BASE_URL);
+            var uri1 = URI.create(REQUEST_BASE_URL + "size=21");
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withOpensearchUri(hostAddress)
