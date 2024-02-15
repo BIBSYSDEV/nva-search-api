@@ -30,7 +30,6 @@ import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search2.common.constant.Words.FUNDING;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
 import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
