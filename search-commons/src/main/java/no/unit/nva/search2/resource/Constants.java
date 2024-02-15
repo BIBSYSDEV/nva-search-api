@@ -112,7 +112,8 @@ public final class Constants {
     public static final String PUBLICATION_CONTEXT_PUBLISHER =
         ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + TITLE + DOT + KEYWORD;
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + "issn" + DOT + KEYWORD
+        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + TITLE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
@@ -207,6 +208,7 @@ public final class Constants {
                         .subAggregation(pubicationContextType())
                         .subAggregation(publisher())
                         .subAggregation(series())
+                        .subAggregation(cources())
                 )
                 .subAggregation(
                     publicationInstance()            // Split or just a branch?
@@ -231,7 +233,15 @@ public final class Constants {
 
     private static TermsAggregationBuilder series() {
         return
-            branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD);
+            branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, "issn", KEYWORD)
+                .subAggregation(
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD)
+                );
+    }
+
+    private static TermsAggregationBuilder cources() {
+        return
+            branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     }
 
 
