@@ -20,6 +20,9 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_N
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_SHOULD_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_NOT;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
@@ -54,6 +57,7 @@ import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_I
 import static no.unit.nva.search2.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
+import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
@@ -61,6 +65,7 @@ import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENC
 import static no.unit.nva.search2.resource.Constants.ENTITY_TAGS;
 import static no.unit.nva.search2.resource.Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
 import static no.unit.nva.search2.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
+import static no.unit.nva.search2.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PARENT_PUBLICATION_ID;
@@ -86,8 +91,8 @@ import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    CRISTIN_IDENTIFIER(KEYWORD),
-    SCOPUS_IDENTIFIER(KEYWORD),
+    CRISTIN_IDENTIFIER(CUSTOM),
+    SCOPUS_IDENTIFIER(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),
@@ -109,7 +114,12 @@ public enum ResourceParameter implements ParameterKey {
     DOI_NOT(KEYWORD, MUST_NOT, REFERENCE_DOI_KEYWORD),
     DOI_SHOULD(TEXT, SHOULD, REFERENCE_DOI_KEYWORD),
     FUNDING(KEYWORD, MUST, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null,
-            PATTERN_IS_FUNDING, null),
+        PATTERN_IS_FUNDING, null),
+    FUNDING_IDENTIFIER(KEYWORD, MUST, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
+    FUNDING_IDENTIFIER_NOT(KEYWORD, MUST_NOT, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
+                           null),
+    FUNDING_IDENTIFIER_SHOULD(FUZZY_KEYWORD, SHOULD, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_SHOULD,
+                              null, null),
     FUNDING_SOURCE(TEXT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, MUST_NOT, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, SHOULD, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
@@ -174,13 +184,16 @@ public enum ResourceParameter implements ParameterKey {
     USER_AFFILIATION(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
+    PUBLICATION_LANGUAGE(KEYWORD, MUST, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, SHOULD, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
                             PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS, null, null),
     SERIES(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_SERIES),
-    SERIES_SHOULD(KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    SERIES_SHOULD(FUZZY_KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(TEXT, MUST, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(CUSTOM),

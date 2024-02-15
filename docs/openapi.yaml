@@ -167,6 +167,52 @@ paths:
         - $ref: '#/components/parameters/userAffiliationShouldParam'
         - $ref: '#/components/parameters/userNotParam'
         - $ref: '#/components/parameters/userShouldParam'
+  /resources:
+    get:
+      description: "Search for public available publications by given criteria"
+      parameters:
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
+        - $ref: '#/components/parameters/contributorIdParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/createdBeforeParam'
+        - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idShouldParam'
+        - $ref: '#/components/parameters/institutionParam'
+        - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionShouldParam'
+        - $ref: '#/components/parameters/isbnParam'
+        - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnShouldParam'
+        - $ref: '#/components/parameters/issnParam'
+        - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnShouldParam'
+        - $ref: '#/components/parameters/orcidParam'
+        - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidShouldParam'
         - $ref: '#/components/parameters/langParam'
         - $ref: '#/components/parameters/fieldsParam'
         - $ref: '#/components/parameters/fromParam'
@@ -174,6 +220,17 @@ paths:
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/queryParam'
         - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/projectParam'
+        - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publishedBeforeParam'
+        - $ref: '#/components/parameters/publishedSinceParam'
+        - $ref: '#/components/parameters/queryParam'
         - $ref: '#/components/parameters/sortParam'
       x-amazon-apigateway-integration:
         uri:
@@ -226,15 +283,25 @@ paths:
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
         - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
         - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
         - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceNotParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
         - $ref: '#/components/parameters/hasFileParam'
         - $ref: '#/components/parameters/hasFileShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idShouldParam'
@@ -263,6 +330,10 @@ paths:
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publicationYearSinceParam'
@@ -503,63 +574,44 @@ components:
     contextTypeParam:
       name: context_type
       in: query
-      description: "returns document with..."
+      description: "Returns documents without these category codes. Support list of Enums, separated by comma(+)."
+      example: "JournalArticle"
       required: false
       schema:
-        type: string
-    contextTypeNotParam:
-      name: context_type_not
+        $ref: "#/components/schemas/CategoryEnum"
+    categoryShouldParam:
+      name: category_should
       in: query
-      description: "returns document with..."
+      description: "Returns documents with these category codes. Support list of Enums, separated by comma(+)."
+      example: "JournalArticle"
       required: false
       schema:
-        type: string
-    contextTypeShouldParam:
-      name: context_type_should
+        $ref: "#/components/schemas/CategoryEnum"
+    contributorIdParam:
+      name: contributor_id
       in: query
-      description: "returns document with..."
+      description: "person id (URI)."
       required: false
       schema:
         type: string
     contributorParam:
       name: contributor
       in: query
-      description: "returns document with person id(URI)."
+      description: "returns document with Author's name or person id(URI)."
       required: false
       schema:
         type: string
     contributorNotParam:
       name: contributor_not
       in: query
-      description: "returns document without person ids(URI), separated by comma (+)."
+      description: "returns document without Author's names or person ids(URI), seperated by space (+)."
       required: false
       schema:
         type: string
     contributorShouldParam:
       name: contributor_should
       in: query
-      description: "returns document with  person ids(URI), separated by comma (+)."
-      required: false
-      schema:
-        type: string
-    contributorNameParam:
-      name: contributor_name
-      in: query
-      description: "returns document without Author's names, separated by comma (+)."
-      required: false
-      schema:
-        type: string
-    contributorNameNotParam:
-      name: contributor_name_not
-      in: query
-      description: "returns document without Author's names, separated by comma (+)."
-      required: false
-      schema:
-        type: string
-    contributorNameShouldParam:
-      name: contributor_name_should
-      in: query
-      description: "returns document without Author's names, separated by comma (+)."
+      description: "returns document with Author's names or person ids(URI), separated by comma(+)."
       required: false
       schema:
         type: string
@@ -581,10 +633,35 @@ components:
       schema:
         type: string
         format: date
+    courseParam:
+      name: course
+      in: query
+      description: "returns documents with this course code"
+      example: "GENV395"
+      required: false
+      schema:
+        type: string
+    courseNotParam:
+      name: course
+      in: query
+      description: "returns documents without this course code"
+      example: "GENV395"
+      required: false
+      schema:
+        type: string
+    courseShouldParam:
+      name: course
+      in: query
+      description: "returns documents without these course codes, separated by comma(+)"
+      example: "GENV395"
+      required: false
+      schema:
+        type: string
     cristinIdentifierParam:
       name: cristin_identifier
       in: query
-      description: "returns document with..."
+      description: "Returns documents with the cristin identifier"
+      example: "1234"
       required: false
       schema:
         type: string
@@ -599,7 +676,7 @@ components:
     doiNotParam:
       name: doi_not
       in: query
-      description: "returns document without these DOI ids, separated by comma (+)."
+      description: "returns document without these DOI ids, separated by comma(+)."
       example: "10.1000/123456"
       required: false
       schema:
@@ -629,10 +706,34 @@ components:
       required: false
       schema:
         type: string
+    fundingIdentifierParam:
+      name: funding_identifier
+      in: query
+      description: "Returns documents with the funding identifier, also known as grant identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    fundingIdentifierNotParam:
+      name: funding_identifier_not
+      in: query
+      description: "Returns documents without the funding identifier, also known as grant identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    fundingIdentifierShouldParam:
+      name: funding_identifier_should
+      in: query
+      description: "Returns documents with the funding identifiers, also known as grant identifiers, separated by comma(+)."
+      example: "1234,4321"
+      required: false
+      schema:
+        type: string
     fundingSourceParam:
       name: funding_source
       in: query
-      description: "returns document with this funding source code"
+      description: "returns document with this funding source code or project code"
       example: "NFR"
       required: false
       schema:
@@ -640,7 +741,7 @@ components:
     fundingSourceNotParam:
       name: funding_source_not
       in: query
-      description: "returns document without these funding source codes, separated by comma (+)."
+      description: "returns document without these funding source codes, separated by comma(+)."
       example: "NFR"
       required: false
       schema:
@@ -648,22 +749,32 @@ components:
     fundingSourceShouldParam:
       name: funding_source_should
       in: query
-      description: "returns document with these funding source codes, separated by comma (+)."
+      description: "returns document with these funding source codes, separated by comma(+)."
       example: "NFR"
       required: false
       schema:
         type: string
-    hasFileParam:
-      name: has_file
+    grantIdentifierParam:
+      name: grant_id
       in: query
-      description: "returns document with..."
+      description: "Returns documents with the grant id, also known as funding identifier"
+      example: "1234"
       required: false
       schema:
         type: string
-    hasFileShouldParam:
-      name: has_file_should
+    grantIdentifierNotParam:
+      name: grant_id_not
       in: query
-      description: "returns document with..."
+      description: "Returns documents without the grant id, also known as funding identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    grantIdentifierShouldParam:
+      name: grant_id_should
+      in: query
+      description: "Returns documents with the grant id, also known as funding identifiers, separated by comma(+)."
+      example: "1234,4321"
       required: false
       schema:
         type: string
@@ -677,7 +788,7 @@ components:
     idNotParam:
       name: id_not
       in: query
-      description: "returns document without these identifiers (UUID), separated by comma (+)."
+      description: "returns document without these identifiers (UUID), separated by comma(+)."
       required: false
       schema:
         type: string
@@ -688,7 +799,6 @@ components:
       required: false
       schema:
         type: string
-
     instanceTypeParam:
       name: instance_type
       in: query
@@ -710,7 +820,6 @@ components:
       required: false
       schema:
         type: string
-
     institutionParam:
       name: institution
       in: query
@@ -722,7 +831,7 @@ components:
     institutionNotParam:
       name: institution_not
       in: query
-      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, separated by comma (+)."
+      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, separated by comma(+)."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -730,7 +839,7 @@ components:
     institutionShouldParam:
       name: institution_should
       in: query
-      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, separated by comma (+)."
+      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, separated by comma(+)."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -745,14 +854,14 @@ components:
     isbnNotParam:
       name: isbn_not
       in: query
-      description: "returns document without these ISBN ids, separated by comma (+)."
+      description: "returns document without these ISBN ids, separated by comma(+)."
       required: false
       schema:
         type: string
     isbnShouldParam:
       name: isbn_should
       in: query
-      description: "returns document with these ISBN ids, separated by comma (+)."
+      description: "returns document with these ISBN ids, separated by comma(+)."
       required: false
       schema:
         type: string
@@ -766,40 +875,46 @@ components:
     issnNotParam:
       name: issn_not
       in: query
-      description: "returns document without these issn, separated by comma (+)."
+      description: "returns document without these issn, separated by comma(+)."
       required: false
       schema:
         type: string
     issnShouldParam:
       name: issn_should
       in: query
-      description: "returns document with these issn, separated by comma (+)."
+      description: "returns document with these issn, separated by comma(+)."
       required: false
       schema:
         type: string
-
-    licenseParam:
-      name: license
+    orcidParam:
+      name: orcid
       in: query
-      description: "returns document with..."
+      description: "returns document with this ORCID id"
       required: false
       schema:
         type: string
-    licenseNotParam:
-      name: license_not
+    orcidNotParam:
+      name: orcid_not
       in: query
-      description: "returns document with..."
+      description: "returns document without these ORCID ids, separated by comma(+)."
       required: false
       schema:
         type: string
-    licenseShouldParam:
-      name: license_should
+    orcidShouldParam:
+      name: orcid_should
       in: query
-      description: "returns document with..."
+      description: "returns document with these ORCID ids, separated by comma(+)."
       required: false
       schema:
         type: string
-
+    langParam:
+      deprecated: true
+      name: lang
+      in: query
+      description: "Two letter language code. Using the 'lang' parameter, this is no longer in use, and are ignored"
+      required: false
+      schema:
+        type: string
     modifiedBeforeParam:
       name: modified_before
       in: query
@@ -818,41 +933,39 @@ components:
       schema:
         type: string
         format: date
-    orcidParam:
-      name: orcid
+    orderParam:
+      name: order
       in: query
-      description: "returns document with this ORCID id"
+      description: "SortOrder is either 'asc' or 'desc'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
+      example: "asc"
       required: false
       schema:
         type: string
-    orcidNotParam:
-      name: orcid_not
+        enum: [ asc, desc ]
+    pageParam:
+      name: page
       in: query
-      description: "returns document without these ORCID ids, separated by comma (+)."
+      description: "Page number, zero based, see from and size."
+      example: "0"
       required: false
       schema:
-        type: string
-    orcidShouldParam:
-      name: orcid_should
+        type: number
+    fromParam:
+      name: from
       in: query
-      description: "returns document with these ORCID ids, separated by comma (+)."
+      description: "Start result from item no. zero based [offset] is also accepted. Default is 0"
+      example: "0"
       required: false
       schema:
-        type: string
-    parentPublicationParam:
-      name: parent_publication
+        type: number
+    sizeParam:
+      name: size
       in: query
-      description: "returns document with..."
+      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15"
+      example: "15"
       required: false
       schema:
-        type: string
-    parentPublicationShouldParam:
-      name: parent_publication_should
-      in: query
-      description: "returns document with..."
-      required: false
-      schema:
-        type: string
+        type: number
     projectParam:
       name: project
       in: query
@@ -864,7 +977,7 @@ components:
     projectNotParam:
       name: project_not
       in: query
-      description: "returns document without these project ids (URI), separated by comma (+)."
+      description: "returns document without these project ids (URI), separated by comma(+)."
       example: "NFR"
       required: false
       schema:
@@ -872,12 +985,36 @@ components:
     projectShouldParam:
       name: project_should
       in: query
-      description: "returns document with these project ids (URI), separated by comma (+)."
+      description: "returns document with these project ids (URI), separated by comma(+)."
       example: "NFR"
       required: false
       schema:
         type: string
-    publicationYearBeforeParam:
+    publicationLanguageParam:
+      name: publication_language
+      in: query
+      description: "returns document with these publication languages (URI), separated by comma (+)."
+      example: "http://lexvo.org/id/iso639-3/nob"
+      required: false
+      schema:
+        type: string
+    publicationLanguageNotParam:
+      name: publication_language_not
+      in: query
+      description: "returns document without these publication languages (URI), separated by comma (+)."
+      example: "http://lexvo.org/id/iso639-3/nob"
+      required: false
+      schema:
+        type: string
+    publicationLanguageShouldParam:
+      name: publication_language_should
+      in: query
+      description: "returns document with these publication languages codes (), separated by comma (+)."
+      example: "nob, eng, nor, etc"
+      required: false
+      schema:
+        type: string
+    publicationYearParam:
       name: publication_year
       in: query
       description: "returns document with this publication year"
@@ -888,18 +1025,11 @@ components:
     publicationYearShouldParam:
       name: publication_year_should
       in: query
-      description: "returns document with any of these publication years, separated by comma (+)."
+      description: "returns document with any of these publication years, separated by comma(+)."
       example: "2022 2023"
       required: false
       schema:
         type: number
-    publicationYearSinceParam:
-      name: publication_year_since
-      in: query
-      description: "returns document with..."
-      required: false
-      schema:
-        type: string
     publishedBeforeParam:
       name: published_before
       in: query
@@ -909,14 +1039,6 @@ components:
       schema:
         type: string
         format: date
-    publishedBetweenParam:
-      name: published_between
-      in: query
-      description: "Results published between the given dates, (yyyy-mm-dd)"
-      example: "2005-03-17,2005-05-17 "
-      required: false
-      schema:
-        type: string
     publishedSinceParam:
       name: published_since
       in: query
@@ -926,18 +1048,19 @@ components:
       schema:
         type: string
         format: date
-    publisherParam:
-      name: publisher
+    queryParam:
+      name: query
       in: query
-      description: "returns document with..."
+      description: "free text search, all words are searched for in all fields, only documents containing all words are returned"
       required: false
       schema:
         type: string
-    publisherIdParam:
-      name: publisher_id
+    sortParam:
+      name: sort
       in: query
-      description: "returns document with..."
+      description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
       required: false
+      example: "category:asc,created_date:desc"
       schema:
         type: string
     publisherIdNotParam:
@@ -1052,7 +1175,7 @@ components:
     titleNotParam:
       name: title_not
       in: query
-      description: "returns document without these words in the title, separated by comma (+)."
+      description: "returns document without these words in the title, separated by comma(+)."
       example: "covid-19"
       required: false
       schema:
@@ -1060,15 +1183,8 @@ components:
     titleShouldParam:
       name: title_should
       in: query
-      description: "returns document with any of these words in the title, separated by comma (+)."
+      description: "returns document with any of these words in the title, separated by comma(+)."
       example: "covid-19"
-      required: false
-      schema:
-        type: string
-    topLevelOrganizationParam:
-      name: top_level_organization
-      in: query
-      description: "returns document with..."
       required: false
       schema:
         type: string
@@ -1083,7 +1199,7 @@ components:
     unitNotParam:
       name: unit_not
       in: query
-      description: "returns document without these words in the Id, separated by comma (+)."
+      description: "returns document without these words in the Id, separated by comma(+)."
       example: 185.53.18.10
       required: false
       schema:
@@ -1091,7 +1207,7 @@ components:
     unitShouldParam:
       name: unit_should
       in: query
-      description: "returns document with any of these words in the Id, separated by comma (+)."
+      description: "returns document with any of these words in the Id, separated by comma(+)."
       example: 185.53.18.10
       required: false
       schema:
@@ -1107,7 +1223,7 @@ components:
     userNotParam:
       name: user_not
       in: query
-      description: "returns document without these resource owners (user id (URI)), separated by colon (+)."
+      description: "returns document without these resource owners (user id (URI)), separated by comma(+)."
       example: "askeladd:185"
       required: false
       schema:
@@ -1115,7 +1231,7 @@ components:
     userShouldParam:
       name: user_should
       in: query
-      description: "returns document with any of these resource owners (user id (URI)), separated by comma (+)."
+      description: "returns document with any of these resource owners (user id (URI)), separated by comma(+)."
       example: "askeladd:185"
       required: false
       schema:
@@ -1644,7 +1760,6 @@ components:
              JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
              MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
              PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts]
-
   securitySchemes:
     CognitoUserPool:
       type: apiKey

@@ -24,6 +24,10 @@ public final class Patterns {
      */
     public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
     public static final String PATTERN_IS_FROM_KEY = "(?i)offset|from";
+    public static final String PATTERN_IS_FUNDING_IDENTIFIER = "(?i)(funding_?identifier|grant_?id)$";
+    public static final String PATTERN_IS_FUNDING_IDENTIFIER_NOT = "(?i)(funding_?identifier_?not|grant_?id_?not)$";
+    public static final String PATTERN_IS_FUNDING_IDENTIFIER_SHOULD =
+        "(?i)(funding_?identifier_?should|grant_?id_?should)$";
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
