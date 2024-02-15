@@ -1,12 +1,14 @@
 package no.unit.nva.search2.common.records;
 
-import static java.util.Objects.isNull;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.search2.common.constant.Words;
 import nva.commons.core.paths.UriWrapper;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 public class PagedSearchBuilder {
 
@@ -61,11 +63,9 @@ public class PagedSearchBuilder {
     }
 
     public PagedSearchBuilder withAggregations(String aggregations) {
-
-        if (isNull(aggregations)) {
-            return this;
+        if (nonNull(aggregations)) {
+            this.aggregations = FacetsBuilder.build(aggregations, this.id);
         }
-        this.aggregations = FacetsBuilder.build(aggregations, this.id);
         return this;
     }
 

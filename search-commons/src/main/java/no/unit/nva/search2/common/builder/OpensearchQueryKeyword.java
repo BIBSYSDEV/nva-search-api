@@ -39,26 +39,4 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
                              .map(value -> new TermQueryBuilder(searchField, value)))
             .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
     }
-    //
-    //    private Stream<QueryBuilder> buildMatchAllKeyValueQuery(K key, String... values) {
-    //        return Arrays.stream(values)
-    //            .flatMap(singleValue -> buildAnyComboMustHitQuery(key, singleValue));
-    //    }
-    //
-    //    private Stream<DisMaxQueryBuilder> buildMatchAnyKeyValueQuery(K key, String... values) {
-    //        var disMax = QueryBuilders.disMaxQuery();
-    //        Arrays.stream(queryTools.getSearchFields(key))
-    //            .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost()))
-    //            );
-    //        return Stream.of(disMax);
-    //    }
-
-    //    private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String value) {
-    //        var disMax = QueryBuilders.disMaxQuery();
-    //        Arrays.stream(queryTools.getSearchFields(key))
-    //            .forEach(field -> disMax.add(new TermQueryBuilder(field, value).boost(key.fieldBoost()))
-    //            );
-    //        return Stream.of(disMax);
-    //    }
-
 }
