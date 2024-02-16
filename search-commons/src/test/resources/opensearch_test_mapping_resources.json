@@ -72,6 +72,10 @@
     "additionalIdentifiers": {
       "type": "nested",
       "include_in_parent": true
+    },
+    "scientificIndex": {
+      "type": "nested",
+      "include_in_parent": true
     }
   }
 }
