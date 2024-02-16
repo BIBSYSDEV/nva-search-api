@@ -49,7 +49,8 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
-import static no.unit.nva.search2.common.enums.FieldOperator.MUST_NOT;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
@@ -268,7 +269,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isMustNot(K key) {
-        return MUST_NOT.equals(key.searchOperator());
+        return NO_ITEMS.equals(key.searchOperator())
+               || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
