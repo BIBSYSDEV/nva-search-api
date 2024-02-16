@@ -7,6 +7,8 @@ public final class Words {
 
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
+    public static final String SCIENTIFIC_INDEX = "scientificIndex";
+    public static final String NVI_STATUS_REPORTED ="Reported";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
     public static final String AMPERSAND = "&";
@@ -32,6 +34,8 @@ public final class Words {
     public static final String EQUAL = "=";
     public static final String FROM = "from";
     public static final String FUNDING = "FUNDING";
+    public static final String SCIENTIFIC_REPORT_PERIOD_START = "SCIENTIFIC_REPORT_PERIOD_START";
+    public static final String SCIENTIFIC_REPORT_PERIOD_END = "SCIENTIFIC_REPORT_PERIOD_END";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
@@ -93,6 +97,7 @@ public final class Words {
     public static final String VALUE = "value";
     public static final String VISIBLE_FOR_NON_OWNER = "visibleForNonOwner";
     public static final String YEAR = "year";
+    public static final String NVI_REPORTED_YEAR = "nviReportedYear";
     public static final String ZERO = "0";
 
     @JacocoGenerated

@@ -53,6 +53,7 @@ import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.REFERENCE;
 import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
@@ -156,8 +157,15 @@ public final class Constants {
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
         publishStatusHierarchy(),
-        topLevelOrganisationsHierarchy()
+        topLevelOrganisationsHierarchy(),
+        scientificIndexHierarchy()
     );
+
+    private static AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>> scientificIndexHierarchy() {
+        return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
+                   .subAggregation(branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD))
+                   .subAggregation(branchBuilder(STATUS, SCIENTIFIC_INDEX, STATUS, KEYWORD));
+    }
 
     private static TermsAggregationBuilder publishStatusHierarchy() {
         return branchBuilder(STATUS, STATUS, KEYWORD);

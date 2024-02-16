@@ -90,6 +90,9 @@ import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
+    SCIENTIFIC_REPORT_PERIOD_SINCE(CUSTOM, FieldOperator.GREATER_THAN_OR_EQUAL_TO, "scientificIndex.year"),
+    SCIENTIFIC_REPORT_PERIOD_BEFORE(CUSTOM, FieldOperator.LESS_THAN, "scientificIndex.year"),
+    SCIENTIFIC_REPORT_PERIOD_SHOULD(NUMBER, SHOULD, "scientificIndex.year"),
     CRISTIN_IDENTIFIER(CUSTOM),
     SCOPUS_IDENTIFIER(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
