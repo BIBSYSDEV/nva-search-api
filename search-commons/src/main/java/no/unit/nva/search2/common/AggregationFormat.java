@@ -13,6 +13,7 @@ import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SLASH;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
@@ -137,7 +138,8 @@ public final class AggregationFormat {
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
             CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",
-            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
+            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id",
+            SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
         );
 
         public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)

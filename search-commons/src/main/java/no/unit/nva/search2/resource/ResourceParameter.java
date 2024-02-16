@@ -82,6 +82,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 
@@ -176,6 +177,8 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(TEXT, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(TEXT, NO_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
+    SCIENTIFIC_REPORT_PERIOD_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, SCIENTIFIC_INDEX_YEAR),
+    SCIENTIFIC_REPORT_PERIOD_BEFORE(NUMBER, FieldOperator.LESS_THAN, SCIENTIFIC_INDEX_YEAR),
     SCOPUS_IDENTIFIER(CUSTOM),
     SERIES(FUZZY_KEYWORD, ALL_ITEMS, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_NOT(FUZZY_KEYWORD, NO_ITEMS, ENTITY_DESCRIPTION_REFERENCE_SERIES),
