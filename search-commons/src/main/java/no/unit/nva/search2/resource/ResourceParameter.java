@@ -56,7 +56,6 @@ import static no.unit.nva.search2.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PARENT_PUBLICATION_ID;
-import static no.unit.nva.search2.resource.Constants.PHI;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
