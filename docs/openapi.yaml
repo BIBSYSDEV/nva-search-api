@@ -134,6 +134,9 @@ paths:
         - $ref: '#/components/parameters/projectShouldParam'
         - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
         - $ref: '#/components/parameters/publishedSinceParam'
         - $ref: '#/components/parameters/queryParam'
@@ -238,6 +241,9 @@ paths:
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
@@ -344,6 +350,9 @@ paths:
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
@@ -943,8 +952,24 @@ components:
     publicationLanguageParam:
       name: publication_language
       in: query
-      description: "returns document with these publication languages (URI), separated by space (+)."
+      description: "returns document with these publication languages (URI), separated by comma (+)."
       example: "http://lexvo.org/id/iso639-3/nob"
+      required: false
+      schema:
+        type: string
+    publicationLanguageNotParam:
+      name: publication_language_not
+      in: query
+      description: "returns document without these publication languages (URI), separated by comma (+)."
+      example: "http://lexvo.org/id/iso639-3/nob"
+      required: false
+      schema:
+        type: string
+    publicationLanguageShouldParam:
+      name: publication_language_should
+      in: query
+      description: "returns document with these publication languages codes (), separated by comma (+)."
+      example: "nob, eng, nor, etc"
       required: false
       schema:
         type: string
