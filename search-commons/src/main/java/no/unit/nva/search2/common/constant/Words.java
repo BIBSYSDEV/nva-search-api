@@ -7,6 +7,7 @@ public final class Words {
 
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
+    public static final String SCIENTIFIC_INDEX = "scientificIndex";
     public static final String AFFILIATIONS = "affiliations";
     public static final String ALL = "all";
     public static final String AMPERSAND = "&";
@@ -29,6 +30,7 @@ public final class Words {
     public static final String DOT = ".";
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
+    public static final String LANGUAGE = "language";
     public static final String EQUAL = "=";
     public static final String FROM = "from";
     public static final String FUNDING = "FUNDING";
@@ -44,7 +46,6 @@ public final class Words {
     public static final String KEY = "key";
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
-    public static final String LANGUAGE = "language";
     public static final String LICENSE = "license";
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MODIFIED_DATE = "modifiedDate";

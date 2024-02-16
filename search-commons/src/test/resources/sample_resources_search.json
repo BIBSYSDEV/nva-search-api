@@ -397,7 +397,13 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/184.0.0.0"
     },
     "rightsHolder": "Copyright 2014, IGI Global",
-    "status": "PUBLISHED"
+    "status": "PUBLISHED",
+    "scientificIndex": {
+      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2019"
+    }
   },
   {
     "type": "Publication",
@@ -406,6 +412,12 @@
     ],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "scientificIndex": {
+      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2020"
+    },
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -727,6 +739,12 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642",
+    "scientificIndex": {
+      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2023"
+    },
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -837,6 +855,12 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8581b2d1-b46eec8b-01c0-409f-b609-1f1f3ad6fa4a",
     "doi": "https://doi.org/10.1371/journal.pone.1234567",
+    "scientificIndex": {
+      "id": "https://api.sandbox.nva.aws.unit.no/scientific-index/period/2019",
+      "type": "ScientificIndex",
+      "status": "Reported",
+      "year": "2011"
+    },
     "associatedArtifacts": [
       {
         "type": "PublishedFile",

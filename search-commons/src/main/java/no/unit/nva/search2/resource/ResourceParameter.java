@@ -1,18 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.common.enums.FieldOperator;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -78,8 +65,21 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 import static no.unit.nva.search2.resource.ResourceQuery.PHI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.common.enums.FieldOperator;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -91,8 +91,13 @@ import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
+    SCIENTIFIC_REPORT_PERIOD_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, SCIENTIFIC_INDEX_YEAR),
+    SCIENTIFIC_REPORT_PERIOD_BEFORE(NUMBER, FieldOperator.LESS_THAN, SCIENTIFIC_INDEX_YEAR),
     CRISTIN_IDENTIFIER(CUSTOM),
     SCOPUS_IDENTIFIER(CUSTOM),
+    PUBLICATION_LANGUAGE(KEYWORD, MUST, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, SHOULD, ENTITY_DESCRIPTION_LANGUAGE),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),
@@ -184,9 +189,6 @@ public enum ResourceParameter implements ParameterKey {
     USER_AFFILIATION(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    PUBLICATION_LANGUAGE(KEYWORD, MUST, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_LANGUAGE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, SHOULD, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SHOULD(NUMBER, SHOULD, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
