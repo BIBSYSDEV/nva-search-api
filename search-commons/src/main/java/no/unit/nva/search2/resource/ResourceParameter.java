@@ -1,18 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.common.enums.FieldOperator;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -81,6 +68,18 @@ import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILI
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.common.enums.FieldOperator;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -143,7 +142,7 @@ public enum ResourceParameter implements ParameterKey {
     ISBN(KEYWORD, PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(TEXT, MUST_NOT, PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_SHOULD(TEXT, SHOULD, PUBLICATION_CONTEXT_ISBN_LIST),
-    ISSN(FUZZY_KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN, PHI),
+    ISSN(KEYWORD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_SHOULD(TEXT, SHOULD, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     LICENSE(KEYWORD, MUST, ASSOCIATED_ARTIFACTS_LICENSE),
@@ -162,8 +161,8 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHED_BETWEEN(ParameterKind.DATE, BETWEEN, PUBLISHED_DATE),
     PUBLISHED_BEFORE(ParameterKind.DATE, FieldOperator.LESS_THAN, PUBLISHED_DATE),
     PUBLISHED_SINCE(ParameterKind.DATE, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
-    PUBLISHER(KEYWORD, MUST, PUBLICATION_CONTEXT_PUBLISHER),
-    PUBLISHER_NOT(KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_PUBLISHER),
+    PUBLISHER(FUZZY_KEYWORD, MUST, PUBLICATION_CONTEXT_PUBLISHER),
+    PUBLISHER_NOT(FUZZY_KEYWORD, MUST_NOT, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_SHOULD(KEYWORD, SHOULD, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_ID(TEXT, MUST, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(TEXT, MUST_NOT, PUBLISHER_ID_KEYWORD),
