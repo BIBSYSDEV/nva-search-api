@@ -32,7 +32,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
                 .multiMatchQuery(value, searchFields)
                 .fuzziness(Fuzziness.AUTO)
                 .maxExpansions(10)
-                .operator(Operator.OR))
+                .operator(Operator.AND))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
 
     }

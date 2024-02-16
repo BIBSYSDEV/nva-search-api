@@ -44,6 +44,7 @@ import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_I
 import static no.unit.nva.search2.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
+import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
@@ -94,6 +95,9 @@ public enum ResourceParameter implements ParameterKey {
     SCIENTIFIC_REPORT_PERIOD_BEFORE(NUMBER, FieldOperator.LESS_THAN, SCIENTIFIC_INDEX_YEAR),
     CRISTIN_IDENTIFIER(CUSTOM),
     SCOPUS_IDENTIFIER(CUSTOM),
+    PUBLICATION_LANGUAGE(KEYWORD, MUST, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, SHOULD, ENTITY_DESCRIPTION_LANGUAGE),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, MUST_NOT, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, SHOULD, ENTITY_ABSTRACT),

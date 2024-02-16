@@ -153,6 +153,9 @@ paths:
         - $ref: '#/components/parameters/userShouldParam'
         - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
         - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
@@ -262,6 +265,9 @@ paths:
         - $ref: '#/components/parameters/userShouldParam'
         - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
         - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -371,6 +377,9 @@ paths:
         - $ref: '#/components/parameters/userShouldParam'
         - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
         - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
       security:
         - CognitoUserPool: [
           "https://api.nva.unit.no/scopes/backend",
@@ -554,7 +563,7 @@ components:
     categoryNotParam:
       name: category_not
       in: query
-      description: "Returns documents without these category codes. Support list of Enums, seperated by space (+)."
+      description: "Returns documents without these category codes. Support list of Enums, seperated by comma (+)."
       example: "JournalArticle"
       required: false
       schema:
@@ -562,7 +571,7 @@ components:
     categoryShouldParam:
       name: category_should
       in: query
-      description: "Returns documents with these category codes. Support list of Enums, seperated by space (+)."
+      description: "Returns documents with these category codes. Support list of Enums, seperated by comma (+)."
       example: "JournalArticle"
       required: false
       schema:
@@ -584,14 +593,14 @@ components:
     contributorNotParam:
       name: contributor_not
       in: query
-      description: "returns document without Author's names or person ids(URI), seperated by space (+)."
+      description: "returns document without Author's names or person ids(URI), seperated by comma (+)."
       required: false
       schema:
         type: string
     contributorShouldParam:
       name: contributor_should
       in: query
-      description: "returns document with Author's names or person ids(URI), seperated by space (+)."
+      description: "returns document with Author's names or person ids(URI), seperated by comma (+)."
       required: false
       schema:
         type: string
@@ -632,7 +641,7 @@ components:
     courseShouldParam:
       name: course
       in: query
-      description: "returns documents without these course codes, seperated by space (+)"
+      description: "returns documents without these course codes, seperated by comma (+)"
       example: "GENV395"
       required: false
       schema:
@@ -664,7 +673,7 @@ components:
     doiNotParam:
       name: doi_not
       in: query
-      description: "returns document without these DOI ids, seperated by space (+)."
+      description: "returns document without these DOI ids, seperated by comma (+)."
       example: "10.1000/123456"
       required: false
       schema:
@@ -672,7 +681,7 @@ components:
     doiShouldParam:
       name: doi_should
       in: query
-      description: "returns document with these DOI ids, seperated by space (+)."
+      description: "returns document with these DOI ids, seperated by comma (+)."
       example: "10.1000/123456"
       required: false
       schema:
@@ -713,7 +722,7 @@ components:
     fundingIdentifierShouldParam:
       name: funding_identifier_should
       in: query
-      description: "Returns documents with the funding identifiers, also known as grant identifiers, seperated by space (+)."
+      description: "Returns documents with the funding identifiers, also known as grant identifiers, seperated by comma (+)."
       example: "1234,4321"
       required: false
       schema:
@@ -729,7 +738,7 @@ components:
     fundingSourceNotParam:
       name: funding_source_not
       in: query
-      description: "returns document without these funding source codes, seperated by space (+)."
+      description: "returns document without these funding source codes, seperated by comma (+)."
       example: "NFR"
       required: false
       schema:
@@ -737,7 +746,7 @@ components:
     fundingSourceShouldParam:
       name: funding_source_should
       in: query
-      description: "returns document with these funding source codes, seperated by space (+)."
+      description: "returns document with these funding source codes, seperated by comma (+)."
       example: "NFR"
       required: false
       schema:
@@ -761,7 +770,7 @@ components:
     grantIdentifierShouldParam:
       name: grant_id_should
       in: query
-      description: "Returns documents with the grant id, also known as funding identifiers, seperated by space (+)."
+      description: "Returns documents with the grant id, also known as funding identifiers, seperated by comma (+)."
       example: "1234,4321"
       required: false
       schema:
@@ -776,14 +785,14 @@ components:
     idNotParam:
       name: id_not
       in: query
-      description: "returns document without these identifiers (UUID), seperated by space (+)."
+      description: "returns document without these identifiers (UUID), seperated by comma (+)."
       required: false
       schema:
         type: string
     idShouldParam:
       name: id_should
       in: query
-      description: "returns document with these identifiers (UUID), seperated by space (+)."
+      description: "returns document with these identifiers (UUID), seperated by comma (+)."
       required: false
       schema:
         type: string
@@ -798,7 +807,7 @@ components:
     institutionNotParam:
       name: institution_not
       in: query
-      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
+      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, seperated by comma (+)."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -806,7 +815,7 @@ components:
     institutionShouldParam:
       name: institution_should
       in: query
-      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, seperated by space (+)."
+      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, seperated by comma (+)."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -821,14 +830,14 @@ components:
     isbnNotParam:
       name: isbn_not
       in: query
-      description: "returns document without these ISBN ids, seperated by space (+)."
+      description: "returns document without these ISBN ids, seperated by comma (+)."
       required: false
       schema:
         type: string
     isbnShouldParam:
       name: isbn_should
       in: query
-      description: "returns document with these ISBN ids, seperated by space (+)."
+      description: "returns document with these ISBN ids, seperated by comma (+)."
       required: false
       schema:
         type: string
@@ -842,14 +851,14 @@ components:
     issnNotParam:
       name: issn_not
       in: query
-      description: "returns document without these issn, seperated by space (+)."
+      description: "returns document without these issn, seperated by comma (+)."
       required: false
       schema:
         type: string
     issnShouldParam:
       name: issn_should
       in: query
-      description: "returns document with these issn, seperated by space (+)."
+      description: "returns document with these issn, seperated by comma (+)."
       required: false
       schema:
         type: string
@@ -863,14 +872,14 @@ components:
     orcidNotParam:
       name: orcid_not
       in: query
-      description: "returns document without these ORCID ids, seperated by space (+)."
+      description: "returns document without these ORCID ids, seperated by comma (+)."
       required: false
       schema:
         type: string
     orcidShouldParam:
       name: orcid_should
       in: query
-      description: "returns document with these ORCID ids, seperated by space (+)."
+      description: "returns document with these ORCID ids, seperated by comma (+)."
       required: false
       schema:
         type: string
@@ -944,7 +953,7 @@ components:
     projectNotParam:
       name: project_not
       in: query
-      description: "returns document without these project ids (URI), seperated by space (+)."
+      description: "returns document without these project ids (URI), seperated by comma (+)."
       example: "NFR"
       required: false
       schema:
@@ -952,8 +961,32 @@ components:
     projectShouldParam:
       name: project_should
       in: query
-      description: "returns document with these project ids (URI), seperated by space (+)."
+      description: "returns document with these project ids (URI), seperated by comma (+)."
       example: "NFR"
+      required: false
+      schema:
+        type: string
+    publicationLanguageParam:
+      name: publication_language
+      in: query
+      description: "returns document with these publication languages (URI), separated by comma (+)."
+      example: "http://lexvo.org/id/iso639-3/nob"
+      required: false
+      schema:
+        type: string
+    publicationLanguageNotParam:
+      name: publication_language_not
+      in: query
+      description: "returns document without these publication languages (URI), separated by comma (+)."
+      example: "http://lexvo.org/id/iso639-3/nob"
+      required: false
+      schema:
+        type: string
+    publicationLanguageShouldParam:
+      name: publication_language_should
+      in: query
+      description: "returns document with these publication languages codes (), separated by comma (+)."
+      example: "nob, eng, nor, etc"
       required: false
       schema:
         type: string
@@ -968,7 +1001,7 @@ components:
     publicationYearShouldParam:
       name: publication_year_should
       in: query
-      description: "returns document with any of these publication years, seperated by space (+)."
+      description: "returns document with any of these publication years, seperated by comma (+)."
       example: "2022 2023"
       required: false
       schema:
@@ -1054,7 +1087,7 @@ components:
     titleNotParam:
       name: title_not
       in: query
-      description: "returns document without these words in the title, seperated by space (+)."
+      description: "returns document without these words in the title, seperated by comma (+)."
       example: "covid-19"
       required: false
       schema:
@@ -1062,7 +1095,7 @@ components:
     titleShouldParam:
       name: title_should
       in: query
-      description: "returns document with any of these words in the title, seperated by space (+)."
+      description: "returns document with any of these words in the title, seperated by comma (+)."
       example: "covid-19"
       required: false
       schema:
@@ -1078,7 +1111,7 @@ components:
     unitNotParam:
       name: unit_not
       in: query
-      description: "returns document without these words in the Id, seperated by space (+)."
+      description: "returns document without these words in the Id, seperated by comma (+)."
       example: 185.53.18.10
       required: false
       schema:
@@ -1086,7 +1119,7 @@ components:
     unitShouldParam:
       name: unit_should
       in: query
-      description: "returns document with any of these words in the Id, seperated by space (+)."
+      description: "returns document with any of these words in the Id, seperated by comma (+)."
       example: 185.53.18.10
       required: false
       schema:
@@ -1102,7 +1135,7 @@ components:
     userNotParam:
       name: user_not
       in: query
-      description: "returns document without these resource owners (user id (URI)), seperated by space (+)."
+      description: "returns document without these resource owners (user id (URI)), seperated by comma (+)."
       example: "askeladd:185"
       required: false
       schema:
@@ -1110,7 +1143,7 @@ components:
     userShouldParam:
       name: user_should
       in: query
-      description: "returns document with any of these resource owners (user id (URI)), seperated by space (+)."
+      description: "returns document with any of these resource owners (user id (URI)), seperated by comma (+)."
       example: "askeladd:185"
       required: false
       schema:
