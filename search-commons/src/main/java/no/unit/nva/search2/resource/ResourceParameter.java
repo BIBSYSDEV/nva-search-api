@@ -79,6 +79,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 
 /**
