@@ -74,6 +74,114 @@ paths:
               schema:
                 $ref: "#/components/schemas/TicketSearchResponse"
 
+  /resources2:
+    get:
+      tags:
+        - external
+      description: "Search for public available publications by given criteria"
+      parameters:
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
+        - $ref: '#/components/parameters/contributorIdParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/createdBeforeParam'
+        - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idShouldParam'
+        - $ref: '#/components/parameters/institutionParam'
+        - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionShouldParam'
+        - $ref: '#/components/parameters/isbnParam'
+        - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnShouldParam'
+        - $ref: '#/components/parameters/issnParam'
+        - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnShouldParam'
+        - $ref: '#/components/parameters/orcidParam'
+        - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidShouldParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/modifiedBeforeParam'
+        - $ref: '#/components/parameters/modifiedSinceParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/projectParam'
+        - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publishedBeforeParam'
+        - $ref: '#/components/parameters/publishedSinceParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/statusShouldParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/titleShouldParam'
+        - $ref: '#/components/parameters/unitParam'
+        - $ref: '#/components/parameters/unitNotParam'
+        - $ref: '#/components/parameters/unitShouldParam'
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/userNotParam'
+        - $ref: '#/components/parameters/userShouldParam'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedPublicationSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /resources:
     get:
       description: "Search for public available publications by given criteria"
@@ -130,9 +238,6 @@ paths:
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectShouldParam'
-        - $ref: '#/components/parameters/publicationLanguageParam'
-        - $ref: '#/components/parameters/publicationLanguageNotParam'
-        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
@@ -239,9 +344,6 @@ paths:
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectShouldParam'
-        - $ref: '#/components/parameters/publicationLanguageParam'
-        - $ref: '#/components/parameters/publicationLanguageNotParam'
-        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
@@ -841,24 +943,8 @@ components:
     publicationLanguageParam:
       name: publication_language
       in: query
-      description: "returns document with these publication languages (URI), separated by comma (+)."
+      description: "returns document with these publication languages (URI), separated by space (+)."
       example: "http://lexvo.org/id/iso639-3/nob"
-      required: false
-      schema:
-        type: string
-    publicationLanguageNotParam:
-      name: publication_language_not
-      in: query
-      description: "returns document without these publication languages (URI), separated by comma (+)."
-      example: "http://lexvo.org/id/iso639-3/nob"
-      required: false
-      schema:
-        type: string
-    publicationLanguageShouldParam:
-      name: publication_language_should
-      in: query
-      description: "returns document with these publication languages codes (), separated by comma (+)."
-      example: "nob, eng, nor, etc"
       required: false
       schema:
         type: string
