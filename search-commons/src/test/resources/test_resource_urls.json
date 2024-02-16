@@ -122,6 +122,8 @@
   "QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&FIELDS=INSTITUTION": 2,
   "QUERY=Kjetil+Møkkelgjerd&fields=contributorName": 3,
   "QUERY=observations&fields=all": 3,
+  "SCIENTIFIC_REPORT_PERIOD_SINCE=2019": 3,
+  "SCIENTIFIC_REPORT_PERIOD_BEFORE=2019": 1,
   "SCOPUS_IDENTIFIER=123455": 1,
   "SEARCH_ALL=Fakultet+for+arkitektur": 1,
   "SERIES=0801-6461": 1,
