@@ -67,7 +67,6 @@ import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILI
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
-import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
