@@ -93,6 +93,7 @@ paths:
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseShouldParam'
         - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
@@ -150,6 +151,8 @@ paths:
         - $ref: '#/components/parameters/userParam'
         - $ref: '#/components/parameters/userNotParam'
         - $ref: '#/components/parameters/userShouldParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
@@ -196,6 +199,7 @@ paths:
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
         - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
         - $ref: '#/components/parameters/courseParam'
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseShouldParam'
@@ -256,6 +260,8 @@ paths:
         - $ref: '#/components/parameters/userParam'
         - $ref: '#/components/parameters/userNotParam'
         - $ref: '#/components/parameters/userShouldParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -305,6 +311,7 @@ paths:
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseShouldParam'
         - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiShouldParam'
@@ -362,6 +369,8 @@ paths:
         - $ref: '#/components/parameters/userParam'
         - $ref: '#/components/parameters/userNotParam'
         - $ref: '#/components/parameters/userShouldParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
       security:
         - CognitoUserPool: [
           "https://api.nva.unit.no/scopes/backend",
@@ -630,6 +639,14 @@ components:
         type: string
     cristinIdentifierParam:
       name: cristin_identifier
+      in: query
+      description: "Returns documents with the cristin identifier"
+      example: "1234"
+      required: false
+      schema:
+        type: string
+    scopusIdentifierParam:
+      name: scopus_identifier
       in: query
       description: "Returns documents with the cristin identifier"
       example: "1234"
@@ -1095,6 +1112,22 @@ components:
       in: query
       description: "returns document with any of these resource owners (user id (URI)), seperated by space (+)."
       example: "askeladd:185"
+      required: false
+      schema:
+        type: string
+    scientificReportingPeriodSinceParam:
+      name: scientific_report_period_since
+      in: query
+      description: "returns document with scientific reporting year after this value"
+      example: "2011"
+      required: false
+      schema:
+        type: string
+    scientificReportingPeriodBeforeParam:
+      name: scientific_report_period_before
+      in: query
+      description: "returns document with scientific reporting year before this value"
+      example: "2023"
       required: false
       schema:
         type: string
