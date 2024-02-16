@@ -1,5 +1,18 @@
 package no.unit.nva.search2.resource;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.common.enums.FieldOperator;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
+
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -67,18 +80,6 @@ import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILI
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.common.enums.FieldOperator;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
