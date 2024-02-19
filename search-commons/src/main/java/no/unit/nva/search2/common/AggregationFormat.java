@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.common.constant.Words.BUCKETS;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
@@ -8,6 +9,7 @@ import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
@@ -22,6 +24,8 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -128,13 +132,14 @@ public final class AggregationFormat {
         private static final Map<String, String> facetResourcePaths1 = Map.of(
             TYPE, "/filter/entityDescription/reference/publicationInstance/type",
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
-            SERIES, "/filter/entityDescription/reference/publicationContext/series",
+            SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
             LICENSE, "/filter/associatedArtifacts/license"
         );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
             HAS_FILE, "/filter/associatedArtifacts/hasFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
+            JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
             CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",

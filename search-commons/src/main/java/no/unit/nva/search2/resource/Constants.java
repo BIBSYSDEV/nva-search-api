@@ -1,17 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import no.unit.nva.search2.common.constant.Defaults;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
@@ -23,6 +11,8 @@ import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.CODE;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_JOURNAL;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_SERIES;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
@@ -36,6 +26,9 @@ import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
+import static no.unit.nva.search2.common.constant.Words.ISBN_LIST;
+import static no.unit.nva.search2.common.constant.Words.ISBN_PREFIX;
+import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
@@ -43,10 +36,12 @@ import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.common.constant.Words.ONLINE_ISSN;
 import static no.unit.nva.search2.common.constant.Words.ORC_ID;
 import static no.unit.nva.search2.common.constant.Words.OWNER;
 import static no.unit.nva.search2.common.constant.Words.OWNER_AFFILIATION;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.PRINT_ISSN;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
@@ -59,11 +54,25 @@ import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TAGS;
-import static no.unit.nva.search2.common.constant.Words.TITLE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
+import static no.unit.nva.search2.resource.ResourceParameter.ISSN;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import no.unit.nva.search2.common.constant.Defaults;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.script.Script;
+import org.opensearch.script.ScriptType;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Constants {
 
@@ -98,21 +107,30 @@ public final class Constants {
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-        ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
+        ENTITY_PUBLICATION_CONTEXT_DOT + ISBN_LIST;
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
-        ENTITY_PUBLICATION_CONTEXT_DOT + "onlineIssn" + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD =
-        ENTITY_PUBLICATION_CONTEXT_DOT + "printIssn" + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_INSTANCE_TYPE =
         ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PUBLISHER =
         ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD;
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + "issn" + DOT + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + TITLE + DOT + KEYWORD;
+        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + NAME + DOT + KEYWORD
+        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + ID + DOT + KEYWORD;
+
+    public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL =
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + NAME + DOT + KEYWORD
+        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + ID + DOT + KEYWORD
+        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + PRINT_ISSN + DOT + KEYWORD
+        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + ONLINE_ISSN + DOT + KEYWORD;
+
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
@@ -219,11 +237,29 @@ public final class Constants {
                         .subAggregation(publisher())
                         .subAggregation(series())
                         .subAggregation(courses())
+                        .subAggregation(journal())
                 )
                 .subAggregation(
                     publicationInstance()            // Split or just a branch?
                         .subAggregation(instanceType())
                 );
+    }
+
+    private static AggregationBuilder journal() {
+        var contextTypeId =
+            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
+
+        var contextTypeName =
+            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, NAME, KEYWORD);
+
+        return filterBranchBuilder(JOURNAL, CONTEXT_TYPE_JOURNAL,
+                                   ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
+                   .subAggregation(contextTypeId.subAggregation(contextTypeName));
+    }
+
+    private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
+        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 
     private static NestedAggregationBuilder publicationContext() {
@@ -241,12 +277,18 @@ public final class Constants {
             branchBuilder(TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE, KEYWORD);
     }
 
-    private static TermsAggregationBuilder series() {
-        return
-            branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, "issn", KEYWORD)
-                .subAggregation(
-                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD)
-                );
+    private static FilterAggregationBuilder series() {
+        var seriesType = filterBranchBuilder(SERIES, CONTEXT_TYPE_SERIES,
+                                   ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD);
+
+
+        var seriesId = branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
+                         .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
+
+        var seriesName = branchBuilder(NAME, ENTITY_DESCRIPTION,
+                                     REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
+
+        return seriesType.subAggregation(seriesId.subAggregation(seriesName));
     }
 
     private static TermsAggregationBuilder courses() {

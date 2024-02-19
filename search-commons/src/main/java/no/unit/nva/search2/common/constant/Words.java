@@ -28,6 +28,7 @@ public final class Words {
     public static final String CRISTIN_SOURCE = "Cristin";
     public static final String DOI = "doi";
     public static final String DOT = ".";
+    public static final String ISBN_PREFIX = "isbnPrefix";
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String LANGUAGE = "language";
@@ -66,6 +67,8 @@ public final class Words {
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String PUBLISHED_FILE = "PublishedFile";
     public static final String PUBLISHER = "publisher";
+    public static final String JOURNAL = "journal";
+    public static final String CONTEXT_TYPE_JOURNAL = "Journal";
     public static final String Q = "q";
     public static final String QUOTE = "'";
     public static final String REFERENCE = "reference";
@@ -79,6 +82,7 @@ public final class Words {
     public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SERIES = "series";
+    public static final String CONTEXT_TYPE_SERIES = "Series";
     public static final String SLASH = "/";
     public static final String SOURCE = "source";
     public static final String SOURCE_NAME = "sourceName";
@@ -96,6 +100,9 @@ public final class Words {
     public static final String VISIBLE_FOR_NON_OWNER = "visibleForNonOwner";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
+    public static final String PRINT_ISSN = "printIssn";
+    public static final String ONLINE_ISSN = "onlineIssn";
+    public static final String ISBN_LIST = "isbnList";
 
     @JacocoGenerated
     public Words() {
