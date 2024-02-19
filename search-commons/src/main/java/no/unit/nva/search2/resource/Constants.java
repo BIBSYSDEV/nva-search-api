@@ -118,30 +118,21 @@ public final class Constants {
         ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PUBLISHER =
         ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD;
+        + PIPE +
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD
+        + PIPE +
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + "issn" + DOT + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + NAME + DOT + KEYWORD
-        + PIPE
-        + ENTITY_DESCRIPTION
-        + DOT
-        + REFERENCE
-        + DOT
-        + PUBLICATION_CONTEXT
-        + DOT
-        + SERIES
-        + DOT
-        + TITLE
-        + DOT
-        + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + ID + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + "issn" + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + NAME + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + TITLE + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + ID + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + NAME + DOT + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + ID + DOT + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + PRINT_ISSN + DOT + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + ONLINE_ISSN + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + NAME + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD
+        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
@@ -197,8 +188,8 @@ public final class Constants {
 
     private static AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>> scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
-                   .subAggregation(branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD))
-                   .subAggregation(branchBuilder(STATUS, SCIENTIFIC_INDEX, STATUS, KEYWORD));
+            .subAggregation(branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD))
+            .subAggregation(branchBuilder(STATUS, SCIENTIFIC_INDEX, STATUS, KEYWORD));
     }
 
     private static TermsAggregationBuilder publishStatusHierarchy() {
@@ -267,7 +258,7 @@ public final class Constants {
 
         return filterBranchBuilder(JOURNAL, CONTEXT_TYPE_JOURNAL,
                                    ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
-                   .subAggregation(contextTypeId.subAggregation(contextTypeName));
+            .subAggregation(contextTypeId.subAggregation(contextTypeName));
     }
 
     private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
@@ -313,7 +304,6 @@ public final class Constants {
             branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     }
 
-
     private static TermsAggregationBuilder publicationContextType() {
         return
             branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
@@ -340,7 +330,6 @@ public final class Constants {
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
-
     }
 
     private static TermsAggregationBuilder license() {
