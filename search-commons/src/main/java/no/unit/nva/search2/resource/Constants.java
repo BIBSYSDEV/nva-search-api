@@ -176,6 +176,7 @@ public final class Constants {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
+        licenseHierarchy(),
         filesHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
@@ -200,6 +201,9 @@ public final class Constants {
         return nestedBranchBuilder(HAS_PUBLIC_FILE, ASSOCIATED_ARTIFACTS)
                    .subAggregation(AggregationBuilders.filter(Boolean.FALSE.toString(), bool))
                    .subAggregation(AggregationBuilders.reverseNested(Boolean.TRUE.toString()));
+    }
+    public static TermsAggregationBuilder licenseHierarchy() {
+        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD);
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
@@ -253,7 +257,7 @@ public final class Constants {
                 .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
 
         var contextTypeName =
-            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, NAME, KEYWORD);
+            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
 
         return filterBranchBuilder(JOURNAL, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
             .subAggregation(contextTypeId.subAggregation(contextTypeName));
