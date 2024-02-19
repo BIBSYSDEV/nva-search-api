@@ -1,17 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import no.unit.nva.search2.common.constant.Defaults;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
@@ -32,7 +20,8 @@ import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILES;
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
@@ -42,6 +31,7 @@ import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.ORC_ID;
 import static no.unit.nva.search2.common.constant.Words.OWNER;
@@ -50,6 +40,7 @@ import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.REFERENCE;
 import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
@@ -62,8 +53,20 @@ import static no.unit.nva.search2.common.constant.Words.TAGS;
 import static no.unit.nva.search2.common.constant.Words.TITLE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.common.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import no.unit.nva.search2.common.constant.Defaults;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.script.Script;
+import org.opensearch.script.ScriptType;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Constants {
 
@@ -93,7 +96,6 @@ public final class Constants {
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
-    public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
@@ -156,7 +158,7 @@ public final class Constants {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        associatedArtifactsHierarchy(),
+        filesHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
         publishStatusHierarchy(),
@@ -174,11 +176,12 @@ public final class Constants {
         return branchBuilder(STATUS, STATUS, KEYWORD);
     }
 
-    public static NestedAggregationBuilder associatedArtifactsHierarchy() {
-        return
-            nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                .subAggregation(visibleForNonOwners())
-                .subAggregation(license());
+    public static NestedAggregationBuilder filesHierarchy() {
+        var filter = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
+        var bool = QueryBuilders.boolQuery().mustNot(filter);
+        return nestedBranchBuilder(HAS_FILES, ASSOCIATED_ARTIFACTS)
+                   .subAggregation(AggregationBuilders.filter(NO_PUBLIC_FILE, bool))
+                   .subAggregation(AggregationBuilders.reverseNested(HAS_PUBLIC_FILE));
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
@@ -280,14 +283,6 @@ public final class Constants {
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
 
-    }
-
-    private static TermsAggregationBuilder license() {
-        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD);
-    }
-
-    private static TermsAggregationBuilder visibleForNonOwners() {
-        return branchBuilder(HAS_FILE, ATTACHMENT_VISIBLE_FOR_NON_OWNER);
     }
 
     @JacocoGenerated

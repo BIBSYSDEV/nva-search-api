@@ -7,7 +7,7 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILES;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
@@ -22,6 +22,8 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +45,34 @@ public final class AggregationFormat {
         getAggregationFieldStreams(aggregations)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
+        ensureChildNodesAreArrays(objectNode);
         return objectNode;
+    }
+
+    public static void ensureChildNodesAreArrays(JsonNode node) {
+        if (node.isObject()) {
+            var objectNode = (ObjectNode) node;
+            objectNode.fieldNames().forEachRemaining(field -> processChildNode(objectNode, field));
+        }
+    }
+
+    private static void processChildNode(ObjectNode objectNode, String field) {
+        var childNode = objectNode.get(field);
+        if (childNode.isObject()) {
+            var nodeArray = JsonUtils.dtoObjectMapper.createArrayNode();
+            childNode.fieldNames().forEachRemaining(node -> processChildNodes(node, childNode, nodeArray));
+        objectNode.set(field, nodeArray);
+        }
+    }
+
+    private static void processChildNodes(String field, JsonNode node, ArrayNode nodeArray) {
+        if (node.get(field).isObject()) {
+            var childNode = node.get(field);
+            var newNode = JsonUtils.dtoObjectMapper.createObjectNode();
+            newNode.put(Constants.DOC_COUNT, childNode.get(Constants.DOC_COUNT).asInt());
+            newNode.put(KEY, field);
+            nodeArray.add(newNode);
+        }
     }
 
     private static JsonNode fixNodes(JsonNode node) {
@@ -84,7 +113,8 @@ public final class AggregationFormat {
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
-        return Map.entry(getNormalizedFieldName(entry.getKey()), getBucketOrValue(entry.getValue()));
+        return Map.entry(getNormalizedFieldName(entry.getKey()),
+                         getBucketOrValue(entry.getValue()));
     }
 
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -133,7 +163,7 @@ public final class AggregationFormat {
             LICENSE, "/filter/associatedArtifacts/license"
         );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_FILE, "/filter/associatedArtifacts/hasFile",
+            HAS_FILES, "/filter/hasFiles",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
             CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",

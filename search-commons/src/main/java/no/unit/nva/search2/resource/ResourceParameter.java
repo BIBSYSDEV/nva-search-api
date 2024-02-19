@@ -36,7 +36,6 @@ import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search2.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
-import static no.unit.nva.search2.resource.Constants.ATTACHMENT_VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
@@ -131,8 +130,7 @@ public enum ResourceParameter implements ParameterKey {
     HANDLE(KEYWORD, MUST, HANDLE_KEYWORD),
     HANDLE_NOT(KEYWORD, MUST_NOT, HANDLE_KEYWORD),
     HANDLE_SHOULD(KEYWORD, SHOULD, HANDLE_KEYWORD),
-    HAS_FILE(ParameterKind.BOOLEAN, MUST, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
-    HAS_FILE_SHOULD(ParameterKind.BOOLEAN, SHOULD, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
+    HAS_PUBLIC_FILE(CUSTOM),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, MUST_NOT, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, SHOULD, IDENTIFIER_KEYWORD),

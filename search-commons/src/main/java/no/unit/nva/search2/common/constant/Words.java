@@ -37,7 +37,8 @@ public final class Words {
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
-    public static final String HAS_FILE = "hasFile";
+    public static final String HAS_PUBLIC_FILE = "hasPublicFile";
+    public static final String NO_PUBLIC_FILE = "noPublicFile";
     public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
@@ -66,6 +67,7 @@ public final class Words {
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String PUBLISHED_FILE = "PublishedFile";
     public static final String PUBLISHER = "publisher";
+    public static final String HAS_FILES = "hasFiles";
     public static final String Q = "q";
     public static final String QUOTE = "'";
     public static final String REFERENCE = "reference";
@@ -73,6 +75,7 @@ public final class Words {
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";
     public static final String SCOPUS_IDENTIFIER = "SCOPUS_IDENTIFIER";
+    public static final String PUBLIC_FILE_CONDITIONAL = "HAS_PUBLIC_FILE";
     public static final String SCOPUS_SOURCE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";

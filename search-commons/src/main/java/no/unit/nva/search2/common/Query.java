@@ -53,6 +53,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.MUST_NOT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
+@SuppressWarnings("PMD.GodClass")
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
@@ -296,6 +297,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
             return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isPublicFile(key)) {
+            return opensearchQueryTools.publishedFileQuery(key, value);
             // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);

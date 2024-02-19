@@ -304,7 +304,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
-                case HAS_FILE -> query.setKeyValue(qpKey, valueToBoolean(decodedValue).toString());
+                case HAS_PUBLIC_FILE -> query.setKeyValue(qpKey, valueToBoolean(decodedValue).toString());
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }

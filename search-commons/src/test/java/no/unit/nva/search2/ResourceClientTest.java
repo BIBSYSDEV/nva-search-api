@@ -5,7 +5,7 @@ import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILES;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -85,7 +85,7 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=50&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 12;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
@@ -151,7 +151,7 @@ class ResourceClientTest {
             var uri2 =
                 URI.create(REQUEST_BASE_URL +
                            "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status,"
-                           + "scientificIndex");
+                           + "scientificIndex,hasFiles");
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -167,8 +167,7 @@ class ResourceClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(4));
-            assertThat(aggregations.get(HAS_FILE).size(), is(2));
-            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(20));
+            assertThat(aggregations.get(HAS_FILES).get(0).count(), is(1));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
@@ -412,7 +411,7 @@ class ResourceClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0&aggregation=all", 20),
+                createArgument("page=0&aggregation=all", 21),
                 createArgument("page=1&aggregation=all&size=1", 1),
                 createArgument("page=2&aggregation=all&size=1", 1),
                 createArgument("page=3&aggregation=all&size=1", 1),
