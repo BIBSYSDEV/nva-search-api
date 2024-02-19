@@ -114,7 +114,8 @@ public final class AggregationFormat {
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
-        return Map.entry(getNormalizedFieldName(entry.getKey()), getBucketOrValue(entry.getValue()));
+        return Map.entry(getNormalizedFieldName(entry.getKey()),
+                         getBucketOrValue(entry.getValue()));
     }
 
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {

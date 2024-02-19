@@ -11,7 +11,6 @@ import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.CODE;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
-import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_SERIES;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
@@ -103,6 +102,7 @@ public final class Constants {
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
+
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
@@ -117,22 +117,20 @@ public final class Constants {
     public static final String PUBLICATION_INSTANCE_TYPE =
         ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PUBLISHER =
-        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD
-        + PIPE +
-        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD
-        + PIPE +
-        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
-        ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + "issn" + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + NAME + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + TITLE + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + ID + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + "issn" + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + NAME + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + TITLE + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + ID + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL =
-        ENTITY_PUBLICATION_CONTEXT_DOT + NAME + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD
-        + PIPE + ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + NAME + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
@@ -257,8 +255,7 @@ public final class Constants {
         var contextTypeName =
             branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
 
-        return filterBranchBuilder(JOURNAL, CONTEXT_TYPE_JOURNAL,
-                                   ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
+        return filterBranchBuilder(JOURNAL, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
             .subAggregation(contextTypeId.subAggregation(contextTypeName));
     }
 
@@ -304,6 +301,7 @@ public final class Constants {
         return
             branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     }
+
 
     private static TermsAggregationBuilder publicationContextType() {
         return
