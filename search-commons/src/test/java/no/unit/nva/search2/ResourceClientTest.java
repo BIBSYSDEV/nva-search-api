@@ -411,7 +411,7 @@ class ResourceClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0&aggregation=all", 21),
+                createArgument("page=0&aggregation=all", 20),
                 createArgument("page=1&aggregation=all&size=1", 1),
                 createArgument("page=2&aggregation=all&size=1", 1),
                 createArgument("page=3&aggregation=all&size=1", 1),
