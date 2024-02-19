@@ -40,7 +40,6 @@ import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search2.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
-import static no.unit.nva.search2.resource.Constants.ATTACHMENT_VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
