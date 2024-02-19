@@ -5,7 +5,7 @@ import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILES;
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -151,7 +151,7 @@ class ResourceClientTest {
             var uri2 =
                 URI.create(REQUEST_BASE_URL +
                            "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status,"
-                           + "scientificIndex,hasFiles");
+                           + "scientificIndex,hasPublicFile");
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -167,7 +167,7 @@ class ResourceClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(4));
-            assertThat(aggregations.get(HAS_FILES).get(0).count(), is(1));
+            assertThat(aggregations.get(HAS_PUBLIC_FILE).get(0).count(), is(20));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));

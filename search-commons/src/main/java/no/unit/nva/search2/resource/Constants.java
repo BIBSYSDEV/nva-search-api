@@ -20,7 +20,6 @@ import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILES;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
@@ -31,7 +30,6 @@ import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.ORC_ID;
 import static no.unit.nva.search2.common.constant.Words.OWNER;
@@ -179,9 +177,9 @@ public final class Constants {
     public static NestedAggregationBuilder filesHierarchy() {
         var filter = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
         var bool = QueryBuilders.boolQuery().mustNot(filter);
-        return nestedBranchBuilder(HAS_FILES, ASSOCIATED_ARTIFACTS)
-                   .subAggregation(AggregationBuilders.filter(NO_PUBLIC_FILE, bool))
-                   .subAggregation(AggregationBuilders.reverseNested(HAS_PUBLIC_FILE));
+        return nestedBranchBuilder(HAS_PUBLIC_FILE, ASSOCIATED_ARTIFACTS)
+                   .subAggregation(AggregationBuilders.filter(Boolean.FALSE.toString(), bool))
+                   .subAggregation(AggregationBuilders.reverseNested(Boolean.TRUE.toString()));
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
