@@ -54,11 +54,11 @@ import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TAGS;
+import static no.unit.nva.search2.common.constant.Words.TITLE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
-import static no.unit.nva.search2.resource.ResourceParameter.ISSN;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -123,6 +123,18 @@ public final class Constants {
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + "issn" + DOT + KEYWORD
         + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + NAME + DOT + KEYWORD
+        + PIPE
+        + ENTITY_DESCRIPTION
+        + DOT
+        + REFERENCE
+        + DOT
+        + PUBLICATION_CONTEXT
+        + DOT
+        + SERIES
+        + DOT
+        + TITLE
+        + DOT
+        + KEYWORD
         + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + ID + DOT + KEYWORD;
 
     public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL =
@@ -278,17 +290,22 @@ public final class Constants {
     }
 
     private static FilterAggregationBuilder series() {
-        var seriesType = filterBranchBuilder(SERIES, CONTEXT_TYPE_SERIES,
-                                   ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD);
+        var seriesType =
+            filterBranchBuilder(
+                SERIES, CONTEXT_TYPE_SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD
+            );
 
+        var seriesId =
+            branchBuilder(
+                ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD
+            ).script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
 
-        var seriesId = branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
-                         .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
+        var seriesName =
+            branchBuilder(
+                NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
 
-        var seriesName = branchBuilder(NAME, ENTITY_DESCRIPTION,
-                                     REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
-
-        return seriesType.subAggregation(seriesId.subAggregation(seriesName));
+        return seriesType.subAggregation(
+            seriesId.subAggregation(seriesName));
     }
 
     private static TermsAggregationBuilder courses() {
@@ -309,8 +326,9 @@ public final class Constants {
                 .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
                 .size(Defaults.DEFAULT_AGGREGATION_SIZE)
                 .subAggregation(
-                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
-                                  KEYWORD)
+                    branchBuilder(
+                        NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD
+                    )
                 );
     }
 

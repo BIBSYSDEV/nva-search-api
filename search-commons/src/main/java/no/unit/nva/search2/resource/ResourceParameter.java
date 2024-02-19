@@ -28,10 +28,10 @@ import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.SHOULD;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
@@ -147,9 +147,9 @@ public enum ResourceParameter implements ParameterKey {
     ISSN(KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_NOT(KEYWORD, NOT_ONE_ITEM, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     ISSN_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    JOURNAL(KEYWORD, MUST, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
-    JOURNAL_NOT(KEYWORD, MUST_NOT, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
-    JOURNAL_SHOULD(FUZZY_KEYWORD, SHOULD, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
+    JOURNAL(FUZZY_KEYWORD, ALL_ITEMS, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
+    JOURNAL_NOT(FUZZY_KEYWORD, NO_ITEMS, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
+    JOURNAL_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
     LICENSE(KEYWORD, ALL_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
     LICENSE_NOT(KEYWORD, NO_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
     LICENSE_SHOULD(KEYWORD, ONE_OR_MORE_ITEM, ASSOCIATED_ARTIFACTS_LICENSE),
