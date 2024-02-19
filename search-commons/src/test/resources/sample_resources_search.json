@@ -85,7 +85,11 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries"
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "name": "Some series nr2",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
           }
         },
         "publicationInstance": {
@@ -493,7 +497,11 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries"
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "name": "Some series nr2",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
           }
         },
         "publicationInstance": {
@@ -2964,7 +2972,13 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "type": "UnconfirmedJournal"
+          "type": "Journal",
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/C3C22B36-26AC-4503-A7AD-719380D0E3E2/2024",
+          "name": "Annales des Sciences Naturelles-Zoologie et Biologie Animale",
+          "onlineIssn": "1879-1840",
+          "printIssn": "0003-4339",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=C3C22B36-26AC-4503-A7AD-719380D0E3E2",
+          "scientificValue": "Unassigned"
         },
         "publicationInstance": {
           "type": "AcademicArticle",
@@ -3032,7 +3046,12 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "type": "UnconfirmedJournal"
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/6EF23D04-C5BB-4024-8802-F4B3AB75BAE1/2024",
+          "type": "Journal",
+          "name": "Acta Naturae",
+          "printIssn": "2075-8251",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=6EF23D04-C5BB-4024-8802-F4B3AB75BAE1",
+          "scientificValue": "Unassigned"
         },
         "publicationInstance": {
           "type": "AcademicArticle",
@@ -3274,9 +3293,11 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries",
-            "title": "Kjetils bokserie",
-            "issn" : "0801-6461"
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
+            "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
+            "scientificValue": "Unassigned"
           }
         },
         "publicationInstance": {

@@ -85,8 +85,8 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=50&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 12;
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 13;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -411,7 +411,7 @@ class ResourceClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0&aggregation=all", 21),
+                createArgument("page=0&aggregation=all", 20),
                 createArgument("page=1&aggregation=all&size=1", 1),
                 createArgument("page=2&aggregation=all&size=1", 1),
                 createArgument("page=3&aggregation=all&size=1", 1),

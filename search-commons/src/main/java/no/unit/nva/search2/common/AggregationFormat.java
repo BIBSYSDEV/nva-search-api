@@ -7,6 +7,7 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
@@ -113,8 +114,7 @@ public final class AggregationFormat {
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
-        return Map.entry(getNormalizedFieldName(entry.getKey()),
-                         getBucketOrValue(entry.getValue()));
+        return Map.entry(getNormalizedFieldName(entry.getKey()), getBucketOrValue(entry.getValue()));
     }
 
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -158,13 +158,14 @@ public final class AggregationFormat {
         private static final Map<String, String> facetResourcePaths1 = Map.of(
             TYPE, "/filter/entityDescription/reference/publicationInstance/type",
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
-            SERIES, "/filter/entityDescription/reference/publicationContext/series",
+            SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
             LICENSE, "/filter/associatedArtifacts/license"
         );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
             HAS_PUBLIC_FILE, "/filter/hasPublicFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
+            JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
             CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",
