@@ -255,7 +255,7 @@ public final class Constants {
                 .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
 
         var contextTypeName =
-            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, NAME, KEYWORD);
+            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
 
         return filterBranchBuilder(JOURNAL, CONTEXT_TYPE_JOURNAL,
                                    ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
