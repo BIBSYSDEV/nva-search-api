@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.common.constant.Words.BUCKETS;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
@@ -62,7 +63,7 @@ public final class AggregationFormat {
         if (childNode.isObject()) {
             var nodeArray = JsonUtils.dtoObjectMapper.createArrayNode();
             childNode.fieldNames().forEachRemaining(node -> processChildNodes(node, childNode, nodeArray));
-        objectNode.set(field, nodeArray);
+            objectNode.set(field, nodeArray);
         }
     }
 
@@ -70,9 +71,11 @@ public final class AggregationFormat {
         if (node.get(field).isObject()) {
             var childNode = node.get(field);
             var newNode = JsonUtils.dtoObjectMapper.createObjectNode();
-            newNode.put(Constants.DOC_COUNT, childNode.get(Constants.DOC_COUNT).asInt());
-            newNode.put(KEY, field);
-            nodeArray.add(newNode);
+            if (nonNull(node.get(field)) && nonNull(childNode.get(Constants.DOC_COUNT))) {
+                newNode.put(Constants.DOC_COUNT, childNode.get(Constants.DOC_COUNT).asInt());
+                newNode.put(KEY, field);
+                nodeArray.add(newNode);
+            }
         }
     }
 
