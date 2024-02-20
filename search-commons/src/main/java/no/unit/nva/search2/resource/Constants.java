@@ -175,7 +175,6 @@ public final class Constants {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        licenseHierarchy(),
         filesHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
@@ -201,9 +200,6 @@ public final class Constants {
                    .subAggregation(branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD))
                    .subAggregation(AggregationBuilders.filter(Boolean.FALSE.toString(), bool))
                    .subAggregation(AggregationBuilders.reverseNested(Boolean.TRUE.toString()));
-    }
-    public static TermsAggregationBuilder licenseHierarchy() {
-        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD);
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
