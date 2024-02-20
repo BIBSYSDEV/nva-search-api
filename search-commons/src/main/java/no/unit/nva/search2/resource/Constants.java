@@ -184,7 +184,7 @@ public final class Constants {
         scientificIndexHierarchy()
     );
 
-    private static AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>> scientificIndexHierarchy() {
+    private static NestedAggregationBuilder scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
             .subAggregation(branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD))
             .subAggregation(branchBuilder(STATUS, SCIENTIFIC_INDEX, STATUS, KEYWORD));
@@ -289,9 +289,8 @@ public final class Constants {
             );
 
         var seriesId =
-            branchBuilder(
-                ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD
-            ).script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
+            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
 
         var seriesName =
             branchBuilder(
