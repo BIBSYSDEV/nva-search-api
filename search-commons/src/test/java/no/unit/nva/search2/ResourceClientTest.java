@@ -5,7 +5,8 @@ import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -21,12 +22,15 @@ import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
+import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,6 +87,7 @@ class ResourceClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 14;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -146,7 +151,8 @@ class ResourceClientTest {
 
             var uri2 =
                 URI.create(REQUEST_BASE_URL +
-                           "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status");
+                           "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status,"
+                           + "scientificIndex,hasPublicFile,license");
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -162,8 +168,8 @@ class ResourceClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(4));
-            assertThat(aggregations.get(HAS_FILE).size(), is(2));
-            assertThat(aggregations.get(HAS_FILE).get(0).count(), is(20));
+            assertThat(aggregations.get(HAS_PUBLIC_FILE).get(0).count(), is(20));
+            assertThat(aggregations.get(LICENSE).get(0).count(), is(15));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
@@ -291,7 +297,8 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(), is(equalTo(11)));
+            assertThat(pagedSearchResourceDto.aggregations().size(),
+                       is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
@@ -366,6 +373,42 @@ class ResourceClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .doSearch(searchClient));
+        }
+
+        @Test
+        void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.fieldName(), "2019",
+                                                SCIENTIFIC_REPORT_PERIOD_BEFORE.fieldName(), "2022"))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+
+            logger.info(query.getValue(SORT).toString());
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertThat(pagedSearchResourceDto.hits(), hasSize(2));
+        }
+
+        @Test
+        void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.fieldName(), "2019",
+                                                SCIENTIFIC_REPORT_PERIOD_BEFORE.fieldName(), "2020"))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+
+            logger.info(query.getValue(SORT).toString());
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
 
         static Stream<Arguments> uriPagingProvider() {

@@ -1,17 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import no.unit.nva.search2.common.constant.Defaults;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
@@ -23,6 +11,7 @@ import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.CODE;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_SERIES;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
@@ -32,10 +21,12 @@ import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
+import static no.unit.nva.search2.common.constant.Words.ISBN_LIST;
+import static no.unit.nva.search2.common.constant.Words.ISBN_PREFIX;
+import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
@@ -43,17 +34,21 @@ import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.common.constant.Words.ONLINE_ISSN;
 import static no.unit.nva.search2.common.constant.Words.ORC_ID;
 import static no.unit.nva.search2.common.constant.Words.OWNER;
 import static no.unit.nva.search2.common.constant.Words.OWNER_AFFILIATION;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.PRINT_ISSN;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.REFERENCE;
 import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
@@ -61,8 +56,22 @@ import static no.unit.nva.search2.common.constant.Words.TAGS;
 import static no.unit.nva.search2.common.constant.Words.TITLE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.common.constant.Words.VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import no.unit.nva.search2.common.constant.Defaults;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.script.Script;
+import org.opensearch.script.ScriptType;
+import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Constants {
 
@@ -92,26 +101,36 @@ public final class Constants {
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
-    public static final String ATTACHMENT_VISIBLE_FOR_NON_OWNER = ASSOCIATED_ARTIFACTS + DOT + VISIBLE_FOR_NON_OWNER;
+
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
-        ENTITY_PUBLICATION_CONTEXT_DOT + "isbnList";
+        ENTITY_PUBLICATION_CONTEXT_DOT + ISBN_LIST;
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
-        ENTITY_PUBLICATION_CONTEXT_DOT + "onlineIssn" + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD =
-        ENTITY_PUBLICATION_CONTEXT_DOT + "printIssn" + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_INSTANCE_TYPE =
         ENTITY_PUBLICATION_INSTANCE_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_PUBLISHER =
-        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + NAME + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ID + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + ISBN_PREFIX + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_REFERENCE_SERIES =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + "issn" + DOT + KEYWORD
-        + PIPE + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT + SERIES + DOT + TITLE + DOT + KEYWORD;
-    public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
+        ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + "issn" + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + NAME + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + TITLE + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + ID + DOT + KEYWORD;
+
+    public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL =
+        ENTITY_PUBLICATION_CONTEXT_DOT + NAME + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
+
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
@@ -122,6 +141,8 @@ public final class Constants {
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
     public static final String TOP_LEVEL_ORG_ID = TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD;
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
+    public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
+    public static final String SCIENTIFIC_INDEX_YEAR = SCIENTIFIC_INDEX + DOT + YEAR;
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
         CONTRIBUTORS_AFFILIATION_LABELS + ENGLISH_CODE + DOT + KEYWORD + PIPE
         + CONTRIBUTORS_AFFILIATION_LABELS + NYNORSK_CODE + DOT + KEYWORD + PIPE
@@ -154,22 +175,31 @@ public final class Constants {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        associatedArtifactsHierarchy(),
+        filesHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
         publishStatusHierarchy(),
-        topLevelOrganisationsHierarchy()
+        topLevelOrganisationsHierarchy(),
+        scientificIndexHierarchy()
     );
+
+    private static NestedAggregationBuilder scientificIndexHierarchy() {
+        return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
+            .subAggregation(branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD))
+            .subAggregation(branchBuilder(STATUS, SCIENTIFIC_INDEX, STATUS, KEYWORD));
+    }
 
     private static TermsAggregationBuilder publishStatusHierarchy() {
         return branchBuilder(STATUS, STATUS, KEYWORD);
     }
 
-    public static NestedAggregationBuilder associatedArtifactsHierarchy() {
-        return
-            nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                .subAggregation(visibleForNonOwners())
-                .subAggregation(license());
+    public static NestedAggregationBuilder filesHierarchy() {
+        var filter = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
+        var bool = QueryBuilders.boolQuery().mustNot(filter);
+        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+                   .subAggregation(branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD))
+                   .subAggregation(AggregationBuilders.filter(Boolean.FALSE.toString(), bool))
+                   .subAggregation(AggregationBuilders.reverseNested(Boolean.TRUE.toString()));
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
@@ -209,11 +239,28 @@ public final class Constants {
                         .subAggregation(publisher())
                         .subAggregation(series())
                         .subAggregation(courses())
+                        .subAggregation(journal())
                 )
                 .subAggregation(
                     publicationInstance()            // Split or just a branch?
                         .subAggregation(instanceType())
                 );
+    }
+
+    private static AggregationBuilder journal() {
+        var contextTypeId =
+            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
+
+        var contextTypeName =
+            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
+
+        return filterBranchBuilder(JOURNAL, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
+            .subAggregation(contextTypeId.subAggregation(contextTypeName));
+    }
+
+    private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
+        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 
     private static NestedAggregationBuilder publicationContext() {
@@ -231,12 +278,22 @@ public final class Constants {
             branchBuilder(TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_INSTANCE, TYPE, KEYWORD);
     }
 
-    private static TermsAggregationBuilder series() {
-        return
-            branchBuilder(SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, "issn", KEYWORD)
-                .subAggregation(
-                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TITLE, KEYWORD)
-                );
+    private static FilterAggregationBuilder series() {
+        var seriesType =
+            filterBranchBuilder(
+                SERIES, CONTEXT_TYPE_SERIES, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD
+            );
+
+        var seriesId =
+            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
+
+        var seriesName =
+            branchBuilder(
+                NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
+
+        return seriesType.subAggregation(
+            seriesId.subAggregation(seriesName));
     }
 
     private static TermsAggregationBuilder courses() {
@@ -257,28 +314,20 @@ public final class Constants {
                 .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
                 .size(Defaults.DEFAULT_AGGREGATION_SIZE)
                 .subAggregation(
-                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME,
-                                  KEYWORD)
+                    branchBuilder(
+                        NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD
+                    )
                 );
     }
 
     public static Script uriAsUuid(String... paths) {
         var path = String.join(DOT, paths);
         var script = """
-            if (doc[params['path']].size()==0) { return null;}
+            if (params['path']==null||doc[params['path']]==null||doc[params['path']].size()==0) { return null;}
             def path_parts = doc[params['path']].value.splitOnToken('/');
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
-
-    }
-
-    private static TermsAggregationBuilder license() {
-        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD);
-    }
-
-    private static TermsAggregationBuilder visibleForNonOwners() {
-        return branchBuilder(HAS_FILE, ATTACHMENT_VISIBLE_FOR_NON_OWNER);
     }
 
     @JacocoGenerated
