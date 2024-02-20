@@ -28,18 +28,14 @@ final class FacetsBuilder {
     }
 
     private static Map.Entry<String, List<Facet>> addIdToFacets(Map.Entry<String, List<Facet>> entry, URI id) {
-        final var uriwrap = UriWrapper.fromUri(id);
+        final var uriWrap = UriWrapper.fromUri(id);
         var facets = entry.getValue().stream()
             .map(facet -> new Facet(
-                createUriFilterByKey(entry.getKey(), facet.key(), uriwrap),
+                uriWrap.addQueryParameter(entry.getKey(), facet.key()).getUri(),
                 facet.key(),
                 facet.count(),
                 facet.labels())
             ).toList();
         return Map.entry(entry.getKey(), facets);
-    }
-
-    private static URI createUriFilterByKey(String keyName, String keyValue, UriWrapper uriwrap) {
-        return uriwrap.addQueryParameter(keyName, keyValue).getUri();
     }
 }

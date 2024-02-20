@@ -85,7 +85,11 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries"
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "name": "Some series nr2",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
           }
         },
         "publicationInstance": {
@@ -315,23 +319,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
-    "associatedArtifacts": [
-      {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "d0fd5eb6-0afb-4871-a5e2-3a3135d27333",
-        "license": "https://rightsstatements.org/page/inc/1.0",
-        "mimeType": "application/pdf",
-        "name": "Repanovici_Landoy_2014.pdf",
-        "publishedDate": "2023-12-18T08:21:11.661364114Z",
-        "publisherAuthority": true,
-        "rightsRetentionStrategy": {
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": 6026249,
-        "visibleForNonOwner": true
-      }
-    ],
+    "associatedArtifacts": [],
     "createdDate": "2023-12-18T08:21:11.463306145Z",
     "entityDescription": {
       "type": "EntityDescription",
@@ -509,7 +497,11 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries"
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852we373/2024",
+            "name": "Some series nr2",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852we373",
+            "scientificValue": "Unassigned"
           }
         },
         "publicationInstance": {
@@ -750,6 +742,30 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097r23449",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097r2342342",
         "license": "https://rightsstatements.org/page/inc/1.0",
         "mimeType": "application/pdf",
         "name": "20200017-03-TN_Release_area_variability.pdf",
@@ -1073,6 +1089,18 @@
         "publisherAuthority": false,
         "size": 3325931,
         "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-3323-9d1097r23449",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-09-29T12:04:08Z",
@@ -1966,6 +1994,18 @@
         "publisherAuthority": false,
         "size": 2355368,
         "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-32233",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-09-29T11:53:36Z",
@@ -2932,7 +2972,13 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "type": "UnconfirmedJournal"
+          "type": "Journal",
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/C3C22B36-26AC-4503-A7AD-719380D0E3E2/2024",
+          "name": "Annales des Sciences Naturelles-Zoologie et Biologie Animale",
+          "onlineIssn": "1879-1840",
+          "printIssn": "0003-4339",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=C3C22B36-26AC-4503-A7AD-719380D0E3E2",
+          "scientificValue": "Unassigned"
         },
         "publicationInstance": {
           "type": "AcademicArticle",
@@ -3000,7 +3046,12 @@
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "type": "UnconfirmedJournal"
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/6EF23D04-C5BB-4024-8802-F4B3AB75BAE1/2024",
+          "type": "Journal",
+          "name": "Acta Naturae",
+          "printIssn": "2075-8251",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=6EF23D04-C5BB-4024-8802-F4B3AB75BAE1",
+          "scientificValue": "Unassigned"
         },
         "publicationInstance": {
           "type": "AcademicArticle",
@@ -3042,6 +3093,18 @@
         "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "mimeType": "application/pdf",
+        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
+        "publishedDate": "2023-11-06T07:47:54.580766901Z",
+        "publisherAuthority": false,
+        "size": 1578503,
+        "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "5a8a8e75-4a13-483eec-8014-werd75eb468",
         "license": "https://creativecommons.org/licenses/by/4.0",
         "mimeType": "application/pdf",
         "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
@@ -3230,9 +3293,11 @@
             "valid": true
           },
           "series": {
-            "type": "UnconfirmedSeries",
-            "title": "Kjetils bokserie",
-            "issn" : "0801-6461"
+            "type": "Series",
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
+            "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
+            "scientificValue": "Unassigned"
           }
         },
         "publicationInstance": {
