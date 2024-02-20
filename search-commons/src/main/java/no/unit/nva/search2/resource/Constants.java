@@ -325,7 +325,7 @@ public final class Constants {
     public static Script uriAsUuid(String... paths) {
         var path = String.join(DOT, paths);
         var script = """
-            if (doc[params['path']].size()==0) { return null;}
+            if (params['path']==null||doc[params['path']]==null||doc[params['path']].size()==0) { return null;}
             def path_parts = doc[params['path']].value.splitOnToken('/');
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
