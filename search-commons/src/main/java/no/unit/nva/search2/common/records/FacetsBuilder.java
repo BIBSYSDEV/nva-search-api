@@ -1,7 +1,5 @@
 package no.unit.nva.search2.common.records;
 
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
-import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.net.URI;
@@ -30,25 +28,14 @@ final class FacetsBuilder {
     }
 
     private static Map.Entry<String, List<Facet>> addIdToFacets(Map.Entry<String, List<Facet>> entry, URI id) {
-        final var uriwrap = UriWrapper.fromUri(id);
+        final var uriWrap = UriWrapper.fromUri(id);
         var facets = entry.getValue().stream()
             .map(facet -> new Facet(
-                createUriFilterByKey(entry.getKey(), facet.key(), uriwrap),
+                uriWrap.addQueryParameter(entry.getKey(), facet.key()).getUri(),
                 facet.key(),
                 facet.count(),
                 facet.labels())
             ).toList();
         return Map.entry(entry.getKey(), facets);
-    }
-
-    private static URI createUriFilterByKey(String keyName, String keyValue, UriWrapper uriwrap) {
-        if (keyName.equals(HAS_PUBLIC_FILE)) {
-            return uriwrap.addQueryParameter(HAS_PUBLIC_FILE, Boolean.TRUE.toString()).getUri();
-        }
-        if (keyName.equals(NO_PUBLIC_FILE)) {
-            return uriwrap.addQueryParameter(HAS_PUBLIC_FILE, Boolean.FALSE.toString()).getUri();
-        } else {
-            return uriwrap.addQueryParameter(keyName, keyValue).getUri();
-        }
     }
 }
