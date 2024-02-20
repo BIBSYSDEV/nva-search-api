@@ -33,10 +33,11 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
     }
 
     private QueryBuilder buildMatchAllKeyword(K key, String... values) {
-        return key.searchFields().stream()
-            .flatMap(searchField ->
-                         Arrays.stream(values)
-                             .map(value -> new TermQueryBuilder(searchField, value)))
-            .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
+        return
+            Arrays.stream(values)
+                .map(value -> key.searchFields().stream()
+                    .map(searchField -> new TermQueryBuilder(searchField, value))
+                    .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add))
+                .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
     }
 }

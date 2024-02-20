@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.common.constant.Words.BUCKETS;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
@@ -7,12 +8,15 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SLASH;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
@@ -21,6 +25,8 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,7 +48,33 @@ public final class AggregationFormat {
         getAggregationFieldStreams(aggregations)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
+        ensureChildNodesAreArrays(objectNode);
         return objectNode;
+    }
+
+    public static void ensureChildNodesAreArrays(JsonNode node) {
+        if (node.isObject()) {
+            var objectNode = (ObjectNode) node;
+            objectNode.fieldNames().forEachRemaining(field -> processChildNode(objectNode, field));
+        }
+    }
+
+    private static void processChildNode(ObjectNode objectNode, String field) {
+        var childNode = objectNode.get(field);
+        if (childNode.isObject()) {
+            var nodeArray = JsonUtils.dtoObjectMapper.createArrayNode();
+            childNode.fieldNames().forEachRemaining(value -> processChildNodes(field, childNode, nodeArray));
+            objectNode.set(field, nodeArray);
+        }
+    }
+
+    private static void processChildNodes(String field, JsonNode node, ArrayNode nodeArray) {
+        var newNode = JsonUtils.dtoObjectMapper.createObjectNode();
+        if (nonNull(node.get(Constants.DOC_COUNT))) {
+            newNode.put(Constants.DOC_COUNT, node.get(Constants.DOC_COUNT).asInt());
+            newNode.put(KEY, field);
+            nodeArray.add(newNode);
+        }
     }
 
     private static JsonNode fixNodes(JsonNode node) {
@@ -83,7 +115,8 @@ public final class AggregationFormat {
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
-        return Map.entry(getNormalizedFieldName(entry.getKey()), getBucketOrValue(entry.getValue()));
+        return Map.entry(getNormalizedFieldName(entry.getKey()),
+                         getBucketOrValue(entry.getValue()));
     }
 
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -127,17 +160,20 @@ public final class AggregationFormat {
         private static final Map<String, String> facetResourcePaths1 = Map.of(
             TYPE, "/filter/entityDescription/reference/publicationInstance/type",
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
-            SERIES, "/filter/entityDescription/reference/publicationContext/series",
+            SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license"
-        );
+            LICENSE, "/filter/associatedArtifacts/license",
+            NO_PUBLIC_FILE, "/filter/associatedArtifacts/false"
+            );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_FILE, "/filter/associatedArtifacts/hasFile",
+            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/true",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
+            JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
             CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
             FUNDING_SOURCE, "/filter/fundings/id",
-            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id"
+            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id",
+            SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
         );
 
         public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)

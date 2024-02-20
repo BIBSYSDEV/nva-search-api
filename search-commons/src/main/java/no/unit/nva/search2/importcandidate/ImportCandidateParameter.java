@@ -26,10 +26,9 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
-import static no.unit.nva.search2.common.enums.FieldOperator.ALL;
-import static no.unit.nva.search2.common.enums.FieldOperator.ANY;
-import static no.unit.nva.search2.common.enums.FieldOperator.NONE;
-import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
+import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
+import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search2.common.enums.ParameterKind.SORT_KEY;
@@ -39,6 +38,7 @@ import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_K
 import static no.unit.nva.search2.importcandidate.Constants.INSTANCE_TYPE_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 
 /**
@@ -50,52 +50,54 @@ import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 public enum ImportCandidateParameter implements ParameterKey {
     INVALID(TEXT),
     // Parameters converted to Lucene query
-    ADDITIONAL_IDENTIFIERS(KEYWORD, ALL, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NONE, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, ANY, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    CATEGORY(KEYWORD, PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_NOT(KEYWORD, NONE, PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_SHOULD(KEYWORD, ANY, PUBLICATION_INSTANCE_TYPE),
-    COLLABORATION_TYPE(KEYWORD, ALL, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_NOT(KEYWORD, NONE, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_SHOULD(TEXT, ANY, COLLABORATION_TYPE_KEYWORD),
-    CONTRIBUTOR(FUZZY_KEYWORD, ALL, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS, 2F),
-    CONTRIBUTOR_NOT(KEYWORD, NONE, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_SHOULD(TEXT, ANY, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NAME(KEYWORD, Constants.CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NAME_NOT(KEYWORD, NONE, Constants.CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NAME_SHOULD(TEXT, ANY, Constants.CONTRIBUTORS_IDENTITY_NAME),
-    CREATED_DATE(ParameterKind.DATE, Words.CREATED_DATE),
     CRISTIN_IDENTIFIER(KEYWORD),
+    SCOPUS_IDENTIFIER(KEYWORD),
+    ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NO_ITEMS, ADDITIONAL_IDENTIFIERS_KEYWORD),
+    ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, ONE_OR_MORE_ITEM, ADDITIONAL_IDENTIFIERS_KEYWORD),
+    CATEGORY(KEYWORD, PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_NOT(KEYWORD, NO_ITEMS, PUBLICATION_INSTANCE_TYPE),
+    CATEGORY_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE),
+    CREATED_DATE(ParameterKind.DATE, Words.CREATED_DATE),
+    CONTRIBUTOR(KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NAME(KEYWORD, Constants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.CONTRIBUTORS_IDENTITY_NAME),
+    COLLABORATION_TYPE(KEYWORD, ALL_ITEMS, COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE_NOT(KEYWORD, NO_ITEMS, COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE_SHOULD(TEXT, ONE_OR_MORE_ITEM, COLLABORATION_TYPE_KEYWORD),
     DOI(KEYWORD, Constants.DOI_KEYWORD),
-    DOI_NOT(TEXT, NONE, Constants.DOI_KEYWORD),
-    DOI_SHOULD(TEXT, ANY, Constants.DOI_KEYWORD),
+    DOI_NOT(TEXT, NO_ITEMS, Constants.DOI_KEYWORD),
+    DOI_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.DOI_KEYWORD),
     ID(KEYWORD, Constants.IDENTIFIER),
-    ID_NOT(KEYWORD, NONE, Constants.IDENTIFIER),
-    ID_SHOULD(TEXT, ANY, Constants.IDENTIFIER),
+    ID_NOT(KEYWORD, NO_ITEMS, Constants.IDENTIFIER),
+    ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.IDENTIFIER),
     IMPORT_STATUS(KEYWORD, STATUS_TYPE_KEYWORD),
-    IMPORT_STATUS_NOT(KEYWORD, NONE, STATUS_TYPE_KEYWORD),
-    IMPORT_STATUS_SHOULD(TEXT, ANY, STATUS_TYPE_KEYWORD),
-    INSTANCE_TYPE(KEYWORD, ALL, INSTANCE_TYPE_KEYWORD),
-    INSTANCE_TYPE_NOT(KEYWORD, NONE, INSTANCE_TYPE_KEYWORD),
-    INSTANCE_TYPE_SHOULD(KEYWORD, ANY, INSTANCE_TYPE_KEYWORD),
-    PUBLICATION_YEAR(KEYWORD, ALL, PUBLICATION_YEAR_KEYWORD),
+    IMPORT_STATUS_NOT(KEYWORD, NO_ITEMS, STATUS_TYPE_KEYWORD),
+    IMPORT_STATUS_SHOULD(TEXT, ONE_OR_MORE_ITEM, STATUS_TYPE_KEYWORD),
+    INSTANCE_TYPE(KEYWORD, ALL_ITEMS, INSTANCE_TYPE_KEYWORD),
+    INSTANCE_TYPE_NOT(KEYWORD, NO_ITEMS, INSTANCE_TYPE_KEYWORD),
+    INSTANCE_TYPE_SHOULD(TEXT, ONE_OR_MORE_ITEM, INSTANCE_TYPE_KEYWORD),
+    PUBLICATION_YEAR(KEYWORD, ALL_ITEMS, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
-    SCOPUS_IDENTIFIER(KEYWORD),
-    TITLE(TEXT, ALL, Constants.MAIN_TITLE_KEYWORD, 2F),
-    TITLE_NOT(TEXT, NONE, Constants.MAIN_TITLE_KEYWORD),
-    TITLE_SHOULD(TEXT, ANY, Constants.MAIN_TITLE_KEYWORD, 2F),
+    PUBLISHER(KEYWORD, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
+    PUBLISHER_NOT(KEYWORD, NO_ITEMS, PUBLISHER_ID_KEYWORD),
+    PUBLISHER_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
+    TITLE(TEXT, Constants.MAIN_TITLE_KEYWORD, 2F),
+    TITLE_NOT(TEXT, NO_ITEMS, Constants.MAIN_TITLE_KEYWORD),
+    TITLE_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.MAIN_TITLE_KEYWORD),
     TYPE(KEYWORD, Constants.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, ALL, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(ParameterKind.CUSTOM),
     // Pagination parameters
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
     SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(ParameterKind.CUSTOM, ALL, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    SORT_ORDER(ParameterKind.CUSTOM, ALL_ITEMS, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
     SEARCH_AFTER(ParameterKind.CUSTOM);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
@@ -117,15 +119,15 @@ public enum ImportCandidateParameter implements ParameterKey {
     private final Float boost;
 
     ImportCandidateParameter(ParameterKind kind) {
-        this(kind, ALL, null, null, null, null);
+        this(kind, ALL_ITEMS, null, null, null, null);
     }
 
     ImportCandidateParameter(ParameterKind kind, String fieldsToSearch) {
-        this(kind, ALL, fieldsToSearch, null, null, null);
+        this(kind, ALL_ITEMS, fieldsToSearch, null, null, null);
     }
 
-    ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
-        this(kind, operator, fieldsToSearch, null, null, boost);
+    ImportCandidateParameter(ParameterKind kind, String fieldsToSearch, Float boost) {
+        this(kind, ALL_ITEMS, fieldsToSearch, null, null, boost);
     }
 
     ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {

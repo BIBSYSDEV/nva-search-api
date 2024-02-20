@@ -49,10 +49,12 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
-import static no.unit.nva.search2.common.enums.FieldOperator.NONE;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
+@SuppressWarnings("PMD.GodClass")
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
@@ -268,7 +270,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isMustNot(K key) {
-        return NONE.equals(key.searchOperator());
+        return NO_ITEMS.equals(key.searchOperator())
+               || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
@@ -296,6 +299,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
             return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isPublicFile(key)) {
+            return opensearchQueryTools.publishedFileQuery(key, value);
             // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
