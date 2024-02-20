@@ -10,6 +10,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_NOT;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_HAS_FILES;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
@@ -40,7 +41,6 @@ import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search2.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
-import static no.unit.nva.search2.resource.Constants.ATTACHMENT_VISIBLE_FOR_NON_OWNER;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search2.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
@@ -129,8 +129,7 @@ public enum ResourceParameter implements ParameterKey {
     HANDLE(FUZZY_KEYWORD, ALL_ITEMS, HANDLE_KEYWORD, PHI),
     HANDLE_NOT(FUZZY_KEYWORD, NO_ITEMS, HANDLE_KEYWORD, PHI),
     HANDLE_SHOULD(TEXT, ONE_OR_MORE_ITEM, HANDLE_KEYWORD),
-    HAS_FILE(ParameterKind.BOOLEAN, ALL_ITEMS, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
-    HAS_FILE_SHOULD(ParameterKind.BOOLEAN, ONE_OR_MORE_ITEM, ATTACHMENT_VISIBLE_FOR_NON_OWNER),
+    HAS_PUBLIC_FILE(CUSTOM, ALL_ITEMS, null, PATTERN_IS_HAS_FILES, null, null),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, NO_ITEMS, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, IDENTIFIER_KEYWORD),

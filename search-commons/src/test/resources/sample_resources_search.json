@@ -319,23 +319,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
-    "associatedArtifacts": [
-      {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "d0fd5eb6-0afb-4871-a5e2-3a3135d27333",
-        "license": "https://rightsstatements.org/page/inc/1.0",
-        "mimeType": "application/pdf",
-        "name": "Repanovici_Landoy_2014.pdf",
-        "publishedDate": "2023-12-18T08:21:11.661364114Z",
-        "publisherAuthority": true,
-        "rightsRetentionStrategy": {
-          "type": "NullRightsRetentionStrategy"
-        },
-        "size": 6026249,
-        "visibleForNonOwner": true
-      }
-    ],
+    "associatedArtifacts": [],
     "createdDate": "2023-12-18T08:21:11.463306145Z",
     "entityDescription": {
       "type": "EntityDescription",
@@ -765,6 +749,30 @@
         "publisherAuthority": false,
         "size": 699309,
         "visibleForNonOwner": false
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097r23449",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-9d1097r2342342",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-09-29T12:14:46Z",
@@ -1081,6 +1089,18 @@
         "publisherAuthority": false,
         "size": 3325931,
         "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-3323-9d1097r23449",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-09-29T12:04:08Z",
@@ -1974,6 +1994,18 @@
         "publisherAuthority": false,
         "size": 2355368,
         "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "98893bfd-82d3-44d8-af10-32233",
+        "license": "https://rightsstatements.org/page/inc/1.0",
+        "mimeType": "application/pdf",
+        "name": "20200017-03-TN_Release_area_variability.pdf",
+        "publishedDate": "2023-10-31T11:25:43.223366513Z",
+        "publisherAuthority": false,
+        "size": 699309,
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-09-29T11:53:36Z",
@@ -3061,6 +3093,18 @@
         "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "mimeType": "application/pdf",
+        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
+        "publishedDate": "2023-11-06T07:47:54.580766901Z",
+        "publisherAuthority": false,
+        "size": 1578503,
+        "visibleForNonOwner": true
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "5a8a8e75-4a13-483eec-8014-werd75eb468",
         "license": "https://creativecommons.org/licenses/by/4.0",
         "mimeType": "application/pdf",
         "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",

@@ -1,5 +1,31 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NO_FILES;
+import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.ONE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
+import static no.unit.nva.search2.common.constant.Words.SOURCE;
+import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
+import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
+import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
+import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.StringUtils.isEmpty;
+import static nva.commons.core.attempt.Try.attempt;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -11,31 +37,11 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
+import org.jetbrains.annotations.NotNull;
+import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search2.common.constant.Functions.jsonPath;
-import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.DOT;
-import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.ONE;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
-import static no.unit.nva.search2.common.constant.Words.SOURCE;
-import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search2.common.constant.Words.VALUE;
-import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
-import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
-import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
-import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
@@ -45,10 +51,14 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
      * @param value a string that is expected to be 1/true or 0/false
      * @return Boolean because we need the text 'true' or 'false'
      */
-    public static Boolean valueToBoolean(String value) {
-        return ONE.equals(value) || PUBLISHED_FILE.equals(value)
-            ? Boolean.TRUE
-            : Boolean.valueOf(value);
+    public static Boolean valueToBoolean(String keyName, String value) {
+        if (keyName.matches(PATTERN_IS_NO_FILES)) {
+            return Boolean.FALSE;
+        }
+        if (ONE.equals(value) || PUBLISHED_FILE.equals(value) || HAS_PUBLIC_FILE.equals(value) || isEmpty(value)) {
+            return Boolean.TRUE;
+        }
+        return Boolean.parseBoolean(value);
     }
 
     public static boolean hasContent(String value) {
@@ -151,6 +161,21 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             ScoreMode.None));
     }
 
+    public boolean isPublicFile(K key) {
+        return Words.PUBLIC_FILE_CONDITIONAL.equals(key.name());
+    }
+
+    public Stream<Entry<K, QueryBuilder>> publishedFileQuery(K key, String value) {
+        return Boolean.TRUE.equals(Boolean.valueOf(value))
+                            ? queryToEntry(key, QueryBuilders.boolQuery().must(containsPublishedFileQuery()))
+                            : queryToEntry(key, QueryBuilders.boolQuery().mustNot(containsPublishedFileQuery()));
+    }
+
+    @NotNull
+    private static MatchQueryBuilder containsPublishedFileQuery() {
+        return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),
+                                        PUBLISHED_FILE);
+    }
 
     private boolean isNotKeyword(K key) {
         return !ParameterKind.KEYWORD.equals(key.fieldType());
