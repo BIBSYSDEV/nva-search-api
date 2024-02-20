@@ -61,6 +61,7 @@ import static no.unit.nva.search2.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PARENT_PUBLICATION_ID;
+import static no.unit.nva.search2.resource.Constants.PHI;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
@@ -72,7 +73,6 @@ import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILI
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
-import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
