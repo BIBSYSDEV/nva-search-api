@@ -27,7 +27,7 @@ paths:
           schema:
             type: string
             default: "curator"
-            enum: [curator, creator]
+            enum: [ curator, creator ]
         - in: query
           name: query
           description: "Term to search for in resource."
@@ -74,7 +74,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/TicketSearchResponse"
 
-  /resources:
+  /resources2:
     get:
       tags:
         - external
@@ -86,15 +86,15 @@ paths:
         - $ref: '#/components/parameters/categoryNotParam'
         - $ref: '#/components/parameters/categoryParam'
         - $ref: '#/components/parameters/categoryShouldParam'
-        - $ref: '#/components/parameters/contextTypeParam'
         - $ref: '#/components/parameters/contextTypeNotParam'
+        - $ref: '#/components/parameters/contextTypeParam'
         - $ref: '#/components/parameters/contextTypeShouldParam'
-        - $ref: '#/components/parameters/contributorNotParam'
-        - $ref: '#/components/parameters/contributorParam'
-        - $ref: '#/components/parameters/contributorShouldParam'
         - $ref: '#/components/parameters/contributorNameNotParam'
         - $ref: '#/components/parameters/contributorNameParam'
         - $ref: '#/components/parameters/contributorNameShouldParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
         - $ref: '#/components/parameters/courseNotParam'
         - $ref: '#/components/parameters/courseParam'
         - $ref: '#/components/parameters/courseShouldParam'
@@ -117,7 +117,6 @@ paths:
         - $ref: '#/components/parameters/grantIdentifierParam'
         - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/hasFileParam'
-        - $ref: '#/components/parameters/hasFileShouldParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idShouldParam'
@@ -166,6 +165,8 @@ paths:
         - $ref: '#/components/parameters/publisherParam'
         - $ref: '#/components/parameters/publisherShouldParam'
         - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
         - $ref: '#/components/parameters/scopusIdentifierParam'
         - $ref: '#/components/parameters/seriesNotParam'
         - $ref: '#/components/parameters/seriesParam'
@@ -191,11 +192,156 @@ paths:
         - $ref: '#/components/parameters/userNotParam'
         - $ref: '#/components/parameters/userParam'
         - $ref: '#/components/parameters/userShouldParam'
-        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
-        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
-        - $ref: '#/components/parameters/publicationLanguageParam'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedPublicationSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /resources:
+    get:
+      tags:
+        - external
+      description: "Search for public available publications by given criteria"
+      parameters:
+        - $ref: '#/components/parameters/abstractNotParam'
+        - $ref: '#/components/parameters/abstractParam'
+        - $ref: '#/components/parameters/abstractShouldParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
+        - $ref: '#/components/parameters/contextTypeNotParam'
+        - $ref: '#/components/parameters/contextTypeParam'
+        - $ref: '#/components/parameters/contextTypeShouldParam'
+        - $ref: '#/components/parameters/contributorNameNotParam'
+        - $ref: '#/components/parameters/contributorNameParam'
+        - $ref: '#/components/parameters/contributorNameShouldParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/createdBeforeParam'
+        - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
+        - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
+        - $ref: '#/components/parameters/hasFileParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idShouldParam'
+        - $ref: '#/components/parameters/instanceTypeNotParam'
+        - $ref: '#/components/parameters/instanceTypeParam'
+        - $ref: '#/components/parameters/instanceTypeShouldParam'
+        - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionParam'
+        - $ref: '#/components/parameters/institutionShouldParam'
+        - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnParam'
+        - $ref: '#/components/parameters/isbnShouldParam'
+        - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnParam'
+        - $ref: '#/components/parameters/issnShouldParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/licenseNotParam'
+        - $ref: '#/components/parameters/licenseParam'
+        - $ref: '#/components/parameters/licenseShouldParam'
+        - $ref: '#/components/parameters/modifiedBeforeParam'
+        - $ref: '#/components/parameters/modifiedSinceParam'
+        - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidParam'
+        - $ref: '#/components/parameters/orcidShouldParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/parentPublicationParam'
+        - $ref: '#/components/parameters/parentPublicationShouldParam'
+        - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectParam'
+        - $ref: '#/components/parameters/projectShouldParam'
         - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
         - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/publicationYearBeforeParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publicationYearSinceParam'
+        - $ref: '#/components/parameters/publishedBeforeParam'
+        - $ref: '#/components/parameters/publishedBetweenParam'
+        - $ref: '#/components/parameters/publishedSinceParam'
+        - $ref: '#/components/parameters/publisherIdNotParam'
+        - $ref: '#/components/parameters/publisherIdParam'
+        - $ref: '#/components/parameters/publisherIdShouldParam'
+        - $ref: '#/components/parameters/publisherNotParam'
+        - $ref: '#/components/parameters/publisherParam'
+        - $ref: '#/components/parameters/publisherShouldParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
+        - $ref: '#/components/parameters/seriesNotParam'
+        - $ref: '#/components/parameters/seriesParam'
+        - $ref: '#/components/parameters/seriesShouldParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusShouldParam'
+        - $ref: '#/components/parameters/tagsNotParam'
+        - $ref: '#/components/parameters/tagsParam'
+        - $ref: '#/components/parameters/tagsShouldParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleShouldParam'
+        - $ref: '#/components/parameters/topLevelOrganizationParam'
+        - $ref: '#/components/parameters/unitNotParam'
+        - $ref: '#/components/parameters/unitParam'
+        - $ref: '#/components/parameters/unitShouldParam'
+        - $ref: '#/components/parameters/userAffiliationNotParam'
+        - $ref: '#/components/parameters/userAffiliationParam'
+        - $ref: '#/components/parameters/userAffiliationShouldParam'
+        - $ref: '#/components/parameters/userNotParam'
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/userShouldParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -232,119 +378,118 @@ paths:
     get:
       description: "Search for publications by customer"
       parameters:
-        - $ref: '#/components/parameters/abstractParam'
         - $ref: '#/components/parameters/abstractNotParam'
+        - $ref: '#/components/parameters/abstractParam'
         - $ref: '#/components/parameters/abstractShouldParam'
-        - $ref: '#/components/parameters/contextTypeParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
         - $ref: '#/components/parameters/contextTypeNotParam'
+        - $ref: '#/components/parameters/contextTypeParam'
         - $ref: '#/components/parameters/contextTypeShouldParam'
-        - $ref: '#/components/parameters/contributorParam'
-        - $ref: '#/components/parameters/contributorNotParam'
-        - $ref: '#/components/parameters/contributorShouldParam'
-        - $ref: '#/components/parameters/contributorNameParam'
         - $ref: '#/components/parameters/contributorNameNotParam'
+        - $ref: '#/components/parameters/contributorNameParam'
         - $ref: '#/components/parameters/contributorNameShouldParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseShouldParam'
         - $ref: '#/components/parameters/createdBeforeParam'
         - $ref: '#/components/parameters/createdSinceParam'
         - $ref: '#/components/parameters/cristinIdentifierParam'
-        - $ref: '#/components/parameters/courseParam'
-        - $ref: '#/components/parameters/courseNotParam'
-        - $ref: '#/components/parameters/courseShouldParam'
-        - $ref: '#/components/parameters/cristinIdentifierParam'
-        - $ref: '#/components/parameters/scopusIdentifierParam'
-        - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiShouldParam'
-        - $ref: '#/components/parameters/fundingParam'
-        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fromParam'
         - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
         - $ref: '#/components/parameters/fundingIdentifierShouldParam'
-        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingParam'
         - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
-        - $ref: '#/components/parameters/hasFileParam'
-        - $ref: '#/components/parameters/hasFileShouldParam'
-        - $ref: '#/components/parameters/grantIdentifierParam'
         - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
         - $ref: '#/components/parameters/grantIdentifierShouldParam'
-        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/hasFileParam'
         - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idShouldParam'
-        - $ref: '#/components/parameters/instanceTypeParam'
         - $ref: '#/components/parameters/instanceTypeNotParam'
+        - $ref: '#/components/parameters/instanceTypeParam'
         - $ref: '#/components/parameters/instanceTypeShouldParam'
-        - $ref: '#/components/parameters/institutionParam'
         - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionParam'
         - $ref: '#/components/parameters/institutionShouldParam'
-        - $ref: '#/components/parameters/isbnParam'
         - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnParam'
         - $ref: '#/components/parameters/isbnShouldParam'
-        - $ref: '#/components/parameters/issnParam'
         - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnParam'
         - $ref: '#/components/parameters/issnShouldParam'
-        - $ref: '#/components/parameters/licenseParam'
+        - $ref: '#/components/parameters/langParam'
         - $ref: '#/components/parameters/licenseNotParam'
+        - $ref: '#/components/parameters/licenseParam'
         - $ref: '#/components/parameters/licenseShouldParam'
         - $ref: '#/components/parameters/modifiedBeforeParam'
         - $ref: '#/components/parameters/modifiedSinceParam'
-        - $ref: '#/components/parameters/orcidParam'
         - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidParam'
         - $ref: '#/components/parameters/orcidShouldParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/parentPublicationParam'
         - $ref: '#/components/parameters/parentPublicationShouldParam'
-        - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectShouldParam'
-        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
+        - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
         - $ref: '#/components/parameters/publicationYearSinceParam'
         - $ref: '#/components/parameters/publishedBeforeParam'
         - $ref: '#/components/parameters/publishedBetweenParam'
         - $ref: '#/components/parameters/publishedSinceParam'
-        - $ref: '#/components/parameters/publisherParam'
-        - $ref: '#/components/parameters/publisherIdParam'
         - $ref: '#/components/parameters/publisherIdNotParam'
+        - $ref: '#/components/parameters/publisherIdParam'
         - $ref: '#/components/parameters/publisherIdShouldParam'
         - $ref: '#/components/parameters/publisherNotParam'
+        - $ref: '#/components/parameters/publisherParam'
         - $ref: '#/components/parameters/publisherShouldParam'
-        - $ref: '#/components/parameters/scopusIdentifierParam'
-        - $ref: '#/components/parameters/seriesParam'
-        - $ref: '#/components/parameters/seriesNotParam'
-        - $ref: '#/components/parameters/seriesShouldParam'
-        - $ref: '#/components/parameters/statusParam'
-        - $ref: '#/components/parameters/statusNotParam'
-        - $ref: '#/components/parameters/statusShouldParam'
-        - $ref: '#/components/parameters/tagsParam'
-        - $ref: '#/components/parameters/tagsNotParam'
-        - $ref: '#/components/parameters/tagsShouldParam'
-        - $ref: '#/components/parameters/titleParam'
-        - $ref: '#/components/parameters/titleNotParam'
-        - $ref: '#/components/parameters/titleShouldParam'
-        - $ref: '#/components/parameters/topLevelOrganizationParam'
-        - $ref: '#/components/parameters/unitParam'
-        - $ref: '#/components/parameters/unitNotParam'
-        - $ref: '#/components/parameters/unitShouldParam'
-        - $ref: '#/components/parameters/userParam'
-        - $ref: '#/components/parameters/userAffiliationParam'
-        - $ref: '#/components/parameters/userAffiliationNotParam'
-        - $ref: '#/components/parameters/userAffiliationShouldParam'
-        - $ref: '#/components/parameters/userNotParam'
-        - $ref: '#/components/parameters/userShouldParam'
-        - $ref: '#/components/parameters/langParam'
-        - $ref: '#/components/parameters/fieldsParam'
-        - $ref: '#/components/parameters/fromParam'
-        - $ref: '#/components/parameters/orderParam'
-        - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
+        - $ref: '#/components/parameters/seriesNotParam'
+        - $ref: '#/components/parameters/seriesParam'
+        - $ref: '#/components/parameters/seriesShouldParam'
         - $ref: '#/components/parameters/sizeParam'
         - $ref: '#/components/parameters/sortParam'
-
-        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
-        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
-        - $ref: '#/components/parameters/publicationLanguageParam'
-        - $ref: '#/components/parameters/publicationLanguageNotParam'
-        - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusShouldParam'
+        - $ref: '#/components/parameters/tagsNotParam'
+        - $ref: '#/components/parameters/tagsParam'
+        - $ref: '#/components/parameters/tagsShouldParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleShouldParam'
+        - $ref: '#/components/parameters/topLevelOrganizationParam'
+        - $ref: '#/components/parameters/unitNotParam'
+        - $ref: '#/components/parameters/unitParam'
+        - $ref: '#/components/parameters/unitShouldParam'
+        - $ref: '#/components/parameters/userAffiliationNotParam'
+        - $ref: '#/components/parameters/userAffiliationParam'
+        - $ref: '#/components/parameters/userAffiliationShouldParam'
+        - $ref: '#/components/parameters/userNotParam'
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/userShouldParam'
       security:
         - CognitoUserPool: [
           "https://api.nva.unit.no/scopes/backend",
@@ -539,47 +684,66 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/CategoryEnum"
-    categoryNotParam:
-      name: category_not
+    contextTypeNotParam:
+      name: context_type_not
       in: query
-      description: "Returns documents without these category codes. Support list of Enums, seperated by comma (+)."
-      example: "JournalArticle"
+      description: "returns document without these contextTypes, separated by comma."
       required: false
       schema:
-        $ref: "#/components/schemas/CategoryEnum"
-    categoryShouldParam:
-      name: category_should
+        type: string
+    contextTypeParam:
+      name: context_type
       in: query
-      description: "Returns documents with these category codes. Support list of Enums, seperated by comma (+)."
-      example: "JournalArticle"
+      description: "returns document with these contextTypes, separated by comma."
       required: false
       schema:
-        $ref: "#/components/schemas/CategoryEnum"
-    contributorIdParam:
-      name: contributor_id
+        type: string
+    contextTypeShouldParam:
+      name: context_type_should
       in: query
-      description: "person id (URI)."
+      description: "?"
+      required: false
+      schema:
+        type: string
+    contributorNameNotParam:
+      name: contributor_name_not
+      in: query
+      description: "returns document without Author's name"
+      required: false
+      schema:
+        type: string
+    contributorNameParam:
+      name: contributor_name
+      in: query
+      description: "returns document with Author's name "
+      required: false
+      schema:
+        type: string
+    contributorNameShouldParam:
+      name: contributor_name_should
+      in: query
+      description: "returns document with similar Author names"
       required: false
       schema:
         type: string
     contributorParam:
       name: contributor
       in: query
-      description: "returns document with Author's name or person id(URI)."
+      description: "returns document with Author's id(URI)."
       required: false
       schema:
         type: string
     contributorNotParam:
       name: contributor_not
       in: query
-      description: "returns document without Author's names or person ids(URI), seperated by comma (+)."
+      description: "returns document without Author's ids(URI), separated by comma."
       required: false
       schema:
         type: string
     contributorShouldParam:
       name: contributor_should
       in: query
-      description: "returns document with Author's names or person ids(URI), seperated by comma (+)."
+      description: "returns document with Author's ids(URI), separated by comma."
       required: false
       schema:
         type: string
@@ -620,7 +784,7 @@ components:
     courseShouldParam:
       name: course
       in: query
-      description: "returns documents without these course codes, seperated by comma (+)"
+      description: "returns documents with these course codes, separated by comma."
       example: "GENV395"
       required: false
       schema:
@@ -652,7 +816,7 @@ components:
     doiNotParam:
       name: doi_not
       in: query
-      description: "returns document without these DOI ids, seperated by comma (+)."
+      description: "returns document without these DOI ids, separated by comma."
       example: "10.1000/123456"
       required: false
       schema:
@@ -660,7 +824,7 @@ components:
     doiShouldParam:
       name: doi_should
       in: query
-      description: "returns document with these DOI ids, separated by comma (+)."
+      description: "returns document with these DOI ids, separated by comma."
       example: "10.1000/123456"
       required: false
       schema:
@@ -701,7 +865,7 @@ components:
     fundingIdentifierShouldParam:
       name: funding_identifier_should
       in: query
-      description: "Returns documents with the funding identifiers, also known as grant identifiers, seperated by comma (+)."
+      description: "Returns documents with the funding identifiers, also known as grant identifiers, separated by comma."
       example: "1234,4321"
       required: false
       schema:
@@ -717,7 +881,7 @@ components:
     fundingSourceNotParam:
       name: funding_source_not
       in: query
-      description: "returns document without these funding source codes, seperated by comma (+)."
+      description: "returns document without these funding source codes, separated by comma."
       example: "NFR"
       required: false
       schema:
@@ -725,7 +889,7 @@ components:
     fundingSourceShouldParam:
       name: funding_source_should
       in: query
-      description: "returns document with these funding source codes, seperated by comma (+)."
+      description: "returns document with these funding source codes, separated by comma."
       example: "NFR"
       required: false
       schema:
@@ -749,8 +913,16 @@ components:
     grantIdentifierShouldParam:
       name: grant_id_should
       in: query
-      description: "Returns documents with the grant id, also known as funding identifiers, seperated by comma (+)."
+      description: "Returns documents with the grant id, also known as funding identifiers, separated by comma."
       example: "1234,4321"
+      required: false
+      schema:
+        type: string
+    hasFileParam:
+      name: has_file
+      in: query
+      description: "Returns documents with visibleForNonOwner=true/false"
+      example: "hasFile=true ,hasFile=false"
       required: false
       schema:
         type: string
@@ -764,35 +936,35 @@ components:
     idNotParam:
       name: id_not
       in: query
-      description: "returns document without these identifiers (UUID), seperated by comma (+)."
+      description: "returns document without these identifiers (UUID), separated by comma."
       required: false
       schema:
         type: string
     idShouldParam:
       name: id_should
       in: query
-      description: "returns document with these identifiers (UUID), separated by comma (+)."
+      description: "returns document with these identifiers (UUID), separated by comma."
       required: false
       schema:
         type: string
     instanceTypeParam:
       name: instance_type
       in: query
-      description: "returns document with..."
+      description: "returns document with this instanceType."
       required: false
       schema:
         type: string
     instanceTypeNotParam:
       name: instance_type_not
       in: query
-      description: "returns document with..."
+      description: "returns document without this instanceType."
       required: false
       schema:
         type: string
     instanceTypeShouldParam:
       name: instance_type_should
       in: query
-      description: "returns document with..."
+      description: "returns document with these instanceTypes"
       required: false
       schema:
         type: string
@@ -807,7 +979,7 @@ components:
     institutionNotParam:
       name: institution_not
       in: query
-      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, seperated by comma (+)."
+      description: "returns document without Ids, names or acronyms of the institution the contributors belong to, separated by comma."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -815,7 +987,7 @@ components:
     institutionShouldParam:
       name: institution_should
       in: query
-      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, seperated by comma (+)."
+      description: "returns document with Ids, names or acronyms of the institution the contributors belong to, separated by comma."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -830,14 +1002,14 @@ components:
     isbnNotParam:
       name: isbn_not
       in: query
-      description: "returns document without these ISBN ids, seperated by comma (+)."
+      description: "returns document without these ISBN ids, separated by comma."
       required: false
       schema:
         type: string
     isbnShouldParam:
       name: isbn_should
       in: query
-      description: "returns document with these ISBN ids, seperated by comma (+)."
+      description: "returns document with these ISBN ids, separated by comma."
       required: false
       schema:
         type: string
@@ -851,44 +1023,39 @@ components:
     issnNotParam:
       name: issn_not
       in: query
-      description: "returns document without these issn, seperated by comma (+)."
+      description: "returns document without these issn, separated by comma."
       required: false
       schema:
         type: string
     issnShouldParam:
       name: issn_should
       in: query
-      description: "returns document with these issn, seperated by comma (+)."
+      description: "returns document with these issn, separated by comma."
       required: false
       schema:
         type: string
-    orcidParam:
-      name: orcid
+    licenseNotParam:
+      name: license_not
       in: query
-      description: "returns document with this ORCID id"
+      description: "returns document without this license key (without version)"
       required: false
+      example: "CC-BY-NC-ND"
       schema:
         type: string
-    orcidNotParam:
-      name: orcid_not
+    licenseParam:
+      name: license
       in: query
-      description: "returns document without these ORCID ids, seperated by comma (+)."
+      description: "returns document with this license key (without version)"
       required: false
+      example: "CC-BY-NC-ND"
       schema:
         type: string
-    orcidShouldParam:
-      name: orcid_should
+    licenseShouldParam:
+      name: license_should
       in: query
-      description: "returns document with these ORCID ids, seperated by comma (+)."
+      description: "returns document with these license key (without version)"
       required: false
-      schema:
-        type: string
-    langParam:
-      deprecated: true
-      name: lang
-      in: query
-      description: "Two letter language code. Using the 'lang' parameter, this is no longer in use, and are ignored"
-      required: false
+      example: "CC-BY-NC-ND"
       schema:
         type: string
     modifiedBeforeParam:
@@ -909,39 +1076,41 @@ components:
       schema:
         type: string
         format: date
-    orderParam:
-      name: order
+    orcidParam:
+      name: orcid
       in: query
-      description: "SortOrder is either 'asc' or 'desc'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
-      example: "asc"
+      description: "returns document with this ORCID id"
       required: false
       schema:
         type: string
-        enum: [ asc, desc ]
-    pageParam:
-      name: page
+    orcidNotParam:
+      name: orcid_not
       in: query
-      description: "Page number, zero based, see from and size."
-      example: "0"
+      description: "returns document without these ORCID ids, separated by comma."
       required: false
       schema:
-        type: number
-    fromParam:
-      name: from
+        type: string
+    orcidShouldParam:
+      name: orcid_should
       in: query
-      description: "Start result from item no. zero based [offset] is also accepted. Default is 0"
-      example: "0"
+      description: "returns document with these ORCID ids, separated by comma."
       required: false
       schema:
-        type: number
-    sizeParam:
-      name: size
+        type: string
+    parentPublicationParam:
+      name: parent_publication
       in: query
-      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15"
-      example: "15"
+      description: "returns document with this parentPublication."
       required: false
       schema:
-        type: number
+        type: string
+    parentPublicationShouldParam:
+      name: parent_publication_should
+      in: query
+      description: "returns document with these parentPublications"
+      required: false
+      schema:
+        type: string
     projectParam:
       name: project
       in: query
@@ -953,7 +1122,7 @@ components:
     projectNotParam:
       name: project_not
       in: query
-      description: "returns document without these project ids (URI), seperated by comma (+)."
+      description: "returns document without these project ids (URI), separated by comma."
       example: "NFR"
       required: false
       schema:
@@ -961,7 +1130,7 @@ components:
     projectShouldParam:
       name: project_should
       in: query
-      description: "returns document with these project ids (URI), seperated by comma (+)."
+      description: "returns document with these project ids (URI), separated by comma."
       example: "NFR"
       required: false
       schema:
@@ -969,7 +1138,7 @@ components:
     publicationLanguageParam:
       name: publication_language
       in: query
-      description: "returns document with these publication languages (URI), separated by comma (+)."
+      description: "returns document with these publication languages (URI), separated by comma."
       example: "http://lexvo.org/id/iso639-3/nob"
       required: false
       schema:
@@ -977,7 +1146,7 @@ components:
     publicationLanguageNotParam:
       name: publication_language_not
       in: query
-      description: "returns document without these publication languages (URI), separated by comma (+)."
+      description: "returns document without these publication languages (URI), separated by comma."
       example: "http://lexvo.org/id/iso639-3/nob"
       required: false
       schema:
@@ -985,7 +1154,7 @@ components:
     publicationLanguageShouldParam:
       name: publication_language_should
       in: query
-      description: "returns document with these publication languages codes (), separated by comma (+)."
+      description: "returns document with these publication languages codes (), separated by comma."
       example: "nob, eng, nor, etc"
       required: false
       schema:
@@ -998,10 +1167,24 @@ components:
       required: false
       schema:
         type: number
+    publicationYearBeforeParam:
+      name: license_should
+      in: query
+      description: "returns document with publication year prior to value."
+      required: false
+      schema:
+        type: string
+    publicationYearSinceParam:
+      name: license_should
+      in: query
+      description: "returns document with publication year starting from value."
+      required: false
+      schema:
+        type: string
     publicationYearShouldParam:
       name: publication_year_should
       in: query
-      description: "returns document with any of these publication years, seperated by comma (+)."
+      description: "returns document with any of these publication years, separated by comma."
       example: "2022 2023"
       required: false
       schema:
@@ -1015,6 +1198,15 @@ components:
       schema:
         type: string
         format: date
+    publishedBetweenParam:
+      name: license_should
+      in: query
+      description: "returns document with date between values."
+      example: "2005-03-17, 2010-01-01"
+      required: false
+      schema:
+        type: string
+        format: date
     publishedSinceParam:
       name: published_since
       in: query
@@ -1024,34 +1216,69 @@ components:
       schema:
         type: string
         format: date
-    queryParam:
-      name: query
+    publisherIdNotParam:
+      name: publisher_id_not
       in: query
-      description: "free text search, all words are searched for in all fields, only documents containing all words are returned"
+      description: "returns document without this Id."
       required: false
       schema:
         type: string
-    sortParam:
-      name: sort
+    publisherIdParam:
+      name: publisher_id
       in: query
-      description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
+      description: "returns document with this Id"
       required: false
-      example: "category:asc,created_date:desc"
       schema:
         type: string
-        enum:
-          - category:asc
-          - category:desc
-          - created_date:asc
-          - created_date:desc
-          - modified_date:asc
-          - modified_date:desc
-          - published_date:asc
-          - published_date:desc
-          - title:asc
-          - title:desc
-          - unit_id:asc
-          - unit_id:desc
+    publisherIdShouldParam:
+      name: publisher_id_should
+      in: query
+      description: "returns document with these Ids."
+      required: false
+      schema:
+        type: string
+    publisherNotParam:
+      name: publisher_not
+      in: query
+      description: "returns document without this publisher."
+      required: false
+      schema:
+        type: string
+    publisherParam:
+      name: publisher
+      in: query
+      description: "returns document with this publisher."
+      required: false
+      schema:
+        type: string
+    publisherShouldParam:
+      name: publisher_should
+      in: query
+      description: "returns document with these publishers."
+      required: false
+      schema:
+        type: string
+    seriesNotParam:
+      name: series_not
+      in: query
+      description: "returns document without this ID/name."
+      required: false
+      schema:
+        type: string
+    seriesParam:
+      name: series
+      in: query
+      description: "returns document with this ID/name."
+      required: false
+      schema:
+        type: string
+    seriesShouldParam:
+      name: series_should
+      in: query
+      description: "returns document with these ID/name."
+      required: false
+      schema:
+        type: string
     statusParam:
       name: status
       in: query
@@ -1071,7 +1298,7 @@ components:
     statusShouldParam:
       name: status_should
       in: query
-      description: "returns documents without any of the given statuses, separated by space (+)."
+      description: "returns documents without any of the given statuses, separated by comma."
       example: "PUBLISHED"
       required: false
       schema:
@@ -1079,45 +1306,52 @@ components:
     tagsParam:
       name: tags
       in: query
-      description: "returns document with..."
+      description: "returns document with these tags, separated by comma."
       required: false
       schema:
         type: string
     tagsNotParam:
       name: tags_not
       in: query
-      description: "returns document with..."
+      description: "returns document without these tags, separated by comma."
       required: false
       schema:
         type: string
     tagsShouldParam:
       name: tags_should
       in: query
-      description: "returns document with..."
+      description: "returns document with these tags, separated by comma."
       required: false
       schema:
         type: string
     titleParam:
       name: title
       in: query
-      description: "returns document with these words in the title"
-      example: "covid-19"
+      description: "returns document with these words in the title."
+      example: "covid-19 unsafe"
       required: false
       schema:
         type: string
     titleNotParam:
       name: title_not
       in: query
-      description: "returns document without these words in the title, seperated by comma (+)."
-      example: "covid-19"
+      description: "returns document without these words in the title."
+      example: "covid-19 safe"
       required: false
       schema:
         type: string
     titleShouldParam:
       name: title_should
       in: query
-      description: "returns document with any of these words in the title, seperated by comma (+)."
-      example: "covid-19"
+      description: "returns document with any of these words in the title."
+      example: "covid-19 save"
+      required: false
+      schema:
+        type: string
+    topLevelOrganizationParam:
+      name: top_level_organization
+      in: query
+      description: "returns documents with this reference."
       required: false
       schema:
         type: string
@@ -1132,7 +1366,7 @@ components:
     unitNotParam:
       name: unit_not
       in: query
-      description: "returns document without these words in the Id, seperated by comma (+)."
+      description: "returns document without these words in the Id, separated by comma."
       example: 185.53.18.10
       required: false
       schema:
@@ -1140,7 +1374,7 @@ components:
     unitShouldParam:
       name: unit_should
       in: query
-      description: "returns document with any of these words in the Id, seperated by comma (+)."
+      description: "returns document with any of these words in the Id, separated by comma."
       example: 185.53.18.10
       required: false
       schema:
@@ -1156,7 +1390,7 @@ components:
     userNotParam:
       name: user_not
       in: query
-      description: "returns document without these resource owners (user id (URI)), seperated by comma (+)."
+      description: "returns document without these resource owners (user id (URI)), separated by comma."
       example: "askeladd:185"
       required: false
       schema:
@@ -1164,7 +1398,7 @@ components:
     userShouldParam:
       name: user_should
       in: query
-      description: "returns document with any of these resource owners (user id (URI)), seperated by comma (+)."
+      description: "returns document with any of these resource owners (user id (URI)), separated by comma."
       example: "askeladd:185"
       required: false
       schema:
@@ -1206,8 +1440,7 @@ components:
       required: false
       schema:
         type: string
-
-    #---
+    #--- aliases - maybe delete?
     categoryParam:
       name: category
       in: query
@@ -1219,7 +1452,7 @@ components:
     categoryNotParam:
       name: category_not
       in: query
-      description: "Returns documents without these category codes. Support list of Enums, separated by comma (+)."
+      description: "Returns documents without these category codes. Support list of Enums, separated by comma."
       example: "JournalArticle"
       required: false
       schema:
@@ -1227,21 +1460,12 @@ components:
     categoryShouldParam:
       name: category_should
       in: query
-      description: "Returns documents with these category codes. Support list of Enums, separated by comma (+)."
+      description: "Returns documents with these category codes. Support list of Enums, separated by comma."
       example: "JournalArticle"
       required: false
       schema:
         $ref: "#/components/schemas/CategoryEnum"
-
-    langParam:
-      deprecated: true
-      name: lang
-      in: query
-      description: "Two letter language code. IGNORED, here to be compatible with CristinAPI"
-      required: false
-      schema:
-        type: string
-
+    #--- paging
     orderParam:
       name: order
       in: query
@@ -1303,6 +1527,15 @@ components:
           - title:desc
           - unit_id:asc
           - unit_id:desc
+    #--- not in use
+    langParam:
+      deprecated: true
+      name: lang
+      in: query
+      description: "Two letter language code. IGNORED, here to be compatible with CristinAPI"
+      required: false
+      schema:
+        type: string
 
   schemas:
     Publication:
@@ -1703,12 +1936,12 @@ components:
       description: The URI of the object ID
     CategoryEnum:
       type: string
-      enum: [AcademicArticle,AcademicChapter,AcademicLiteratureReview,AcademicMonograph,Architecture,ArtisticDesign,BookAbstracts,BookAnthology,BookMonograph,CaseReport,ChapterArticle,
-             ChapterConferenceAbstract,ChapterInReport,ConferenceAbstract,ConferenceLecture,ConferencePoster,ConferenceReport,DataManagementPlan,DataSet,DegreeBachelor,DegreeLicentiate,
-             DegreeMaster,DegreePhd,Encyclopedia,EncyclopediaChapter,ExhibitionCatalog,ExhibitionCatalogChapter,ExhibitionProduction,FeatureArticle,Introduction,JournalArticle,JournalCorrigendum,
-             JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
-             MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
-             PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts]
+      enum: [ AcademicArticle,AcademicChapter,AcademicLiteratureReview,AcademicMonograph,Architecture,ArtisticDesign,BookAbstracts,BookAnthology,BookMonograph,CaseReport,ChapterArticle,
+              ChapterConferenceAbstract,ChapterInReport,ConferenceAbstract,ConferenceLecture,ConferencePoster,ConferenceReport,DataManagementPlan,DataSet,DegreeBachelor,DegreeLicentiate,
+              DegreeMaster,DegreePhd,Encyclopedia,EncyclopediaChapter,ExhibitionCatalog,ExhibitionCatalogChapter,ExhibitionProduction,FeatureArticle,Introduction,JournalArticle,JournalCorrigendum,
+              JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
+              MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
+              PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts ]
   securitySchemes:
     CognitoUserPool:
       type: apiKey
