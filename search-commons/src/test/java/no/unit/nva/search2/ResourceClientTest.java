@@ -87,7 +87,7 @@ class ResourceClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 13;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 14;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -169,7 +169,7 @@ class ResourceClientTest {
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(4));
             assertThat(aggregations.get(HAS_PUBLIC_FILE).get(0).count(), is(20));
-            assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
+            assertThat(aggregations.get(LICENSE).get(0).count(), is(15));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));

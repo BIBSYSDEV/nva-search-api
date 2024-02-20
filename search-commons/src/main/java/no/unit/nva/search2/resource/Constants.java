@@ -21,7 +21,6 @@ import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
@@ -198,7 +197,8 @@ public final class Constants {
     public static NestedAggregationBuilder filesHierarchy() {
         var filter = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
         var bool = QueryBuilders.boolQuery().mustNot(filter);
-        return nestedBranchBuilder(HAS_PUBLIC_FILE, ASSOCIATED_ARTIFACTS)
+        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+                   .subAggregation(branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD))
                    .subAggregation(AggregationBuilders.filter(Boolean.FALSE.toString(), bool))
                    .subAggregation(AggregationBuilders.reverseNested(Boolean.TRUE.toString()));
     }

@@ -8,12 +8,13 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
@@ -62,20 +63,17 @@ public final class AggregationFormat {
         var childNode = objectNode.get(field);
         if (childNode.isObject()) {
             var nodeArray = JsonUtils.dtoObjectMapper.createArrayNode();
-            childNode.fieldNames().forEachRemaining(node -> processChildNodes(node, childNode, nodeArray));
+            childNode.fieldNames().forEachRemaining(value -> processChildNodes(field, childNode, nodeArray));
             objectNode.set(field, nodeArray);
         }
     }
 
     private static void processChildNodes(String field, JsonNode node, ArrayNode nodeArray) {
-        if (node.get(field).isObject()) {
-            var childNode = node.get(field);
-            var newNode = JsonUtils.dtoObjectMapper.createObjectNode();
-            if (nonNull(node.get(field)) && nonNull(childNode.get(Constants.DOC_COUNT))) {
-                newNode.put(Constants.DOC_COUNT, childNode.get(Constants.DOC_COUNT).asInt());
-                newNode.put(KEY, field);
-                nodeArray.add(newNode);
-            }
+        var newNode = JsonUtils.dtoObjectMapper.createObjectNode();
+        if (nonNull(node.get(Constants.DOC_COUNT))) {
+            newNode.put(Constants.DOC_COUNT, node.get(Constants.DOC_COUNT).asInt());
+            newNode.put(KEY, field);
+            nodeArray.add(newNode);
         }
     }
 
@@ -164,10 +162,11 @@ public final class AggregationFormat {
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
             SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
-            LICENSE, "/filter/license"
-        );
+            LICENSE, "/filter/associatedArtifacts/license",
+            NO_PUBLIC_FILE, "/filter/associatedArtifacts/false"
+            );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/hasPublicFile",
+            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/true",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",

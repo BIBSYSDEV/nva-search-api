@@ -1,5 +1,7 @@
 package no.unit.nva.search2.common.records;
 
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.net.URI;
@@ -40,6 +42,13 @@ final class FacetsBuilder {
     }
 
     private static URI createUriFilterByKey(String keyName, String keyValue, UriWrapper uriwrap) {
-        return uriwrap.addQueryParameter(keyName, keyValue).getUri();
+        if (keyName.equals(HAS_PUBLIC_FILE)) {
+            return uriwrap.addQueryParameter(HAS_PUBLIC_FILE, Boolean.TRUE.toString()).getUri();
+        }
+        if (keyName.equals(NO_PUBLIC_FILE)) {
+            return uriwrap.addQueryParameter(HAS_PUBLIC_FILE, Boolean.FALSE.toString()).getUri();
+        } else {
+            return uriwrap.addQueryParameter(keyName, keyValue).getUri();
+        }
     }
 }
