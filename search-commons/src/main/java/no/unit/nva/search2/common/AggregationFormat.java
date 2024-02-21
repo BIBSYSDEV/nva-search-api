@@ -39,7 +39,6 @@ import nva.commons.core.JacocoGenerated;
 public final class AggregationFormat {
 
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
-    public static final String ROOT = "root";
 
     @JacocoGenerated
     public AggregationFormat() {
@@ -112,10 +111,6 @@ public final class AggregationFormat {
     private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
         return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
                && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
-    }
-
-    private static boolean isRoot(Entry<String, JsonNode> entry) {
-        return ROOT.equals(entry.getKey());
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
