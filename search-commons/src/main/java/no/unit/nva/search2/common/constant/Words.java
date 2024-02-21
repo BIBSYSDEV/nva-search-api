@@ -19,6 +19,7 @@ public final class Words {
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTEXT_TYPE = "contextType";
     public static final String CONTEXT_TYPE_SERIES = "Series";
+    public static final String CONTEXT_TYPE_JOURNAL = "Journal";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";
