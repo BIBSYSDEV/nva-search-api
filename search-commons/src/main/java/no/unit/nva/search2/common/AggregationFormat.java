@@ -171,7 +171,7 @@ public final class AggregationFormat {
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
             CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
-            FUNDING_SOURCE, "/filter/fundings/id",
+            FUNDING_SOURCE, "/filter/fundings",
             TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id",
             SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
         );

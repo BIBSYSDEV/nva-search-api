@@ -182,6 +182,7 @@ public final class Constants {
         topLevelOrganisationsHierarchy(),
         scientificIndexHierarchy()
     );
+    public static final String UNIQUE_RESOURCES_COUNT = "unique_resources_count";
 
     private static NestedAggregationBuilder scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
@@ -203,14 +204,15 @@ public final class Constants {
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
-        return
-            nestedBranchBuilder(FUNDINGS, FUNDINGS)
-                .subAggregation(
-                    branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
-                        .subAggregation(
-                            labels(jsonPath(FUNDINGS, SOURCE))
-                        )
-                );
+        return nestedBranchBuilder(FUNDINGS, FUNDINGS)
+                   .subAggregation(
+                       AggregationBuilders
+                           .terms(ID)
+                           .field(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD))
+                           .subAggregation(AggregationBuilders.cardinality(UNIQUE_RESOURCES_COUNT).field(jsonPath(ID, KEYWORD)))
+                           .subAggregation(labels(jsonPath(FUNDINGS, SOURCE))
+                           )
+                   );
     }
 
     public static NestedAggregationBuilder entityDescriptionHierarchy() {
