@@ -74,12 +74,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/TicketSearchResponse"
 
-  /resources2:
+  /resources:
     get:
       tags:
         - external
       description: "Search for public available publications by given criteria"
       parameters:
+        - $ref: '#/components/parameters/aggregationParam'
         - $ref: '#/components/parameters/abstractNotParam'
         - $ref: '#/components/parameters/abstractParam'
         - $ref: '#/components/parameters/abstractShouldParam'
@@ -104,8 +105,6 @@ paths:
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiShouldParam'
-        - $ref: '#/components/parameters/fieldsParam'
-        - $ref: '#/components/parameters/fromParam'
         - $ref: '#/components/parameters/fundingIdentifierNotParam'
         - $ref: '#/components/parameters/fundingIdentifierParam'
         - $ref: '#/components/parameters/fundingIdentifierShouldParam'
@@ -132,7 +131,6 @@ paths:
         - $ref: '#/components/parameters/issnNotParam'
         - $ref: '#/components/parameters/issnParam'
         - $ref: '#/components/parameters/issnShouldParam'
-        - $ref: '#/components/parameters/langParam'
         - $ref: '#/components/parameters/licenseNotParam'
         - $ref: '#/components/parameters/licenseParam'
         - $ref: '#/components/parameters/licenseShouldParam'
@@ -141,8 +139,6 @@ paths:
         - $ref: '#/components/parameters/orcidNotParam'
         - $ref: '#/components/parameters/orcidParam'
         - $ref: '#/components/parameters/orcidShouldParam'
-        - $ref: '#/components/parameters/orderParam'
-        - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/parentPublicationParam'
         - $ref: '#/components/parameters/parentPublicationShouldParam'
         - $ref: '#/components/parameters/projectNotParam'
@@ -171,8 +167,6 @@ paths:
         - $ref: '#/components/parameters/seriesNotParam'
         - $ref: '#/components/parameters/seriesParam'
         - $ref: '#/components/parameters/seriesShouldParam'
-        - $ref: '#/components/parameters/sizeParam'
-        - $ref: '#/components/parameters/sortParam'
         - $ref: '#/components/parameters/statusNotParam'
         - $ref: '#/components/parameters/statusParam'
         - $ref: '#/components/parameters/statusShouldParam'
@@ -192,6 +186,13 @@ paths:
         - $ref: '#/components/parameters/userNotParam'
         - $ref: '#/components/parameters/userParam'
         - $ref: '#/components/parameters/userShouldParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -224,11 +225,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-  /resources:
+  /resources2:
     get:
       tags:
         - external
       description: "Search for public available publications by given criteria"
+      deprecated: true
       parameters:
         - $ref: '#/components/parameters/abstractNotParam'
         - $ref: '#/components/parameters/abstractParam'
@@ -665,46 +667,77 @@ components:
     abstractParam:
       name: abstract
       in: query
-      description: "returns document with..."
+      description: "returns document with these words in the abstract..."
       required: false
+      examples:
+        documents with all words:
+          value: covid threat
+        documents with either word:
+          value: covid, threat
       schema:
         type: string
     abstractNotParam:
       name: abstract_not
       in: query
-      description: "returns document with..."
+      description: "returns document without these words in the abstract..."
       required: false
+      examples:
+        documents with all words:
+          value: covid threat
+        documents with either word:
+          value: covid, threat
       schema:
         type: string
     abstractShouldParam:
       name: abstract_should
       in: query
-      description: "Returns documents with this category code, only one category code is allowed."
-      example: "JournalArticle"
+      description: "returns document with these words in the abstract..."
       required: false
+      examples:
+        documents with all words:
+          value: covid threat
+        documents with either word:
+          value: covid, threat
       schema:
-        $ref: "#/components/schemas/CategoryEnum"
+        type: string
+    aggregationParam:
+      name: aggregation
+      in: query
+      description: "Aggregations to include in the search"
+      required: false
+      examples:
+        all aggregations:
+          value: all
+        specific aggregations1:
+          value: [type, course, series, status, license]
+        specific aggregations2:
+          value: "type, course, series, status, license"
+      schema:
+        $ref: '#/components/schemas/AggregationNames'
     contextTypeNotParam:
       name: context_type_not
       in: query
       description: "returns document without these contextTypes, separated by comma."
       required: false
+      example: "Anthology"
       schema:
-        type: string
+        $ref: '#/components/schemas/ContextType'
     contextTypeParam:
       name: context_type
       in: query
       description: "returns document with these contextTypes, separated by comma."
       required: false
+      example: "Degree"
       schema:
-        type: string
+        $ref: '#/components/schemas/ContextType'
     contextTypeShouldParam:
       name: context_type_should
       in: query
-      description: "?"
+      description: "returns document with these contextTypes, separated by comma."
       required: false
+      example: Book
       schema:
-        type: string
+        $ref: '#/components/schemas/ContextType'
     contributorNameNotParam:
       name: contributor_name_not
       in: query
@@ -1445,7 +1478,7 @@ components:
       name: category
       in: query
       description: "Returns documents with this category code, only one category code is allowed."
-      example: "JournalArticle"
+      example: JournalArticle
       required: false
       schema:
         $ref: "#/components/schemas/CategoryEnum"
@@ -1453,7 +1486,7 @@ components:
       name: category_not
       in: query
       description: "Returns documents without these category codes. Support list of Enums, separated by comma."
-      example: "JournalArticle"
+      example: JournalArticle
       required: false
       schema:
         $ref: "#/components/schemas/CategoryEnum"
@@ -1511,7 +1544,13 @@ components:
       in: query
       description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
       required: false
-      example: "category:asc,created_date:desc"
+      examples:
+        ascending:
+          value: "category:asc"
+        descending:
+            value: "category:desc"
+        composite:
+          value: "category:asc,created_date:desc"
       schema:
         type: string
         enum:
@@ -1934,6 +1973,10 @@ components:
       type: string
       pattern: 'https:\/\/.*$'
       description: The URI of the object ID
+    AggregationNames:
+      type: string
+      enum: [ all, type, course, series, status, license, publisher, journal,
+        contributor, context_type, funding_source, top_level_organization, scientific_index ]
     CategoryEnum:
       type: string
       enum: [ AcademicArticle,AcademicChapter,AcademicLiteratureReview,AcademicMonograph,Architecture,ArtisticDesign,BookAbstracts,BookAnthology,BookMonograph,CaseReport,ChapterArticle,
@@ -1942,6 +1985,9 @@ components:
               JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
               MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
               PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts ]
+    ContextType:
+      type: string
+      enum: [ "Anthology","Artistic","Book","Degree","Event","ExhibitionContent","Journal","MediaContribution","MediaContributionPeriodical","Report","UnconfirmedJournal","UnconfirmedMediaContributionPeriodical"]
   securitySchemes:
     CognitoUserPool:
       type: apiKey

@@ -151,8 +151,8 @@ class ResourceClientTest {
 
             var uri2 =
                 URI.create(REQUEST_BASE_URL +
-                           "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status,"
-                           + "scientificIndex,hasPublicFile,license");
+                           "aggregation=entityDescription,associatedArtifacts,scientificIndex,fundings," +
+                    "topLevelOrganizations,status");
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)

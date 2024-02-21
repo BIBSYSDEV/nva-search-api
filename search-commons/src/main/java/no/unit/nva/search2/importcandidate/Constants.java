@@ -6,7 +6,6 @@ import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
-import static no.unit.nva.search2.resource.Constants.filesHierarchy;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,8 +48,7 @@ public final class Constants {
         branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
         branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
         importStatusHierarchy(),
-        topLevelOrganisationsHierarchy(),
-        filesHierarchy()
+        topLevelOrganisationsHierarchy()
     );
 
     private static TermsAggregationBuilder importStatusHierarchy() {

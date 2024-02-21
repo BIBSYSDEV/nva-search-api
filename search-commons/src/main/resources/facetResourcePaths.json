@@ -1,0 +1,15 @@
+{
+  "type": "/filter/entityDescription/reference/publicationInstance/type",
+  "course": "/filter/entityDescription/reference/publicationContext/course",
+  "series": "/filter/entityDescription/reference/publicationContext/series/id",
+  "publisher": "/filter/entityDescription/reference/publicationContext/publisher",
+  "journal": "/filter/entityDescription/reference/publicationContext/journal/id",
+  "contributor": "/filter/entityDescription/contributor/id",
+  "contextType": "/filter/entityDescription/reference/publicationContext/contextType",
+  "fundingSource": "/filter/fundings/id",
+  "topLevelOrganization": "/filter/topLevelOrganizations/id",
+  "status": "/filter/status",
+  "license": "/filter/associatedArtifacts/license",
+  "hasPublicFile": "/filter/associatedArtifacts/hasPublicFile",
+  "scientificIndex": "/filter/scientificIndex/year"
+}

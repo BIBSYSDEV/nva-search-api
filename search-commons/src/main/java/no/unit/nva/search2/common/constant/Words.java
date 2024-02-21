@@ -100,6 +100,7 @@ public final class Words {
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
+    public static final String VISIBLE_FOR_NO_NOWNER = "visibleForNonOwner";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
 
