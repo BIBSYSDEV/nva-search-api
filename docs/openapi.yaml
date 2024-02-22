@@ -78,11 +78,11 @@ paths:
     get:
       tags:
         - external
-      description: "<h3>Search for public available publications by given criteria</h3>
+      description: '<h3>Search for public available publications by given criteria</h3>
       <p>All parameters documented with <code>snake_case</code>, but <code>camelCase</code> is also accepted. 
       They accept more than one value, each value must be separated by a <code>comma</code>. 
       If you use <code>space</code> between search phrases, it will usually be interpreted as words that should be found in the text.
-      The more hits it gets, the closer to the top of search result an item will be.</p>"
+      The more hits it gets, the closer to the top of search result an item will be.</p>'
       parameters:
         - $ref: '#/components/parameters/aggregationParam'
         - $ref: '#/components/parameters/abstractNotParam'
@@ -725,7 +725,7 @@ components:
       required: false
       example: "Anthology"
       schema:
-        $ref: '#/components/schemas/ContextType'
+        $ref: '#/components/schemas/ContextValues'
     contextTypeParam:
       name: context_type
       in: query
@@ -733,7 +733,7 @@ components:
       required: false
       example: "Degree"
       schema:
-        $ref: '#/components/schemas/ContextType'
+        $ref: '#/components/schemas/ContextValues'
     contextTypeShouldParam:
       name: context_type_should
       in: query
@@ -741,11 +741,12 @@ components:
       required: false
       example: Book
       schema:
-        $ref: '#/components/schemas/ContextType'
+        $ref: '#/components/schemas/ContextValues'
     contributorNameNotParam:
       name: contributor_name_not
       in: query
       description: "Returns document without Author's name."
+      example: "John Doe"
       required: false
       schema:
         type: string
@@ -753,6 +754,7 @@ components:
       name: contributor_name
       in: query
       description: "Returns document with Author's name."
+      example: "John Doe"
       required: false
       schema:
         type: string
@@ -760,6 +762,7 @@ components:
       name: contributor_name_should
       in: query
       description: "Returns document with similar Author names."
+      example: "John Doe"
       required: false
       schema:
         type: string
@@ -767,6 +770,7 @@ components:
       name: contributor
       in: query
       description: "Returns document with Author's id(URI)."
+      example: 'https://api.dev.nva.aws.unit.no/cristin/person/1306838'
       required: false
       schema:
         type: string
@@ -774,6 +778,7 @@ components:
       name: contributor_not
       in: query
       description: "Returns document without Author's ids(URI)."
+      example: 'https://api.dev.nva.aws.unit.no/cristin/person/1306838'
       required: false
       schema:
         type: string
@@ -781,6 +786,7 @@ components:
       name: contributor_should
       in: query
       description: "Returns document with Author's ids(URI)."
+      example: '1306838'
       required: false
       schema:
         type: string
@@ -811,7 +817,7 @@ components:
       schema:
         type: string
     courseNotParam:
-      name: course
+      name: course_not
       in: query
       description: "Returns documents without this course code."
       example: "GENV395"
@@ -819,7 +825,7 @@ components:
       schema:
         type: string
     courseShouldParam:
-      name: course
+      name: course_should
       in: query
       description: "Returns documents with these course codes."
       example: "GENV395"
@@ -971,6 +977,7 @@ components:
       required: false
       schema:
         type: string
+        format: uuid
     idNotParam:
       name: id_not
       in: query
@@ -978,6 +985,7 @@ components:
       required: false
       schema:
         type: string
+        format: uuid
     idShouldParam:
       name: id_should
       in: query
@@ -985,32 +993,42 @@ components:
       required: false
       schema:
         type: string
+        format: uuid
     instanceTypeParam:
       name: instance_type
       in: query
       description: "Returns document with this instanceType."
+      example: JournalArticle
       required: false
       schema:
-        type: string
+        $ref: "#/components/schemas/CategoryEnum"
     instanceTypeNotParam:
       name: instance_type_not
       in: query
       description: "Returns document without this instanceType."
+      example: JournalArticle
       required: false
       schema:
-        type: string
+        $ref: "#/components/schemas/CategoryEnum"
     instanceTypeShouldParam:
       name: instance_type_should
       in: query
       description: "Returns document with these instanceTypes."
+      example: JournalArticle
       required: false
       schema:
-        type: string
+        $ref: "#/components/schemas/CategoryEnum"
     institutionParam:
       name: institution
       in: query
-      description: "Returns document with Id, name or acronym of the institution the contributors belong to."
-      example: [ 185, UiO, University of Oslo ]
+      description: "Returns document with this institution id (URI)."
+      examples:
+        Id:
+          value: "185"
+        Acronyms:
+          value: "UiO"
+        Name:
+          value: "University of Oslo"
       required: false
       schema:
         type: string
@@ -1018,7 +1036,13 @@ components:
       name: institution_not
       in: query
       description: "Returns document without Ids, names or acronyms of the institution the contributors belong to."
-      example: [ 185, UiO, University of Oslo ]
+      examples:
+        Id:
+          value: "185"
+        Acronyms:
+          value: "UiO"
+        Name:
+          value: "University of Oslo"
       required: false
       schema:
         type: string
@@ -1026,7 +1050,13 @@ components:
       name: institution_should
       in: query
       description: "Returns document with Ids, names or acronyms of the institution the contributors belong to."
-      example: [ 185, UiO, University of Oslo ]
+      examples:
+        Id:
+          value: "185"
+        Acronyms:
+          value: "UiO"
+        Name:
+          value: "University of Oslo"
       required: false
       schema:
         type: string
@@ -1034,6 +1064,7 @@ components:
       name: isbn
       in: query
       description: "Returns document with this ISBN id"
+      example: "978-3-16-148410-0"
       required: false
       schema:
         type: string
@@ -1041,6 +1072,7 @@ components:
       name: isbn_not
       in: query
       description: "Returns document without these ISBN ids."
+      example: "978-3-16-148410-0"
       required: false
       schema:
         type: string
@@ -1048,6 +1080,7 @@ components:
       name: isbn_should
       in: query
       description: "Returns document with these ISBN ids."
+      example: "978-3-16-148410-0"
       required: false
       schema:
         type: string
@@ -1055,6 +1088,7 @@ components:
       name: issn
       in: query
       description: "Returns document with this issn"
+      example: "1234-5678"
       required: false
       schema:
         type: string
@@ -1062,6 +1096,7 @@ components:
       name: issn_not
       in: query
       description: "Returns document without these issn."
+      example: "1234-5678"
       required: false
       schema:
         type: string
@@ -1069,6 +1104,7 @@ components:
       name: issn_should
       in: query
       description: "Returns document with these issn."
+      example: "1234-5678"
       required: false
       schema:
         type: string
@@ -1077,25 +1113,25 @@ components:
       in: query
       description: "Returns document without this license key (without version)."
       required: false
-      example: "CC-BY-NC-ND"
+      example: "CC BY-NC-ND"
       schema:
-        type: string
+        $ref: "#/components/schemas/LicenseValues"
     licenseParam:
       name: license
       in: query
       description: "Returns document with this license key (without version)."
       required: false
-      example: "CC-BY-NC-ND"
+      example: "CC BY-NC-ND"
       schema:
-        type: string
+        $ref: "#/components/schemas/LicenseValues"
     licenseShouldParam:
       name: license_should
       in: query
       description: "Returns document with these license key (without version)."
       required: false
-      example: "CC-BY-NC-ND"
+      example: "CC BY-NC-ND"
       schema:
-        type: string
+        $ref: "#/components/schemas/LicenseValues"
     modifiedBeforeParam:
       name: modified_before
       in: query
@@ -1118,6 +1154,7 @@ components:
       name: orcid
       in: query
       description: "Returns document with this ORCID id."
+      example: "0000-0002-1825-0097"
       required: false
       schema:
         type: string
@@ -1125,6 +1162,7 @@ components:
       name: orcid_not
       in: query
       description: "Returns document without these ORCID ids."
+      example: "0000-0002-1825-0097"
       required: false
       schema:
         type: string
@@ -1132,6 +1170,7 @@ components:
       name: orcid_should
       in: query
       description: "Returns document with these ORCID ids."
+      example: "0000-0002-1825-0097"
       required: false
       schema:
         type: string
@@ -1206,19 +1245,21 @@ components:
       schema:
         type: number
     publicationYearBeforeParam:
-      name: license_should
+      name: publication_year_before
       in: query
       description: "Returns document with publication year prior to value."
       required: false
       schema:
         type: string
+        format: date
     publicationYearSinceParam:
-      name: license_should
+      name: publication_year_since
       in: query
       description: "Returns document with publication year starting from value."
       required: false
       schema:
         type: string
+        format: date
     publicationYearShouldParam:
       name: publication_year_should
       in: query
@@ -1237,7 +1278,7 @@ components:
         type: string
         format: date
     publishedBetweenParam:
-      name: license_should
+      name: published_between
       in: query
       description: "Returns document with date between values."
       example: "2005-03-17, 2010-01-01"
@@ -1559,7 +1600,8 @@ components:
       schema:
         type: string
         enum:
-          - category
+          - category:asc
+          - category:desc
           - created_date
           - modified_date
           - published_date
@@ -1902,8 +1944,12 @@ components:
           pattern: 'https:\/\/.*$'
           description: Link to previous page of results, null if this is the first page
         aggregations:
+          description: 'a (key, List<Facet>) map. '
           type: object
-          description: Entity containing the different facets hit by the search, null if response is beyond the first page.
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/Facet'
         '@context':
           $ref: '#/components/schemas/Context'
     PagedPublicationSearchResponse:
@@ -1912,12 +1958,12 @@ components:
         - type: object
           required:
             - hits
-          properties:
-            hits:
-              type: array
-              description: Publication search results (numberOf = [size])
-              items:
-                $ref: '#/components/schemas/Publication'
+      properties:
+        hits:
+          type: array
+          description: Publication search results (numberOf = [size])
+          items:
+            $ref: '#/components/schemas/Publication'
     PagedImportCandidateSearchResponse:
       allOf: # Combines PagedSearchResponse with ImportCandidate hits
         - $ref: '#/components/schemas/PagedSearchResponse'
@@ -1972,6 +2018,23 @@ components:
       type: string
       pattern: 'https:\/\/.*$'
       description: The URI of the object ID
+    Facet:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The URI of the object ID
+        key:
+          type: string
+          description: The key of the bucket
+        count:
+          type: integer
+          description: The number of documents in the bucket
+        labels:
+          type: object
+          description: The labels of the bucket
+          additionalProperties:
+            type: string
     AggregationNames:
       type: string
       enum: [ all, none, associatedArtifact, entityDescription, fundingSource, status, topLevelOrganisations, scientificIndex ]
@@ -1983,9 +2046,12 @@ components:
               JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
               MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
               PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts ]
-    ContextType:
+    ContextValues:
       type: string
       enum: [ Anthology,Artistic,Book,Degree,Event,ExhibitionContent,Journal,MediaContribution,MediaContributionPeriodical,Report,UnconfirmedJournal,UnconfirmedMediaContributionPeriodical ]
+    LicenseValues:
+      type: string
+      enum: [ 'CC BY', 'CC BY-NC', 'CC BY-NC-ND', 'CC BY-NC-SA', 'CC BY-ND', 'CC BY-SA', 'CC0' ]
   securitySchemes:
     CognitoUserPool:
       type: apiKey
