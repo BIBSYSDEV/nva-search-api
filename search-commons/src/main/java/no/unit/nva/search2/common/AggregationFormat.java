@@ -176,10 +176,11 @@ public final class AggregationFormat {
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
             SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license"
-        );
+            LICENSE, "/filter/associatedArtifacts/license",
+            NO_PUBLIC_FILE, "/filter/associatedArtifacts/false"
+            );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasFile",
+            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/true",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
