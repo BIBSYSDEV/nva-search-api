@@ -10,7 +10,7 @@ paths:
       parameters:
         - in: query
           name: viewingScope
-          description: 'Only return tickets with a resource owner in one of the selected organisation. Including their sub-units. Formated as a comma separated list of affiliations ids.'
+          description: 'Only return tickets with a resource owner in one of the selected organisation. Including their sub-units. Formatted as a comma separated list of affiliations ids.'
           required: false
           schema:
             type: string
@@ -269,9 +269,9 @@ paths:
         - $ref: '#/components/parameters/fundingSourceNotParam'
         - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
-        #        - $ref: '#/components/parameters/grantIdentifierNotParam'
-        #        - $ref: '#/components/parameters/grantIdentifierParam'
-        #        - $ref: '#/components/parameters/grantIdentifierShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/hasFileParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idParam'
@@ -417,9 +417,9 @@ paths:
         - $ref: '#/components/parameters/fundingSourceNotParam'
         - $ref: '#/components/parameters/fundingSourceParam'
         - $ref: '#/components/parameters/fundingSourceShouldParam'
-        #        - $ref: '#/components/parameters/grantIdentifierNotParam'
-        #        - $ref: '#/components/parameters/grantIdentifierParam'
-        #        - $ref: '#/components/parameters/grantIdentifierShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
         - $ref: '#/components/parameters/hasFileParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/idParam'
@@ -1985,7 +1985,7 @@ components:
               PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts ]
     ContextType:
       type: string
-      enum: [ "Anthology","Artistic","Book","Degree","Event","ExhibitionContent","Journal","MediaContribution","MediaContributionPeriodical","Report","UnconfirmedJournal","UnconfirmedMediaContributionPeriodical" ]
+      enum: [ Anthology,Artistic,Book,Degree,Event,ExhibitionContent,Journal,MediaContribution,MediaContributionPeriodical,Report,UnconfirmedJournal,UnconfirmedMediaContributionPeriodical ]
   securitySchemes:
     CognitoUserPool:
       type: apiKey
