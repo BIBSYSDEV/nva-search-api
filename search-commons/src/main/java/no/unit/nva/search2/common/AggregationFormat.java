@@ -39,7 +39,6 @@ import nva.commons.core.JacocoGenerated;
 public final class AggregationFormat {
 
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
-    public static final String ROOT = "root";
 
     @JacocoGenerated
     public AggregationFormat() {
@@ -177,11 +176,10 @@ public final class AggregationFormat {
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
             SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license",
-            NO_PUBLIC_FILE, "/filter/associatedArtifacts/false"
-            );
+            LICENSE, "/filter/associatedArtifacts/license"
+        );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/true",
+            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",
