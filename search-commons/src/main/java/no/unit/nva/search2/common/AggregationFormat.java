@@ -114,10 +114,6 @@ public final class AggregationFormat {
                && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
-    private static boolean isRoot(Entry<String, JsonNode> entry) {
-        return ROOT.equals(entry.getKey());
-    }
-
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
         return Constants.facetResourcePaths
             .entrySet().stream()
