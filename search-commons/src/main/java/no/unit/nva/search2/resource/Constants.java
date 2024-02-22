@@ -177,7 +177,7 @@ public final class Constants {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
-        filesHierarchy(),
+        associatedArtifactsHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
         publishStatusHierarchy(),
@@ -189,30 +189,37 @@ public final class Constants {
 
     private static NestedAggregationBuilder scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
-            .subAggregation(branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD))
-            .subAggregation(branchBuilder(STATUS, SCIENTIFIC_INDEX, STATUS, KEYWORD));
+            .subAggregation(
+                branchBuilder(YEAR, SCIENTIFIC_INDEX, YEAR, KEYWORD)
+                    .subAggregation(
+                        branchBuilder(NAME, SCIENTIFIC_INDEX, STATUS, KEYWORD)
+                    )
+            );
     }
 
     private static TermsAggregationBuilder publishStatusHierarchy() {
         return branchBuilder(STATUS, STATUS, KEYWORD);
     }
 
-    public static NestedAggregationBuilder filesHierarchy() {
-        var filter = new TermQueryBuilder(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
-        var bool = QueryBuilders.boolQuery().mustNot(filter);
-        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                   .subAggregation(branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD))
-                   .subAggregation(AggregationBuilders.filter(Boolean.FALSE.toString(), bool))
-                   .subAggregation(AggregationBuilders.reverseNested(Boolean.TRUE.toString()));
+    public static NestedAggregationBuilder associatedArtifactsHierarchy() {
+        return
+            nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+                .subAggregation(visibleForNonOwners())
+                .subAggregation(license());
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
-        return nestedBranchBuilder(FUNDINGS, FUNDINGS)
-            .subAggregation(branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
-                                .subAggregation(labels(jsonPath(FUNDINGS, SOURCE)))
-                                .subAggregation(AggregationBuilders.reverseNested(ROOT)
-                                                    .subAggregation(uniquePublications())
-            ));
+        return
+            nestedBranchBuilder(FUNDINGS, FUNDINGS)
+                .subAggregation(
+                    branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
+                        .subAggregation(
+                            labels(jsonPath(FUNDINGS, SOURCE))
+                        )
+                        .subAggregation(AggregationBuilders.reverseNested(ROOT)
+                            .subAggregation(uniquePublications())
+                        )
+                );
     }
 
     private static CardinalityAggregationBuilder uniquePublications() {
@@ -336,6 +343,18 @@ public final class Constants {
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+
+    }
+
+    private static TermsAggregationBuilder license() {
+        return branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD);
+    }
+
+    private static TermsAggregationBuilder visibleForNonOwners() {
+        return branchBuilder("hasFile", ASSOCIATED_ARTIFACTS, "visibleForNonOwners")
+            .subAggregation(AggregationBuilders.reverseNested(ROOT)
+                .subAggregation(uniquePublications())
+            );
     }
 
     @JacocoGenerated
