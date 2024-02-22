@@ -671,7 +671,7 @@ components:
     abstractParam:
       name: abstract
       in: query
-      description: "Returns document with these words in the abstract..."
+      description: "Returns document with these words in the abstract."
       required: false
       examples:
         documents with all words:
@@ -683,7 +683,7 @@ components:
     abstractNotParam:
       name: abstract_not
       in: query
-      description: "Returns document without these words in the abstract..."
+      description: "Returns document without these words in the abstract."
       required: false
       examples:
         documents with all words:
@@ -695,7 +695,7 @@ components:
     abstractShouldParam:
       name: abstract_should
       in: query
-      description: "Returns document with these words in the abstract..."
+      description: "Returns document with these words in the abstract."
       required: false
       examples:
         documents with all words:
@@ -707,7 +707,7 @@ components:
     aggregationParam:
       name: aggregation
       in: query
-      description: "Aggregations to include in the search"
+      description: "Aggregations to include in the search."
       required: false
       examples:
         all aggregations:
@@ -745,21 +745,21 @@ components:
     contributorNameNotParam:
       name: contributor_name_not
       in: query
-      description: "Returns document without Author's name"
+      description: "Returns document without Author's name."
       required: false
       schema:
         type: string
     contributorNameParam:
       name: contributor_name
       in: query
-      description: "Returns document with Author's name "
+      description: "Returns document with Author's name."
       required: false
       schema:
         type: string
     contributorNameShouldParam:
       name: contributor_name_should
       in: query
-      description: "Returns document with similar Author names"
+      description: "Returns document with similar Author names."
       required: false
       schema:
         type: string
@@ -787,7 +787,7 @@ components:
     createdBeforeParam:
       name: created_before
       in: query
-      description: "Results created before and inclusive the given date, (yyyy-mm-dd)"
+      description: "Results created before and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
       schema:
@@ -796,7 +796,7 @@ components:
     createdSinceParam:
       name: created_since
       in: query
-      description: "Results created since and inclusive the given date, (yyyy-mm-dd)"
+      description: "Results created since and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
       schema:
@@ -805,7 +805,7 @@ components:
     courseParam:
       name: course
       in: query
-      description: "Returns documents with this course code"
+      description: "Returns documents with this course code."
       example: "GENV395"
       required: false
       schema:
@@ -813,7 +813,7 @@ components:
     courseNotParam:
       name: course
       in: query
-      description: "Returns documents without this course code"
+      description: "Returns documents without this course code."
       example: "GENV395"
       required: false
       schema:
@@ -829,7 +829,7 @@ components:
     cristinIdentifierParam:
       name: cristin_identifier
       in: query
-      description: "Returns documents with the cristin identifier"
+      description: "Returns documents with the cristin identifier."
       example: "1234"
       required: false
       schema:
@@ -837,7 +837,7 @@ components:
     scopusIdentifierParam:
       name: scopus_identifier
       in: query
-      description: "Returns documents with the cristin identifier"
+      description: "Returns documents with the cristin identifier."
       example: "1234"
       required: false
       schema:
@@ -845,7 +845,7 @@ components:
     doiParam:
       name: doi
       in: query
-      description: "Returns document with this DOI id"
+      description: "Returns document with this DOI id."
       example: "10.1000/123456"
       required: false
       schema:
@@ -878,7 +878,7 @@ components:
     fundingParam:
       name: funding
       in: query
-      description: "Funding source code e.g: NFR, and project_code together separated by ':'"
+      description: "Funding source code e.g: NFR, and project_code together separated by ':'."
       example: "NFR:1234"
       required: false
       schema:
@@ -886,7 +886,7 @@ components:
     fundingIdentifierParam:
       name: funding_identifier
       in: query
-      description: "Returns documents with the funding identifier, also known as grant identifier"
+      description: "Returns documents with the funding identifier, also known as grant identifier."
       example: "1234"
       required: false
       schema:
@@ -894,7 +894,7 @@ components:
     fundingIdentifierNotParam:
       name: funding_identifier_not
       in: query
-      description: "Returns documents without the funding identifier, also known as grant identifier"
+      description: "Returns documents without the funding identifier, also known as grant identifier."
       example: "1234"
       required: false
       schema:
@@ -910,7 +910,7 @@ components:
     fundingSourceParam:
       name: funding_source
       in: query
-      description: "Returns document with this funding source code or project code"
+      description: "Returns document with this funding source code or project code."
       example: "NFR"
       required: false
       schema:
@@ -934,7 +934,7 @@ components:
     grantIdentifierParam:
       name: grant_id
       in: query
-      description: "Returns documents with the grant id, also known as funding identifier"
+      description: "Returns documents with the grant id, also known as funding identifier."
       example: "1234"
       required: false
       schema:
@@ -942,7 +942,7 @@ components:
     grantIdentifierNotParam:
       name: grant_id_not
       in: query
-      description: "Returns documents without the grant id, also known as funding identifier"
+      description: "Returns documents without the grant id, also known as funding identifier."
       example: "1234"
       required: false
       schema:
@@ -958,15 +958,16 @@ components:
     hasFileParam:
       name: has_file
       in: query
-      description: "Returns documents with visibleForNonOwner=true/false"
-      example: "hasFile=true ,hasFile=false"
+      description: "Returns documents with visibleForNonOwner=true/false."
+      example: "true"
       required: false
       schema:
-        type: string
+        type: boolean
+        enum: [ true, false ]
     idParam:
       name: id
       in: query
-      description: "Returns document with the identifier (UUID)"
+      description: "Returns document with the identifier (UUID)."
       required: false
       schema:
         type: string
@@ -1001,14 +1002,14 @@ components:
     instanceTypeShouldParam:
       name: instance_type_should
       in: query
-      description: "Returns document with these instanceTypes"
+      description: "Returns document with these instanceTypes."
       required: false
       schema:
         type: string
     institutionParam:
       name: institution
       in: query
-      description: "Returns document with Id, name or acronym of the institution the contributors belong to"
+      description: "Returns document with Id, name or acronym of the institution the contributors belong to."
       example: [ 185, UiO, University of Oslo ]
       required: false
       schema:
@@ -1074,7 +1075,7 @@ components:
     licenseNotParam:
       name: license_not
       in: query
-      description: "Returns document without this license key (without version)"
+      description: "Returns document without this license key (without version)."
       required: false
       example: "CC-BY-NC-ND"
       schema:
@@ -1082,7 +1083,7 @@ components:
     licenseParam:
       name: license
       in: query
-      description: "Returns document with this license key (without version)"
+      description: "Returns document with this license key (without version)."
       required: false
       example: "CC-BY-NC-ND"
       schema:
@@ -1090,7 +1091,7 @@ components:
     licenseShouldParam:
       name: license_should
       in: query
-      description: "Returns document with these license key (without version)"
+      description: "Returns document with these license key (without version)."
       required: false
       example: "CC-BY-NC-ND"
       schema:
@@ -1098,7 +1099,7 @@ components:
     modifiedBeforeParam:
       name: modified_before
       in: query
-      description: "Results modified before and inclusive the given date, (yyyy-mm-dd)"
+      description: "Results modified before and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
       schema:
@@ -1107,7 +1108,7 @@ components:
     modifiedSinceParam:
       name: modified_since
       in: query
-      description: "Results modified since and inclusive the given date, (yyyy-mm-dd)"
+      description: "Results modified since and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
       schema:
@@ -1116,7 +1117,7 @@ components:
     orcidParam:
       name: orcid
       in: query
-      description: "Returns document with this ORCID id"
+      description: "Returns document with this ORCID id."
       required: false
       schema:
         type: string
@@ -1144,14 +1145,14 @@ components:
     parentPublicationShouldParam:
       name: parent_publication_should
       in: query
-      description: "Returns document with these parentPublications"
+      description: "Returns document with these parentPublications."
       required: false
       schema:
         type: string
     projectParam:
       name: project
       in: query
-      description: "Returns document with this project id (URI)"
+      description: "Returns document with this project id (URI)."
       example: "NFR"
       required: false
       schema:
@@ -1199,7 +1200,7 @@ components:
     publicationYearParam:
       name: publication_year
       in: query
-      description: "Returns document with this publication year"
+      description: "Returns document with this publication year."
       example: "2022"
       required: false
       schema:
@@ -1247,7 +1248,7 @@ components:
     publishedSinceParam:
       name: published_since
       in: query
-      description: "Results published since and inclusive the given date, (yyyy-mm-dd)"
+      description: "Results published since and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
       schema:
@@ -1263,7 +1264,7 @@ components:
     publisherIdParam:
       name: publisher_id
       in: query
-      description: "Returns document with this Id"
+      description: "Returns document with this Id."
       required: false
       schema:
         type: string
@@ -1395,7 +1396,7 @@ components:
     unitParam:
       name: unit
       in: query
-      description: "Returns document with these words in the Id"
+      description: "Returns document with these words in the Id."
       example: 185.53.18.10
       required: false
       schema:
@@ -1419,7 +1420,7 @@ components:
     userParam:
       name: user
       in: query
-      description: "Returns document with this resource owner (user id (URI))"
+      description: "Returns document with this resource owner (user id (URI))."
       example: "askeladd:185"
       required: false
       schema:
@@ -1443,7 +1444,7 @@ components:
     scientificReportingPeriodSinceParam:
       name: scientific_report_period_since
       in: query
-      description: "Returns document with scientific reporting year after this value"
+      description: "Returns document with scientific reporting year after this value."
       example: "2011"
       required: false
       schema:
@@ -1451,7 +1452,7 @@ components:
     scientificReportingPeriodBeforeParam:
       name: scientific_report_period_before
       in: query
-      description: "Returns document with scientific reporting year before this value"
+      description: "Returns document with scientific reporting year before this value."
       example: "2023"
       required: false
       schema:
@@ -1459,21 +1460,21 @@ components:
     userAffiliationParam:
       name: user_affiliation
       in: query
-      description: "Returns document with..."
+      description: "Returns document with these owner affiliations."
       required: false
       schema:
         type: string
     userAffiliationNotParam:
       name: user_affiliation_not
       in: query
-      description: "Returns document with..."
+      description: "Returns document without these owner affiliations."
       required: false
       schema:
         type: string
     userAffiliationShouldParam:
       name: user_affiliation_should
       in: query
-      description: "Returns document with..."
+      description: "Returns document with these owner affiliations."
       required: false
       schema:
         type: string
@@ -1523,7 +1524,7 @@ components:
     fromParam:
       name: from
       in: query
-      description: "Start result from item no. zero based [offset] is also accepted. Default is 0"
+      description: "Start result from item no. zero based [offset] is also accepted. Default is 0."
       example: "0"
       required: false
       schema:
@@ -1531,7 +1532,7 @@ components:
     sizeParam:
       name: size
       in: query
-      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15"
+      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15."
       example: "15"
       required: false
       schema:
@@ -1539,7 +1540,7 @@ components:
     queryParam:
       name: query
       in: query
-      description: "free text search, all words are searched for in all fields, only documents containing all words are returned"
+      description: "free text search, all words are searched for in all fields, only documents containing all words are returned."
       required: false
       schema:
         type: string
@@ -1569,7 +1570,7 @@ components:
       deprecated: true
       name: lang
       in: query
-      description: "Two letter language code. IGNORED, here to be compatible with CristinAPI"
+      description: "Two letter language code. IGNORED, here to be compatible with CristinAPI."
       required: false
       schema:
         type: string
