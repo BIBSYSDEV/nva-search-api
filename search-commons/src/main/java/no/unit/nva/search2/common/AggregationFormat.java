@@ -22,6 +22,7 @@ import static no.unit.nva.search2.common.constant.Words.SLASH;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,6 +37,8 @@ import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
 
 public final class AggregationFormat {
+
+    public static final String UNIQUE_PUBLICATIONS = "unique_publications";
 
     @JacocoGenerated
     public AggregationFormat() {
@@ -85,18 +88,29 @@ public final class AggregationFormat {
         } else {
             var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
             node.fields().forEachRemaining(entry -> {
-                if (keyIsLabel(entry)) {
-                    outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
-                } else if (keyIsName(entry)) {
-                    outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-                } else {
-                    outputAggregationNode.set(entry.getKey(), entry.getValue());
-                }
+                extractKeyAndLabels(entry, outputAggregationNode);
             });
             return outputAggregationNode.isEmpty()
                 ? JsonUtils.dtoObjectMapper.createArrayNode()
                 : outputAggregationNode;
         }
+    }
+
+    private static void extractKeyAndLabels(Entry<String, JsonNode> entry, ObjectNode outputAggregationNode) {
+        if (keyIsLabel(entry)) {
+            outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
+        } else if (keyIsName(entry)) {
+            outputAggregationNode.set(LABELS, formatName(entry.getValue()));
+        } else if(rootHasUniquePublicationsCount(entry)) {
+            outputAggregationNode.set(Constants.DOC_COUNT, entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
+        } else {
+            outputAggregationNode.set(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
+        return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
+               && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {

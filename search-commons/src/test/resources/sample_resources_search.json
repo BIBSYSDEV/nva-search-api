@@ -3192,6 +3192,25 @@
             "en": "All Caps"
           }
         }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/12343",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-12-31T23:00:00Z",
+        "activeTo": "2019-12-31T23:00:00Z",
+        "identifier": "12345",
+        "labels": {
+          "nb": "Tap av natur som finansiell risiko"
+        },
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
       }
     ],
     "status": "PUBLISHED"
