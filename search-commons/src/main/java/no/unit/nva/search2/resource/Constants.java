@@ -11,6 +11,7 @@ import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.CODE;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
+import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE_SERIES;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
@@ -72,6 +73,7 @@ import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -198,6 +200,8 @@ public final class Constants {
         topLevelOrganisationsHierarchy(),
         scientificIndexHierarchy()
     );
+    public static final String UNIQUE_PUBLICATIONS = "unique_publications";
+    public static final String ROOT = "root";
 
     private static NestedAggregationBuilder scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
@@ -219,14 +223,16 @@ public final class Constants {
     }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
-        return
-            nestedBranchBuilder(FUNDINGS, FUNDINGS)
-                .subAggregation(
-                    branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
-                        .subAggregation(
-                            labels(jsonPath(FUNDINGS, SOURCE))
-                        )
-                );
+        return nestedBranchBuilder(FUNDINGS, FUNDINGS)
+            .subAggregation(branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
+                                .subAggregation(labels(jsonPath(FUNDINGS, SOURCE)))
+                                .subAggregation(AggregationBuilders.reverseNested(ROOT)
+                                                    .subAggregation(uniquePublications())
+            ));
+    }
+
+    private static CardinalityAggregationBuilder uniquePublications() {
+        return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
     }
 
     public static NestedAggregationBuilder entityDescriptionHierarchy() {
@@ -261,18 +267,6 @@ public final class Constants {
                     publicationInstance()            // Split or just a branch?
                         .subAggregation(instanceType())
                 );
-    }
-
-    private static AggregationBuilder journal() {
-        var contextTypeId =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
-
-        var contextTypeName =
-            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
-
-        return filterBranchBuilder(JOURNAL, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
-            .subAggregation(contextTypeId.subAggregation(contextTypeName));
     }
 
     private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
@@ -310,6 +304,20 @@ public final class Constants {
 
         return seriesType.subAggregation(
             seriesId.subAggregation(seriesName));
+    }
+
+    private static AggregationBuilder journal() {
+        var contextTypeId =
+            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
+                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
+
+        var contextTypeName =
+            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
+
+        return filterBranchBuilder(JOURNAL,
+                                   CONTEXT_TYPE_JOURNAL,
+                                   ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD)
+                   .subAggregation(contextTypeId.subAggregation(contextTypeName));
     }
 
     private static TermsAggregationBuilder courses() {
