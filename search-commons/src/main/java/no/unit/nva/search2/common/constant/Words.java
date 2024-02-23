@@ -18,8 +18,6 @@ public final class Words {
     public static final String COMMA = ",";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTEXT_TYPE = "contextType";
-    public static final String CONTEXT_TYPE_SERIES = "Series";
-    public static final String CONTEXT_TYPE_JOURNAL = "Journal";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";
@@ -40,7 +38,7 @@ public final class Words {
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
     public static final String HAS_PUBLIC_FILE = "hasPublicFile";
-    public static final String NO_PUBLIC_FILE = "noPublicFile";
+    public static final String HAS_PUBLIC_FILE_KEY_NAME = "HAS_PUBLIC_FILE";
     public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
@@ -49,6 +47,7 @@ public final class Words {
     public static final String ISBN_PREFIX = "isbnPrefix";
     public static final String JANUARY_FIRST = "-01-01";
     public static final String JOURNAL = "journal";
+    public static final String JOURNAL_AS_TYPE = "Journal";
     public static final String KEY = "key";
     public static final String KEYWORD = "keyword";
     public static final String LABELS = "labels";
@@ -72,7 +71,6 @@ public final class Words {
     public static final String PUBLICATION_CONTEXT = "publicationContext";
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
-    public static final String PUBLIC_FILE_CONDITIONAL = "HAS_PUBLIC_FILE";
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String PUBLISHED_FILE = "PublishedFile";
     public static final String PUBLISHER = "publisher";
@@ -90,6 +88,7 @@ public final class Words {
     public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SERIES = "series";
+    public static final String SERIES_AS_TYPE = "Series";
     public static final String SLASH = "/";
     public static final String SOURCE = "source";
     public static final String SOURCE_NAME = "sourceName";

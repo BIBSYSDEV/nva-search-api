@@ -11,6 +11,7 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.ONE;
@@ -162,7 +163,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public boolean isPublicFile(K key) {
-        return Words.PUBLIC_FILE_CONDITIONAL.equals(key.name());
+        return HAS_PUBLIC_FILE_KEY_NAME.equals(key.name());
     }
 
     public Stream<Entry<K, QueryBuilder>> publishedFileQuery(K key, String value) {

@@ -54,7 +54,6 @@ import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
-import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -358,6 +357,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
+            // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isPublicFile(key)) {
+            return opensearchQueryTools.publishedFileQuery(key, value);
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isBooleanKey(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
