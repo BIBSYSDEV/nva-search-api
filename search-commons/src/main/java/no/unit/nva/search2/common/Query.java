@@ -297,7 +297,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                    : List.of();
     }
 
-    @Nullable
     private String getViewingScopeParameter(List<K> searchParameterKeys) {
         return searchParameterKeys.stream()
                    .filter(key -> VIEWING_SCOPE.equals(key.name()))
