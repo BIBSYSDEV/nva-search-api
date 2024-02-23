@@ -96,6 +96,8 @@ import nva.commons.core.JacocoGenerated;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
+    EXCLUDE_SUBUNITS(CUSTOM),
+    VIEWING_SCOPE(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, NO_ITEMS, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_ABSTRACT),

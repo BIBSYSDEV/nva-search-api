@@ -171,6 +171,14 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                             : queryToEntry(key, QueryBuilders.boolQuery().mustNot(containsPublishedFileQuery()));
     }
 
+    public boolean isExcludeSubunits(K key) {
+        return Words.EXCLUDE_SUBUNITS.equals(key.name());
+    }
+
+    public boolean isViewingScope(K key) {
+        return Words.VIEWING_SCOPE.equals(key.name());
+    }
+
     @NotNull
     private static MatchQueryBuilder containsPublishedFileQuery() {
         return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),

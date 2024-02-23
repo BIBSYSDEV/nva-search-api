@@ -156,6 +156,8 @@ paths:
         - $ref: '#/components/parameters/publicationLanguageParam'
         - $ref: '#/components/parameters/publicationLanguageNotParam'
         - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/excludeSubunits'
+        - $ref: '#/components/parameters/viewingScope'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
@@ -1164,6 +1166,22 @@ components:
       required: false
       schema:
         type: string
+    viewingScope:
+      name: viewing_scope
+      in: query
+      description: "Only return publications where contributor affiliation is part of affiliation provided in viewing scope depending on excludeSubunits value. Do not include when excludeSubunits is 'true'. Entries should be separated by comma."
+      example: 'https://example.com/cristin/organization/20754.0.0.0,https://example.com/cristin/organization/20754.1.0.0'
+      required: false
+      schema:
+        type: string
+    excludeSubunits:
+      name: exclude_subunits
+      in: query
+      description: "Exclude sub-units of the provided viewingScope"
+      example: 'true'
+      required: false
+      schema:
+        type: boolean
   schemas:
     Publication:
       type: object

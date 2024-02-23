@@ -4,6 +4,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
@@ -26,12 +27,15 @@ import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_P
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static no.unit.nva.search2.resource.ResourceParameter.VIEWING_SCOPE;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,7 +49,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -409,6 +415,81 @@ class ResourceClientTest {
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertThat(pagedSearchResourceDto.hits(), hasSize(1));
+        }
+
+        @Test
+        void shouldNotReturnResourcesContainingAffiliationThatShouldBeExcludedWhenAffiliationIsSubunitOfRequestedViewingScopeI()
+            throws BadRequestException {
+            var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+                                                 StandardCharsets.UTF_8);
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(Map.of(VIEWING_SCOPE.fieldName(), viewingScope,
+                                                EXCLUDE_SUBUNITS, Boolean.TRUE.toString()))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+
+            logger.info(query.getValue(SORT).toString());
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            var excludedSubunit = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0";
+
+            assertThat(pagedSearchResourceDto.toJsonString(), not(containsString(excludedSubunit)));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(1));
+        }
+
+        @Test
+        void shouldNotReturnResourcesContainingAffiliationThatShouldBeExcludedWhenAffiliationIsSubunitOfRequestedViewingScopeII()
+            throws BadRequestException {
+            var firstLevelOfViewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+                                                 StandardCharsets.UTF_8);
+            var secondLevelOfViewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0",
+                                                 StandardCharsets.UTF_8);
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(Map.of(VIEWING_SCOPE.fieldName(), firstLevelOfViewingScope
+                                                                           + "," + secondLevelOfViewingScope,
+                                                EXCLUDE_SUBUNITS, Boolean.TRUE.toString()))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
+
+            logger.info(query.getValue(SORT).toString());
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            var excludedSubunit = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.1";
+
+            assertThat(pagedSearchResourceDto.toJsonString(), not(containsString(excludedSubunit)));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(2));
+        }
+
+        @Test
+        void shouldReturnResourcesWithSubunitsWhenExcludedSubunitsIsNotProvided() throws BadRequestException {
+            var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+                                                 StandardCharsets.UTF_8);
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(Map.of(VIEWING_SCOPE.fieldName(), viewingScope))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
+
+            logger.info(query.getValue(SORT).toString());
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            var includedSubunitI = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0";
+            var includedSubunitII = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.1";
+
+            assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
+            assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(3));
         }
 
         static Stream<Arguments> uriPagingProvider() {
