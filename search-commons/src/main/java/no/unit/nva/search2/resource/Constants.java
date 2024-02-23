@@ -75,18 +75,6 @@ import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import no.unit.nva.search2.common.constant.Defaults;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Constants {
 
