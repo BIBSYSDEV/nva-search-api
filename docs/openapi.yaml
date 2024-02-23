@@ -148,6 +148,9 @@ paths:
         - $ref: '#/components/parameters/projectNotParam'
         - $ref: '#/components/parameters/projectParam'
         - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
         - $ref: '#/components/parameters/publicationYearBeforeParam'
         - $ref: '#/components/parameters/publicationYearParam'
         - $ref: '#/components/parameters/publicationYearShouldParam'
@@ -162,6 +165,8 @@ paths:
         - $ref: '#/components/parameters/publisherParam'
         - $ref: '#/components/parameters/publisherShouldParam'
         - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
         - $ref: '#/components/parameters/scopusIdentifierParam'
         - $ref: '#/components/parameters/seriesNotParam'
         - $ref: '#/components/parameters/seriesParam'
@@ -186,16 +191,17 @@ paths:
         - $ref: '#/components/parameters/userParam'
         - $ref: '#/components/parameters/userShouldParam'
         - $ref: '#/components/parameters/langParam'
-        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
-        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
-        - $ref: '#/components/parameters/publicationLanguageParam'
-        - $ref: '#/components/parameters/publicationLanguageNotParam'
-        - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/excludeSubunits'
         - $ref: '#/components/parameters/viewingScope'
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsResourcesFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
