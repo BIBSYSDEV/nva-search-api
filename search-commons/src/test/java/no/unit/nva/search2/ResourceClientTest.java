@@ -87,7 +87,7 @@ class ResourceClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 14;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 13;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
