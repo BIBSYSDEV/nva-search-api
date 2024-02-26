@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common.builder;
 
+import static no.unit.nva.search2.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
@@ -7,16 +8,14 @@ import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
-import static no.unit.nva.search2.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
-
 public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
+    @JacocoGenerated    // never used
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
     }
 
-    @JacocoGenerated    // never used
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         return queryAsEntryStream(key, values);

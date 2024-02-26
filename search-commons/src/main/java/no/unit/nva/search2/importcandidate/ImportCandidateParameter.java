@@ -1,19 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.FieldOperator;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
@@ -40,6 +26,19 @@ import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.FieldOperator;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -158,6 +157,7 @@ public enum ImportCandidateParameter implements ParameterKey {
         return key;
     }
 
+    @JacocoGenerated    // not used yet...
     @Override
     public Float fieldBoost() {
         return boost;

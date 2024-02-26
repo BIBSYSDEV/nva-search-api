@@ -135,11 +135,11 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return Stream.of(entry);
     }
 
-    public Stream<Entry<K, QueryBuilder>> boolQuery(K key, String value) {
-        return queryToEntry(
-            key, QueryBuilders.termQuery(getFirstSearchField(key), Boolean.valueOf(value))
-        );
-    }
+    //    public Stream<Entry<K, QueryBuilder>> boolQuery(K key, String value) {
+    //        return queryToEntry(
+    //            key, QueryBuilders.termQuery(getFirstSearchField(key), Boolean.valueOf(value))
+    //        );
+    //    }
 
     public Stream<Entry<K, QueryBuilder>> fundingQuery(K key, String value) {
         final var values = value.split(COLON);
@@ -182,9 +182,9 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return !ParameterKind.KEYWORD.equals(key.fieldType());
     }
 
-    public boolean isBooleanKey(K key) {
-        return ParameterKind.BOOLEAN.equals(key.fieldType());
-    }
+    //    public boolean isBooleanKey(K key) {
+    //        return ParameterKind.BOOLEAN.equals(key.fieldType());
+    //    }
 
     public boolean isNumberKey(K key) {
         return key.searchOperator() == GREATER_THAN_OR_EQUAL_TO

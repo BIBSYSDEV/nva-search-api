@@ -290,9 +290,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isPublicFile(key)) {
             return opensearchQueryTools.publishedFileQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isBooleanKey(key)) {
-            return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
-            // -> E M P T Y  S P A C E
+            //        } else if (opensearchQueryTools.isBooleanKey(key)) {
+            //            return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern...
+            //             (assumes one value)
+            //            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isNumberKey(key)) {
             return new OpensearchQueryRange<K>().buildQuery(key, value);
             // -> E M P T Y  S P A C E
