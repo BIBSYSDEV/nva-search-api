@@ -72,12 +72,12 @@ class SearchClientTest {
 
     public static final String SAMPLE_TERM = "SampleSearchTerm";
     public static final String EXPECTED_TICKETS_AGGREGATIONS =
-        "sample_opensearch_ticket_response_searchresponsedto_aggregations.json";
+        "ticket_searchresponsedto_aggregations_response.json";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
-    private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
+    private static final String NO_HITS_RESPONSE_JSON = "opensearch_no_hits_response.json";
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
-    private static final String OPENSEARCH_SAMPLE_TICKET_RESPONSE_FILE = "sample_opensearch_tickets_response.json";
+    private static final String OPENSEARCH_SAMPLE_TICKET_RESPONSE_FILE = "ticket_response.json";
     private static final URI SAMPLE_REQUEST_URI = randomUri();
     private static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> SAMPLE_AGGREGATIONS =
         List.of(new TermsAggregationBuilder(randomString()).field(randomString()));

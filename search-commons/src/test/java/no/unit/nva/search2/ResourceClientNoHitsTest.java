@@ -29,7 +29,7 @@ class ResourceClientNoHitsTest {
 
     private ResourceClient resourceClient;
 
-    private static final String NO_HITS_RESPONSE_JSON = "no_hits_response.json";
+    private static final String NO_HITS_RESPONSE_JSON = "opensearch_no_hits_response.json";
 
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
