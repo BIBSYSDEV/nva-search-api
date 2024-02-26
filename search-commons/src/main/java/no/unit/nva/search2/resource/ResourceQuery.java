@@ -68,10 +68,6 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
-    public static final String FILTER = "filter";
-    public static final float PI = 3.14F;        // π
-    public static final float PHI  = 1.618F;      // Golden Ratio (Φ) -> used in the future for boosting.
-
     private ResourceQuery() {
         super();
         assignStatusImpossibleWhiteList();
@@ -194,7 +190,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
+        var aggrFilter = AggregationBuilders.filter(Constants.FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -241,7 +237,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                    .boost(Constants.PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(

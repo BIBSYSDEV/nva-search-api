@@ -14,7 +14,6 @@ import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
@@ -87,9 +86,7 @@ public final class AggregationFormat {
             return arrayNode;
         } else {
             var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
-            node.fields().forEachRemaining(entry -> {
-                extractKeyAndLabels(entry, outputAggregationNode);
-            });
+            node.fields().forEachRemaining(entry -> extractKeyAndLabels(entry, outputAggregationNode));
             return outputAggregationNode.isEmpty()
                 ? JsonUtils.dtoObjectMapper.createArrayNode()
                 : outputAggregationNode;
@@ -176,11 +173,10 @@ public final class AggregationFormat {
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
             SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license",
-            NO_PUBLIC_FILE, "/filter/associatedArtifacts/false"
+            LICENSE, "/filter/associatedArtifacts/license"
             );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/true",
+            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",

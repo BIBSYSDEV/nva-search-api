@@ -12,7 +12,7 @@ class FakeGatewayResponseTest {
     void shouldReturnGatewayResponseWithSwsResponse() throws IOException {
         var response =
             FakeGatewayResponse.ofSwsGatewayResponse(
-                getClass().getResourceAsStream("/sample_gateway_opensearch_response.json"));
+                getClass().getResourceAsStream("/opensearch_valid_gateway_response.json"));
         assertNotNull(response);
         assertEquals(200, response.statusCode());
         assertNotNull(response.body());
@@ -24,7 +24,7 @@ class FakeGatewayResponseTest {
     void shouldReturnGatewayResponseWithErrorCode() throws IOException {
         var response =
             FakeGatewayResponse.ofSwsGatewayResponse(
-                getClass().getResourceAsStream("/sample_invalid_gateway_opensearch_response.json"));
+                getClass().getResourceAsStream("/opensearch_invalid_gateway_response.json"));
         assertNotNull(response);
         assertEquals(400, response.statusCode());
         assertNotNull(response.body());

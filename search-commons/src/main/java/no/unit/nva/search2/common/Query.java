@@ -1,5 +1,20 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.PLUS;
+import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,22 +52,6 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.PLUS;
-import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.SPACE;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 
 @SuppressWarnings("PMD.GodClass")
 public abstract class Query<K extends Enum<K> & ParameterKey> {
@@ -288,6 +287,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
             return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
             // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isPublicFile(key)) {
+            return opensearchQueryTools.publishedFileQuery(key, value);
+            // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isBooleanKey(key)) {
             return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             // -> E M P T Y  S P A C E
@@ -299,9 +301,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             // -> E M P T Y  S P A C E
         } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
             return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isPublicFile(key)) {
-            return opensearchQueryTools.publishedFileQuery(key, value);
             // -> E M P T Y  S P A C E
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);

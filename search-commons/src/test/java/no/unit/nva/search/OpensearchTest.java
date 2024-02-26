@@ -73,8 +73,8 @@ public class OpensearchTest {
     public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
     public static final long NON_ZERO_HITS_BECAUSE_APPROVED_WAS_INCLUDED = 1;
     public static final long DELAY_AFTER_INDEXING = 1000L;
-    public static final String TEST_RESOURCES_MAPPINGS = "test_resources_mappings.json";
-    public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "test_import_candidates_mappings.json";
+    public static final String TEST_RESOURCES_MAPPINGS = "opensearch_test_mapping_resources.json";
+    public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "opensearch_test_mapping_import_candidates.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final int SAMPLE_FROM = 0;
@@ -201,9 +201,9 @@ public class OpensearchTest {
         @Test
         void shouldReturnCorrectAggregationsForImportCandidates()
             throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json",
-                                "not_imported_candidate_from_index.json",
-                                "not_applicable_import_candidate_from_index.json");
+            addDocumentsToIndex("import_candidate.json",
+                "import_candidate_with_not_imported.json",
+                "import_candidate_with_not_applicable.json");
 
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
@@ -214,7 +214,7 @@ public class OpensearchTest {
         @Test
         void shouldReturnAssociatedArtifactAggregationWithSingleDocCount()
             throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+            addDocumentsToIndex("import_candidate.json", "import_candidate_with_not_imported.json");
 
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
@@ -226,7 +226,7 @@ public class OpensearchTest {
         @Test
         void shouldReturnInstanceTypeAggregationWithDocCountTwo()
             throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+            addDocumentsToIndex("import_candidate.json", "import_candidate_with_not_imported.json");
 
             var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
@@ -238,7 +238,7 @@ public class OpensearchTest {
         @Test
         void shouldFilterDocumentsWithFiles()
             throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+            addDocumentsToIndex("import_candidate.json", "import_candidate_with_not_imported.json");
 
             var query = queryWithTermAndAggregation(
                 "(associatedArtifacts.type:\"PublishedFile\")AND(associatedArtifacts"
@@ -252,7 +252,7 @@ public class OpensearchTest {
         @Test
         void shouldQueryPublicationsWithMultipleOrganizations()
             throws InterruptedException, ApiGatewayException {
-            addDocumentsToIndex("imported_candidate_from_index.json", "not_imported_candidate_from_index.json");
+            addDocumentsToIndex("import_candidate.json", "import_candidate_with_not_imported.json");
 
             var searchTerm = "collaborationType:\"Collaborative\"";
             var query = queryWithTermAndAggregation(searchTerm, IMPORT_CANDIDATES_AGGREGATIONS);
@@ -288,8 +288,8 @@ public class OpensearchTest {
             void shouldNotReturnAggregationsWhenNotRequested()
                 throws ApiGatewayException, InterruptedException {
 
-                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
-                                    "sample_publishing_request_of_published_publication.json");
+                addDocumentsToIndex("publication_draft_publishing_request.json",
+                    "publication_published_publishing_request.json");
 
                 var query = queryWithTermAndAggregation(SEARCH_ALL, null);
 
@@ -325,8 +325,8 @@ public class OpensearchTest {
             @Test
             void shouldReturnAssociatedArtifactAggregationWithSingleDocCount()
                 throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("published_publication_with_multiple_published_files.json",
-                                    "published_publication_with_administrative_agreement.json");
+                addDocumentsToIndex("publication_published_with_multiple_published_files.json",
+                    "publication_published_with_administrative_agreement.json");
 
                 var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
 
@@ -417,8 +417,8 @@ public class OpensearchTest {
 
             @Test
             void shouldReturnCorrectTicketsAggregations() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
-                                    "sample_ticket_general_support_case_of_published_publication.json");
+                addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
+                    "ticket_general_support_case_of_published_publication.json");
 
                 var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
 
@@ -488,8 +488,8 @@ public class OpensearchTest {
 
             @Test
             void shouldVerifySearchNotReturningHitsWithPublicationRequestInSearchResponse() throws Exception {
-                addDocumentsToIndex("sample_response_with_publication_status_as_draft.json",
-                                    "sample_response_with_publication_status_as_requested.json");
+                addDocumentsToIndex("publication_status_as_draft_response.json",
+                    "publication_status_as_requested_response.json");
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
@@ -508,8 +508,8 @@ public class OpensearchTest {
             @Test
             void shouldReturnPendingPublishingRequestsForPublications()
                 throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("sample_publishing_request_of_draft_publication.json",
-                                    "sample_publishing_request_of_published_publication.json");
+                addDocumentsToIndex("publication_draft_publishing_request.json",
+                    "publication_published_publishing_request.json");
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
@@ -528,8 +528,8 @@ public class OpensearchTest {
             void shouldNotReturnTicketsAggregationsWhenNotRequested() throws ApiGatewayException,
                                                                              InterruptedException {
 
-                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
-                                    "sample_ticket_general_support_case_of_published_publication.json");
+                addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
+                    "ticket_general_support_case_of_published_publication.json");
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
@@ -547,8 +547,8 @@ public class OpensearchTest {
             void shouldOnlyReturnPublishingRequestsWhenUserOnlyHasAccessToPublishingRequest() throws ApiGatewayException,
                                                                              InterruptedException {
 
-                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
-                                    "sample_ticket_general_support_case_of_published_publication.json");
+                addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
+                    "ticket_general_support_case_of_published_publication.json");
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
@@ -566,8 +566,8 @@ public class OpensearchTest {
             void shouldNotReturnAnyDocumentsWhenNoAllowedCuratorSearchTypes() throws ApiGatewayException,
                                                                                                      InterruptedException {
 
-                addDocumentsToIndex("sample_ticket_publishing_request_of_draft_publication.json",
-                                    "sample_ticket_general_support_case_of_published_publication.json");
+                addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
+                    "ticket_general_support_case_of_published_publication.json");
 
                 var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
                                                                 DESC, SAMPLE_REQUEST_URI, emptyList(),
