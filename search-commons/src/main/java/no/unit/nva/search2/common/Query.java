@@ -4,30 +4,19 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS_PART_OFS;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search2.common.constant.Words.EXCLUDE_SUBUNITS;
-import static no.unit.nva.search2.common.constant.Words.ID;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
-import static no.unit.nva.search2.common.constant.Words.VIEWING_SCOPE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -269,66 +258,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                     boolQueryBuilder.must(entry.getValue());
                 }
             });
-        addExcludeSubunitsQuery(boolQueryBuilder, searchParameterKeys);
         return boolQueryBuilder;
-    }
-
-    private void addExcludeSubunitsQuery(BoolQueryBuilder boolQueryBuilder, List<K> searchParameterKeys) {
-        var viewingScope = getViewingScope(searchParameterKeys);
-        if (viewingScopeIsProvided(viewingScope)) {
-            var shouldExcludeSubunits = getExcludeSubunitsKey(searchParameterKeys);
-            boolQueryBuilder.must(createSubunitQuery(shouldExcludeSubunits, viewingScope));
-        }
-    }
-
-    private static QueryBuilder createSubunitQuery(Boolean shouldExcludeSubunits, List<String> viewingScope) {
-        return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
-    }
-
-    private static boolean viewingScopeIsProvided(List<String> viewingScope) {
-        return !viewingScope.isEmpty();
-    }
-
-    private List<String> getViewingScope(List<K> searchParameterKeys) {
-        var viewingScopeParameter = getViewingScopeParameter(searchParameterKeys);
-        return nonNull(viewingScopeParameter)
-                   ? extractViewingScope(viewingScopeParameter)
-                   : List.of();
-    }
-
-    private String getViewingScopeParameter(List<K> searchParameterKeys) {
-        return searchParameterKeys.stream()
-                   .filter(key -> VIEWING_SCOPE.equals(key.name()))
-                   .map(searchParameters::get)
-                   .findFirst().orElse(null);
-    }
-
-    private static List<String> extractViewingScope(String viewingScopeParameter) {
-        return Arrays.stream(viewingScopeParameter.split(COMMA))
-                   .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
-                   .toList();
-    }
-
-    private Boolean getExcludeSubunitsKey(List<K> searchParameterKeys) {
-        return searchParameterKeys.stream()
-                   .filter(key -> EXCLUDE_SUBUNITS.equals(key.name()))
-                   .findFirst()
-                   .map(searchParameters::get)
-                   .map(Boolean::parseBoolean)
-                   .orElse(false);
-    }
-
-    private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
-        var query = QueryBuilders.boolQuery();
-        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope));
-        query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                              viewingScope));
-        return query;
-    }
-
-    private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
-        return QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                        viewingScope);
     }
 
     // SORTING
@@ -376,9 +306,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isPublicFile(key)) {
             return opensearchQueryTools.publishedFileQuery(key, value);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isExcludeSubunits(key) || opensearchQueryTools.isViewingScope(key)) {
-            return null;
+        } else if (opensearchQueryTools.isOrganization(key)) {
+            return opensearchQueryTools.createSubunitsQuery(searchParameters, key);
             // -> E M P T Y  S P A C E
+        } else if (opensearchQueryTools.isExcludeSubunits(key)) {
+            return null;
         } else {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
         }

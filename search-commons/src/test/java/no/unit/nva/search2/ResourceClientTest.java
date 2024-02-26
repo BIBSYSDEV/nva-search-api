@@ -4,7 +4,6 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
@@ -21,13 +20,14 @@ import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
-import static no.unit.nva.search2.resource.ResourceParameter.VIEWING_SCOPE;
+import static no.unit.nva.search2.resource.ResourceParameter.UNIT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -63,6 +63,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.resource.ResourceParameter;
 import no.unit.nva.search2.resource.ResourceQuery;
 import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -424,8 +425,8 @@ class ResourceClientTest {
                                                  StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(VIEWING_SCOPE.fieldName(), viewingScope,
-                                                EXCLUDE_SUBUNITS, Boolean.TRUE.toString()))
+                    .fromQueryParameters(Map.of(UNIT.fieldName(), viewingScope,
+                                                EXCLUDE_SUBUNITS.fieldName(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -450,9 +451,9 @@ class ResourceClientTest {
                                                  StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(VIEWING_SCOPE.fieldName(), firstLevelOfViewingScope
-                                                                           + "," + secondLevelOfViewingScope,
-                                                EXCLUDE_SUBUNITS, Boolean.TRUE.toString()))
+                    .fromQueryParameters(Map.of(ResourceParameter.TOP_LEVEL_ORGANIZATION.fieldName(), firstLevelOfViewingScope,
+                                                UNIT.fieldName(), secondLevelOfViewingScope,
+                                                EXCLUDE_SUBUNITS.fieldName(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -474,7 +475,7 @@ class ResourceClientTest {
                                                  StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(VIEWING_SCOPE.fieldName(), viewingScope))
+                    .fromQueryParameters(Map.of(UNIT.fieldName(), viewingScope))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()

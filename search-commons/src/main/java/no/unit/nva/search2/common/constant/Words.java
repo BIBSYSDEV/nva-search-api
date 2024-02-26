@@ -31,7 +31,6 @@ public final class Words {
     public static final String EQUAL = "=";
     public static final String FROM = "from";
     public static final String FUNDING = "FUNDING";
-    public static final String EXCLUDE_SUBUNITS = "EXCLUDE_SUBUNITS";
     public static final String VIEWING_SCOPE = "VIEWING_SCOPE";
     public static final String CONTRIBUTORS_PART_OFS = "contributorsPartOfs";
     public static final String FUNDINGS = "fundings";

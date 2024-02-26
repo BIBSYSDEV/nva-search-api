@@ -198,7 +198,6 @@ paths:
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/excludeSubunits'
-        - $ref: '#/components/parameters/viewingScope'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -1346,14 +1345,6 @@ components:
       in: query
       description: "Returns document with scientific reporting year before this value."
       example: "2023"
-      required: false
-      schema:
-        type: string
-    viewingScope:
-      name: viewing_scope
-      in: query
-      description: "Only return publications where contributor affiliation is part of affiliation provided in viewing scope depending on excludeSubunits value. Do not include when excludeSubunits is 'true'. Entries should be separated by comma."
-      example: 'https://example.com/cristin/organization/20754.0.0.0,https://example.com/cristin/organization/20754.1.0.0'
       required: false
       schema:
         type: string

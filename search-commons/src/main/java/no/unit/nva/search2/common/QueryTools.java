@@ -6,12 +6,18 @@ import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NO_FILES;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS_PART_OFS;
 import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.ONE;
@@ -24,21 +30,25 @@ import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.StringUtils.isEmpty;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.resource.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
-import org.jetbrains.annotations.NotNull;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -162,6 +172,71 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             ScoreMode.None));
     }
 
+    public Stream<Entry<K, QueryBuilder>> createSubunitsQuery(Map<K, String> searchParameters, K key) {
+        var viewingScope = getViewingScope(searchParameters);
+        if (viewingScopeIsProvided(viewingScope)) {
+            var shouldExcludeSubunits = getExcludeSubunitsKey(searchParameters);
+            return queryToEntry(key, createSubunitQuery(shouldExcludeSubunits, viewingScope));
+        } else {
+            return null;
+        }
+    }
+
+    private static QueryBuilder createSubunitQuery(Boolean shouldExcludeSubunits, List<String> viewingScope) {
+        return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
+    }
+
+    private static boolean viewingScopeIsProvided(List<String> viewingScope) {
+        return !viewingScope.isEmpty();
+    }
+
+    private List<String> getViewingScope(Map<K, String> searchParameterKeys) {
+        var viewingScopeKeys = getViewingScopeParameters(searchParameterKeys);
+        var viewingScopeParams = viewingScopeKeys.stream().map(searchParameterKeys::get).collect(Collectors.joining(","));
+        return !viewingScopeKeys.isEmpty()
+                   ? extractViewingScope(viewingScopeParams)
+                   : List.of();
+    }
+
+    private List<K> getViewingScopeParameters(Map<K, String> searchParameterKeys) {
+        return searchParameterKeys.keySet().stream()
+                   .filter(this::isOrganization)
+                   .toList();
+    }
+
+    public boolean isOrganization(K key) {
+        return ResourceParameter.TOP_LEVEL_ORGANIZATION.name().equals(key.name())
+               || ResourceParameter.UNIT.name().equals(key.name());
+    }
+
+    private static List<String> extractViewingScope(String viewingScopeParameter) {
+        return Arrays.stream(viewingScopeParameter.split(COMMA))
+                   .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
+                   .toList();
+    }
+
+    private Boolean getExcludeSubunitsKey(Map<K, String> searchParameterKeys) {
+        var excludeSubunitValue = searchParameterKeys.keySet().stream()
+                                    .filter(key -> ResourceParameter.EXCLUDE_SUBUNITS.name().equals(key.name()))
+                                    .findFirst()
+                                    .map(searchParameterKeys::get)
+                                    .orElse(null);
+        return Boolean.parseBoolean(excludeSubunitValue);
+    }
+
+    private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
+        var query = QueryBuilders.boolQuery();
+        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope));
+        query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                              viewingScope));
+        return query;
+    }
+
+    private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
+        return QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                        viewingScope);
+    }
+
     public boolean isPublicFile(K key) {
         return HAS_PUBLIC_FILE_KEY_NAME.equals(key.name());
     }
@@ -173,14 +248,9 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public boolean isExcludeSubunits(K key) {
-        return Words.EXCLUDE_SUBUNITS.equals(key.name());
+        return EXCLUDE_SUBUNITS.name().equals(key.name());
     }
 
-    public boolean isViewingScope(K key) {
-        return Words.VIEWING_SCOPE.equals(key.name());
-    }
-
-    @NotNull
     private static MatchQueryBuilder containsPublishedFileQuery() {
         return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),
                                         PUBLISHED_FILE);
