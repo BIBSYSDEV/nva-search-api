@@ -61,6 +61,8 @@ import static no.unit.nva.search2.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.HANDLE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PARENT_PUBLICATION_ID;
+import static no.unit.nva.search2.resource.Constants.PHI;
+import static no.unit.nva.search2.resource.Constants.PI;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
@@ -71,7 +73,6 @@ import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
-import static no.unit.nva.search2.resource.ResourceQuery.PHI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -190,7 +191,7 @@ public enum ResourceParameter implements ParameterKey {
     TAGS(TEXT, ENTITY_TAGS),
     TAGS_NOT(TEXT, NO_ITEMS, ENTITY_TAGS),
     TAGS_SHOULD(TEXT, ONE_OR_MORE_ITEM, ENTITY_TAGS),
-    TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, 2F),
+    TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TITLE_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_MAIN_TITLE),
     TOP_LEVEL_ORGANIZATION(CUSTOM),
