@@ -30,7 +30,6 @@ import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
-import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.StringUtils.isEmpty;
 import static nva.commons.core.attempt.Try.attempt;
@@ -247,10 +246,6 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                             : queryToEntry(key, QueryBuilders.boolQuery().mustNot(containsPublishedFileQuery()));
     }
 
-    public boolean isExcludeSubunits(K key) {
-        return EXCLUDE_SUBUNITS.name().equals(key.name());
-    }
-
     private static MatchQueryBuilder containsPublishedFileQuery() {
         return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),
                                         PUBLISHED_FILE);
@@ -284,6 +279,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
     public boolean isFuzzyKeywordKey(K key) {
         return FUZZY_KEYWORD.equals(key.fieldType());
+    }
+
+    public boolean isKeywordKey(K key) {
+        return ParameterKind.KEYWORD.equals(key.fieldType());
     }
 
     public boolean isSearchAllKey(K key) {

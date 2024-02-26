@@ -309,10 +309,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         } else if (opensearchQueryTools.isOrganization(key)) {
             return opensearchQueryTools.createSubunitsQuery(searchParameters, key);
             // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isExcludeSubunits(key)) {
-            return null;
-        } else {
+        } else if (opensearchQueryTools.isKeywordKey(key)) {
             return new OpensearchQueryKeyword<K>().buildQuery(key, value);
+            // -> E M P T Y  S P A C E
+        } else {
+            return null;
         }
     }
 
