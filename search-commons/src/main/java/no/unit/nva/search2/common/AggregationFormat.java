@@ -43,11 +43,11 @@ public final class AggregationFormat {
     public AggregationFormat() {
     }
 
-    public static JsonNode apply(JsonNode aggregations) {
+    public static JsonNode apply(JsonNode aggregations, Map<String, String> definitions ) {
 
         var objectNode = JsonUtils.dtoObjectMapper.createObjectNode();
 
-        getAggregationFieldStreams(aggregations)
+        getAggregationFieldStreams(aggregations, definitions)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
         ensureChildNodesAreArrays(objectNode);
@@ -110,8 +110,9 @@ public final class AggregationFormat {
                && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
-    private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
-        return Constants.facetResourcePaths
+    private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations,
+                                                                              Map<String, String> definitions) {
+        return definitions
             .entrySet().stream()
             .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
         );
@@ -167,29 +168,6 @@ public final class AggregationFormat {
 
     @JacocoGenerated
     static final class Constants {
-
-        private static final Map<String, String> facetResourcePaths1 = Map.of(
-            TYPE, "/filter/entityDescription/reference/publicationInstance/type",
-            COURSE, "/filter/entityDescription/reference/publicationContext/course",
-            SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
-            STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license"
-            );
-        private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
-            PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
-            JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
-            CONTRIBUTOR, "/filter/entityDescription/contributor/id",
-            CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
-            FUNDING_SOURCE, "/filter/fundings/id",
-            TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id",
-            SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
-        );
-
-        public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)
-            .flatMap(map -> map.entrySet().stream())
-            .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
-
         public static final String DOC_COUNT = "doc_count";
         public static final String BUCKETS_PTR = SLASH + BUCKETS;
         public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;

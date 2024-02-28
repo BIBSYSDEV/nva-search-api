@@ -9,6 +9,7 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.TicketStatus;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -36,22 +37,22 @@ import java.util.stream.Stream;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.common.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT;
-import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
-import static no.unit.nva.search2.common.enums.PublicationStatus.NEW;
-import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search2.common.enums.TicketStatus.COMPLETED;
+import static no.unit.nva.search2.common.enums.TicketStatus.NEW;
+import static no.unit.nva.search2.ticket.Constants.PUBLICATION;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
@@ -73,8 +74,8 @@ class TicketClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
     private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
-    private static final String TEST_TICKETS_MAPPINGS_JSON = "opensearch_test_mapping_tickets.json";
-    private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_urls.json";
+    private static final String TEST_TICKETS_MAPPINGS_JSON = "mapping_test_tickets.json";
+    private static final String TICKETS_VALID_TEST_URL_JSON = "datasource_urls_ticket.json";
     private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
@@ -116,9 +117,12 @@ class TicketClientTest {
             var mapping = indexingClient.getMapping(TICKETS);
             assertThat(mapping, is(notNullValue()));
             var topLevelOrgType = mapping.path("properties")
-                .path(TOP_LEVEL_ORGANIZATIONS)
-                .path(TYPE).textValue();
-            assertThat(topLevelOrgType, is(equalTo("nested")));
+                .path(PUBLICATION)
+                .path(CONTRIBUTORS)
+                .path(AFFILIATIONS)
+                .path(ID)
+                .textValue();
+            assertThat(topLevelOrgType, is(equalTo("text")));
             logger.info(mapping.toString());
         }
 
@@ -132,20 +136,18 @@ class TicketClientTest {
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                .withRequiredStatus(COMPLETED, NEW);
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
             var uri2 =
-                URI.create(REQUEST_BASE_URL +
-                           "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status,"
-                           + "scientificIndex,hasPublicFile,license");
+                URI.create(REQUEST_BASE_URL + "aggregation=status,type");
             var query2 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                .withRequiredStatus(NEW, COMPLETED);
             var response2 = searchClient.doSearch(query2);
             assertNotNull(response2);
 
@@ -154,15 +156,8 @@ class TicketClientTest {
             var aggregations = query1.toPagedResponse(response1).aggregations();
 
             assertFalse(aggregations.isEmpty());
-            assertThat(aggregations.get(TYPE).size(), is(4));
-            assertThat(aggregations.get(HAS_PUBLIC_FILE).get(0).count(), is(20));
-            assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
-            assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
-            assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
-            assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
-            assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(4));
-            assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
-                       is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
+            assertThat(aggregations.get(TYPE).size(), is(3));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(2));
         }
 
         @Test
@@ -175,8 +170,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
-                        DRAFT_FOR_DELETION)
+                    .withRequiredStatus(NEW, COMPLETED)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -191,7 +185,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                    .withRequiredStatus(NEW, COMPLETED)
                     .withOrganization(
                         URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
 
@@ -212,7 +206,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withRequiredStatus(NEW, COMPLETED);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -234,7 +228,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withRequiredStatus(NEW, COMPLETED);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -260,7 +254,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredStatus(PUBLISHED_METADATA)
+                    .withRequiredStatus(NEW, COMPLETED)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -274,7 +268,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withRequiredStatus(NEW, COMPLETED);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);

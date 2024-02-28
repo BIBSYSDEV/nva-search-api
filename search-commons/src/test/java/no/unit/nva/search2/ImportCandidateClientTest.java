@@ -246,7 +246,7 @@ class ImportCandidateClientTest {
     }
 
     protected static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of("opensearch_test_mapping_import_candidates.json"));
+        var mappingsJson = stringFromResources(Path.of("mapping_test_import_candidates.json"));
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();

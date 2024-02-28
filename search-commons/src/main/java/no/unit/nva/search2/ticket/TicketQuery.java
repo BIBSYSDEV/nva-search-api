@@ -5,6 +5,7 @@ import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
+import no.unit.nva.search2.common.enums.TicketStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
@@ -21,6 +22,7 @@ import org.opensearch.search.sort.SortOrder;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +47,7 @@ import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TICKET_AGGREGATIONS;
+import static no.unit.nva.search2.ticket.Constants.facetResourcePaths;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
@@ -117,18 +120,23 @@ public final class TicketQuery extends Query<TicketParameter> {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
+    @Override
+    protected Map<String, String> aggregationsDef() {
+        return facetResourcePaths;
+    }
+
     /**
      * Filter on Required Status.
      *
      * <p>Only STATUES specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      * <p>See {@link PublicationStatus} for available values.</p>
-     * @param publicationStatus the required statues
+     * @param ticketStatus the required statues
      * @return ResourceQuery (builder pattern)
      */
-    public TicketQuery withRequiredStatus(PublicationStatus... publicationStatus) {
-        final var values = Arrays.stream(publicationStatus)
-            .map(PublicationStatus::toString)
+    public TicketQuery withRequiredStatus(TicketStatus... ticketStatus) {
+        final var values = Arrays.stream(ticketStatus)
+            .map(TicketStatus::toString)
             .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
             .queryName(STATUS);
@@ -166,7 +174,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         builder.aggregation(getAggregationsWithFilter());
 
-        logger.debug(builder.toString());
+        logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }

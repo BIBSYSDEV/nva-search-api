@@ -3,6 +3,7 @@ package no.unit.nva.search2.importcandidate;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
@@ -32,6 +33,7 @@ import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.importcandidate.Constants.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
+import static no.unit.nva.search2.importcandidate.Constants.facetResourcePaths;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
@@ -101,6 +103,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     @Override
     protected boolean isPagingValue(ImportCandidateParameter key) {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+    }
+
+    @Override
+    protected Map<String, String> aggregationsDef() {
+        return facetResourcePaths;
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream() {

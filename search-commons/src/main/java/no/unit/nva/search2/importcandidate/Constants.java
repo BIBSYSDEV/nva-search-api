@@ -2,13 +2,22 @@ package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
+import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.SERIES;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -59,6 +68,14 @@ public final class Constants {
                 .subAggregation(branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD));
     }
 
+    public static final Map<String, String> facetResourcePaths = Map.of(
+        PUBLICATION_YEAR, "/filter/publicationYear",
+        INSTANCE_TYPE, "/filter/publicationInstance.type",
+        COLLABORATION_TYPE, "/filter/collaborationType/id",
+        IMPORT_STATUS, "/filter/status",
+        TOP_LEVEL_ORGANIZATIONS, "/filter/status",
+        ASSOCIATED_ARTIFACTS, "/filter/associatedArtifacts/license"
+    );
     @JacocoGenerated
     public Constants() {
     }

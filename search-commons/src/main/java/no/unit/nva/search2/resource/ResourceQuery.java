@@ -23,6 +23,7 @@ import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
@@ -43,6 +44,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
@@ -121,6 +123,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected boolean isPagingValue(ResourceParameter key) {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+    }
+
+    @Override
+    protected Map<String, String> aggregationsDef() {
+        return facetResourcePaths;
     }
 
     /**

@@ -87,6 +87,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract boolean isPagingValue(K key);
 
+    protected abstract Map<String,String> aggregationsDef();
+
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
@@ -111,6 +113,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     public PagedSearch toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
+        final var aggregationFormatted = AggregationFormat.apply(response.aggregations(),aggregationsDef()).toString();
 
         return
             new PagedSearchBuilder()
@@ -118,7 +121,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .withHits(response.getSearchHits())
                 .withIds(source, requestParameter, getFrom(), getSize())
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
-                .withAggregations(response.getAggregationsStructured())
+                .withAggregations(aggregationFormatted)
                 .build();
     }
 

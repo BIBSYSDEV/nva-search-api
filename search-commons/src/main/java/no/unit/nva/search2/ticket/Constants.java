@@ -5,17 +5,21 @@ import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.common.constant.Words.OWNER;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 
@@ -45,6 +49,10 @@ public final class Constants {
         branchBuilder(STATUS, STATUS_KEYWORD)
     );
 
+    public static final Map<String, String> facetResourcePaths = Map.of(
+        TYPE, "/filter/type",
+        STATUS, "/filter/status"
+    );
 
     @JacocoGenerated
     public Constants() {

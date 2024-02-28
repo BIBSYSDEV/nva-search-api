@@ -81,8 +81,8 @@ class ResourceClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
-    private static final String TEST_RESOURCES_MAPPINGS_JSON = "opensearch_test_mapping_resources.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_urls.json";
+    private static final String TEST_RESOURCES_MAPPINGS_JSON = "mapping_test_resources.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "datasource_urls_resource.json";
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);

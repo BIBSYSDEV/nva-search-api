@@ -68,11 +68,4 @@ public record SwsResponse(
                 .orElse(List.of())
                 : List.of();
     }
-
-    @Transient
-    public String getAggregationsStructured() {
-        return nonNull(aggregations)
-            ? AggregationFormat.apply(aggregations).toString()
-            : null;
-    }
 }
