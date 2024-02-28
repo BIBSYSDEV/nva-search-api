@@ -552,7 +552,7 @@ Resources:
                 - Lambda Function Invocation Result - Success
               detail:
                 responsePayload:
-                  topic: [ "PublicationService.ExpandedEntry.Deleted" ]
+                  topic: [ "PublicationService.ExpandedEntry.Deleted", "PublicationService.UnpublishedResource.Ticket" ]
 
   DeleteImportCandidates:
     DependsOn:
