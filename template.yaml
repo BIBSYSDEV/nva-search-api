@@ -238,6 +238,34 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  SearchParamTicketsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for searching Tickets
+      CodeUri: search-resources-api
+      Handler: no.unit.nva.search2.SearchTicketAuthHandler::handleRequest
+      Runtime: java17
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Enabled: true
+        Role: !GetAtt CustomCodeDeployServiceRole.Arn
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: 1
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+          COGNITO_HOST: !Ref CognitoUri
+          BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
+      Events:
+        GetTickets:
+          Type: Api
+          Properties:
+            Path: /customer/tickets
+            Method: get
+            RestApiId: !Ref NvaSearchApi
+
   SearchResourcesFunction:
     Type: AWS::Serverless::Function
     Properties:

@@ -1,53 +1,5 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
-import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.DOT;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.PI;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
-import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search2.resource.Constants.PUBLICATION_STATUS;
-import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
-import static no.unit.nva.search2.resource.ResourceParameter.FROM;
-import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
-import static no.unit.nva.search2.resource.ResourceSort.INVALID;
-import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
-import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
@@ -55,7 +7,6 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
-import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -67,15 +18,58 @@ import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ResourceQuery extends Query<ResourceParameter> {
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 
-    private ResourceQuery() {
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
+import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
+import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search2.ticket.Constants.TICKET_AGGREGATIONS;
+import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
+import static no.unit.nva.search2.ticket.TicketParameter.FROM;
+import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
+import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
+import static no.unit.nva.search2.ticket.TicketParameter.SORT;
+import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
+import static no.unit.nva.search2.ticket.TicketParameter.keyFromString;
+import static no.unit.nva.search2.ticket.TicketSort.INVALID;
+import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
+import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
+
+public final class TicketQuery extends Query<TicketParameter> {
+
+    private TicketQuery() {
         super();
         assignStatusImpossibleWhiteList();
     }
 
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
+    public static TicketParameterValidator builder() {
+        return new TicketParameterValidator();
     }
 
     @Override
@@ -89,7 +83,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected ResourceParameter getFieldsKey() {
+    protected TicketParameter getFieldsKey() {
         return FIELDS;
     }
 
@@ -98,7 +92,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return ALL.equals(field) || isNull(field)
             ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameter::keyFromString)
+                .map(TicketParameter::keyFromString)
                 .map(ParameterKey::searchFields)
                 .flatMap(Collection::stream)
                 .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
@@ -114,12 +108,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
+                .addChild(Words.TICKETS, Words.SEARCH)
                 .getUri();
     }
 
     @Override
-    protected boolean isPagingValue(ResourceParameter key) {
+    protected boolean isPagingValue(TicketParameter key) {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
@@ -132,11 +126,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * @param publicationStatus the required statues
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
+    public TicketQuery withRequiredStatus(PublicationStatus... publicationStatus) {
         final var values = Arrays.stream(publicationStatus)
             .map(PublicationStatus::toString)
             .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(PUBLICATION_STATUS, values)
+        final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
             .queryName(STATUS);
         this.addFilter(filter);
         return this;
@@ -150,18 +144,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceQuery withOrganization(URI organization) {
-        final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
+    public TicketQuery withOrganization(URI organization) {
+        final var filter = new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, organization.toString())
             .queryName(PUBLISHER);
         this.addFilter(filter);
         return this;
     }
 
-    public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
+    public Stream<QueryContentWrapper> createQueryBuilderStream() {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : makeBoolQuery(userSettingsClient);
+                : makeBoolQuery();
 
         var builder = defaultSearchSourceBuilder(queryBuilder);
 
@@ -177,17 +171,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
-    private BoolQueryBuilder makeBoolQuery(UserSettingsClient userSettingsClient) {
-        var queryBuilder = boolQuery();
-        if (isLookingForOneContributor()) {
-            addPromotedPublications(userSettingsClient, queryBuilder);
-        }
-        return queryBuilder;
+    private BoolQueryBuilder makeBoolQuery() {
+        return  boolQuery();
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(Constants.FILTER, getFilters());
-        RESOURCES_AGGREGATIONS
+        var aggrFilter = AggregationBuilders.filter(no.unit.nva.search2.resource.Constants.FILTER, getFilters());
+        TICKET_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
@@ -218,31 +208,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    private boolean isLookingForOneContributor() {
-        return hasOneValue(CONTRIBUTOR);
-    }
-
-    private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        var promotedPublications =
-            attempt(() -> userSettingsClient.doSearch(this))
-                .or(() -> new UserSettings(List.of()))
-                .get().promotedPublications();
-        if (hasContent(promotedPublications)) {
-            removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
-                var qb = QueryBuilders
-                    .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
-                bq.should(qb);
-            }
-            logger.info(
-                bq.should().stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "))
-            );
-        }
-    }
 
     /**
      * Add a (default) filter to the query that will never match any document.
@@ -252,19 +217,19 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
-        setFilters(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
+        setFilters(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     @SuppressWarnings("PMD.GodClass")
-    public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
+    public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketQuery> {
 
-        ResourceParameterValidator() {
-            super(new ResourceQuery());
+        TicketParameterValidator() {
+            super(new TicketQuery());
         }
 
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ResourceParameter.INVALID;
+            return keyFromString(keyName) != TicketParameter.INVALID;
         }
 
         @Override
@@ -273,7 +238,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 switch (key) {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case SORT -> setValue(key.fieldName(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
                     case AGGREGATION -> setValue(key.fieldName(), ALL);
                     default -> { /* ignore and continue */ }
                 }
@@ -292,11 +257,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case CREATED_BEFORE, CREATED_SINCE,
-                    MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
-                case HAS_PUBLIC_FILE -> query.setKeyValue(qpKey, valueToBoolean(key, decodedValue).toString());
-                case LANG -> { /* ignore and continue */ }
+                case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE, PUBLICATION_CREATED_DATE  ->
+                    query.setKeyValue(qpKey,expandYearToDate(decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }

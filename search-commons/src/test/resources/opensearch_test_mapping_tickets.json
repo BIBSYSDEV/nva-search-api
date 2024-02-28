@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "messages": {
+      "type": "nested",
+      "include_in_parent": true
+    },
+    "viewedBy": {
+      "type": "nested",
+      "include_in_parent": true
+    },
+    "organizations": {
+      "properties": {
+        "partOf": {
+          "type": "nested",
+          "include_in_parent": true
+        }
+      }
+    },
+    "publication": {
+      "properties": {
+        "include_in_parent": true
+      }
+    }
+  }
+}
+

@@ -383,6 +383,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+
   /import-candidates2:
     get:
       description: "Search for import candidates by given criteria"
