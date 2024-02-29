@@ -1,21 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -23,13 +7,18 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
+import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.importcandidate.Constants.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
@@ -46,19 +35,50 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.keyFr
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.fromSortKey;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.validSortKeys;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.termQuery;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.ParameterValidator;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
+import nva.commons.core.JacocoGenerated;
+import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     ImportCandidateQuery() {
         super();
     }
 
-    public static Builder builder() {
-        return new Builder();
+    @Override
+    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> customQueryBuilders(
+        ImportCandidateParameter key) {
+        return switch (key) {
+            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            default -> {
+                logger.error("unhandled key -> {}", key.name());
+                yield Stream.empty();
+            }
+        };
     }
+
 
     @Override
     protected Integer getFrom() {
@@ -81,9 +101,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
                 .map(ImportCandidateParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
+                .flatMap(ParameterKey::searchFields)
                 .toArray(String[]::new);
     }
 
@@ -114,7 +132,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : boolQuery();
+                : mainQuery();
 
         var builder = new SearchSourceBuilder()
             .query(queryBuilder)
@@ -138,6 +156,20 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             builder.searchAfter(sortKeys);
         }
     }
+
+    public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(
+        ImportCandidateParameter key, String source) {
+        var value = getValue(key).as();
+        var query = QueryBuilders.nestedQuery(
+            ADDITIONAL_IDENTIFIERS,
+            boolQuery()
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), value))
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
+            ScoreMode.None);
+
+        return kQueryTools.queryToEntry(key, query);
+    }
+
 
     @SuppressWarnings("PMD.GodClass")
     public static class Builder extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {

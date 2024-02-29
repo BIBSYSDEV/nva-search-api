@@ -411,6 +411,8 @@ class ResourceClientTest {
             assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
 
+
+
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
                 createArgument("page=0&aggregation=all", 20),
