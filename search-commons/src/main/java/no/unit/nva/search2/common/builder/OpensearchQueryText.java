@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.MatchPhrasePrefixQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
@@ -14,28 +13,33 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
-        final var searchFields = queryTools.getSearchFields(key);
-        return queryTools.queryToEntry(key, Arrays.stream(values)
-            .flatMap(singleValue -> getMatchPhrasePrefixBuilderStream(singleValue, searchFields))
-            .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
-            .queryName("TextAny-" + key.fieldName()));
+        return buildAnyComboMustHitQuery(key, values)
+            .flatMap(builder -> queryTools.queryToEntry(key, builder));
     }
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
-        final var searchFields = queryTools.getSearchFields(key);
-        return queryTools.queryToEntry(key, Arrays.stream(values)
-            .map(singleValue ->
-                     getMatchPhrasePrefixBuilderStream(singleValue, searchFields)
-                         .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
-            )
-            .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must)
-            .queryName("TextAll-" + key.fieldName()));
+        return buildAllMustHitQuery(key, values)
+            .flatMap(builder -> queryTools.queryToEntry(key, builder));
     }
 
-    private Stream<MatchPhrasePrefixQueryBuilder> getMatchPhrasePrefixBuilderStream(String singleValue,
-                                                                                    String... fieldNames) {
-        return Arrays.stream(fieldNames)
+    private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
+        return Arrays.stream(values)
+            .map(singleValue -> phrasePrefixBuilder(singleValue, key)
+                .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
+                .queryName("TextAll-" + key.fieldName()));
+    }
+
+    private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
+        var disMax = QueryBuilders.disMaxQuery().queryName("TextAny-" + key.fieldName());
+        Arrays.stream(values)
+            .flatMap(singleValue -> phrasePrefixBuilder(singleValue, key))
+            .forEach(disMax::add);
+        return Stream.of(disMax);
+    }
+
+    private Stream<MatchPhrasePrefixQueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
+        return key.searchFields()
             .map(fieldName -> QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue));
     }
 }

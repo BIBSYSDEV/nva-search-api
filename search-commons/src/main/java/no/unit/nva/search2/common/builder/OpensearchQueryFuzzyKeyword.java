@@ -7,8 +7,6 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.DisMaxQueryBuilder;
-import org.opensearch.index.query.MatchPhrasePrefixQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -36,37 +34,34 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private QueryBuilder buildMatchAnyFuzzy(K key, String... values) {
-        final var searchFields = queryTools.getSearchFields(key);
         return Arrays.stream(values)
-            .map(value -> getMultiMatchQueryBuilder(value, searchFields))
+            .map(value -> getMultiMatchQueryBuilder(value, key))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
     }
 
     private QueryBuilder buildMatchAnyKeyword(K key, String... values) {
-        return key.searchFields().stream()
+        return key.searchFields()
             .map(searchField -> new TermsQueryBuilder(searchField, values))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
     }
 
     private QueryBuilder buildMatchAllFuzzy(K key, String... values) {
-        final var searchFields = queryTools.getSearchFields(key);
         return Arrays.stream(values)
-            .map(singleValue ->
-                     getMatchPhrasePrefixBuilderStream(singleValue, searchFields)
-                         .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
+            .map(singleValue -> getMatchPhrasePrefixBuilderStream(singleValue, key)
+                .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
             )
             .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
     }
 
     private QueryBuilder buildMatchAllKeyword(K key, String... values) {
-        return key.searchFields().stream()
-            .flatMap(searchField ->
-                         Arrays.stream(values)
-                             .map(value -> new TermQueryBuilder(searchField, value)))
+        return key.searchFields()
+            .flatMap(searchField -> Arrays.stream(values)
+                .map(value -> new TermQueryBuilder(searchField, value)))
             .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
     }
 
-    private static MultiMatchQueryBuilder getMultiMatchQueryBuilder(String value, String... searchFields) {
+    private QueryBuilder getMultiMatchQueryBuilder(String value, K key) {
+        final var searchFields = key.searchFields().toArray(String[]::new);
         return QueryBuilders
             .multiMatchQuery(value, searchFields)
             .fuzziness(Fuzziness.AUTO)
@@ -74,14 +69,11 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
             .operator(Operator.AND);
     }
 
-    private Stream<MatchPhrasePrefixQueryBuilder> getMatchPhrasePrefixBuilderStream(
-        String singleValue, String... fieldNames) {
-
-        return Arrays.stream(fieldNames)
+    private Stream<QueryBuilder> getMatchPhrasePrefixBuilderStream(String singleValue, K key) {
+        return key.searchFields()
             .map(fieldName -> QueryBuilders
                 .matchPhrasePrefixQuery(fieldName, singleValue)
                 .maxExpansions(10)
             );
     }
-
 }

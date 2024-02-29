@@ -1,14 +1,14 @@
 package no.unit.nva.search2.common.builder;
 
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
-
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 
 /**
  * Abstract class for building OpenSearch queries.
@@ -30,7 +30,7 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     private Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        return key.searchOperator().equals(ONE_OR_MORE_ITEM)
+        return key.searchOperator().equals(ONE_OR_MORE_ITEM) || key.searchOperator().equals(NOT_ONE_ITEM)
             ? buildMatchAnyKeyValuesQuery(key, values)
             : buildMatchAllValuesQuery(key, values);
     }
