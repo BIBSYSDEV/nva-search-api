@@ -1,33 +1,5 @@
 package no.unit.nva.search2.ticket;
 
-import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.PublicationStatus;
-import no.unit.nva.search2.common.enums.TicketStatus;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
-import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.SortOrder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -39,8 +11,8 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.DOT;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.FILTER;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
@@ -60,15 +32,43 @@ import static no.unit.nva.search2.ticket.TicketParameter.keyFromString;
 import static no.unit.nva.search2.ticket.TicketSort.INVALID;
 import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
 import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.ParameterValidator;
+import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.TicketStatus;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
+import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
+import org.opensearch.index.query.TermsQueryBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
 
     private TicketQuery() {
         super();
         assignStatusImpossibleWhiteList();
+    }
+
+    @Override
+    protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
+        return null;
     }
 
     public static TicketParameterValidator builder() {
@@ -96,9 +96,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
                 .map(TicketParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
+                .flatMap(ParameterKey::searchFields)
                 .toArray(String[]::new);
     }
 
@@ -130,7 +128,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      *
      * <p>Only STATUES specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link PublicationStatus} for available values.</p>
+     * <p>See {@link TicketStatus} for available values.</p>
      * @param ticketStatus the required statues
      * @return ResourceQuery (builder pattern)
      */
@@ -163,7 +161,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         var queryBuilder =
             this.hasNoSearchValue()
                 ? QueryBuilders.matchAllQuery()
-                : makeBoolQuery();
+                : mainQuery();
 
         var builder = defaultSearchSourceBuilder(queryBuilder);
 
@@ -179,12 +177,8 @@ public final class TicketQuery extends Query<TicketParameter> {
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
 
-    private BoolQueryBuilder makeBoolQuery() {
-        return  boolQuery();
-    }
-
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(no.unit.nva.search2.resource.Constants.FILTER, getFilters());
+        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
         TICKET_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -222,7 +216,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      *
      * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
      * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
+     * <p>See {@link #withRequiredStatus(TicketStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
         setFilters(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
@@ -247,7 +241,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case AGGREGATION -> setValue(key.fieldName(), NONE);
                     default -> { /* ignore and continue */ }
                 }
             });
@@ -265,7 +259,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE, PUBLICATION_CREATED_DATE  ->
+                case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
                     query.setKeyValue(qpKey,expandYearToDate(decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }

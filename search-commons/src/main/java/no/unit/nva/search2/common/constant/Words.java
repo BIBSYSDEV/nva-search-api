@@ -6,6 +6,9 @@ public final class Words {
 
     public static final float PI = 3.14F;        // π -> used for boosting.
     public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
+    public static final String FILTER = "filter";
+    public static final String ROOT = "root";
+
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
     public static final String AFFILIATIONS = "affiliations";
@@ -54,6 +57,7 @@ public final class Words {
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
+    public static final String NONE = "none";
     public static final String NYNORSK_CODE = "nn";
     public static final String ONE = "1";
     public static final String ONLINE_ISSN = "onlineIssn";

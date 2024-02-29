@@ -3,12 +3,20 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
@@ -138,8 +146,8 @@ class ResourceClientTest {
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
 
-            var uri1 = URI.create(REQUEST_BASE_URL);
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withOpensearchUri(hostAddress)
@@ -147,12 +155,13 @@ class ResourceClientTest {
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response1 = searchClient.doSearch(query1);
+
             assertNotNull(response1);
 
-            var uri2 =
-                URI.create(REQUEST_BASE_URL +
-                           "aggregation=entityDescription,associatedArtifacts,topLevelOrganizations,fundings,status,"
-                           + "scientificIndex,hasPublicFile,license");
+            var aggregationsList = String.join(COMMA, ASSOCIATED_ARTIFACTS, ENTITY_DESCRIPTION, FUNDINGS,
+                                               STATUS, SCIENTIFIC_INDEX, TOP_LEVEL_ORGANIZATIONS);
+            var uri2 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + aggregationsList);
+
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -160,8 +169,8 @@ class ResourceClientTest {
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
             var response2 = searchClient.doSearch(query2);
-            assertNotNull(response2);
 
+            assertNotNull(response2);
             assertEquals(response1.aggregations(), response2.aggregations());
 
             var aggregations = query1.toPagedResponse(response1).aggregations();

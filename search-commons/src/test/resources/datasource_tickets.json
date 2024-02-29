@@ -6,37 +6,40 @@
     "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
     "status": "New",
     "id": "https://api.dev.nva.aws.unit.no/publication/018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c/ticket/018deb172d73-9e7d963d-ec8b-4fbe-8fe4-665a95ba301e",
-    "messages": [{
-      "type": "Message",
-      "identifier": "018deb1773b0-d12c328d-3aa2-4c12-b5a8-5f36c1676c5c",
-      "owner": "1492596@20754.0.0.0",
-      "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-      "sender": {
+    "messages": [
+      {
+        "type": "Message",
+        "identifier": "018deb1773b0-d12c328d-3aa2-4c12-b5a8-5f36c1676c5c",
+        "owner": "1492596@20754.0.0.0",
+        "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+        "sender": {
+          "type": "Person",
+          "firstName": "Kir ",
+          "lastName": "Truhacev",
+          "username": "1492596@20754.0.0.0"
+        },
+        "resourceIdentifier": "018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
+        "ticketIdentifier": "018deb172d73-9e7d963d-ec8b-4fbe-8fe4-665a95ba301e",
+        "text": "dFASF",
+        "createdDate": "2024-02-27T15:03:19.215852154Z",
+        "modifiedDate": "2024-02-27T15:03:19.215852154Z",
+        "resourceTitle": "NOT_USED",
+        "status": "Active"
+      }
+    ],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Terje",
+        "lastName": "Hellesvik",
+        "username": "1269057@20754.0.0.0"
+      },
+      {
         "type": "Person",
         "firstName": "Kir ",
         "lastName": "Truhacev",
         "username": "1492596@20754.0.0.0"
-      },
-      "resourceIdentifier": "018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
-      "ticketIdentifier": "018deb172d73-9e7d963d-ec8b-4fbe-8fe4-665a95ba301e",
-      "text": "dFASF",
-      "createdDate": "2024-02-27T15:03:19.215852154Z",
-      "modifiedDate": "2024-02-27T15:03:19.215852154Z",
-      "resourceTitle": "NOT_USED",
-      "status": "Active"
-    }
-    ],
-    "viewedBy": [{
-      "type": "Person",
-      "firstName": "Terje",
-      "lastName": "Hellesvik",
-      "username": "1269057@20754.0.0.0"
-    }, {
-      "type": "Person",
-      "firstName": "Kir ",
-      "lastName": "Truhacev",
-      "username": "1492596@20754.0.0.0"
-    }
+      }
     ],
     "publication": {
       "owner": "1492596@20754.0.0.0",
@@ -47,44 +50,47 @@
           "type": "ShortFilm"
         },
         "description": "adawd",
-        "outputs": [{
-          "type": "Broadcast",
-          "publisher": {
-            "type": "UnconfirmedPublisher",
-            "name": "NRK",
-            "valid": true
-          },
-          "date": {
-            "type": "Instant",
-            "value": "2024-01-31T23:00:00Z"
-          },
-          "sequence": 1
-        }
+        "outputs": [
+          {
+            "type": "Broadcast",
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "name": "NRK",
+              "valid": true
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-01-31T23:00:00Z"
+            },
+            "sequence": 1
+          }
         ],
         "pages": {
           "type": "NullPages"
         }
       },
-      "contributors": [{
-        "type": "Contributor",
-        "identity": {
-          "type": "Identity",
-          "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
-          "name": "Kir  Truhacev",
-          "verificationStatus": "Verified",
-          "additionalIdentifiers": []
-        },
-        "affiliations": [{
-          "type": "Organization",
-          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
+            "name": "Kir  Truhacev",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
         }
-        ],
-        "role": {
-          "type": "Director"
-        },
-        "sequence": 1,
-        "correspondingAuthor": false
-      }
       ],
       "id": "https://api.dev.nva.aws.unit.no/publication/018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
       "identifier": "018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
@@ -102,1984 +108,2195 @@
     }
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-28T09:25:39.223178587Z",
-    "createdDate" : "2024-02-27T14:28:06.168047052Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c/ticket/018deaf73598-3b01bbf7-754a-44b0-892a-e8ae13826d57",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Terje",
-      "lastName" : "Hellesvik",
-      "username" : "1269057@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Mayli",
-      "lastName" : "Munkebye",
-      "username" : "1684650@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1492596@20754.0.0.0",
-      "status" : "DRAFT",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-28T09:25:39.223178587Z",
+    "createdDate": "2024-02-27T14:28:06.168047052Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c/ticket/018deaf73598-3b01bbf7-754a-44b0-892a-e8ae13826d57",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Terje",
+        "lastName": "Hellesvik",
+        "username": "1269057@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Mayli",
+        "lastName": "Munkebye",
+        "username": "1684650@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1492596@20754.0.0.0",
+      "status": "DRAFT",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "description" : "adawd",
-        "outputs" : [ {
-          "type" : "Broadcast",
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "name" : "NRK",
-            "valid" : true
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-01-31T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "description": "adawd",
+        "outputs": [
+          {
+            "type": "Broadcast",
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "name": "NRK",
+              "valid": true
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-01-31T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
-          "name" : "Kir  Truhacev",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
-      "identifier" : "018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
-      "mainTitle" : "Test filer"
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
+            "name": "Kir  Truhacev",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
+      "identifier": "018d64b6415e-59ac68b4-f801-490d-8c16-b7b1052b3d6c",
+      "mainTitle": "Test filer"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Kir ",
+      "lastName": "Truhacev",
+      "username": "1492596@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     },
-    "status" : "New"
+    "status": "New"
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/9d02e866-aeba-466d-993a-b519c664d38c",
-    "modifiedDate" : "2024-02-26T12:08:36.469286345Z",
-    "createdDate" : "2024-02-26T12:08:36.469286345Z",
-    "workflow" : "RegistratorPublishesMetadataAndFiles",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f3d6e1-3cafe82f-536a-4a51-9442-7c4a21673ac6/ticket/018de5512375-b7952954-a221-4045-bd83-8451c3033b5a",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@5923.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1485369@5923.0.0.0",
-      "status" : "PUBLISHED",
-      "publicationInstance" : {
-        "type" : "OtherPresentation",
-        "pages" : {
-          "type" : "NullPages"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/9d02e866-aeba-466d-993a-b519c664d38c",
+    "modifiedDate": "2024-02-26T12:08:36.469286345Z",
+    "createdDate": "2024-02-26T12:08:36.469286345Z",
+    "workflow": "RegistratorPublishesMetadataAndFiles",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de4f3d6e1-3cafe82f-536a-4a51-9442-7c4a21673ac6/ticket/018de5512375-b7952954-a221-4045-bd83-8451c3033b5a",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Ketil",
+        "lastName": "Aasarød",
+        "username": "1485369@5923.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1485369@5923.0.0.0",
+      "status": "PUBLISHED",
+      "publicationInstance": {
+        "type": "OtherPresentation",
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T12:08:36.424620614Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1269057",
-          "name" : "Terje Hellesvik",
-          "orcId" : "https://sandbox.orcid.org/0000-0002-8617-3281",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
+      "publishedDate": "2024-02-26T12:08:36.424620614Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1269057",
+            "name": "Terje Hellesvik",
+            "orcId": "https://sandbox.orcid.org/0000-0002-8617-3281",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
         },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
+            "name": "Kir  Truhacev",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2,
+          "correspondingAuthor": false
         },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      }, {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
-          "name" : "Kir  Truhacev",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3,
+          "correspondingAuthor": false
         },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 2,
-        "correspondingAuthor" : false
-      }, {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 3,
-        "correspondingAuthor" : false
-      }, {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/42557",
-          "name" : "Jan E. Garshol",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 4,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f3d6e1-3cafe82f-536a-4a51-9442-7c4a21673ac6",
-      "identifier" : "018de4f3d6e1-3cafe82f-536a-4a51-9442-7c4a21673ac6",
-      "mainTitle" : "Publikasjon fra Norges Bank med bidragsytere fra Sikt"
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/42557",
+            "name": "Jan E. Garshol",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de4f3d6e1-3cafe82f-536a-4a51-9442-7c4a21673ac6",
+      "identifier": "018de4f3d6e1-3cafe82f-536a-4a51-9442-7c4a21673ac6",
+      "mainTitle": "Publikasjon fra Norges Bank med bidragsytere fra Sikt"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@5923.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Ketil",
+      "lastName": "Aasarød",
+      "username": "1485369@5923.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@5923.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Ketil",
+      "lastName": "Aasarød",
+      "username": "1485369@5923.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/5923.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/5923.0.0.0",
+      "partOf": []
     },
-    "status" : "Completed"
+    "status": "Completed"
   },
   {
-    "type" : "GeneralSupportCase",
-    "modifiedDate" : "2024-02-27T17:12:24.485325786Z",
-    "createdDate" : "2024-02-26T10:44:38.550648576Z",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status" : "New",
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de5044416-7a3b7a74-978f-45fb-a743-c9c0b0d39e65",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Terje",
-      "lastName" : "Hellesvik",
-      "username" : "1269057@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Torbjørn",
-      "lastName" : "Kvåle",
-      "username" : "34322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "GeneralSupportCase",
+    "modifiedDate": "2024-02-27T17:12:24.485325786Z",
+    "createdDate": "2023-02-26T10:44:38.550648576Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "status": "New",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de5044416-7a3b7a74-978f-45fb-a743-c9c0b0d39e65",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Terje",
+        "lastName": "Hellesvik",
+        "username": "1269057@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Torbjørn",
+        "lastName": "Kvåle",
+        "username": "34322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:32:50.604536786Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "identifier" : "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "mainTitle" : "Min ikke så fullt supre registrering"
+      "publishedDate": "2024-02-26T10:32:50.604536786Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+      "identifier": "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+      "mainTitle": "Min ikke så fullt supre registrering"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     }
   },
   {
-    "type" : "GeneralSupportCase",
-    "modifiedDate" : "2024-02-27T16:53:08.323112217Z",
-    "createdDate" : "2024-02-26T10:46:35.728498816Z",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status" : "New",
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1/ticket/018de5060dd0-3e2570f5-3d56-4479-b79e-4410b81626c7",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Terje",
-      "lastName" : "Hellesvik",
-      "username" : "1269057@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Torbjørn",
-      "lastName" : "Kvåle",
-      "username" : "34322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "GeneralSupportCase",
+    "modifiedDate": "2024-02-27T16:53:08.323112217Z",
+    "createdDate": "2024-02-26T10:46:35.728498816Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "status": "New",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1/ticket/018de5060dd0-3e2570f5-3d56-4479-b79e-4410b81626c7",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Terje",
+        "lastName": "Hellesvik",
+        "username": "1269057@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Torbjørn",
+        "lastName": "Kvåle",
+        "username": "34322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:46:19.928352131Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
-      "identifier" : "018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
-      "mainTitle" : "Min ikke fult så supre registrering"
+      "publishedDate": "2024-02-26T10:46:19.928352131Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
+      "identifier": "018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
+      "mainTitle": "Min ikke fult så supre registrering"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     }
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-28T09:25:17.970646009Z",
-    "createdDate" : "2024-02-26T10:48:20.042254401Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e/ticket/018de507a54a-7b15ceb6-edf7-4177-af66-4d33324efec8",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Mayli",
-      "lastName" : "Munkebye",
-      "username" : "1684650@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-28T09:25:17.970646009Z",
+    "createdDate": "2023-02-26T10:48:20.042254401Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e/ticket/018de507a54a-7b15ceb6-edf7-4177-af66-4d33324efec8",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Mayli",
+        "lastName": "Munkebye",
+        "username": "1684650@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:48:20.000915406Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
-      "identifier" : "018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
-      "mainTitle" : "Min ikke fult så supre registrering"
+      "publishedDate": "2024-02-26T10:48:20.000915406Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
+      "identifier": "018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
+      "mainTitle": "Min ikke fult så supre registrering"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     },
-    "status" : "Completed"
+    "status": "Completed"
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-27T16:39:44.664261563Z",
-    "createdDate" : "2024-02-26T10:46:19.972047753Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1/ticket/018de505d044-37c91588-4e04-4f08-91ad-cb48a011332a",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-27T16:39:44.664261563Z",
+    "createdDate": "2022-02-26T10:46:19.972047753Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1/ticket/018de505d044-37c91588-4e04-4f08-91ad-cb48a011332a",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:46:19.928352131Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
-      "identifier" : "018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
-      "mainTitle" : "Min ikke fult så supre registrering"
+      "publishedDate": "2024-02-26T10:46:19.928352131Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
+      "identifier": "018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
+      "mainTitle": "Min ikke fult så supre registrering"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     },
-    "status" : "Completed"
+    "status": "Completed"
   },
   {
-    "type" : "DoiRequest",
-    "status" : "Completed",
-    "modifiedDate" : "2024-02-27T16:54:41.974063176Z",
-    "createdDate" : "2024-02-26T10:41:52.229720596Z",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de501ba65-78574f92-5033-4db9-a9e2-444f15cba339",
-    "messages" : [ {
-      "type" : "Message",
-      "identifier" : "018de501ebc1-28c3ac62-5d1f-4692-98a6-2ce3ceb0dbbd",
-      "owner" : "1412322@20754.0.0.0",
-      "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-      "sender" : {
-        "type" : "Person",
-        "firstName" : "Anette Olli",
-        "lastName" : "Siiri",
-        "username" : "1412322@20754.0.0.0"
-      },
-      "resourceIdentifier" : "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "ticketIdentifier" : "018de501ba65-78574f92-5033-4db9-a9e2-444f15cba339",
-      "text" : "Trenger en DOI for demoen",
-      "createdDate" : "2024-02-26T10:42:04.864542336Z",
-      "modifiedDate" : "2024-02-26T10:42:04.864542336Z",
-      "resourceTitle" : "NOT_USED",
-      "status" : "Active"
-    } ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "DoiRequest",
+    "status": "Completed",
+    "modifiedDate": "2024-02-27T16:54:41.974063176Z",
+    "createdDate": "2022-02-26T10:41:52.229720596Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de501ba65-78574f92-5033-4db9-a9e2-444f15cba339",
+    "messages": [
+      {
+        "type": "Message",
+        "identifier": "018de501ebc1-28c3ac62-5d1f-4692-98a6-2ce3ceb0dbbd",
+        "owner": "1412322@20754.0.0.0",
+        "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+        "sender": {
+          "type": "Person",
+          "firstName": "Anette Olli",
+          "lastName": "Siiri",
+          "username": "1412322@20754.0.0.0"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "resourceIdentifier": "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+        "ticketIdentifier": "018de501ba65-78574f92-5033-4db9-a9e2-444f15cba339",
+        "text": "Trenger en DOI for demoen",
+        "createdDate": "2024-02-26T10:42:04.864542336Z",
+        "modifiedDate": "2024-02-26T10:42:04.864542336Z",
+        "resourceTitle": "NOT_USED",
+        "status": "Active"
+      }
+    ],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
+        },
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:32:50.604536786Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "identifier" : "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "mainTitle" : "Min ikke så fullt supre registrering"
+      "publishedDate": "2024-02-26T10:32:50.604536786Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+      "identifier": "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+      "mainTitle": "Min ikke så fullt supre registrering"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     }
   },
   {
-    "type" : "GeneralSupportCase",
-    "modifiedDate" : "2024-02-28T08:53:03.670346953Z",
-    "createdDate" : "2024-02-26T11:14:54.838823498Z",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status" : "New",
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e/ticket/018de51ffaf6-ccf19743-31a3-4933-a168-344ca79de275",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kjetil",
-      "lastName" : "Møkkelgjerd",
-      "username" : "1421086@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Terje",
-      "lastName" : "Hellesvik",
-      "username" : "1269057@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Joachim William Hegvold",
-      "lastName" : "Jørgensen",
-      "username" : "1004729@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "GeneralSupportCase",
+    "modifiedDate": "2023-02-28T08:53:03.670346953Z",
+    "createdDate": "2021-02-26T11:14:54.838823498Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "status": "New",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e/ticket/018de51ffaf6-ccf19743-31a3-4933-a168-344ca79de275",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kjetil",
+        "lastName": "Møkkelgjerd",
+        "username": "1421086@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Terje",
+        "lastName": "Hellesvik",
+        "username": "1269057@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Joachim William Hegvold",
+        "lastName": "Jørgensen",
+        "username": "1004729@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:48:20.000915406Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
-      "identifier" : "018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
-      "mainTitle" : "Min ikke fult så supre registrering"
+      "publishedDate": "2024-02-26T10:48:20.000915406Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
+      "identifier": "018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e",
+      "mainTitle": "Min ikke fult så supre registrering"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     }
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-27T17:11:12.522879036Z",
-    "createdDate" : "2024-02-26T10:32:50.649053086Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de4f976d9-bec67abe-7819-4136-869c-cab3a070e150",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-27T17:11:12.522879036Z",
+    "createdDate": "2024-02-26T10:32:50.649053086Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de4f976d9-bec67abe-7819-4136-869c-cab3a070e150",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "Hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "Trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-25T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-26T10:32:50.604536786Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "identifier" : "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
-      "mainTitle" : "Min ikke så fullt supre registrering"
+      "publishedDate": "2024-02-26T10:32:50.604536786Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+      "identifier": "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
+      "mainTitle": "Min ikke så fullt supre registrering"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     },
-    "status" : "Completed"
+    "status": "Completed"
   },
   {
-  "type" : "PublishingRequest",
-  "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-  "modifiedDate" : "2024-02-27T17:11:07.257046060Z",
-  "createdDate" : "2024-02-26T10:31:42.210169692Z",
-  "workflow" : "RegistratorPublishesMetadataOnly",
-  "approvedFiles" : [ ],
-  "filesForApproval" : [ ],
-  "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f680f3-ea6fdf6c-74bc-4179-bdc3-c8c687a5a02b/ticket/018de4f86b82-a0e18e88-8ed6-48db-b86e-dc3451f6ec19",
-  "messages" : [ ],
-  "viewedBy" : [ {
-  "type" : "Person",
-  "firstName" : "Anette Olli",
-  "lastName" : "Siiri",
-  "username" : "1412322@20754.0.0.0"
-}, {
-  "type" : "Person",
-  "firstName" : "Kir ",
-  "lastName" : "Truhacev",
-  "username" : "1492596@20754.0.0.0"
-} ],
-  "publication" : {
-  "owner" : "1412322@20754.0.0.0",
-  "status" : "PUBLISHED",
-  "publicationInstance" : {
-    "type" : "MovingPicture",
-    "subtype" : {
-      "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-27T17:11:07.257046060Z",
+    "createdDate": "2024-02-26T10:31:42.210169692Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018de4f680f3-ea6fdf6c-74bc-4179-bdc3-c8c687a5a02b/ticket/018de4f86b82-a0e18e88-8ed6-48db-b86e-dc3451f6ec19",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "PUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
+        },
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "Hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "Trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-25T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
+        }
+      },
+      "publishedDate": "2024-02-26T10:31:42.163111Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018de4f680f3-ea6fdf6c-74bc-4179-bdc3-c8c687a5a02b",
+      "identifier": "018de4f680f3-ea6fdf6c-74bc-4179-bdc3-c8c687a5a02b",
+      "mainTitle": "Min supre registrering"
     },
-    "outputs" : [ {
-      "type" : "OtherRelease",
-      "description" : "Hjemmekino",
-      "place" : {
-        "type" : "UnconfirmedPlace",
-        "label" : "Trondheim"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
+    },
+    "status": "Completed"
+  },
+  {
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T09:41:44.293139750Z",
+    "createdDate": "2024-02-23T09:41:44.293139750Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [
+      {
+        "type": "PublishedFile",
+        "identifier": "a6debd9c-d45e-42c7-88a7-5f48490e71ba",
+        "name": "20210924_085343.jpg",
+        "mimeType": "image/jpeg",
+        "size": 800866,
+        "license": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+        "administrativeAgreement": false,
+        "publisherAuthority": false,
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "publishedDate": "2024-02-23T09:41:44.049269096Z",
+        "visibleForNonOwner": true
+      }
+    ],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e/ticket/018dd55798e5-e18c1c1d-8978-4da2-98de-f494fbbf7462",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "ArtisticDesign",
+        "subtype": {
+          "type": "ProductDesign"
+        },
+        "venues": [
+          {
+            "type": "Venue",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "date": {
+              "type": "Period",
+              "from": "2024-02-22T23:00:00Z"
+            },
+            "sequence": 0
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
+        }
       },
-      "publisher" : {
-        "type" : "UnconfirmedPublisher",
-        "valid" : false
+      "publishedDate": "2024-02-23T09:41:44.253475101Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Designer"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
+      "identifier": "018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
+      "mainTitle": "Trikken"
+    },
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
+    },
+    "status": "Completed"
+  },
+  {
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-27T14:34:19.712985302Z",
+    "createdDate": "2024-02-23T14:40:30.128128970Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [
+      {
+        "type": "PublishedFile",
+        "identifier": "27a094d9-36a5-43b9-99f3-a20eb791195e",
+        "name": "agile.png",
+        "mimeType": "image/png",
+        "size": 38399,
+        "license": "https://creativecommons.org/licenses/by/4.0",
+        "administrativeAgreement": false,
+        "publisherAuthority": false,
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy"
+        },
+        "publishedDate": "2024-02-23T14:40:29.978130891Z",
+        "visibleForNonOwner": true
+      }
+    ],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd6646f34-0271ce64-3d98-4710-9359-7f18691f2035/ticket/018dd6691fb0-57f79190-7368-4577-a91b-2d82dde3983c",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Ketil",
+        "lastName": "Aasarød",
+        "username": "1485369@20754.0.0.0"
       },
-      "date" : {
-        "type" : "Instant",
-        "value" : "2024-02-25T23:00:00Z"
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1485369@20754.0.0.0",
+      "status": "PUBLISHED",
+      "publicationInstance": {
+        "type": "ConferenceLecture",
+        "pages": {
+          "type": "NullPages"
+        }
       },
-      "sequence" : 1
-    } ],
-    "pages" : {
-      "type" : "NullPages"
+      "publishedDate": "2024-02-23T14:40:30.089076080Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/34322",
+            "name": "Torbjørn Kvåle",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        },
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2,
+          "correspondingAuthor": false
+        },
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
+            "name": "Kir  Truhacev",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd6646f34-0271ce64-3d98-4710-9359-7f18691f2035",
+      "identifier": "018dd6646f34-0271ce64-3d98-4710-9359-7f18691f2035",
+      "mainTitle": "Publikasjon med andre bidragsytere i Sikt som skal kunne redigere"
+    },
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Ketil",
+      "lastName": "Aasarød",
+      "username": "1485369@20754.0.0.0"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Ketil",
+      "lastName": "Aasarød",
+      "username": "1485369@20754.0.0.0"
+    },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Ketil",
+      "lastName": "Aasarød",
+      "username": "1485369@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+      "partOf": [
+        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+      ]
+    },
+    "status": "Completed"
+  },
+  {
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T14:55:18.100872060Z",
+    "createdDate": "2024-02-23T14:55:18.100872060Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd6758cf2-d7884f60-402c-40a6-a63d-7fcaed518324/ticket/018dd676ac54-ac8f5e07-ef9c-47c1-92d8-6607e05ac47c",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "DRAFT",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "SerialFilmProduction"
+        },
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-23T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
+        }
+      },
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd6758cf2-d7884f60-402c-40a6-a63d-7fcaed518324",
+      "identifier": "018dd6758cf2-d7884f60-402c-40a6-a63d-7fcaed518324",
+      "mainTitle": "Tester preview"
+    },
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
+    },
+    "status": "Completed"
+  },
+  {
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T14:36:43.226352333Z",
+    "createdDate": "2024-02-23T14:36:43.226352333Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd625cffc-460a9e94-5b69-4033-9b71-ce764179b845/ticket/018dd665a95a-693bd999-66eb-4a89-9e8f-beda0d1525f0",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Torbjørn",
+        "lastName": "Kvåle",
+        "username": "34322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "34322@20754.0.0.0",
+      "status": "PUBLISHED",
+      "publicationInstance": {
+        "type": "AcademicArticle",
+        "pages": {
+          "type": "Range"
+        }
+      },
+      "publishedDate": "2024-02-23T14:36:43.183939673Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/34322",
+            "name": "Torbjørn Kvåle",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        },
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1485369",
+            "name": "Ketil Aasarød",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/5923.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
+            }
+          ],
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd625cffc-460a9e94-5b69-4033-9b71-ce764179b845",
+      "identifier": "018dd625cffc-460a9e94-5b69-4033-9b71-ce764179b845",
+      "mainTitle": "tk blabla"
+    },
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Torbjørn",
+      "lastName": "Kvåle",
+      "username": "34322@20754.0.0.0"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Torbjørn",
+      "lastName": "Kvåle",
+      "username": "34322@20754.0.0.0"
+    },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Torbjørn",
+      "lastName": "Kvåle",
+      "username": "34322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
+    },
+    "status": "Completed"
+  },
+  {
+    "type": "GeneralSupportCase",
+    "modifiedDate": "2024-02-27T13:40:16.906768545Z",
+    "createdDate": "2024-02-23T09:41:56.514210992Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "status": "New",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e/ticket/018dd557c8a2-efba9a32-7b05-4156-af8d-ee775c62a4d1",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kjetil",
+        "lastName": "Møkkelgjerd",
+        "username": "1421086@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "ArtisticDesign",
+        "subtype": {
+          "type": "ProductDesign"
+        },
+        "venues": [
+          {
+            "type": "Venue",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "date": {
+              "type": "Period",
+              "from": "2024-02-22T23:00:00Z"
+            },
+            "sequence": 0
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
+        }
+      },
+      "publishedDate": "2024-02-23T09:41:44.253475101Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Designer"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
+      "identifier": "018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
+      "mainTitle": "Trikken"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     }
   },
-  "publishedDate" : "2024-02-26T10:31:42.163111Z",
-  "contributors" : [ {
-    "type" : "Contributor",
-    "identity" : {
-      "type" : "Identity",
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-      "name" : "Anette Olli Siiri",
-      "verificationStatus" : "Verified",
-      "additionalIdentifiers" : [ ]
-    },
-    "affiliations" : [ {
-      "type" : "Organization",
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-    } ],
-    "role" : {
-      "type" : "Director"
-    },
-    "sequence" : 1,
-    "correspondingAuthor" : false
-  } ],
-  "id" : "https://api.dev.nva.aws.unit.no/publication/018de4f680f3-ea6fdf6c-74bc-4179-bdc3-c8c687a5a02b",
-  "identifier" : "018de4f680f3-ea6fdf6c-74bc-4179-bdc3-c8c687a5a02b",
-  "mainTitle" : "Min supre registrering"
-},
-  "finalizedBy" : {
-  "type" : "Person",
-  "firstName" : "Anette Olli",
-  "lastName" : "Siiri",
-  "username" : "1412322@20754.0.0.0"
-},
-  "owner" : {
-  "type" : "Person",
-  "firstName" : "Anette Olli",
-  "lastName" : "Siiri",
-  "username" : "1412322@20754.0.0.0"
-},
-  "assignee" : {
-  "type" : "Person",
-  "firstName" : "Anette Olli",
-  "lastName" : "Siiri",
-  "username" : "1412322@20754.0.0.0"
-},
-  "organization" : {
-  "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-  "partOf" : [ ]
-},
-  "status" : "Completed"
-  },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-23T09:41:44.293139750Z",
-    "createdDate" : "2024-02-23T09:41:44.293139750Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ {
-      "type" : "PublishedFile",
-      "identifier" : "a6debd9c-d45e-42c7-88a7-5f48490e71ba",
-      "name" : "20210924_085343.jpg",
-      "mimeType" : "image/jpeg",
-      "size" : 800866,
-      "license" : "https://creativecommons.org/licenses/by-nc-nd/4.0",
-      "administrativeAgreement" : false,
-      "publisherAuthority" : false,
-      "rightsRetentionStrategy" : {
-        "type" : "NullRightsRetentionStrategy"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T14:46:59.791198184Z",
+    "createdDate": "2024-02-23T14:46:59.791198184Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d/ticket/018dd66f11cf-9600bded-bef5-42da-824a-2066dc6c940f",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "PUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "InteractiveFilm"
       },
-      "publishedDate" : "2024-02-23T09:41:44.049269096Z",
-      "visibleForNonOwner" : true
-    } ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e/ticket/018dd55798e5-e18c1c1d-8978-4da2-98de-f494fbbf7462",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "ArtisticDesign",
-        "subtype" : {
-          "type" : "ProductDesign"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
         },
-        "venues" : [ {
-          "type" : "Venue",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "date" : {
-            "type" : "Period",
-            "from" : "2024-02-22T23:00:00Z"
-          },
-          "sequence" : 0
-        } ],
-        "pages" : {
-          "type" : "NullPages"
-        }
-      },
-      "publishedDate" : "2024-02-23T09:41:44.253475101Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "orcId" : "https://sandbox.orcid.org/0009-0004-4447-9305",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
         },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Designer"
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-22T23:00:00Z"
         },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
-      "identifier" : "018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
-      "mainTitle" : "Trikken"
-    },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
-    },
-    "status" : "Completed"
-  },
-  {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-27T14:34:19.712985302Z",
-    "createdDate" : "2024-02-23T14:40:30.128128970Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ {
-      "type" : "PublishedFile",
-      "identifier" : "27a094d9-36a5-43b9-99f3-a20eb791195e",
-      "name" : "agile.png",
-      "mimeType" : "image/png",
-      "size" : 38399,
-      "license" : "https://creativecommons.org/licenses/by/4.0",
-      "administrativeAgreement" : false,
-      "publisherAuthority" : false,
-      "rightsRetentionStrategy" : {
-        "type" : "NullRightsRetentionStrategy"
-      },
-      "publishedDate" : "2024-02-23T14:40:29.978130891Z",
-      "visibleForNonOwner" : true
-    } ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd6646f34-0271ce64-3d98-4710-9359-7f18691f2035/ticket/018dd6691fb0-57f79190-7368-4577-a91b-2d82dde3983c",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1485369@20754.0.0.0",
-      "status" : "PUBLISHED",
-      "publicationInstance" : {
-        "type" : "ConferenceLecture",
-        "pages" : {
-          "type" : "NullPages"
-        }
-      },
-      "publishedDate" : "2024-02-23T14:40:30.089076080Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/34322",
-          "name" : "Torbjørn Kvåle",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      }, {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 2,
-        "correspondingAuthor" : false
-      }, {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1492596",
-          "name" : "Kir  Truhacev",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 3,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd6646f34-0271ce64-3d98-4710-9359-7f18691f2035",
-      "identifier" : "018dd6646f34-0271ce64-3d98-4710-9359-7f18691f2035",
-      "mainTitle" : "Publikasjon med andre bidragsytere i Sikt som skal kunne redigere"
-    },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@20754.0.0.0"
-    },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@20754.0.0.0"
-    },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Ketil",
-      "lastName" : "Aasarød",
-      "username" : "1485369@20754.0.0.0"
-    },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
-      "partOf" : [ "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0" ]
-    },
-    "status" : "Completed"
-  },
-  {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-23T14:55:18.100872060Z",
-    "createdDate" : "2024-02-23T14:55:18.100872060Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd6758cf2-d7884f60-402c-40a6-a63d-7fcaed518324/ticket/018dd676ac54-ac8f5e07-ef9c-47c1-92d8-6607e05ac47c",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "DRAFT",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "SerialFilmProduction"
-        },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-23T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
-        }
-      },
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd6758cf2-d7884f60-402c-40a6-a63d-7fcaed518324",
-      "identifier" : "018dd6758cf2-d7884f60-402c-40a6-a63d-7fcaed518324",
-      "mainTitle" : "Tester preview"
-    },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
-    },
-    "status" : "Completed"
-  },
-  {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-23T14:36:43.226352333Z",
-    "createdDate" : "2024-02-23T14:36:43.226352333Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd625cffc-460a9e94-5b69-4033-9b71-ce764179b845/ticket/018dd665a95a-693bd999-66eb-4a89-9e8f-beda0d1525f0",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Torbjørn",
-      "lastName" : "Kvåle",
-      "username" : "34322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "34322@20754.0.0.0",
-      "status" : "PUBLISHED",
-      "publicationInstance" : {
-        "type" : "AcademicArticle",
-        "pages" : {
-          "type" : "Range"
-        }
-      },
-      "publishedDate" : "2024-02-23T14:36:43.183939673Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/34322",
-          "name" : "Torbjørn Kvåle",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      }, {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1485369",
-          "name" : "Ketil Aasarød",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/5923.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
-        } ],
-        "role" : {
-          "type" : "Creator"
-        },
-        "sequence" : 2,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd625cffc-460a9e94-5b69-4033-9b71-ce764179b845",
-      "identifier" : "018dd625cffc-460a9e94-5b69-4033-9b71-ce764179b845",
-      "mainTitle" : "tk blabla"
-    },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Torbjørn",
-      "lastName" : "Kvåle",
-      "username" : "34322@20754.0.0.0"
-    },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Torbjørn",
-      "lastName" : "Kvåle",
-      "username" : "34322@20754.0.0.0"
-    },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Torbjørn",
-      "lastName" : "Kvåle",
-      "username" : "34322@20754.0.0.0"
-    },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
-    },
-    "status" : "Completed"
-  },
-  {
-    "type" : "GeneralSupportCase",
-    "modifiedDate" : "2024-02-27T13:40:16.906768545Z",
-    "createdDate" : "2024-02-23T09:41:56.514210992Z",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status" : "New",
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e/ticket/018dd557c8a2-efba9a32-7b05-4156-af8d-ee775c62a4d1",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kjetil",
-      "lastName" : "Møkkelgjerd",
-      "username" : "1421086@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "ArtisticDesign",
-        "subtype" : {
-          "type" : "ProductDesign"
-        },
-        "venues" : [ {
-          "type" : "Venue",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "date" : {
-            "type" : "Period",
-            "from" : "2024-02-22T23:00:00Z"
-          },
-          "sequence" : 0
-        } ],
-        "pages" : {
-          "type" : "NullPages"
-        }
-      },
-      "publishedDate" : "2024-02-23T09:41:44.253475101Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "orcId" : "https://sandbox.orcid.org/0009-0004-4447-9305",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Designer"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
-      "identifier" : "018dd556305f-263357ef-3240-46dc-bcec-ed4220dfbf5e",
-      "mainTitle" : "Trikken"
-    },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
-    }
-  },
-  {
-  "type" : "PublishingRequest",
-  "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-  "modifiedDate" : "2024-02-23T14:46:59.791198184Z",
-  "createdDate" : "2024-02-23T14:46:59.791198184Z",
-  "workflow" : "RegistratorPublishesMetadataOnly",
-  "approvedFiles" : [ ],
-  "filesForApproval" : [ ],
-  "id" : "https://api.dev.nva.aws.unit.no/publication/018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d/ticket/018dd66f11cf-9600bded-bef5-42da-824a-2066dc6c940f",
-  "messages" : [ ],
-  "viewedBy" : [ {
-    "type" : "Person",
-    "firstName" : "Anette Olli",
-    "lastName" : "Siiri",
-    "username" : "1412322@20754.0.0.0"
-  } ],
-  "publication" : {
-    "owner" : "1412322@20754.0.0.0",
-    "status" : "PUBLISHED",
-    "publicationInstance" : {
-      "type" : "MovingPicture",
-      "subtype" : {
-        "type" : "InteractiveFilm"
-      },
-      "outputs" : [ {
-        "type" : "OtherRelease",
-        "description" : "hjemmekino",
-        "place" : {
-          "type" : "UnconfirmedPlace",
-          "label" : "trondheim"
-        },
-        "publisher" : {
-          "type" : "UnconfirmedPublisher",
-          "valid" : false
-        },
-        "date" : {
-          "type" : "Instant",
-          "value" : "2024-02-22T23:00:00Z"
-        },
-        "sequence" : 1
-      } ],
-      "pages" : {
-        "type" : "NullPages"
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
       }
     },
-    "publishedDate" : "2024-02-23T14:46:59.757109355Z",
-    "contributors" : [ {
-      "type" : "Contributor",
-      "identity" : {
-        "type" : "Identity",
-        "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-        "name" : "Anette Olli Siiri",
-        "verificationStatus" : "Verified",
-        "additionalIdentifiers" : [ ]
+      "publishedDate": "2024-02-23T14:46:59.757109355Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
       },
-      "affiliations" : [ {
-        "type" : "Organization",
-        "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-      } ],
-      "role" : {
-        "type" : "Director"
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
       },
-      "sequence" : 1,
-      "correspondingAuthor" : false
-    } ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d",
-    "identifier" : "018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d",
-    "mainTitle" : "preview no associated artifacts"
-  },
-  "finalizedBy" : {
-    "type" : "Person",
-    "firstName" : "Anette Olli",
-    "lastName" : "Siiri",
-    "username" : "1412322@20754.0.0.0"
-  },
-  "owner" : {
-    "type" : "Person",
-    "firstName" : "Anette Olli",
-    "lastName" : "Siiri",
-    "username" : "1412322@20754.0.0.0"
-  },
-  "assignee" : {
-    "type" : "Person",
-    "firstName" : "Anette Olli",
-    "lastName" : "Siiri",
-    "username" : "1412322@20754.0.0.0"
-  },
-  "organization" : {
-    "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-    "partOf" : [ ]
-  },
-  "status" : "Completed"
-},
-  {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-23T14:44:23.370091810Z",
-    "createdDate" : "2024-02-23T14:44:23.370091810Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd66bcd2b-930c6ce2-f097-4243-b609-ac95bf4a1343/ticket/018dd66caeca-c2a05237-4d46-45b2-ba02-dd1d0df2546b",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "DRAFT",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "InteractiveFilm"
-        },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-01T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+          "sequence": 1,
+          "correspondingAuthor": false
         }
-      },
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd66bcd2b-930c6ce2-f097-4243-b609-ac95bf4a1343",
-      "identifier" : "018dd66bcd2b-930c6ce2-f097-4243-b609-ac95bf4a1343",
-      "mainTitle" : "Teste publisering uten associated artifacts"
-    },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
-    },
-    "status" : "Completed"
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d",
+      "identifier": "018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d",
+      "mainTitle": "preview no associated artifacts"
+  },
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+  },
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+  },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+  },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
+  },
+    "status": "Completed"
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-23T14:24:17.171508221Z",
-    "createdDate" : "2024-02-23T14:24:17.171508221Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd65048de-01bcee47-318e-4497-9af5-96c50d97ded2/ticket/018dd65a4713-37a59265-b702-4041-8145-9a9a18a9cbef",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "DRAFT",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T14:44:23.370091810Z",
+    "createdDate": "2024-02-23T14:44:23.370091810Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd66bcd2b-930c6ce2-f097-4243-b609-ac95bf4a1343/ticket/018dd66caeca-c2a05237-4d46-45b2-ba02-dd1d0df2546b",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "DRAFT",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "InteractiveFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-22T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-01T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd65048de-01bcee47-318e-4497-9af5-96c50d97ded2",
-      "identifier" : "018dd65048de-01bcee47-318e-4497-9af5-96c50d97ded2",
-      "mainTitle" : "Teste preview ingen associated artifacts"
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd66bcd2b-930c6ce2-f097-4243-b609-ac95bf4a1343",
+      "identifier": "018dd66bcd2b-930c6ce2-f097-4243-b609-ac95bf4a1343",
+      "mainTitle": "Teste publisering uten associated artifacts"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     },
-    "status" : "Completed"
+    "status": "Completed"
   },
   {
-    "type" : "PublishingRequest",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "modifiedDate" : "2024-02-23T11:22:52.939644034Z",
-    "createdDate" : "2024-02-23T11:22:52.939644034Z",
-    "workflow" : "RegistratorPublishesMetadataOnly",
-    "approvedFiles" : [ ],
-    "filesForApproval" : [ ],
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29/ticket/018dd5b4328b-ade0f5f0-4baf-45c6-bbdc-1ede6eadc8d8",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T14:24:17.171508221Z",
+    "createdDate": "2024-02-23T14:24:17.171508221Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd65048de-01bcee47-318e-4497-9af5-96c50d97ded2/ticket/018dd65a4713-37a59265-b702-4041-8145-9a9a18a9cbef",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "DRAFT",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-22T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-22T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-23T11:22:52.888108346Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "orcId" : "https://sandbox.orcid.org/0009-0004-4447-9305",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
-      "identifier" : "018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
-      "mainTitle" : "Test delete"
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd65048de-01bcee47-318e-4497-9af5-96c50d97ded2",
+      "identifier": "018dd65048de-01bcee47-318e-4497-9af5-96c50d97ded2",
+      "mainTitle": "Teste preview ingen associated artifacts"
     },
-    "finalizedBy" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "assignee" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     },
-    "status" : "Completed"
+    "status": "Completed"
   },
   {
-    "type" : "GeneralSupportCase",
-    "modifiedDate" : "2024-02-27T16:49:43.971076381Z",
-    "createdDate" : "2024-02-23T11:23:07.464093812Z",
-    "customerId" : "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status" : "New",
-    "id" : "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29/ticket/018dd5b46b48-299dbfe4-f86e-4a71-a23a-751ed03fac72",
-    "messages" : [ ],
-    "viewedBy" : [ {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
-    }, {
-      "type" : "Person",
-      "firstName" : "Kir ",
-      "lastName" : "Truhacev",
-      "username" : "1492596@20754.0.0.0"
-    } ],
-    "publication" : {
-      "owner" : "1412322@20754.0.0.0",
-      "status" : "UNPUBLISHED",
-      "publicationInstance" : {
-        "type" : "MovingPicture",
-        "subtype" : {
-          "type" : "ShortFilm"
+    "type": "PublishingRequest",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "modifiedDate": "2024-02-23T11:22:52.939644034Z",
+    "createdDate": "2024-02-23T11:22:52.939644034Z",
+    "workflow": "RegistratorPublishesMetadataOnly",
+    "approvedFiles": [],
+    "filesForApproval": [],
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29/ticket/018dd5b4328b-ade0f5f0-4baf-45c6-bbdc-1ede6eadc8d8",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
         },
-        "outputs" : [ {
-          "type" : "OtherRelease",
-          "description" : "hjemmekino",
-          "place" : {
-            "type" : "UnconfirmedPlace",
-            "label" : "trondheim"
-          },
-          "publisher" : {
-            "type" : "UnconfirmedPublisher",
-            "valid" : false
-          },
-          "date" : {
-            "type" : "Instant",
-            "value" : "2024-02-22T23:00:00Z"
-          },
-          "sequence" : 1
-        } ],
-        "pages" : {
-          "type" : "NullPages"
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-22T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
         }
       },
-      "publishedDate" : "2024-02-23T11:22:52.888108346Z",
-      "contributors" : [ {
-        "type" : "Contributor",
-        "identity" : {
-          "type" : "Identity",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
-          "name" : "Anette Olli Siiri",
-          "orcId" : "https://sandbox.orcid.org/0009-0004-4447-9305",
-          "verificationStatus" : "Verified",
-          "additionalIdentifiers" : [ ]
-        },
-        "affiliations" : [ {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
-        }, {
-          "type" : "Organization",
-          "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
-        } ],
-        "role" : {
-          "type" : "Director"
-        },
-        "sequence" : 1,
-        "correspondingAuthor" : false
-      } ],
-      "id" : "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
-      "identifier" : "018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
-      "mainTitle" : "Test delete"
+      "publishedDate": "2024-02-23T11:22:52.888108346Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
+      "identifier": "018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
+      "mainTitle": "Test delete"
     },
-    "owner" : {
-      "type" : "Person",
-      "firstName" : "Anette Olli",
-      "lastName" : "Siiri",
-      "username" : "1412322@20754.0.0.0"
+    "finalizedBy": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
     },
-    "organization" : {
-      "id" : "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf" : [ ]
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "assignee": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
+    },
+    "status": "Completed"
+  },
+  {
+    "type": "GeneralSupportCase",
+    "modifiedDate": "2024-02-27T16:49:43.971076381Z",
+    "createdDate": "2024-02-23T11:23:07.464093812Z",
+    "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+    "status": "New",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29/ticket/018dd5b46b48-299dbfe4-f86e-4a71-a23a-751ed03fac72",
+    "messages": [],
+    "viewedBy": [
+      {
+        "type": "Person",
+        "firstName": "Anette Olli",
+        "lastName": "Siiri",
+        "username": "1412322@20754.0.0.0"
+      },
+      {
+        "type": "Person",
+        "firstName": "Kir ",
+        "lastName": "Truhacev",
+        "username": "1492596@20754.0.0.0"
+      }
+    ],
+    "publication": {
+      "owner": "1412322@20754.0.0.0",
+      "status": "UNPUBLISHED",
+      "publicationInstance": {
+        "type": "MovingPicture",
+        "subtype": {
+          "type": "ShortFilm"
+        },
+        "outputs": [
+          {
+            "type": "OtherRelease",
+            "description": "hjemmekino",
+            "place": {
+              "type": "UnconfirmedPlace",
+              "label": "trondheim"
+            },
+            "publisher": {
+              "type": "UnconfirmedPublisher",
+              "valid": false
+            },
+            "date": {
+              "type": "Instant",
+              "value": "2024-02-22T23:00:00Z"
+            },
+            "sequence": 1
+          }
+        ],
+        "pages": {
+          "type": "NullPages"
+        }
+      },
+      "publishedDate": "2024-02-23T11:22:52.888108346Z",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "identity": {
+            "type": "Identity",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1412322",
+            "name": "Anette Olli Siiri",
+            "orcId": "https://sandbox.orcid.org/0009-0004-4447-9305",
+            "verificationStatus": "Verified",
+            "additionalIdentifiers": []
+          },
+          "affiliations": [
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            },
+            {
+              "type": "Organization",
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0"
+            }
+          ],
+          "role": {
+            "type": "Director"
+          },
+          "sequence": 1,
+          "correspondingAuthor": false
+        }
+      ],
+      "id": "https://api.dev.nva.aws.unit.no/publication/018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
+      "identifier": "018dd1492b91-0c0a7c08-9f2b-4c4d-9341-908446507f29",
+      "mainTitle": "Test delete"
+    },
+    "owner": {
+      "type": "Person",
+      "firstName": "Anette Olli",
+      "lastName": "Siiri",
+      "username": "1412322@20754.0.0.0"
+    },
+    "organization": {
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "partOf": []
     }
   }
 ]

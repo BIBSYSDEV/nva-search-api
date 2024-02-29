@@ -20,9 +20,10 @@ import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.importcandidate.Constants.DEFAULT_IMPORT_CANDIDATE_SORT;
+import static no.unit.nva.search2.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
-import static no.unit.nva.search2.importcandidate.Constants.facetResourcePaths;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
@@ -42,10 +43,13 @@ import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -53,6 +57,9 @@ import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
@@ -125,7 +132,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected Map<String, String> aggregationsDef() {
-        return facetResourcePaths;
+        return FACET_IMPORT_CANDIDATE_PATHS;
     }
 
     public Stream<QueryContentWrapper> createQueryBuilderStream() {
@@ -134,15 +141,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryBuilders.matchAllQuery()
                 : mainQuery();
 
-        var builder = new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .trackTotalHits(true);
+        var builder = defaultSearchSourceBuilder(queryBuilder);
 
         handleSearchAfter(builder);
 
-        IMPORT_CANDIDATES_AGGREGATIONS.forEach(builder::aggregation);
+        builder.aggregation(getAggregationsWithFilter());
 
         getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
 
@@ -155,6 +158,27 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             var sortKeys = searchAfter.split(COMMA);
             builder.searchAfter(sortKeys);
         }
+    }
+
+    private FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggrFilter = AggregationBuilders.filter(Words.FILTER, getFilters());
+        IMPORT_CANDIDATES_AGGREGATIONS
+            .stream().filter(this::isRequestedAggregation)
+            .forEach(aggrFilter::subAggregation);
+        return aggrFilter;
+    }
+
+    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
+        return Optional.ofNullable(aggregationBuilder)
+            .map(AggregationBuilder::getName)
+            .map(this::isDefined)
+            .orElse(false);
+    }
+
+    private boolean isDefined(String key) {
+        return getValue(AGGREGATION).optionalStream()
+            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
+            .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }
 
     public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(
@@ -185,6 +209,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.fieldName(), Words.NONE);
                     default -> { /* do nothing */
                     }
                 }

@@ -1,14 +1,12 @@
 package no.unit.nva.search2.common.records;
 
+import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
-import no.unit.nva.search2.common.AggregationFormat;
 import no.unit.nva.search2.common.records.SwsResponse.HitsInfo.Hit;
-
-import static java.util.Objects.nonNull;
 
 public record SwsResponse(
     int took,

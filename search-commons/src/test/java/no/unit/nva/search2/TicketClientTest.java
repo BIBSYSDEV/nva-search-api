@@ -1,7 +1,42 @@
 package no.unit.nva.search2;
 
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.TICKETS;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.enums.TicketStatus.COMPLETED;
+import static no.unit.nva.search2.common.enums.TicketStatus.NEW;
+import static no.unit.nva.search2.ticket.Constants.PUBLICATION;
+import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS;
+import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.FROM;
+import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
+import static no.unit.nva.search2.ticket.TicketParameter.SORT;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.IndexingClient;
@@ -9,7 +44,6 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.TicketStatus;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -28,47 +62,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
-import static no.unit.nva.search2.common.constant.Words.ID;
-import static no.unit.nva.search2.common.constant.Words.LICENSE;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.common.constant.Words.TICKETS;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.common.enums.TicketStatus.COMPLETED;
-import static no.unit.nva.search2.common.enums.TicketStatus.NEW;
-import static no.unit.nva.search2.ticket.Constants.PUBLICATION;
-import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
-import static no.unit.nva.search2.ticket.TicketParameter.FROM;
-import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
-import static no.unit.nva.search2.ticket.TicketParameter.SORT;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @Testcontainers
 class TicketClientTest {
 
@@ -80,7 +73,7 @@ class TicketClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 2;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 3;
     private static TicketClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -120,28 +113,27 @@ class TicketClientTest {
                 .path(PUBLICATION)
                 .path(CONTRIBUTORS)
                 .path(AFFILIATIONS)
-                .path(ID)
-                .textValue();
-            assertThat(topLevelOrgType, is(equalTo("text")));
+                .getNodeType();
+            assertThat(topLevelOrgType, is(equalTo("<MISSING>")));
             logger.info(mapping.toString());
         }
 
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
-
-            var uri1 = URI.create(REQUEST_BASE_URL);
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
             var query1 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withOpensearchUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(COMPLETED, NEW);
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
             var uri2 =
-                URI.create(REQUEST_BASE_URL + "aggregation=status,type");
+                URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL
+                           + STATUS + COMMA + TYPE + COMMA + PUBLICATION_STATUS);
             var query2 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
@@ -157,7 +149,7 @@ class TicketClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(2));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(14));
         }
 
         @Test
@@ -186,14 +178,13 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .build()
                     .withRequiredStatus(NEW, COMPLETED)
-                    .withOrganization(
-                        URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+                    .withOrganization(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"));
 
             var response = searchClient.doSearch(query);
             assertNotNull(response);
 
             var pagedSearchResourceDto = query.toPagedResponse(response);
-            assertEquals(2, pagedSearchResourceDto.totalHits());
+            assertEquals(19, pagedSearchResourceDto.totalHits());
         }
 
         @ParameterizedTest
@@ -311,8 +302,8 @@ class TicketClientTest {
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date+asc&sort=category+desc"));
+                URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"));
         }
 
         static Stream<URI> uriInvalidProvider() {

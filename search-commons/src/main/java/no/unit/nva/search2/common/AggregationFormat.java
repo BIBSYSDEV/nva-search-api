@@ -3,24 +3,11 @@ package no.unit.nva.search2.common;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.common.constant.Words.BUCKETS;
-import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
-import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
-import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
-import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SLASH;
-import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -30,7 +17,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
@@ -44,13 +30,13 @@ public final class AggregationFormat {
     }
 
     public static JsonNode apply(JsonNode aggregations, Map<String, String> definitions ) {
-
         var objectNode = JsonUtils.dtoObjectMapper.createObjectNode();
-
-        getAggregationFieldStreams(aggregations, definitions)
-            .map(AggregationFormat::getJsonNodeEntry)
-            .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
-        ensureChildNodesAreArrays(objectNode);
+        if (nonNull(aggregations)) {
+            getAggregationFieldStreams(aggregations, definitions)
+                .map(AggregationFormat::getJsonNodeEntry)
+                .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
+            ensureChildNodesAreArrays(objectNode);
+        }
         return objectNode;
     }
 

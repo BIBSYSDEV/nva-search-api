@@ -70,12 +70,12 @@ import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_ISBN_LI
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search2.resource.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
+import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
@@ -192,9 +192,9 @@ public enum ResourceParameter implements ParameterKey {
     SERIES(FUZZY_KEYWORD, ALL_ITEMS, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_NOT(FUZZY_KEYWORD, NO_ITEMS, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_REFERENCE_SERIES),
-    STATUS(KEYWORD, ALL_ITEMS, PUBLICATION_STATUS),
-    STATUS_NOT(KEYWORD, NO_ITEMS, PUBLICATION_STATUS),
-    STATUS_SHOULD(KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_STATUS),
+    STATUS(KEYWORD, ALL_ITEMS, STATUS_KEYWORD),
+    STATUS_NOT(KEYWORD, NO_ITEMS, STATUS_KEYWORD),
+    STATUS_SHOULD(KEYWORD, ONE_OR_MORE_ITEM, STATUS_KEYWORD),
     TAGS(TEXT, ENTITY_TAGS),
     TAGS_NOT(TEXT, NO_ITEMS, ENTITY_TAGS),
     TAGS_SHOULD(TEXT, ONE_OR_MORE_ITEM, ENTITY_TAGS),

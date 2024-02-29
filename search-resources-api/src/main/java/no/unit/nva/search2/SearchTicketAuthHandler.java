@@ -1,7 +1,16 @@
 package no.unit.nva.search2;
 
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search2.common.enums.TicketStatus.COMPLETED;
+import static no.unit.nva.search2.common.enums.TicketStatus.NEW;
+import static no.unit.nva.search2.ticket.TicketClient.defaultClient;
+import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.FROM;
+import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
+import java.net.HttpURLConnection;
+import java.util.List;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
 import nva.commons.apigateway.AccessRight;
@@ -12,18 +21,6 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-import java.net.HttpURLConnection;
-import java.util.List;
-
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search2.common.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search2.ticket.TicketClient.defaultClient;
-import static no.unit.nva.search2.ticket.TicketParameter.FROM;
-import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
-
 public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final TicketClient opensearchClient;
@@ -33,9 +30,9 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         this(new Environment(), defaultClient());
     }
 
-    public SearchTicketAuthHandler(Environment environment, TicketClient TicketClient) {
+    public SearchTicketAuthHandler(Environment environment, TicketClient ticketClient) {
         super(Void.class, environment);
-        this.opensearchClient = TicketClient;
+        this.opensearchClient = ticketClient;
     }
 
     @Override
@@ -47,10 +44,10 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         return
             TicketQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+                .withRequiredStatus(NEW, COMPLETED)
                 .withOrganization(requestInfo.getCurrentCustomer())
                 .doSearch(opensearchClient);
     }
