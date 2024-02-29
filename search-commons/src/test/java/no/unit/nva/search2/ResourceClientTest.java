@@ -418,6 +418,8 @@ class ResourceClientTest {
             assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
 
+
+
         @Test
         void shouldNotReturnResourcesContainingAffiliationThatShouldBeExcludedWhenAffiliationIsSubunitOfRequestedViewingScopeI()
             throws BadRequestException {

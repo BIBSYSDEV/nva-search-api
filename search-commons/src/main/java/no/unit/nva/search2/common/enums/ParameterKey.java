@@ -1,8 +1,5 @@
 package no.unit.nva.search2.common.enums;
 
-import java.util.Collection;
-import java.util.function.Predicate;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_NUMBER;
@@ -13,6 +10,8 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NUMBER;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface ParameterKey {
 
@@ -28,7 +27,7 @@ public interface ParameterKey {
 
     ValueEncoding valueEncoding();
 
-    Collection<String> searchFields();
+    Stream<String> searchFields();
 
     FieldOperator searchOperator();
 
