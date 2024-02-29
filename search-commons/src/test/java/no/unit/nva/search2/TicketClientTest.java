@@ -113,7 +113,7 @@ class TicketClientTest {
                 .path(PUBLICATION)
                 .path(CONTRIBUTORS)
                 .path(AFFILIATIONS)
-                .getNodeType();
+                .;
             assertThat(topLevelOrgType, is(equalTo("<MISSING>")));
             logger.info(mapping.toString());
         }
