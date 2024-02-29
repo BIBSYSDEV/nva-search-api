@@ -9,14 +9,30 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS_PART_OFS;
+import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.SOURCE;
+import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_STATUS;
@@ -24,6 +40,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
@@ -31,16 +48,18 @@ import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
+import static no.unit.nva.search2.resource.ResourceParameter.VIEWING_SCOPE;
 import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.termQuery;
+import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -56,7 +75,10 @@ import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
+import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MatchQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
@@ -68,13 +90,28 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class ResourceQuery extends Query<ResourceParameter> {
 
+    public static ResourceParameterValidator builder() {
+        return new ResourceParameterValidator();
+    }
+
     private ResourceQuery() {
         super();
         assignStatusImpossibleWhiteList();
     }
 
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
+    @Override
+    protected Stream<Entry<ResourceParameter, QueryBuilder>> customQueryBuilders(ResourceParameter key) {
+        return switch (key) {
+            case FUNDING -> fundingQuery(key);
+            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            case FILES -> publishedFileQuery(key);
+            case EXCLUDE_SUBUNITS -> excludeSubunitsQuery();
+            default -> {
+                logger.error("unhandled key -> {}", key.name());
+                yield Stream.empty();
+            }
+        };
     }
 
     @Override
@@ -98,9 +135,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
                 .map(ResourceParameter::keyFromString)
-                .map(ParameterKey::searchFields)
-                .flatMap(Collection::stream)
-                .map(fieldPath -> fieldPath.replace(DOT + KEYWORD, EMPTY_STRING))
+                .flatMap(ParameterKey::searchFields)
                 .toArray(String[]::new);
     }
 
@@ -128,6 +163,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>Only STATUES specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      * <p>See {@link PublicationStatus} for available values.</p>
+     *
      * @param publicationStatus the required statues
      * @return ResourceQuery (builder pattern)
      */
@@ -182,7 +218,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private BoolQueryBuilder makeBoolQuery(UserSettingsClient userSettingsClient) {
-        var queryBuilder = boolQuery();
+        var queryBuilder = mainQuery();
         if (isLookingForOneContributor()) {
             addPromotedPublications(userSettingsClient, queryBuilder);
         }
@@ -237,7 +273,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(Constants.PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                    .boost(Constants.PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(
@@ -246,6 +282,65 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     .collect(Collectors.joining(", "))
             );
         }
+    }
+
+    private MatchQueryBuilder containsPublishedFileQuery() {
+        return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
+    }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> excludeSubunitsQuery() {
+
+        var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
+        var viewingScope = getValue(VIEWING_SCOPE).split(COMMA);
+
+        var queryBuilder = shouldExcludeSubunits
+            ? excludeSubunitsQuery(viewingScope)
+            : includeSubunitsQuery(viewingScope);
+
+        return kQueryTools.queryToEntry(VIEWING_SCOPE, queryBuilder);
+    }
+
+    private QueryBuilder includeSubunitsQuery(String... viewingScope) {
+        return boolQuery()
+            .should(termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope))
+            .should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope));
+    }
+
+    private QueryBuilder excludeSubunitsQuery(String... viewingScope) {
+        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope);
+    }
+
+    public Stream<Entry<ResourceParameter, QueryBuilder>> publishedFileQuery(ResourceParameter key) {
+        var query = getValue(key).asBoolean()
+            ? boolQuery().must(containsPublishedFileQuery())
+            : boolQuery().mustNot(containsPublishedFileQuery());
+
+        return kQueryTools.queryToEntry(key, query);
+    }
+
+    public Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
+        final var values = getValue(key).split(COLON);
+        var query = QueryBuilders.nestedQuery(
+            FUNDINGS,
+            boolQuery()
+                .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))
+                .must(termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
+            ScoreMode.None);
+
+        return kQueryTools.queryToEntry(key, query);
+    }
+
+    public Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
+        ResourceParameter key, String source) {
+        var value = getValue(key).toString();
+        var query = QueryBuilders.nestedQuery(
+            ADDITIONAL_IDENTIFIERS,
+            boolQuery()
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), value))
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
+            ScoreMode.None);
+
+        return kQueryTools.queryToEntry(key, query);
     }
 
     /**

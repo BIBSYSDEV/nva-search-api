@@ -23,14 +23,14 @@ public final class Words {
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
     public static final String CRISTIN_IDENTIFIER = "CRISTIN_IDENTIFIER";
-    public static final String CRISTIN_SOURCE = "Cristin";
+    public static final String CRISTIN_AS_TYPE = "Cristin";
     public static final String DOI = "doi";
     public static final String DOT = ".";
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
     public static final String FROM = "from";
-    public static final String FUNDING = "FUNDING";
+    public static final String CONTRIBUTORS_PART_OFS = "contributorsPartOfs";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
@@ -80,8 +80,7 @@ public final class Words {
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";
     public static final String SCIENTIFIC_INDEX = "scientificIndex";
-    public static final String SCOPUS_IDENTIFIER = "SCOPUS_IDENTIFIER";
-    public static final String SCOPUS_SOURCE = "Scopus";
+    public static final String SCOPUS_AS_TYPE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
     public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";

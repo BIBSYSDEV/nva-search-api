@@ -1,19 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.FieldOperator;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
@@ -24,11 +10,16 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
+import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
+import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
+import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search2.common.enums.ParameterKind.SORT_KEY;
@@ -40,6 +31,20 @@ import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.FieldOperator;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.common.enums.ValueEncoding;
+import nva.commons.core.JacocoGenerated;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -48,16 +53,16 @@ import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
  */
 
 public enum ImportCandidateParameter implements ParameterKey {
-    INVALID(TEXT),
+    INVALID(ParameterKind.INVALID),
     // Parameters converted to Lucene query
-    CRISTIN_IDENTIFIER(KEYWORD),
-    SCOPUS_IDENTIFIER(KEYWORD),
+    CRISTIN_IDENTIFIER(CUSTOM),
+    SCOPUS_IDENTIFIER(CUSTOM),
     ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NO_ITEMS, ADDITIONAL_IDENTIFIERS_KEYWORD),
     ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, ONE_OR_MORE_ITEM, ADDITIONAL_IDENTIFIERS_KEYWORD),
     CATEGORY(KEYWORD, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, NO_ITEMS, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE),
-    CREATED_DATE(ParameterKind.DATE, Words.CREATED_DATE),
+    CREATED_DATE(DATE, Words.CREATED_DATE),
     CONTRIBUTOR(KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
@@ -90,15 +95,15 @@ public enum ImportCandidateParameter implements ParameterKey {
     TITLE_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.MAIN_TITLE_KEYWORD),
     TYPE(KEYWORD, Constants.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    FIELDS(ParameterKind.CUSTOM),
+    SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    FIELDS(CUSTOM),
     // Pagination parameters
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
     SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(ParameterKind.CUSTOM, ALL_ITEMS, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
-    SEARCH_AFTER(ParameterKind.CUSTOM);
+    SORT_ORDER(IGNORED, ALL_ITEMS, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    SEARCH_AFTER(IGNORED);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -184,8 +189,16 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     @Override
-    public Collection<String> searchFields() {
-        return Arrays.stream(fieldsToSearch).toList();
+    public Stream<String> searchFields() {
+        return Arrays.stream(fieldsToSearch)
+            .map(String::trim)
+            .map(trimmed -> isNotKeyword()
+                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
+                : trimmed);
+    }
+
+    private boolean isNotKeyword() {
+        return !fieldType().equals(KEYWORD);
     }
 
     @Override
