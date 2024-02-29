@@ -492,7 +492,7 @@ class ResourceClientTest {
 
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
-            assertThat(pagedSearchResourceDto.hits(), hasSize(3));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(15));
         }
 
         static Stream<Arguments> uriPagingProvider() {

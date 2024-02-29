@@ -40,7 +40,6 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
@@ -57,8 +56,9 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
-import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -88,6 +88,7 @@ import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+@SuppressWarnings("PMD.GodClass")
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static ResourceParameterValidator builder() {
@@ -106,7 +107,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case HAS_PUBLIC_FILE -> publishedFileQuery(key);
-            case EXCLUDE_SUBUNITS -> excludeSubunitsQuery();
+            case EXCLUDE_SUBUNITS -> createSubunitsQuery();
             default -> {
                 logger.error("unhandled key -> {}", key.name());
                 yield Stream.empty();
@@ -288,26 +289,69 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> excludeSubunitsQuery() {
-
-        var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
-        var viewingScope = getValue(VIEWING_SCOPE).split(COMMA);
-
-        var queryBuilder = shouldExcludeSubunits
-            ? excludeSubunitsQuery(viewingScope)
-            : includeSubunitsQuery(viewingScope);
-
-        return kQueryTools.queryToEntry(VIEWING_SCOPE, queryBuilder);
+    public Stream<Entry<ResourceParameter, QueryBuilder>> createSubunitsQuery() {
+        var viewingScope = getViewingScope();
+        if (viewingScopeIsProvided(viewingScope)) {
+            var shouldExcludeSubunits = getExcludeSubunitsKey();
+            return kQueryTools.queryToEntry(VIEWING_SCOPE,createSubunitQuery(shouldExcludeSubunits, viewingScope));
+        } else {
+            return null;
+        }
     }
 
-    private QueryBuilder includeSubunitsQuery(String... viewingScope) {
-        return boolQuery()
-            .should(termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope))
-            .should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope));
+    private static QueryBuilder createSubunitQuery(Boolean shouldExcludeSubunits, List<String> viewingScope) {
+        return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
     }
 
-    private QueryBuilder excludeSubunitsQuery(String... viewingScope) {
-        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope);
+    private static boolean viewingScopeIsProvided(List<String> viewingScope) {
+        return !viewingScope.isEmpty();
+    }
+
+    private List<String> getViewingScope() {
+        var viewingScopeKeys = getViewingScopeParameters();
+        var viewingScopeParams = viewingScopeKeys.stream().map(searchParameters::get).collect(Collectors.joining(","));
+        return !viewingScopeKeys.isEmpty()
+                   ? extractViewingScope(viewingScopeParams)
+                   : List.of();
+    }
+
+    private List<ResourceParameter> getViewingScopeParameters() {
+        return searchParameters.keySet().stream()
+                   .filter(this::isOrganization)
+                   .toList();
+    }
+
+    public boolean isOrganization(ResourceParameter resourceParameter) {
+        return ResourceParameter.TOP_LEVEL_ORGANIZATION.name().equals(resourceParameter.name())
+               || ResourceParameter.UNIT.name().equals(resourceParameter.name());
+    }
+
+    private static List<String> extractViewingScope(String viewingScopeParameter) {
+        return Arrays.stream(viewingScopeParameter.split(COMMA))
+                   .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
+                   .toList();
+    }
+
+    private Boolean getExcludeSubunitsKey() {
+        var excludeSubunitValue = searchParameters.keySet().stream()
+                                      .filter(key -> ResourceParameter.EXCLUDE_SUBUNITS.name().equals(key.name()))
+                                      .findFirst()
+                                      .map(searchParameters::get)
+                                      .orElse(null);
+        return Boolean.parseBoolean(excludeSubunitValue);
+    }
+
+    private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
+        var query = boolQuery();
+        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope));
+        query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                              viewingScope));
+        return query;
+    }
+
+    private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
+        return QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                        viewingScope);
     }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> publishedFileQuery(ResourceParameter key) {
