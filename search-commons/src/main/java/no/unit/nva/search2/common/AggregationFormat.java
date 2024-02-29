@@ -1,12 +1,14 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.AggregationFormat.Constants.DOC_COUNT;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_WORD_ENDING_WITH_HASHTAG;
 import static no.unit.nva.search2.common.constant.Words.BUCKETS;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.JOURNAL;
@@ -14,6 +16,7 @@ import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
@@ -25,7 +28,6 @@ import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import java.util.Map;
@@ -50,32 +52,26 @@ public final class AggregationFormat {
         getAggregationFieldStreams(aggregations)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
-        ensureChildNodesAreArrays(objectNode);
+        convertFilterAggregationsToBucket(objectNode);
         return objectNode;
     }
 
-    public static void ensureChildNodesAreArrays(JsonNode node) {
-        if (node.isObject()) {
-            var objectNode = (ObjectNode) node;
-            objectNode.fieldNames().forEachRemaining(field -> processChildNode(objectNode, field));
-        }
+    private static void convertFilterAggregationsToBucket(ObjectNode objectNode) {
+        createFileAggregation(objectNode);
     }
 
-    private static void processChildNode(ObjectNode objectNode, String field) {
-        var childNode = objectNode.get(field);
-        if (childNode.isObject()) {
-            var nodeArray = JsonUtils.dtoObjectMapper.createArrayNode();
-            childNode.fieldNames().forEachRemaining(value -> processChildNodes(field, childNode, nodeArray));
-            objectNode.set(field, nodeArray);
-        }
-    }
-
-    private static void processChildNodes(String field, JsonNode node, ArrayNode nodeArray) {
-        var newNode = JsonUtils.dtoObjectMapper.createObjectNode();
-        if (nonNull(node.get(Constants.DOC_COUNT))) {
-            newNode.put(Constants.DOC_COUNT, node.get(Constants.DOC_COUNT).asInt());
-            newNode.put(KEY, field);
-            nodeArray.add(newNode);
+    private static void createFileAggregation(ObjectNode objectNode) {
+        var hasPublicFile = objectNode.get(HAS_PUBLIC_FILE);
+        var noPublicFile = objectNode.get(NO_PUBLIC_FILE);
+        if (hasPublicFile.isObject() && noPublicFile.isObject()) {
+            ((ObjectNode) hasPublicFile).put(KEY, HAS_PUBLIC_FILE);
+            ((ObjectNode) noPublicFile).put(KEY, NO_PUBLIC_FILE);
+            var bucket = JsonUtils.dtoObjectMapper.createArrayNode();
+            bucket.add(hasPublicFile);
+            bucket.add(noPublicFile);
+            objectNode.set(FILES, bucket);
+            objectNode.remove(HAS_PUBLIC_FILE);
+            objectNode.remove(NO_PUBLIC_FILE);
         }
     }
 
@@ -99,7 +95,7 @@ public final class AggregationFormat {
         } else if (keyIsName(entry)) {
             outputAggregationNode.set(LABELS, formatName(entry.getValue()));
         } else if(rootHasUniquePublicationsCount(entry)) {
-            outputAggregationNode.set(Constants.DOC_COUNT, entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
+            outputAggregationNode.set(DOC_COUNT, entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
         } else {
             outputAggregationNode.set(entry.getKey(), entry.getValue());
         }
@@ -153,7 +149,7 @@ public final class AggregationFormat {
 
         Streams.stream(value.fields())
             .map(AggregationFormat::getNormalizedJsonNodeEntry)
-            .filter(entry -> !Constants.DOC_COUNT.equals(entry.getKey()))
+            .filter(entry -> !DOC_COUNT.equals(entry.getKey()))
             .forEach(node -> {
                 var keyValue = node.getValue().at(Constants.BUCKETS_KEY_PTR);
                 outputAggregationNode.set(node.getKey(), keyValue);
@@ -177,6 +173,7 @@ public final class AggregationFormat {
             );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
             HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
+            NO_PUBLIC_FILE, "/filter/associatedArtifacts/noPublicFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",

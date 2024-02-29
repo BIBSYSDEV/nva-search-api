@@ -11,7 +11,6 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.ONE;
@@ -36,9 +35,9 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
+import no.unit.nva.search2.resource.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
-import org.jetbrains.annotations.NotNull;
 import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -163,7 +162,7 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
     }
 
     public boolean isPublicFile(K key) {
-        return HAS_PUBLIC_FILE_KEY_NAME.equals(key.name());
+        return ResourceParameter.FILES.name().equals(key.name());
     }
 
     public Stream<Entry<K, QueryBuilder>> publishedFileQuery(K key, String value) {
@@ -172,7 +171,6 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                             : queryToEntry(key, QueryBuilders.boolQuery().mustNot(containsPublishedFileQuery()));
     }
 
-    @NotNull
     private static MatchQueryBuilder containsPublishedFileQuery() {
         return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD),
                                         PUBLISHED_FILE);

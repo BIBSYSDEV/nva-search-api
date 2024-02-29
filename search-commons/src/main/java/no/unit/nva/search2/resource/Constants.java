@@ -34,6 +34,7 @@ import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
+import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.ONLINE_ISSN;
 import static no.unit.nva.search2.common.constant.Words.ORC_ID;
@@ -193,7 +194,8 @@ public final class Constants {
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {
         return
             nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                .subAggregation(publishedFiles())
+                .subAggregation(publicFiles())
+                .subAggregation(noPublicFiles())
                 .subAggregation(license());
     }
 
@@ -347,10 +349,14 @@ public final class Constants {
                 .subAggregation(getReverseNestedAggregationBuilder());
     }
 
-    private static FilterAggregationBuilder publishedFiles() {
-        return
-            filterBranchBuilder(HAS_PUBLIC_FILE, PUBLISHED_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
+    private static FilterAggregationBuilder publicFiles() {
+        return filterBranchBuilder(HAS_PUBLIC_FILE, PUBLISHED_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
                 .subAggregation(getReverseNestedAggregationBuilder());
+    }
+
+    private static FilterAggregationBuilder noPublicFiles() {
+        return mustNotBranchBuilder(NO_PUBLIC_FILE, PUBLISHED_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
+                   .subAggregation(getReverseNestedAggregationBuilder());
     }
 
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
@@ -365,6 +371,11 @@ public final class Constants {
 
     private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
+    }
+
+    private static FilterAggregationBuilder mustNotBranchBuilder(String name, String filter, String... paths) {
+        return AggregationBuilders.filter(name, QueryBuilders.boolQuery().mustNot(
+                                              QueryBuilders.termQuery(jsonPath(paths), filter)));
     }
 
     public static Script uriAsUuid(String... paths) {
