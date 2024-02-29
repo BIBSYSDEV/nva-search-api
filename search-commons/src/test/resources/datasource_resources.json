@@ -7,6 +7,9 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
     "associatedArtifacts": [
+      {
+        "type": "NullAssociatedArtifact"
+      }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
     "entityDescription": {
@@ -319,7 +322,11 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
-    "associatedArtifacts": [],
+    "associatedArtifacts": [
+      {
+        "type": "NullAssociatedArtifact"
+      }
+    ],
     "createdDate": "2023-12-18T08:21:11.463306145Z",
     "entityDescription": {
       "type": "EntityDescription",
@@ -408,7 +415,7 @@
     },
     "associatedArtifacts": [
       {
-        "type": "PublishedFile",
+        "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "95ffa438-7367-49aa-ade7-5851daa6a8a3",
         "license": "https://creativecommons.org/licenses/by/4.0",
@@ -417,7 +424,7 @@
         "publishedDate": "2023-11-06T08:48:11.786959336Z",
         "publisherAuthority": false,
         "size": 4656,
-        "visibleForNonOwner": true
+        "visibleForNonOwner": false
       }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
@@ -748,7 +755,7 @@
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
         "publisherAuthority": false,
         "size": 699309,
-        "visibleForNonOwner": false
+        "visibleForNonOwner": true
       },
       {
         "type": "PublishedFile",
@@ -760,7 +767,7 @@
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
         "publisherAuthority": false,
         "size": 699309,
-        "visibleForNonOwner": false
+        "visibleForNonOwner": true
       },
       {
         "type": "PublishedFile",
@@ -772,7 +779,7 @@
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
         "publisherAuthority": false,
         "size": 699309,
-        "visibleForNonOwner": false
+        "visibleForNonOwner": true
       }
     ],
     "createdDate": "2023-09-29T12:14:46Z",
@@ -1100,7 +1107,7 @@
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
         "publisherAuthority": false,
         "size": 699309,
-        "visibleForNonOwner": false
+        "visibleForNonOwner": true
       }
     ],
     "createdDate": "2023-09-29T12:04:08Z",
@@ -3099,7 +3106,7 @@
         "publishedDate": "2023-11-06T07:47:54.580766901Z",
         "publisherAuthority": false,
         "size": 1578503,
-        "visibleForNonOwner": true
+        "visibleForNonOwner": false
       },
       {
         "type": "PublishedFile",

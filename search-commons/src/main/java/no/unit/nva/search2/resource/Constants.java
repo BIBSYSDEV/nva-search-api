@@ -45,7 +45,6 @@ import static no.unit.nva.search2.common.constant.Words.PRINT_ISSN;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.REFERENCE;
 import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
@@ -350,12 +349,12 @@ public final class Constants {
     }
 
     private static FilterAggregationBuilder publicFiles() {
-        return filterBranchBuilder(HAS_PUBLIC_FILE, PUBLISHED_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
+        return filterBooleanBranchBuilder(HAS_PUBLIC_FILE, true, ASSOCIATED_ARTIFACTS, "visibleForNonOwner")
                 .subAggregation(getReverseNestedAggregationBuilder());
     }
 
     private static FilterAggregationBuilder noPublicFiles() {
-        return mustNotBranchBuilder(NO_PUBLIC_FILE, PUBLISHED_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
+        return mustNotBranchBuilder(NO_PUBLIC_FILE, true, ASSOCIATED_ARTIFACTS, "visibleForNonOwner")
                    .subAggregation(getReverseNestedAggregationBuilder());
     }
 
@@ -373,7 +372,11 @@ public final class Constants {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 
-    private static FilterAggregationBuilder mustNotBranchBuilder(String name, String filter, String... paths) {
+    private static FilterAggregationBuilder filterBooleanBranchBuilder(String name, boolean filter, String... paths) {
+        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
+    }
+
+    private static FilterAggregationBuilder mustNotBranchBuilder(String name, boolean filter, String... paths) {
         return AggregationBuilders.filter(name, QueryBuilders.boolQuery().mustNot(
                                               QueryBuilders.termQuery(jsonPath(paths), filter)));
     }
