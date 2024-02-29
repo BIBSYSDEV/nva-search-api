@@ -14,7 +14,6 @@ import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
@@ -22,6 +21,7 @@ import static no.unit.nva.search2.common.constant.Words.SLASH;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,6 +36,8 @@ import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
 
 public final class AggregationFormat {
+
+    public static final String UNIQUE_PUBLICATIONS = "unique_publications";
 
     @JacocoGenerated
     public AggregationFormat() {
@@ -84,19 +86,28 @@ public final class AggregationFormat {
             return arrayNode;
         } else {
             var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();
-            node.fields().forEachRemaining(entry -> {
-                if (keyIsLabel(entry)) {
-                    outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
-                } else if (keyIsName(entry)) {
-                    outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-                } else {
-                    outputAggregationNode.set(entry.getKey(), entry.getValue());
-                }
-            });
+            node.fields().forEachRemaining(entry -> extractKeyAndLabels(entry, outputAggregationNode));
             return outputAggregationNode.isEmpty()
                 ? JsonUtils.dtoObjectMapper.createArrayNode()
                 : outputAggregationNode;
         }
+    }
+
+    private static void extractKeyAndLabels(Entry<String, JsonNode> entry, ObjectNode outputAggregationNode) {
+        if (keyIsLabel(entry)) {
+            outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
+        } else if (keyIsName(entry)) {
+            outputAggregationNode.set(LABELS, formatName(entry.getValue()));
+        } else if(rootHasUniquePublicationsCount(entry)) {
+            outputAggregationNode.set(Constants.DOC_COUNT, entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
+        } else {
+            outputAggregationNode.set(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
+        return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
+               && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations) {
@@ -162,11 +173,10 @@ public final class AggregationFormat {
             COURSE, "/filter/entityDescription/reference/publicationContext/course",
             SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
             STATUS, "/filter/status",
-            LICENSE, "/filter/associatedArtifacts/license",
-            NO_PUBLIC_FILE, "/filter/associatedArtifacts/false"
+            LICENSE, "/filter/associatedArtifacts/license"
             );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/true",
+            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",

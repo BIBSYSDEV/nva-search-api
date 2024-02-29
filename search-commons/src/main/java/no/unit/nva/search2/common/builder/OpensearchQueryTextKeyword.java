@@ -33,15 +33,14 @@ public class OpensearchQueryTextKeyword<K extends Enum<K> & ParameterKey> extend
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
         var disMax = QueryBuilders.disMaxQuery();
-        Arrays.stream(queryTools.getSearchFields(key))
-            .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost()))
-            );
+        key.searchFields()
+            .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost())));
         return Stream.of(disMax);
     }
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String value) {
         var disMax = QueryBuilders.disMaxQuery();
-        Arrays.stream(queryTools.getSearchFields(key))
+        key.searchFields()
             .forEach(field -> disMax.add(new TermQueryBuilder(field, value).boost(key.fieldBoost()))
             );
         return Stream.of(disMax);

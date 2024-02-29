@@ -1,5 +1,18 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.PLUS;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,22 +51,6 @@ import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.CRISTIN_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.PLUS;
-import static no.unit.nva.search2.common.constant.Words.SCOPUS_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.SPACE;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
-
 @SuppressWarnings("PMD.GodClass")
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
@@ -62,7 +59,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected final transient QueryTools<K> opensearchQueryTools;
+    protected final transient QueryTools<K> kQueryTools;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
@@ -91,7 +88,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
-        opensearchQueryTools = new QueryTools<>();
+        kQueryTools = new QueryTools<>();
 
         setMediaType(MediaType.JSON_UTF_8.toString());
     }
@@ -246,8 +243,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      *
      * @return a BoolQueryBuilder
      */
-    @SuppressWarnings({"PMD.SwitchStmtsShouldHaveDefault"})
-    protected BoolQueryBuilder boolQuery() {
+    protected BoolQueryBuilder mainQuery() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
         getSearchParameterKeys()
             .flatMap(this::getQueryBuilders)
@@ -261,6 +257,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return boolQueryBuilder;
     }
 
+
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
         return getSort().optionalStream()
@@ -269,44 +266,27 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .map(QueryTools::objectToSortEntry);
     }
 
-    private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-               || NOT_ONE_ITEM.equals(key.searchOperator());
-    }
 
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
-        if (opensearchQueryTools.isSearchAllKey(key)) {
-            return opensearchQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isFundingKey(key)) {
-            return opensearchQueryTools.fundingQuery(key, value);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isCristinIdentifierKey(key)) {
-            return opensearchQueryTools.additionalIdentifierQuery(key, value, CRISTIN_SOURCE);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isScopusIdentifierKey(key)) {
-            return opensearchQueryTools.additionalIdentifierQuery(key, value, SCOPUS_SOURCE);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isBooleanKey(key)) {
-            return opensearchQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isNumberKey(key)) {
-            return new OpensearchQueryRange<K>().buildQuery(key, value);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isTextKey(key)) {
-            return new OpensearchQueryText<K>().buildQuery(key, value);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isFuzzyKeywordKey(key)) {
-            return new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
-            // -> E M P T Y  S P A C E
-        } else if (opensearchQueryTools.isPublicFile(key)) {
-            return opensearchQueryTools.publishedFileQuery(key, value);
-            // -> E M P T Y  S P A C E
-        } else {
-            return new OpensearchQueryKeyword<K>().buildQuery(key, value);
-        }
+        return switch (key.fieldType()) {
+            case BOOLEAN -> kQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
+            case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
+            case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
+            case TEXT, FUZZY_TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
+            case FREE_TEXT -> kQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+            case CUSTOM -> customQueryBuilders(key);
+            case IGNORED -> Stream.empty();
+            default -> {
+                logger.info("default handling -> {}", key.name());
+                yield new OpensearchQueryKeyword<K>().buildQuery(key, value);
+            }
+        };
     }
+
+    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
+
 
     /**
      * Creates a multi match query, all words needs to be present, within a document.
@@ -351,6 +331,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         );
     }
 
+    private boolean isMustNot(K key) {
+        return NO_ITEMS.equals(key.searchOperator())
+               || NOT_ONE_ITEM.equals(key.searchOperator());
+    }
+
     /**
      * AutoConvert value to Date, Number (or String)
      * <p>Also holds key and can return value as <samp>optional stream</samp></p>
@@ -373,6 +358,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return (T) switch (getKey().fieldType()) {
                 case DATE -> castDateTime();
                 case NUMBER -> castNumber();
+                case BOOLEAN -> castBoolean();
                 default -> value;
             };
         }
@@ -383,6 +369,22 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
         public Stream<String> optionalStream() {
             return Optional.ofNullable(value).stream();
+        }
+
+        public String[] split(String delimiter) {
+            return nonNull(value)
+                ? value.split(delimiter)
+                : null;
+        }
+
+        public String stripped() {
+            return nonNull(value)
+                ? value.replaceAll(" .-/", "")
+                : null;
+        }
+
+        public Boolean asBoolean() {
+            return Boolean.parseBoolean(value);
         }
 
         @Override
@@ -396,6 +398,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
         private <T extends Number> T castNumber() {
             return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
+        }
+
+        private <T> T castBoolean() {
+            return ((Class<T>) Boolean.class).cast(Boolean.parseBoolean(value));
         }
     }
 }

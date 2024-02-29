@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 class ImportCandidateClientTest {
 
     protected static final Logger logger = LoggerFactory.getLogger(ImportCandidateClientTest.class);
-    public static final String SAMPLE_IMPORT_CANDIDATES = "sample_import_candidate_search.json";
+    public static final String SAMPLE_IMPORT_CANDIDATES = "datasource_import_candidates.json";
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final String REQUEST_BASE_URL = "https://x.org/?";
@@ -281,7 +281,7 @@ class ImportCandidateClientTest {
     }
 
     protected static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of("test_import_candidates_mappings.json"));
+        var mappingsJson = stringFromResources(Path.of("opensearch_test_mapping_import_candidates.json"));
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();

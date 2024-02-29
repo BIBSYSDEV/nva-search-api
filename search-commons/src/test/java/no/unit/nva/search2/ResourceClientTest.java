@@ -81,13 +81,13 @@ class ResourceClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
-    private static final String TEST_RESOURCES_MAPPINGS_JSON = "test_resources_mappings.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "test_resource_urls.json";
-    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "sample_resources_search.json";
+    private static final String TEST_RESOURCES_MAPPINGS_JSON = "opensearch_test_mapping_resources.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_urls.json";
+    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 14;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 13;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -169,7 +169,7 @@ class ResourceClientTest {
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(4));
             assertThat(aggregations.get(HAS_PUBLIC_FILE).get(0).count(), is(20));
-            assertThat(aggregations.get(LICENSE).get(0).count(), is(15));
+            assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
@@ -410,6 +410,8 @@ class ResourceClientTest {
 
             assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
+
+
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
