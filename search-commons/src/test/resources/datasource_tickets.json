@@ -1820,7 +1820,7 @@
         "type": "MovingPicture",
         "subtype": {
           "type": "InteractiveFilm"
-      },
+        },
         "outputs": [
           {
             "type": "OtherRelease",
@@ -1828,22 +1828,22 @@
             "place": {
               "type": "UnconfirmedPlace",
               "label": "trondheim"
-        },
+            },
             "publisher": {
               "type": "UnconfirmedPublisher",
               "valid": false
-        },
+            },
             "date": {
               "type": "Instant",
               "value": "2024-02-22T23:00:00Z"
-        },
+            },
             "sequence": 1
           }
         ],
         "pages": {
           "type": "NullPages"
-      }
-    },
+        }
+      },
       "publishedDate": "2024-02-23T14:46:59.757109355Z",
       "contributors": [
         {
@@ -1854,7 +1854,7 @@
             "name": "Anette Olli Siiri",
             "verificationStatus": "Verified",
             "additionalIdentifiers": []
-      },
+          },
           "affiliations": [
             {
               "type": "Organization",
@@ -1863,7 +1863,7 @@
           ],
           "role": {
             "type": "Director"
-      },
+          },
           "sequence": 1,
           "correspondingAuthor": false
         }
@@ -1871,29 +1871,29 @@
       "id": "https://api.dev.nva.aws.unit.no/publication/018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d",
       "identifier": "018dd66e2ff9-9a1a3b18-4775-431a-9f30-521fb413484d",
       "mainTitle": "preview no associated artifacts"
-  },
+    },
     "finalizedBy": {
       "type": "Person",
       "firstName": "Anette Olli",
       "lastName": "Siiri",
       "username": "1412322@20754.0.0.0"
-  },
+    },
     "owner": {
       "type": "Person",
       "firstName": "Anette Olli",
       "lastName": "Siiri",
       "username": "1412322@20754.0.0.0"
-  },
+    },
     "assignee": {
       "type": "Person",
       "firstName": "Anette Olli",
       "lastName": "Siiri",
       "username": "1412322@20754.0.0.0"
-  },
+    },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "partOf": []
-  },
+    },
     "status": "Completed"
   },
   {
