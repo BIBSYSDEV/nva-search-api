@@ -18,10 +18,11 @@ import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.FILES_STATUS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
@@ -45,7 +46,6 @@ import static no.unit.nva.search2.common.constant.Words.PRINT_ISSN;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
 import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.REFERENCE;
 import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
@@ -88,6 +88,7 @@ public final class Constants {
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
+    public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
     public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
@@ -188,7 +189,7 @@ public final class Constants {
         LICENSE, "/filter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
-        HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
+        FILES, "/filter/files",
         PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
         JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
         CONTRIBUTOR, "/filter/entityDescription/contributor/id",
@@ -200,6 +201,7 @@ public final class Constants {
 
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
         List.of(
+            filesHierarchy(),
             associatedArtifactsHierarchy(),
             entityDescriptionHierarchy(),
             fundingSourceHierarchy(),
@@ -213,10 +215,12 @@ public final class Constants {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 
+    public static TermsAggregationBuilder filesHierarchy() {
+        return branchBuilder(FILES,jsonPath(FILES_STATUS, KEYWORD));
+    }
+
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {
-        return
-            nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                .subAggregation(publishedFiles())
+        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
                 .subAggregation(license());
     }
 
@@ -367,12 +371,6 @@ public final class Constants {
                 .subAggregation(getReverseNestedAggregationBuilder());
     }
 
-    private static FilterAggregationBuilder publishedFiles() {
-        return
-            filterBranchBuilder(HAS_PUBLIC_FILE, PUBLISHED_FILE, ASSOCIATED_ARTIFACTS, TYPE, KEYWORD)
-                .subAggregation(getReverseNestedAggregationBuilder());
-    }
-
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
         return
             AggregationBuilders.reverseNested(ROOT)
@@ -396,7 +394,6 @@ public final class Constants {
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
     }
-
 
     @JacocoGenerated
     public Constants() {
