@@ -74,6 +74,86 @@ paths:
               schema:
                 $ref: "#/components/schemas/TicketSearchResponse"
 
+  /customer/tickets:
+    get:
+      description: "Search for Tickets by customer"
+      parameters:
+        - $ref: '#/components/parameters/assigneeParam'
+        - $ref: '#/components/parameters/assigneeNotParam'
+        - $ref: '#/components/parameters/createdDateParam'
+        - $ref: '#/components/parameters/customerIdParam'
+        - $ref: '#/components/parameters/customerIdNotParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/finalizedByParam'
+        - $ref: '#/components/parameters/finalizedByNotParam'
+        - $ref: '#/components/parameters/messagesParam'
+        - $ref: '#/components/parameters/messagesNotParam'
+        - $ref: '#/components/parameters/modifiedDateParam'
+        - $ref: '#/components/parameters/organizationIdParam'
+        - $ref: '#/components/parameters/organizationIdNotParam'
+        - $ref: '#/components/parameters/ownerParam'
+        - $ref: '#/components/parameters/ownerNotParam'
+        - $ref: '#/components/parameters/publicationIdParam'
+        - $ref: '#/components/parameters/publicationIdNotParam'
+        - $ref: '#/components/parameters/publicationModifiedDateParam'
+        - $ref: '#/components/parameters/publicationOwnerParam'
+        - $ref: '#/components/parameters/publicationOwnerNotParam'
+        - $ref: '#/components/parameters/publicationStatusParam'
+        - $ref: '#/components/parameters/publicationStatusNotParam'
+        - $ref: '#/components/parameters/publicationTitleParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/typeParam'
+        - $ref: '#/components/parameters/typeNotParam'
+        - $ref: '#/components/parameters/viewedByParam'
+        - $ref: '#/components/parameters/viewedByNotParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+      security:
+        - CognitoUserPool: [
+          "https://api.nva.unit.no/scopes/backend",
+          "https://api.nva.unit.no/scopes/frontend",
+          "aws.cognito.signin.user.admin"
+        ]
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchParamTicketsFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+
   /resources:
     get:
       tags:
@@ -1369,6 +1449,189 @@ components:
       required: false
       schema:
         type: string
+    assigneeParam:
+      name: assignee
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    assigneeNotParam:
+      name: assignee_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    createdDateParam:
+      name: created_date
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    customerIdParam:
+      name: customer_id
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    customerIdNotParam:
+      name: customer_id_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    finalizedByParam:
+      name: finalized_by
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    finalizedByNotParam:
+      name: finalized_by_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    messagesParam:
+      name: messages
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    messagesNotParam:
+      name: messages_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    modifiedDateParam:
+      name: modified_date
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    organizationIdParam:
+      name: organization_id
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    organizationIdNotParam:
+      name: organization_id_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    ownerParam:
+      name: owner
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    ownerNotParam:
+      name: owner_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationIdParam:
+      name: publication_id
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationIdNotParam:
+      name: publication_id_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationModifiedDateParam:
+      name: publication_modified_date
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationOwnerParam:
+      name: publication_owner
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationOwnerNotParam:
+      name: publication_owner_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationStatusParam:
+      name: publication_status
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationStatusNotParam:
+      name: publication_status_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    publicationTitleParam:
+      name: publication_title
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    typeParam:
+      name: type
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    typeNotParam:
+      name: type_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    viewedByParam:
+      name: viewed_by
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+    viewedByNotParam:
+      name: viewed_by_not
+      in: query
+      description: "TBA"
+      required: false
+      schema:
+        type: string
+
     #--- aliases - maybe delete?
     categoryParam:
       name: category
