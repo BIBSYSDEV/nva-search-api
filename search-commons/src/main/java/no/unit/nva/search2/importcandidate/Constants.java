@@ -5,10 +5,12 @@ import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisation
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
+import static no.unit.nva.search2.resource.Constants.filesHierarchy;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,7 +54,8 @@ public final class Constants {
             branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
             branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
             importStatusHierarchy(),
-            topLevelOrganisationsHierarchy()
+            topLevelOrganisationsHierarchy(),
+            filesHierarchy()
         );
 
     public static final Map<String, String> FACET_IMPORT_CANDIDATE_PATHS = Map.of(
@@ -61,7 +64,8 @@ public final class Constants {
         IMPORT_STATUS, "/filter/status",
         INSTANCE_TYPE, "/filter/publicationInstance.type",
         PUBLICATION_YEAR, "/filter/publicationYear",
-        TOP_LEVEL_ORGANIZATIONS, "/filter/status"
+        TOP_LEVEL_ORGANIZATIONS, "/filter/topLevelOrganizations/id",
+        FILES, "/filter/filesStatus"
     );
 
     private static TermsAggregationBuilder importStatusHierarchy() {
@@ -70,7 +74,6 @@ public final class Constants {
                 .subAggregation(branchBuilder(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD))
                 .subAggregation(branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD));
     }
-
 
     @JacocoGenerated
     public Constants() {

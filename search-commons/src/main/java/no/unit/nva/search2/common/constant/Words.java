@@ -27,7 +27,6 @@ public final class Words {
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
-    public static final String CRISTIN_IDENTIFIER = "CRISTIN_IDENTIFIER";
     public static final String CRISTIN_AS_TYPE = "Cristin";
     public static final String DOI = "doi";
     public static final String DOT = ".";
@@ -39,7 +38,8 @@ public final class Words {
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
-    public static final String HAS_PUBLIC_FILE = "hasPublicFile";
+    public static final String FILES = "files";
+    public static final String FILES_STATUS = "filesStatus";
     public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
@@ -86,7 +86,6 @@ public final class Words {
     public static final String SCOPUS_AS_TYPE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
-    public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SERIES = "series";
     public static final String SERIES_AS_TYPE = "Series";
