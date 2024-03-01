@@ -16,7 +16,7 @@ import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS_PART_OFS;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FILTER;
@@ -312,7 +312,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
         var query = boolQuery();
-        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope));
+        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
         query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
                                               viewingScope));
         return query;
