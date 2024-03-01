@@ -38,7 +38,6 @@ public final class AggregationFormat {
             getAggregationFieldStreams(aggregations, definitions)
                 .map(AggregationFormat::getJsonNodeEntry)
                 .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
-            ensureChildNodesAreArrays(objectNode);
         }
         return objectNode;
     }

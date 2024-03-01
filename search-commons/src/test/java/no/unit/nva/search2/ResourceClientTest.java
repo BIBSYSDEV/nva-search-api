@@ -159,7 +159,7 @@ class ResourceClientTest {
             assertNotNull(response1);
 
             var aggregationsList = String.join(COMMA, ASSOCIATED_ARTIFACTS, ENTITY_DESCRIPTION, FUNDINGS,
-                                               STATUS, SCIENTIFIC_INDEX, TOP_LEVEL_ORGANIZATIONS);
+                                               STATUS, SCIENTIFIC_INDEX, TOP_LEVEL_ORGANIZATIONS, FILES);
             var uri2 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + aggregationsList);
 
             var query2 = ResourceQuery.builder()
