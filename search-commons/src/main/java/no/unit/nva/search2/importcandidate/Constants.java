@@ -7,6 +7,7 @@ import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
+import static no.unit.nva.search2.resource.Constants.filesHierarchy;
 import java.util.List;
 import java.util.Locale;
 import nva.commons.core.JacocoGenerated;
@@ -49,7 +50,8 @@ public final class Constants {
         branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
         importStatusHierarchy(),
         topLevelOrganisationsHierarchy(),
-        associatedArtifactsHierarchy()
+        associatedArtifactsHierarchy(),
+        filesHierarchy()
     );
 
     private static TermsAggregationBuilder importStatusHierarchy() {

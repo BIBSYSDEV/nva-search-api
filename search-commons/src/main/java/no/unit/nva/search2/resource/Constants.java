@@ -191,7 +191,7 @@ public final class Constants {
         scientificIndexHierarchy()
     );
 
-    private static TermsAggregationBuilder filesHierarchy() {
+    public static TermsAggregationBuilder filesHierarchy() {
         return branchBuilder(FILES,jsonPath(HAS_FILE, KEYWORD));
     }
 
