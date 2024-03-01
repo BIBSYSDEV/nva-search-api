@@ -21,7 +21,7 @@ import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
+import static no.unit.nva.search2.common.constant.Words.FILES_STATUS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
@@ -88,6 +88,7 @@ public final class Constants {
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
+    public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
     public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
@@ -192,7 +193,7 @@ public final class Constants {
     );
 
     public static TermsAggregationBuilder filesHierarchy() {
-        return branchBuilder(FILES,jsonPath(HAS_FILE, KEYWORD));
+        return branchBuilder(FILES,jsonPath(FILES_STATUS, KEYWORD));
     }
 
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {

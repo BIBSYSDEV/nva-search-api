@@ -57,6 +57,7 @@ import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENC
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_SERIES;
 import static no.unit.nva.search2.resource.Constants.ENTITY_TAGS;
+import static no.unit.nva.search2.resource.Constants.FILES_STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
 import static no.unit.nva.search2.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
 import static no.unit.nva.search2.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
@@ -136,7 +137,7 @@ public enum ResourceParameter implements ParameterKey {
     HANDLE(FUZZY_KEYWORD, ALL_ITEMS, HANDLE_KEYWORD, PHI),
     HANDLE_NOT(FUZZY_KEYWORD, NO_ITEMS, HANDLE_KEYWORD, PHI),
     HANDLE_SHOULD(TEXT, ONE_OR_MORE_ITEM, HANDLE_KEYWORD),
-    FILES(KEYWORD, ALL_ITEMS,"hasFile.keyword"),
+    FILES(KEYWORD, ALL_ITEMS,FILES_STATUS_KEYWORD),
     ID(KEYWORD, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, NO_ITEMS, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, IDENTIFIER_KEYWORD),
