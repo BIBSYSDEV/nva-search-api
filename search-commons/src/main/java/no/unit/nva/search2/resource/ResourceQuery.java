@@ -19,10 +19,12 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS_PART_OFS;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.common.constant.Words.FILTER;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
@@ -31,9 +33,10 @@ import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search2.resource.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
@@ -57,6 +60,7 @@ import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
@@ -151,6 +155,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
     }
 
+    @Override
+    protected Map<String, String> aggregationsDef() {
+        return facetResourcePaths;
+    }
+
     /**
      * Filter on Required Status.
      *
@@ -165,7 +174,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         final var values = Arrays.stream(publicationStatus)
             .map(PublicationStatus::toString)
             .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(PUBLICATION_STATUS, values)
+        final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
             .queryName(STATUS);
         this.addFilter(filter);
         return this;
@@ -192,12 +201,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 ? QueryBuilders.matchAllQuery()
                 : makeBoolQuery(userSettingsClient);
 
-        var builder = new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .postFilter(getFilters())
-            .trackTotalHits(true);
+        var builder = defaultSearchSourceBuilder(queryBuilder);
 
         handleSearchAfter(builder);
 
@@ -220,7 +224,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(Constants.FILTER, getFilters());
+        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -267,7 +271,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = QueryBuilders
                     .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(Constants.PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(
@@ -333,7 +337,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
-        setFilters(new TermsQueryBuilder(PUBLICATION_STATUS, UUID.randomUUID().toString()).queryName(STATUS));
+        setFilters(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     @SuppressWarnings("PMD.GodClass")

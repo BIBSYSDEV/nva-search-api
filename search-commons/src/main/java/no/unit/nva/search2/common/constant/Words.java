@@ -4,6 +4,11 @@ import nva.commons.core.JacocoGenerated;
 
 public final class Words {
 
+    public static final float PI = 3.14F;        // π -> used for boosting.
+    public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
+    public static final String FILTER = "filter";
+    public static final String ROOT = "root";
+
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
     public static final String AFFILIATIONS = "affiliations";
@@ -22,7 +27,6 @@ public final class Words {
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
-    public static final String CRISTIN_IDENTIFIER = "CRISTIN_IDENTIFIER";
     public static final String CRISTIN_AS_TYPE = "Cristin";
     public static final String DOI = "doi";
     public static final String DOT = ".";
@@ -53,6 +57,7 @@ public final class Words {
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
+    public static final String NONE = "none";
     public static final String NYNORSK_CODE = "nn";
     public static final String ONE = "1";
     public static final String ONLINE_ISSN = "onlineIssn";
@@ -81,7 +86,6 @@ public final class Words {
     public static final String SCOPUS_AS_TYPE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
-    public static final String SEARCH_ALL_KEY_NAME = "SEARCH_ALL";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
     public static final String SERIES = "series";
     public static final String SERIES_AS_TYPE = "Series";
