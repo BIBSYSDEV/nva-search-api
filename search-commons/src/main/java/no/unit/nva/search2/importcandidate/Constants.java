@@ -2,15 +2,18 @@ package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
+import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 public final class Constants {
@@ -42,14 +45,23 @@ public final class Constants {
     public static final String DEFAULT_IMPORT_CANDIDATE_SORT =
         ImportCandidateSort.CREATED_DATE.name().toLowerCase(Locale.getDefault());
 
-    public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
-        IMPORT_CANDIDATES_AGGREGATIONS = List.of(
-        branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
-        branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
-        branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
-        importStatusHierarchy(),
-        topLevelOrganisationsHierarchy(),
-        associatedArtifactsHierarchy()
+    public static final List<AggregationBuilder> IMPORT_CANDIDATES_AGGREGATIONS =
+        List.of(
+            associatedArtifactsHierarchy(),
+            branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
+            branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
+            branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
+            importStatusHierarchy(),
+            topLevelOrganisationsHierarchy()
+        );
+
+    public static final Map<String, String> FACET_IMPORT_CANDIDATE_PATHS = Map.of(
+        ASSOCIATED_ARTIFACTS, "/filter/associatedArtifacts/license",
+        COLLABORATION_TYPE, "/filter/collaborationType/id",
+        IMPORT_STATUS, "/filter/status",
+        INSTANCE_TYPE, "/filter/publicationInstance.type",
+        PUBLICATION_YEAR, "/filter/publicationYear",
+        TOP_LEVEL_ORGANIZATIONS, "/filter/status"
     );
 
     private static TermsAggregationBuilder importStatusHierarchy() {
@@ -59,8 +71,8 @@ public final class Constants {
                 .subAggregation(branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD));
     }
 
+
     @JacocoGenerated
     public Constants() {
     }
-
 }

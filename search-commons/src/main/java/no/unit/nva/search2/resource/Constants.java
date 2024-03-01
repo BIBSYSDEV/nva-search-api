@@ -19,6 +19,7 @@ import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
+import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
 import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
@@ -48,6 +49,7 @@ import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.REFERENCE;
 import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
+import static no.unit.nva.search2.common.constant.Words.ROOT;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
@@ -56,18 +58,20 @@ import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TAGS;
 import static no.unit.nva.search2.common.constant.Words.TITLE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Defaults;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.script.Script;
 import org.opensearch.script.ScriptType;
-import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -80,11 +84,7 @@ public final class Constants {
 
     //entityDescription/reference/publicationContext/publisher
     public static final String PERSON_PREFERENCES = "/person-preferences/";
-    public static final String FILTER = "filter";
-    public static final float PI = 3.14F;        // π -> used for boosting.
-    public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
-    public static final String ROOT = "root";
     public static final String DEFAULT_RESOURCE_SORT =
         ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
@@ -111,7 +111,7 @@ public final class Constants {
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
     public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
-    public static final String PUBLICATION_STATUS = STATUS + DOT + KEYWORD;
+    public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + ISBN_LIST;
     public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
@@ -180,15 +180,38 @@ public final class Constants {
         + ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD + PIPE
         + ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
 
-    public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
-        RESOURCES_AGGREGATIONS = List.of(
-        associatedArtifactsHierarchy(),
-        entityDescriptionHierarchy(),
-        fundingSourceHierarchy(),
-        publishStatusHierarchy(),
-        topLevelOrganisationsHierarchy(),
-        scientificIndexHierarchy()
+    private static final Map<String, String> facetResourcePaths1 = Map.of(
+        TYPE, "/filter/entityDescription/reference/publicationInstance/type",
+        COURSE, "/filter/entityDescription/reference/publicationContext/course",
+        SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
+        STATUS, "/filter/status",
+        LICENSE, "/filter/associatedArtifacts/license"
     );
+    private static final Map<String, String> facetResourcePaths2 = Map.of(
+        HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
+        PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
+        JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
+        CONTRIBUTOR, "/filter/entityDescription/contributor/id",
+        CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
+        FUNDING_SOURCE, "/filter/fundings/id",
+        TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id",
+        SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
+    );
+
+    public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
+        List.of(
+            associatedArtifactsHierarchy(),
+            entityDescriptionHierarchy(),
+            fundingSourceHierarchy(),
+            publishStatusHierarchy(),
+            scientificIndexHierarchy(),
+            topLevelOrganisationsHierarchy()
+        );
+
+    public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)
+        .flatMap(map -> map.entrySet().stream())
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
 
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {
         return
@@ -224,7 +247,6 @@ public final class Constants {
                 );
     }
 
-
     public static NestedAggregationBuilder entityDescriptionHierarchy() {
         return
             nestedBranchBuilder(ENTITY_DESCRIPTION, ENTITY_DESCRIPTION)
@@ -258,7 +280,6 @@ public final class Constants {
                         .subAggregation(instanceType())
                 );
     }
-
 
     private static NestedAggregationBuilder publicationContext() {
         return
@@ -322,7 +343,6 @@ public final class Constants {
             branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
     }
 
-
     private static TermsAggregationBuilder publicationContextType() {
         return
             branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
@@ -376,6 +396,7 @@ public final class Constants {
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
     }
+
 
     @JacocoGenerated
     public Constants() {
