@@ -156,7 +156,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected Map<String, String> aggregationsDef() {
+    protected Map<String, String> aggregationsDefinition() {
         return facetResourcePaths;
     }
 
@@ -291,7 +291,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             ? excludeSubunitsQuery(viewingScope)
             : includeSubunitsQuery(viewingScope);
 
-        return kQueryTools.queryToEntry(VIEWING_SCOPE, queryBuilder);
+        return queryTools.queryToEntry(VIEWING_SCOPE, queryBuilder);
     }
 
     private QueryBuilder includeSubunitsQuery(String... viewingScope) {
@@ -313,7 +313,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .must(termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
             ScoreMode.None);
 
-        return kQueryTools.queryToEntry(key, query);
+        return queryTools.queryToEntry(key, query);
     }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
@@ -326,7 +326,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
-        return kQueryTools.queryToEntry(key, query);
+        return queryTools.queryToEntry(key, query);
     }
 
     /**

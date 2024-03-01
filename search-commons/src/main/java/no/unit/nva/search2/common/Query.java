@@ -60,7 +60,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected final transient QueryTools<K> kQueryTools;
+    protected final transient QueryTools<K> queryTools;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
@@ -85,13 +85,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract boolean isPagingValue(K key);
 
-    protected abstract Map<String,String> aggregationsDef();
+    protected abstract Map<String,String> aggregationsDefinition();
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
-        kQueryTools = new QueryTools<>();
+        queryTools = new QueryTools<>();
 
         setMediaType(MediaType.JSON_UTF_8.toString());
     }
@@ -111,7 +111,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     public PagedSearch toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
-        final var aggregationFormatted = AggregationFormat.apply(response.aggregations(),aggregationsDef()).toString();
+        final var aggregationFormatted = AggregationFormat.apply(response.aggregations(), aggregationsDefinition()).toString();
 
         return
             new PagedSearchBuilder()
@@ -273,12 +273,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
         return switch (key.fieldType()) {
-            case BOOLEAN -> kQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            case BOOLEAN -> queryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
             case TEXT, FUZZY_TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
-            case FREE_TEXT -> kQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+            case FREE_TEXT -> queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
             case CUSTOM -> customQueryBuilders(key);
             case IGNORED -> Stream.empty();
             default -> {

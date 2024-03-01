@@ -131,7 +131,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected Map<String, String> aggregationsDef() {
+    protected Map<String, String> aggregationsDefinition() {
         return FACET_IMPORT_CANDIDATE_PATHS;
     }
 
@@ -191,7 +191,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
-        return kQueryTools.queryToEntry(key, query);
+        return queryTools.queryToEntry(key, query);
     }
 
 

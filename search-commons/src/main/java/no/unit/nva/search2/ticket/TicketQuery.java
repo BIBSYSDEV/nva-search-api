@@ -119,7 +119,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     @Override
-    protected Map<String, String> aggregationsDef() {
+    protected Map<String, String> aggregationsDefinition() {
         return facetResourcePaths;
     }
 
