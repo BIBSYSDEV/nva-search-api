@@ -96,8 +96,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     TYPE(KEYWORD, Constants.TYPE_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    FIELDS(CUSTOM),
     // Pagination parameters
+    FIELDS(IGNORED),
+    AGGREGATION(IGNORED),
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),

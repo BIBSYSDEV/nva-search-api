@@ -23,21 +23,27 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
 
     protected Stream<Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
         final var searchField = queryTools.getFirstSearchField(key);
+        final var firstParam = valueOrNull(values[0]);
+        final var secondParam = values.length == 2 ? valueOrNull(values[1]) : null;
         return queryTools.queryToEntry(key, switch (key.searchOperator()) {
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
                 .rangeQuery(searchField)
-                .gte(values[0])
+                .gte(firstParam)
                 .queryName("GreaterOrEqual-" + key.fieldName());
             case LESS_THAN -> QueryBuilders
                 .rangeQuery(searchField)
-                .lt(values[0])
+                .lt(firstParam)
                 .queryName("LessThan-" + key.fieldName());
             case BETWEEN -> QueryBuilders
                 .rangeQuery(searchField)
-                .from(values[0])
-                .to(values[1])
+                .from(firstParam)
+                .to(secondParam)
                 .queryName("Between-" + key.fieldName());
             default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         });
+    }
+
+    private String valueOrNull(String value) {
+        return value.isBlank() ? null : value;
     }
 }
