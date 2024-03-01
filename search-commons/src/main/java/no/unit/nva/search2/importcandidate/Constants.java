@@ -5,6 +5,7 @@ import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisation
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
@@ -63,7 +64,8 @@ public final class Constants {
         IMPORT_STATUS, "/filter/status",
         INSTANCE_TYPE, "/filter/publicationInstance.type",
         PUBLICATION_YEAR, "/filter/publicationYear",
-        TOP_LEVEL_ORGANIZATIONS, "/filter/status"
+        TOP_LEVEL_ORGANIZATIONS, "/filter/topLevelOrganizations/id",
+        FILES, "/filter/filesStatus"
     );
 
     private static TermsAggregationBuilder importStatusHierarchy() {
