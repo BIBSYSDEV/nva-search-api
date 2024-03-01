@@ -47,6 +47,8 @@ import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
+import static no.unit.nva.search2.resource.ResourceParameter.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.resource.ResourceParameter.UNIT;
 import static no.unit.nva.search2.resource.ResourceParameter.VIEWING_SCOPE;
 import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
@@ -56,12 +58,14 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
-import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -87,6 +91,7 @@ import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+@SuppressWarnings("PMD.GodClass")
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     public static ResourceParameterValidator builder() {
@@ -104,7 +109,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case FUNDING -> fundingQuery(key);
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case EXCLUDE_SUBUNITS -> excludeSubunitsQuery();
+            case EXCLUDE_SUBUNITS -> createSubunitsQuery();
             default -> {
                 logger.error("unhandled key -> {}", key.name());
                 yield Stream.empty();
@@ -282,26 +287,40 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> excludeSubunitsQuery() {
-
-        var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
-        var viewingScope = getValue(VIEWING_SCOPE).split(COMMA);
-
-        var queryBuilder = shouldExcludeSubunits
-            ? excludeSubunitsQuery(viewingScope)
-            : includeSubunitsQuery(viewingScope);
-
-        return kQueryTools.queryToEntry(VIEWING_SCOPE, queryBuilder);
+    public Stream<Entry<ResourceParameter, QueryBuilder>> createSubunitsQuery() {
+        var viewingScope = getViewingScope();
+        if (!viewingScope.isEmpty()) {
+            var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
+            return kQueryTools.queryToEntry(VIEWING_SCOPE,createSubunitQuery(shouldExcludeSubunits, viewingScope));
+        } else {
+            return null;
+        }
     }
 
-    private QueryBuilder includeSubunitsQuery(String... viewingScope) {
-        return boolQuery()
-            .should(termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope))
-            .should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope));
+    private static QueryBuilder createSubunitQuery(Boolean shouldExcludeSubunits, List<String> viewingScope) {
+        return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
     }
 
-    private QueryBuilder excludeSubunitsQuery(String... viewingScope) {
-        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope);
+    private List<String> getViewingScope() {
+        return Stream.of(getValue(TOP_LEVEL_ORGANIZATION), getValue(UNIT))
+                   .filter(asType -> isPresent(asType.getKey()))
+                   .map(AsType::as)
+                   .map(Objects::toString)
+                   .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
+                   .toList();
+    }
+
+    private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
+        var query = boolQuery();
+        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTORS_PART_OFS, KEYWORD), viewingScope));
+        query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                              viewingScope));
+        return query;
+    }
+
+    private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
+        return QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                        viewingScope);
     }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {

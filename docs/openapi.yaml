@@ -197,6 +197,7 @@ paths:
         - $ref: '#/components/parameters/sortParam'
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/excludeSubunits'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -1347,6 +1348,14 @@ components:
       required: false
       schema:
         type: string
+    excludeSubunits:
+      name: exclude_subunits
+      in: query
+      description: "Exclude sub-units of the provided viewingScope"
+      example: 'true'
+      required: false
+      schema:
+        type: boolean
     userAffiliationParam:
       name: user_affiliation
       in: query
