@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.QueryTools.valueToBoolean;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -13,7 +12,6 @@ import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
@@ -25,13 +23,11 @@ import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHED_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
@@ -77,7 +73,6 @@ import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MatchQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -105,7 +100,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case FUNDING -> fundingQuery(key);
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case HAS_PUBLIC_FILE -> publishedFileQuery(key);
             case EXCLUDE_SUBUNITS -> excludeSubunitsQuery();
             default -> {
                 logger.error("unhandled key -> {}", key.name());
@@ -284,10 +278,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    private MatchQueryBuilder containsPublishedFileQuery() {
-        return QueryBuilders.matchQuery(jsonPath(ASSOCIATED_ARTIFACTS, TYPE, KEYWORD), PUBLISHED_FILE);
-    }
-
     private Stream<Entry<ResourceParameter, QueryBuilder>> excludeSubunitsQuery() {
 
         var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
@@ -308,14 +298,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private QueryBuilder excludeSubunitsQuery(String... viewingScope) {
         return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD), viewingScope);
-    }
-
-    public Stream<Entry<ResourceParameter, QueryBuilder>> publishedFileQuery(ResourceParameter key) {
-        var query = getValue(key).asBoolean()
-            ? boolQuery().must(containsPublishedFileQuery())
-            : boolQuery().mustNot(containsPublishedFileQuery());
-
-        return kQueryTools.queryToEntry(key, query);
     }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
@@ -394,7 +376,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
-                case HAS_PUBLIC_FILE -> query.setKeyValue(qpKey, valueToBoolean(key, decodedValue).toString());
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
