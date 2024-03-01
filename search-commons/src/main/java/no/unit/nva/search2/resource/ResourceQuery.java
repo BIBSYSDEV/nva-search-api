@@ -40,6 +40,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
@@ -47,6 +48,8 @@ import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
+import static no.unit.nva.search2.resource.ResourceParameter.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.resource.ResourceParameter.UNIT;
 import static no.unit.nva.search2.resource.ResourceParameter.VIEWING_SCOPE;
 import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
@@ -62,6 +65,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -291,8 +295,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> createSubunitsQuery() {
         var viewingScope = getViewingScope();
-        if (viewingScopeIsProvided(viewingScope)) {
-            var shouldExcludeSubunits = getExcludeSubunitsKey();
+        if (!viewingScope.isEmpty()) {
+            var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
             return kQueryTools.queryToEntry(VIEWING_SCOPE,createSubunitQuery(shouldExcludeSubunits, viewingScope));
         } else {
             return null;
@@ -303,42 +307,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
     }
 
-    private static boolean viewingScopeIsProvided(List<String> viewingScope) {
-        return !viewingScope.isEmpty();
-    }
-
     private List<String> getViewingScope() {
-        var viewingScopeKeys = getViewingScopeParameters();
-        var viewingScopeParams = viewingScopeKeys.stream().map(searchParameters::get).collect(Collectors.joining(","));
-        return !viewingScopeKeys.isEmpty()
-                   ? extractViewingScope(viewingScopeParams)
-                   : List.of();
-    }
-
-    private List<ResourceParameter> getViewingScopeParameters() {
-        return searchParameters.keySet().stream()
-                   .filter(this::isOrganization)
-                   .toList();
-    }
-
-    public boolean isOrganization(ResourceParameter resourceParameter) {
-        return ResourceParameter.TOP_LEVEL_ORGANIZATION.name().equals(resourceParameter.name())
-               || ResourceParameter.UNIT.name().equals(resourceParameter.name());
-    }
-
-    private static List<String> extractViewingScope(String viewingScopeParameter) {
-        return Arrays.stream(viewingScopeParameter.split(COMMA))
+        return Stream.of(getValue(TOP_LEVEL_ORGANIZATION), getValue(UNIT))
+                   .filter(asType -> isPresent(asType.getKey()))
+                   .map(AsType::as)
+                   .map(Objects::toString)
                    .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
                    .toList();
-    }
-
-    private Boolean getExcludeSubunitsKey() {
-        var excludeSubunitValue = searchParameters.keySet().stream()
-                                      .filter(key -> ResourceParameter.EXCLUDE_SUBUNITS.name().equals(key.name()))
-                                      .findFirst()
-                                      .map(searchParameters::get)
-                                      .orElse(null);
-        return Boolean.parseBoolean(excludeSubunitValue);
     }
 
     private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
