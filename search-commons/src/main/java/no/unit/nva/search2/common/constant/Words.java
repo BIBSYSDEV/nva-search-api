@@ -36,8 +36,7 @@ public final class Words {
     public static final String HANDLE = "handle";
     public static final String HAS_PUBLIC_FILE = "hasPublicFile";
     public static final String FILES = "files";
-    public static final String NO_PUBLIC_FILE = "noPublicFile";
-    public static final String HAS_PUBLIC_FILE_KEY_NAME = "HAS_PUBLIC_FILE";
+    public static final String HAS_FILE = "hasFile";
     public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";

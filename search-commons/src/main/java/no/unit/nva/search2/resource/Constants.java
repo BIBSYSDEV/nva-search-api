@@ -18,9 +18,10 @@ import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
+import static no.unit.nva.search2.common.constant.Words.HAS_FILE;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
@@ -34,7 +35,6 @@ import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.ONLINE_ISSN;
 import static no.unit.nva.search2.common.constant.Words.ORC_ID;
@@ -182,6 +182,7 @@ public final class Constants {
 
     public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>>
         RESOURCES_AGGREGATIONS = List.of(
+            filesHierarchy(),
         associatedArtifactsHierarchy(),
         entityDescriptionHierarchy(),
         fundingSourceHierarchy(),
@@ -190,11 +191,12 @@ public final class Constants {
         scientificIndexHierarchy()
     );
 
+    private static TermsAggregationBuilder filesHierarchy() {
+        return branchBuilder(FILES,jsonPath(HAS_FILE, KEYWORD));
+    }
+
     public static NestedAggregationBuilder associatedArtifactsHierarchy() {
-        return
-            nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-                .subAggregation(publicFiles())
-                .subAggregation(noPublicFiles())
+        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
                 .subAggregation(license());
     }
 
@@ -348,16 +350,6 @@ public final class Constants {
                 .subAggregation(getReverseNestedAggregationBuilder());
     }
 
-    private static FilterAggregationBuilder publicFiles() {
-        return filterBooleanBranchBuilder(HAS_PUBLIC_FILE, true, ASSOCIATED_ARTIFACTS, "visibleForNonOwner")
-                .subAggregation(getReverseNestedAggregationBuilder());
-    }
-
-    private static FilterAggregationBuilder noPublicFiles() {
-        return mustNotBranchBuilder(NO_PUBLIC_FILE, true, ASSOCIATED_ARTIFACTS, "visibleForNonOwner")
-                   .subAggregation(getReverseNestedAggregationBuilder());
-    }
-
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
         return
             AggregationBuilders.reverseNested(ROOT)
@@ -370,15 +362,6 @@ public final class Constants {
 
     private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
-    }
-
-    private static FilterAggregationBuilder filterBooleanBranchBuilder(String name, boolean filter, String... paths) {
-        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
-    }
-
-    private static FilterAggregationBuilder mustNotBranchBuilder(String name, boolean filter, String... paths) {
-        return AggregationBuilders.filter(name, QueryBuilders.boolQuery().mustNot(
-                                              QueryBuilders.termQuery(jsonPath(paths), filter)));
     }
 
     public static Script uriAsUuid(String... paths) {

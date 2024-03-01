@@ -10,13 +10,11 @@ import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HAS_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.JOURNAL;
 import static no.unit.nva.search2.common.constant.Words.KEY;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.NO_PUBLIC_FILE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
@@ -52,27 +50,7 @@ public final class AggregationFormat {
         getAggregationFieldStreams(aggregations)
             .map(AggregationFormat::getJsonNodeEntry)
             .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
-        convertFilterAggregationsToBucket(objectNode);
         return objectNode;
-    }
-
-    private static void convertFilterAggregationsToBucket(ObjectNode objectNode) {
-        createFileAggregation(objectNode);
-    }
-
-    private static void createFileAggregation(ObjectNode objectNode) {
-        var hasPublicFile = objectNode.get(HAS_PUBLIC_FILE);
-        var noPublicFile = objectNode.get(NO_PUBLIC_FILE);
-        if (hasPublicFile.isObject() && noPublicFile.isObject()) {
-            ((ObjectNode) hasPublicFile).put(KEY, HAS_PUBLIC_FILE);
-            ((ObjectNode) noPublicFile).put(KEY, NO_PUBLIC_FILE);
-            var bucket = JsonUtils.dtoObjectMapper.createArrayNode();
-            bucket.add(hasPublicFile);
-            bucket.add(noPublicFile);
-            objectNode.set(FILES, bucket);
-            objectNode.remove(HAS_PUBLIC_FILE);
-            objectNode.remove(NO_PUBLIC_FILE);
-        }
     }
 
     private static JsonNode fixNodes(JsonNode node) {
@@ -172,8 +150,7 @@ public final class AggregationFormat {
             LICENSE, "/filter/associatedArtifacts/license"
             );
         private static final Map<String, String> facetResourcePaths2 = Map.of(
-            HAS_PUBLIC_FILE, "/filter/associatedArtifacts/hasPublicFile",
-            NO_PUBLIC_FILE, "/filter/associatedArtifacts/noPublicFile",
+            FILES, "/filter/files",
             PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
             JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
             CONTRIBUTOR, "/filter/entityDescription/contributor/id",

@@ -330,6 +330,32 @@ class ResourceClientTest {
 
         @ParameterizedTest
         @MethodSource("uriProvider")
+        void some(URI uri, int expectedCount) throws ApiGatewayException {
+
+            var query =
+                ResourceQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertNotNull(pagedSearchResourceDto);
+            if (expectedCount == 0) {
+                logger.debug(pagedSearchResourceDto.toJsonString());
+            } else {
+                logger.debug(pagedSearchResourceDto.toString());
+            }
+
+            assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
+            assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+        }
+
+        @ParameterizedTest
+        @MethodSource("uriProvider")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult =
                 ResourceQuery.builder()

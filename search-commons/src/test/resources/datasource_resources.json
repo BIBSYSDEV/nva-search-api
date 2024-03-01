@@ -6,6 +6,7 @@
     ],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba3cfcb9c-94f77a1e-ac36-430a-84b0-0619ecbbaf39",
+    "hasFile": "noFiles",
     "associatedArtifacts": [
       {
         "type": "NullAssociatedArtifact"
@@ -322,6 +323,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
+    "hasFile": "noFiles",
     "associatedArtifacts": [
       {
         "type": "NullAssociatedArtifact"
@@ -413,6 +415,7 @@
       "status": "Reported",
       "year": "2020"
     },
+    "hasFile": "noFiles",
     "associatedArtifacts": [
       {
         "type": "UnPublishedFile",
@@ -744,6 +747,7 @@
       "status": "Reported",
       "year": "2023"
     },
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -884,6 +888,7 @@
       "status": "Reported",
       "year": "2011"
     },
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -993,6 +998,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8579f0ad-db0bd29b-ad7c-4068-afa3-f300a1af61ef",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1084,6 +1090,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b858395d7-02aaf128-dc44-457e-b471-675a952e8cff",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1294,6 +1301,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857af565-f63a53df-6c4f-4051-8686-8547f45ef726",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1468,6 +1476,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8579ef63-3985cba8-f6e8-4038-8282-e7ffb88c6c27",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1989,6 +1998,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857a85ae-110bf68d-c0f7-42b5-b635-b154ed6208dd",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2098,6 +2108,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857b89d9-b5053ac9-fe14-4ea9-9922-8130b306b720",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2287,6 +2298,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857b28b5-25e3138f-5914-44e3-b322-5ed790a97f36",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2390,6 +2402,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857d48b0-cbcc81bf-0feb-4058-bf0a-8254b02b4cbd",
+    "hasFile": "hasPublicFiles",
     "additionalIdentifiers": [
       {
         "type": "AdditionalIdentifier",
@@ -2514,6 +2527,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a451a-7cd6f672-40e2-4c53-b0c5-501be59a8f0b",
+    "hasFile": "hasPublicFiles",
     "additionalIdentifiers": [
       {
         "type": "AdditionalIdentifier",
@@ -2587,6 +2601,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a40f9-2c909b04-6380-4af3-9b7f-c1a447fba075",
+    "hasFile": "hasPublicFiles",
     "additionalIdentifiers": [
       {
         "type": "AdditionalIdentifier",
@@ -2655,6 +2670,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018ba39c10de-cad0ae46-6d06-4c28-a1d2-ae0f46235a3a",
+    "hasFile": "hasPublicFiles",
     "additionalIdentifiers": [
       {
         "type": "AdditionalIdentifier",
@@ -2723,6 +2739,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857fbe4e-2d1e7fb3-5e9f-4149-8606-62164ff2e61c",
+    "hasFile": "hasPublicFiles",
     "additionalIdentifiers": [
       {
         "type": "AdditionalIdentifier",
@@ -2876,6 +2893,7 @@
         "value": "2133164"
       }
     ],
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2948,6 +2966,7 @@
         "value": "2130654"
       }
     ],
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -3022,6 +3041,7 @@
         "value": "2139688"
       }
     ],
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -3095,6 +3115,7 @@
         "value": "2129196"
       }
     ],
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "UnPublishedFile",
@@ -3227,6 +3248,7 @@
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
+    "hasFile": "hasPublicFiles",
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
