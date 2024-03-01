@@ -34,7 +34,7 @@ public final class Words {
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
     public static final String FROM = "from";
-    public static final String CONTRIBUTORS_PART_OFS = "contributorsPartOfs";
+    public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
