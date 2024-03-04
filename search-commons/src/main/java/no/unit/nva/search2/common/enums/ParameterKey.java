@@ -43,13 +43,8 @@ public interface ParameterKey {
 
     static ValueEncoding getEncoding(ParameterKind kind) {
         return switch (kind) {
-            case DATE,
-                KEYWORD,
-                FUZZY_TEXT,
-                TEXT,
-                FUZZY_KEYWORD,
-                SORT_KEY -> ValueEncoding.DECODE;
-            default -> ValueEncoding.NONE;
+            case INVALID, IGNORED, BOOLEAN, NUMBER -> ValueEncoding.NONE;
+            default -> ValueEncoding.DECODE;
         };
     }
 
