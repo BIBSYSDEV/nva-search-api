@@ -172,10 +172,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
     }
 
-    public String removeKey(K key) {
-        return searchParameters.containsKey(key)
+    public AsType removeKey(K key) {
+        return new AsType(
+            searchParameters.containsKey(key)
             ? searchParameters.remove(key)
-            : pageParameters.remove(key);
+                : pageParameters.remove(key),
+            key
+        );
     }
 
     public boolean isPresent(K key) {

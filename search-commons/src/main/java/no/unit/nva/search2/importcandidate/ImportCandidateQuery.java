@@ -153,9 +153,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
+        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
+        if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
     }

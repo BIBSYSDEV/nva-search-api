@@ -2,6 +2,9 @@ package no.unit.nva.search2.common.enums;
 
 public enum ParameterKind {
     INVALID,
+    /**
+     * ignored parameters are not processed by standard or custom handing
+     */
     IGNORED,
     BOOLEAN,
     NUMBER,

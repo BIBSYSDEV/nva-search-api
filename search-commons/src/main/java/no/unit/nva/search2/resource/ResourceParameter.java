@@ -76,6 +76,7 @@ import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILI
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -200,8 +201,8 @@ public enum ResourceParameter implements ParameterKey {
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TITLE_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(CUSTOM),
-    UNIT(CUSTOM),
+    TOP_LEVEL_ORGANIZATION(CUSTOM, ALL_ITEMS, TOP_LEVEL_ORG_ID),
+    UNIT(CUSTOM, ALL_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(KEYWORD, NO_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, ONE_OR_MORE_ITEM, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
@@ -221,7 +222,6 @@ public enum ResourceParameter implements ParameterKey {
     SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
     SORT_ORDER(IGNORED, ALL_ITEMS, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
     SEARCH_AFTER(IGNORED),
-    // ignored parameter
     LANG(IGNORED);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
@@ -322,7 +322,7 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
+        return !(fieldType().equals(KEYWORD) || fieldType().equals(CUSTOM));
     }
 
     @Override
