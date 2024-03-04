@@ -7,9 +7,9 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
@@ -482,11 +482,13 @@ class ResourceClientTest {
 
         @Test
         void shouldReturnResourcesWithSubunitsWhenExcludedSubunitsSearchParamIsNotProvided() throws BadRequestException {
-            var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+            var unit = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
                                                  StandardCharsets.UTF_8);
+            var topLevelOrg = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+                                         StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(UNIT.fieldName(), viewingScope))
+                    .fromQueryParameters(Map.of(UNIT.fieldName(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -501,7 +503,7 @@ class ResourceClientTest {
 
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
-            assertThat(pagedSearchResourceDto.hits(), hasSize(15));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(2));
         }
 
         static Stream<Arguments> uriPagingProvider() {
