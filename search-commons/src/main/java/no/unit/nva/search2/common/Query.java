@@ -249,7 +249,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     protected BoolQueryBuilder mainQuery() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        getSearchParameterKeys()
+        searchParameters.keySet().stream()
             .flatMap(this::getQueryBuilders)
             .forEach(entry -> {
                 if (isMustNot(entry.getKey())) {
