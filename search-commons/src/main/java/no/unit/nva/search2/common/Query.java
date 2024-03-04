@@ -369,7 +369,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return key;
         }
 
-        public <T> T as() throws RuntimeException {
+        public <T> T as() {
             if (isNull(value)) {
                 return null;
             }
@@ -438,7 +438,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
 
         private <T extends Number> T castNumber() {
-            return (T) attempt(() -> asNumber()).orElseThrow();
+            return (T) attempt(this::asNumber).orElseThrow();
         }
 
         private <T> T castBoolean() {
