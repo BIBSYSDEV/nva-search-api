@@ -30,7 +30,6 @@ import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
@@ -111,8 +110,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case EXCLUDE_SUBUNITS -> createSubunitsQuery();
-            case TOP_LEVEL_ORGANIZATION -> createOrganizationQuery(key);
-            case UNIT -> createUnitQuery(key);
+            case TOP_LEVEL_ORGANIZATION -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createOrganizationQuery(key);
+            case UNIT -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createUnitQuery(key);
             default -> {
                 logger.error("unhandled key -> {}", key.name());
                 yield Stream.empty();
@@ -121,22 +120,15 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> createUnitQuery(ResourceParameter key) {
-        if (isNull(getValue(EXCLUDE_SUBUNITS))) {
-            return kQueryTools.queryToEntry(UNIT,
-                                            termQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                                      getValue(key)));
-        } else {
-            return null;
-        }
+        return kQueryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
+                                                      getValue(key).as()));
+
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> createOrganizationQuery(ResourceParameter key) {
-        if (isNull(getValue(EXCLUDE_SUBUNITS))) {
-            return kQueryTools.queryToEntry(TOP_LEVEL_ORGANIZATION,
-                                     termQuery(jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD), getValue(key)));
-        } else {
-            return null;
-        }
+        return kQueryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
+                                                       getValue(key).as()));
+
     }
 
     @Override
