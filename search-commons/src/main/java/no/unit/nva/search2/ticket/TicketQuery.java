@@ -192,10 +192,10 @@ public final class TicketQuery extends Query<TicketParameter> {
             .orElse(false);
     }
 
-    private boolean isDefined(String key) {
-        return getValue(AGGREGATION).optionalStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    private boolean isDefined(String keyName) {
+        return getValue(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equals(ALL) || name.equals(keyName));
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {

@@ -36,6 +36,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
@@ -183,7 +184,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected boolean hasOneValue(K key) {
         return getValue(key)
-            .optionalStream()
+            .asStream()
             .anyMatch(p -> !p.contains(COMMA));
     }
 
@@ -263,7 +264,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().optionalStream()
+        return getSort().asStream()
             .map(items -> items.split(COMMA))
             .flatMap(Arrays::stream)
             .map(QueryTools::objectToSortEntry);
@@ -364,9 +365,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             this.key = key;
         }
 
-        public <T> T as() {
+        public K getKey() {
+            return key;
+        }
+
+        public <T> T as() throws RuntimeException {
             if (isNull(value)) {
                 return null;
+            }
+            if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
+                logger.warn("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
             }
             return (T) switch (getKey().fieldType()) {
                 case DATE -> castDateTime();
@@ -376,28 +384,48 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             };
         }
 
-        public K getKey() {
-            return key;
-        }
-
-        public Stream<String> optionalStream() {
-            return Optional.ofNullable(value).stream();
-        }
-
-        public String[] split(String delimiter) {
-            return nonNull(value)
-                ? value.split(delimiter)
-                : null;
-        }
-
         public String stripped() {
             return nonNull(value)
                 ? value.replaceAll(" .-/", "")
                 : null;
         }
 
+        /**
+         * @param delimiter regex to split on
+         * @return The value split, or null.
+         */
+        public String[] split(String delimiter) {
+            return nonNull(value)
+                ? value.split(delimiter)
+                : null;
+        }
+
+        /**
+         * @param delimiter regex to split on
+         * @return The value as an optional Stream, split by delimiter.
+         */
+        public Stream<String> asSplitStream(String delimiter) {
+            return asStream()
+                .flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
+        }
+
+        /**
+         * @return The value as an optional Stream.
+         */
+        public Stream<String> asStream() {
+            return Optional.ofNullable(value).stream();
+        }
+
         public Boolean asBoolean() {
             return Boolean.parseBoolean(value);
+        }
+
+        public DateTime asDateTime() {
+            return DateTime.parse(value);
+        }
+
+        public Number asNumber() {
+            return Integer.parseInt(value);
         }
 
         @Override
@@ -406,15 +434,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
 
         private <T> T castDateTime() {
-            return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
+            return ((Class<T>) DateTime.class).cast(asDateTime());
         }
 
         private <T extends Number> T castNumber() {
-            return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
+            return (T) attempt(() -> asNumber()).orElseThrow();
         }
 
         private <T> T castBoolean() {
-            return ((Class<T>) Boolean.class).cast(Boolean.parseBoolean(value));
+            return ((Class<T>) Boolean.class).cast(asBoolean());
         }
     }
 }

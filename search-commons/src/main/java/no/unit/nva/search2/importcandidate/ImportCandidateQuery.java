@@ -176,7 +176,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     private boolean isDefined(String key) {
-        return getValue(AGGREGATION).optionalStream()
+        return getValue(AGGREGATION).asStream()
             .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
             .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }

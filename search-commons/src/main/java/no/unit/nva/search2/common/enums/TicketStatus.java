@@ -2,8 +2,9 @@ package no.unit.nva.search2.common.enums;
 
 public enum TicketStatus {
     NEW("New"),
-    COMPLETED("Completed");
-
+    PENDING("Pending"),
+    COMPLETED("Completed"),
+    CLOSED("Closed");
     private final String code;
     TicketStatus(String name) {
         this.code = name;

@@ -58,6 +58,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
+import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -240,11 +241,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .orElse(false);
     }
 
-    private boolean isDefined(String key) {
-        return getValue(AGGREGATION).optionalStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    private boolean isDefined(String keyName) {
+        return getValue(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equals(ALL) || name.equals(keyName));
     }
+
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
@@ -299,24 +301,22 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private List<String> getViewingScope() {
-        return Stream.of(getValue(TOP_LEVEL_ORGANIZATION), getValue(UNIT))
-                   .filter(asType -> isPresent(asType.getKey()))
-                   .map(AsType::as)
-                   .map(Objects::toString)
-                   .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
+        return Stream.concat(
+                getValue(TOP_LEVEL_ORGANIZATION).asStream(),
+                getValue(UNIT).asStream())
                    .toList();
     }
 
     private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
         var query = boolQuery();
-        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
-        query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                              viewingScope));
+        query.should(termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
+        query.should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                viewingScope));
         return query;
     }
 
     private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
-        return QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
                                         viewingScope);
     }
 
