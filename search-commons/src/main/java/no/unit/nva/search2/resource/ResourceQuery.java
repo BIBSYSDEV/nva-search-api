@@ -70,7 +70,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
@@ -109,9 +108,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case EXCLUDE_SUBUNITS -> createSubunitsQuery();
-            case UNIT, TOP_LEVEL_ORGANIZATION -> isPresent(EXCLUDE_SUBUNITS)
-                ? Stream.empty()
-                : new OpensearchQueryKeyword<ResourceParameter>().buildQuery(key, getValue(key).as());
             default -> {
                 logger.error("unhandled key -> {}", key.name());
                 yield Stream.empty();

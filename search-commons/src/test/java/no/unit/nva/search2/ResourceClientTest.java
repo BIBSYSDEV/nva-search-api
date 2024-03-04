@@ -7,9 +7,9 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
@@ -501,7 +501,7 @@ class ResourceClientTest {
 
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
-            assertThat(pagedSearchResourceDto.hits(), hasSize(15));
+            assertThat(pagedSearchResourceDto.hits().size(), is(15));
         }
 
         static Stream<Arguments> uriPagingProvider() {
