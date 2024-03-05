@@ -131,7 +131,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected Map<String, String> aggregationsDef() {
+    protected Map<String, String> aggregationsDefinition() {
         return FACET_IMPORT_CANDIDATE_PATHS;
     }
 
@@ -153,9 +153,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
+        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
+        if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
     }
@@ -176,7 +175,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     private boolean isDefined(String key) {
-        return getValue(AGGREGATION).optionalStream()
+        return getValue(AGGREGATION).asStream()
             .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
             .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }
@@ -191,7 +190,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
-        return kQueryTools.queryToEntry(key, query);
+        return queryTools.queryToEntry(key, query);
     }
 
 

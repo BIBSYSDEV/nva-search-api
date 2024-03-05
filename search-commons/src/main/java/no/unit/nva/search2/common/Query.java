@@ -36,6 +36,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
@@ -60,7 +61,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected final transient Map<K, String> pageParameters;
     protected final transient Map<K, String> searchParameters;
     protected final transient Set<K> otherRequiredKeys;
-    protected final transient QueryTools<K> kQueryTools;
+    protected final transient QueryTools<K> queryTools;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
@@ -85,13 +86,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract boolean isPagingValue(K key);
 
-    protected abstract Map<String,String> aggregationsDef();
+    protected abstract Map<String, String> aggregationsDefinition();
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
         pageParameters = new ConcurrentHashMap<>();
         otherRequiredKeys = new HashSet<>();
-        kQueryTools = new QueryTools<>();
+        queryTools = new QueryTools<>();
 
         setMediaType(MediaType.JSON_UTF_8.toString());
     }
@@ -111,7 +112,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     public PagedSearch toPagedResponse(SwsResponse response) {
         final var requestParameter = toNvaSearchApiRequestParameter();
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
-        final var aggregationFormatted = AggregationFormat.apply(response.aggregations(),aggregationsDef()).toString();
+        final var aggregationFormatted = AggregationFormat.apply(response.aggregations(), aggregationsDefinition())
+            .toString();
 
         return
             new PagedSearchBuilder()
@@ -171,10 +173,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
     }
 
-    public String removeKey(K key) {
-        return searchParameters.containsKey(key)
+    public AsType removeKey(K key) {
+        return new AsType(
+            searchParameters.containsKey(key)
             ? searchParameters.remove(key)
-            : pageParameters.remove(key);
+                : pageParameters.remove(key),
+            key
+        );
     }
 
     public boolean isPresent(K key) {
@@ -183,7 +188,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected boolean hasOneValue(K key) {
         return getValue(key)
-            .optionalStream()
+            .asStream()
             .anyMatch(p -> !p.contains(COMMA));
     }
 
@@ -263,7 +268,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().optionalStream()
+        return getSort().asStream()
             .map(items -> items.split(COMMA))
             .flatMap(Arrays::stream)
             .map(QueryTools::objectToSortEntry);
@@ -273,12 +278,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
         return switch (key.fieldType()) {
-            case BOOLEAN -> kQueryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
+            case BOOLEAN -> queryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
             case TEXT, FUZZY_TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
-            case FREE_TEXT -> kQueryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
+            case FREE_TEXT -> queryTools.queryToEntry(key, multiMatchQuery(key, getFieldsKey()));
             case CUSTOM -> customQueryBuilders(key);
             case IGNORED -> Stream.empty();
             default -> {
@@ -364,9 +369,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             this.key = key;
         }
 
+        public K getKey() {
+            return key;
+        }
+
         public <T> T as() {
             if (isNull(value)) {
                 return null;
+            }
+            if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
+                logger.warn("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
             }
             return (T) switch (getKey().fieldType()) {
                 case DATE -> castDateTime();
@@ -376,28 +388,48 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             };
         }
 
-        public K getKey() {
-            return key;
-        }
-
-        public Stream<String> optionalStream() {
-            return Optional.ofNullable(value).stream();
-        }
-
-        public String[] split(String delimiter) {
-            return nonNull(value)
-                ? value.split(delimiter)
-                : null;
-        }
-
         public String stripped() {
             return nonNull(value)
                 ? value.replaceAll(" .-/", "")
                 : null;
         }
 
+        /**
+         * @param delimiter regex to split on
+         * @return The value split, or null.
+         */
+        public String[] split(String delimiter) {
+            return nonNull(value)
+                ? value.split(delimiter)
+                : null;
+        }
+
+        /**
+         * @param delimiter regex to split on
+         * @return The value as an optional Stream, split by delimiter.
+         */
+        public Stream<String> asSplitStream(String delimiter) {
+            return asStream()
+                .flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
+        }
+
+        /**
+         * @return The value as an optional Stream.
+         */
+        public Stream<String> asStream() {
+            return Optional.ofNullable(value).stream();
+        }
+
         public Boolean asBoolean() {
             return Boolean.parseBoolean(value);
+        }
+
+        public DateTime asDateTime() {
+            return DateTime.parse(value);
+        }
+
+        public Number asNumber() {
+            return Integer.parseInt(value);
         }
 
         @Override
@@ -406,15 +438,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
 
         private <T> T castDateTime() {
-            return ((Class<T>) DateTime.class).cast(DateTime.parse(value));
+            return ((Class<T>) DateTime.class).cast(asDateTime());
         }
 
         private <T extends Number> T castNumber() {
-            return (T) attempt(() -> Integer.parseInt(value)).orElseThrow();
+            return (T) attempt(this::asNumber).orElseThrow();
         }
 
         private <T> T castBoolean() {
-            return ((Class<T>) Boolean.class).cast(Boolean.parseBoolean(value));
+            return ((Class<T>) Boolean.class).cast(asBoolean());
         }
     }
 }

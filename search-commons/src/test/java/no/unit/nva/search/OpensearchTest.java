@@ -75,7 +75,7 @@ public class OpensearchTest {
     public static final long DELAY_AFTER_INDEXING = 1000L;
     public static final String TEST_RESOURCES_MAPPINGS = "mapping_test_resources.json";
     public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "mapping_test_import_candidates.json";
-    public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
+    public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.12.0";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final int SAMPLE_FROM = 0;
     private static final String SAMPLE_ORDERBY = "orderByField";
