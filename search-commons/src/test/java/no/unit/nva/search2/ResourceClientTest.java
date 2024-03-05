@@ -482,11 +482,13 @@ class ResourceClientTest {
 
         @Test
         void shouldReturnResourcesWithSubunitsWhenExcludedSubunitsSearchParamIsNotProvided() throws BadRequestException {
-            var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+            var unit = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
                                                  StandardCharsets.UTF_8);
+            var topLevelOrg = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+                                         StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(UNIT.fieldName(), viewingScope))
+                    .fromQueryParameters(Map.of(UNIT.fieldName(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -501,7 +503,7 @@ class ResourceClientTest {
 
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
-            assertThat(pagedSearchResourceDto.hits().size(), is(15));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(2));
         }
 
         static Stream<Arguments> uriPagingProvider() {
