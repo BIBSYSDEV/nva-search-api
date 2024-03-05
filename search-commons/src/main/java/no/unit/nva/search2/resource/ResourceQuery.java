@@ -70,6 +70,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
@@ -108,25 +109,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case EXCLUDE_SUBUNITS -> createSubunitsQuery();
-            case TOP_LEVEL_ORGANIZATION -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createOrganizationQuery(key);
-            case UNIT -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createUnitQuery(key);
-            default -> {
-                logger.error("unhandled key -> {}", key.name());
-                yield Stream.empty();
-            }
+            case TOP_LEVEL_ORGANIZATION, UNIT -> getValue(EXCLUDE_SUBUNITS).asBoolean()
+                ? Stream.empty()
+                : new OpensearchQueryKeyword<ResourceParameter>().buildQuery(key, getValue(key).as());
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+
         };
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> createUnitQuery(ResourceParameter key) {
-        return kQueryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
-                                                      getValue(key).as()));
-
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> createOrganizationQuery(ResourceParameter key) {
-        return kQueryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
-                                                       getValue(key).as()));
-
     }
 
     @Override

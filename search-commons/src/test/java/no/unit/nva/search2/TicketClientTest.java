@@ -63,7 +63,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class TicketClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
-    private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
+    private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.12.0";
     private static final String TEST_TICKETS_MAPPINGS_JSON = "mapping_test_tickets.json";
     private static final String TICKETS_VALID_TEST_URL_JSON = "datasource_urls_ticket.json";
     private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";

@@ -95,7 +95,7 @@ class ResourceClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.0.0";
+    private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.12.0";
     private static final String TEST_RESOURCES_MAPPINGS_JSON = "mapping_test_resources.json";
     private static final String RESOURCE_VALID_TEST_URL_JSON = "datasource_urls_resource.json";
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
@@ -492,7 +492,7 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
