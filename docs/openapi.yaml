@@ -278,6 +278,7 @@ paths:
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/excludeSubunits'
+        - $ref: '#/components/parameters/scientificValueParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesFunction.Arn}:live/invocations
@@ -800,6 +801,14 @@ components:
       in: query
       description: "Returns document with these DOI ids."
       example: "10.1000/123456"
+      required: false
+      schema:
+        type: string
+    scientificValueParam:
+      name: scientific_value
+      in: query
+      description: "Returns document with provided scientific values separated by comma."
+      example: "LevelOne,LevelTwo"
       required: false
       schema:
         type: string
