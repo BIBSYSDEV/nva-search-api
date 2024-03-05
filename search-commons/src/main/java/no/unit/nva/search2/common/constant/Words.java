@@ -97,6 +97,7 @@ public final class Words {
     public static final String SUFFIX = ")";
     public static final String TAGS = "tags";
     public static final String TEXT_CSV = "text/csv";
+    public static final String TICKETS = "tickets";
     public static final String TITLE = "title";
     public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
@@ -105,6 +106,8 @@ public final class Words {
     public static final String VALUE = "value";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
+    public static final String MESSAGES = "messages";
+    public static final String VIEWED_BY = "viewedBy";
 
     @JacocoGenerated
     public Words() {

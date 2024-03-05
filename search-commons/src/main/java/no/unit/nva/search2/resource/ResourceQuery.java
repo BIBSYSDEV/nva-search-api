@@ -58,14 +58,12 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
+import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -120,13 +118,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> createUnitQuery(ResourceParameter key) {
-        return kQueryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
+        return queryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
                                                       getValue(key).as()));
 
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> createOrganizationQuery(ResourceParameter key) {
-        return kQueryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
+        return queryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
                                                        getValue(key).as()));
 
     }
@@ -175,7 +173,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected Map<String, String> aggregationsDef() {
+    protected Map<String, String> aggregationsDefinition() {
         return facetResourcePaths;
     }
 
@@ -257,10 +255,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .orElse(false);
     }
 
-    private boolean isDefined(String key) {
-        return getValue(AGGREGATION).optionalStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    private boolean isDefined(String keyName) {
+        return getValue(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equals(ALL) || name.equals(keyName));
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
@@ -268,9 +266,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
-        var searchAfter = removeKey(SEARCH_AFTER);
-        if (nonNull(searchAfter)) {
-            var sortKeys = searchAfter.split(COMMA);
+        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
+        if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
     }
@@ -305,7 +302,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var viewingScope = getViewingScope();
         if (!viewingScope.isEmpty()) {
             var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
-            return kQueryTools.queryToEntry(VIEWING_SCOPE,createSubunitQuery(shouldExcludeSubunits, viewingScope));
+            return queryTools.queryToEntry(VIEWING_SCOPE, createSubunitQuery(shouldExcludeSubunits, viewingScope));
         } else {
             return null;
         }
@@ -316,24 +313,22 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private List<String> getViewingScope() {
-        return Stream.of(getValue(TOP_LEVEL_ORGANIZATION), getValue(UNIT))
-                   .filter(asType -> isPresent(asType.getKey()))
-                   .map(AsType::as)
-                   .map(Objects::toString)
-                   .map(value -> URLDecoder.decode(value, StandardCharsets.UTF_8))
+        return Stream.concat(
+                getValue(TOP_LEVEL_ORGANIZATION).asStream(),
+                getValue(UNIT).asStream())
                    .toList();
     }
 
     private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
         var query = boolQuery();
-        query.should(QueryBuilders.termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
-        query.should(QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                              viewingScope));
+        query.should(termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
+        query.should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+                                viewingScope));
         return query;
     }
 
     private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
-        return QueryBuilders.termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
+        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
                                         viewingScope);
     }
 
@@ -346,7 +341,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .must(termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
             ScoreMode.None);
 
-        return kQueryTools.queryToEntry(key, query);
+        return queryTools.queryToEntry(key, query);
     }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
@@ -359,7 +354,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
-        return kQueryTools.queryToEntry(key, query);
+        return queryTools.queryToEntry(key, query);
     }
 
     /**
