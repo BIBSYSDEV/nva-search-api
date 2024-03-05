@@ -25,7 +25,10 @@ import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PI;
+import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.REFERENCE;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_VALUE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -110,11 +113,25 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case EXCLUDE_SUBUNITS -> createSubunitsQuery();
             case TOP_LEVEL_ORGANIZATION -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createOrganizationQuery(key);
             case UNIT -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createUnitQuery(key);
+            case SCIENTIFIC_VALUE -> createScientificValueQuery(key);
             default -> {
                 logger.error("unhandled key -> {}", key.name());
                 yield Stream.empty();
             }
         };
+    }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> createScientificValueQuery(ResourceParameter key) {
+        var values = getValue(key).asList();
+        var query = boolQuery();
+        query.should(termsQuery(jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER,
+                                        SCIENTIFIC_VALUE, KEYWORD),
+                               values));
+        query.should(termsQuery(jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT,
+                                                      SCIENTIFIC_VALUE, KEYWORD),
+                               values));
+        query.minimumShouldMatch(1);
+        return queryTools.queryToEntry(key, query);
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> createUnitQuery(ResourceParameter key) {
