@@ -279,7 +279,6 @@ class TicketClientTest {
                     .doSearch(searchClient));
         }
 
-
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
                 createArgument("page=0&aggregation=all", 20),
@@ -353,5 +352,4 @@ class TicketClientTest {
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
         indexingClient.createIndex(TICKETS, mappings);
     }
-
 }

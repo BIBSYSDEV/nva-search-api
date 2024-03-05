@@ -56,10 +56,9 @@ import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 
 /**
- * Enum for all the parameters that can be used to query the search index.
- * This enum needs to implement these parameters
+ * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
+ * parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
- *
  */
 
 public enum TicketParameter implements ParameterKey {
@@ -86,7 +85,7 @@ public enum TicketParameter implements ParameterKey {
     PUBLICATION_MODIFIED_DATE(DATE, BETWEEN, Constants.PUBLICATION_MODIFIED_DATE),
     PUBLICATION_OWNER(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_OWNER_KEYWORD),
     PUBLICATION_OWNER_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, PUBLICATION_OWNER_KEYWORD),
-    PUBLICATION_STATUS(KEYWORD, ONE_OR_MORE_ITEM,PUBLICATION_STATUS_KEYWORD),
+    PUBLICATION_STATUS(KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_STATUS_KEYWORD),
     PUBLICATION_STATUS_NOT(KEYWORD, NOT_ONE_ITEM, PUBLICATION_STATUS_KEYWORD),
     PUBLICATION_TITLE(FUZZY_TEXT, ALL_ITEMS, PUBLICATION_MAIN_TITLE_KEYWORD, PHI),
     STATUS(KEYWORD, ONE_OR_MORE_ITEM, STATUS_KEYWORD),
@@ -137,7 +136,6 @@ public enum TicketParameter implements ParameterKey {
     TicketParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
         this(kind, operator, fieldsToSearch, null, null, boost);
     }
-
 
     TicketParameter(
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,

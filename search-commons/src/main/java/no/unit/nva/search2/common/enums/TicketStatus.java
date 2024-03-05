@@ -8,6 +8,7 @@ public enum TicketStatus {
     CLOSED("Closed");
 
     private final String code;
+
     TicketStatus(String name) {
         this.code = name;
     }

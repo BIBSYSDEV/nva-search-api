@@ -129,6 +129,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * <p>Only STATUES specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      * <p>See {@link TicketStatus} for available values.</p>
+     *
      * @param ticketStatus the required statues
      * @return ResourceQuery (builder pattern)
      */
@@ -209,7 +210,6 @@ public final class TicketQuery extends Query<TicketParameter> {
         }
     }
 
-
     /**
      * Add a (default) filter to the query that will never match any document.
      *
@@ -259,7 +259,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    query.setKeyValue(qpKey,expandYearToDate(decodedValue));
+                    query.setKeyValue(qpKey, expandYearToDate(decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }

@@ -70,7 +70,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
@@ -111,11 +110,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case EXCLUDE_SUBUNITS -> createSubunitsQuery();
             case TOP_LEVEL_ORGANIZATION, UNIT -> getValue(EXCLUDE_SUBUNITS).asBoolean()
                 ? Stream.empty()
-                : new OpensearchQueryKeyword<ResourceParameter>().buildQuery(key, getValue(key).as());
+                : createQuery(key);
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
-
         };
     }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> createQuery(ResourceParameter key) {
+        return queryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
+                                                      getValue(key).as()));
+
+    }
+
 
     @Override
     protected Integer getFrom() {
@@ -249,7 +254,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .anyMatch(name -> name.equals(ALL) || name.equals(keyName));
     }
 
-
     private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
     }
@@ -291,7 +295,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var viewingScope = getViewingScope();
         if (!viewingScope.isEmpty()) {
             var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
-            return queryTools.queryToEntry(VIEWING_SCOPE,createSubunitQuery(shouldExcludeSubunits, viewingScope));
+            return queryTools.queryToEntry(VIEWING_SCOPE, createSubunitQuery(shouldExcludeSubunits, viewingScope));
         } else {
             return null;
         }

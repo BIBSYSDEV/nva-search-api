@@ -1,25 +1,5 @@
 package no.unit.nva.search2;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import no.unit.nva.search2.common.FakeGatewayResponse;
-import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.AccessRight;
-import nva.commons.core.Environment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.util.Map;
-
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
@@ -35,6 +15,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.Map;
+import no.unit.nva.search2.common.FakeGatewayResponse;
+import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.AccessRight;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class SearchTicketAuthHandlerTest {
 
@@ -109,12 +107,12 @@ class SearchTicketAuthHandlerTest {
     private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
         throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                   .withHeaders(Map.of(ACCEPT, "application/json"))
-                   .withRequestContext(getRequestContext())
-                   .withUserName(randomString())
-                   .withCurrentCustomer(organization)
-                   .withAccessRights(organization, accessRight)
-                   .build();
+            .withHeaders(Map.of(ACCEPT, "application/json"))
+            .withRequestContext(getRequestContext())
+            .withUserName(randomString())
+            .withCurrentCustomer(organization)
+            .withAccessRights(organization, accessRight)
+            .build();
     }
 
     private ObjectNode getRequestContext() {
