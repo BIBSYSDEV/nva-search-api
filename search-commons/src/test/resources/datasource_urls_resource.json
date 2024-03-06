@@ -126,6 +126,8 @@
   "QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&FIELDS=INSTITUTION": 1,
   "QUERY=Kjetil+Møkkelgjerd&fields=contributorName": 3,
   "QUERY=observations&fields=all": 3,
+  "SCIENTIFIC_INDEX_STATUS=Reported": 4,
+  "SCIENTIFIC_INDEX_STATUS_NOT=Reported": 17,
   "SCIENTIFIC_REPORT_PERIOD_SINCE=2019": 3,
   "SCIENTIFIC_REPORT_PERIOD_BEFORE=2019": 1,
   "SCOPUS_IDENTIFIER=123455": 1,
@@ -160,7 +162,9 @@
   "UNIT_SHOULD=194.63.55.0": 1,
   "USER=1136254@20754.0.0.0": 2,
   "USER_NOT=1136254@20754.0.0.0": 19,
-  "USER_SHOULD=1136254@": 2
+  "USER_SHOULD=1136254@": 2,
+  "SCIENTIFIC_VALUE=LevelTwo": 1,
+  "SCIENTIFIC_VALUE=LevelOne,LevelTwo": 3
 }
 
 

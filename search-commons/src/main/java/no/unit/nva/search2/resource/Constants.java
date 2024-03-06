@@ -19,10 +19,10 @@ import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FILES;
+import static no.unit.nva.search2.common.constant.Words.FILES_STATUS;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.FILES_STATUS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
@@ -52,6 +52,7 @@ import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.common.constant.Words.ROOT;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_VALUE;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SERIES_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
@@ -104,6 +105,9 @@ public final class Constants {
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
+    public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + SCIENTIFIC_VALUE + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SCIENTIFIC_VALUE + DOT + KEYWORD;
     public static final String COURSE_CODE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
@@ -151,6 +155,8 @@ public final class Constants {
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
     public static final String SCIENTIFIC_INDEX_YEAR = SCIENTIFIC_INDEX + DOT + YEAR;
+    public static final String SCIENTIFIC_INDEX_STATUS_KEYWORD = SCIENTIFIC_INDEX + DOT + STATUS_KEYWORD;
+
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD =
         CONTRIBUTORS_AFFILIATION_LABELS + ENGLISH_CODE + DOT + KEYWORD + PIPE
         + CONTRIBUTORS_AFFILIATION_LABELS + NYNORSK_CODE + DOT + KEYWORD + PIPE

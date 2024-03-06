@@ -89,7 +89,7 @@
             "isbnPrefix": "978-91-27",
             "name": "Natur och kultur -deleted",
             "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=944351B3-DC14-4F62-9939-7A2793D6F0B1",
-            "scientificValue": "LevelOne",
+            "scientificValue": "LevelTwo",
             "valid": true
           },
           "series": {
@@ -3024,7 +3024,7 @@
           "onlineIssn": "1879-1840",
           "printIssn": "0003-4339",
           "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=C3C22B36-26AC-4503-A7AD-719380D0E3E2",
-          "scientificValue": "Unassigned"
+          "scientificValue": "LevelTwo"
         },
         "publicationInstance": {
           "type": "AcademicArticle",
