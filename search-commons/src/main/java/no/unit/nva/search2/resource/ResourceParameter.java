@@ -76,6 +76,7 @@ import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILI
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
+import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
@@ -171,7 +172,7 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT_NOT(KEYWORD, NOT_ONE_ITEM, PROJECTS_ID),
     PROJECT_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PROJECTS_ID, PHI),
     PUBLICATION_LANGUAGE(KEYWORD, ALL_ITEMS, ENTITY_DESCRIPTION_LANGUAGE),
-    SCIENTIFIC_VALUE(CUSTOM),
+    SCIENTIFIC_VALUE(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     PUBLICATION_LANGUAGE_NOT(KEYWORD, NO_ITEMS, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_YEAR_BEFORE(NUMBER, LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),

@@ -420,10 +420,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             return Optional.ofNullable(value).stream();
         }
 
-        public List<String> asList() {
-            return Optional.ofNullable(value).map(value -> value.split(COMMA)).map(Arrays::asList).orElse(List.of());
-        }
-
         public Boolean asBoolean() {
             return Boolean.parseBoolean(value);
         }
