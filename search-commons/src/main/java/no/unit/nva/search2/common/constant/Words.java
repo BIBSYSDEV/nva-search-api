@@ -74,7 +74,7 @@ public final class Words {
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String PUBLISHED_DATE = "publishedDate";
-    public static final String PUBLISHED_FILE = "PublishedFile";
+    public static final String SCIENTIFIC_VALUE = "scientificValue";
     public static final String PUBLISHER = "publisher";
     public static final String Q = "q";
     public static final String QUOTE = "'";
