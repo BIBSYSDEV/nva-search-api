@@ -1,6 +1,7 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
@@ -16,13 +17,14 @@ import static no.unit.nva.search2.common.constant.Words.VIEWED_BY;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import no.unit.nva.search2.common.enums.TicketStatus;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilders;
 
 public final class Constants {
 
-    private static final String ASSIGNEE = "assignee";
-    private static final String FINALIZED_BY = "finalizedBy";
     public static final String CUSTOMER_ID = "customerId";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
@@ -37,51 +39,192 @@ public final class Constants {
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
-    public static final String PUBLICATION_ID_KEYWORD_PUBLICATION_IDENTIFIER_KEYWORD =
-        PUBLICATION + DOT + ID + DOT + KEYWORD + PIPE + PUBLICATION + DOT + IDENTIFIER + DOT + KEYWORD;
+    public static final String PUBLICATION_ID_KEYWORD_PUBLICATION_IDENTIFIER_KEYWORD = PUBLICATION
+                                                                                       + DOT
+                                                                                       + ID
+                                                                                       + DOT
+                                                                                       + KEYWORD
+                                                                                       + PIPE
+                                                                                       + PUBLICATION
+                                                                                       + DOT
+                                                                                       + IDENTIFIER
+                                                                                       + DOT
+                                                                                       + KEYWORD;
     public static final String PUBLICATION_MAIN_TITLE_KEYWORD = PUBLICATION + DOT + MAIN_TITLE + DOT + KEYWORD;
     public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
-
-    public static final String ASSIGNEE_FIELDS = ASSIGNEE + DOT + TYPE_KEYWORD + PIPE +
-                                                 ASSIGNEE + DOT + FIRST_NAME + DOT + KEYWORD + PIPE +
-                                                 ASSIGNEE + DOT + LAST_NAME + DOT + KEYWORD + PIPE +
-                                                 ASSIGNEE + DOT + USERNAME + DOT + KEYWORD;
-
-    public static final String FINALIZED_BY_FIELDS = FINALIZED_BY + DOT + TYPE_KEYWORD + PIPE +
-                                                     FINALIZED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE +
-                                                     FINALIZED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE +
-                                                     FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
-
-    public static final String MESSAGE_FIELDS = MESSAGES + DOT + TYPE_KEYWORD + PIPE +
-                                                MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE +
-                                                MESSAGES + DOT + STATUS + DOT + KEYWORD;
-
-    public static final String OWNER_FIELDS = OWNER + DOT + TYPE_KEYWORD + PIPE +
-                                              OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE +
-                                              OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE +
-                                              OWNER + DOT + USERNAME + DOT + KEYWORD;
-
-    public static final String VIEWED_BY_FIELDS = VIEWED_BY + DOT + TYPE_KEYWORD + PIPE +
-                                                  VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE +
-                                                  VIEWED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE +
-                                                  VIEWED_BY + DOT + USERNAME + DOT + KEYWORD;
-
-    public static final List<AggregationBuilder> TICKET_AGGREGATIONS =
-        List.of(
-            branchBuilder(STATUS, STATUS_KEYWORD),
-            branchBuilder(TYPE, TYPE_KEYWORD),
-            branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD)
-        );
-
-    public static final Map<String, String> facetResourcePaths = Map.of(
-        STATUS, "/filter/status",
-        TYPE, "/filter/type",
-        PUBLICATION_STATUS, "/filter/publication/status"
-    );
+    public static final String MESSAGE_FIELDS = MESSAGES
+                                                + DOT
+                                                + TYPE_KEYWORD
+                                                + PIPE
+                                                + MESSAGES
+                                                + DOT
+                                                + "text"
+                                                + DOT
+                                                + KEYWORD
+                                                + PIPE
+                                                + MESSAGES
+                                                + DOT
+                                                + STATUS
+                                                + DOT
+                                                + KEYWORD;
+    public static final String OWNER_FIELDS = OWNER
+                                              + DOT
+                                              + TYPE_KEYWORD
+                                              + PIPE
+                                              + OWNER
+                                              + DOT
+                                              + FIRST_NAME
+                                              + DOT
+                                              + KEYWORD
+                                              + PIPE
+                                              + OWNER
+                                              + DOT
+                                              + LAST_NAME
+                                              + DOT
+                                              + KEYWORD
+                                              + PIPE
+                                              + OWNER
+                                              + DOT
+                                              + USERNAME
+                                              + DOT
+                                              + KEYWORD;
+    public static final String VIEWED_BY_FIELDS = VIEWED_BY
+                                                  + DOT
+                                                  + TYPE_KEYWORD
+                                                  + PIPE
+                                                  + VIEWED_BY
+                                                  + DOT
+                                                  + FIRST_NAME
+                                                  + DOT
+                                                  + KEYWORD
+                                                  + PIPE
+                                                  + VIEWED_BY
+                                                  + DOT
+                                                  + LAST_NAME
+                                                  + DOT
+                                                  + KEYWORD
+                                                  + PIPE
+                                                  + VIEWED_BY
+                                                  + DOT
+                                                  + USERNAME
+                                                  + DOT
+                                                  + KEYWORD;
+    public static final String USER_NOTIFICATIONS = "userNotifications";
+    public static final String UNASSIGNED_NOTIFICATIONS = "unassignedNotifications";
+    public static final String DOI_REQUEST_NOTIFICATIONS = "doiRequestNotifications";
+    public static final String PUBLISHING_REQUEST_NOTIFICATIONS = "publishingRequestNotifications";
+    public static final String GENERAL_SUPPORT_NOTIFICATIONS = "generalSupportNotifications";
+    public static final String GENERAL_SUPPORT_CASE = "GeneralSupportCase";
+    public static final String DOI_REQUEST = "DoiRequest";
+    public static final String PUBLISHING_REQUEST = "PublishingRequest";
+    public static final Map<String, String> facetTicketsPaths = Map.of(USER_NOTIFICATIONS, "/filter/userNotifications",
+                                                                       UNASSIGNED_NOTIFICATIONS,
+                                                                       "/filter/unassignedNotifications",
+                                                                       DOI_REQUEST_NOTIFICATIONS,
+                                                                       "/filter/doiRequestNotifications",
+                                                                       GENERAL_SUPPORT_NOTIFICATIONS,
+                                                                       "/filter/generalSupportNotifications",
+                                                                       PUBLISHING_REQUEST_NOTIFICATIONS,
+                                                                       "/filter/publishingRequestNotifications", STATUS,
+                                                                       "/filter/status", TYPE, "/filter/type",
+                                                                       PUBLICATION_STATUS,
+                                                                       "/filter/publication/status");
+    private static final String ASSIGNEE = "assignee";
+    public static final String ASSIGNEE_FIELDS = ASSIGNEE
+                                                 + DOT
+                                                 + TYPE_KEYWORD
+                                                 + PIPE
+                                                 + ASSIGNEE
+                                                 + DOT
+                                                 + FIRST_NAME
+                                                 + DOT
+                                                 + KEYWORD
+                                                 + PIPE
+                                                 + ASSIGNEE
+                                                 + DOT
+                                                 + LAST_NAME
+                                                 + DOT
+                                                 + KEYWORD
+                                                 + PIPE
+                                                 + ASSIGNEE
+                                                 + DOT
+                                                 + USERNAME
+                                                 + DOT
+                                                 + KEYWORD;
+    private static final String FINALIZED_BY = "finalizedBy";
+    public static final String FINALIZED_BY_FIELDS = FINALIZED_BY
+                                                     + DOT
+                                                     + TYPE_KEYWORD
+                                                     + PIPE
+                                                     + FINALIZED_BY
+                                                     + DOT
+                                                     + FIRST_NAME
+                                                     + DOT
+                                                     + KEYWORD
+                                                     + PIPE
+                                                     + FINALIZED_BY
+                                                     + DOT
+                                                     + LAST_NAME
+                                                     + DOT
+                                                     + KEYWORD
+                                                     + PIPE
+                                                     + FINALIZED_BY
+                                                     + DOT
+                                                     + USERNAME
+                                                     + DOT
+                                                     + KEYWORD;
 
     @JacocoGenerated
     public Constants() {
+    }
+
+    public static List<AggregationBuilder> getTicketsAggregations(String username) {
+        return List.of(branchBuilder(STATUS, STATUS_KEYWORD), branchBuilder(TYPE, TYPE_KEYWORD),
+                       branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD), notifications(username),
+                       unassignedNotifications(), doiRequestNotifications(username),
+                       publishingRequestNotifications(username), generalSupportNotifications(username));
+    }
+
+    private static AggregationBuilder generalSupportNotifications(String username) {
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
+        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
+        query.must(QueryBuilders.termQuery(jsonPath(TYPE, KEYWORD), GENERAL_SUPPORT_CASE));
+        return AggregationBuilders.filter(GENERAL_SUPPORT_NOTIFICATIONS, query);
+    }
+
+    private static AggregationBuilder publishingRequestNotifications(String username) {
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING));
+        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
+        query.must(QueryBuilders.termQuery(jsonPath(TYPE, KEYWORD), PUBLISHING_REQUEST));
+        return AggregationBuilders.filter(PUBLISHING_REQUEST_NOTIFICATIONS, query);
+    }
+
+    private static AggregationBuilder doiRequestNotifications(String username) {
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
+        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
+        query.must(QueryBuilders.termQuery(jsonPath(TYPE, KEYWORD), DOI_REQUEST));
+        return AggregationBuilders.filter(DOI_REQUEST_NOTIFICATIONS, query);
+    }
+
+    private static AggregationBuilder notifications(String username) {
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
+        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD),
+                                            List.of(PUBLISHING_REQUEST, DOI_REQUEST, GENERAL_SUPPORT_CASE)));
+        return AggregationBuilders.filter(USER_NOTIFICATIONS, query);
+    }
+
+    private static AggregationBuilder unassignedNotifications() {
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.NEW.toString()));
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD),
+                                            List.of(PUBLISHING_REQUEST, DOI_REQUEST, GENERAL_SUPPORT_CASE)));
+        return AggregationBuilders.filter(UNASSIGNED_NOTIFICATIONS, query);
     }
 }

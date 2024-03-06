@@ -15,6 +15,8 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -34,15 +36,37 @@ public final class AggregationFormat {
         if (nonNull(aggregations)) {
             getAggregationFieldStreams(aggregations, definitions)
                 .map(AggregationFormat::getJsonNodeEntry)
-                .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
+                .forEach(item -> objectNode.set(item.getKey(), fixNodes(item, item.getValue())));
         }
+        combineNotificationQueries(objectNode);
         return objectNode;
     }
 
-    private static JsonNode fixNodes(JsonNode node) {
+
+    private static void combineNotificationQueries(ObjectNode jsonNode) {
+        var notifications = JsonUtils.dtoObjectMapper.createObjectNode().arrayNode();
+        var keysToRemove = new ArrayList<String>();
+        for (Map.Entry<String, JsonNode> field : jsonNode.properties()) {
+            var fieldName = field.getKey();
+            if (isNotificationAggregation(field)) {
+                JsonNode value = field.getValue();
+                ((ObjectNode) value).put("key", fieldName);
+                notifications.add(value);
+                keysToRemove.add(fieldName);
+            }
+        }
+        keysToRemove.forEach(jsonNode::remove);
+        jsonNode.put("notifications", notifications);
+    }
+
+    private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
+        return field.getKey().toLowerCase(Locale.getDefault()).contains("notifications") && field.getValue().isObject();
+    }
+
+    private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {
         if (node.isArray()) {
             var arrayNode = JsonUtils.dtoObjectMapper.createArrayNode();
-            node.forEach(element -> arrayNode.add(fixNodes(element)));
+            node.forEach(element -> arrayNode.add(fixNodes(item, element)));
             return arrayNode;
         } else {
             var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();

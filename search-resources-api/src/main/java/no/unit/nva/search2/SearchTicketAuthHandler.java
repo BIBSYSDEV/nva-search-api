@@ -49,6 +49,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .build()
                 .withRequiredStatus(NEW, COMPLETED)
                 .withOrganization(requestInfo.getCurrentCustomer())
+                .withUser(requestInfo.getUserName())
                 .doSearch(opensearchClient);
     }
 
