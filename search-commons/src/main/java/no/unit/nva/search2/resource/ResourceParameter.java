@@ -74,6 +74,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -186,6 +187,8 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(TEXT, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(TEXT, NO_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
+    SCIENTIFIC_INDEX_STATUS(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
+    SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ONE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_REPORT_PERIOD_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, SCIENTIFIC_INDEX_YEAR),
     SCIENTIFIC_REPORT_PERIOD_BEFORE(NUMBER, LESS_THAN, SCIENTIFIC_INDEX_YEAR),
     SCOPUS_IDENTIFIER(CUSTOM),
