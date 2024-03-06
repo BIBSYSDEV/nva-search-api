@@ -1,8 +1,10 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search2.common.enums.TicketStatus.CLOSED;
 import static no.unit.nva.search2.common.enums.TicketStatus.COMPLETED;
 import static no.unit.nva.search2.common.enums.TicketStatus.NEW;
+import static no.unit.nva.search2.common.enums.TicketStatus.PENDING;
 import static no.unit.nva.search2.ticket.TicketClient.defaultClient;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
@@ -47,7 +49,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequiredStatus(NEW, COMPLETED)
+                .withRequiredStatus(NEW, COMPLETED, PENDING, CLOSED)
                 .withOrganization(requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation()))
                 .withUser(requestInfo.getUserName())
                 .doSearch(opensearchClient);
