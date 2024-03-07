@@ -27,7 +27,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.core.Environment;
@@ -39,16 +39,16 @@ class SearchTicketAuthHandlerTest {
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
-    private SearchResourceAuthHandler handler;
+    private SearchTicketAuthHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
-    private ResourceClient mockedSearchClient;
+    private TicketClient mockedSearchClient;
 
     @BeforeEach
     void setUp() {
 
-        mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceAuthHandler(new Environment(), mockedSearchClient);
+        mockedSearchClient = mock(TicketClient.class);
+        handler = new SearchTicketAuthHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -59,7 +59,7 @@ class SearchTicketAuthHandlerTest {
 
         var organization = new URI("https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
 
-        handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_RESOURCES_STANDARD),
+        handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI),
                               outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
@@ -74,7 +74,7 @@ class SearchTicketAuthHandlerTest {
     void shouldReturnOkWhenUserIsEditor() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
-        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.MANAGE_OWN_AFFILIATION);
+        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.SUPPORT);
         handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
