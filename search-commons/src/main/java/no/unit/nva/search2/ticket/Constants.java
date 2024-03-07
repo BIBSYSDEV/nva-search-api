@@ -111,23 +111,23 @@ public final class Constants {
                                                   + USERNAME
                                                   + DOT
                                                   + KEYWORD;
-    public static final String USER_NOTIFICATIONS = "userNotifications";
-    public static final String UNASSIGNED_NOTIFICATIONS = "unassignedNotifications";
-    public static final String DOI_REQUEST_NOTIFICATIONS = "doiRequestNotifications";
-    public static final String PUBLISHING_REQUEST_NOTIFICATIONS = "publishingRequestNotifications";
-    public static final String GENERAL_SUPPORT_NOTIFICATIONS = "generalSupportNotifications";
+    public static final String USER_NOTIFICATIONS = "UserNotification";
+    public static final String UNASSIGNED_NOTIFICATIONS = "UnassignedNotification";
+    public static final String DOI_REQUEST_NOTIFICATIONS = "DoiRequestNotification";
+    public static final String PUBLISHING_REQUEST_NOTIFICATIONS = "PublishingRequestNotification";
+    public static final String GENERAL_SUPPORT_NOTIFICATIONS = "GeneralSupportNotification";
     public static final String GENERAL_SUPPORT_CASE = "GeneralSupportCase";
     public static final String DOI_REQUEST = "DoiRequest";
     public static final String PUBLISHING_REQUEST = "PublishingRequest";
-    public static final Map<String, String> facetTicketsPaths = Map.of(USER_NOTIFICATIONS, "/filter/userNotifications",
+    public static final Map<String, String> facetTicketsPaths = Map.of(USER_NOTIFICATIONS, "/filter/UserNotification",
                                                                        UNASSIGNED_NOTIFICATIONS,
-                                                                       "/filter/unassignedNotifications",
+                                                                       "/filter/UnassignedNotification",
                                                                        DOI_REQUEST_NOTIFICATIONS,
-                                                                       "/filter/doiRequestNotifications",
+                                                                       "/filter/DoiRequestNotification",
                                                                        GENERAL_SUPPORT_NOTIFICATIONS,
-                                                                       "/filter/generalSupportNotifications",
+                                                                       "/filter/GeneralSupportNotification",
                                                                        PUBLISHING_REQUEST_NOTIFICATIONS,
-                                                                       "/filter/publishingRequestNotifications", STATUS,
+                                                                       "/filter/PublishingRequestNotification", STATUS,
                                                                        "/filter/status", TYPE, "/filter/type",
                                                                        PUBLICATION_STATUS,
                                                                        "/filter/publication/status");

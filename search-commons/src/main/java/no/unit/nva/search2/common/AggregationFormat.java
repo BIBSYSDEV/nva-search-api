@@ -38,12 +38,12 @@ public final class AggregationFormat {
                 .map(AggregationFormat::getJsonNodeEntry)
                 .forEach(item -> objectNode.set(item.getKey(), fixNodes(item, item.getValue())));
         }
-        combineNotificationQueries(objectNode);
+        combineNotificationAggregations(objectNode);
         return objectNode;
     }
 
 
-    private static void combineNotificationQueries(ObjectNode jsonNode) {
+    private static void combineNotificationAggregations(ObjectNode jsonNode) {
         var notifications = JsonUtils.dtoObjectMapper.createObjectNode().arrayNode();
         var keysToRemove = new ArrayList<String>();
         for (Map.Entry<String, JsonNode> field : jsonNode.properties()) {
@@ -60,7 +60,7 @@ public final class AggregationFormat {
     }
 
     private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
-        return field.getKey().toLowerCase(Locale.getDefault()).contains("notifications") && field.getValue().isObject();
+        return field.getKey().toLowerCase(Locale.getDefault()).contains("notification") && field.getValue().isObject();
     }
 
     private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {
