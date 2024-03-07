@@ -5,12 +5,17 @@ import static no.unit.nva.search2.ticket.TicketClient.defaultClient;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
+import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
+import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
+import no.unit.nva.search2.ticket.TicketType;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -37,7 +42,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
         throws BadRequestException, UnauthorizedException {
 
-        validateAccessRight(requestInfo);
+        var ticketTypes = validateAccessRight(requestInfo);
 
         return
             TicketQuery.builder()
@@ -46,6 +51,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .validate()
                 .build()
                 .withOrganization(requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation()))
+                .withRequiredTypeFilter(ticketTypes)
                 .doSearch(opensearchClient);
     }
 
@@ -59,12 +65,20 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
 
-    private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        if (requestInfo.userIsAuthorized(AccessRight.MANAGE_OWN_AFFILIATION)
-            || requestInfo.userIsAuthorized(AccessRight.MANAGE_RESOURCES_STANDARD)) {
-            return;
+    private TicketType[] validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
+        var allowed = new HashSet<TicketType>();
+        if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
+            allowed.add(TicketType.DOI_REQUEST);
         }
-
-        throw new UnauthorizedException();
+        if (requestInfo.userIsAuthorized(AccessRight.SUPPORT)) {
+            allowed.add(TicketType.GENERAL_SUPPORT_CASE);
+        }
+        if (requestInfo.userIsAuthorized(MANAGE_PUBLISHING_REQUESTS)) {
+            allowed.add(TicketType.PUBLISHING_REQUEST);
+        }
+        if (allowed.isEmpty()) {
+            throw new UnauthorizedException();
+        }
+        return allowed.toArray(TicketType[]::new);
     }
 }
