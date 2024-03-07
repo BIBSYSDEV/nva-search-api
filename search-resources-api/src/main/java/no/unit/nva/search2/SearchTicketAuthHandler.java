@@ -7,13 +7,11 @@ import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.HashSet;
 import java.util.List;
-
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
 import no.unit.nva.search2.ticket.TicketType;
@@ -52,6 +50,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .validate()
                 .build()
                 .withRequiredTypeFilter(ticketTypes)
+                .withUser(requestInfo.getUserName())
                 .doSearch(opensearchClient);
     }
 
