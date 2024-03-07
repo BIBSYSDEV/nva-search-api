@@ -52,6 +52,7 @@ import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
 import static no.unit.nva.search2.common.constant.Words.ROOT;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
+import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_VALUE;
 import static no.unit.nva.search2.common.constant.Words.SERIES;
 import static no.unit.nva.search2.common.constant.Words.SERIES_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
@@ -104,6 +105,9 @@ public final class Constants {
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
+    public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD =
+        ENTITY_PUBLICATION_CONTEXT_DOT + PUBLISHER + DOT + SCIENTIFIC_VALUE + DOT + KEYWORD + PIPE
+        + ENTITY_PUBLICATION_CONTEXT_DOT + SCIENTIFIC_VALUE + DOT + KEYWORD;
     public static final String COURSE_CODE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =

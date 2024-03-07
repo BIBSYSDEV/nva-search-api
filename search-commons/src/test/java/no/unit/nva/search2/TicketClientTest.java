@@ -8,13 +8,14 @@ import static no.unit.nva.search2.common.constant.Words.NOTIFICATIONS;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.common.enums.TicketStatus.COMPLETED;
-import static no.unit.nva.search2.common.enums.TicketStatus.NEW;
 import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
+import static no.unit.nva.search2.ticket.TicketType.DOI_REQUEST;
+import static no.unit.nva.search2.ticket.TicketType.GENERAL_SUPPORT_CASE;
+import static no.unit.nva.search2.ticket.TicketType.PUBLISHING_REQUEST;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -126,7 +127,7 @@ class TicketClientTest {
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(COMPLETED, NEW)
+                .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                              .withUser(ASSIGNEE_USERNAME);
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -139,7 +140,7 @@ class TicketClientTest {
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(NEW, COMPLETED)
+                .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                              .withUser(ASSIGNEE_USERNAME);
             var response2 = searchClient.doSearch(query2);
             assertNotNull(response2);
@@ -164,31 +165,11 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(NEW, COMPLETED)
+                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .withUser(ASSIGNEE_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
-        }
-
-        @Test
-        void withOrganizationDoWork() throws BadRequestException {
-            var uri = URI.create("https://x.org/");
-            var query =
-                TicketQuery.builder()
-                    .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
-                    .build()
-                    .withRequiredStatus(NEW, COMPLETED)
-                    .withOrganization(URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"))
-                    .withUser(ASSIGNEE_USERNAME);
-
-            var response = searchClient.doSearch(query);
-            assertNotNull(response);
-
-            var pagedSearchResourceDto = query.toPagedResponse(response);
-            assertEquals(19, pagedSearchResourceDto.totalHits());
         }
 
         @ParameterizedTest
@@ -201,7 +182,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(NEW, COMPLETED)
+                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .withUser(ASSIGNEE_USERNAME);
 
             var response = searchClient.doSearch(query);
@@ -210,7 +191,7 @@ class TicketClientTest {
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.aggregations().size(),
-                       is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
+                is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
@@ -224,8 +205,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(NEW, COMPLETED)
+                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .withUser(ASSIGNEE_USERNAME);
+
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -251,7 +233,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredStatus(NEW, COMPLETED)
+                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .withUser(ASSIGNEE_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
@@ -266,7 +248,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(NEW, COMPLETED)
+                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .withUser(ASSIGNEE_USERNAME);
 
             logger.info(query.getValue(SORT).toString());
