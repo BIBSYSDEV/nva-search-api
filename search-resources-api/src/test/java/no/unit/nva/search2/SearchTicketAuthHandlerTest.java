@@ -30,6 +30,7 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
+import nva.commons.apigateway.RequestInfoConstants;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ class SearchTicketAuthHandlerTest {
     void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying() throws IOException, URISyntaxException {
         prepareRestHighLevelClientOkResponse();
 
-        var organization = new URI("https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
+        var organization = new URI("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
 
         handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI),
                               outputStream, contextMock);
@@ -106,9 +107,14 @@ class SearchTicketAuthHandlerTest {
 
     private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
         throws JsonProcessingException {
+        var personAffiliationId = "20754.0.0.0";
+        var PERSON_AFFILIATION = RequestInfoConstants.PERSON_AFFILIATION.toString();
+        var topLevelOrgCristinId = URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
+            .withTopLevelCristinOrgId(topLevelOrgCristinId)
+            .withRequestContextValue(PERSON_AFFILIATION, personAffiliationId)
             .withUserName(randomString())
             .withCurrentCustomer(organization)
             .withAccessRights(organization, accessRight)
