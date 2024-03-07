@@ -42,7 +42,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         throws BadRequestException, UnauthorizedException {
 
         var ticketTypes = validateAccessRight(requestInfo);
-        var organization = requestInfo.getTopLevelOrgCristinId().orElseThrow(UnauthorizedException::new);
+        var organization = requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
 
         return
             TicketQuery.builder()
@@ -50,7 +50,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequeriedOrganization(organization)
+                .withRequiredOrganization(organization)
                 .withRequiredTicketType(ticketTypes)
                 .doSearch(opensearchClient);
     }

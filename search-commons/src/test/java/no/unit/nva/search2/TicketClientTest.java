@@ -128,7 +128,7 @@ class TicketClientTest {
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequeriedOrganization(testOrganizationId)
+                .withRequiredOrganization(testOrganizationId)
                 .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -141,7 +141,7 @@ class TicketClientTest {
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequeriedOrganization(testOrganizationId)
+                .withRequiredOrganization(testOrganizationId)
                 .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
             var response2 = searchClient.doSearch(query2);
             assertNotNull(response2);
@@ -165,7 +165,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequeriedOrganization(testOrganizationId)
+                    .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
@@ -183,7 +183,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequeriedOrganization(testOrganizationId)
+                    .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
 
             var response = searchClient.doSearch(query);
@@ -206,7 +206,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequeriedOrganization(testOrganizationId)
+                    .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
 
             var response = searchClient.doSearch(query);
@@ -233,7 +233,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequeriedOrganization(testOrganizationId)
+                    .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
@@ -248,7 +248,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequeriedOrganization(testOrganizationId)
+                    .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
 
             logger.info(query.getValue(SORT).toString());

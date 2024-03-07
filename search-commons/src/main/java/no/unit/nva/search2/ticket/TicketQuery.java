@@ -150,7 +150,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
-    public TicketQuery withRequeriedOrganization(URI organization) {
+    public TicketQuery withRequiredOrganization(URI organization) {
         final var filter = new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, organization.toString())
             .queryName(ORGANIZATION + ID);
         this.addFilter(filter);

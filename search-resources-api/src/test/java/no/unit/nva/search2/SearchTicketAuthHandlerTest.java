@@ -30,7 +30,6 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.AccessRight;
-import nva.commons.apigateway.RequestInfoConstants;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,9 +58,9 @@ class SearchTicketAuthHandlerTest {
         prepareRestHighLevelClientOkResponse();
 
         var organization = new URI("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
+        var input = getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI);
 
-        handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI),
-                              outputStream, contextMock);
+        handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
@@ -107,14 +106,14 @@ class SearchTicketAuthHandlerTest {
 
     private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
         throws JsonProcessingException {
-        var personAffiliationId = "20754.0.0.0";
-        var PERSON_AFFILIATION = RequestInfoConstants.PERSON_AFFILIATION.toString();
+        var personAffiliationId = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0";
+        var PERSON_AFFILIATION = "custom:personAffiliation";
         var topLevelOrgCristinId = URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
             .withTopLevelCristinOrgId(topLevelOrgCristinId)
-            .withRequestContextValue(PERSON_AFFILIATION, personAffiliationId)
+            .withAuthorizerClaim(PERSON_AFFILIATION, personAffiliationId)
             .withUserName(randomString())
             .withCurrentCustomer(organization)
             .withAccessRights(organization, accessRight)
