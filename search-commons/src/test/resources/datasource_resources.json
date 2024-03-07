@@ -3363,6 +3363,7 @@
             "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
             "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
             "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
+            "printIssn": "0809-6058",
             "scientificValue": "Unassigned"
           }
         },
