@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
@@ -123,11 +124,11 @@ class TicketClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
             var query1 = TicketQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri1))
-                .withOpensearchUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                             .fromQueryParameters(queryToMapEntries(uri1))
+                             .withOpensearchUri(hostAddress)
+                             .withRequiredParameters(FROM, SIZE)
+                             .build()
+                             .withTicketTypes(List.of(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE))
                              .withUser(ASSIGNEE_USERNAME);
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -136,11 +137,11 @@ class TicketClientTest {
                 URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL
                            + joinBy(COMMA, STATUS, TYPE, PUBLICATION_STATUS, NOTIFICATIONS));
             var query2 = TicketQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri2))
-                .withOpensearchUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                             .fromQueryParameters(queryToMapEntries(uri2))
+                             .withOpensearchUri(hostAddress)
+                             .withRequiredParameters(FROM, SIZE)
+                             .build()
+                             .withTicketTypes(List.of(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE))
                              .withUser(ASSIGNEE_USERNAME);
             var response2 = searchClient.doSearch(query2);
             assertNotNull(response2);
@@ -165,7 +166,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withTicketTypes(List.of(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE))
                     .withUser(ASSIGNEE_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
@@ -182,7 +183,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withTicketTypes(List.of(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE))
                     .withUser(ASSIGNEE_USERNAME);
 
             var response = searchClient.doSearch(query);
@@ -205,7 +206,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withTicketTypes(List.of(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE))
                     .withUser(ASSIGNEE_USERNAME);
 
 
@@ -233,7 +234,7 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withTicketTypes(List.of(DOI_REQUEST))
                     .withUser(ASSIGNEE_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
@@ -248,7 +249,7 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredTypeFilter(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withTicketTypes(List.of(DOI_REQUEST))
                     .withUser(ASSIGNEE_USERNAME);
 
             logger.info(query.getValue(SORT).toString());

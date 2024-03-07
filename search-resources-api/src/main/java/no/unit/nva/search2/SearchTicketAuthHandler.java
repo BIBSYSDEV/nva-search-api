@@ -10,7 +10,7 @@ import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
@@ -49,7 +49,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequiredTypeFilter(ticketTypes)
+                .withTicketTypes(ticketTypes)
                 .withUser(requestInfo.getUserName())
                 .doSearch(opensearchClient);
     }
@@ -64,8 +64,8 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
 
-    private TicketType[] validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        var allowed = new HashSet<TicketType>();
+    private List<TicketType> validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
+        var allowed = new ArrayList<TicketType>();
         if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
         }
@@ -78,7 +78,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         if (allowed.isEmpty()) {
             throw new UnauthorizedException();
         }
-        return allowed.toArray(TicketType[]::new);
+        return allowed;
     }
 
 

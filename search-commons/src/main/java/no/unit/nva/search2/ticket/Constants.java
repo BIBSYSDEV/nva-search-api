@@ -132,7 +132,7 @@ public final class Constants {
                                                                        "/filter/status", TYPE, "/filter/type",
                                                                        PUBLICATION_STATUS,
                                                                        "/filter/publication/status");
-    private static final String ASSIGNEE = "assignee";
+    public static final String ASSIGNEE = "assignee";
     public static final String ASSIGNEE_FIELDS = ASSIGNEE
                                                  + DOT
                                                  + TYPE_KEYWORD
@@ -181,27 +181,27 @@ public final class Constants {
     public Constants() {
     }
 
-    public static List<AggregationBuilder> getTicketsAggregations(String username) {
+    public static List<AggregationBuilder> getTicketsAggregations(String username, List<TicketType> ticketTypes) {
         return List.of(branchBuilder(STATUS, STATUS_KEYWORD), branchBuilder(TYPE, TYPE_KEYWORD),
-                       branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD), notifications(username),
-                       unassignedNotifications(), doiRequestNotifications(username),
+                       branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD), notifications(username, ticketTypes),
+                       unassignedNotifications(ticketTypes), doiRequestNotifications(username),
                        publishingRequestNotifications(username), generalSupportNotifications(username));
     }
 
     private static AggregationBuilder generalSupportNotifications(String username) {
-        return getTicketAggregationFor(GENERAL_SUPPORT_NOTIFICATIONS, username, GENERAL_SUPPORT_CASE);
+        return getTicketAggregationFor(GENERAL_SUPPORT_NOTIFICATIONS, username, TicketType.GENERAL_SUPPORT_CASE);
     }
 
     private static AggregationBuilder publishingRequestNotifications(String username) {
-        return getTicketAggregationFor(PUBLISHING_REQUEST_NOTIFICATIONS, username, PUBLISHING_REQUEST);
+        return getTicketAggregationFor(PUBLISHING_REQUEST_NOTIFICATIONS, username, TicketType.PUBLISHING_REQUEST);
     }
 
     private static AggregationBuilder doiRequestNotifications(String username) {
-        return getTicketAggregationFor(DOI_REQUEST_NOTIFICATIONS, username, DOI_REQUEST);
+        return getTicketAggregationFor(DOI_REQUEST_NOTIFICATIONS, username, TicketType.DOI_REQUEST);
     }
 
     private static FilterAggregationBuilder getTicketAggregationFor(String aggregationName, String username,
-                                                                    String... types) {
+                                                                    TicketType... types) {
         var query = QueryBuilders.boolQuery();
         query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
         query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
@@ -209,17 +209,16 @@ public final class Constants {
         return AggregationBuilders.filter(aggregationName, query);
     }
 
-    private static AggregationBuilder notifications(String username) {
+    private static AggregationBuilder notifications(String username, List<TicketType> ticketTypes) {
         return getTicketAggregationFor(USER_NOTIFICATIONS,
                                        username,
-                                       DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
+                                       ticketTypes.toArray(new TicketType[0]));
     }
 
-    private static AggregationBuilder unassignedNotifications() {
+    private static AggregationBuilder unassignedNotifications(List<TicketType> ticketTypes) {
         var query = QueryBuilders.boolQuery();
         query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.NEW.toString()));
-        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD),
-                                            List.of(PUBLISHING_REQUEST, DOI_REQUEST, GENERAL_SUPPORT_CASE)));
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), ticketTypes));
         return AggregationBuilders.filter(UNASSIGNED_NOTIFICATIONS, query);
     }
 }
