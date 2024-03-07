@@ -112,6 +112,7 @@ class SearchTicketAuthHandlerTest {
             .withUserName(randomString())
             .withCurrentCustomer(organization)
             .withAccessRights(organization, accessRight)
+
             .build();
     }
 

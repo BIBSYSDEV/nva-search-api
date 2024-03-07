@@ -33,6 +33,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -57,6 +58,7 @@ import org.opensearch.search.sort.SortOrder;
 public final class TicketQuery extends Query<TicketParameter> {
 
     private String username;
+    private List<TicketType> ticketTypes;
     private TicketQuery() {
         super();
         assignStatusImpossibleWhiteList();
@@ -119,25 +121,16 @@ public final class TicketQuery extends Query<TicketParameter> {
         return facetTicketsPaths;
     }
 
-    /**
-     * Filter on Required Types.
-     *
-     * <p>Only TYPE specified here will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link TicketType} for available values.</p>
-     *
-     * @param ticketTypes the required types
-     * @return TicketQuery (builder pattern)
-     */
-    public TicketQuery withRequiredTypeFilter(TicketType... ticketTypes) {
-        final var filter = new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes)
-            .queryName(TYPE+FILTER);
-        this.addFilter(filter);
+    public TicketQuery withUser(String username) {
+        this.username = username;
         return this;
     }
 
-    public TicketQuery withUser(String username) {
-        this.username = username;
+    public TicketQuery withTicketTypes(List<TicketType> ticketTypes) {
+        this.ticketTypes = ticketTypes;
+        final var filter = new TermsQueryBuilder(TYPE_KEYWORD, this.ticketTypes)
+                               .queryName(TYPE + FILTER);
+        this.addFilter(filter);
         return this;
     }
 
@@ -163,8 +156,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
-        var ticketsAggregations = Constants.getTicketsAggregations(username);
-        ticketsAggregations
+        Constants.getTicketsAggregations(username, ticketTypes)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
