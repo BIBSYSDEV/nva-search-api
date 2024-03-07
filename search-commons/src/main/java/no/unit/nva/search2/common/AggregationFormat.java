@@ -46,7 +46,7 @@ public final class AggregationFormat {
     private static void combineNotificationAggregations(ObjectNode jsonNode) {
         var notifications = JsonUtils.dtoObjectMapper.createObjectNode().arrayNode();
         var keysToRemove = new ArrayList<String>();
-        for (Map.Entry<String, JsonNode> field : jsonNode.properties()) {
+        for (var field : jsonNode.properties()) {
             var fieldName = field.getKey();
             if (isNotificationAggregation(field)) {
                 JsonNode value = field.getValue();

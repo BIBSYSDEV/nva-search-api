@@ -22,6 +22,7 @@ import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 
 public final class Constants {
 
@@ -188,36 +189,30 @@ public final class Constants {
     }
 
     private static AggregationBuilder generalSupportNotifications(String username) {
-        var query = QueryBuilders.boolQuery();
-        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
-        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
-        query.must(QueryBuilders.termQuery(jsonPath(TYPE, KEYWORD), GENERAL_SUPPORT_CASE));
-        return AggregationBuilders.filter(GENERAL_SUPPORT_NOTIFICATIONS, query);
+        return getTicketAggregationFor(GENERAL_SUPPORT_NOTIFICATIONS, username, GENERAL_SUPPORT_CASE);
     }
 
     private static AggregationBuilder publishingRequestNotifications(String username) {
-        var query = QueryBuilders.boolQuery();
-        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING));
-        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
-        query.must(QueryBuilders.termQuery(jsonPath(TYPE, KEYWORD), PUBLISHING_REQUEST));
-        return AggregationBuilders.filter(PUBLISHING_REQUEST_NOTIFICATIONS, query);
+        return getTicketAggregationFor(PUBLISHING_REQUEST_NOTIFICATIONS, username, PUBLISHING_REQUEST);
     }
 
     private static AggregationBuilder doiRequestNotifications(String username) {
+        return getTicketAggregationFor(DOI_REQUEST_NOTIFICATIONS, username, DOI_REQUEST);
+    }
+
+    private static FilterAggregationBuilder getTicketAggregationFor(String aggregationName, String username,
+                                                                    String... types) {
         var query = QueryBuilders.boolQuery();
         query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
         query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
-        query.must(QueryBuilders.termQuery(jsonPath(TYPE, KEYWORD), DOI_REQUEST));
-        return AggregationBuilders.filter(DOI_REQUEST_NOTIFICATIONS, query);
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), types));
+        return AggregationBuilders.filter(aggregationName, query);
     }
 
     private static AggregationBuilder notifications(String username) {
-        var query = QueryBuilders.boolQuery();
-        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
-        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
-        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD),
-                                            List.of(PUBLISHING_REQUEST, DOI_REQUEST, GENERAL_SUPPORT_CASE)));
-        return AggregationBuilders.filter(USER_NOTIFICATIONS, query);
+        return getTicketAggregationFor(USER_NOTIFICATIONS,
+                                       username,
+                                       DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
     }
 
     private static AggregationBuilder unassignedNotifications() {

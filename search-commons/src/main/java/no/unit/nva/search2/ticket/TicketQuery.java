@@ -164,7 +164,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
-        List<AggregationBuilder> ticketsAggregations = Constants.getTicketsAggregations(username);
+        var ticketsAggregations = Constants.getTicketsAggregations(username);
         ticketsAggregations
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
