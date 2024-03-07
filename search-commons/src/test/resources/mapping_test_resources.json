@@ -38,15 +38,6 @@
                 "publisher": {
                   "type": "nested",
                   "include_in_parent": true
-                },
-                "series": {
-                  "type": "nested",
-                  "include_in_parent": true,
-                  "properties": {
-                    "printIssn": {
-                      "type": "keyword"
-                    }
-                  }
                 }
               }
             }

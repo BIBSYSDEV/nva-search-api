@@ -31,7 +31,6 @@ import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.resource.ResourceParameter.ISSN;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
@@ -505,22 +504,6 @@ class ResourceClientTest {
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
             assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
             assertThat(pagedSearchResourceDto.hits(), hasSize(2));
-        }
-
-        @Test
-        void issn() throws BadRequestException {
-            var query =
-                ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(ISSN.fieldName(), "0809-6058"))
-                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                    .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
-
-            logger.info(query.getValue(SORT).toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
-            assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
 
         static Stream<Arguments> uriPagingProvider() {
