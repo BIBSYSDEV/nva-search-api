@@ -3,8 +3,8 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.NOTIFICATIONS;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
@@ -71,10 +72,11 @@ class TicketClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 3;
-
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
+    public static final String ASSIGNEE_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
+
     private static TicketClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -129,20 +131,23 @@ class TicketClientTest {
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredOrganization(testOrganizationId)
-                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
+                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .withUser(ASSIGNEE_USERNAME);
+
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
             var uri2 =
                 URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL
-                    + STATUS + COMMA + TYPE + COMMA + PUBLICATION_STATUS);
+                           + joinBy(COMMA, STATUS, TYPE, PUBLICATION_STATUS, NOTIFICATIONS));
             var query2 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
                 .withOpensearchUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredOrganization(testOrganizationId)
-                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
+                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .withUser(ASSIGNEE_USERNAME);
             var response2 = searchClient.doSearch(query2);
             assertNotNull(response2);
 
@@ -152,7 +157,8 @@ class TicketClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(12));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(14));
+            assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
         }
 
         @Test
@@ -167,11 +173,11 @@ class TicketClientTest {
                     .build()
                     .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withUser(ASSIGNEE_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
         }
-
 
         @ParameterizedTest
         @MethodSource("uriPagingProvider")
@@ -184,7 +190,8 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
+                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withUser(ASSIGNEE_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -207,7 +214,8 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
+                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withUser(ASSIGNEE_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -235,6 +243,7 @@ class TicketClientTest {
                     .build()
                     .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withUser(ASSIGNEE_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -249,7 +258,8 @@ class TicketClientTest {
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
+                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withUser(ASSIGNEE_USERNAME);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -308,6 +318,10 @@ class TicketClientTest {
             return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
         }
+    }
+
+    private String joinBy(String delimiter, String... values) {
+        return String.join(delimiter, values);
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {

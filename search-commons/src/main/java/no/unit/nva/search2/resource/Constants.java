@@ -119,10 +119,6 @@ public final class Constants {
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
         ENTITY_PUBLICATION_CONTEXT_DOT + ISBN_LIST;
-    public static final String PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD =
-        ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD;
-    public static final String PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD =
-        ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_TYPE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + TYPE + DOT + KEYWORD;
     public static final String PUBLICATION_INSTANCE_TYPE =
@@ -167,8 +163,12 @@ public final class Constants {
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD + PIPE
         + ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD;
 
+    public static final String PUBLICATION_CONTEXT_PATH = jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT);
     public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN =
-        PUBLICATION_CONTEXT_ONLINE_ISSN_KEYWORD + PIPE + PUBLICATION_CONTEXT_PRINT_ISSN_KEYWORD;
+        multipleFields(jsonPath(PUBLICATION_CONTEXT_PATH, ONLINE_ISSN, KEYWORD),
+                       jsonPath(PUBLICATION_CONTEXT_PATH, PRINT_ISSN, KEYWORD),
+                       jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, ONLINE_ISSN, KEYWORD),
+                       jsonPath(PUBLICATION_CONTEXT_PATH, SERIES, PRINT_ISSN, KEYWORD));
 
     public static final String FUNDING_IDENTIFIER_KEYWORD = FUNDINGS + DOT + IDENTIFIER_KEYWORD;
 
@@ -399,6 +399,10 @@ public final class Constants {
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+    }
+
+    private static String multipleFields(String... values) {
+        return String.join(PIPE, values);
     }
 
     @JacocoGenerated
