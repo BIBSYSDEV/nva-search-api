@@ -492,7 +492,7 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withOpensearchUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
+                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);

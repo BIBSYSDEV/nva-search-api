@@ -19,6 +19,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URI;
 import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.MODIFIED_DATE;
@@ -205,8 +206,8 @@ public enum ResourceParameter implements ParameterKey {
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TITLE_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(CUSTOM),
-    UNIT(CUSTOM),
+    TOP_LEVEL_ORGANIZATION(CUSTOM, ALL_ITEMS, CONTRIBUTOR_ORGANIZATIONS + DOT + Words.KEYWORD),
+    UNIT(CUSTOM, ALL_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(KEYWORD, NO_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, ONE_OR_MORE_ITEM, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
@@ -326,7 +327,7 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
+        return !(fieldType().equals(KEYWORD) || fieldType().equals(CUSTOM));
     }
 
     @Override
