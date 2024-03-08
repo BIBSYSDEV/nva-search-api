@@ -4,7 +4,7 @@ public enum TicketStatus {
     NEW("New"),
     PENDING("Pending"),
     COMPLETED("Completed"),
-    NOT_APPLICABLE("Not Applicable"),
+    NOT_APPLICABLE("NotApplicable"),
     CLOSED("Closed");
 
     private final String code;
