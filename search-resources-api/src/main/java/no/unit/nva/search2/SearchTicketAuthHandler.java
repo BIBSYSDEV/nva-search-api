@@ -10,7 +10,7 @@ import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
@@ -42,6 +42,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         throws BadRequestException, UnauthorizedException {
 
         var ticketTypes = validateAccessRight(requestInfo);
+        var organization = requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
 
         return
             TicketQuery.builder()
@@ -49,7 +50,8 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withTicketTypes(ticketTypes)
+                .withRequiredOrganization(organization)
+                .withRequiredTicketType(ticketTypes)
                 .withUser(requestInfo.getUserName())
                 .doSearch(opensearchClient);
     }
@@ -64,8 +66,8 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
 
-    private List<TicketType> validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        var allowed = new ArrayList<TicketType>();
+    private TicketType[] validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
+        var allowed = new HashSet<TicketType>();
         if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
         }
@@ -76,12 +78,9 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
             allowed.add(TicketType.PUBLISHING_REQUEST);
         }
         if (allowed.isEmpty()) {
+            allowed.add(TicketType.NONE);       // either set filter = none OR throw UnauthorizedException
             throw new UnauthorizedException();
         }
-        return allowed;
+        return allowed.toArray(TicketType[]::new);
     }
-
-
-
-
 }

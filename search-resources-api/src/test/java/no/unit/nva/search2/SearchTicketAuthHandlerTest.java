@@ -57,10 +57,10 @@ class SearchTicketAuthHandlerTest {
     void shouldOnlyReturnPublicationsFromCuratorsOrganizationWhenQuerying() throws IOException, URISyntaxException {
         prepareRestHighLevelClientOkResponse();
 
-        var organization = new URI("https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934");
+        var organization = new URI("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
+        var input = getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI);
 
-        handler.handleRequest(getInputStreamWithAccessRight(organization, AccessRight.MANAGE_DOI),
-                              outputStream, contextMock);
+        handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
         var actualBody = gatewayResponse.body();
@@ -106,9 +106,14 @@ class SearchTicketAuthHandlerTest {
 
     private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
         throws JsonProcessingException {
+        var personAffiliationId = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0";
+        var PERSON_AFFILIATION = "custom:personAffiliation";
+        var topLevelOrgCristinId = URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
+            .withTopLevelCristinOrgId(topLevelOrgCristinId)
+            .withAuthorizerClaim(PERSON_AFFILIATION, personAffiliationId)
             .withUserName(randomString())
             .withCurrentCustomer(organization)
             .withAccessRights(organization, accessRight)

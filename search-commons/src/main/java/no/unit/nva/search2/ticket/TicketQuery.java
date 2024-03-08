@@ -12,9 +12,14 @@ import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.FILTER;
+import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.SEARCH;
+import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
+import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
+import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
@@ -33,14 +38,13 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -48,6 +52,7 @@ import nva.commons.core.JacocoGenerated;
 import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
@@ -58,10 +63,9 @@ import org.opensearch.search.sort.SortOrder;
 public final class TicketQuery extends Query<TicketParameter> {
 
     private String username;
-    private List<TicketType> ticketTypes;
     private TicketQuery() {
         super();
-        assignStatusImpossibleWhiteList();
+        assignImpossibleWhiteListFilters();
     }
 
     @Override
@@ -107,7 +111,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
-                .addChild(Words.TICKETS, Words.SEARCH)
+                .addChild(TICKETS, SEARCH)
                 .getUri();
     }
 
@@ -126,10 +130,35 @@ public final class TicketQuery extends Query<TicketParameter> {
         return this;
     }
 
-    public TicketQuery withTicketTypes(List<TicketType> ticketTypes) {
-        this.ticketTypes = ticketTypes;
-        final var filter = new TermsQueryBuilder(TYPE_KEYWORD, this.ticketTypes)
-                               .queryName(TYPE + FILTER);
+    /**
+     * Filter on Required Types.
+     *
+     * <p>Only TYPE specified here will be available for the Query.</p>
+     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
+     * <p>See {@link TicketType} for available values.</p>
+     *
+     * @param ticketTypes the required types
+     * @return TicketQuery (builder pattern)
+     */
+    public TicketQuery withRequiredTicketType(TicketType... ticketTypes) {
+        var ticketStringTypes = Arrays.stream(ticketTypes).map(Object::toString).toList();
+        final var filter = new TermsQueryBuilder(TYPE_KEYWORD, ticketStringTypes)
+            .queryName(TICKETS + TYPE);
+        this.addFilter(filter);
+        return this;
+    }
+
+    /**
+     * Filter on organization.
+     * <P>Only documents belonging to organization specified are searchable (for the user)
+     * </p>
+     *
+     * @param organization uri of publisher
+     * @return ResourceQuery (builder pattern)
+     */
+    public TicketQuery withRequiredOrganization(URI organization) {
+        final var filter = new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, organization.toString())
+            .queryName(ORGANIZATION + ID);
         this.addFilter(filter);
         return this;
     }
@@ -156,7 +185,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
-        Constants.getTicketsAggregations(username, ticketTypes)
+        Constants.getTicketsAggregations(username)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
@@ -171,13 +200,14 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private boolean isDefined(String keyName) {
         return getValue(AGGREGATION)
-                        .asSplitStream(COMMA)
-                        .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
+                .asSplitStream(COMMA)
+            .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
     }
 
     private static boolean isNotificationAggregation(String name) {
         return name.toLowerCase(LocaleBeanUtils.getDefaultLocale()).contains("notification");
     }
+
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
@@ -197,8 +227,12 @@ public final class TicketQuery extends Query<TicketParameter> {
      * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
      * <p>See  for the correct way to filter by status</p>
      */
-    private void assignStatusImpossibleWhiteList() {
-        setFilters(new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE+FILTER));
+    private void assignImpossibleWhiteListFilters() {
+        var filterType =
+            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + FILTER);
+        final var filterId =
+            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
+        setFilters(filterType, filterId);
     }
 
     @SuppressWarnings("PMD.GodClass")
