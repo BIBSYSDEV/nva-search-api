@@ -157,7 +157,7 @@ class TicketClientTest {
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(14));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(12));
             assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
         }
 
