@@ -19,7 +19,6 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
-import static no.unit.nva.search2.ticket.Constants.TICKET_AGGREGATIONS;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
@@ -38,7 +37,6 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -65,7 +63,6 @@ import org.opensearch.search.sort.SortOrder;
 public final class TicketQuery extends Query<TicketParameter> {
 
     private String username;
-    private List<TicketType> ticketTypes;
     private TicketQuery() {
         super();
         assignImpossibleWhiteListFilters();
@@ -188,7 +185,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
-        Constants.getTicketsAggregations(username, ticketTypes)
+        Constants.getTicketsAggregations(username)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
@@ -202,8 +199,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private boolean isDefined(String keyName) {
-        return
-            getValue(AGGREGATION)
+        return getValue(AGGREGATION)
                 .asSplitStream(COMMA)
             .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
     }
@@ -212,9 +208,6 @@ public final class TicketQuery extends Query<TicketParameter> {
         return name.toLowerCase(LocaleBeanUtils.getDefaultLocale()).contains("notification");
     }
 
-    private static boolean isNotificationAggregation(String name) {
-        return name.toLowerCase(LocaleBeanUtils.getDefaultLocale()).contains("notification");
-    }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
@@ -237,8 +230,8 @@ public final class TicketQuery extends Query<TicketParameter> {
     private void assignImpossibleWhiteListFilters() {
         var filterType =
             new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + FILTER);
-        final var filterId = new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID())
-            .queryName(ORGANIZATION + ID);
+        final var filterId =
+            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
         setFilters(filterType, filterId);
     }
 
