@@ -14,6 +14,7 @@ import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.FILTER;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
@@ -44,7 +45,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -111,7 +111,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
-                .addChild(Words.TICKETS, Words.SEARCH)
+                .addChild(TICKETS, SEARCH)
                 .getUri();
     }
 
