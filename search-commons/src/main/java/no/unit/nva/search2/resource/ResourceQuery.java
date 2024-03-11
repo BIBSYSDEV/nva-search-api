@@ -108,25 +108,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case EXCLUDE_SUBUNITS -> createSubunitsQuery();
-            case TOP_LEVEL_ORGANIZATION -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createOrganizationQuery(key);
-            case UNIT -> getValue(EXCLUDE_SUBUNITS).asBoolean() ? Stream.empty() : createUnitQuery(key);
-            default -> {
-                logger.error("unhandled key -> {}", key.name());
-                yield Stream.empty();
-            }
+            case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> createUnitQuery(ResourceParameter key) {
-        return queryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
-                                                      getValue(key).as()));
-
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> createOrganizationQuery(ResourceParameter key) {
-        return queryTools.queryToEntry(key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD),
-                                                       getValue(key).as()));
-
+    private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncluded(ResourceParameter key) {
+        return getValue(EXCLUDE_SUBUNITS).asBoolean()
+            ? Stream.empty()
+            : queryTools.queryToEntry(
+                key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), getValue(key).as())
+            );
     }
 
     @Override
@@ -405,12 +397,19 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
+                case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
+                    PUBLICATION_LANGUAGE_SHOULD -> query.setKeyValue(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
+        }
+
+        private String expandLanguage(String decodedValue) {
+            var startIndex = decodedValue.length() - 3;
+            return Constants.LEXVO_ORG_ID_ISO_639_3 + decodedValue.substring(startIndex);
         }
 
         @JacocoGenerated
