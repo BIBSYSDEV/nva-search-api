@@ -78,6 +78,8 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEY
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
+import static no.unit.nva.search2.resource.Constants.UNIT_PATHS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -103,8 +105,6 @@ import nva.commons.core.JacocoGenerated;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    EXCLUDE_SUBUNITS(CUSTOM),
-    VIEWING_SCOPE(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, NO_ITEMS, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_ABSTRACT),
@@ -126,6 +126,7 @@ public enum ResourceParameter implements ParameterKey {
     DOI(FUZZY_KEYWORD, REFERENCE_DOI_KEYWORD),
     DOI_NOT(FUZZY_KEYWORD, NO_ITEMS, REFERENCE_DOI_KEYWORD),
     DOI_SHOULD(TEXT, ONE_OR_MORE_ITEM, REFERENCE_DOI_KEYWORD),
+    EXCLUDE_SUBUNITS(IGNORED),
     FUNDING(CUSTOM, ALL_ITEMS, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
     FUNDING_IDENTIFIER(KEYWORD, ALL_ITEMS, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
     FUNDING_IDENTIFIER_NOT(KEYWORD, NO_ITEMS, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
@@ -205,8 +206,8 @@ public enum ResourceParameter implements ParameterKey {
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TITLE_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(CUSTOM),
-    UNIT(CUSTOM),
+    TOP_LEVEL_ORGANIZATION(CUSTOM, ONE_OR_MORE_ITEM, TOP_LEVEL_ORG_ID),
+    UNIT(CUSTOM, ALL_ITEMS, UNIT_PATHS),
     UNIT_NOT(KEYWORD, NO_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, ONE_OR_MORE_ITEM, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
@@ -318,15 +319,22 @@ public enum ResourceParameter implements ParameterKey {
 
     @Override
     public Stream<String> searchFields() {
+        return searchFields(null);
+    }
+
+    public Stream<String> searchFields(Boolean isKeyWord) {
         return Arrays.stream(fieldsToSearch)
             .map(String::trim)
-            .map(trimmed -> isNotKeyword()
+            .map(trimmed -> isNotKeyword(isKeyWord)
                 ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
                 : trimmed);
     }
 
-    private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
+    private boolean isNotKeyword(Boolean isKeyWord) {
+        var result = !(fieldType().equals(KEYWORD) || fieldType().equals(CUSTOM));
+        return nonNull(isKeyWord)
+            ? !isKeyWord
+            : result;
     }
 
     @Override

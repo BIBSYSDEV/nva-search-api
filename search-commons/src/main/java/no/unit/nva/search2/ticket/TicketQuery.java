@@ -11,9 +11,9 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.FILTER;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
@@ -184,7 +184,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
+        var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
         Constants.getTicketsAggregations(username)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -229,7 +229,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      */
     private void assignImpossibleWhiteListFilters() {
         var filterType =
-            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + FILTER);
+            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
         final var filterId =
             new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
         setFilters(filterType, filterId);

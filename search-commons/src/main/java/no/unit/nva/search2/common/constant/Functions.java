@@ -8,6 +8,7 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
@@ -50,7 +51,7 @@ public final class Functions {
 
     public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
         return
-            nestedBranchBuilder(TOP_LEVEL_ORGANIZATIONS, TOP_LEVEL_ORGANIZATIONS)
+            nestedBranchBuilder(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
                 .subAggregation(
                     branchBuilder(ID, TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD)
                         .subAggregation(

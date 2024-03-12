@@ -160,7 +160,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(Words.FILTER, getFilters());
+        var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, getFilters());
         IMPORT_CANDIDATES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);

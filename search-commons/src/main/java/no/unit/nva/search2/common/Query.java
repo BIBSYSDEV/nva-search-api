@@ -44,7 +44,7 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -301,14 +301,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      *
      * @return a MultiMatchQueryBuilder
      */
-    private MultiMatchQueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
+    private QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
         var value = getValue(searchAllKey).toString();
-
-        return QueryBuilders
-            .multiMatchQuery(value, fields)
-            .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-            .operator(Operator.AND);
+        logger.info(value);
+        return QueryBuilders.multiMatchQuery(value, fields).type(Type.CROSS_FIELDS).operator(Operator.AND);
+        //            : QueryBuilders.queryStringQuery(value).defaultOperator(Operator.AND);
     }
 
     private Stream<K> getSearchParameterKeys() {
