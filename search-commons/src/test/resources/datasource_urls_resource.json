@@ -123,7 +123,7 @@
   "PUBLISHER_ID_SHOULD=https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478": 2,
   "QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642": 0,
   "QUERY=Forsvarets+høgskole": 3,
-  "QUERY=Forsvarets+høgskole&fields=INSTITUTION": 3,
+  "QUERY=Forsvarets+høgskole&fields=INSTITUTION,title,abstract": 3,
   "QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&FIELDS=INSTITUTION": 1,
   "QUERY=Kjetil+Møkkelgjerd&fields=contributorName": 3,
   "QUERY=observations&fields=all": 3,

@@ -71,7 +71,6 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -137,13 +136,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected String[] fieldsToKeyNames(String field) {
+    protected Map<String, Float> fieldsToKeyNames(String field) {
         return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            ? Map.of(ASTERISK, 1F)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
                 .map(ResourceParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
+                .flatMap(this::getFieldNameBoost)
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     @Override

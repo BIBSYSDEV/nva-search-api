@@ -38,18 +38,18 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
-import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -93,13 +93,14 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     @Override
-    protected String[] fieldsToKeyNames(String field) {
+    protected Map<String, Float> fieldsToKeyNames(String field) {
         return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            ? Map.of(ASTERISK, 1F)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
-                .map(TicketParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
+            .map(TicketParameter::keyFromString)
+            .flatMap(this::getFieldNameBoost)
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
     }
 
     @Override
@@ -200,12 +201,12 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private boolean isDefined(String keyName) {
         return getValue(AGGREGATION)
-                .asSplitStream(COMMA)
+            .asSplitStream(COMMA)
             .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
     }
 
-    private static boolean isNotificationAggregation(String name) {
-        return name.toLowerCase(LocaleBeanUtils.getDefaultLocale()).contains("notification");
+    private boolean isNotificationAggregation(String name) {
+        return name.toLowerCase(Locale.getDefault()).contains("notification");
     }
 
 

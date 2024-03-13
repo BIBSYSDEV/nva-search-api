@@ -78,6 +78,9 @@ public final class Words {
     public static final String PUBLISHER = "publisher";
     public static final String Q = "q";
     public static final String QUOTE = "'";
+    public static final String QUOTE_DOUBLE = "\"";
+    public static final String CURLY_BRACKETS = "{";
+    public static final String CURLY_BRACKETS_END = "}";
     public static final String REFERENCE = "reference";
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
