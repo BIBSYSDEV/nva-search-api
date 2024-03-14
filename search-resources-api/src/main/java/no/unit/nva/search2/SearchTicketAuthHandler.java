@@ -81,6 +81,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
             allowed.add(TicketType.NONE);       // either set filter = none OR throw UnauthorizedException
             throw new UnauthorizedException();
         }
+//        return allowed.toArray(new TicketType[0]);
         return allowed.toArray(TicketType[]::new);
     }
 }

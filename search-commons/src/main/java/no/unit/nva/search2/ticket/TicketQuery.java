@@ -142,7 +142,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @return TicketQuery (builder pattern)
      */
     public TicketQuery withRequiredTicketType(TicketType... ticketTypes) {
-        var ticketStringTypes = Arrays.stream(ticketTypes).map(Object::toString).toList();
+        var ticketStringTypes = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
         final var filter = new TermsQueryBuilder(TYPE_KEYWORD, ticketStringTypes)
             .queryName(TICKETS + TYPE);
         this.addFilter(filter);
@@ -208,7 +208,6 @@ public final class TicketQuery extends Query<TicketParameter> {
     private boolean isNotificationAggregation(String name) {
         return name.toLowerCase(Locale.getDefault()).contains("notification");
     }
-
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).getFieldName();
