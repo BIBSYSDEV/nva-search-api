@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
@@ -103,13 +104,13 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected String[] fieldsToKeyNames(String field) {
+    protected Map<String, Float> fieldsToKeyNames(String field) {
         return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            ? Map.of(ASTERISK,1F)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
-                .map(ImportCandidateParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
+            .map(ImportCandidateParameter::keyFromString)
+            .flatMap(this::getFieldNameBoost)
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     @Override

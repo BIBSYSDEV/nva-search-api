@@ -1,7 +1,9 @@
 package no.unit.nva.search2.common.constant;
 
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.PREFIX;
 import static no.unit.nva.search2.common.constant.Words.QUOTE;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.SUFFIX;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Collection;
@@ -45,7 +47,7 @@ public final class ErrorMessages {
         return queryParameters.size() > 1
                    ? queryParameters.stream()
                          .map(parameterName -> QUOTE + parameterName + QUOTE)
-                         .collect(Collectors.joining(", ", PREFIX, SUFFIX))
+                         .collect(Collectors.joining(COMMA+SPACE, PREFIX, SUFFIX))
                    : queryParameters.stream()
                          .collect(Collectors.joining(EMPTY_STRING, QUOTE, QUOTE));
     }

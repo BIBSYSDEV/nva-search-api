@@ -15,6 +15,8 @@ import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VIEWED_BY;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
+import static org.opensearch.index.query.QueryBuilders.termsQuery;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,6 +69,7 @@ public final class Constants {
     public static final String DOI_REQUEST_NOTIFICATIONS = "DoiRequestNotification";
     public static final String PUBLISHING_REQUEST_NOTIFICATIONS = "PublishingRequestNotification";
     public static final String GENERAL_SUPPORT_NOTIFICATIONS = "GeneralSupportNotification";
+
     public static final String ASSIGNEE = "assignee";
     public static final String ASSIGNEE_FIELDS =
         ASSIGNEE + DOT + TYPE_KEYWORD + PIPE
@@ -124,8 +127,8 @@ public final class Constants {
         var query = QueryBuilders.boolQuery()
             .must(termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()))
             .must(termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username))
-            .must(termQuery(jsonPath(TYPE, KEYWORD), types));
-        return AggregationBuilders.filter(aggregationName, query);
+            .must(termsQuery(jsonPath(TYPE, KEYWORD), types));
+        return AggregationBuilders.filter(aggregationName , query);
     }
 
     private static AggregationBuilder notifications(String username) {

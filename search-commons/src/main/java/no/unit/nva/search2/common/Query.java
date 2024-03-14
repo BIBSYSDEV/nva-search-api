@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.mapToJson;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
@@ -75,7 +76,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract K getFieldsKey();
 
-    protected abstract String[] fieldsToKeyNames(String field);
+    protected abstract Map<String, Float> fieldsToKeyNames(String field);
 
     /**
      * Builds URI to query SWS based on post body.
@@ -184,6 +185,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public boolean isPresent(K key) {
         return searchParameters.containsKey(key) || pageParameters.containsKey(key);
+    }
+
+    protected Stream<Entry<String, Float>> getFieldNameBoost(K key) {
+        return key.searchFields()
+            .sorted()
+            .map(fieldName -> Map.entry(fieldName, key.fieldBoost()));
     }
 
     protected boolean hasOneValue(K key) {
@@ -303,11 +310,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     private MultiMatchQueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
-        var value = getValue(searchAllKey).toString();
 
+        mapToJson(fields).ifPresent(logger::info);
+
+        var value = getValue(searchAllKey).toString();
         return QueryBuilders
-            .multiMatchQuery(value, fields)
-            .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+            .multiMatchQuery(value)
+            .fields(fields)
+            .lenient(true)
+            .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
             .operator(Operator.AND);
     }
 

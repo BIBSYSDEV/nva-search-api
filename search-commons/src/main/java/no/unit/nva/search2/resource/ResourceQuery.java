@@ -61,6 +61,7 @@ import static org.opensearch.index.query.QueryBuilders.termQuery;
 import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,7 +72,6 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -137,13 +137,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected String[] fieldsToKeyNames(String field) {
+    protected Map<String, Float> fieldsToKeyNames(String field) {
         return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
+            ? Map.of(ASTERISK, 1F)     // NONE or ALL -> ['*']
             : Arrays.stream(field.split(COMMA))
                 .map(ResourceParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
+                .flatMap(this::getFieldNameBoost)
+                .sorted(Map.Entry.comparingByKey())
+                .collect(
+                    LinkedHashMap::new,
+                    (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+                    LinkedHashMap::putAll
+                );
     }
 
     @Override
