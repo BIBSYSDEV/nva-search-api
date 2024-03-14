@@ -85,7 +85,7 @@ class ImportCandidateClientTest {
     }
 
     @Nested
-    class ImportCandidateTest {
+    class NestedTests {
 
         @Test
         void openSearchFailedResponse() throws IOException, InterruptedException {
@@ -114,7 +114,7 @@ class ImportCandidateClientTest {
             var query =
                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
@@ -131,7 +131,7 @@ class ImportCandidateClientTest {
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult = ImportCandidateQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .withMediaType(Words.TEXT_CSV)
                 .build()
@@ -145,7 +145,7 @@ class ImportCandidateClientTest {
             var query =
                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
@@ -162,7 +162,7 @@ class ImportCandidateClientTest {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
-                             .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                              .withRequiredParameters(FROM, SIZE)
                              .build()
                              .doSearch(importCandidateClient));
@@ -174,7 +174,7 @@ class ImportCandidateClientTest {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
-                             .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                              .withRequiredParameters(FROM, SIZE, CREATED_DATE)
                              .build()
                              .doSearch(importCandidateClient));

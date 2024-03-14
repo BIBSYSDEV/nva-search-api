@@ -72,7 +72,7 @@ class TicketClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 5;
     public static final String ASSIGNEE_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
@@ -127,7 +127,7 @@ class TicketClientTest {
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
             var query1 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
-                .withOpensearchUri(hostAddress)
+                .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredOrganization(testOrganizationId)
@@ -142,7 +142,7 @@ class TicketClientTest {
                            + joinBy(COMMA, STATUS, TYPE, PUBLICATION_STATUS, NOTIFICATIONS));
             var query2 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
-                .withOpensearchUri(hostAddress)
+                .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredOrganization(testOrganizationId)
@@ -156,8 +156,10 @@ class TicketClientTest {
             var aggregations = query1.toPagedResponse(response1).aggregations();
 
             assertFalse(aggregations.isEmpty());
+            assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
+
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(12));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(10));
             assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
         }
 
@@ -168,7 +170,7 @@ class TicketClientTest {
             var pagedResult =
                 TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
                     .withRequiredOrganization(testOrganizationId)
@@ -187,7 +189,7 @@ class TicketClientTest {
                 TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
@@ -198,8 +200,6 @@ class TicketClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(),
-                is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
@@ -211,7 +211,7 @@ class TicketClientTest {
                 TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
@@ -238,7 +238,7 @@ class TicketClientTest {
                 TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
                     .withRequiredOrganization(testOrganizationId)
@@ -255,7 +255,7 @@ class TicketClientTest {
                 TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
@@ -277,7 +277,7 @@ class TicketClientTest {
                 () -> TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .doSearch(searchClient));
         }

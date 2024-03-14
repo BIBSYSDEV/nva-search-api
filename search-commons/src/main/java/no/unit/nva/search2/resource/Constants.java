@@ -1,6 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.common.constant.Functions.filterBranchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
 import static no.unit.nva.search2.common.constant.Functions.nestedBranchBuilder;
@@ -63,14 +64,13 @@ import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Defaults;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.script.Script;
 import org.opensearch.script.ScriptType;
 import org.opensearch.search.aggregations.AggregationBuilder;
@@ -103,7 +103,6 @@ public final class Constants {
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
         TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
     );
-
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS;
@@ -210,21 +209,21 @@ public final class Constants {
     );
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
-        TYPE, "/filter/entityDescription/reference/publicationInstance/type",
-        COURSE, "/filter/entityDescription/reference/publicationContext/course",
-        SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
-        STATUS, "/filter/status",
-        LICENSE, "/filter/associatedArtifacts/license"
+        TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
+        COURSE, "/withAppliedFilter/entityDescription/reference/publicationContext/course",
+        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
+        STATUS, "/withAppliedFilter/status",
+        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
-        FILES, "/filter/files",
-        PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
-        JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
-        CONTRIBUTOR, "/filter/entityDescription/contributor/id",
-        CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
-        FUNDING_SOURCE, "/filter/fundings/id",
-        TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganization/id",
-        SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
+        FILES, "/withAppliedFilter/files",
+        PUBLISHER, "/withAppliedFilter/entityDescription/reference/publicationContext/publisher",
+        JOURNAL, "/withAppliedFilter/entityDescription/reference/publicationContext/journal/id",
+        CONTRIBUTOR, "/withAppliedFilter/entityDescription/contributor/id",
+        CONTEXT_TYPE, "/withAppliedFilter/entityDescription/reference/publicationContext/contextType",
+        FUNDING_SOURCE, "/withAppliedFilter/fundings/id",
+        TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/topLevelOrganization/id",
+        SCIENTIFIC_INDEX, "/withAppliedFilter/scientificIndex/year"
     );
 
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
@@ -240,7 +239,13 @@ public final class Constants {
 
     public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)
         .flatMap(map -> map.entrySet().stream())
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        .sorted(Map.Entry.comparingByValue())
+        .collect(
+            LinkedHashMap::new,
+            (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+            LinkedHashMap::putAll
+        );
+
 
     public static TermsAggregationBuilder filesHierarchy() {
         return branchBuilder(FILES, jsonPath(FILES_STATUS, KEYWORD));
@@ -407,9 +412,6 @@ public final class Constants {
         return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
     }
 
-    private static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
-        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
-    }
 
     public static Script uriAsUuid(String... paths) {
         var path = String.join(DOT, paths);

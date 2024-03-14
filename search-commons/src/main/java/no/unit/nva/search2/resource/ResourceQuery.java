@@ -1,5 +1,6 @@
 package no.unit.nva.search2.resource;
 
+import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -60,6 +61,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
@@ -146,7 +148,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    public AsType getSort() {
+    public AsType<ResourceParameter> getSort() {
         return getValue(SORT);
     }
 
@@ -216,8 +218,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         getSortStream()
             .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
 
-        builder.aggregation(getAggregationsWithFilter());
-
+        if (getMediaType().is(JSON_UTF_8)) {
+            builder.aggregation(getAggregationsWithFilter());
+        }
         logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
@@ -276,9 +279,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
-                var qb = QueryBuilders
-                    .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
+                    .boost(PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(
@@ -360,7 +362,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         setFilters(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
-    @SuppressWarnings("PMD.GodClass")
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
 
         ResourceParameterValidator() {

@@ -1,6 +1,7 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.common.constant.Functions.filterBranchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ID;
@@ -81,14 +82,15 @@ public final class Constants {
         + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
 
     public static final Map<String, String> facetTicketsPaths = Map.of(
-        USER_NOTIFICATIONS, "/filter/UserNotification",
-        UNASSIGNED_NOTIFICATIONS, "/filter/UnassignedNotification",
-        DOI_REQUEST_NOTIFICATIONS, "/filter/DoiRequestNotification",
-        GENERAL_SUPPORT_NOTIFICATIONS, "/filter/GeneralSupportNotification",
-        PUBLISHING_REQUEST_NOTIFICATIONS, "/filter/PublishingRequestNotification",
-        STATUS, "/filter/status",
-        TYPE, "/filter/type",
-        PUBLICATION_STATUS, "/filter/publication/status");
+        USER_NOTIFICATIONS, "/withAppliedFilter/UserNotification",
+        UNASSIGNED_NOTIFICATIONS, "/withAppliedFilter/UnassignedNotification",
+        DOI_REQUEST_NOTIFICATIONS, "/withAppliedFilter/DoiRequestNotification",
+        GENERAL_SUPPORT_NOTIFICATIONS, "/withAppliedFilter/GeneralSupportNotification",
+        PUBLISHING_REQUEST_NOTIFICATIONS, "/withAppliedFilter/PublishingRequestNotification",
+        "byUserPending", "/withAppliedFilter/byUserPending/status/type",
+        STATUS, "/withAppliedFilter/status",
+        TYPE, "/withAppliedFilter/type",
+        PUBLICATION_STATUS, "/withAppliedFilter/publication/status");
 
     @JacocoGenerated
     public Constants() {
@@ -99,6 +101,7 @@ public final class Constants {
             branchBuilder(STATUS, STATUS_KEYWORD),
             branchBuilder(TYPE, TYPE_KEYWORD),
             branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD),
+            notificationsByUser(username),
             unassignedNotifications(),
             notifications(username),
             doiRequestNotifications(username),
@@ -106,6 +109,18 @@ public final class Constants {
             generalSupportNotifications(username)
         );
     }
+
+    private static AggregationBuilder notificationsByUser(String username) {
+        return
+            filterBranchBuilder("byUserPending", username, "assignee.username.keyword")
+                .subAggregation(
+                    filterBranchBuilder(STATUS, "Pending", STATUS_KEYWORD)
+                        .subAggregation(
+                            branchBuilder(TYPE, TYPE_KEYWORD)
+                        )
+                );
+    }
+
 
     private static AggregationBuilder generalSupportNotifications(String username) {
         return getTicketAggregationFor(GENERAL_SUPPORT_NOTIFICATIONS, username, TicketType.GENERAL_SUPPORT_CASE);

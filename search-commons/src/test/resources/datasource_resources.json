@@ -323,7 +323,9 @@
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "handle": "https://hdl.handle.net/1956/7948",
     "id": "https://api.dev.nva.aws.unit.no/publication/018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
+    "identifier": "018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
     "filesStatus": "noFiles",
     "associatedArtifacts": [
       {
@@ -393,8 +395,6 @@
         }
       }
     },
-    "handle": "https://hdl.handle.net/1956/7948",
-    "identifier": "018c7c03c7cd-2e2ce462-4428-4169-a959-cdde629fe139",
     "modelVersion": "0.20.78",
     "modifiedDate": "2023-12-18T08:21:11.463306145Z",
     "publishedDate": "2023-12-18T08:21:11.463306145Z",

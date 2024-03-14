@@ -13,7 +13,9 @@ import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
@@ -80,5 +82,9 @@ public final class Functions {
 
     public static NestedAggregationBuilder nestedBranchBuilder(String name, String... pathElements) {
         return new NestedAggregationBuilder(name, jsonPath(pathElements));
+    }
+
+    public static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
+        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 }

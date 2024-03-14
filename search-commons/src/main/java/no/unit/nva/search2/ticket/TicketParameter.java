@@ -19,6 +19,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
+import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_TEXT;
@@ -64,8 +65,9 @@ import nva.commons.core.JacocoGenerated;
 public enum TicketParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    ASSIGNEE(TEXT, ALL_ITEMS, ASSIGNEE_FIELDS),
+    ASSIGNEE(CUSTOM, ALL_ITEMS, ASSIGNEE_FIELDS),
     ASSIGNEE_NOT(TEXT, NO_ITEMS, ASSIGNEE_FIELDS),
+    BY_USER_PENDING(IGNORED),
     CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
     CUSTOMER_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, CUSTOMER_ID_KEYWORD),
     CUSTOMER_ID_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, CUSTOMER_ID_KEYWORD),
