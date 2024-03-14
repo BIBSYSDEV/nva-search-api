@@ -9,6 +9,10 @@ import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static nva.commons.core.attempt.Try.attempt;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
@@ -79,5 +83,12 @@ public final class Functions {
 
     public static NestedAggregationBuilder nestedBranchBuilder(String name, String... pathElements) {
         return new NestedAggregationBuilder(name, jsonPath(pathElements));
+    }
+
+    public static <K, V> Optional<String> mapToJson(Map<K, V> keymap) {
+        return
+            attempt(() -> new ObjectMapper()
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(keymap)).toOptional();
     }
 }

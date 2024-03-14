@@ -4,14 +4,11 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.mapToJson;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.CURLY_BRACKETS;
-import static no.unit.nva.search2.common.constant.Words.CURLY_BRACKETS_END;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
-import static no.unit.nva.search2.common.constant.Words.QUOTE_DOUBLE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
@@ -192,6 +189,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected Stream<Entry<String, Float>> getFieldNameBoost(K key) {
         return key.searchFields()
+            .sorted()
             .map(fieldName -> Map.entry(fieldName, key.fieldBoost()));
     }
 
@@ -312,11 +310,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     private MultiMatchQueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
-        logger.info(
-            fields.entrySet().stream()
-            .map(entry-> QUOTE_DOUBLE+entry.getKey()+QUOTE_DOUBLE+COLON+QUOTE_DOUBLE+entry.getValue()+QUOTE_DOUBLE)
-            .collect(Collectors.joining(COMMA,CURLY_BRACKETS,CURLY_BRACKETS_END))
-        );
+
+        mapToJson(fields).ifPresent(logger::info);
+
         var value = getValue(searchAllKey).toString();
         return QueryBuilders
             .multiMatchQuery(value)

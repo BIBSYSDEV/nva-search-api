@@ -6,8 +6,6 @@ public final class Words {
 
     public static final float PI = 3.14F;        // π -> used for boosting.
     public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
-    public static final String FILTER = "filter";
-    public static final String ROOT = "root";
 
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
@@ -25,6 +23,7 @@ public final class Words {
     public static final String CONTEXT_TYPE = "contextType";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
+    public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
     public static final String CRISTIN_AS_TYPE = "Cristin";
@@ -33,13 +32,13 @@ public final class Words {
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
+    public static final String FILES = "files";
+    public static final String FILES_STATUS = "filesStatus";
+    public static final String FILTER = "filter";
     public static final String FROM = "from";
-    public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
-    public static final String FILES = "files";
-    public static final String FILES_STATUS = "filesStatus";
     public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
@@ -55,11 +54,12 @@ public final class Words {
     public static final String LANGUAGE = "language";
     public static final String LICENSE = "license";
     public static final String MAIN_TITLE = "mainTitle";
+    public static final String MESSAGES = "messages";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
     public static final String NONE = "none";
+    public static final String NOTIFICATIONS = "notifications";
     public static final String NYNORSK_CODE = "nn";
-    public static final String ONE = "1";
     public static final String ONLINE_ISSN = "onlineIssn";
     public static final String ORC_ID = "orcId";
     public static final String OWNER = "owner";
@@ -74,18 +74,16 @@ public final class Words {
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String PUBLISHED_DATE = "publishedDate";
-    public static final String SCIENTIFIC_VALUE = "scientificValue";
     public static final String PUBLISHER = "publisher";
     public static final String Q = "q";
     public static final String QUOTE = "'";
-    public static final String QUOTE_DOUBLE = "\"";
-    public static final String CURLY_BRACKETS = "{";
-    public static final String CURLY_BRACKETS_END = "}";
     public static final String REFERENCE = "reference";
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
+    public static final String ROOT = "root";
     public static final String SAMI_CODE = "sme";
     public static final String SCIENTIFIC_INDEX = "scientificIndex";
+    public static final String SCIENTIFIC_VALUE = "scientificValue";
     public static final String SCOPUS_AS_TYPE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
@@ -105,13 +103,11 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
-    public static final String NOTIFICATIONS = "notifications";
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
+    public static final String VIEWED_BY = "viewedBy";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
-    public static final String MESSAGES = "messages";
-    public static final String VIEWED_BY = "viewedBy";
 
     @JacocoGenerated
     public Words() {

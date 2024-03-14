@@ -61,6 +61,7 @@ import static org.opensearch.index.query.QueryBuilders.termQuery;
 import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -142,7 +143,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             : Arrays.stream(field.split(COMMA))
                 .map(ResourceParameter::keyFromString)
                 .flatMap(this::getFieldNameBoost)
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                .sorted(Map.Entry.comparingByKey())
+                .collect(
+                    LinkedHashMap::new,
+                    (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+                    LinkedHashMap::putAll
+                );
     }
 
     @Override
