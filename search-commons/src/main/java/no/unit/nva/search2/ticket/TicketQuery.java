@@ -12,7 +12,6 @@ import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
-import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
@@ -73,6 +72,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         assignImpossibleWhiteListFilters();
     }
 
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
     protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
         return switch (key) {
@@ -217,7 +217,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private boolean isDefined(String keyName) {
         return getValue(AGGREGATION)
-                .asSplitStream(COMMA)
+            .asSplitStream(COMMA)
             .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
     }
 
@@ -271,7 +271,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), NONE);
+                    case AGGREGATION -> setValue(key.fieldName(), ALL);
                     default -> { /* ignore and continue */ }
                 }
             });

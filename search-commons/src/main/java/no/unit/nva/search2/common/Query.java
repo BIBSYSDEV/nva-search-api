@@ -83,6 +83,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract Map<String, String> aggregationsDefinition();
 
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
 
     protected Query() {

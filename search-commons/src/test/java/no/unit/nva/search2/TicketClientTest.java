@@ -171,7 +171,7 @@ class TicketClientTest {
                 TicketQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
                     .withRequiredOrganization(testOrganizationId)
                     .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
@@ -284,7 +284,7 @@ class TicketClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0&aggregation=all", 19),
+                createArgument("page=0&aggregation=all,the,best,", 19),
                 createArgument("page=1&aggregation=all&size=1", 1),
                 createArgument("page=2&aggregation=all&size=1", 1),
                 createArgument("page=3&aggregation=all&size=1", 1),
@@ -294,20 +294,26 @@ class TicketClientTest {
                 createArgument("offset=15&aggregation=all&results=2", 2),
                 createArgument("offset=15&aggregation=all&per_page=2", 2),
                 createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
-                createArgument("offset=15&aggregation=all&perPage=2", 2)
+                createArgument("offset=15&perPage=2", 2)
             );
         }
 
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
+                URI.create(REQUEST_BASE_URL + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
                 URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"));
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&SEARCH_AFTER=12312")
+
+            );
         }
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
-                URI.create(REQUEST_BASE_URL + "sort=epler"),
+                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
                 URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
                 URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
                 URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),

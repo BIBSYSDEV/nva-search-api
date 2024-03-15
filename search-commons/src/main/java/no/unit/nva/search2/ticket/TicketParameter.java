@@ -21,6 +21,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
@@ -98,7 +99,7 @@ public enum TicketParameter implements ParameterKey {
     VIEWED_BY_NOT(TEXT, NO_ITEMS, VIEWED_BY_FIELDS),
 
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),

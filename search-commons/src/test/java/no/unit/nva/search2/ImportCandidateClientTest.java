@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREATED_DATE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
@@ -163,7 +164,7 @@ class ImportCandidateClientTest {
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
                              .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE)
+                             .withRequiredParameters(FROM, SIZE, AGGREGATION)
                              .build()
                              .doSearch(importCandidateClient));
         }
@@ -182,22 +183,20 @@ class ImportCandidateClientTest {
 
         static Stream<URI> uriSortingProvider() {
             return Stream.of(
-                URI.create(
-                    "https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date&order"
-                    + "=desc"),
+                URI.create("https://example.com/?sort=title&sortOrder=asc&sort=created_date&order=desc"),
                 URI.create("https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
                 URI.create("https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
                 URI.create("https://example.com/?category=AcademicArticle&size=10&from=0&sort=created_date"),
-                URI.create(
-                    "https://example.com/?category=AcademicArticle&orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
-                URI.create("https://example.com/?category=AcademicArticle&orderBy=title:asc,"
-                           + "CREATED_DATE:desc&searchAfter=1241234,23412"),
+                URI.create("https://example.com/?orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
+                URI.create("https://example.com/?orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
                 URI.create("https://example.com/?category=AcademicArticle&sort=TYPE+asc&sort=INSTANCE_TYPE+desc"));
         }
 
         static Stream<URI> uriProvider() {
             return Stream.of(
                 URI.create("https://example.com/?size=8"),
+                URI.create("https://example.com/?aggregation=ALL&size=8"),
+                URI.create("https://example.com/?aggregation=title,werf&size=8"),
                 URI.create("https://example.com/?category=AcademicArticle&size=5"),
                 URI.create("https://example.com/?CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
                 URI.create("https://example.com/?CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),

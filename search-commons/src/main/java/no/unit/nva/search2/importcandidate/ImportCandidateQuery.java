@@ -74,16 +74,14 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         super();
     }
 
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
     protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> customQueryBuilders(
         ImportCandidateParameter key) {
         return switch (key) {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            default -> {
-                logger.error("unhandled key -> {}", key.name());
-                yield Stream.empty();
-            }
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
@@ -176,8 +174,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     private boolean isDefined(String key) {
-        return getValue(AGGREGATION).asStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
+        return getValue(AGGREGATION)
+            .asSplitStream(COMMA)
             .anyMatch(name -> name.equals(ALL) || name.equals(key));
     }
 
@@ -209,7 +207,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), Words.NONE);
+                    case AGGREGATION -> setValue(key.fieldName(), ALL);
                     default -> { /* do nothing */
                     }
                 }
