@@ -153,6 +153,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract boolean isKeyValid(String keyName);
 
+    protected abstract boolean isAggregationValid(String aggregationName);
+
     /**
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
      * <p>Usage:</p>
@@ -270,6 +272,15 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .filter(this::isKeyValid)           // ignoring invalid keys
                 .collect(Collectors.joining(COMMA));
     }
+
+    protected String ignoreInvalidAggregations(String value) {
+        return ALL.equals(value)
+            ? ALL
+            : Arrays.stream(value.split(COMMA))
+                .filter(this::isAggregationValid)           // ignoring invalid keys
+                .collect(Collectors.joining(COMMA));
+    }
+
 
     protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;

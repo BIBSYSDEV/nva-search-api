@@ -22,6 +22,7 @@ import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
+import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
@@ -202,7 +203,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
-        Constants.getTicketsAggregations(username)
+        getTicketsAggregations(username)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
@@ -265,6 +266,12 @@ public final class TicketQuery extends Query<TicketParameter> {
         }
 
         @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return getTicketsAggregations("").stream()
+                .anyMatch(builder -> builder.getName().equals(aggregationName));
+        }
+
+        @Override
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
@@ -287,6 +294,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->

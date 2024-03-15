@@ -340,6 +340,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
 
         @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return RESOURCES_AGGREGATIONS.stream().anyMatch(builder -> builder.getName().equals(aggregationName));
+        }
+
+        @Override
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
@@ -362,6 +367,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,

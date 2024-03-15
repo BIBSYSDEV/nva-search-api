@@ -4,19 +4,14 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
-import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
-import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
-import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
@@ -27,6 +22,7 @@ import static no.unit.nva.search2.common.enums.PublicationStatus.NEW;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
@@ -62,6 +58,7 @@ import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -84,6 +81,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
+import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,8 +162,9 @@ class ResourceClientTest {
 
             assertNotNull(response1);
 
-            var aggregationsList = String.join(COMMA, ASSOCIATED_ARTIFACTS, ENTITY_DESCRIPTION, FUNDINGS,
-                                               STATUS, SCIENTIFIC_INDEX, TOP_LEVEL_ORGANIZATION, FILES);
+            var aggregationsList = RESOURCES_AGGREGATIONS.stream()
+                .map(AggregationBuilder::getName)
+                .collect(Collectors.joining(COMMA));
             var uri2 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + aggregationsList);
 
             var query2 = ResourceQuery.builder()

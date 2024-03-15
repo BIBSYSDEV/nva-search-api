@@ -14,6 +14,7 @@ import static no.unit.nva.search2.common.constant.Words.CODE;
 import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.COURSE;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
@@ -101,7 +102,9 @@ public final class Constants {
 
     public static final String UNIT_PATHS = multipleFields(
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
-        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
+        jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
+
+        //        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
     );
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
@@ -160,7 +163,8 @@ public final class Constants {
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
     public static final String TOP_LEVEL_ORG_ID = multipleFields(
         TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD,
-        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
+        jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
+        //        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
     );
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
