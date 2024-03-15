@@ -173,10 +173,12 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             .orElse(false);
     }
 
-    private boolean isDefined(String key) {
+    private boolean isDefined(String keyName) {
+        var lowerCaseName = keyName.toLowerCase();
         return getValue(AGGREGATION)
             .asSplitStream(COMMA)
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+            .map(String::toLowerCase)
+            .anyMatch(name -> name.equals(ALL) || name.equals(lowerCaseName));
     }
 
     public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(

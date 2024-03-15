@@ -54,7 +54,6 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
-import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -217,13 +216,18 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private boolean isDefined(String keyName) {
+        var lowerCaseName = keyName.toLowerCase();
         return getValue(AGGREGATION)
             .asSplitStream(COMMA)
-            .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
+            .map(String::toLowerCase)
+            .anyMatch(name -> name.equals(ALL) ||
+                              name.equals(lowerCaseName) ||
+                              isNotificationAggregation(lowerCaseName)
+            );
     }
 
     private static boolean isNotificationAggregation(String name) {
-        return name.toLowerCase(LocaleBeanUtils.getDefaultLocale()).contains("notification");
+        return name.contains("notification");
     }
 
 
