@@ -13,11 +13,9 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
-
 
     public static boolean hasContent(String value) {
         return nonNull(value) && !value.isEmpty();
@@ -80,11 +78,5 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
             }
         };
         return Stream.of(entry);
-    }
-
-    public Stream<Entry<K, QueryBuilder>> boolQuery(K key, String value) {
-        return queryToEntry(
-            key, QueryBuilders.termQuery(getFirstSearchField(key), Boolean.valueOf(value))
-        );
     }
 }

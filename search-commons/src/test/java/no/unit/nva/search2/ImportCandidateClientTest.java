@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREATED_DATE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
@@ -85,7 +86,7 @@ class ImportCandidateClientTest {
     }
 
     @Nested
-    class ImportCandidateTest {
+    class NestedTests {
 
         @Test
         void openSearchFailedResponse() throws IOException, InterruptedException {
@@ -114,7 +115,7 @@ class ImportCandidateClientTest {
             var query =
                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
@@ -131,7 +132,7 @@ class ImportCandidateClientTest {
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult = ImportCandidateQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .withMediaType(Words.TEXT_CSV)
                 .build()
@@ -145,7 +146,7 @@ class ImportCandidateClientTest {
             var query =
                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
@@ -162,8 +163,8 @@ class ImportCandidateClientTest {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
-                             .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE)
+                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                             .withRequiredParameters(FROM, SIZE, AGGREGATION)
                              .build()
                              .doSearch(importCandidateClient));
         }
@@ -174,7 +175,7 @@ class ImportCandidateClientTest {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
-                             .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                              .withRequiredParameters(FROM, SIZE, CREATED_DATE)
                              .build()
                              .doSearch(importCandidateClient));

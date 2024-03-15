@@ -11,9 +11,8 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.FILTER;
 import static no.unit.nva.search2.common.constant.Words.ID;
-import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
@@ -22,6 +21,7 @@ import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
+import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.enums.ParameterKey;
@@ -103,7 +104,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     @Override
-    public AsType getSort() {
+    public AsType<TicketParameter> getSort() {
         return getValue(SORT);
     }
 
@@ -184,8 +185,8 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
-        Constants.getTicketsAggregations(username)
+        var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
+        getTicketsAggregations(username)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
@@ -229,7 +230,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      */
     private void assignImpossibleWhiteListFilters() {
         var filterType =
-            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + FILTER);
+            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
         final var filterId =
             new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
         setFilters(filterType, filterId);
@@ -254,7 +255,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                     case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.fieldName(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), NONE);
+                    case AGGREGATION -> setValue(key.fieldName(), ALL);
                     default -> { /* ignore and continue */ }
                 }
             });

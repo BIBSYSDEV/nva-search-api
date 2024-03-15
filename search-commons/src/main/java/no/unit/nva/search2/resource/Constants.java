@@ -190,21 +190,21 @@ public final class Constants {
         + ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD;
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
-        TYPE, "/filter/entityDescription/reference/publicationInstance/type",
-        COURSE, "/filter/entityDescription/reference/publicationContext/course",
-        SERIES, "/filter/entityDescription/reference/publicationContext/series/id",
-        STATUS, "/filter/status",
-        LICENSE, "/filter/associatedArtifacts/license"
+        TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
+        COURSE, "/withAppliedFilter/entityDescription/reference/publicationContext/course",
+        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
+        STATUS, "/withAppliedFilter/status",
+        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
-        FILES, "/filter/files",
-        PUBLISHER, "/filter/entityDescription/reference/publicationContext/publisher",
-        JOURNAL, "/filter/entityDescription/reference/publicationContext/journal/id",
-        CONTRIBUTOR, "/filter/entityDescription/contributor/id",
-        CONTEXT_TYPE, "/filter/entityDescription/reference/publicationContext/contextType",
-        FUNDING_SOURCE, "/filter/fundings/id",
-        TOP_LEVEL_ORGANIZATION, "/filter/topLevelOrganizations/id",
-        SCIENTIFIC_INDEX, "/filter/scientificIndex/year"
+        FILES, "/withAppliedFilter/files",
+        PUBLISHER, "/withAppliedFilter/entityDescription/reference/publicationContext/publisher",
+        JOURNAL, "/withAppliedFilter/entityDescription/reference/publicationContext/journal/id",
+        CONTRIBUTOR, "/withAppliedFilter/entityDescription/contributor/id",
+        CONTEXT_TYPE, "/withAppliedFilter/entityDescription/reference/publicationContext/contextType",
+        FUNDING_SOURCE, "/withAppliedFilter/fundings/id",
+        TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/topLevelOrganizations/id",
+        SCIENTIFIC_INDEX, "/withAppliedFilter/scientificIndex/year"
     );
 
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =

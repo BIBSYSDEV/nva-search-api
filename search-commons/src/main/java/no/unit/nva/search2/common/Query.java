@@ -1,6 +1,5 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
@@ -11,7 +10,6 @@ import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
-import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -36,15 +33,13 @@ import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
-import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -67,7 +62,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
-    public abstract AsType getSort();
+    public abstract AsType<K> getSort();
 
     protected abstract Integer getFrom();
 
@@ -87,6 +82,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected abstract boolean isPagingValue(K key);
 
     protected abstract Map<String, String> aggregationsDefinition();
+
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -145,8 +143,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * @param key to look up.
      * @return String content raw
      */
-    public AsType getValue(K key) {
-        return new AsType(
+    public AsType<K> getValue(K key) {
+        return new AsType<>(
             searchParameters.containsKey(key)
                 ? searchParameters.get(key)
                 : pageParameters.get(key),
@@ -173,8 +171,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
     }
 
-    public AsType removeKey(K key) {
-        return new AsType(
+    public AsType<K> removeKey(K key) {
+        return new AsType<>(
             searchParameters.containsKey(key)
             ? searchParameters.remove(key)
                 : pageParameters.remove(key),
@@ -196,7 +194,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return searchParameters.isEmpty();
     }
 
-    private MediaType getMediaType() {
+    protected MediaType getMediaType() {
         return mediaType;
     }
 
@@ -266,6 +264,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return boolQueryBuilder;
     }
 
+    protected SearchSourceBuilder defaultSearchSourceBuilder(QueryBuilder queryBuilder) {
+        return new SearchSourceBuilder()
+            .query(queryBuilder)
+            .size(getSize())
+            .from(getFrom())
+            .postFilter(getFilters())
+            .trackTotalHits(true);
+    }
+
+
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
         return getSort().asStream()
@@ -278,7 +286,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
         return switch (key.fieldType()) {
-            case BOOLEAN -> queryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
@@ -293,22 +300,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
-
-
     /**
      * Creates a multi match query, all words needs to be present, within a document.
      *
      * @return a MultiMatchQueryBuilder
      */
-    private MultiMatchQueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
+    private QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
         var value = getValue(searchAllKey).toString();
-
-        return QueryBuilders
-            .multiMatchQuery(value, fields)
-            .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-            .operator(Operator.AND);
+        logger.info(value);
+        return QueryBuilders.multiMatchQuery(value, fields).type(Type.CROSS_FIELDS).operator(Operator.AND);
     }
 
     private Stream<K> getSearchParameterKeys() {
@@ -342,111 +343,5 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private boolean isMustNot(K key) {
         return NO_ITEMS.equals(key.searchOperator())
                || NOT_ONE_ITEM.equals(key.searchOperator());
-    }
-
-
-    protected SearchSourceBuilder defaultSearchSourceBuilder(QueryBuilder queryBuilder) {
-        return new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .postFilter(getFilters())
-            .trackTotalHits(true);
-    }
-
-    /**
-     * AutoConvert value to Date, Number (or String)
-     * <p>Also holds key and can return value as <samp>optional stream</samp></p>
-     */
-    @SuppressWarnings({"PMD.ShortMethodName"})
-    public class AsType {
-
-        private final String value;
-        private final K key;
-
-        public AsType(String value, K key) {
-            this.value = value;
-            this.key = key;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public <T> T as() {
-            if (isNull(value)) {
-                return null;
-            }
-            if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
-                logger.warn("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
-            }
-            return (T) switch (getKey().fieldType()) {
-                case DATE -> castDateTime();
-                case NUMBER -> castNumber();
-                case BOOLEAN -> castBoolean();
-                default -> value;
-            };
-        }
-
-        public String stripped() {
-            return nonNull(value)
-                ? value.replaceAll(" .-/", "")
-                : null;
-        }
-
-        /**
-         * @param delimiter regex to split on
-         * @return The value split, or null.
-         */
-        public String[] split(String delimiter) {
-            return nonNull(value)
-                ? value.split(delimiter)
-                : null;
-        }
-
-        /**
-         * @param delimiter regex to split on
-         * @return The value as an optional Stream, split by delimiter.
-         */
-        public Stream<String> asSplitStream(String delimiter) {
-            return asStream()
-                .flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
-        }
-
-        /**
-         * @return The value as an optional Stream.
-         */
-        public Stream<String> asStream() {
-            return Optional.ofNullable(value).stream();
-        }
-
-        public Boolean asBoolean() {
-            return Boolean.parseBoolean(value);
-        }
-
-        public DateTime asDateTime() {
-            return DateTime.parse(value);
-        }
-
-        public Number asNumber() {
-            return Integer.parseInt(value);
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-
-        private <T> T castDateTime() {
-            return ((Class<T>) DateTime.class).cast(asDateTime());
-        }
-
-        private <T extends Number> T castNumber() {
-            return (T) attempt(this::asNumber).orElseThrow();
-        }
-
-        private <T> T castBoolean() {
-            return ((Class<T>) Boolean.class).cast(asBoolean());
-        }
     }
 }
