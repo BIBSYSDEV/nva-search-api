@@ -266,7 +266,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     protected String ignoreInvalidFields(String value) {
-        return ALL.equals(value) || isNull(value)
+        return ALL.equalsIgnoreCase(value) || isNull(value)
             ? ALL
             : Arrays.stream(value.split(COMMA))
                 .filter(this::isKeyValid)           // ignoring invalid keys
@@ -274,7 +274,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     protected String ignoreInvalidAggregations(String value) {
-        return ALL.equals(value)
+        return isNull(value) || value.contains(ALL) || value.contains("ALL")
             ? ALL
             : Arrays.stream(value.split(COMMA))
                 .filter(this::isAggregationValid)           // ignoring invalid keys

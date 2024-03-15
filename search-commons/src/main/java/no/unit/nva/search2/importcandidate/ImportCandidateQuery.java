@@ -271,7 +271,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected boolean isAggregationValid(String aggregationName) {
             return IMPORT_CANDIDATES_AGGREGATIONS.stream()
-                .anyMatch(builder -> builder.getName().equals(aggregationName));
+                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

@@ -216,13 +216,12 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private boolean isDefined(String keyName) {
-        var lowerCaseName = keyName.toLowerCase();
         return getValue(AGGREGATION)
             .asSplitStream(COMMA)
             .map(String::toLowerCase)
-            .anyMatch(name -> name.equals(ALL) ||
-                              name.equals(lowerCaseName) ||
-                              isNotificationAggregation(lowerCaseName)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) ||
+                              name.equalsIgnoreCase(keyName) ||
+                              isNotificationAggregation(keyName.toLowerCase())
             );
     }
 
@@ -272,7 +271,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected boolean isAggregationValid(String aggregationName) {
             return getTicketsAggregations("").stream()
-                .anyMatch(builder -> builder.getName().equals(aggregationName));
+                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override

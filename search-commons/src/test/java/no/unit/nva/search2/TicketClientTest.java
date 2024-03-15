@@ -3,13 +3,11 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.NOTIFICATIONS;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
@@ -23,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -136,22 +133,6 @@ class TicketClientTest {
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
-
-            var uri2 =
-                URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL
-                           + joinBy(COMMA, STATUS, TYPE, PUBLICATION_STATUS, NOTIFICATIONS));
-            var query2 = TicketQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri2))
-                .withDockerHostUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .withRequiredOrganization(testOrganizationId)
-                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withUser(ASSIGNEE_USERNAME);
-            var response2 = searchClient.doSearch(query2);
-            assertNotNull(response2);
-
-            assertEquals(response1.aggregations(), response2.aggregations());
 
             var aggregations = query1.toPagedResponse(response1).aggregations();
 

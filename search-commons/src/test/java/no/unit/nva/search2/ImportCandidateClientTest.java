@@ -196,7 +196,7 @@ class ImportCandidateClientTest {
             return Stream.of(
                 URI.create("https://example.com/?size=8"),
                 URI.create("https://example.com/?aggregation=ALL&size=8"),
-                URI.create("https://example.com/?aggregation=title,werf&size=8"),
+                URI.create("https://example.com/?aggregation=importStatus&size=8"),
                 URI.create("https://example.com/?category=AcademicArticle&size=5"),
                 URI.create("https://example.com/?CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
                 URI.create("https://example.com/?CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),

@@ -109,7 +109,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var query =
             getValue(EXCLUDE_SUBUNITS).asBoolean()
                 ? termQuery(getTermPath(key), getValue(key).as())
-                : matchQuery(getMatchPath(key), getValue(key).as());
+                : termQuery(getMatchPath(key), getValue(key).as());
 
         return queryTools.queryToEntry(key, query);
     }
@@ -119,7 +119,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private String getMatchPath(ResourceParameter key) {
-        return key.searchFields(false).skip(1).findFirst().orElseThrow();
+        return key.searchFields(true).skip(1).findFirst().orElseThrow();
     }
 
     @Override
@@ -343,7 +343,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         @Override
         protected boolean isAggregationValid(String aggregationName) {
-            return RESOURCES_AGGREGATIONS.stream().anyMatch(builder -> builder.getName().equals(aggregationName));
+            return RESOURCES_AGGREGATIONS.stream()
+                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
