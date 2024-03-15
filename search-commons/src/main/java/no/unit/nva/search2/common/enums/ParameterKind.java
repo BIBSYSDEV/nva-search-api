@@ -3,7 +3,8 @@ package no.unit.nva.search2.common.enums;
 public enum ParameterKind {
     INVALID,
     /**
-     * ignored parameters are not processed by standard or custom handing
+     * Ignored parameters are not processed by standard or custom handing.
+     * Normally used in conjection with other parameters in custom handlers or paging.
      */
     IGNORED,
     BOOLEAN,

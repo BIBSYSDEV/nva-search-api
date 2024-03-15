@@ -103,19 +103,21 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
 
     /**
-     * Adds parameters from query.
+     * Adds testParameters from query.
+     * @apiNote This is intended to be used when setting up tests.
      */
-    public ParameterValidator<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> parameters) {
-        parameters.forEach(this::setEntryValue);
+    public ParameterValidator<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> testParameters) {
+        testParameters.forEach(this::setEntryValue);
         return this;
     }
 
     /**
-     * Adds parameters from query.
+     * Adds testParameters from query.
+     * @apiNote This is intended to be used when setting up tests.
      */
     @JacocoGenerated
-    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> parameters) {
-        parameters.forEach(this::setValue);
+    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> testParameters) {
+        testParameters.forEach(this::setValue);
         return this;
     }
 
@@ -142,8 +144,9 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * When running docker tests, the current host needs to be specified.
      * @param  uri URI to local docker test instance
+     * @apiNote This is intended to be used when setting up tests.
      */
-    public final ParameterValidator<K, Q> withOpensearchUri(URI uri) {
+    public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
         query.setOpenSearchUri(uri);
         return this;
     }

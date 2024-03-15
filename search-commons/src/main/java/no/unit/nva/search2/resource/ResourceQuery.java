@@ -1,5 +1,6 @@
 package no.unit.nva.search2.resource;
 
+import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
@@ -19,12 +20,12 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search2.common.constant.Words.FILTER;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.PI;
+import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
@@ -68,6 +69,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
@@ -147,7 +149,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    public AsType getSort() {
+    public AsType<ResourceParameter> getSort() {
         return getValue(SORT);
     }
 
@@ -217,9 +219,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         getSortStream()
             .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
 
-        builder.aggregation(getAggregationsWithFilter());
-
-        logger.debug(builder.toString());
+        if (getMediaType().is(JSON_UTF_8)) {
+            builder.aggregation(getAggregationsWithFilter());
+        }
+        logger.info(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -233,7 +236,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(FILTER, getFilters());
+        var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
@@ -250,7 +253,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     private boolean isDefined(String keyName) {
         return getValue(AGGREGATION)
             .asSplitStream(COMMA)
-            .anyMatch(name -> name.equals(ALL) || name.equals(keyName));
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {

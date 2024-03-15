@@ -136,7 +136,7 @@ class ResourceClientTest {
     }
 
     @Nested
-    class ResourceQueries {
+    class NestedTests {
 
         @Test
         void shouldCheckMapping() {
@@ -157,7 +157,7 @@ class ResourceClientTest {
 
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
-                .withOpensearchUri(hostAddress)
+                .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
@@ -171,7 +171,7 @@ class ResourceClientTest {
 
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
-                .withOpensearchUri(hostAddress)
+                .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
@@ -207,7 +207,7 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
@@ -229,7 +229,7 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
@@ -250,7 +250,7 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
@@ -266,7 +266,7 @@ class ResourceClientTest {
             var pagedResult =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
                     .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
@@ -282,7 +282,7 @@ class ResourceClientTest {
             var query =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
                     .withRequiredStatus(PUBLISHED_METADATA, PUBLISHED)
@@ -304,7 +304,7 @@ class ResourceClientTest {
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
@@ -326,7 +326,7 @@ class ResourceClientTest {
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
@@ -351,7 +351,7 @@ class ResourceClientTest {
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
                     .withRequiredStatus(PUBLISHED_METADATA)
@@ -366,7 +366,7 @@ class ResourceClientTest {
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
@@ -386,7 +386,7 @@ class ResourceClientTest {
                 () -> ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .doSearch(searchClient));
         }
@@ -398,7 +398,7 @@ class ResourceClientTest {
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.fieldName(), "2019",
                                                 SCIENTIFIC_REPORT_PERIOD_BEFORE.fieldName(), "2022"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
@@ -416,7 +416,7 @@ class ResourceClientTest {
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.fieldName(), "2019",
                                                 SCIENTIFIC_REPORT_PERIOD_BEFORE.fieldName(), "2020"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
@@ -439,7 +439,7 @@ class ResourceClientTest {
                     .fromQueryParameters(Map.of(UNIT.fieldName(), viewingScope,
                                                 EXCLUDE_SUBUNITS.fieldName(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
@@ -466,7 +466,7 @@ class ResourceClientTest {
                                                 UNIT.fieldName(), secondLevelOfViewingScope,
                                                 EXCLUDE_SUBUNITS.fieldName(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
 
@@ -490,7 +490,7 @@ class ResourceClientTest {
                 ResourceQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.fieldName(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
 

@@ -81,14 +81,14 @@ public final class Constants {
         + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
 
     public static final Map<String, String> facetTicketsPaths = Map.of(
-        USER_NOTIFICATIONS, "/filter/UserNotification",
-        UNASSIGNED_NOTIFICATIONS, "/filter/UnassignedNotification",
-        DOI_REQUEST_NOTIFICATIONS, "/filter/DoiRequestNotification",
-        GENERAL_SUPPORT_NOTIFICATIONS, "/filter/GeneralSupportNotification",
-        PUBLISHING_REQUEST_NOTIFICATIONS, "/filter/PublishingRequestNotification",
-        STATUS, "/filter/status",
-        TYPE, "/filter/type",
-        PUBLICATION_STATUS, "/filter/publication/status");
+        USER_NOTIFICATIONS, "/withAppliedFilter/UserNotification",
+        UNASSIGNED_NOTIFICATIONS, "/withAppliedFilter/UnassignedNotification",
+        DOI_REQUEST_NOTIFICATIONS, "/withAppliedFilter/DoiRequestNotification",
+        GENERAL_SUPPORT_NOTIFICATIONS, "/withAppliedFilter/GeneralSupportNotification",
+        PUBLISHING_REQUEST_NOTIFICATIONS, "/withAppliedFilter/PublishingRequestNotification",
+        STATUS, "/withAppliedFilter/status",
+        TYPE, "/withAppliedFilter/type",
+        PUBLICATION_STATUS, "/withAppliedFilter/publication/status");
 
     @JacocoGenerated
     public Constants() {

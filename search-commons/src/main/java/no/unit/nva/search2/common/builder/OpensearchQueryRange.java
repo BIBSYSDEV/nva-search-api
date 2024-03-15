@@ -10,12 +10,12 @@ import org.opensearch.index.query.QueryBuilders;
 
 public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
+    @JacocoGenerated    // never used
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
     }
 
-    @JacocoGenerated    // never used
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
