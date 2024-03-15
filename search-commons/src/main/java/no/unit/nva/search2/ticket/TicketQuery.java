@@ -41,6 +41,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -221,7 +222,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             .map(String::toLowerCase)
             .anyMatch(name -> name.equalsIgnoreCase(ALL) ||
                               name.equalsIgnoreCase(keyName) ||
-                              isNotificationAggregation(keyName.toLowerCase())
+                              isNotificationAggregation(keyName.toLowerCase(Locale.getDefault()))
             );
     }
 

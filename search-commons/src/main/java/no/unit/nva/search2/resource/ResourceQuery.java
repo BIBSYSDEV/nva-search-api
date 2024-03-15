@@ -250,11 +250,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private boolean isDefined(String keyName) {
-        var lowerCaseName = keyName.toLowerCase();
         return getValue(AGGREGATION)
             .asSplitStream(COMMA)
-            .map(String::toLowerCase)
-            .anyMatch(name -> name.equals(ALL) || name.equals(lowerCaseName));
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
