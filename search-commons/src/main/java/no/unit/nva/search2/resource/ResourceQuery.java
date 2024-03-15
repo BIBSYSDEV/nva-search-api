@@ -291,40 +291,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    //    public Stream<Entry<ResourceParameter, QueryBuilder>> createSubunitsQuery() {
-    //        var viewingScope = getViewingScope();
-    //        if (!viewingScope.isEmpty()) {
-    //            var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
-    //            return queryTools.queryToEntry(VIEWING_SCOPE, createSubunitQuery(shouldExcludeSubunits,
-    //            viewingScope));
-    //        } else {
-    //            return null;
-    //        }
-    //    }
-    //
-    //    private static QueryBuilder createSubunitQuery(Boolean shouldExcludeSubunits, List<String> viewingScope) {
-    //        return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
-    //    }
-    //
-    //    private List<String> getViewingScope() {
-    //        return Stream.concat(
-    //                getValue(TOP_LEVEL_ORGANIZATION).asStream(),
-    //                getValue(UNIT).asStream())
-    //                   .toList();
-    //    }
-    //
-    //    private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
-    //        var query = boolQuery();
-    //        query.should(termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
-    //        query.should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-    //                                viewingScope));
-    //        return query;
-    //    }
-    //
-    //    private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
-    //        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-    //                                        viewingScope);
-    //    }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
         final var values = getValue(key).split(COLON);
