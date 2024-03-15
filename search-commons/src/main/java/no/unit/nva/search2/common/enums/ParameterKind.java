@@ -4,7 +4,7 @@ public enum ParameterKind {
     INVALID,
     /**
      * Ignored parameters are not processed by standard or custom handing.
-     * Normally used in conjecture with other parameters in custom handlers or paging.
+     * Normally used in conjection with other parameters in custom handlers or paging.
      */
     IGNORED,
     BOOLEAN,
