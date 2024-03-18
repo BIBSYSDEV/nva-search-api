@@ -49,6 +49,7 @@ public final class Constants {
     public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
+    public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
     public static final String MESSAGE_FIELDS =
         MESSAGES + DOT + TYPE_KEYWORD + PIPE
         + MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
@@ -57,7 +58,7 @@ public final class Constants {
         OWNER + DOT + TYPE_KEYWORD + PIPE
         + OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
         + OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-        + OWNER + DOT + USERNAME + DOT + KEYWORD;
+        + OWNER_USERNAME;
     public static final String VIEWED_BY_FIELDS =
         VIEWED_BY + DOT + TYPE_KEYWORD + PIPE
         + VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE

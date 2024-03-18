@@ -308,7 +308,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
         var value = getValue(searchAllKey).toString();
-        logger.info(value);
+        logger.debug(value);
         return QueryBuilders.multiMatchQuery(value, fields).type(Type.CROSS_FIELDS).operator(Operator.AND);
     }
 
