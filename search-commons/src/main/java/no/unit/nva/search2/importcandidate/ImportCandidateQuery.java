@@ -15,6 +15,7 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -268,8 +269,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected boolean isAggregationValid(String aggregationName) {
-            return IMPORT_CANDIDATES_AGGREGATIONS.stream()
-                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                IMPORT_CANDIDATES_AGGREGATIONS.stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

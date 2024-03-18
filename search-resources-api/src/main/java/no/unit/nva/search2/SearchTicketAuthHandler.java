@@ -41,7 +41,7 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
-                .setContextAndAuthorize(requestInfo)
+                .applyContextAndAuthorize(requestInfo)
                 .doSearch(opensearchClient);
     }
 

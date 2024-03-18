@@ -12,6 +12,7 @@ import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
@@ -153,7 +154,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param requestInfo all required is here
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery setContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
+    public TicketQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
         var organization = requestInfo.getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
 
@@ -335,8 +336,11 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         @Override
         protected boolean isAggregationValid(String aggregationName) {
-            return getTicketsAggregations("").stream()
-                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                getTicketsAggregations("").stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
