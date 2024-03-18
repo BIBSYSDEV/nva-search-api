@@ -70,7 +70,7 @@ class TicketClientTest {
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 5;
-    public static final String ASSIGNEE_USERNAME = "1412322@20754.0.0.0";
+    public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
 
@@ -127,9 +127,9 @@ class TicketClientTest {
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredOrganization(testOrganizationId)
-                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withUser(ASSIGNEE_USERNAME);
+                .withFilterOrganization(testOrganizationId)
+                .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .withFilterOwner(CURRENT_USERNAME);
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -154,9 +154,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME)
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterOwner(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -172,9 +172,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME);
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterOwner(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -194,9 +194,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME);
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterOwner(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -222,9 +222,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME)
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterOwner(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -238,9 +238,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME);
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterOwner(CURRENT_USERNAME);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
