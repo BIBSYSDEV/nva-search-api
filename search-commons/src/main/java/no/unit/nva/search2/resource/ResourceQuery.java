@@ -19,6 +19,7 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
@@ -238,7 +239,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         if (getMediaType().is(JSON_UTF_8)) {
             builder.aggregation(getAggregationsWithFilter());
         }
-        logger.info(builder.toString());
+        logger.debug(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -385,8 +386,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         @Override
         protected boolean isAggregationValid(String aggregationName) {
-            return RESOURCES_AGGREGATIONS.stream()
-                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                RESOURCES_AGGREGATIONS.stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
