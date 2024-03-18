@@ -188,10 +188,10 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @return TicketQuery (builder pattern)
      */
     public TicketQuery withFilterTicketType(TicketType... ticketTypes) {
-        this.ticketTypes = ticketTypes;
-        var ticketStringTypes = Arrays.stream(ticketTypes).map(Object::toString).toList();
-        final var filter = new TermsQueryBuilder(TYPE_KEYWORD, ticketStringTypes)
-            .queryName(TICKETS + TYPE);
+        this.ticketTypes = ticketTypes.clone();
+        final var filter =
+            new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::name))
+                .queryName(TICKETS + TYPE);
         this.addFilter(filter);
         return this;
     }
