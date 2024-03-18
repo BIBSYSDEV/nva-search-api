@@ -129,7 +129,7 @@ class TicketClientTest {
                 .build()
                 .withFilterOrganization(testOrganizationId)
                 .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withFilterOwner(CURRENT_USERNAME);
+                .withFilterCurrentUser(CURRENT_USERNAME);
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -156,7 +156,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterOwner(CURRENT_USERNAME)
+                    .withFilterCurrentUser(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -174,7 +174,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterOwner(CURRENT_USERNAME);
+                    .withFilterCurrentUser(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -196,7 +196,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterOwner(CURRENT_USERNAME);
+                    .withFilterCurrentUser(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -224,7 +224,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterOwner(CURRENT_USERNAME)
+                    .withFilterCurrentUser(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -240,7 +240,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterOwner(CURRENT_USERNAME);
+                    .withFilterCurrentUser(CURRENT_USERNAME);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);

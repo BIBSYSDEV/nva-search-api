@@ -75,7 +75,7 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
 
-    private String username;
+    private String currentUser;
     private TicketType[] ticketTypes;
 
     private TicketQuery() {
@@ -87,7 +87,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     @Override
     protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
         return switch (key) {
-            case ASSIGNEE -> byUserPending();
+            case ASSIGNEE -> byAssignee();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
@@ -159,7 +159,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         return withFilterTicketType(validateAccessRight(requestInfo))
             .withFilterOrganization(organization)
-            .withFilterOwner(requestInfo.getUserName());
+            .withFilterCurrentUser(requestInfo.getUserName());
     }
 
     /**
@@ -205,8 +205,8 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param userName current user
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery withFilterOwner(String userName) {
-        this.username = userName;
+    public TicketQuery withFilterCurrentUser(String userName) {
+        this.currentUser = userName;
         if (isUserOnly(ticketTypes)) {
             final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
                 .queryName(OWNER.fieldName());
@@ -257,9 +257,9 @@ public final class TicketQuery extends Query<TicketParameter> {
         return allowed.toArray(TicketType[]::new);
     }
 
-    private Stream<Entry<TicketParameter, QueryBuilder>> byUserPending() {
-        var searchByUserName = isPresent(BY_USER_PENDING)
-            ? username
+    private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
+        var searchByUserName = isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
+            ? currentUser
             : getValue(TicketParameter.ASSIGNEE).toString();
 
         return new OpensearchQueryText<TicketParameter>()
@@ -268,7 +268,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
-        getTicketsAggregations(username)
+        getTicketsAggregations(currentUser)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
