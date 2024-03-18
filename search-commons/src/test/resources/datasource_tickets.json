@@ -366,7 +366,6 @@
     "modifiedDate": "2024-02-27T17:12:24.485325786Z",
     "createdDate": "2023-02-26T10:44:38.550648576Z",
     "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status": "New",
     "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de5044416-7a3b7a74-978f-45fb-a743-c9c0b0d39e65",
     "messages": [],
     "viewedBy": [
@@ -463,14 +462,14 @@
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "partOf": []
-    }
+    },
+    "status": "New"
   },
   {
     "type": "GeneralSupportCase",
     "modifiedDate": "2024-02-27T16:53:08.323112217Z",
     "createdDate": "2024-02-26T10:46:35.728498816Z",
     "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
-    "status": "New",
     "id": "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1/ticket/018de5060dd0-3e2570f5-3d56-4479-b79e-4410b81626c7",
     "messages": [],
     "viewedBy": [
@@ -567,7 +566,8 @@
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "partOf": []
-    }
+    },
+    "status": "New"
   },
   {
     "type": "PublishingRequest",
@@ -765,12 +765,6 @@
       "identifier": "018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1",
       "mainTitle": "Min ikke fult så supre registrering"
     },
-    "finalizedBy": {
-      "type": "Person",
-      "firstName": "Anette Olli",
-      "lastName": "Siiri",
-      "username": "1412322@20754.0.0.0"
-    },
     "owner": {
       "type": "Person",
       "firstName": "Anette Olli",
@@ -787,11 +781,11 @@
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
       "partOf": []
     },
-    "status": "Completed"
+    "status": "Pending"
   },
   {
     "type": "DoiRequest",
-    "status": "Completed",
+    "status": "Pending",
     "modifiedDate": "2024-02-27T16:54:41.974063176Z",
     "createdDate": "2022-02-26T10:41:52.229720596Z",
     "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
@@ -889,12 +883,6 @@
       "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
       "identifier": "018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d",
       "mainTitle": "Min ikke så fullt supre registrering"
-    },
-    "finalizedBy": {
-      "type": "Person",
-      "firstName": "Anette Olli",
-      "lastName": "Siiri",
-      "username": "1412322@20754.0.0.0"
     },
     "owner": {
       "type": "Person",

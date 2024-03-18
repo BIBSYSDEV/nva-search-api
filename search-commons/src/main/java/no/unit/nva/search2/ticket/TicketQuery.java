@@ -16,6 +16,7 @@ import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.enums.TicketStatus.PENDING;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
@@ -23,6 +24,7 @@ import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
@@ -30,6 +32,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
+import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.keyFromString;
 import static no.unit.nva.search2.ticket.TicketSort.INVALID;
 import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
@@ -38,6 +41,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -46,11 +50,11 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
-import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -69,9 +73,22 @@ public final class TicketQuery extends Query<TicketParameter> {
         assignImpossibleWhiteListFilters();
     }
 
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
     protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
-        return null;
+        return switch (key) {
+            case ASSIGNEE -> byUserPending();
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+        };
+    }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> byUserPending() {
+        var searchByUserName = isPresent(BY_USER_PENDING)
+            ? username
+            : getValue(TicketParameter.ASSIGNEE).toString();
+
+        return new OpensearchQueryText<TicketParameter>()
+            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
     }
 
     public static TicketParameterValidator builder() {
@@ -201,12 +218,16 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private boolean isDefined(String keyName) {
         return getValue(AGGREGATION)
-                .asSplitStream(COMMA)
-            .anyMatch(name -> name.equals(ALL) || name.equals(keyName) || isNotificationAggregation(name));
+            .asSplitStream(COMMA)
+            .map(String::toLowerCase)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) ||
+                              name.equalsIgnoreCase(keyName) ||
+                              isNotificationAggregation(keyName.toLowerCase(Locale.getDefault()))
+            );
     }
 
     private static boolean isNotificationAggregation(String name) {
-        return name.toLowerCase(LocaleBeanUtils.getDefaultLocale()).contains("notification");
+        return name.contains("notification");
     }
 
 
@@ -249,6 +270,12 @@ public final class TicketQuery extends Query<TicketParameter> {
         }
 
         @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return getTicketsAggregations("").stream()
+                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
+        }
+
+        @Override
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
@@ -271,6 +298,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
@@ -290,6 +318,10 @@ public final class TicketQuery extends Query<TicketParameter> {
                     query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
                 query.removeKey(PAGE);
+            }
+            if (query.isPresent(BY_USER_PENDING)) {
+                query.setKeyValue(TicketParameter.TYPE, query.getValue(BY_USER_PENDING).as());
+                query.setKeyValue(STATUS, PENDING.toString());
             }
         }
 

@@ -1,6 +1,7 @@
 {
   "page=0&size=21": 19,
   "ASSIGNEE=Anette+Olli": 11,
+  "ASSIGNEE=Kir&BY_USER_PENDING=DoiRequest": 1,
   "ASSIGNEE_NOT=Anette+Olli": 8,
   "CREATED_DATE=2024": 14,
   "CREATED_DATE=2023,2024": 2,
@@ -33,7 +34,11 @@
   "VIEWED_BY_NOT=Terje,Hellesvik": 14,
   "VIEWED_BY=Kir,Truhacev,Person": 11,
   "VIEWED_BY=Kir,Truhacev,Person,Terje,Hellesvik": 5,
-  "QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642": 0
+  "QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642": 0,
+  "QUERY=Kir+Truhacev": 11,
+  "QUERY=Kir+Truhacev&FIELDS=STATUS": 0,
+  "QUERY=Kir+Truhacev&FIELDS=STATUS,VIEWED_BY": 11,
+  "BY_USER_PENDING=DoiRequest": 1
 }
 
 

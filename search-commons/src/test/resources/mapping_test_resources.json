@@ -5,7 +5,11 @@
       "include_in_parent": true,
       "properties": {
         "labels": {
-          "type": "nested"
+          "type": "nested",
+          "include_in_parent": true
+        },
+        "hasPart": {
+          "type": "flat_object"
         }
       }
     },

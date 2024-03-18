@@ -173,10 +173,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             .orElse(false);
     }
 
-    private boolean isDefined(String key) {
-        return getValue(AGGREGATION).asStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    private boolean isDefined(String keyName) {
+        return getValue(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(
@@ -223,6 +223,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
@@ -263,6 +264,12 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected boolean isKeyValid(String keyName) {
             return keyFromString(keyName) != ImportCandidateParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return IMPORT_CANDIDATES_AGGREGATIONS.stream()
+                .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }
