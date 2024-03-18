@@ -153,7 +153,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param requestInfo all required is here
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery contextAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
+    public TicketQuery setContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
         var organization = requestInfo.getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
 
@@ -190,7 +190,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     public TicketQuery withFilterTicketType(TicketType... ticketTypes) {
         this.ticketTypes = ticketTypes.clone();
         final var filter =
-            new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::name))
+            new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::toString).toList())
                 .queryName(TICKETS + TYPE);
         this.addFilter(filter);
         return this;
@@ -230,7 +230,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         builder.aggregation(getAggregationsWithFilter());
 
-        logger.info(builder.toString());
+        logger.debug(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -310,9 +310,8 @@ public final class TicketQuery extends Query<TicketParameter> {
     /**
      * Add a (default) filter to the query that will never match any document.
      *
-     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     * <p>See  for the correct way to filter by status</p>
+     * <p>This whitelist the Query from any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withFilter* must be set </p>
      */
     private void assignImpossibleWhiteListFilters() {
         var filterType =

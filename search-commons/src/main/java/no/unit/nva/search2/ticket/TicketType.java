@@ -8,8 +8,8 @@ public enum TicketType {
 
     private final String type;
 
-    TicketType(String name) {
-        this.type = name;
+    TicketType(String typeName) {
+        this.type = typeName;
     }
 
     @Override
