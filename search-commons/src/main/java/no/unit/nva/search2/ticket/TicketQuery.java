@@ -1,6 +1,5 @@
 package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
@@ -8,7 +7,6 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
@@ -33,7 +31,6 @@ import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
-import static no.unit.nva.search2.ticket.TicketParameter.keyFromString;
 import static no.unit.nva.search2.ticket.TicketSort.INVALID;
 import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
 import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
@@ -51,7 +48,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
@@ -82,6 +78,11 @@ public final class TicketQuery extends Query<TicketParameter> {
         };
     }
 
+    @Override
+    protected TicketParameter keyFromString(String keyName) {
+        return TicketParameter.keyFromString(keyName);
+    }
+
     private Stream<Entry<TicketParameter, QueryBuilder>> byUserPending() {
         var searchByUserName = isPresent(BY_USER_PENDING)
             ? username
@@ -110,15 +111,6 @@ public final class TicketQuery extends Query<TicketParameter> {
         return FIELDS;
     }
 
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(TicketParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
-    }
 
     @Override
     public AsType<TicketParameter> getSort() {
@@ -266,7 +258,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != TicketParameter.INVALID;
+            return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
 
         @Override
@@ -290,7 +282,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key);
+            var qpKey = TicketParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
                 ? decodeUTF(value)
                 : value;

@@ -127,6 +127,8 @@
   "QUERY=https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0&FIELDS=INSTITUTION": 1,
   "QUERY=Kjetil+Møkkelgjerd&fields=contributorName": 3,
   "QUERY=observations&fields=all": 2,
+  "QUERY=societal+acceptable+risk+from+avalanches+for+three+building+classes+(S1,+S1,+and+S3).+The+corresponding+highest+allowed+nominal+annual+probabili": 1,
+  "QUERY=Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms,+and+": 1,
   "SCIENTIFIC_INDEX_STATUS=Reported": 4,
   "SCIENTIFIC_INDEX_STATUS_NOT=Reported": 17,
   "SCIENTIFIC_REPORT_PERIOD_SINCE=2019": 3,

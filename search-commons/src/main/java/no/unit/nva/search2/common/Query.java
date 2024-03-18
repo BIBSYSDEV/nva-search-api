@@ -1,10 +1,13 @@
 package no.unit.nva.search2.common;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
@@ -70,8 +73,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract K getFieldsKey();
 
-    protected abstract String[] fieldsToKeyNames(String field);
-
     /**
      * Builds URI to query SWS based on post body.
      *
@@ -85,6 +86,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
+
+    protected abstract K keyFromString(String keyName);
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -220,6 +223,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         this.openSearchUri = openSearchUri;
     }
 
+    protected Map<String, Float> fieldsToKeyNames(String field) {
+        return ALL.equals(field) || isNull(field)
+            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> ['*']
+            : Arrays.stream(field.split(COMMA))
+                .map(this::keyFromString)
+                .flatMap(key -> key.searchFields()
+                    .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
+                )
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    }
 
     protected BoolQueryBuilder getFilters() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
@@ -309,7 +322,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
         var value = getValue(searchAllKey).toString();
         logger.info(value);
-        return QueryBuilders.multiMatchQuery(value, fields).type(Type.CROSS_FIELDS).operator(Operator.AND);
+        return QueryBuilders.multiMatchQuery(value)
+            .fields(fields)
+            .type(Type.CROSS_FIELDS)
+            .operator(Operator.AND);
     }
 
     private Stream<K> getSearchParameterKeys() {
