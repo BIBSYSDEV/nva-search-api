@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
@@ -31,7 +30,6 @@ import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -190,16 +188,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     @Override
-    public Stream<String> searchFields() {
+    public Stream<String> searchFields(boolean... isKeyWord) {
         return Arrays.stream(fieldsToSearch)
-            .map(String::trim)
-            .map(trimmed -> isNotKeyword()
-                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
-                : trimmed);
-    }
-
-    private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
+            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
     @Override

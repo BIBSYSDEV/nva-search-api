@@ -280,11 +280,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
+        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
-            .forEach(aggrFilter::subAggregation);
-        return aggrFilter;
+            .forEach(aggregationFilter::subAggregation);
+        return aggregationFilter;
     }
 
     private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {

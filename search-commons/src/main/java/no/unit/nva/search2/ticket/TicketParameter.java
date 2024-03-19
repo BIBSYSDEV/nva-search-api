@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.PHI;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
@@ -42,7 +41,6 @@ import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.VIEWED_BY_FIELDS;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -190,17 +188,11 @@ public enum TicketParameter implements ParameterKey {
     }
 
     @Override
-    public Stream<String> searchFields() {
+    public Stream<String> searchFields(boolean... isKeyWord) {
         return Arrays.stream(fieldsToSearch)
-            .map(String::trim)
-            .map(trimmed -> isNotKeyword()
-                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
-                : trimmed);
+            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
-    private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
-    }
 
     @Override
     public FieldOperator searchOperator() {

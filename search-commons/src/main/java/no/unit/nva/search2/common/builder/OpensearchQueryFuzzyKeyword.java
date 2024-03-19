@@ -40,7 +40,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private QueryBuilder buildMatchAnyKeyword(K key, String... values) {
-        return key.searchFields()
+        return key.searchFields(true)
             .map(searchField -> new TermsQueryBuilder(searchField, values))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
     }
@@ -54,14 +54,14 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private QueryBuilder buildMatchAllKeyword(K key, String... values) {
-        return key.searchFields()
+        return key.searchFields(true)
             .flatMap(searchField -> Arrays.stream(values)
                 .map(value -> new TermQueryBuilder(searchField, value)))
             .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
     }
 
     private QueryBuilder getMultiMatchQueryBuilder(String value, K key) {
-        final var searchFields = key.searchFields().toArray(String[]::new);
+        final var searchFields = key.searchFields(false).toArray(String[]::new);
         return QueryBuilders
             .multiMatchQuery(value, searchFields)
             .fuzziness(Fuzziness.AUTO)
@@ -70,7 +70,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private Stream<QueryBuilder> getMatchPhrasePrefixBuilderStream(String singleValue, K key) {
-        return key.searchFields()
+        return key.searchFields(false)
             .map(fieldName -> QueryBuilders
                 .matchPhrasePrefixQuery(fieldName, singleValue)
                 .maxExpansions(10)

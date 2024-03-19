@@ -39,7 +39,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
     }
 
     private Stream<MatchPhrasePrefixQueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
-        return key.searchFields()
+        return key.searchFields(false)
             .map(fieldName -> QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue));
     }
 }

@@ -40,7 +40,7 @@ public class OpensearchQueryTextKeyword<K extends Enum<K> & ParameterKey> extend
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String value) {
         var disMax = QueryBuilders.disMaxQuery();
-        key.searchFields()
+        key.searchFields(true)
             .forEach(field -> disMax.add(new TermQueryBuilder(field, value).boost(key.fieldBoost()))
             );
         return Stream.of(disMax);
