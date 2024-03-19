@@ -48,7 +48,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
@@ -248,7 +247,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected Collection<String> validKeys() {
             return VALID_LUCENE_PARAMETER_KEYS.stream()
-                .map(ParameterKey::fieldName)
+                .map(Enum::name)
                 .toList();
         }
 

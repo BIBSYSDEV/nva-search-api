@@ -56,7 +56,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.apigateway.AccessRight;
@@ -401,7 +400,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected Collection<String> validKeys() {
             return VALID_SEARCH_PARAMETER_KEYS.stream()
-                .map(ParameterKey::enumName)
+                .map(Enum::name)
                 .toList();
         }
     }

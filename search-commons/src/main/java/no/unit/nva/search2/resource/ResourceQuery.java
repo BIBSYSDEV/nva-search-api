@@ -74,7 +74,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -452,7 +451,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected Collection<String> validKeys() {
             return VALID_SEARCH_PARAMETER_KEYS.stream()
-                .map(ParameterKey::enumName)
+                .map(Enum::name)
                 .toList();
         }
     }

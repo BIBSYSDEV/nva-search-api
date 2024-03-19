@@ -123,7 +123,6 @@ public enum ImportCandidateParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
-    private final String name;
 
     ImportCandidateParameter(ParameterKind kind) {
         this(kind, ALL_ITEMS, null, null, null, null);
@@ -146,18 +145,18 @@ public enum ImportCandidateParameter implements ParameterKey {
         Float boost) {
 
         this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
-        this.name = name().toLowerCase(Locale.ROOT);
+        //        this.name = name().toLowerCase(Locale.ROOT);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{enumName()};
+            : new String[]{name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
             ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + enumName().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
@@ -166,10 +165,6 @@ public enum ImportCandidateParameter implements ParameterKey {
         return key;
     }
 
-    @Override
-    public String enumName() {
-        return name;
-    }
 
     @Override
     public Float fieldBoost() {

@@ -23,8 +23,6 @@ public interface ParameterKey {
 
     String fieldName();
 
-    String enumName();
-
     Float fieldBoost();
 
     ParameterKind fieldType();
