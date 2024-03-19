@@ -252,7 +252,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .collect(Collectors.joining(SPACE));
 
         var query = boolQuery()
-            .queryName(SEARCH_ALL.fieldName())
+            .queryName(SEARCH_ALL.asCamelCase())
             .must(QueryBuilders.multiMatchQuery(sevenValues)
                       .fields(fields)
                       .type(Type.CROSS_FIELDS)
@@ -387,10 +387,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case FROM -> setValue(key.asCamelCase(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.asCamelCase(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.asCamelCase(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.asCamelCase(), ALL);
                     default -> { /* ignore and continue */ }
                 }
             });

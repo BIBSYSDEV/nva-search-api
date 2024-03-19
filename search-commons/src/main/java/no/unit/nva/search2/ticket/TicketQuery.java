@@ -203,7 +203,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         this.currentUser = userName;
         if (isUserOnly(ticketTypes)) {
             final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
-                .queryName(OWNER.fieldName());
+                .queryName(OWNER.asCamelCase());
             this.addFilter(viewOwnerOnly);
         }
         return this;
@@ -340,10 +340,10 @@ public final class TicketQuery extends Query<TicketParameter> {
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case FROM -> setValue(key.asCamelCase(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.asCamelCase(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.asCamelCase(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.asCamelCase(), ALL);
                     default -> { /* ignore and continue */ }
                 }
             });

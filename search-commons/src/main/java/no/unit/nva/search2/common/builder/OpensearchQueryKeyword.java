@@ -28,11 +28,11 @@ public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends Op
         return Arrays.stream(values)
             .flatMap(value -> key.searchFields()
                 .map(searchField -> new TermQueryBuilder(searchField, value).queryName(
-                    "KeywordAll-" + key.fieldName())));
+                    "KeywordAll-" + key.asCamelCase())));
     }
 
     private Stream<DisMaxQueryBuilder> buildMatchAnyKeywordStream(K key, String... values) {
-        var disMax = QueryBuilders.disMaxQuery().queryName("KeywordAny-" + key.fieldName());
+        var disMax = QueryBuilders.disMaxQuery().queryName("KeywordAny-" + key.asCamelCase());
         key.searchFields()
             .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost())));
         return Stream.of(disMax);

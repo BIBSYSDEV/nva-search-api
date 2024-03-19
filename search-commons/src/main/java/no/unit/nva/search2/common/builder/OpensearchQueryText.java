@@ -28,11 +28,11 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         return Arrays.stream(values)
             .map(singleValue -> phrasePrefixBuilder(singleValue, key)
                 .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
-                .queryName("TextAll-" + key.fieldName()));
+                .queryName("TextAll-" + key.asCamelCase()));
     }
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
-        var disMax = QueryBuilders.disMaxQuery().queryName("TextAny-" + key.fieldName());
+        var disMax = QueryBuilders.disMaxQuery().queryName("TextAny-" + key.asCamelCase());
         Arrays.stream(values)
             .flatMap(singleValue -> phrasePrefixBuilder(singleValue, key))
             .forEach(disMax::add);

@@ -21,7 +21,7 @@ import no.unit.nva.search2.common.constant.Words;
 
 public interface ParameterKey {
 
-    String fieldName();
+    String asCamelCase();
 
     Float fieldBoost();
 

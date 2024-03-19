@@ -161,7 +161,7 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     @Override
-    public String fieldName() {
+    public String asCamelCase() {
         return key;
     }
 

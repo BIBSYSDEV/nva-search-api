@@ -29,16 +29,16 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
                 .rangeQuery(searchField)
                 .gte(firstParam)
-                .queryName("GreaterOrEqual-" + key.fieldName());
+                .queryName("GreaterOrEqual-" + key.asCamelCase());
             case LESS_THAN -> QueryBuilders
                 .rangeQuery(searchField)
                 .lt(firstParam)
-                .queryName("LessThan-" + key.fieldName());
+                .queryName("LessThan-" + key.asCamelCase());
             case BETWEEN -> QueryBuilders
                 .rangeQuery(searchField)
                 .from(firstParam)
                 .to(secondParam)
-                .queryName("Between-" + key.fieldName());
+                .queryName("Between-" + key.asCamelCase());
             default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         });
     }

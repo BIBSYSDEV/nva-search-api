@@ -250,7 +250,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().fieldName();
+        return entry.getKey().asCamelCase();
     }
 
     protected String toNvaSearchApiValue(Entry<K, String> entry) {
@@ -348,7 +348,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private void logSearchKeys() {
         logger.info(
             getSearchParameterKeys()
-                .map(ParameterKey::fieldName)
+                .map(ParameterKey::asCamelCase)
                 .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }

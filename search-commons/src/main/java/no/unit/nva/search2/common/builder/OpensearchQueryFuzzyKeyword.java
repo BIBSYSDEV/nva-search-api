@@ -22,7 +22,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
         var boolQuery = QueryBuilders.boolQuery()
             .should(buildMatchAnyKeyword(key, values).boost(key.fieldBoost()))
             .must(buildMatchAnyFuzzy(key, values))
-            .queryName("FuzzyKeywordAny" + key.fieldName());
+            .queryName("FuzzyKeywordAny" + key.asCamelCase());
         return queryTools.queryToEntry(key, boolQuery);
     }
 
@@ -31,7 +31,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
         var boolQuery = QueryBuilders.boolQuery()
             .should(buildMatchAllKeyword(key, values).boost(key.fieldBoost()))
             .must(buildMatchAllFuzzy(key, values))
-            .queryName("FuzzyKeywordAll-" + key.fieldName());
+            .queryName("FuzzyKeywordAll-" + key.asCamelCase());
         return queryTools.queryToEntry(key, boolQuery);
     }
 

@@ -150,7 +150,7 @@ class ResourceClientTest {
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
-            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
             var query1 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
@@ -165,7 +165,7 @@ class ResourceClientTest {
             var aggregationsList = RESOURCES_AGGREGATIONS.stream()
                 .map(AggregationBuilder::getName)
                 .collect(Collectors.joining(COMMA));
-            var uri2 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + aggregationsList);
+            var uri2 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + aggregationsList);
 
             var query2 = ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri2))
@@ -393,8 +393,8 @@ class ResourceClientTest {
         void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.fieldName(), "2019",
-                                                SCIENTIFIC_REPORT_PERIOD_BEFORE.fieldName(), "2022"))
+                    .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
+                                                SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2022"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -411,8 +411,8 @@ class ResourceClientTest {
         void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.fieldName(), "2019",
-                                                SCIENTIFIC_REPORT_PERIOD_BEFORE.fieldName(), "2020"))
+                    .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
+                                                SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -434,8 +434,8 @@ class ResourceClientTest {
                                                  StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(UNIT.fieldName(), viewingScope,
-                                                EXCLUDE_SUBUNITS.fieldName(), Boolean.TRUE.toString()))
+                    .fromQueryParameters(Map.of(UNIT.asCamelCase(), viewingScope,
+                                                EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
@@ -461,7 +461,7 @@ class ResourceClientTest {
                                          StandardCharsets.UTF_8);
             var query =
                 ResourceQuery.builder()
-                    .fromQueryParameters(Map.of(UNIT.fieldName(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
+                    .fromQueryParameters(Map.of(UNIT.asCamelCase(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()

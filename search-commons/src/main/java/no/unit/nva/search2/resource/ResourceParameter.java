@@ -287,7 +287,7 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     @Override
-    public String fieldName() {
+    public String asCamelCase() {
         return key;
     }
 

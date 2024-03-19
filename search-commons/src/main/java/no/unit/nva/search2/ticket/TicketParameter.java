@@ -162,7 +162,7 @@ public enum TicketParameter implements ParameterKey {
     }
 
     @Override
-    public String fieldName() {
+    public String asCamelCase() {
         return key;
     }
 
