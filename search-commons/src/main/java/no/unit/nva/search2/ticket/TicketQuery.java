@@ -298,7 +298,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).getFieldName();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {

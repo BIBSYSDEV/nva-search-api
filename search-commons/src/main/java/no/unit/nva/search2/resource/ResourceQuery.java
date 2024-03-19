@@ -257,7 +257,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).getFieldName();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
