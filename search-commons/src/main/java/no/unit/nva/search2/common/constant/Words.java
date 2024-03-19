@@ -18,6 +18,8 @@ public final class Words {
     public static final String ASTERISK = "*";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
+    public static final char CHAR_UNDERSCORE = '_';
+
     public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";

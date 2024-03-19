@@ -121,7 +121,7 @@ class TicketClientTest {
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
-            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
             var query1 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)

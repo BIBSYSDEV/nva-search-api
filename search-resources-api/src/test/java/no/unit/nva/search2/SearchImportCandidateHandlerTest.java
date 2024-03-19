@@ -32,9 +32,9 @@ import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search2.common.FakeGatewayResponse;
-import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.records.PagedSearch;
+import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.GatewayResponse;
@@ -202,13 +202,13 @@ class SearchImportCandidateHandlerTest {
     
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withQueryParameters(Map.of(SEARCH_ALL.fieldName(), SAMPLE_SEARCH_TERM))
+            .withQueryParameters(Map.of(SEARCH_ALL.name(), SAMPLE_SEARCH_TERM))
             .withRequestContext(getRequestContext()).build();
     }
     
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.fieldName(), "entityDescription.contributors.identity.id:12345",
+                Map.of(SEARCH_ALL.name(), "entityDescription.contributors.identity.id:12345",
                        "results", "10", "from", "0"))
             .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
@@ -220,7 +220,7 @@ class SearchImportCandidateHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_ALL.fieldName(),
+                    Map.of(SEARCH_ALL.name(),
                            "((entityDescription.contributors.identity.id:12345)"
                            + "+OR+"
                            + "(entityDescription.contributors.identity.id:54321))"))
@@ -232,7 +232,7 @@ class SearchImportCandidateHandlerTest {
     
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.fieldName(), SAMPLE_SEARCH_TERM))
+                Map.of(SEARCH_ALL.name(), SAMPLE_SEARCH_TERM))
             .withHeaders(Map.of(ACCEPT, contentType))
             .withRequestContext(getRequestContext())
             .build();

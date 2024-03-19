@@ -205,10 +205,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.name(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.name(), ALL);
                     default -> { /* do nothing */
                     }
                 }
@@ -258,7 +258,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected Collection<String> validKeys() {
             return VALID_LUCENE_PARAMETER_KEYS.stream()
-                .map(ParameterKey::fieldName)
+                .map(ParameterKey::asCamelCase)
                 .toList();
         }
 
