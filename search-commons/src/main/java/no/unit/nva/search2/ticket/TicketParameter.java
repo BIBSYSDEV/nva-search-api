@@ -127,7 +127,6 @@ public enum TicketParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
-    //    private final String name;
 
     TicketParameter(ParameterKind kind) {
         this(kind, ALL_ITEMS, null, null, null, null);
@@ -146,7 +145,6 @@ public enum TicketParameter implements ParameterKey {
         Float boost) {
 
         this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
-        //        this.name = name().toLowerCase(Locale.ROOT);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
@@ -165,7 +163,6 @@ public enum TicketParameter implements ParameterKey {
     public String asCamelCase() {
         return key;
     }
-
 
     @Override
     public Float fieldBoost() {

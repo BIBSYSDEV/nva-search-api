@@ -271,7 +271,6 @@ public enum ResourceParameter implements ParameterKey {
         Float boost) {
 
         this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
-        //        this.name = name().toLowerCase(Locale.ROOT);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
@@ -290,7 +289,6 @@ public enum ResourceParameter implements ParameterKey {
     public String asCamelCase() {
         return key;
     }
-
 
     @Override
     public Float fieldBoost() {
