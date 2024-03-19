@@ -18,6 +18,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URI;
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.common.constant.Words.DOT;
@@ -94,6 +95,7 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -272,7 +274,7 @@ public enum ResourceParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.key = this.name().toLowerCase(Locale.getDefault());
+        this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
@@ -288,7 +290,7 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     @Override
-    public String fieldName() {
+    public String asCamelCase() {
         return key;
     }
 

@@ -204,7 +204,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected Collection<String> validKeys() {
         return VALID_SEARCH_PARAMETER_KEYS.stream()
-                   .map(ParameterKey::fieldName)
+            .map(ParameterKey::asCamelCase)
                    .toList();
     }
 
@@ -218,7 +218,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         return
             requiredMissing()
                 .stream()
-                .map(ParameterKey::fieldName)
+                .map(ParameterKey::asCamelCase)
                 .collect(Collectors.toSet());
     }
 
@@ -238,7 +238,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         final var key = entry.getKey();
         final var value = entry.getValue();
         if (invalidQueryParameter(key, value)) {
-            final var keyName =  key.fieldName();
+            final var keyName = key.asCamelCase();
             final var errorMessage = key.errorMessage().formatted(keyName, value);
             throw new BadRequestException(errorMessage);
         }

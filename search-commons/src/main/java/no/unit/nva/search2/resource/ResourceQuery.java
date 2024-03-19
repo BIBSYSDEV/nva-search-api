@@ -353,10 +353,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.name(), ALL);
                     default -> { /* ignore and continue */ }
                 }
             });

@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public interface ParameterKey {
 
-    String fieldName();
+    String asCamelCase();
 
     Float fieldBoost();
 

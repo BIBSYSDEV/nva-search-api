@@ -238,7 +238,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
+        return entry.getKey().asCamelCase().toLowerCase(Locale.getDefault());
     }
 
     protected String toNvaSearchApiValue(Entry<K, String> entry) {
