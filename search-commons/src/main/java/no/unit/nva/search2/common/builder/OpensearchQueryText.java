@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common.builder;
 
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -39,7 +40,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
     }
 
     private Stream<MatchPhrasePrefixQueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
-        return key.searchFields()
+        return key.searchFields(KEYWORD_FALSE)
             .map(fieldName -> QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue));
     }
 }

@@ -1,6 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
@@ -10,7 +9,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WI
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
@@ -27,13 +25,12 @@ import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_IN
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.keyFromString;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.fromSortKey;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.validSortKeys;
@@ -42,7 +39,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,7 +48,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
@@ -86,6 +81,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         };
     }
 
+    @Override
+    protected ImportCandidateParameter keyFromString(String keyName) {
+        return ImportCandidateParameter.keyFromString(keyName);
+    }
 
     @Override
     protected Integer getFrom() {
@@ -100,16 +99,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     @Override
     protected ImportCandidateParameter getFieldsKey() {
         return FIELDS;
-    }
-
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ImportCandidateParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
     }
 
     @Override
@@ -217,7 +206,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key);
+            var qpKey = ImportCandidateParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
                 ? decodeUTF(value)
                 : value;
@@ -257,14 +246,14 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected Collection<String> validKeys() {
-            return VALID_LUCENE_PARAMETER_KEYS.stream()
-                .map(ParameterKey::asCamelCase)
+            return IMPORT_CANDIDATE_PARAMETER_SET.stream()
+                .map(Enum::name)
                 .toList();
         }
 
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ImportCandidateParameter.INVALID;
+            return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
         }
 
         @Override

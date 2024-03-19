@@ -48,7 +48,7 @@ public enum ResourceSort {
         this.path = jsonPath;
     }
 
-    public String getKeyPattern() {
+    public String keyPattern() {
         return keyValidationRegEx;
     }
 
@@ -66,13 +66,12 @@ public enum ResourceSort {
     }
 
     public static Predicate<ResourceSort> equalTo(String name) {
-        return key -> name.matches(key.getKeyPattern());
+        return key -> name.matches(key.keyPattern());
     }
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ResourceSort::name)
-            .map(String::toLowerCase)
+            .map(ResourceSort::jsonPath)
             .toList();
     }
 

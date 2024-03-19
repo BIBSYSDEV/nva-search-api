@@ -17,6 +17,7 @@
   "MODIFIED_DATE=1872-01-01,2024": 1,
   "ORGANIZATION_ID=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0": 19,
   "ORGANIZATION_ID_NOT=20754.0.0.0": 0,
+  "OWNER=1492596@20754.0.0.0": 2,
   "OWNER=Kir,Truhacev": 2,
   "OWNER_NOT=Kir,Truhacev": 17,
   "PUBLICATION_ID=https://api.dev.nva.aws.unit.no/publication/018de50689ab-6cbc7fe6-61a0-4eab-8793-ef6b8f6b4a9e": 2,

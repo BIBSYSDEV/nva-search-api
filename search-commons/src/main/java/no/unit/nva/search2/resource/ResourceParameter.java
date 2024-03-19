@@ -21,7 +21,6 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URI;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
-import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.common.constant.Words.PHI;
 import static no.unit.nva.search2.common.constant.Words.PI;
@@ -38,7 +37,6 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
-import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
@@ -81,7 +79,6 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIE
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 import static no.unit.nva.search2.resource.Constants.UNIT_PATHS;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -89,7 +86,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
@@ -219,7 +215,7 @@ public enum ResourceParameter implements ParameterKey {
     USER_NOT(KEYWORD, NO_ITEMS, RESOURCE_OWNER_OWNER_KEYWORD),
     USER_SHOULD(TEXT, ONE_OR_MORE_ITEM, RESOURCE_OWNER_OWNER_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(CUSTOM, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
@@ -233,7 +229,7 @@ public enum ResourceParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ResourceParameter> VALID_SEARCH_PARAMETER_KEYS =
+    public static final Set<ResourceParameter> RESOURCE_PARAMETER_SET =
         Arrays.stream(ResourceParameter.values())
             .filter(ResourceParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
@@ -320,24 +316,11 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     @Override
-    public Stream<String> searchFields() {
-        return searchFields(null);
-    }
-
-    public Stream<String> searchFields(Boolean isKeyWord) {
+    public Stream<String> searchFields(boolean... isKeyWord) {
         return Arrays.stream(fieldsToSearch)
-            .map(String::trim)
-            .map(trimmed -> isNotKeyword(isKeyWord)
-                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
-                : trimmed);
+            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
-    private boolean isNotKeyword(Boolean isKeyWord) {
-        var result = !(fieldType().equals(KEYWORD) || fieldType().equals(CUSTOM));
-        return nonNull(isKeyWord)
-            ? !isKeyWord
-            : result;
-    }
 
     @Override
     public FieldOperator searchOperator() {

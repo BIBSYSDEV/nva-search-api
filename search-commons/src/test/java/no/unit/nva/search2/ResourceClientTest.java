@@ -368,7 +368,7 @@ class ResourceClientTest {
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
-            logger.info(query.getValue(SORT).toString());
+            logger.info(query.getSort().toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
             assertNotNull(pagedSearchResourceDto.id());

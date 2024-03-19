@@ -5,7 +5,10 @@ import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
@@ -14,7 +17,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -70,8 +72,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract K getFieldsKey();
 
-    protected abstract String[] fieldsToKeyNames(String field);
-
     /**
      * Builds URI to query SWS based on post body.
      *
@@ -85,6 +85,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
+
+    protected abstract K keyFromString(String keyName);
 
     protected Query() {
         searchParameters = new ConcurrentHashMap<>();
@@ -220,6 +222,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         this.openSearchUri = openSearchUri;
     }
 
+    protected Map<String, Float> fieldsToKeyNames(AsType<K> field) {
+        return field.isEmpty() || field.toString().toLowerCase(Locale.ROOT).contains(ALL)
+            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
+            : field.asSplitStream(COMMA)
+                .map(this::keyFromString)
+                .flatMap(key -> key.searchFields(KEYWORD_FALSE)
+                    .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
+                )
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    }
 
     protected BoolQueryBuilder getFilters() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
@@ -238,7 +250,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().asCamelCase().toLowerCase(Locale.getDefault());
+        return entry.getKey().asCamelCase();
     }
 
     protected String toNvaSearchApiValue(Entry<K, String> entry) {
@@ -276,9 +288,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().asStream()
-            .map(items -> items.split(COMMA))
-            .flatMap(Arrays::stream)
+        return getSort().asSplitStream(COMMA)
             .map(QueryTools::objectToSortEntry);
     }
 
@@ -306,10 +316,13 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * @return a MultiMatchQueryBuilder
      */
     private QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
-        var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
+        var fields = fieldsToKeyNames(getValue(fieldsKey));
         var value = getValue(searchAllKey).toString();
-        logger.debug(value);
-        return QueryBuilders.multiMatchQuery(value, fields).type(Type.CROSS_FIELDS).operator(Operator.AND);
+        return QueryBuilders
+            .multiMatchQuery(value)
+            .fields(fields)
+            .type(Type.CROSS_FIELDS)
+            .operator(Operator.AND);
     }
 
     private Stream<K> getSearchParameterKeys() {
@@ -335,7 +348,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private void logSearchKeys() {
         logger.info(
             getSearchParameterKeys()
-                .map(Enum::name)
+                .map(ParameterKey::asCamelCase)
                 .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }

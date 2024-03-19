@@ -36,7 +36,7 @@ public enum ImportCandidateSort {
         this.path = jsonPath;
     }
 
-    public String getKeyPattern() {
+    public String keyPattern() {
         return keyValidationRegEx;
     }
 
@@ -54,7 +54,7 @@ public enum ImportCandidateSort {
     }
 
     public static Predicate<ImportCandidateSort> equalTo(String name) {
-        return key -> name.matches(key.getKeyPattern());
+        return key -> name.matches(key.keyPattern());
     }
 
     public static Collection<String> validSortKeys() {

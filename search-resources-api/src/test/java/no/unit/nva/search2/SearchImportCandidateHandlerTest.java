@@ -202,13 +202,13 @@ class SearchImportCandidateHandlerTest {
     
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withQueryParameters(Map.of(SEARCH_ALL.name(), SAMPLE_SEARCH_TERM))
+            .withQueryParameters(Map.of(SEARCH_ALL.asCamelCase(), SAMPLE_SEARCH_TERM))
             .withRequestContext(getRequestContext()).build();
     }
     
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.name(), "entityDescription.contributors.identity.id:12345",
+                Map.of(SEARCH_ALL.asCamelCase(), "entityDescription.contributors.identity.id:12345",
                        "results", "10", "from", "0"))
             .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())

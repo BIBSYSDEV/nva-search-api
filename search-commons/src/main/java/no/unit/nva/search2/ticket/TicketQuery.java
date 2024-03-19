@@ -1,6 +1,5 @@
 package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
@@ -8,7 +7,6 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
@@ -36,7 +34,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
-import static no.unit.nva.search2.ticket.TicketParameter.keyFromString;
+import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketSort.INVALID;
 import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
 import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
@@ -46,6 +44,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +56,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.apigateway.AccessRight;
@@ -92,6 +90,10 @@ public final class TicketQuery extends Query<TicketParameter> {
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
+    @Override
+    protected TicketParameter keyFromString(String keyName) {
+        return TicketParameter.keyFromString(keyName);
+    }
 
     public static TicketParameterValidator builder() {
         return new TicketParameterValidator();
@@ -112,15 +114,6 @@ public final class TicketQuery extends Query<TicketParameter> {
         return FIELDS;
     }
 
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(TicketParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
-    }
 
     @Override
     public AsType<TicketParameter> getSort() {
@@ -210,7 +203,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         this.currentUser = userName;
         if (isUserOnly(ticketTypes)) {
             final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
-                .queryName(OWNER.name());
+                .queryName(OWNER.asCamelCase());
             this.addFilter(viewOwnerOnly);
         }
         return this;
@@ -331,7 +324,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != TicketParameter.INVALID;
+            return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
 
         @Override
@@ -358,7 +351,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key);
+            var qpKey = TicketParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
                 ? decodeUTF(value)
                 : value;
@@ -402,6 +395,13 @@ public final class TicketQuery extends Query<TicketParameter> {
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return TICKET_PARAMETER_SET.stream()
+                .map(Enum::name)
+                .toList();
         }
     }
 }

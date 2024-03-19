@@ -200,7 +200,7 @@ class SearchResourceHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_ALL.name(),
+                    Map.of(SEARCH_ALL.asCamelCase(),
                         "((entityDescription.contributors.identity.id:12345)"
                             + "+OR+"
                             + "(entityDescription.contributors.identity.id:54321))"))
@@ -212,7 +212,7 @@ class SearchResourceHandlerTest {
 
     private InputStream getRequestInputStreamAccepting(String contentType) throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty).withQueryParameters(
-                Map.of(SEARCH_ALL.name(), SAMPLE_SEARCH_TERM))
+                Map.of(SEARCH_ALL.asCamelCase(), SAMPLE_SEARCH_TERM))
             .withHeaders(Map.of(ACCEPT, contentType))
             .withRequestContext(getRequestContext())
             .build();

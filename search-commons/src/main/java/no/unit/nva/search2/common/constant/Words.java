@@ -112,6 +112,10 @@ public final class Words {
     public static final String MESSAGES = "messages";
     public static final String VIEWED_BY = "viewedBy";
 
+    public static final boolean KEYWORD_TRUE = true;
+    public static final boolean KEYWORD_FALSE = false;
+
+
     @JacocoGenerated
     public Words() {
     }

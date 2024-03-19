@@ -12,7 +12,6 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
-import static no.unit.nva.search2.resource.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -185,6 +184,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
 
+    protected abstract Collection<String> validKeys();
+
     /**
      * Validate sort keys.
      *
@@ -202,11 +203,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * returns T.VALID_SEARCH_PARAMETER_KEYS
      */
-    protected Collection<String> validKeys() {
-        return VALID_SEARCH_PARAMETER_KEYS.stream()
-            .map(ParameterKey::asCamelCase)
-                   .toList();
-    }
 
 
     protected boolean invalidQueryParameter(K key, String value) {

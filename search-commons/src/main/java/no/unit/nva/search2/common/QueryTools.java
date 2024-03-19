@@ -33,8 +33,8 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return key.searchFields().findFirst().orElseThrow();
     }
 
-    public static Entry<String, SortOrder> objectToSortEntry(Object sortString) {
-        return stringsToSortEntry(sortString.toString().split(COLON_OR_SPACE));
+    public static Entry<String, SortOrder> objectToSortEntry(String sortString) {
+        return stringsToSortEntry(sortString.split(COLON_OR_SPACE));
     }
 
     public static Entry<String, SortOrder> stringsToSortEntry(String... strings) {
