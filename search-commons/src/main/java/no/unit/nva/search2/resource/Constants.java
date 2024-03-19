@@ -67,7 +67,6 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Defaults;
@@ -87,8 +86,7 @@ public final class Constants {
     //entityDescription/reference/publicationContext/publisher
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
-    public static final String DEFAULT_RESOURCE_SORT =
-        ResourceSort.PUBLISHED_DATE.name().toLowerCase(Locale.getDefault());
+    public static final String DEFAULT_RESOURCE_SORT = ResourceSort.PUBLISHED_DATE.fieldName();
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;

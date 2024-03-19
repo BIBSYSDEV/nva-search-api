@@ -9,6 +9,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SEARCH_ALL
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
@@ -43,6 +44,7 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -121,6 +123,7 @@ public enum ImportCandidateParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
+    private final String enumName;
 
     ImportCandidateParameter(ParameterKind kind) {
         this(kind, ALL_ITEMS, null, null, null, null);
@@ -142,24 +145,30 @@ public enum ImportCandidateParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.key = this.name().toLowerCase(Locale.getDefault());
+        this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+        this.enumName = name().toLowerCase(Locale.ROOT);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{key};
+            : new String[]{enumName()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
             ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+            : PATTERN_IS_IGNORE_CASE + enumName().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
     @Override
     public String fieldName() {
         return key;
+    }
+
+    @Override
+    public String enumName() {
+        return enumName;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package no.unit.nva.search2.resource;
 
 import static com.google.common.net.MediaType.JSON_UTF_8;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
@@ -50,6 +49,7 @@ import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
+import static no.unit.nva.search2.resource.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
@@ -62,6 +62,7 @@ import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,6 +74,7 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -111,7 +113,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
-            case SEARCH_ALL -> multiMatchQuery();
+            case SEARCH_ALL -> multiMatchQueryStream();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
@@ -151,18 +153,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected ResourceParameter getFieldsKey() {
         return FIELDS;
-    }
-
-    @Override
-    protected Map<String, Float> fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? Map.of(ASTERISK, 1F)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameter::keyFromString)
-                .flatMap(key -> key.searchFields(false)
-                    .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
-                )
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     @Override
@@ -252,8 +242,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryBuilder;
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQuery() {
-        var fields = fieldsToKeyNames(getValue(FIELDS).toString());
+    private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQueryStream() {
+        var fields = fieldsToKeyNames(getValue(FIELDS));
         var sevenValues = getValue(SEARCH_ALL).asSplitStream(SPACE)
             .limit(7)
             .collect(Collectors.joining(SPACE));
@@ -301,7 +291,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).getFieldName();
+        return fromSortKey(entry.getKey()).fieldName();
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
@@ -457,6 +447,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return VALID_SEARCH_PARAMETER_KEYS.stream()
+                .map(ParameterKey::enumName)
+                .toList();
         }
     }
 }

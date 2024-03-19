@@ -43,6 +43,10 @@ public class AsType<K extends Enum<K> & ParameterKey> {
         };
     }
 
+    public boolean isEmpty() {
+        return isNull(value) || value.isEmpty();
+    }
+
     /**
      * @param delimiter regex to split on
      * @return The value split, or null.

@@ -34,6 +34,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
+import static no.unit.nva.search2.ticket.TicketParameter.VALID_SEARCH_PARAMETER_KEYS;
 import static no.unit.nva.search2.ticket.TicketSort.INVALID;
 import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
 import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
@@ -43,6 +44,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +56,7 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.apigateway.AccessRight;
@@ -393,6 +396,13 @@ public final class TicketQuery extends Query<TicketParameter> {
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return VALID_SEARCH_PARAMETER_KEYS.stream()
+                .map(ParameterKey::enumName)
+                .toList();
         }
     }
 }

@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import no.unit.nva.search2.common.constant.Words;
 
 public enum ResourceSort {
@@ -49,11 +48,11 @@ public enum ResourceSort {
         this.fieldName = fieldName;
     }
 
-    public String getKeyPattern() {
+    public String keyPattern() {
         return keyValidationRegEx;
     }
 
-    public String getFieldName() {
+    public String fieldName() {
         return fieldName;
     }
 
@@ -67,13 +66,12 @@ public enum ResourceSort {
     }
 
     public static Predicate<ResourceSort> equalTo(String name) {
-        return key -> name.matches(key.getKeyPattern());
+        return key -> name.matches(key.keyPattern());
     }
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ResourceSort::name)
-            .map(String::toLowerCase)
+            .map(ResourceSort::fieldName)
             .toList();
     }
 

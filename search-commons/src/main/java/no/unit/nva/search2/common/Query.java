@@ -1,6 +1,5 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
@@ -17,7 +16,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -223,12 +221,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         this.openSearchUri = openSearchUri;
     }
 
-    protected Map<String, Float> fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
+    protected Map<String, Float> fieldsToKeyNames(AsType<K> field) {
+        return field.isEmpty() || field.toString().toLowerCase(Locale.ROOT).contains(ALL)
+            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
+            : field.asSplitStream(COMMA)
                 .map(this::keyFromString)
-                .flatMap(key -> key.searchFields()
+                .flatMap(key -> key.searchFields(false)
                     .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
                 )
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
@@ -251,7 +249,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
+        return entry.getKey().fieldName();
     }
 
     protected String toNvaSearchApiValue(Entry<K, String> entry) {
@@ -289,9 +287,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     // SORTING
     protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().asStream()
-            .map(items -> items.split(COMMA))
-            .flatMap(Arrays::stream)
+        return getSort().asSplitStream(COMMA)
             .map(QueryTools::objectToSortEntry);
     }
 
@@ -319,10 +315,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * @return a MultiMatchQueryBuilder
      */
     private QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
-        var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
+        var fields = fieldsToKeyNames(getValue(fieldsKey));
         var value = getValue(searchAllKey).toString();
-        logger.info(value);
-        return QueryBuilders.multiMatchQuery(value)
+        return QueryBuilders
+            .multiMatchQuery(value)
             .fields(fields)
             .type(Type.CROSS_FIELDS)
             .operator(Operator.AND);
@@ -351,7 +347,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private void logSearchKeys() {
         logger.info(
             getSearchParameterKeys()
-                .map(Enum::name)
+                .map(ParameterKey::fieldName)
                 .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }
