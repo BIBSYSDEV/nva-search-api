@@ -36,16 +36,16 @@ public enum ResourceSort {
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
-    private final String fieldName;
+    private final String name;
 
     ResourceSort(String pattern, String fieldName) {
         this.keyValidationRegEx = pattern;
-        this.fieldName = fieldName;
+        this.name = fieldName;
     }
 
     ResourceSort(String fieldName) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
-        this.fieldName = fieldName;
+        this.name = fieldName;
     }
 
     public String keyPattern() {
@@ -53,7 +53,7 @@ public enum ResourceSort {
     }
 
     public String fieldName() {
-        return fieldName;
+        return name;
     }
 
     public static ResourceSort fromSortKey(String keyName) {

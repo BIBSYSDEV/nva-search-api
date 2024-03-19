@@ -244,7 +244,7 @@ public enum ResourceParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
-    private final String enumName;
+    private final String name;
 
     ResourceParameter(ParameterKind kind) {
         this(kind, ALL_ITEMS, null, null, null, null);
@@ -272,7 +272,7 @@ public enum ResourceParameter implements ParameterKey {
         Float boost) {
 
         this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
-        this.enumName = name().toLowerCase(Locale.ROOT);
+        this.name = name().toLowerCase(Locale.ROOT);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
@@ -294,7 +294,7 @@ public enum ResourceParameter implements ParameterKey {
 
     @Override
     public String enumName() {
-        return enumName;
+        return name;
     }
 
     @Override
