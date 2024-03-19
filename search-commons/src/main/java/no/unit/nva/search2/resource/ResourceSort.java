@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import no.unit.nva.search2.common.constant.Words;
 
 public enum ResourceSort {
@@ -37,24 +36,24 @@ public enum ResourceSort {
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
-    private final String fieldName;
+    private final String path;
 
-    ResourceSort(String pattern, String fieldName) {
+    ResourceSort(String pattern, String jsonPath) {
         this.keyValidationRegEx = pattern;
-        this.fieldName = fieldName;
+        this.path = jsonPath;
     }
 
-    ResourceSort(String fieldName) {
+    ResourceSort(String jsonPath) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
-        this.fieldName = fieldName;
+        this.path = jsonPath;
     }
 
     public String getKeyPattern() {
         return keyValidationRegEx;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public String jsonPath() {
+        return path;
     }
 
     public static ResourceSort fromSortKey(String keyName) {
