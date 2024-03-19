@@ -18,6 +18,7 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
@@ -43,13 +44,13 @@ import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
-import static no.unit.nva.search2.resource.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
@@ -132,11 +133,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private String getTermPath(ResourceParameter key) {
-        return key.searchFields(true).findFirst().orElseThrow();
+        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
     }
 
     private String getMatchPath(ResourceParameter key) {
-        return key.searchFields(true).skip(1).findFirst().orElseThrow();
+        return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
     }
 
     @Override
@@ -290,7 +291,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).fieldName();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
@@ -450,7 +451,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         @Override
         protected Collection<String> validKeys() {
-            return VALID_SEARCH_PARAMETER_KEYS.stream()
+            return RESOURCE_PARAMETER_SET.stream()
                 .map(Enum::name)
                 .toList();
         }

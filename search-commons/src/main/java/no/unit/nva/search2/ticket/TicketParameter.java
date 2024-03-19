@@ -112,7 +112,7 @@ public enum TicketParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<TicketParameter> VALID_SEARCH_PARAMETER_KEYS =
+    public static final Set<TicketParameter> TICKET_PARAMETER_SET =
         Arrays.stream(TicketParameter.values())
             .filter(TicketParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)

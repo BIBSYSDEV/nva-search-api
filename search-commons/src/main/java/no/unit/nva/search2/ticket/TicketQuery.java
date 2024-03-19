@@ -34,7 +34,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
-import static no.unit.nva.search2.ticket.TicketParameter.VALID_SEARCH_PARAMETER_KEYS;
+import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketSort.INVALID;
 import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
 import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
@@ -291,7 +291,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).getFieldName();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
@@ -399,7 +399,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         @Override
         protected Collection<String> validKeys() {
-            return VALID_SEARCH_PARAMETER_KEYS.stream()
+            return TICKET_PARAMETER_SET.stream()
                 .map(Enum::name)
                 .toList();
         }

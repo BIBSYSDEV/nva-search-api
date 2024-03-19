@@ -1,5 +1,7 @@
 package no.unit.nva.search2.common.builder;
 
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -20,7 +22,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
         var boolQuery = QueryBuilders.boolQuery()
             .should(buildMatchAnyKeyword(key, values).boost(key.fieldBoost()))
             .must(buildMatchAnyFuzzy(key, values))
-            .queryName("FuzzyKeywordAny" + key.name());
+            .queryName("FuzzyKeywordAny" + key.fieldName());
         return queryTools.queryToEntry(key, boolQuery);
     }
 
@@ -40,7 +42,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private QueryBuilder buildMatchAnyKeyword(K key, String... values) {
-        return key.searchFields(true)
+        return key.searchFields(KEYWORD_TRUE)
             .map(searchField -> new TermsQueryBuilder(searchField, values))
             .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add);
     }
@@ -54,14 +56,14 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private QueryBuilder buildMatchAllKeyword(K key, String... values) {
-        return key.searchFields(true)
+        return key.searchFields(KEYWORD_TRUE)
             .flatMap(searchField -> Arrays.stream(values)
                 .map(value -> new TermQueryBuilder(searchField, value)))
             .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must);
     }
 
     private QueryBuilder getMultiMatchQueryBuilder(String value, K key) {
-        final var searchFields = key.searchFields(false).toArray(String[]::new);
+        final var searchFields = key.searchFields(KEYWORD_FALSE).toArray(String[]::new);
         return QueryBuilders
             .multiMatchQuery(value, searchFields)
             .fuzziness(Fuzziness.AUTO)
@@ -70,7 +72,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
     }
 
     private Stream<QueryBuilder> getMatchPhrasePrefixBuilderStream(String singleValue, K key) {
-        return key.searchFields(false)
+        return key.searchFields(KEYWORD_FALSE)
             .map(fieldName -> QueryBuilders
                 .matchPhrasePrefixQuery(fieldName, singleValue)
                 .maxExpansions(10)

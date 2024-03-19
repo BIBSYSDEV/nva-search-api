@@ -25,12 +25,12 @@ import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_IN
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.fromSortKey;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.validSortKeys;
@@ -136,7 +136,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         builder.aggregation(getAggregationsWithFilter());
 
-        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
+        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).jsonPath(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -246,7 +246,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected Collection<String> validKeys() {
-            return VALID_LUCENE_PARAMETER_KEYS.stream()
+            return IMPORT_CANDIDATE_PARAMETER_SET.stream()
                 .map(Enum::name)
                 .toList();
         }

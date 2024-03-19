@@ -8,6 +8,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
@@ -226,7 +227,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
             : field.asSplitStream(COMMA)
                 .map(this::keyFromString)
-                .flatMap(key -> key.searchFields(false)
+                .flatMap(key -> key.searchFields(KEYWORD_FALSE)
                     .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
                 )
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));

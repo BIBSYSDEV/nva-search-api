@@ -108,7 +108,7 @@ public enum ImportCandidateParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ImportCandidateParameter> VALID_LUCENE_PARAMETER_KEYS =
+    public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
         Arrays.stream(ImportCandidateParameter.values())
             .filter(ImportCandidateParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)

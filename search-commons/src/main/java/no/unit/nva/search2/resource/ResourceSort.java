@@ -36,24 +36,24 @@ public enum ResourceSort {
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
-    private final String name;
+    private final String path;
 
-    ResourceSort(String pattern, String fieldName) {
+    ResourceSort(String pattern, String jsonPath) {
         this.keyValidationRegEx = pattern;
-        this.name = fieldName;
+        this.path = jsonPath;
     }
 
-    ResourceSort(String fieldName) {
+    ResourceSort(String jsonPath) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
-        this.name = fieldName;
+        this.path = jsonPath;
     }
 
     public String keyPattern() {
         return keyValidationRegEx;
     }
 
-    public String fieldName() {
-        return name;
+    public String jsonPath() {
+        return path;
     }
 
     public static ResourceSort fromSortKey(String keyName) {
@@ -71,7 +71,7 @@ public enum ResourceSort {
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ResourceSort::fieldName)
+            .map(ResourceSort::jsonPath)
             .toList();
     }
 

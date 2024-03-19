@@ -29,19 +29,19 @@ public enum TicketSort {
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final String keyValidationRegEx;
-    private final String fieldName;
+    private final String path;
 
-    TicketSort(String fieldName) {
+    TicketSort(String jsonPath) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
-        this.fieldName = fieldName;
+        this.path = jsonPath;
     }
 
-    public String getKeyPattern() {
+    public String keyPattern() {
         return keyValidationRegEx;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public String jsonPath() {
+        return path;
     }
 
     public static TicketSort fromSortKey(String keyName) {
@@ -54,7 +54,7 @@ public enum TicketSort {
     }
 
     public static Predicate<TicketSort> equalTo(String name) {
-        return key -> name.matches(key.getKeyPattern());
+        return key -> name.matches(key.keyPattern());
     }
 
     public static Collection<String> validSortKeys() {

@@ -229,7 +229,7 @@ public enum ResourceParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ResourceParameter> VALID_SEARCH_PARAMETER_KEYS =
+    public static final Set<ResourceParameter> RESOURCE_PARAMETER_SET =
         Arrays.stream(ResourceParameter.values())
             .filter(ResourceParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
