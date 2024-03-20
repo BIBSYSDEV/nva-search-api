@@ -6,15 +6,20 @@ import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.PHI;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
+
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -306,10 +311,34 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * @return a MultiMatchQueryBuilder
      */
     private QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
+        var fieldCount = fieldsKey.searchFields().count();
         var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
-        var value = getValue(searchAllKey).toString();
-        logger.info(value);
-        return QueryBuilders.multiMatchQuery(value, fields).type(Type.CROSS_FIELDS).operator(Operator.AND);
+        var best7Words = getValue(searchAllKey)
+            .asSplitStream(SPACE)
+            .collect(Collectors.groupingBy(String::length))
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.<Integer, List<String>> comparingByKey().reversed())
+            .map(Entry::getValue)
+            .flatMap(Collection::stream)
+            .limit(6 + fieldCount)
+            .collect(Collectors.joining(SPACE));
+
+        var boolQuery = QueryBuilders.boolQuery()
+            .must(QueryBuilders.multiMatchQuery(best7Words, fields).type(Type.BEST_FIELDS).operator(Operator.AND))
+            .queryName("FuzzySearchAll");
+
+//        if (getValue(fieldsKey).asStream().count() == 0) {
+//            var first15Words = getValue(searchAllKey)
+//                .asSplitStream(SPACE)
+//                .limit(20)
+//                .collect(Collectors.joining(SPACE));
+//            boolQuery
+//                .should(matchPhrasePrefixQuery("mainTitle", first15Words).boost(PHI))
+//                .should(matchQuery("abstract", first15Words).operator(Operator.AND).boost(PHI-0.1F));
+//        }
+
+        return boolQuery;
     }
 
     private Stream<K> getSearchParameterKeys() {

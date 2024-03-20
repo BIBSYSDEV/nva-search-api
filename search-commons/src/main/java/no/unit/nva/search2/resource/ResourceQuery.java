@@ -232,6 +232,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         if (isLookingForOneContributor()) {
             addPromotedPublications(userSettingsClient, queryBuilder);
         }
+
         return queryBuilder;
     }
 

@@ -6,8 +6,12 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.MatchPhrasePrefixQueryBuilder;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+
+import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
@@ -38,8 +42,12 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         return Stream.of(disMax);
     }
 
-    private Stream<MatchPhrasePrefixQueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
-        return key.searchFields()
-            .map(fieldName -> QueryBuilders.matchPhrasePrefixQuery(fieldName, singleValue));
+    private Stream<QueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
+        return Stream.concat(
+            key.searchFields().map(fieldName -> matchPhrasePrefixQuery(fieldName, singleValue)
+                .boost(key.fieldBoost()+0.1F)),
+            key.searchFields().map(fieldName -> matchQuery(fieldName, singleValue)
+                .operator(Operator.AND)
+                .boost(key.fieldBoost())));
     }
 }
