@@ -72,10 +72,10 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : query.pageParameters.entrySet()) {
+        for (var entry : query.parameters.getSearchEntries()) {
             validatesEntrySet(entry);
         }
-        for (var entry : query.searchParameters.entrySet()) {
+        for (var entry : query.parameters.getPageEntries()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -131,7 +131,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     @SafeVarargs
     public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
-        query.otherRequiredKeys.addAll(tmpSet);
+        query.parameters.otherRequired.addAll(tmpSet);
         return this;
     }
 
@@ -219,14 +219,13 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     protected Set<K> required() {
-        return query.otherRequiredKeys;
+        return query.parameters.otherRequired;
     }
 
     protected Set<K> requiredMissing() {
         return
             required().stream()
-                .filter(key -> !query.searchParameters.containsKey(key))
-                .filter(key -> !query.pageParameters.containsKey(key))
+                .filter(key -> !query.parameters.isPresent(key))
                 .collect(Collectors.toSet());
     }
 
@@ -254,7 +253,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     protected void mergeToKey(K key, String value) {
-        query.setKeyValue(key, mergeWithColonOrComma(query.getValue(key).as(), value));
+        query.parameters.set(key, mergeWithColonOrComma(query.parameters.get(key).as(), value));
     }
 
     protected String trimSpace(String value) {

@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
@@ -83,6 +84,10 @@ public class AsType<K extends Enum<K> & ParameterKey> {
 
     public Number asNumber() {
         return Integer.parseInt(value);
+    }
+
+    public String asLowerCase() {
+        return value.toLowerCase(Locale.getDefault());
     }
 
     @Override

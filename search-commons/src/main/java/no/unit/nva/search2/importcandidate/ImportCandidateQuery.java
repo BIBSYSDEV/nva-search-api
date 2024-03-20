@@ -1,7 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -42,22 +40,19 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
@@ -88,12 +83,12 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected Integer getFrom() {
-        return getValue(FROM).as();
+        return parameters.get(FROM).as();
     }
 
     @Override
     protected Integer getSize() {
-        return getValue(SIZE).as();
+        return parameters.get(SIZE).as();
     }
 
     @Override
@@ -102,8 +97,18 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
+    protected ImportCandidateParameter getSortOrderKey() {
+        return SORT_ORDER;
+    }
+
+    @Override
+    protected ImportCandidateParameter getSearchAfterKey() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
     public AsType<ImportCandidateParameter> getSort() {
-        return getValue(SORT);
+        return parameters.get(SORT);
     }
 
     @Override
@@ -115,63 +120,30 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected boolean isPagingValue(ImportCandidateParameter key) {
-        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
-    }
-
-    @Override
     protected Map<String, String> aggregationsDefinition() {
         return FACET_IMPORT_CANDIDATE_PATHS;
     }
 
-    public Stream<QueryContentWrapper> createQueryBuilderStream() {
-        var queryBuilder =
-            this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery()
-                : mainQuery();
 
-        var builder = defaultSearchSourceBuilder(queryBuilder);
-
-        handleSearchAfter(builder);
-
-        builder.aggregation(getAggregationsWithFilter());
-
-        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).jsonPath(), entry.getValue()));
-
-        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
-    }
-
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
-        }
-    }
-
-    private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, getFilters());
+    protected FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, filters.get());
         IMPORT_CANDIDATES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
     }
 
-    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
-        return Optional.ofNullable(aggregationBuilder)
-            .map(AggregationBuilder::getName)
-            .map(this::isDefined)
-            .orElse(false);
-    }
 
-    private boolean isDefined(String keyName) {
-        return getValue(AGGREGATION)
+    @Override
+    protected boolean isDefined(String keyName) {
+        return parameters.get(AGGREGATION)
             .asSplitStream(COMMA)
             .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(
         ImportCandidateParameter key, String source) {
-        var value = getValue(key).as();
+        var value = parameters.get(key).as();
         var query = QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
@@ -180,6 +152,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             ScoreMode.None);
 
         return queryTools.queryToEntry(key, query);
+    }
+
+    @Override
+    protected String getSortFieldName(Entry<String, SortOrder> entry) {
+        return ImportCandidateSort.fromSortKey(entry.getKey()).jsonPath();
     }
 
 
@@ -208,12 +185,12 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         protected void setValue(String key, String value) {
             var qpKey = ImportCandidateParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-                ? decodeUTF(value)
+                ? QueryTools.decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
-                case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query. parameters.set(qpKey, decodedValue);
+                case FIELDS -> query. parameters.set(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query. parameters.set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
@@ -225,13 +202,13 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.isPresent(PAGE)) {
-                if (query.isPresent(FROM)) {
-                    var page = query.getValue(PAGE).<Number>as();
-                    var perPage = query.getValue(SIZE).<Number>as();
-                    query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (query.parameters.isPresent(PAGE)) {
+                if (query.parameters.isPresent(FROM)) {
+                    var page = query.parameters.get(PAGE).<Number>as();
+                    var perPage = query.parameters.get(SIZE).<Number>as();
+                    query.parameters.set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.removeKey(PAGE);
+                query.parameters.remove(PAGE);
             }
         }
 

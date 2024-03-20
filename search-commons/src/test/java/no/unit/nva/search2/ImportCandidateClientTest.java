@@ -35,7 +35,6 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
-import no.unit.nva.search2.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search2.importcandidate.ImportCandidateQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -123,8 +122,8 @@ class ImportCandidateClientTest {
             var pagedResponse = query.toPagedResponse(swsResponse);
 
             assertNotNull(pagedResponse);
-            assertThat(pagedResponse.hits().size(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
-            assertThat(pagedResponse.totalHits(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
+            assertThat(pagedResponse.hits().size(), is(equalTo(query.parameters.get(SIZE).as())));
+            assertThat(pagedResponse.totalHits(), is(equalTo(query.parameters.get(SIZE).as())));
         }
 
         @ParameterizedTest

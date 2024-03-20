@@ -12,7 +12,6 @@ import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
 import static no.unit.nva.search2.resource.Constants.filesHierarchy;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilder;
@@ -44,8 +43,7 @@ public final class Constants {
     public static final String STATUS_TYPE_KEYWORD = "importStatus.candidateStatus.keyword";
     public static final String TYPE_KEYWORD = "type.keyword";
 
-    public static final String DEFAULT_IMPORT_CANDIDATE_SORT =
-        ImportCandidateSort.CREATED_DATE.name().toLowerCase(Locale.getDefault());
+    public static final String DEFAULT_IMPORT_CANDIDATE_SORT = ImportCandidateSort.CREATED_DATE.asCamelCase();
 
     public static final List<AggregationBuilder> IMPORT_CANDIDATES_AGGREGATIONS =
         List.of(

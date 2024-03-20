@@ -1,7 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import static com.google.common.net.MediaType.JSON_UTF_8;
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
@@ -67,7 +65,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -77,7 +74,6 @@ import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
@@ -88,14 +84,14 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceQuery extends Query<ResourceParameter> {
+
+    private UserSettingsClient userSettingsClient;
 
     public static ResourceParameterValidator builder() {
         return new ResourceParameterValidator();
@@ -110,8 +106,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     protected Stream<Entry<ResourceParameter, QueryBuilder>> customQueryBuilders(ResourceParameter key) {
         return switch (key) {
             case FUNDING -> fundingQuery(key);
-            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            case CRISTIN_IDENTIFIER -> additionalIdentifier(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifier(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
             case SEARCH_ALL -> multiMatchQueryStream();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
@@ -123,31 +119,14 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return ResourceParameter.keyFromString(keyName);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncluded(ResourceParameter key) {
-        var query =
-            getValue(EXCLUDE_SUBUNITS).asBoolean()
-                ? termQuery(getTermPath(key), getValue(key).as())
-                : termQuery(getMatchPath(key), getValue(key).as());
-
-        return queryTools.queryToEntry(key, query);
-    }
-
-    private String getTermPath(ResourceParameter key) {
-        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
-    }
-
-    private String getMatchPath(ResourceParameter key) {
-        return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
-    }
-
     @Override
     protected Integer getFrom() {
-        return getValue(FROM).as();
+        return parameters.get(FROM).as();
     }
 
     @Override
     protected Integer getSize() {
-        return getValue(SIZE).as();
+        return parameters.get(SIZE).as();
     }
 
     @Override
@@ -156,8 +135,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
+    protected ResourceParameter getSortOrderKey() {
+        return SORT_ORDER;
+    }
+
+    @Override
+    protected ResourceParameter getSearchAfterKey() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
     public AsType<ResourceParameter> getSort() {
-        return getValue(SORT);
+        return parameters.get(SORT);
     }
 
     @Override
@@ -169,8 +158,33 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected boolean isPagingValue(ResourceParameter key) {
-        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+    protected BoolQueryBuilder makeBoolQuery() {
+        var queryBuilder = mainQuery();
+        if (isLookingForOneContributor()) {
+            addPromotedPublications(this.userSettingsClient, queryBuilder);
+        }
+        return queryBuilder;
+    }
+
+    @Override
+    protected FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
+        RESOURCES_AGGREGATIONS
+            .stream().filter(this::isRequestedAggregation)
+            .forEach(aggregationFilter::subAggregation);
+        return aggregationFilter;
+    }
+
+    @Override
+    protected boolean isDefined(String keyName) {
+        return parameters.get(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
+    }
+
+    @Override
+    protected String getSortFieldName(Entry<String, SortOrder> entry) {
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     @Override
@@ -194,7 +208,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
             .queryName(STATUS);
-        this.addFilter(filter);
+        this.filters.add(filter);
         return this;
     }
 
@@ -209,101 +223,19 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     public ResourceQuery withOrganization(URI organization) {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
             .queryName(PUBLISHER);
-        this.addFilter(filter);
+        this.filters.add(filter);
         return this;
     }
 
-    public Stream<QueryContentWrapper> createQueryBuilderStream(UserSettingsClient userSettingsClient) {
-        var queryBuilder =
-            this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery()
-                : makeBoolQuery(userSettingsClient);
-
-        var builder = defaultSearchSourceBuilder(queryBuilder);
-
-        handleSearchAfter(builder);
-
-        getSortStream()
-            .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
-
-        if (getMediaType().is(JSON_UTF_8)) {
-            builder.aggregation(getAggregationsWithFilter());
-        }
-        logger.debug(builder.toString());
-
-        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
-    }
-
-    private BoolQueryBuilder makeBoolQuery(UserSettingsClient userSettingsClient) {
-        var queryBuilder = mainQuery();
-        if (isLookingForOneContributor()) {
-            addPromotedPublications(userSettingsClient, queryBuilder);
-        }
-
-        return queryBuilder;
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQueryStream() {
-        var fields = fieldsToKeyNames(getValue(FIELDS));
-        var sevenValues = getValue(SEARCH_ALL).asSplitStream(SPACE)
-            .limit(7)
-            .collect(Collectors.joining(SPACE));
-        var fifteenValues = getValue(SEARCH_ALL).asSplitStream(SPACE)
-            .limit(15)
-            .collect(Collectors.joining(SPACE));
-
-        var query = boolQuery()
-            .queryName(SEARCH_ALL.asCamelCase())
-            .must(QueryBuilders.multiMatchQuery(sevenValues)
-                      .fields(fields)
-                      .type(Type.CROSS_FIELDS)
-                      .operator(Operator.AND));
-
-        if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
-            query.should(
-                matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues).boost(TITLE.fieldBoost())
-            );
-        }
-        if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
-            query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
-        }
-        return queryTools.queryToEntry(SEARCH_ALL, query);
-    }
-
-    private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
-        RESOURCES_AGGREGATIONS
-            .stream().filter(this::isRequestedAggregation)
-            .forEach(aggregationFilter::subAggregation);
-        return aggregationFilter;
-    }
-
-    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
-        return Optional.ofNullable(aggregationBuilder)
-            .map(AggregationBuilder::getName)
-            .map(this::isDefined)
-            .orElse(false);
-    }
-
-    private boolean isDefined(String keyName) {
-        return getValue(AGGREGATION)
-            .asSplitStream(COMMA)
-            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
-    }
-
-    private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
-    }
-
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
-        }
+    public ResourceQuery withUserSettings(UserSettingsClient userSettingsClient) {
+        this.userSettingsClient = userSettingsClient;
+        return this;
     }
 
     private boolean isLookingForOneContributor() {
-        return hasOneValue(CONTRIBUTOR);
+        return parameters.get(CONTRIBUTOR)
+            .asSplitStream(COMMA)
+            .count() == 1;
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
@@ -312,7 +244,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .or(() -> new UserSettings(List.of()))
                 .get().promotedPublications();
         if (hasContent(promotedPublications)) {
-            removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
+            parameters.remove(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
@@ -327,31 +259,72 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
+    private Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifier(ResourceParameter key, String source) {
+        var query = QueryBuilders.nestedQuery(
+            ADDITIONAL_IDENTIFIERS,
+            boolQuery()
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), parameters.get(key).as()))
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
+            ScoreMode.None);
 
-    public Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
-        final var values = getValue(key).split(COLON);
+        return queryTools.queryToEntry(key, query);
+    }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
+        var values = parameters.get(key).split(COLON);
         var query = QueryBuilders.nestedQuery(
             FUNDINGS,
             boolQuery()
                 .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))
                 .must(termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
             ScoreMode.None);
+        return queryTools.queryToEntry(key, query);
+    }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQueryStream() {
+        var fields = fieldsToKeyNames(parameters.get(FIELDS));
+        var sevenValues = parameters.get(SEARCH_ALL).asSplitStream(SPACE)
+            .limit(7)
+            .collect(Collectors.joining(SPACE));
+        var fifteenValues = parameters.get(SEARCH_ALL).asSplitStream(SPACE)
+            .limit(15)
+            .collect(Collectors.joining(SPACE));
+
+        var query = boolQuery()
+            .queryName(SEARCH_ALL.asCamelCase())
+            .must(QueryBuilders.multiMatchQuery(sevenValues)
+                .fields(fields)
+                .type(Type.CROSS_FIELDS)
+                .operator(Operator.AND));
+
+        if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
+            query.should(
+                matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues).boost(TITLE.fieldBoost())
+            );
+        }
+        if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
+            query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
+        }
+        return queryTools.queryToEntry(SEARCH_ALL, query);
+    }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncluded(ResourceParameter key) {
+        var query =
+            parameters.get(EXCLUDE_SUBUNITS).asBoolean()
+                ? termQuery(getTermPath(key), parameters.get(key).as())
+                : termQuery(getMatchPath(key), parameters.get(key).as());
 
         return queryTools.queryToEntry(key, query);
     }
 
-    public Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
-        ResourceParameter key, String source) {
-        var value = getValue(key).toString();
-        var query = QueryBuilders.nestedQuery(
-            ADDITIONAL_IDENTIFIERS,
-            boolQuery()
-                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), value))
-                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
-            ScoreMode.None);
-
-        return queryTools.queryToEntry(key, query);
+    private String getTermPath(ResourceParameter key) {
+        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
     }
+
+    private String getMatchPath(ResourceParameter key) {
+        return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
+    }
+
 
     /**
      * Add a (default) filter to the query that will never match any document.
@@ -361,7 +334,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
-        setFilters(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
+        filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
@@ -405,16 +378,16 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
-                case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters.set(qpKey, decodedValue);
+                case FIELDS -> query.parameters.set(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.parameters.set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                    PUBLICATION_LANGUAGE_SHOULD -> query.setKeyValue(qpKey, expandLanguage(decodedValue));
+                    PUBLICATION_LANGUAGE_SHOULD -> query.parameters.set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.setKeyValue(qpKey, expandYearToDate(decodedValue));
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters.set(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
@@ -429,13 +402,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.isPresent(PAGE)) {
-                if (query.isPresent(FROM)) {
-                    var page = query.getValue(PAGE).<Number>as();
-                    var perPage = query.getValue(SIZE).<Number>as();
-                    query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (query.parameters.isPresent(PAGE)) {
+                if (query.parameters.isPresent(FROM)) {
+                    var page = query.parameters.get(PAGE).<Number>as();
+                    var perPage = query.parameters.get(SIZE).<Number>as();
+                    query.parameters.set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.removeKey(PAGE);
+                query.parameters.remove(PAGE);
             }
         }
 
