@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common.builder;
 
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -32,7 +33,7 @@ public class OpensearchQueryTextKeyword<K extends Enum<K> & ParameterKey> extend
     }
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
-        var disMax = QueryBuilders.disMaxQuery();
+        var disMax = QueryBuilders.disMaxQuery().queryName("TextAny-" + key.asCamelCase());
         key.searchFields()
             .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost())));
         return Stream.of(disMax);
@@ -40,7 +41,7 @@ public class OpensearchQueryTextKeyword<K extends Enum<K> & ParameterKey> extend
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String value) {
         var disMax = QueryBuilders.disMaxQuery();
-        key.searchFields()
+        key.searchFields(KEYWORD_TRUE)
             .forEach(field -> disMax.add(new TermQueryBuilder(field, value).boost(key.fieldBoost()))
             );
         return Stream.of(disMax);

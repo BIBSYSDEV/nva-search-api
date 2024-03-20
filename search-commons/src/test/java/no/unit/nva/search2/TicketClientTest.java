@@ -3,13 +3,11 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.NOTIFICATIONS;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
@@ -23,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -72,8 +69,8 @@ class TicketClientTest {
     private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
-    public static final String ASSIGNEE_USERNAME = "1412322@20754.0.0.0";
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 5;
+    public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
 
@@ -124,40 +121,26 @@ class TicketClientTest {
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
-            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL + ALL);
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
             var query1 = TicketQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredOrganization(testOrganizationId)
-                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withUser(ASSIGNEE_USERNAME);
+                .withFilterOrganization(testOrganizationId)
+                .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .withFilterCurrentUser(CURRENT_USERNAME);
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
-            var uri2 =
-                URI.create(REQUEST_BASE_URL + AGGREGATION.fieldName() + EQUAL
-                           + joinBy(COMMA, STATUS, TYPE, PUBLICATION_STATUS, NOTIFICATIONS));
-            var query2 = TicketQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri2))
-                .withDockerHostUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .withRequiredOrganization(testOrganizationId)
-                .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withUser(ASSIGNEE_USERNAME);
-            var response2 = searchClient.doSearch(query2);
-            assertNotNull(response2);
-
-            assertEquals(response1.aggregations(), response2.aggregations());
-
             var aggregations = query1.toPagedResponse(response1).aggregations();
 
             assertFalse(aggregations.isEmpty());
+            assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
+
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(12));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(10));
             assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
         }
 
@@ -171,9 +154,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME)
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterCurrentUser(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -189,17 +172,15 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME);
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterCurrentUser(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
-            assertThat(pagedSearchResourceDto.aggregations().size(),
-                is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
             logger.debug(pagedSearchResourceDto.id().toString());
         }
 
@@ -213,9 +194,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME);
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterCurrentUser(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -241,9 +222,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME)
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterCurrentUser(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -257,9 +238,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredOrganization(testOrganizationId)
-                    .withRequiredTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withUser(ASSIGNEE_USERNAME);
+                    .withFilterOrganization(testOrganizationId)
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withFilterCurrentUser(CURRENT_USERNAME);
 
             logger.info(query.getValue(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -284,7 +265,7 @@ class TicketClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0&aggregation=all", 19),
+                createArgument("page=0&aggregation=all,the,best,", 19),
                 createArgument("page=1&aggregation=all&size=1", 1),
                 createArgument("page=2&aggregation=all&size=1", 1),
                 createArgument("page=3&aggregation=all&size=1", 1),
@@ -294,20 +275,26 @@ class TicketClientTest {
                 createArgument("offset=15&aggregation=all&results=2", 2),
                 createArgument("offset=15&aggregation=all&per_page=2", 2),
                 createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
-                createArgument("offset=15&aggregation=all&perPage=2", 2)
+                createArgument("offset=15&perPage=2", 2)
             );
         }
 
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
+                URI.create(REQUEST_BASE_URL + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
                 URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"));
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&SEARCH_AFTER=12312")
+
+            );
         }
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
-                URI.create(REQUEST_BASE_URL + "sort=epler"),
+                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
                 URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
                 URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
                 URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),

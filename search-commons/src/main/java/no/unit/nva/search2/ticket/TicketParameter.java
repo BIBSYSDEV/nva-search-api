@@ -9,8 +9,8 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SEARCH_ALL
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.PHI;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
@@ -19,7 +19,9 @@ import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
+import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
@@ -40,7 +42,6 @@ import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.VIEWED_BY_FIELDS;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -54,6 +55,7 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -64,8 +66,9 @@ import nva.commons.core.JacocoGenerated;
 public enum TicketParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    ASSIGNEE(TEXT, ALL_ITEMS, ASSIGNEE_FIELDS),
+    ASSIGNEE(CUSTOM, ALL_ITEMS, ASSIGNEE_FIELDS),
     ASSIGNEE_NOT(TEXT, NO_ITEMS, ASSIGNEE_FIELDS),
+    BY_USER_PENDING(IGNORED),
     CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
     CUSTOMER_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, CUSTOMER_ID_KEYWORD),
     CUSTOMER_ID_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, CUSTOMER_ID_KEYWORD),
@@ -96,7 +99,7 @@ public enum TicketParameter implements ParameterKey {
     VIEWED_BY_NOT(TEXT, NO_ITEMS, VIEWED_BY_FIELDS),
 
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
@@ -109,7 +112,7 @@ public enum TicketParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<TicketParameter> VALID_SEARCH_PARAMETER_KEYS =
+    public static final Set<TicketParameter> TICKET_PARAMETER_SET =
         Arrays.stream(TicketParameter.values())
             .filter(TicketParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
@@ -141,23 +144,23 @@ public enum TicketParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.key = this.name().toLowerCase(Locale.getDefault());
+        this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{key};
+            : new String[]{name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
             ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
     @Override
-    public String fieldName() {
+    public String asCamelCase() {
         return key;
     }
 
@@ -187,17 +190,11 @@ public enum TicketParameter implements ParameterKey {
     }
 
     @Override
-    public Stream<String> searchFields() {
+    public Stream<String> searchFields(boolean... isKeyWord) {
         return Arrays.stream(fieldsToSearch)
-            .map(String::trim)
-            .map(trimmed -> isNotKeyword()
-                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
-                : trimmed);
+            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
-    private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
-    }
 
     @Override
     public FieldOperator searchOperator() {

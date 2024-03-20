@@ -12,7 +12,6 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
-import static no.unit.nva.search2.resource.ResourceParameter.VALID_SEARCH_PARAMETER_KEYS;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -153,6 +152,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract boolean isKeyValid(String keyName);
 
+    protected abstract boolean isAggregationValid(String aggregationName);
+
     /**
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
      * <p>Usage:</p>
@@ -183,6 +184,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
 
+    protected abstract Collection<String> validKeys();
+
     /**
      * Validate sort keys.
      *
@@ -200,11 +203,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * returns T.VALID_SEARCH_PARAMETER_KEYS
      */
-    protected Collection<String> validKeys() {
-        return VALID_SEARCH_PARAMETER_KEYS.stream()
-                   .map(ParameterKey::fieldName)
-                   .toList();
-    }
 
 
     protected boolean invalidQueryParameter(K key, String value) {
@@ -216,7 +214,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         return
             requiredMissing()
                 .stream()
-                .map(ParameterKey::fieldName)
+                .map(ParameterKey::asCamelCase)
                 .collect(Collectors.toSet());
     }
 
@@ -236,7 +234,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         final var key = entry.getKey();
         final var value = entry.getValue();
         if (invalidQueryParameter(key, value)) {
-            final var keyName =  key.fieldName();
+            final var keyName = key.asCamelCase();
             final var errorMessage = key.errorMessage().formatted(keyName, value);
             throw new BadRequestException(errorMessage);
         }
@@ -264,12 +262,21 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     protected String ignoreInvalidFields(String value) {
-        return ALL.equals(value) || isNull(value)
+        return ALL.equalsIgnoreCase(value) || isNull(value)
             ? ALL
             : Arrays.stream(value.split(COMMA))
                 .filter(this::isKeyValid)           // ignoring invalid keys
                 .collect(Collectors.joining(COMMA));
     }
+
+    protected String ignoreInvalidAggregations(String value) {
+        return isNull(value) || value.contains(ALL) || value.contains("ALL")
+            ? ALL
+            : Arrays.stream(value.split(COMMA))
+                .filter(this::isAggregationValid)           // ignoring invalid keys
+                .collect(Collectors.joining(COMMA));
+    }
+
 
     protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;

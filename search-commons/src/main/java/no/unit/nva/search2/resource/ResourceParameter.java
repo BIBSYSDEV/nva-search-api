@@ -18,9 +18,9 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URI;
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
-import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.common.constant.Words.PHI;
 import static no.unit.nva.search2.common.constant.Words.PI;
@@ -37,7 +37,6 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
-import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
@@ -78,7 +77,8 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEY
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
+import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
+import static no.unit.nva.search2.resource.Constants.UNIT_PATHS;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -86,12 +86,12 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index.
@@ -103,8 +103,6 @@ import nva.commons.core.JacocoGenerated;
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
-    EXCLUDE_SUBUNITS(CUSTOM),
-    VIEWING_SCOPE(CUSTOM),
     ABSTRACT(FUZZY_TEXT, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, NO_ITEMS, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_ABSTRACT),
@@ -126,6 +124,7 @@ public enum ResourceParameter implements ParameterKey {
     DOI(FUZZY_KEYWORD, REFERENCE_DOI_KEYWORD),
     DOI_NOT(FUZZY_KEYWORD, NO_ITEMS, REFERENCE_DOI_KEYWORD),
     DOI_SHOULD(TEXT, ONE_OR_MORE_ITEM, REFERENCE_DOI_KEYWORD),
+    EXCLUDE_SUBUNITS(IGNORED),
     FUNDING(CUSTOM, ALL_ITEMS, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
     FUNDING_IDENTIFIER(KEYWORD, ALL_ITEMS, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
     FUNDING_IDENTIFIER_NOT(KEYWORD, NO_ITEMS, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
@@ -205,8 +204,8 @@ public enum ResourceParameter implements ParameterKey {
     TITLE(FUZZY_TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TITLE_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(FUZZY_TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TOP_LEVEL_ORGANIZATION(CUSTOM),
-    UNIT(CUSTOM),
+    TOP_LEVEL_ORGANIZATION(CUSTOM, ONE_OR_MORE_ITEM, TOP_LEVEL_ORG_ID),
+    UNIT(CUSTOM, ALL_ITEMS, UNIT_PATHS),
     UNIT_NOT(KEYWORD, NO_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, ONE_OR_MORE_ITEM, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
@@ -216,7 +215,7 @@ public enum ResourceParameter implements ParameterKey {
     USER_NOT(KEYWORD, NO_ITEMS, RESOURCE_OWNER_OWNER_KEYWORD),
     USER_SHOULD(TEXT, ONE_OR_MORE_ITEM, RESOURCE_OWNER_OWNER_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    SEARCH_ALL(CUSTOM, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
@@ -230,7 +229,7 @@ public enum ResourceParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ResourceParameter> VALID_SEARCH_PARAMETER_KEYS =
+    public static final Set<ResourceParameter> RESOURCE_PARAMETER_SET =
         Arrays.stream(ResourceParameter.values())
             .filter(ResourceParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
@@ -271,23 +270,23 @@ public enum ResourceParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.key = this.name().toLowerCase(Locale.getDefault());
+        this.key = CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{key};
+            : new String[]{name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
             ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
     @Override
-    public String fieldName() {
+    public String asCamelCase() {
         return key;
     }
 
@@ -317,17 +316,11 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     @Override
-    public Stream<String> searchFields() {
+    public Stream<String> searchFields(boolean... isKeyWord) {
         return Arrays.stream(fieldsToSearch)
-            .map(String::trim)
-            .map(trimmed -> isNotKeyword()
-                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
-                : trimmed);
+            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
-    private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
-    }
 
     @Override
     public FieldOperator searchOperator() {

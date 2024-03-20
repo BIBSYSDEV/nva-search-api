@@ -1,6 +1,5 @@
 package no.unit.nva.search2.importcandidate;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
@@ -10,11 +9,11 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WI
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -26,13 +25,12 @@ import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_IN
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.keyFromString;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.INVALID;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.fromSortKey;
 import static no.unit.nva.search2.importcandidate.ImportCandidateSort.validSortKeys;
@@ -41,7 +39,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -51,7 +48,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
@@ -85,6 +81,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         };
     }
 
+    @Override
+    protected ImportCandidateParameter keyFromString(String keyName) {
+        return ImportCandidateParameter.keyFromString(keyName);
+    }
 
     @Override
     protected Integer getFrom() {
@@ -99,16 +99,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     @Override
     protected ImportCandidateParameter getFieldsKey() {
         return FIELDS;
-    }
-
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ImportCandidateParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
     }
 
     @Override
@@ -146,7 +136,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         builder.aggregation(getAggregationsWithFilter());
 
-        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
+        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).jsonPath(), entry.getValue()));
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -173,10 +163,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             .orElse(false);
     }
 
-    private boolean isDefined(String key) {
-        return getValue(AGGREGATION).asStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    private boolean isDefined(String keyName) {
+        return getValue(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(
@@ -204,10 +194,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.name(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.name(), ALL);
                     default -> { /* do nothing */
                     }
                 }
@@ -216,13 +206,14 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key);
+            var qpKey = ImportCandidateParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
                 ? decodeUTF(value)
                 : value;
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
@@ -255,14 +246,23 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
         @Override
         protected Collection<String> validKeys() {
-            return VALID_LUCENE_PARAMETER_KEYS.stream()
-                .map(ParameterKey::fieldName)
+            return IMPORT_CANDIDATE_PARAMETER_SET.stream()
+                .map(Enum::name)
                 .toList();
         }
 
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ImportCandidateParameter.INVALID;
+            return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                IMPORT_CANDIDATES_AGGREGATIONS.stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

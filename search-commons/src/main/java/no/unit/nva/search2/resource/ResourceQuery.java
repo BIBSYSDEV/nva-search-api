@@ -1,7 +1,6 @@
 package no.unit.nva.search2.resource;
 
 import static com.google.common.net.MediaType.JSON_UTF_8;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
@@ -11,57 +10,60 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAG
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
+import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
+import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
+import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search2.resource.ResourceParameter.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.resource.ResourceParameter.UNIT;
-import static no.unit.nva.search2.resource.ResourceParameter.VIEWING_SCOPE;
-import static no.unit.nva.search2.resource.ResourceParameter.keyFromString;
+import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
 import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
-import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,7 +75,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -81,6 +82,8 @@ import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -109,18 +112,32 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case FUNDING -> fundingQuery(key);
             case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case EXCLUDE_SUBUNITS -> createSubunitsQuery();
             case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
+            case SEARCH_ALL -> multiMatchQueryStream();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
+    @Override
+    protected ResourceParameter keyFromString(String keyName) {
+        return ResourceParameter.keyFromString(keyName);
+    }
+
     private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncluded(ResourceParameter key) {
-        return getValue(EXCLUDE_SUBUNITS).asBoolean()
-            ? Stream.empty()
-            : queryTools.queryToEntry(
-                key, termQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), getValue(key).as())
-            );
+        var query =
+            getValue(EXCLUDE_SUBUNITS).asBoolean()
+                ? termQuery(getTermPath(key), getValue(key).as())
+                : termQuery(getMatchPath(key), getValue(key).as());
+
+        return queryTools.queryToEntry(key, query);
+    }
+
+    private String getTermPath(ResourceParameter key) {
+        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
+    }
+
+    private String getMatchPath(ResourceParameter key) {
+        return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
     }
 
     @Override
@@ -136,16 +153,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected ResourceParameter getFieldsKey() {
         return FIELDS;
-    }
-
-    @Override
-    protected String[] fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? ASTERISK.split(COMMA)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-                .map(ResourceParameter::keyFromString)
-                .flatMap(ParameterKey::searchFields)
-                .toArray(String[]::new);
     }
 
     @Override
@@ -222,7 +229,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         if (getMediaType().is(JSON_UTF_8)) {
             builder.aggregation(getAggregationsWithFilter());
         }
-        logger.info(builder.toString());
+        logger.debug(builder.toString());
 
         return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
     }
@@ -236,12 +243,39 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryBuilder;
     }
 
+    private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQueryStream() {
+        var fields = fieldsToKeyNames(getValue(FIELDS));
+        var sevenValues = getValue(SEARCH_ALL).asSplitStream(SPACE)
+            .limit(7)
+            .collect(Collectors.joining(SPACE));
+        var fifteenValues = getValue(SEARCH_ALL).asSplitStream(SPACE)
+            .limit(15)
+            .collect(Collectors.joining(SPACE));
+
+        var query = boolQuery()
+            .queryName(SEARCH_ALL.asCamelCase())
+            .must(QueryBuilders.multiMatchQuery(sevenValues)
+                      .fields(fields)
+                      .type(Type.CROSS_FIELDS)
+                      .operator(Operator.AND));
+
+        if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
+            query.should(
+                matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues).boost(TITLE.fieldBoost())
+            );
+        }
+        if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
+            query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
+        }
+        return queryTools.queryToEntry(SEARCH_ALL, query);
+    }
+
     private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
+        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
         RESOURCES_AGGREGATIONS
             .stream().filter(this::isRequestedAggregation)
-            .forEach(aggrFilter::subAggregation);
-        return aggrFilter;
+            .forEach(aggregationFilter::subAggregation);
+        return aggregationFilter;
     }
 
     private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
@@ -258,7 +292,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).getFieldName();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
@@ -281,9 +315,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             removeKey(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
-                var qb = QueryBuilders
-                    .matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(PI + 1F - ((float) i/promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
+                    .boost(PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
             logger.info(
@@ -294,39 +327,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    public Stream<Entry<ResourceParameter, QueryBuilder>> createSubunitsQuery() {
-        var viewingScope = getViewingScope();
-        if (!viewingScope.isEmpty()) {
-            var shouldExcludeSubunits = getValue(EXCLUDE_SUBUNITS).asBoolean();
-            return queryTools.queryToEntry(VIEWING_SCOPE, createSubunitQuery(shouldExcludeSubunits, viewingScope));
-        } else {
-            return null;
-        }
-    }
-
-    private static QueryBuilder createSubunitQuery(Boolean shouldExcludeSubunits, List<String> viewingScope) {
-        return shouldExcludeSubunits ? excludeSubunitsQuery(viewingScope) : includeSubunitsQuery(viewingScope);
-    }
-
-    private List<String> getViewingScope() {
-        return Stream.concat(
-                getValue(TOP_LEVEL_ORGANIZATION).asStream(),
-                getValue(UNIT).asStream())
-                   .toList();
-    }
-
-    private static QueryBuilder includeSubunitsQuery(List<String> viewingScope) {
-        var query = boolQuery();
-        query.should(termsQuery(jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD), viewingScope));
-        query.should(termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                viewingScope));
-        return query;
-    }
-
-    private static QueryBuilder excludeSubunitsQuery(List<String> viewingScope) {
-        return termsQuery(jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, AFFILIATIONS, ID, KEYWORD),
-                                        viewingScope);
-    }
 
     public Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
         final var values = getValue(key).split(COLON);
@@ -364,7 +364,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         setFilters(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
-    @SuppressWarnings("PMD.GodClass")
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
 
         ResourceParameterValidator() {
@@ -373,17 +372,26 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ResourceParameter.INVALID;
+            return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                RESOURCES_AGGREGATIONS.stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), ALL);
+                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.name(), ALL);
                     default -> { /* ignore and continue */ }
                 }
             });
@@ -391,7 +399,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key);
+            var qpKey = ResourceParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
                 ? decodeUTF(value)
                 : value;
@@ -399,6 +407,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
                 case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
@@ -439,6 +448,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             }
             attempt(entry::getValue)
                 .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return RESOURCE_PARAMETER_SET.stream()
+                .map(Enum::name)
+                .toList();
         }
     }
 }
