@@ -473,6 +473,7 @@ Resources:
                   - !Ref EventBusArn
                   - !GetAtt BatchIndexEventBus.Arn
                   - !GetAtt ResourcesIndexerDLQ.Arn
+                  - !GetAtt RecoveryQueue.Arn
         - PolicyName: readFromS3
           PolicyDocument:
             Version: 2012-10-17
