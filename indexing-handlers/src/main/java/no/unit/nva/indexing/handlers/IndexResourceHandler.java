@@ -25,7 +25,8 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexResourceHandler.class);
     private static final String EXPANDED_RESOURCES_BUCKET = IndexingConfig.ENVIRONMENT.readEnv(
         "EXPANDED_RESOURCES_BUCKET");
-    private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE = "IndexDocument has been sent to recovery queue: {}";
+    private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE =
+        "IndexDocument for index {} has been sent to recovery queue: {}";
     private final S3Driver resourcesS3Driver;
     private final IndexingClient indexingClient;
     private final QueueClient queueClient;
@@ -60,12 +61,13 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
     }
 
     private Void persistRecoveryMessage(Failure<Void> failure, IndexDocument indexDocument) {
+        var documentIdentifier = indexDocument.getDocumentIdentifier();
         var indexName = indexDocument.getIndexName();
-        RecoveryEntry.withIdentifier(indexDocument.getDocumentIdentifier())
+        RecoveryEntry.withIdentifier(documentIdentifier)
             .withIndex(indexName)
             .withException(failure.getException())
             .persist(queueClient);
-        LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexName);
+        LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexName, documentIdentifier);
         return null;
     }
 
