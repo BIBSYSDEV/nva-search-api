@@ -508,7 +508,6 @@ Resources:
       Environment:
         Variables:
           EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
-          ERRORS_BUCKET: !Ref IndexingErrorsBucket
           RECOVERY_QUEUE: !Ref RecoveryQueue
       Events:
         EventBridgeEvent:
@@ -522,6 +521,11 @@ Resources:
               detail:
                 responsePayload:
                   topic: [ "PublicationService.ExpandedEntry.Persisted" ]
+      EventInvokeConfig:
+        DestinationConfig:
+          OnFailure:
+            Type: SQS
+            Destination: !GetAtt ResourcesIndexerDLQ.Arn
 
   BatchIndexEventBus:
     Type: AWS::Events::EventBus

@@ -13,6 +13,7 @@ public final class RecoveryEntry {
     private static final String ID = "id";
     private static final String RECOVERY_QUEUE = "RECOVERY_QUEUE";
     private static final String INDEX_NAME = "index";
+    public static final String DATA_TYPE_STRING = "String";
     private final String identifier;
     private final String index;
     private final String exception;
@@ -42,7 +43,7 @@ public final class RecoveryEntry {
     private MessageAttributeValue convertToMessageAttribute(String value) {
         return MessageAttributeValue.builder()
                    .stringValue(value)
-                   .dataType(String.class.getCanonicalName())
+                   .dataType(DATA_TYPE_STRING)
                    .build();
     }
 
