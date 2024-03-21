@@ -6,11 +6,15 @@ import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
+import no.unit.nva.indexing.utils.RecoveryEntry;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.IndexingClient;
 import no.unit.nva.search.IndexingConfig;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search.utils.IndexQueueClient;
+import no.unit.nva.search.utils.QueueClient;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.Failure;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
 import org.slf4j.Logger;
@@ -21,23 +25,21 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexResourceHandler.class);
     private static final String EXPANDED_RESOURCES_BUCKET = IndexingConfig.ENVIRONMENT.readEnv(
         "EXPANDED_RESOURCES_BUCKET");
-    public static final String INDEXING_ERROR_MSG = "Failure adding document to index. Resource path: {}. "
-                                                    + "Exception message: {}";
-    private static final String ERRORS_BUCKET = "ERRORS_BUCKET";
+    private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE = "IndexDocument has been sent to recovery queue: {}";
     private final S3Driver resourcesS3Driver;
     private final IndexingClient indexingClient;
-    private final S3Driver errorsS3Driver;
+    private final QueueClient queueClient;
 
     @JacocoGenerated
     public IndexResourceHandler() {
-        this(new S3Driver(EXPANDED_RESOURCES_BUCKET), new S3Driver(ERRORS_BUCKET), defaultIndexingClient());
+        this(new S3Driver(EXPANDED_RESOURCES_BUCKET), defaultIndexingClient(), IndexQueueClient.defaultQueueClient());
     }
 
-    public IndexResourceHandler(S3Driver resourcesS3Driver, S3Driver errorsS3Driver, IndexingClient indexingClient) {
+    public IndexResourceHandler(S3Driver resourcesS3Driver, IndexingClient indexingClient, QueueClient queueClient) {
         super(EventReference.class);
         this.resourcesS3Driver = resourcesS3Driver;
-        this.errorsS3Driver = errorsS3Driver;
         this.indexingClient = indexingClient;
+        this.queueClient = queueClient;
     }
 
     @JacocoGenerated
@@ -50,21 +52,25 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
                                        AwsEventBridgeEvent<AwsEventBridgeDetail<EventReference>> event,
                                        Context context) {
 
-        UnixPath resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
-        IndexDocument indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
-        attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElseThrow(
-            failure -> handleFailure(resourceRelativePath, failure.getException()));
+        var resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
+        var indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
+        attempt(() -> indexingClient.addDocumentToIndex(indexDocument)).orElse(
+            failure -> persistRecoveryMessage(failure, indexDocument));
         return null;
     }
 
-    private RuntimeException handleFailure(UnixPath resourceRelativePath, Exception exception) {
-        LOGGER.error(INDEXING_ERROR_MSG, resourceRelativePath, exception.getMessage());
-        attempt(() -> errorsS3Driver.insertFile(resourceRelativePath, exception.toString()));
-        return new RuntimeException(exception);
+    private Void persistRecoveryMessage(Failure<Void> failure, IndexDocument indexDocument) {
+        var indexName = indexDocument.getIndexName();
+        RecoveryEntry.withIdentifier(indexDocument.getDocumentIdentifier())
+            .withIndex(indexName)
+            .withException(failure.getException())
+            .persist(queueClient);
+        LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexName);
+        return null;
     }
 
     private IndexDocument fetchFileFromS3Bucket(UnixPath resourceRelativePath) {
-        String resource = resourcesS3Driver.getFile(resourceRelativePath);
+        var resource = resourcesS3Driver.getFile(resourceRelativePath);
         return IndexDocument.fromJsonString(resource);
     }
 }

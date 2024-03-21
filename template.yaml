@@ -508,6 +508,7 @@ Resources:
         Variables:
           EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
           ERRORS_BUCKET: !Ref IndexingErrorsBucket
+          RECOVERY_QUEUE: !Ref RecoveryQueue
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
@@ -610,6 +611,10 @@ Resources:
 
   ResourcesIndexerDLQ:
     Type: AWS::SQS::Queue
+  RecoveryQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600 #14 days
 
   EventBasedBatchIndex:
     Type: AWS::Serverless::Function

@@ -29,6 +29,7 @@ dependencies {
     implementation libs.opensearch.java
     implementation libs.opensearch.rest.highlevel.client
     implementation libs.slf4j
+    implementation libs.aws.apache.client
 
     testImplementation libs.bundles.testing
 
