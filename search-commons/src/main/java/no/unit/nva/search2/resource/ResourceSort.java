@@ -1,19 +1,18 @@
 package no.unit.nva.search2.resource;
 
-import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PIPE;
+import static no.unit.nva.search2.common.constant.Patterns.*;
+import static no.unit.nva.search2.common.constant.Words.*;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.DOT;
-import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.YEAR;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.SortKey;
+import org.apache.commons.text.CaseUtils;
 
 public enum ResourceSort implements SortKey {
     INVALID(EMPTY_STRING),
@@ -40,7 +39,15 @@ public enum ResourceSort implements SortKey {
         this.path = jsonPath;
     }
 
-    @Override
+
+    public String asCamelCase() {
+        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+    }
+
+    public String asLowerCase() {
+        return this.name().toLowerCase(Locale.getDefault());
+    }
+
     public String keyPattern() {
         return keyValidationRegEx;
     }
@@ -64,23 +71,38 @@ public enum ResourceSort implements SortKey {
             : INVALID;
     }
 
-    public static Set<String> validSortKeys() {
+    public static Predicate<ResourceSort> equalTo(String name) {
+        return key -> name.matches(key.keyPattern());
+    }
+
+    public static Collection<String> validSortKeys() {
         return Arrays.stream(ResourceSort.values())
-            .sorted(SortKey::compareAscending)
-            .skip(1)
-            .map(ResourceSort::name)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+                .sorted(SortKey::compareAscending)
+                .skip(1)
+                .map(ResourceSort::name)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private static int compareAscending(ResourceSort key1, ResourceSort key2) {
+        return key1.ordinal() - key2.ordinal();
+    }
+
+    private static String getIgnoreCaseAndUnderscoreKeyExpression(String keyName) {
+        var keyNameIgnoreUnderscoreExpression =
+            keyName.toLowerCase(Locale.getDefault())
+                .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+        return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
     }
 
     public static String sortToJson(String sortParameters) {
         return
-            Arrays.stream(sortParameters.split(COMMA))
-                .flatMap(param -> {
-                    var split = param.split(COLON_OR_SPACE);
-                    var direction = split.length == 2 ? split[1] : "asc";
-                    return Arrays.stream(fromSortKey(split[0]).jsonPaths())
-                        .map(path -> "{\"" + path + "\":{ \"order\": \"" + direction + "\",\"missing\": \"_last\"}}");
-                })
-                .collect(Collectors.joining(COMMA, "[", "]"));
+                Arrays.stream(sortParameters.split(COMMA))
+                        .flatMap(param -> {
+                            var split = param.split(COLON_OR_SPACE);
+                            var direction = split.length == 2 ? split[1] : "asc";
+                            return Arrays.stream(fromSortKey(split[0]).jsonPaths())
+                                    .map(path -> "{\"" + path + "\":{ \"order\": \"" + direction + "\",\"missing\": \"_last\"}}");
+                        })
+                        .collect(Collectors.joining(COMMA, "[", "]"));
     }
 }

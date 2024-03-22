@@ -2,6 +2,7 @@ package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.constant.Words;
+import org.apache.commons.text.CaseUtils;
 
 public enum TicketSort {
     INVALID(EMPTY_STRING),
@@ -30,10 +32,17 @@ public enum TicketSort {
 
     private final String keyValidationRegEx;
     private final String path;
-
     TicketSort(String jsonPath) {
         this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.path = jsonPath;
+    }
+
+    public String asCamelCase() {
+        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+    }
+
+    public String asLowerCase() {
+        return this.name().toLowerCase(Locale.getDefault());
     }
 
     public String keyPattern() {
@@ -59,8 +68,7 @@ public enum TicketSort {
 
     public static Collection<String> validSortKeys() {
         return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(TicketSort::name)
-            .map(String::toLowerCase)
+            .map(TicketSort::asLowerCase)
             .toList();
     }
 
