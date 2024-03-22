@@ -13,6 +13,8 @@ dependencies {
     implementation libs.nva.eventhandlers
     implementation libs.aws.sdk2.urlconnection
     implementation libs.aws.sdk2.eventbridge
+    implementation libs.aws.sdk2.sqs
+    implementation libs.aws.apache.client
     implementation libs.bundles.logging
 
     implementation libs.bundles.jackson
@@ -28,4 +30,5 @@ test {
     environment "ERRORS_BUCKET", "errorsBucket"
     environment "SEARCH_INFRASTRUCTURE_API_URI", "localhost"
     environment "SEARCH_INFRASTRUCTURE_AUTH_URI", "localhost"
+    environment "RECOVERY_QUEUE", "queue"
 }
