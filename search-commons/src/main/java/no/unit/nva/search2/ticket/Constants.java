@@ -17,7 +17,6 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VIEWED_BY;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import no.unit.nva.search2.common.enums.TicketStatus;
 import nva.commons.core.JacocoGenerated;
@@ -38,7 +37,7 @@ public final class Constants {
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
     public static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-    public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.name().toLowerCase(Locale.getDefault());
+    public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.asCamelCase();
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;

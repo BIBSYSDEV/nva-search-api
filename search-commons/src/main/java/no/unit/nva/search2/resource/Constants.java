@@ -86,7 +86,7 @@ public final class Constants {
     //entityDescription/reference/publicationContext/publisher
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
-    public static final String DEFAULT_RESOURCE_SORT = ResourceSort.PUBLISHED_DATE.jsonPath();
+    public static final String DEFAULT_RESOURCE_SORT = ResourceSort.PUBLISHED_DATE.asCamelCase();
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;

@@ -41,7 +41,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
     }
 
     private Stream<String> createQueryBuilderStream(ResourceQuery query) {
-        return query.getValue(CONTRIBUTOR).asStream();
+        return query.parameters().get(CONTRIBUTOR).asStream();
     }
 
     private HttpRequest createRequest(String contributorId) {
@@ -57,7 +57,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
             .GET().build();
     }
 
-    @Override
+
     protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             logger.error("Error fetching user settings: {}", response.body());

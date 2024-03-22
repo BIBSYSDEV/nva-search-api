@@ -1,6 +1,5 @@
 package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
@@ -49,7 +48,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
@@ -57,19 +55,15 @@ import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
@@ -82,60 +76,22 @@ public final class TicketQuery extends Query<TicketParameter> {
         assignImpossibleWhiteListFilters();
     }
 
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
-    @Override
-    protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
-        return switch (key) {
-            case ASSIGNEE -> byAssignee();
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
-        };
-    }
-    @Override
-    protected TicketParameter keyFromString(String keyName) {
-        return TicketParameter.keyFromString(keyName);
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the Query from any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withFilter* must be set </p>
+     */
+    private void assignImpossibleWhiteListFilters() {
+        var filterType =
+            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
+        final var filterId =
+            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
+        filters.set(filterType, filterId);
     }
 
     public static TicketParameterValidator builder() {
         return new TicketParameterValidator();
-    }
-
-    @Override
-    protected Integer getFrom() {
-        return getValue(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return getValue(SIZE).as();
-    }
-
-    @Override
-    protected TicketParameter getFieldsKey() {
-        return FIELDS;
-    }
-
-
-    @Override
-    public AsType<TicketParameter> getSort() {
-        return getValue(SORT);
-    }
-
-    @Override
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(TICKETS, SEARCH)
-                .getUri();
-    }
-
-    @Override
-    protected boolean isPagingValue(TicketParameter key) {
-        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
-    }
-
-    @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return facetTicketsPaths;
     }
 
     /**
@@ -157,6 +113,25 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     /**
+     * Filter on owner (user).
+     *
+     * <p>Only tickets owned by user will be available for the Query.</p>
+     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
+     *
+     * @param userName current user
+     * @return TicketQuery (builder pattern)
+     */
+    public TicketQuery withFilterCurrentUser(String userName) {
+        this.currentUser = userName;
+        if (isUserOnly(ticketTypes)) {
+            final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
+                    .queryName(OWNER.asCamelCase());
+            this.filters.add(viewOwnerOnly);
+        }
+        return this;
+    }
+
+    /**
      * Filter on organization.
      * <P>Only documents belonging to organization specified are searchable (for the user)
      * </p>
@@ -167,7 +142,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     public TicketQuery withFilterOrganization(URI organization) {
         final var filter = new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, organization.toString())
             .queryName(ORGANIZATION + ID);
-        this.addFilter(filter);
+        this.filters.add(filter);
         return this;
     }
 
@@ -186,51 +161,8 @@ public final class TicketQuery extends Query<TicketParameter> {
         final var filter =
             new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::toString).toList())
                 .queryName(TICKETS + TYPE);
-        this.addFilter(filter);
+        this.filters.add(filter);
         return this;
-    }
-
-    /**
-     * Filter on owner (user).
-     *
-     * <p>Only tickets owned by user will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     *
-     * @param userName current user
-     * @return TicketQuery (builder pattern)
-     */
-    public TicketQuery withFilterCurrentUser(String userName) {
-        this.currentUser = userName;
-        if (isUserOnly(ticketTypes)) {
-            final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
-                .queryName(OWNER.asCamelCase());
-            this.addFilter(viewOwnerOnly);
-        }
-        return this;
-    }
-
-    public Stream<QueryContentWrapper> createQueryBuilderStream() {
-        var queryBuilder =
-            this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery()
-                : mainQuery();
-
-        var builder = defaultSearchSourceBuilder(queryBuilder);
-
-        handleSearchAfter(builder);
-
-        getSortStream()
-            .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
-
-        builder.aggregation(getAggregationsWithFilter());
-
-        logger.debug(builder.toString());
-
-        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
-    }
-
-    private boolean isUserOnly(TicketType... ticketTypes) {
-        return Arrays.stream(ticketTypes).allMatch(pre -> pre.equals(TicketType.GENERAL_SUPPORT_CASE));
     }
 
     private TicketType[] validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
@@ -251,32 +183,84 @@ public final class TicketQuery extends Query<TicketParameter> {
         return allowed.toArray(TicketType[]::new);
     }
 
-    private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
-        var searchByUserName = isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? currentUser
-            : getValue(TicketParameter.ASSIGNEE).toString();
-
-        return new OpensearchQueryText<TicketParameter>()
-            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+    private boolean isUserOnly(TicketType... ticketTypes) {
+        return Arrays.stream(ticketTypes).allMatch(pre -> pre.equals(TicketType.GENERAL_SUPPORT_CASE));
     }
 
-    private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(POST_FILTER, getFilters());
+    @Override
+    protected Integer getFrom() {
+        return parameters().get(FROM).as();
+    }
+
+    @Override
+    protected Integer getSize() {
+        return parameters().get(SIZE).as();
+    }
+
+    @Override
+    protected TicketParameter getFieldsKey() {
+        return FIELDS;
+    }
+
+    @Override
+    protected TicketParameter getSortOrderKey() {
+        return SORT_ORDER;
+    }
+
+    @Override
+    protected TicketParameter getSearchAfterKey() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected TicketParameter keyFromString(String keyName) {
+        return TicketParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected String getSortFieldName(Entry<String, SortOrder> entry) {
+        return fromSortKey(entry.getKey()).jsonPath();
+    }
+
+    @Override
+    public AsType<TicketParameter> getSort() {
+        return parameters().get(SORT);
+    }
+
+    @Override
+    public URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(TICKETS, SEARCH)
+                .getUri();
+    }
+
+    @Override
+    protected FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
         getTicketsAggregations(currentUser)
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
     }
 
-    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
-        return Optional.ofNullable(aggregationBuilder)
-            .map(AggregationBuilder::getName)
-            .map(this::isDefined)
-            .orElse(false);
+    @Override
+    protected Map<String, String> aggregationsDefinition() {
+        return facetTicketsPaths;
     }
 
-    private boolean isDefined(String keyName) {
-        return getValue(AGGREGATION)
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    @Override
+    protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
+        return switch (key) {
+            case ASSIGNEE -> byAssignee();
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+        };
+    }
+
+    @Override
+    protected boolean isDefined(String keyName) {
+        return parameters().get(AGGREGATION)
             .asSplitStream(COMMA)
             .map(String::toLowerCase)
             .anyMatch(name -> name.equalsIgnoreCase(ALL) ||
@@ -285,34 +269,17 @@ public final class TicketQuery extends Query<TicketParameter> {
             );
     }
 
-    private static boolean isNotificationAggregation(String name) {
+    private boolean isNotificationAggregation(String name) {
         return name.contains("notification");
     }
 
+    private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
+        var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
+            ? currentUser
+                : parameters().get(TicketParameter.ASSIGNEE).toString();
 
-    private String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
-    }
-
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
-        }
-    }
-
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the Query from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withFilter* must be set </p>
-     */
-    private void assignImpossibleWhiteListFilters() {
-        var filterType =
-            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
-        final var filterId =
-            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
-        setFilters(filterType, filterId);
+        return new OpensearchQueryText<TicketParameter>()
+            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
     }
 
     @SuppressWarnings("PMD.GodClass")
@@ -320,20 +287,6 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         TicketParameterValidator() {
             super(new TicketQuery());
-        }
-
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
-        }
-
-        @Override
-        protected boolean isAggregationValid(String aggregationName) {
-            return
-                ALL.equalsIgnoreCase(aggregationName) ||
-                NONE.equalsIgnoreCase(aggregationName) ||
-                getTicketsAggregations("").stream()
-                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
@@ -349,41 +302,29 @@ public final class TicketQuery extends Query<TicketParameter> {
             });
         }
 
-        @Override
-        protected void setValue(String key, String value) {
-            var qpKey = TicketParameter.keyFromString(key);
-            var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-                ? decodeUTF(value)
-                : value;
-            switch (qpKey) {
-                case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
-                case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.setKeyValue(qpKey, ignoreInvalidAggregations(decodedValue));
-                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
-                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    query.setKeyValue(qpKey, expandYearToDate(decodedValue));
-                default -> mergeToKey(qpKey, decodedValue);
-            }
-        }
-
         @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.isPresent(PAGE)) {
-                if (query.isPresent(FROM)) {
-                    var page = query.getValue(PAGE).<Number>as();
-                    var perPage = query.getValue(SIZE).<Number>as();
-                    query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as();
+                    var perPage = query.parameters().get(SIZE).<Number>as();
+                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.removeKey(PAGE);
+                query.parameters().remove(PAGE);
             }
-            if (query.isPresent(BY_USER_PENDING)) {
-                query.setKeyValue(TicketParameter.TYPE, query.getValue(BY_USER_PENDING).as());
-                query.setKeyValue(STATUS, PENDING.toString());
+            if (query.parameters().isPresent(BY_USER_PENDING)) {
+                query.parameters().set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
+                query.parameters().set(STATUS, PENDING.toString());
             }
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return TICKET_PARAMETER_SET.stream()
+                    .map(Enum::name)
+                    .toList();
         }
 
         @Override
@@ -398,10 +339,36 @@ public final class TicketQuery extends Query<TicketParameter> {
         }
 
         @Override
-        protected Collection<String> validKeys() {
-            return TICKET_PARAMETER_SET.stream()
-                .map(Enum::name)
-                .toList();
+        protected void setValue(String key, String value) {
+            var qpKey = TicketParameter.keyFromString(key);
+            var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
+                    ? decodeUTF(value)
+                    : value;
+            switch (qpKey) {
+                case INVALID -> invalidKeys.add(key);
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
+                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.parameters().set(qpKey, ignoreInvalidAggregations(decodedValue));
+                case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
+                case SORT_ORDER -> mergeToKey(SORT, decodedValue);
+                case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
+                        query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                default -> mergeToKey(qpKey, decodedValue);
+            }
+        }
+
+        @Override
+        protected boolean isKeyValid(String keyName) {
+            return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return
+                    ALL.equalsIgnoreCase(aggregationName) ||
+                            NONE.equalsIgnoreCase(aggregationName) ||
+                            getTicketsAggregations("").stream()
+                                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

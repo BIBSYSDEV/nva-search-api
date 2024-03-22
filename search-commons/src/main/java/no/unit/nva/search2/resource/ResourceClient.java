@@ -15,6 +15,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
 
     private final UserSettingsClient userSettingsClient;
 
+
     public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
         this.userSettingsClient = new UserSettingsClient(client, cachedJwtProvider);
@@ -35,14 +36,15 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     @Override
     public SwsResponse doSearch(ResourceQuery query) {
         return
-            query.createQueryBuilderStream(userSettingsClient)
+            query.withUserSettings(userSettingsClient)
+                .createQueryBuilderStream()
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
                 .findFirst().orElseThrow();
     }
 
-    @Override
+
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

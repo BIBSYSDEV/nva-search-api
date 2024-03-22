@@ -19,9 +19,7 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
 
     @JacocoGenerated
     public static ImportCandidateClient defaultClient() {
-        var cachedJwtProvider =
-            OpenSearchClient.getCachedJwtProvider(new SecretsReader());
-
+        var cachedJwtProvider = OpenSearchClient.getCachedJwtProvider(new SecretsReader());
         return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
@@ -35,7 +33,7 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
                 .findFirst().orElseThrow();
     }
 
-    @Override
+
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());
