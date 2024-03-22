@@ -53,6 +53,7 @@ import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
+import static no.unit.nva.search2.resource.ResourceSort.sortToJson;
 import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
@@ -61,6 +62,7 @@ import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,6 +83,10 @@ import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.common.xcontent.DeprecationHandler;
+import org.opensearch.common.xcontent.NamedXContentRegistry;
+import org.opensearch.common.xcontent.XContentParser;
+import org.opensearch.common.xcontent.json.JsonXContent;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
@@ -92,6 +98,8 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.FieldSortBuilder;
+import org.opensearch.search.sort.SortBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
@@ -223,8 +231,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
         handleSearchAfter(builder);
 
-        getSortStream()
-            .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
+        getSortBuilder().forEach(builder::sort);
 
         if (getMediaType().is(JSON_UTF_8)) {
             builder.aggregation(getAggregationsWithFilter());
@@ -293,6 +300,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     private String getSortFieldName(Entry<String, SortOrder> entry) {
         return fromSortKey(entry.getKey()).jsonPath();
     }
+
+    protected List<SortBuilder<?>> getSortBuilder() {
+        try (XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry.EMPTY,
+                                                                            DeprecationHandler.IGNORE_DEPRECATIONS,
+                                                                            sortToJson(getSort().as()))) {
+            parser.nextToken();  // Flytter til første token for å starte parsing
+            return FieldSortBuilder.fromXContent(parser);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
         var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);

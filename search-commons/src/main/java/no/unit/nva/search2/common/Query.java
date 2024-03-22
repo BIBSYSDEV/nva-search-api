@@ -292,7 +292,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .map(QueryTools::objectToSortEntry);
     }
 
-
     private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
         final var value = searchParameters.get(key);
         return switch (key.fieldType()) {

@@ -219,8 +219,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         handleSearchAfter(builder);
 
-        getSortStream()
-            .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
+        getSortStream().forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
 
         builder.aggregation(getAggregationsWithFilter());
 
