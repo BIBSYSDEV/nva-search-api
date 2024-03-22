@@ -287,7 +287,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     @Override
     protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return TicketSort.fromSortKey(entry.getKey()).jsonPath();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
     @SuppressWarnings("PMD.GodClass")

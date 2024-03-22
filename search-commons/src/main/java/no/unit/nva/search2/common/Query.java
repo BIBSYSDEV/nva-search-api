@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
@@ -12,7 +13,6 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Locale;
@@ -95,7 +95,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
         logSearchKeys();
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
-        return MediaType.CSV_UTF_8.is(this.getMediaType())
+        return CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
             : toPagedResponse(response).toJsonString();
     }
@@ -126,9 +126,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     final void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
-            this.mediaType = MediaType.CSV_UTF_8;
+            this.mediaType = CSV_UTF_8;
         } else {
-            this.mediaType = MediaType.JSON_UTF_8;
+            this.mediaType = JSON_UTF_8;
         }
     }
 

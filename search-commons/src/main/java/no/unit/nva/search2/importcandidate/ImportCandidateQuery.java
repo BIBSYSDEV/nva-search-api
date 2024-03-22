@@ -124,7 +124,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return FACET_IMPORT_CANDIDATE_PATHS;
     }
 
-
+    @Override
     protected FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, filters.get());
         IMPORT_CANDIDATES_AGGREGATIONS
@@ -156,7 +156,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
     @Override
     protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return ImportCandidateSort.fromSortKey(entry.getKey()).jsonPath();
+        return fromSortKey(entry.getKey()).jsonPath();
     }
 
 
