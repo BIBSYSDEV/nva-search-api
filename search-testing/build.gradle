@@ -6,6 +6,8 @@ dependencies {
     implementation libs.bundles.jackson
     implementation libs.bundles.opensearch
 
+    implementation libs.aws.sdk2.sqs
+
     implementation libs.bundles.testing
     implementation libs.bundles.testcontainers
     implementation libs.com.auth0.jwt

@@ -87,6 +87,9 @@ Parameters:
   ElasticSearchSize:
     Type: String
     Default: dummy-value
+  SlackSnsArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: '/NVA/Monitoring/SlackSnsArn'
 
 Conditions:
   WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
@@ -473,6 +476,7 @@ Resources:
                   - !Ref EventBusArn
                   - !GetAtt BatchIndexEventBus.Arn
                   - !GetAtt ResourcesIndexerDLQ.Arn
+                  - !GetAtt RecoveryQueue.Arn
         - PolicyName: readFromS3
           PolicyDocument:
             Version: 2012-10-17
@@ -507,7 +511,7 @@ Resources:
       Environment:
         Variables:
           EXPANDED_RESOURCES_BUCKET: !Ref ResourcesBucket
-          ERRORS_BUCKET: !Ref IndexingErrorsBucket
+          RECOVERY_QUEUE: !Ref RecoveryQueue
       Events:
         EventBridgeEvent:
           Type: EventBridgeRule
@@ -520,6 +524,11 @@ Resources:
               detail:
                 responsePayload:
                   topic: [ "PublicationService.ExpandedEntry.Persisted" ]
+      EventInvokeConfig:
+        DestinationConfig:
+          OnFailure:
+            Type: SQS
+            Destination: !GetAtt ResourcesIndexerDLQ.Arn
 
   BatchIndexEventBus:
     Type: AWS::Events::EventBus
@@ -610,6 +619,10 @@ Resources:
 
   ResourcesIndexerDLQ:
     Type: AWS::SQS::Queue
+  RecoveryQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600 #14 days
 
   EventBasedBatchIndex:
     Type: AWS::Serverless::Function
@@ -773,4 +786,24 @@ Resources:
           - Id: DeleteContentAfter100Days
             Status: Enabled
             ExpirationInDays: 100
+
+
+  #============================Alarms===============================================================
+
+  RecoveryQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: AWS/SQS ApproximateNumberOfMessagesVisible QueueName=RecoveryQueue
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Statistic: Sum
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt RecoveryQueue.QueueName
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SlackSnsArn
 

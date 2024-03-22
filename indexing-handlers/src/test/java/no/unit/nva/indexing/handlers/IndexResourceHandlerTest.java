@@ -8,7 +8,6 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
@@ -29,6 +28,7 @@ import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
+import no.unit.nva.indexing.testutils.FakeSqsClient;
 import no.unit.nva.s3.S3Driver;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
@@ -36,7 +36,6 @@ import no.unit.nva.stubs.FakeS3Client;
 import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
-import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -54,20 +53,20 @@ public class IndexResourceHandlerTest {
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
         createSampleResource(SortableIdentifier.next(), null);
     private S3Driver resourcesS3Driver;
-    private S3Driver errorsS3Driver;
     private IndexResourceHandler indexResourceHandler;
     private Context context;
     private ByteArrayOutputStream output;
     private FakeIndexingClient indexingClient;
+    private FakeSqsClient sqsClient;
+
 
     @BeforeEach
     void init() {
         FakeS3Client fakeS3Client = new FakeS3Client();
         resourcesS3Driver = new S3Driver(fakeS3Client, "resources");
-        errorsS3Driver = new S3Driver(fakeS3Client, "errors");
         indexingClient = new FakeIndexingClient();
-        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
-
+        sqsClient = new FakeSqsClient();
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, indexingClient, sqsClient);
         context = Mockito.mock(Context.class);
         output = new ByteArrayOutputStream();
     }
@@ -83,38 +82,15 @@ public class IndexResourceHandlerTest {
     }
 
     @Test
-    void shouldThrowExceptionOnCommunicationProblemWithService() throws Exception {
-        final var expectedErrorMessage = randomString();
-        indexingClient = indexingClientThrowingException(expectedErrorMessage);
-        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
-        URI resourceLocation = prepareEventStorageResourceFile();
-        InputStream input = createEventBridgeEvent(resourceLocation);
-        assertThrows(RuntimeException.class,
-                     () -> indexResourceHandler.handleRequest(input, output, context));
-    }
-
-    @Test
-    void shouldLogErrorContainingRelativeResourceLocationOnCommunicationProblemWithService() throws Exception {
-        final var appender = LogUtils.getTestingAppender(IndexResourceHandler.class);
+    void shouldSendMessageToRecoveryQueueWhenIndexingIsFailing() throws Exception {
         indexingClient = indexingClientThrowingException(randomString());
-        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, indexingClient, sqsClient);
         var resourceLocation = prepareEventStorageResourceFile();
         var input = createEventBridgeEvent(resourceLocation);
-        assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
-        var expectedResourceLocationString = UriWrapper.fromUri(resourceLocation).toS3bucketPath().toString();
-        assertThat(appender.getMessages(), containsString(expectedResourceLocationString));
-    }
+        indexResourceHandler.handleRequest(input, output, context);
 
-    @Test
-    void shouldStoreIndexDocumentIdentifierToErrorBucketWhenFailingIndexing() throws Exception {
-        indexingClient = indexingClientThrowingException(randomString());
-        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, errorsS3Driver, indexingClient);
-        var resourceLocation = prepareEventStorageResourceFile();
-        var input = createEventBridgeEvent(resourceLocation);
-        assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
-        var expectedResourceLocationString = UriWrapper.fromUri(resourceLocation).toS3bucketPath().toString();
-
-        assertThat(errorsS3Driver.getFile(UnixPath.of(expectedResourceLocationString)), is(notNullValue()));
+        var deliveredMessage = sqsClient.getDeliveredMessages().get(0);
+        assertThat(deliveredMessage.messageAttributes().get("id"), is(notNullValue()));
     }
 
     @Test
