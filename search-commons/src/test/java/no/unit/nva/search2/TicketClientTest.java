@@ -242,7 +242,7 @@ class TicketClientTest {
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .withFilterCurrentUser(CURRENT_USERNAME);
 
-            logger.info(query.parameters.get(SORT).toString());
+            logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
             assertNotNull(pagedSearchResourceDto.id());

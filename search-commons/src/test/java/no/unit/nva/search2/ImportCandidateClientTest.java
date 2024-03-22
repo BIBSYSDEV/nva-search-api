@@ -122,8 +122,8 @@ class ImportCandidateClientTest {
             var pagedResponse = query.toPagedResponse(swsResponse);
 
             assertNotNull(pagedResponse);
-            assertThat(pagedResponse.hits().size(), is(equalTo(query.parameters.get(SIZE).as())));
-            assertThat(pagedResponse.totalHits(), is(equalTo(query.parameters.get(SIZE).as())));
+            assertThat(pagedResponse.hits().size(), is(equalTo(query.parameters().get(SIZE).as())));
+            assertThat(pagedResponse.totalHits(), is(equalTo(query.parameters().get(SIZE).as())));
         }
 
         @ParameterizedTest

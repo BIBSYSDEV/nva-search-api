@@ -48,23 +48,53 @@ import org.slf4j.LoggerFactory;
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
-    public final transient QueryKeys<K> parameters;
-    protected final transient QueryTools<K> queryTools;
-    protected final transient QueryFilter filters;
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
-    protected Query() {
-        queryTools = new QueryTools<>();
-        parameters = new QueryKeys<>(getFieldsKey(),getSortOrderKey());
-        filters = new QueryFilter();
-        setMediaType(MediaType.JSON_UTF_8.toString());
-    }
+    protected final transient QueryTools<K> queryTools;
+    private final transient QueryKeys<K> queryKeys;
+    protected final transient QueryFilter filters;
+
+    protected abstract Integer getFrom();
+
+    protected abstract Integer getSize();
 
     protected abstract K getFieldsKey();
 
     protected abstract K getSortOrderKey();
+
+    protected abstract K getSearchAfterKey();
+
+    protected abstract K keyFromString(String keyName);
+
+    protected abstract String getSortFieldName(Entry<String, SortOrder> entry);
+
+    protected abstract AsType<K> getSort();
+
+    /**
+     * Builds URI to query SWS based on post body.
+     *
+     * @return an URI to Sws search without parameters.
+     */
+    protected abstract URI getOpenSearchUri();
+
+    protected abstract AggregationBuilder getAggregationsWithFilter();
+
+    protected abstract Map<String, String> aggregationsDefinition();
+
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
+
+    protected abstract boolean isDefined(String keyName);
+
+
+    protected Query() {
+        queryTools = new QueryTools<>();
+        queryKeys = new QueryKeys<>(getFieldsKey(), getSortOrderKey());
+        filters = new QueryFilter();
+        setMediaType(MediaType.JSON_UTF_8.toString());
+    }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
         logSearchKeys();
@@ -74,8 +104,32 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             : toPagedResponse(response).toJsonString();
     }
 
+    public Stream<QueryContentWrapper> createQueryBuilderStream() {
+        var queryBuilder =
+                parameters().getSearchKeys().findAny().isEmpty()
+                        ? QueryBuilders.matchAllQuery()
+                        : makeBoolQuery();
+
+        var builder = defaultSearchSourceBuilder(queryBuilder);
+
+        handleSearchAfter(builder);
+
+        getSortStream()
+                .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
+
+        if (getMediaType().is(JSON_UTF_8)) {
+            builder.aggregation(getAggregationsWithFilter());
+        }
+        logger.debug(builder.toString());
+        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    public QueryKeys<K> parameters() {
+        return queryKeys;
+    }
+
     public PagedSearch toPagedResponse(SwsResponse response) {
-        final var requestParameter = parameters.asMap();
+        final var requestParameter = parameters().asMap();
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
         final var aggregationFormatted = AggregationFormat.apply(response.aggregations(), aggregationsDefinition())
             .toString();
@@ -88,37 +142,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
                 .withAggregations(aggregationFormatted)
                 .build();
-    }
-
-    protected abstract Integer getFrom();
-
-    protected abstract Integer getSize();
-
-    protected abstract Map<String, String> aggregationsDefinition();
-
-    public URI getNvaSearchApiUri() {
-        return gatewayUri;
-    }
-
-    @JacocoGenerated
-    public void setNvaSearchApiUri(URI gatewayUri) {
-        this.gatewayUri = gatewayUri;
-    }
-
-    private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-        requestParameter.remove(Words.FROM);
-        var sortParameter =
-            response.getSort().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(COMMA));
-        if (!hasContent(sortParameter)) {
-            return null;
-        }
-        var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
-        requestParameter.put(searchAfter, sortParameter);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
     }
 
     protected String toCsvText(SwsResponse response) {
@@ -137,81 +160,42 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         }
     }
 
-    private void logSearchKeys() {
-        logger.info(
-            parameters.getSearchKeys()
-                .map(ParameterKey::asCamelCase)
-                .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
-        );
+    public URI getNvaSearchApiUri() {
+        return gatewayUri;
     }
 
-    public Stream<QueryContentWrapper> createQueryBuilderStream() {
-        var queryBuilder =
-            parameters.getSearchKeys().findAny().isEmpty()
-                ? QueryBuilders.matchAllQuery()
-                : makeBoolQuery();
-
-        var builder = defaultSearchSourceBuilder(queryBuilder);
-
-        handleSearchAfter(builder);
-
-        getSortStream()
-            .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
-
-        if (getMediaType().is(JSON_UTF_8)) {
-            builder.aggregation(getAggregationsWithFilter());
-        }
-        logger.debug(builder.toString());
-        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    @JacocoGenerated
+    public void setNvaSearchApiUri(URI gatewayUri) {
+        this.gatewayUri = gatewayUri;
     }
-
-    protected abstract String getSortFieldName(Entry<String, SortOrder> entry);
-
-    /**
-     * Builds URI to query SWS based on post body.
-     *
-     * @return an URI to Sws search without parameters.
-     */
-    protected abstract URI getOpenSearchUri();
 
     protected void setOpenSearchUri(URI openSearchUri) {
         this.openSearchUri = openSearchUri;
     }
 
-    protected abstract AggregationBuilder getAggregationsWithFilter();
+    /**
+     * Creates a multi match query, all words needs to be present, within a document.
+     *
+     * @return a MultiMatchQueryBuilder
+     */
+    protected Map<String, Float> fieldsToKeyNames(AsType<K> fieldValue) {
+        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
+                ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
+                : fieldValue.asSplitStream(COMMA)
+                .map(this::keyFromString)
+                .flatMap(key -> key.searchFields(KEYWORD_FALSE)
+                        .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
+                )
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    }
 
     protected Stream<Entry<String, SortOrder>> getSortStream() {
         return getSort().asSplitStream(COMMA)
             .map(QueryTools::objectToSortEntry);
     }
 
-    protected abstract AsType<K> getSort();
-
-    protected BoolQueryBuilder makeBoolQuery() {
-        return mainQuery();
-    }
-
-    /**
-     * Creates a boolean query, with all the search parameters.
-     *
-     * @return a BoolQueryBuilder
-     */
-    protected BoolQueryBuilder mainQuery() {
-        var boolQueryBuilder = QueryBuilders.boolQuery();
-        parameters.getSearchKeys()
-            .flatMap(this::getQueryBuilders)
-            .forEach(entry -> {
-                if (isMustNot(entry.getKey())) {
-                    boolQueryBuilder.mustNot(entry.getValue());
-                } else {
-                    boolQueryBuilder.must(entry.getValue());
-                }
-            });
-        return boolQueryBuilder;
-    }
-
     protected Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
-        final var value = parameters.get(key).toString();
+        final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
@@ -227,67 +211,89 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
-    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
-
-    protected QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
-        var fields = fieldsToKeyNames(parameters.get(fieldsKey));
-        var value = parameters.get(searchAllKey).toString();
-        return QueryBuilders
-            .multiMatchQuery(value)
-            .fields(fields)
-            .type(Type.CROSS_FIELDS)
-            .operator(Operator.AND);
+    protected BoolQueryBuilder makeBoolQuery() {
+        return mainQuery();
     }
 
     /**
-     * Creates a multi match query, all words needs to be present, within a document.
+     * Creates a boolean query, with all the search parameters.
      *
-     * @return a MultiMatchQueryBuilder
+     * @return a BoolQueryBuilder
      */
-    protected Map<String, Float> fieldsToKeyNames(AsType<K> fieldValue) {
-        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
-            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
-            : fieldValue.asSplitStream(COMMA)
-                .map(this::keyFromString)
-                .flatMap(key -> key.searchFields(KEYWORD_FALSE)
-                    .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
-                )
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-    }
-
-    protected abstract K keyFromString(String keyName);
-
-    private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-               || NOT_ONE_ITEM.equals(key.searchOperator());
+    protected BoolQueryBuilder mainQuery() {
+        var boolQueryBuilder = QueryBuilders.boolQuery();
+        parameters().getSearchKeys()
+            .flatMap(this::getQueryBuilders)
+            .forEach(entry -> {
+                if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
+                } else {
+                    boolQueryBuilder.must(entry.getValue());
+                }
+            });
+        return boolQueryBuilder;
     }
 
     protected SearchSourceBuilder defaultSearchSourceBuilder(QueryBuilder queryBuilder) {
         return new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .postFilter(filters.get())
-            .trackTotalHits(true);
+                .query(queryBuilder)
+                .size(getSize())
+                .from(getFrom())
+                .postFilter(filters.get())
+                .trackTotalHits(true);
+    }
+
+    protected QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
+        var fields = fieldsToKeyNames(parameters().get(fieldsKey));
+        var value = parameters().get(searchAllKey).toString();
+        return QueryBuilders
+                .multiMatchQuery(value)
+                .fields(fields)
+                .type(Type.CROSS_FIELDS)
+                .operator(Operator.AND);
+    }
+
+    protected boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
+        return Optional.ofNullable(aggregationBuilder)
+                .map(AggregationBuilder::getName)
+                .map(this::isDefined)
+                .orElse(false);
+    }
+
+    private boolean isMustNot(K key) {
+        return NO_ITEMS.equals(key.searchOperator())
+                || NOT_ONE_ITEM.equals(key.searchOperator());
+    }
+
+    private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
+        requestParameter.remove(Words.FROM);
+        var sortParameter =
+                response.getSort().stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(COMMA));
+        if (!hasContent(sortParameter)) {
+            return null;
+        }
+        var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
+        requestParameter.put(searchAfter, sortParameter);
+        return fromUri(gatewayUri)
+                .addQueryParameters(requestParameter)
+                .getUri();
+    }
+
+    private void logSearchKeys() {
+        logger.info(
+                parameters().getSearchKeys()
+                        .map(ParameterKey::asCamelCase)
+                        .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
+        );
     }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = parameters.remove(getSearchAfterKey()).split(COMMA);
+        var sortKeys = parameters().remove(getSearchAfterKey()).split(COMMA);
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
     }
-
-    protected abstract K getSearchAfterKey();
-
-    protected boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
-        return Optional.ofNullable(aggregationBuilder)
-            .map(AggregationBuilder::getName)
-            .map(this::isDefined)
-            .orElse(false);
-    }
-
-    protected abstract boolean isDefined(String keyName);
 }
 

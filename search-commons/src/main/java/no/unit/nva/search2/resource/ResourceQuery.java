@@ -165,12 +165,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     @Override
     protected Integer getFrom() {
-        return parameters.get(FROM).as();
+        return parameters().get(FROM).as();
     }
 
     @Override
     protected Integer getSize() {
-        return parameters.get(SIZE).as();
+        return parameters().get(SIZE).as();
     }
 
     @Override
@@ -202,7 +202,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     @Override
     public AsType<ResourceParameter> getSort() {
-        return parameters.get(SORT);
+        return parameters().get(SORT);
     }
 
     @Override
@@ -238,7 +238,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     @Override
     protected boolean isDefined(String keyName) {
-        return parameters.get(AGGREGATION)
+        return parameters().get(AGGREGATION)
             .asSplitStream(COMMA)
             .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
@@ -247,7 +247,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         var query = QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
-                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), parameters.get(key).as()))
+                    .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), parameters().get(key).as()))
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
@@ -255,7 +255,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
-        var values = parameters.get(key).split(COLON);
+        var values = parameters().get(key).split(COLON);
         var query = QueryBuilders.nestedQuery(
             FUNDINGS,
             boolQuery()
@@ -266,11 +266,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQueryStream() {
-        var fields = fieldsToKeyNames(parameters.get(FIELDS));
-        var sevenValues = parameters.get(SEARCH_ALL).asSplitStream(SPACE)
+        var fields = fieldsToKeyNames(parameters().get(FIELDS));
+        var sevenValues = parameters().get(SEARCH_ALL).asSplitStream(SPACE)
             .limit(7)
             .collect(Collectors.joining(SPACE));
-        var fifteenValues = parameters.get(SEARCH_ALL).asSplitStream(SPACE)
+        var fifteenValues = parameters().get(SEARCH_ALL).asSplitStream(SPACE)
             .limit(15)
             .collect(Collectors.joining(SPACE));
 
@@ -294,9 +294,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncluded(ResourceParameter key) {
         var query =
-            parameters.get(EXCLUDE_SUBUNITS).asBoolean()
-                ? termQuery(getTermPath(key), parameters.get(key).as())
-                : termQuery(getMatchPath(key), parameters.get(key).as());
+                parameters().get(EXCLUDE_SUBUNITS).asBoolean()
+                        ? termQuery(getTermPath(key), parameters().get(key).as())
+                        : termQuery(getMatchPath(key), parameters().get(key).as());
 
         return queryTools.queryToEntry(key, query);
     }
@@ -310,7 +310,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     private boolean isLookingForOneContributor() {
-        return parameters.get(CONTRIBUTOR)
+        return parameters().get(CONTRIBUTOR)
                    .asSplitStream(COMMA)
                    .count() == 1;
     }
@@ -321,7 +321,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 .or(() -> new UserSettings(List.of()))
                 .get().promotedPublications();
         if (hasContent(promotedPublications)) {
-            parameters.remove(SORT);  // remove sort to avoid messing up "sorting by score"
+            parameters().remove(SORT);  // remove sort to avoid messing up "sorting by score"
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
                 var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
@@ -359,13 +359,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters.isPresent(PAGE)) {
-                if (query.parameters.isPresent(FROM)) {
-                    var page = query.parameters.get(PAGE).<Number>as();
-                    var perPage = query.parameters.get(SIZE).<Number>as();
-                    query.parameters.set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as();
+                    var perPage = query.parameters().get(SIZE).<Number>as();
+                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters.remove(PAGE);
+                query.parameters().remove(PAGE);
             }
         }
 
@@ -395,16 +395,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters.set(qpKey, decodedValue);
-                case FIELDS -> query.parameters.set(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.parameters.set(qpKey, ignoreInvalidAggregations(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
+                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.parameters().set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                    PUBLICATION_LANGUAGE_SHOULD -> query.parameters.set(qpKey, expandLanguage(decodedValue));
+                        PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters.set(qpKey, expandYearToDate(decodedValue));
+                        PUBLISHED_BEFORE, PUBLISHED_SINCE ->
+                        query.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }

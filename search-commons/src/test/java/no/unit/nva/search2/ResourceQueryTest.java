@@ -83,14 +83,14 @@ class ResourceQueryTest {
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        assertNotNull(resource.parameters.get(FROM).as());
-        assertNotNull(resource.parameters.get(SIZE).as());
+        assertNotNull(resource.parameters().get(FROM).as());
+        assertNotNull(resource.parameters().get(SIZE).as());
         var uri2 =
             UriWrapper.fromUri(resource.getNvaSearchApiUri())
-                .addQueryParameters(resource.parameters.asMap()).getUri();
+                    .addQueryParameters(resource.parameters().asMap()).getUri();
 
         logger.info(
-            resource.parameters.asMap()
+                resource.parameters().asMap()
                 .entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&")));
@@ -108,35 +108,35 @@ class ResourceQueryTest {
                 .build();
 
         var modified =
-            resource.parameters.get(MODIFIED_BEFORE).<DateTime>as();
+                resource.parameters().get(MODIFIED_BEFORE).<DateTime>as();
         if (nonNull(modified)) {
             logger.info("modified: {}", modified);
         }
 
         var publishedBefore =
-            resource.parameters.isPresent(PUBLISHED_BEFORE)
-                ? resource.parameters.get(PUBLISHED_BEFORE).<DateTime>as()
+                resource.parameters().isPresent(PUBLISHED_BEFORE)
+                        ? resource.parameters().get(PUBLISHED_BEFORE).<DateTime>as()
                 : null;
         if (nonNull(publishedBefore)) {
             logger.info("publishedBefore: {}", publishedBefore);
         }
 
         var publishedSince =
-            resource.parameters.isPresent(PUBLISHED_SINCE)
-                ? resource.parameters.get(PUBLISHED_SINCE).<DateTime>as()
+                resource.parameters().isPresent(PUBLISHED_SINCE)
+                        ? resource.parameters().get(PUBLISHED_SINCE).<DateTime>as()
                 : null;
         if (nonNull(publishedSince)) {
             logger.info("publishedSince: {}", publishedSince);
         }
 
         var created =
-            resource.parameters.get(CREATED_BEFORE).<DateTime>as();
+                resource.parameters().get(CREATED_BEFORE).<DateTime>as();
         if (nonNull(created)) {
             logger.info("created: {}", created);
         }
 
         var category =
-            resource.parameters.get(INSTANCE_TYPE).<String>as();
+                resource.parameters().get(INSTANCE_TYPE).<String>as();
         if (nonNull(category)) {
             logger.info("category: {}", category);
         }
@@ -149,9 +149,9 @@ class ResourceQueryTest {
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, SORT)
             .build();
-        assertNotNull(resource.parameters.get(FROM).<Long>as());
-        assertNull(resource.parameters.get(PAGE).<Long>as());
-        assertNotNull(resource.parameters.get(SORT).as());
+        assertNotNull(resource.parameters().get(FROM).<Long>as());
+        assertNull(resource.parameters().get(PAGE).<Long>as());
+        assertNotNull(resource.parameters().get(SORT).as());
     }
 
     @ParameterizedTest

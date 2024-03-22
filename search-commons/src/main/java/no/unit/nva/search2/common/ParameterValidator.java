@@ -72,10 +72,10 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : query.parameters.getSearchEntries()) {
+        for (var entry : query.parameters().getSearchEntries()) {
             validatesEntrySet(entry);
         }
-        for (var entry : query.parameters.getPageEntries()) {
+        for (var entry : query.parameters().getPageEntries()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -134,12 +134,12 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     protected Set<K> requiredMissing() {
         return
             required().stream()
-                .filter(key -> !query.parameters.isPresent(key))
+                    .filter(key -> !query.parameters().isPresent(key))
                 .collect(Collectors.toSet());
     }
 
     protected Set<K> required() {
-        return query.parameters.otherRequired;
+        return query.parameters().otherRequired;
     }
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
@@ -212,7 +212,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     @SafeVarargs
     public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
-        query.parameters.otherRequired.addAll(tmpSet);
+        query.parameters().otherRequired.addAll(tmpSet);
         return this;
     }
 
@@ -233,7 +233,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     protected void mergeToKey(K key, String value) {
-        query.parameters.set(key, mergeWithColonOrComma(query.parameters.get(key).as(), value));
+        query.parameters().set(key, mergeWithColonOrComma(query.parameters().get(key).as(), value));
     }
 
     private String mergeWithColonOrComma(String oldValue, String newValue) {

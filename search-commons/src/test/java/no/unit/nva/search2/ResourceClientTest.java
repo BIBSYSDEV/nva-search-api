@@ -400,7 +400,7 @@ class ResourceClientTest {
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
-            logger.info(query.parameters.get(SORT).toString());
+            logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
@@ -418,7 +418,7 @@ class ResourceClientTest {
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
-            logger.info(query.parameters.get(SORT).toString());
+            logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
@@ -441,7 +441,7 @@ class ResourceClientTest {
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
 
-            logger.info(query.parameters.get(SORT).toString());
+            logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
@@ -467,7 +467,7 @@ class ResourceClientTest {
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
 
-            logger.info(query.parameters.get(SORT).toString());
+            logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
 
