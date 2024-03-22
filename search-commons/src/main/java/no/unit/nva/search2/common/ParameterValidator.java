@@ -91,70 +91,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     /**
-     * Adds query and path parameters from requestInfo.
-     */
-    @JacocoGenerated
-    public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
-        query.setNvaSearchApiUri(requestInfo.getRequestUri());
-        return fromQueryParameters(requestInfo.getQueryParameters());
-    }
-
-
-    /**
-     * Adds testParameters from query.
-     * @apiNote This is intended to be used when setting up tests.
-     */
-    public ParameterValidator<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> testParameters) {
-        testParameters.forEach(this::setEntryValue);
-        return this;
-    }
-
-    /**
-     * Adds testParameters from query.
-     * @apiNote This is intended to be used when setting up tests.
-     */
-    @JacocoGenerated
-    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> testParameters) {
-        testParameters.forEach(this::setValue);
-        return this;
-    }
-
-    /**
-     * Defines which parameters are required.
-     * <p>In order to improve ease of use, you can add a default value to
-     * each required parameter, and it will be used, if it is not proved by the requester.
-     * Implement default values in  {@link #assignDefaultValues()}</p>
-     *
-     * @param requiredParameters comma seperated QueryParameterKeys
-     */
-    @SafeVarargs
-    public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
-        var tmpSet = Set.of(requiredParameters);
-        query.parameters.otherRequired.addAll(tmpSet);
-        return this;
-    }
-
-    public final ParameterValidator<K, Q> withMediaType(String mediaType) {
-        query.setMediaType(mediaType);
-        return this;
-    }
-
-    /**
-     * When running docker tests, the current host needs to be specified.
-     * @param  uri URI to local docker test instance
-     * @apiNote This is intended to be used when setting up tests.
-     */
-    public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
-        query.setOpenSearchUri(uri);
-        return this;
-    }
-
-    protected abstract boolean isKeyValid(String keyName);
-
-    protected abstract boolean isAggregationValid(String aggregationName);
-
-    /**
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
      * <p>Usage:</p>
      * <samp>requiredMissing().forEach(key -> { <br>
@@ -167,22 +103,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected abstract void assignDefaultValues();
 
-    /**
-     * Sample code for setValue.
-     * <p>Usage:</p>
-     * <samp>var qpKey = keyFromString(key,value);<br>
-     * if(qpKey.equals(INVALID)) {<br>
-     *     invalidKeys.add(key);<br>
-     * } else {<br>
-     *     query.setValue(qpKey, value);<br>
-     * }<br>
-     * </samp>
-     */
-    protected abstract void setValue(String key, String value);
-
     protected abstract void applyRulesAfterValidation();
-
-    protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
 
     protected abstract Collection<String> validKeys();
 
@@ -200,15 +121,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         }
     }
 
-    /**
-     * returns T.VALID_SEARCH_PARAMETER_KEYS
-     */
-
-
-    protected boolean invalidQueryParameter(K key, String value) {
-        return isNull(value) || Arrays.stream(value.split(COMMA))
-            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
-    }
+    protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
 
     protected Set<String> getMissingKeys() {
         return
@@ -218,15 +131,15 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .collect(Collectors.toSet());
     }
 
-    protected Set<K> required() {
-        return query.parameters.otherRequired;
-    }
-
     protected Set<K> requiredMissing() {
         return
             required().stream()
                 .filter(key -> !query.parameters.isPresent(key))
                 .collect(Collectors.toSet());
+    }
+
+    protected Set<K> required() {
+        return query.parameters.otherRequired;
     }
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
@@ -239,8 +152,88 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         }
     }
 
+    protected boolean invalidQueryParameter(K key, String value) {
+        return isNull(value) || Arrays.stream(value.split(COMMA))
+            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
+    }
+
+    /**
+     * Adds query and path parameters from requestInfo.
+     */
+    @JacocoGenerated
+    public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
+        query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
+        query.setNvaSearchApiUri(requestInfo.getRequestUri());
+        return fromQueryParameters(requestInfo.getQueryParameters());
+    }
+
+    /**
+     * Adds testParameters from query.
+     *
+     * @apiNote This is intended to be used when setting up tests.
+     */
+    @JacocoGenerated
+    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> testParameters) {
+        testParameters.forEach(this::setValue);
+        return this;
+    }
+
+    /**
+     * Sample code for setValue.
+     * <p>Usage:</p>
+     * <samp>var qpKey = keyFromString(key,value);<br>
+     * if(qpKey.equals(INVALID)) {<br> invalidKeys.add(key);<br> } else {<br> query.setValue(qpKey, value);<br> }<br>
+     * </samp>
+     */
+    protected abstract void setValue(String key, String value);
+
+    /**
+     * Adds testParameters from query.
+     *
+     * @apiNote This is intended to be used when setting up tests.
+     */
+    public ParameterValidator<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> testParameters) {
+        testParameters.forEach(this::setEntryValue);
+        return this;
+    }
+
     private void setEntryValue(Map.Entry<String, String> entry) {
         setValue(entry.getKey(), entry.getValue());
+    }
+
+    /**
+     * Defines which parameters are required.
+     * <p>In order to improve ease of use, you can add a default value to
+     * each required parameter, and it will be used, if it is not proved by the requester. Implement default values in
+     * {@link #assignDefaultValues()}</p>
+     *
+     * @param requiredParameters comma seperated QueryParameterKeys
+     */
+    @SafeVarargs
+    public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
+        var tmpSet = Set.of(requiredParameters);
+        query.parameters.otherRequired.addAll(tmpSet);
+        return this;
+    }
+
+    public final ParameterValidator<K, Q> withMediaType(String mediaType) {
+        query.setMediaType(mediaType);
+        return this;
+    }
+
+    /**
+     * When running docker tests, the current host needs to be specified.
+     *
+     * @param uri URI to local docker test instance
+     * @apiNote This is intended to be used when setting up tests.
+     */
+    public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
+        query.setOpenSearchUri(uri);
+        return this;
+    }
+
+    protected void mergeToKey(K key, String value) {
+        query.parameters.set(key, mergeWithColonOrComma(query.parameters.get(key).as(), value));
     }
 
     private String mergeWithColonOrComma(String oldValue, String newValue) {
@@ -250,10 +243,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         } else {
             return newValue;
         }
-    }
-
-    protected void mergeToKey(K key, String value) {
-        query.parameters.set(key, mergeWithColonOrComma(query.parameters.get(key).as(), value));
     }
 
     protected String trimSpace(String value) {
@@ -268,6 +257,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .collect(Collectors.joining(COMMA));
     }
 
+    protected abstract boolean isKeyValid(String keyName);
+
     protected String ignoreInvalidAggregations(String value) {
         return isNull(value) || value.contains(ALL) || value.contains("ALL")
             ? ALL
@@ -276,6 +267,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .collect(Collectors.joining(COMMA));
     }
 
+    protected abstract boolean isAggregationValid(String aggregationName);
 
     protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;

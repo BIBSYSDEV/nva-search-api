@@ -57,28 +57,12 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     ImportCandidateQuery() {
         super();
     }
 
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
-    @Override
-    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> customQueryBuilders(
-        ImportCandidateParameter key) {
-        return switch (key) {
-            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
-        };
-    }
-
-    @Override
-    protected ImportCandidateParameter keyFromString(String keyName) {
-        return ImportCandidateParameter.keyFromString(keyName);
+    public static ImportCandidateValidator builder() {
+        return new ImportCandidateValidator();
     }
 
     @Override
@@ -107,6 +91,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
+    protected ImportCandidateParameter keyFromString(String keyName) {
+        return ImportCandidateParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected String getSortFieldName(Entry<String, SortOrder> entry) {
+        return fromSortKey(entry.getKey()).jsonPath();
+    }
+
+    @Override
     public AsType<ImportCandidateParameter> getSort() {
         return parameters.get(SORT);
     }
@@ -120,11 +114,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return FACET_IMPORT_CANDIDATE_PATHS;
-    }
-
-    @Override
     protected FilterAggregationBuilder getAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, filters.get());
         IMPORT_CANDIDATES_AGGREGATIONS
@@ -133,6 +122,21 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return aggrFilter;
     }
 
+    @Override
+    protected Map<String, String> aggregationsDefinition() {
+        return FACET_IMPORT_CANDIDATE_PATHS;
+    }
+
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    @Override
+    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> customQueryBuilders(
+        ImportCandidateParameter key) {
+        return switch (key) {
+            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+        };
+    }
 
     @Override
     protected boolean isDefined(String keyName) {
@@ -154,17 +158,27 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return queryTools.queryToEntry(key, query);
     }
 
-    @Override
-    protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
-    }
-
 
     @SuppressWarnings("PMD.GodClass")
-    public static class Builder extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
+    public static class ImportCandidateValidator
+        extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
 
-        Builder() {
+        ImportCandidateValidator() {
             super(new ImportCandidateQuery());
+        }
+
+        @Override
+        protected boolean isKeyValid(String keyName) {
+            return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                IMPORT_CANDIDATES_AGGREGATIONS.stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
@@ -226,20 +240,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             return IMPORT_CANDIDATE_PARAMETER_SET.stream()
                 .map(Enum::name)
                 .toList();
-        }
-
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
-        }
-
-        @Override
-        protected boolean isAggregationValid(String aggregationName) {
-            return
-                ALL.equalsIgnoreCase(aggregationName) ||
-                NONE.equalsIgnoreCase(aggregationName) ||
-                IMPORT_CANDIDATES_AGGREGATIONS.stream()
-                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

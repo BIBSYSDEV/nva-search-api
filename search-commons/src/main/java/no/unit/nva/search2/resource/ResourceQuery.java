@@ -93,103 +93,24 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
 
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
-    }
-
     private ResourceQuery() {
         super();
         assignStatusImpossibleWhiteList();
     }
 
-    @Override
-    protected Stream<Entry<ResourceParameter, QueryBuilder>> customQueryBuilders(ResourceParameter key) {
-        return switch (key) {
-            case FUNDING -> fundingQuery(key);
-            case CRISTIN_IDENTIFIER -> additionalIdentifier(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> additionalIdentifier(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
-            case SEARCH_ALL -> multiMatchQueryStream();
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
-        };
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
+     * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
+     */
+    private void assignStatusImpossibleWhiteList() {
+        filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
     }
 
-    @Override
-    protected ResourceParameter keyFromString(String keyName) {
-        return ResourceParameter.keyFromString(keyName);
-    }
-
-    @Override
-    protected Integer getFrom() {
-        return parameters.get(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return parameters.get(SIZE).as();
-    }
-
-    @Override
-    protected ResourceParameter getFieldsKey() {
-        return FIELDS;
-    }
-
-    @Override
-    protected ResourceParameter getSortOrderKey() {
-        return SORT_ORDER;
-    }
-
-    @Override
-    protected ResourceParameter getSearchAfterKey() {
-        return SEARCH_AFTER;
-    }
-
-    @Override
-    public AsType<ResourceParameter> getSort() {
-        return parameters.get(SORT);
-    }
-
-    @Override
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
-                .getUri();
-    }
-
-    @Override
-    protected BoolQueryBuilder makeBoolQuery() {
-        var queryBuilder = mainQuery();
-        if (isLookingForOneContributor()) {
-            addPromotedPublications(this.userSettingsClient, queryBuilder);
-        }
-        return queryBuilder;
-    }
-
-    @Override
-    protected FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
-        RESOURCES_AGGREGATIONS
-            .stream().filter(this::isRequestedAggregation)
-            .forEach(aggregationFilter::subAggregation);
-        return aggregationFilter;
-    }
-
-    @Override
-    protected boolean isDefined(String keyName) {
-        return parameters.get(AGGREGATION)
-            .asSplitStream(COMMA)
-            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
-    }
-
-    @Override
-    protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
-    }
-
-    @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return facetResourcePaths;
+    public static ResourceParameterValidator builder() {
+        return new ResourceParameterValidator();
     }
 
     /**
@@ -232,31 +153,94 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return this;
     }
 
-    private boolean isLookingForOneContributor() {
-        return parameters.get(CONTRIBUTOR)
-            .asSplitStream(COMMA)
-            .count() == 1;
+    @Override
+    protected ResourceParameter getFieldsKey() {
+        return FIELDS;
     }
 
-    private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        var promotedPublications =
-            attempt(() -> userSettingsClient.doSearch(this))
-                .or(() -> new UserSettings(List.of()))
-                .get().promotedPublications();
-        if (hasContent(promotedPublications)) {
-            parameters.remove(SORT);  // remove sort to avoid messing up "sorting by score"
-            for (int i = 0; i < promotedPublications.size(); i++) {
-                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
-                var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
-                    .boost(PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
-                bq.should(qb);
-            }
-            logger.info(
-                bq.should().stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "))
-            );
+    @Override
+    protected ResourceParameter getSortOrderKey() {
+        return SORT_ORDER;
+    }
+
+    @Override
+    protected Integer getFrom() {
+        return parameters.get(FROM).as();
+    }
+
+    @Override
+    protected Integer getSize() {
+        return parameters.get(SIZE).as();
+    }
+
+    @Override
+    protected Map<String, String> aggregationsDefinition() {
+        return facetResourcePaths;
+    }
+
+    @Override
+    protected String getSortFieldName(Entry<String, SortOrder> entry) {
+        return fromSortKey(entry.getKey()).jsonPath();
+    }
+
+    @Override
+    public URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(Words.RESOURCES, Words.SEARCH)
+                .getUri();
+    }
+
+    @Override
+    protected FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
+        RESOURCES_AGGREGATIONS
+            .stream().filter(this::isRequestedAggregation)
+            .forEach(aggregationFilter::subAggregation);
+        return aggregationFilter;
+    }
+
+    @Override
+    public AsType<ResourceParameter> getSort() {
+        return parameters.get(SORT);
+    }
+
+    @Override
+    protected BoolQueryBuilder makeBoolQuery() {
+        var queryBuilder = mainQuery();
+        if (isLookingForOneContributor()) {
+            addPromotedPublications(this.userSettingsClient, queryBuilder);
         }
+        return queryBuilder;
+    }
+
+    @Override
+    protected Stream<Entry<ResourceParameter, QueryBuilder>> customQueryBuilders(ResourceParameter key) {
+        return switch (key) {
+            case FUNDING -> fundingQuery(key);
+            case CRISTIN_IDENTIFIER -> additionalIdentifier(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifier(key, SCOPUS_AS_TYPE);
+            case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
+            case SEARCH_ALL -> multiMatchQueryStream();
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+        };
+    }
+
+    @Override
+    protected ResourceParameter keyFromString(String keyName) {
+        return ResourceParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected ResourceParameter getSearchAfterKey() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected boolean isDefined(String keyName) {
+        return parameters.get(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifier(ResourceParameter key, String source) {
@@ -325,36 +309,37 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
     }
 
+    private boolean isLookingForOneContributor() {
+        return parameters.get(CONTRIBUTOR)
+                   .asSplitStream(COMMA)
+                   .count() == 1;
+    }
 
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
-     */
-    private void assignStatusImpossibleWhiteList() {
-        filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
+    private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
+        var promotedPublications =
+            attempt(() -> userSettingsClient.doSearch(this))
+                .or(() -> new UserSettings(List.of()))
+                .get().promotedPublications();
+        if (hasContent(promotedPublications)) {
+            parameters.remove(SORT);  // remove sort to avoid messing up "sorting by score"
+            for (int i = 0; i < promotedPublications.size(); i++) {
+                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
+                var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
+                    .boost(PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
+                bq.should(qb);
+            }
+            logger.info(
+                bq.should().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))
+            );
+        }
     }
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
 
         ResourceParameterValidator() {
             super(new ResourceQuery());
-        }
-
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
-        }
-
-        @Override
-        protected boolean isAggregationValid(String aggregationName) {
-            return
-                ALL.equalsIgnoreCase(aggregationName) ||
-                NONE.equalsIgnoreCase(aggregationName) ||
-                RESOURCES_AGGREGATIONS.stream()
-                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         @Override
@@ -368,6 +353,38 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     default -> { /* ignore and continue */ }
                 }
             });
+        }
+
+        @JacocoGenerated
+        @Override
+        protected void applyRulesAfterValidation() {
+            // convert page to offset if offset is not set
+            if (query.parameters.isPresent(PAGE)) {
+                if (query.parameters.isPresent(FROM)) {
+                    var page = query.parameters.get(PAGE).<Number>as();
+                    var perPage = query.parameters.get(SIZE).<Number>as();
+                    query.parameters.set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                }
+                query.parameters.remove(PAGE);
+            }
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return RESOURCE_PARAMETER_SET.stream()
+                .map(Enum::name)
+                .toList();
+        }
+
+        @Override
+        protected void validateSortEntry(Entry<String, SortOrder> entry) {
+            if (fromSortKey(entry.getKey()) == INVALID) {
+                throw new IllegalArgumentException(
+                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys())
+                );
+            }
+            attempt(entry::getValue)
+                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
 
         @Override
@@ -393,41 +410,23 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             }
         }
 
+        @Override
+        protected boolean isKeyValid(String keyName) {
+            return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return
+                ALL.equalsIgnoreCase(aggregationName) ||
+                NONE.equalsIgnoreCase(aggregationName) ||
+                RESOURCES_AGGREGATIONS.stream()
+                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
+        }
+
         private String expandLanguage(String decodedValue) {
             var startIndex = decodedValue.length() - 3;
             return Constants.LEXVO_ORG_ID_ISO_639_3 + decodedValue.substring(startIndex);
-        }
-
-        @JacocoGenerated
-        @Override
-        protected void applyRulesAfterValidation() {
-            // convert page to offset if offset is not set
-            if (query.parameters.isPresent(PAGE)) {
-                if (query.parameters.isPresent(FROM)) {
-                    var page = query.parameters.get(PAGE).<Number>as();
-                    var perPage = query.parameters.get(SIZE).<Number>as();
-                    query.parameters.set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
-                }
-                query.parameters.remove(PAGE);
-            }
-        }
-
-        @Override
-        protected void validateSortEntry(Entry<String, SortOrder> entry) {
-            if (fromSortKey(entry.getKey()) == INVALID) {
-                throw new IllegalArgumentException(
-                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys())
-                );
-            }
-            attempt(entry::getValue)
-                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
-        }
-
-        @Override
-        protected Collection<String> validKeys() {
-            return RESOURCE_PARAMETER_SET.stream()
-                .map(Enum::name)
-                .toList();
         }
     }
 }

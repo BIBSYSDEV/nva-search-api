@@ -26,10 +26,6 @@ public class AsType<K extends Enum<K> & ParameterKey> {
         this.key = key;
     }
 
-    public K getKey() {
-        return key;
-    }
-
     public <T> T as() {
         if (isNull(value)) {
             return null;
@@ -42,6 +38,26 @@ public class AsType<K extends Enum<K> & ParameterKey> {
             case NUMBER -> castNumber();
             default -> value;
         };
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    private <T> T castDateTime() {
+        return ((Class<T>) DateTime.class).cast(asDateTime());
+    }
+
+    public DateTime asDateTime() {
+        return DateTime.parse(value);
+    }
+
+    private <T extends Number> T castNumber() {
+        return (T) attempt(this::asNumber).orElseThrow();
+    }
+
+    public Number asNumber() {
+        return Integer.parseInt(value);
     }
 
     public boolean isEmpty() {
@@ -78,14 +94,6 @@ public class AsType<K extends Enum<K> & ParameterKey> {
         return Boolean.parseBoolean(value);
     }
 
-    public DateTime asDateTime() {
-        return DateTime.parse(value);
-    }
-
-    public Number asNumber() {
-        return Integer.parseInt(value);
-    }
-
     public String asLowerCase() {
         return value.toLowerCase(Locale.getDefault());
     }
@@ -93,13 +101,5 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     @Override
     public String toString() {
         return value;
-    }
-
-    private <T> T castDateTime() {
-        return ((Class<T>) DateTime.class).cast(asDateTime());
-    }
-
-    private <T extends Number> T castNumber() {
-        return (T) attempt(this::asNumber).orElseThrow();
     }
 }

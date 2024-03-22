@@ -29,10 +29,6 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    public String getFirstSearchField(K key) {
-        return key.searchFields().findFirst().orElseThrow();
-    }
-
     public static Entry<String, SortOrder> objectToSortEntry(String sortString) {
         return stringsToSortEntry(sortString.split(COLON_OR_SPACE));
     }
@@ -57,6 +53,10 @@ public final class QueryTools<K extends Enum<K> & ParameterKey> {
                 return null;
             }
         };
+    }
+
+    public String getFirstSearchField(K key) {
+        return key.searchFields().findFirst().orElseThrow();
     }
 
     public Stream<Map.Entry<K, QueryBuilder>> queryToEntry(K key, QueryBuilder qb) {

@@ -1,8 +1,9 @@
 package no.unit.nva.search2.common;
 
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ValueEncoding;
-
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.constant.Words.PLUS;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -10,17 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.constant.Words.PLUS;
-import static no.unit.nva.search2.common.constant.Words.SPACE;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 
 public class QueryKeys<K extends Enum<K> & ParameterKey> {
+
+    protected final transient Set<K> otherRequired;
     private final transient Map<K, String> page;
     private final transient Map<K, String> search;
-    protected final transient Set<K> otherRequired;
-
     private final  K fields;
     private final  K sortOrder;
 
@@ -59,6 +57,13 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
         return results;
     }
 
+    private String toApiKey(Map.Entry<K, String> entry) {
+        return entry.getKey().asCamelCase();
+    }
+
+    private String toApiValue(Map.Entry<K, String> entry) {
+        return entry.getValue().replace(SPACE, PLUS);
+    }
 
     /**
      * Get value from Query Parameter Map with key.
@@ -94,6 +99,10 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
         }
     }
 
+    private boolean isPagingValue(K key) {
+        return key.ordinal() >= fields.ordinal() && key.ordinal() <= sortOrder.ordinal();
+    }
+
     public AsType<K> remove(K key) {
         return new AsType<>(
             search.containsKey(key)
@@ -105,17 +114,5 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
 
     public boolean isPresent(K key) {
         return search.containsKey(key) || page.containsKey(key);
-    }
-
-    private boolean isPagingValue(K key) {
-        return key.ordinal() >= fields.ordinal() && key.ordinal() <= sortOrder.ordinal();
-    }
-
-    private String toApiKey(Map.Entry<K, String> entry) {
-        return entry.getKey().asCamelCase();
-    }
-
-    private String toApiValue(Map.Entry<K, String> entry) {
-        return entry.getValue().replace(SPACE, PLUS);
     }
 }

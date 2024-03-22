@@ -71,71 +71,27 @@ public final class TicketQuery extends Query<TicketParameter> {
     private String currentUser;
     private TicketType[] ticketTypes;
 
-    public static TicketParameterValidator builder() {
-        return new TicketParameterValidator();
-    }
-
     private TicketQuery() {
         super();
         assignImpossibleWhiteListFilters();
     }
 
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
-    @Override
-    protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
-        return switch (key) {
-            case ASSIGNEE -> byAssignee();
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
-        };
-    }
-    @Override
-    protected TicketParameter keyFromString(String keyName) {
-        return TicketParameter.keyFromString(keyName);
-    }
-
-    @Override
-    protected Integer getFrom() {
-        return parameters.get(FROM).as();
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the Query from any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withFilter* must be set </p>
+     */
+    private void assignImpossibleWhiteListFilters() {
+        var filterType =
+            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
+        final var filterId =
+            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
+        filters.set(filterType, filterId);
     }
 
-    @Override
-    protected Integer getSize() {
-        return parameters.get(SIZE).as();
-    }
-
-    @Override
-    protected TicketParameter getFieldsKey() {
-        return FIELDS;
-    }
-
-    @Override
-    protected TicketParameter getSortOrderKey() {
-        return SORT_ORDER;
-    }
-
-    @Override
-    protected TicketParameter getSearchAfterKey() {
-        return SEARCH_AFTER;
-    }
-
-    @Override
-    public AsType<TicketParameter> getSort() {
-        return parameters.get(SORT);
-    }
-
-    @Override
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(TICKETS, SEARCH)
-                .getUri();
-    }
-
-
-
-    @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return facetTicketsPaths;
+    public static TicketParameterValidator builder() {
+        return new TicketParameterValidator();
     }
 
     /**
@@ -231,13 +187,52 @@ public final class TicketQuery extends Query<TicketParameter> {
         return allowed.toArray(TicketType[]::new);
     }
 
-    private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
-        var searchByUserName = parameters.isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? currentUser
-            : parameters.get(TicketParameter.ASSIGNEE).toString();
+    @Override
+    protected Integer getFrom() {
+        return parameters.get(FROM).as();
+    }
 
-        return new OpensearchQueryText<TicketParameter>()
-            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+    @Override
+    protected Integer getSize() {
+        return parameters.get(SIZE).as();
+    }
+
+    @Override
+    protected TicketParameter getFieldsKey() {
+        return FIELDS;
+    }
+
+    @Override
+    protected TicketParameter getSortOrderKey() {
+        return SORT_ORDER;
+    }
+
+    @Override
+    protected TicketParameter getSearchAfterKey() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected TicketParameter keyFromString(String keyName) {
+        return TicketParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected String getSortFieldName(Entry<String, SortOrder> entry) {
+        return fromSortKey(entry.getKey()).jsonPath();
+    }
+
+    @Override
+    public AsType<TicketParameter> getSort() {
+        return parameters.get(SORT);
+    }
+
+    @Override
+    public URI getOpenSearchUri() {
+        return
+            fromUri(openSearchUri)
+                .addChild(TICKETS, SEARCH)
+                .getUri();
     }
 
     @Override
@@ -247,6 +242,20 @@ public final class TicketQuery extends Query<TicketParameter> {
             .stream().filter(this::isRequestedAggregation)
             .forEach(aggrFilter::subAggregation);
         return aggrFilter;
+    }
+
+    @Override
+    protected Map<String, String> aggregationsDefinition() {
+        return facetTicketsPaths;
+    }
+
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    @Override
+    protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
+        return switch (key) {
+            case ASSIGNEE -> byAssignee();
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+        };
     }
 
     @Override
@@ -264,30 +273,13 @@ public final class TicketQuery extends Query<TicketParameter> {
         return name.contains("notification");
     }
 
+    private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
+        var searchByUserName = parameters.isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
+            ? currentUser
+            : parameters.get(TicketParameter.ASSIGNEE).toString();
 
-//    private String getSortFieldName(Entry<String, SortOrder> entry) {
-//        return fromSortKey(entry.getKey()).jsonPath();
-//    }
-
-
-
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the Query from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withFilter* must be set </p>
-     */
-    private void assignImpossibleWhiteListFilters() {
-        var filterType =
-            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
-        final var filterId =
-            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
-        filters.set(filterType, filterId);
-    }
-
-    @Override
-    protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
+        return new OpensearchQueryText<TicketParameter>()
+            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
     }
 
     @SuppressWarnings("PMD.GodClass")
