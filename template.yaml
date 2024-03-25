@@ -790,7 +790,7 @@ Resources:
 
   #============================Alarms===============================================================
 
-  RecoveryQueueAlarm:
+  RecoveryQueueSearchApiAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: AWS/SQS ApproximateNumberOfMessagesVisible QueueName=RecoveryQueue
