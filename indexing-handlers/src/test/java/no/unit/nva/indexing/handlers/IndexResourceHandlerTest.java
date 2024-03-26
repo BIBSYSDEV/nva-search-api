@@ -45,15 +45,15 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 public class IndexResourceHandlerTest {
 
-    public static final String RESOURCES_INDEX = "resources";
+    public static final String OPENSEARCH_RESOURCES_INDEX = "resources";
     public static final IndexDocument SAMPLE_RESOURCE = createSampleResource(SortableIdentifier.next(),
-                                                                             RESOURCES_INDEX);
+                                                                             OPENSEARCH_RESOURCES_INDEX);
     public static final IndexDocument SAMPLE_TICKET = createSampleResource(SortableIdentifier.next(),
                                                                              TICKETS_INDEX);
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String IGNORED_TOPIC = "ignoredValue";
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
-        createSampleResource(null, RESOURCES_INDEX);
+        createSampleResource(null, OPENSEARCH_RESOURCES_INDEX);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
         createSampleResource(SortableIdentifier.next(), null);
     private S3Driver resourcesS3Driver;
