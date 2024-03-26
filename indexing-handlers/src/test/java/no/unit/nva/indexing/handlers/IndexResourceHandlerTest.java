@@ -1,6 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.search.IndexingClient.objectMapper;
+import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search.models.IndexDocument.MISSING_IDENTIFIER_IN_RESOURCE;
 import static no.unit.nva.search.models.IndexDocument.MISSING_INDEX_NAME_IN_RESOURCE;
@@ -8,6 +9,7 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
@@ -43,9 +45,11 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 public class IndexResourceHandlerTest {
 
-    public static final String RESOURCES_INDEX = "resource";
+    public static final String RESOURCES_INDEX = "resources";
     public static final IndexDocument SAMPLE_RESOURCE = createSampleResource(SortableIdentifier.next(),
                                                                              RESOURCES_INDEX);
+    public static final IndexDocument SAMPLE_TICKET = createSampleResource(SortableIdentifier.next(),
+                                                                             TICKETS_INDEX);
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String IGNORED_TOPIC = "ignoredValue";
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
@@ -82,7 +86,7 @@ public class IndexResourceHandlerTest {
     }
 
     @Test
-    void shouldSendMessageToRecoveryQueueWhenIndexingIsFailing() throws Exception {
+    void shouldSendMessageToRecoveryQueueWhenIndexingResourceIsFailing() throws Exception {
         indexingClient = indexingClientThrowingException(randomString());
         indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, indexingClient, sqsClient);
         var resourceLocation = prepareEventStorageResourceFile();
@@ -90,7 +94,23 @@ public class IndexResourceHandlerTest {
         indexResourceHandler.handleRequest(input, output, context);
 
         var deliveredMessage = sqsClient.getDeliveredMessages().get(0);
-        assertThat(deliveredMessage.messageAttributes().get("id"), is(notNullValue()));
+
+        assertThat(deliveredMessage.messageAttributes().get("id").stringValue(), is(notNullValue()));
+        assertThat(deliveredMessage.messageAttributes().get("type").stringValue(), is(equalTo("Resource")));
+    }
+
+    @Test
+    void shouldSendMessageToRecoveryQueueWhenIndexingTicketIsFailing() throws Exception {
+        indexingClient = indexingClientThrowingException(randomString());
+        indexResourceHandler = new IndexResourceHandler(resourcesS3Driver, indexingClient, sqsClient);
+        var resourceLocation = prepareEventStorageTicketFile();
+        var input = createEventBridgeEvent(resourceLocation);
+        indexResourceHandler.handleRequest(input, output, context);
+
+        var deliveredMessage = sqsClient.getDeliveredMessages().get(0);
+
+        assertThat(deliveredMessage.messageAttributes().get("id").stringValue(), is(notNullValue()));
+        assertThat(deliveredMessage.messageAttributes().get("type").stringValue(), is(equalTo("Ticket")));
     }
 
     @Test
@@ -148,6 +168,10 @@ public class IndexResourceHandlerTest {
 
     private URI prepareEventStorageResourceFile() throws IOException {
         return prepareEventStorageResourceFile(SAMPLE_RESOURCE);
+    }
+
+    private URI prepareEventStorageTicketFile() throws IOException {
+        return prepareEventStorageResourceFile(SAMPLE_TICKET);
     }
 
     private URI prepareEventStorageResourceFile(IndexDocument resource) throws IOException {
