@@ -30,18 +30,7 @@ public final class RecoveryEntry {
     }
 
     public static RecoveryEntry fromIndexDocument(IndexDocument indexDocument) {
-        return builder().withType(getType(indexDocument)).build();
-    }
-
-    private static String getType(IndexDocument indexDocument) {
-        if (RESOURCES_INDEX_NAME.equals(indexDocument.getIndexName())) {
-            return RESOURCE;
-        }
-        if (TICKETS_INDEX_NAME.equals(indexDocument.getIndexName())) {
-            return TICKET;
-        } else {
-            throw new IllegalArgumentException(UNSUPPORTED_DOCUMENT_MESSAGE);
-        }
+        return builder().withType(indexDocument.getType()).build();
     }
 
     public RecoveryEntry withIdentifier(String identifier) {
