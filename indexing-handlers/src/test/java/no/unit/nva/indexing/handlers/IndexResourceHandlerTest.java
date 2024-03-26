@@ -32,6 +32,7 @@ import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexing.testutils.FakeSqsClient;
 import no.unit.nva.s3.S3Driver;
+import no.unit.nva.search.constants.ApplicationConstants;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.stubs.FakeS3Client;
@@ -45,15 +46,14 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 public class IndexResourceHandlerTest {
 
-    public static final String OPENSEARCH_RESOURCES_INDEX = "resources";
     public static final IndexDocument SAMPLE_RESOURCE = createSampleResource(SortableIdentifier.next(),
-                                                                             OPENSEARCH_RESOURCES_INDEX);
+                                                                             ApplicationConstants.RESOURCES_INDEX);
     public static final IndexDocument SAMPLE_TICKET = createSampleResource(SortableIdentifier.next(),
                                                                              TICKETS_INDEX);
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String IGNORED_TOPIC = "ignoredValue";
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
-        createSampleResource(null, OPENSEARCH_RESOURCES_INDEX);
+        createSampleResource(null, ApplicationConstants.RESOURCES_INDEX);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
         createSampleResource(SortableIdentifier.next(), null);
     private S3Driver resourcesS3Driver;
