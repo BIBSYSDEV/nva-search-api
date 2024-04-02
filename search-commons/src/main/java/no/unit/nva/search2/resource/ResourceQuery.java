@@ -6,7 +6,9 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENT;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
@@ -27,6 +29,7 @@ import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
+import no.unit.nva.search2.common.enums.*;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -50,8 +53,6 @@ import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
-import static no.unit.nva.search2.resource.ResourceSort.fromSortKey;
-import static no.unit.nva.search2.resource.ResourceSort.validSortKeys;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
@@ -72,8 +73,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.PublicationStatus;
-import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
@@ -178,10 +177,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return facetResourcePaths;
     }
 
-    @Override
-    protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
-    }
 
     @Override
     public URI getOpenSearchUri() {
@@ -217,10 +212,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> customQueryBuilders(ResourceParameter key) {
         return switch (key) {
-            case FUNDING -> fundingQuery(key);
-            case CRISTIN_IDENTIFIER -> additionalIdentifier(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> additionalIdentifier(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncluded(key);
+            case FUNDING -> fundingQueryStream(key);
+            case CRISTIN_IDENTIFIER -> additionalIdentifierQueryStream(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifierQueryStream(key, SCOPUS_AS_TYPE);
+            case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncludedQueryStream(key);
             case SEARCH_ALL -> multiMatchQueryStream();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
@@ -229,6 +224,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected ResourceParameter keyFromString(String keyName) {
         return ResourceParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected SortKey fromSortKey(String sortName) {
+        return ResourceSort.fromSortKey(sortName);
     }
 
     @Override
@@ -243,18 +243,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifier(ResourceParameter key, String source) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQueryStream(ResourceParameter key, String source) {
         var query = QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
-                    .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), parameters().get(key).as()))
+                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), parameters().get(key).as()))
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
         return queryTools.queryToEntry(key, query);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> fundingQueryStream(ResourceParameter key) {
         var values = parameters().get(key).split(COLON);
         var query = QueryBuilders.nestedQuery(
             FUNDINGS,
@@ -292,11 +292,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryTools.queryToEntry(SEARCH_ALL, query);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncluded(ResourceParameter key) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncludedQueryStream(ResourceParameter key) {
         var query =
-                parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-                        ? termQuery(getTermPath(key), parameters().get(key).as())
-                        : termQuery(getMatchPath(key), parameters().get(key).as());
+            parameters().get(EXCLUDE_SUBUNITS).asBoolean()
+                ? termQuery(getTermPath(key), parameters().get(key).as())
+                : termQuery(getMatchPath(key), parameters().get(key).as());
 
         return queryTools.queryToEntry(key, query);
     }
@@ -311,8 +311,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private boolean isLookingForOneContributor() {
         return parameters().get(CONTRIBUTOR)
-                   .asSplitStream(COMMA)
-                   .count() == 1;
+            .asSplitStream(COMMA)
+            .count() == 1;
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
@@ -372,19 +372,24 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected Collection<String> validKeys() {
             return RESOURCE_PARAMETER_SET.stream()
-                .map(Enum::name)
+                .map(ResourceParameter::asLowerCase)
                 .toList();
         }
 
         @Override
-        protected void validateSortEntry(Entry<String, SortOrder> entry) {
-            if (fromSortKey(entry.getKey()) == INVALID) {
+        protected void validateSortKeyName(String name) {
+            var nameSort = name.split(COLON_OR_SPACE);
+            if (nameSort.length == 2) {
+                SortOrder.fromString(nameSort[1]);
+            } else if (nameSort.length > 2) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
+            }
+
+            if (ResourceSort.fromSortKey(nameSort[0]) == INVALID) {
                 throw new IllegalArgumentException(
-                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys())
+                    INVALID_VALUE_WITH_SORT.formatted(name, ResourceSort.validSortKeys())
                 );
             }
-            attempt(entry::getValue)
-                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
 
         @Override
@@ -401,11 +406,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                        PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
+                    PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                     MODIFIED_BEFORE, MODIFIED_SINCE,
-                        PUBLISHED_BEFORE, PUBLISHED_SINCE ->
-                        query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }

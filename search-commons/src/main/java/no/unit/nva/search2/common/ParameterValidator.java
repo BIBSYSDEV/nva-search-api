@@ -5,9 +5,7 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.common.constant.Patterns.*;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
@@ -17,14 +15,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,14 +110,14 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            query.getSortStream()
-                .forEach(this::validateSortEntry);
+            query.getSort().asSplitStream(COMMA)
+                .forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
     }
 
-    protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
+    protected abstract void validateSortKeyName(String name);
 
     protected Set<String> getMissingKeys() {
         return

@@ -1,23 +1,10 @@
 package no.unit.nva.search2.common;
 
-import static com.google.common.net.MediaType.CSV_UTF_8;
-import static com.google.common.net.MediaType.JSON_UTF_8;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +15,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
@@ -40,14 +28,33 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.FieldSortBuilder;
+import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.google.common.net.MediaType.CSV_UTF_8;
+import static com.google.common.net.MediaType.JSON_UTF_8;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 @SuppressWarnings("PMD.GodClass")
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
+    public static final String LAST = "_last";
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
@@ -68,7 +75,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract K keyFromString(String keyName);
 
-    protected abstract String getSortFieldName(Entry<String, SortOrder> entry);
+    protected abstract SortKey fromSortKey(String sortName);
 
     protected abstract AsType<K> getSort();
 
@@ -106,16 +113,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public Stream<QueryContentWrapper> createQueryBuilderStream() {
         var queryBuilder =
-                parameters().getSearchKeys().findAny().isEmpty()
-                        ? QueryBuilders.matchAllQuery()
-                        : makeBoolQuery();
+            parameters().getSearchKeys().findAny().isEmpty()
+                ? QueryBuilders.matchAllQuery()
+                : makeBoolQuery();
 
         var builder = defaultSearchSourceBuilder(queryBuilder);
 
         handleSearchAfter(builder);
 
-        getSortStream()
-                .forEach(entry -> builder.sort(getSortFieldName(entry), entry.getValue()));
+        getSortStream().forEach(builder::sort);
 
         if (getMediaType().is(JSON_UTF_8)) {
             builder.aggregation(getAggregationsWithFilter());
@@ -180,18 +186,24 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     protected Map<String, Float> fieldsToKeyNames(AsType<K> fieldValue) {
         return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
-                ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
-                : fieldValue.asSplitStream(COMMA)
-                .map(this::keyFromString)
-                .flatMap(key -> key.searchFields(KEYWORD_FALSE)
-                        .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
-                )
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
+            : fieldValue.asSplitStream(COMMA)
+            .map(this::keyFromString)
+            .flatMap(key -> key.searchFields(KEYWORD_FALSE)
+                .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
+            )
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
-    protected Stream<Entry<String, SortOrder>> getSortStream() {
+    protected Stream<FieldSortBuilder> getSortStream() {
         return getSort().asSplitStream(COMMA)
-            .map(QueryTools::objectToSortEntry);
+            .flatMap(item -> {
+                final var parts = item.split(COLON_OR_SPACE);
+                final var order = SortOrder.fromString(
+                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
+                return fromSortKey(parts[0]).jsonPaths()
+                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(LAST));
+            });
     }
 
     protected Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
@@ -236,56 +248,56 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected SearchSourceBuilder defaultSearchSourceBuilder(QueryBuilder queryBuilder) {
         return new SearchSourceBuilder()
-                .query(queryBuilder)
-                .size(getSize())
-                .from(getFrom())
-                .postFilter(filters.get())
-                .trackTotalHits(true);
+            .query(queryBuilder)
+            .size(getSize())
+            .from(getFrom())
+            .postFilter(filters.get())
+            .trackTotalHits(true);
     }
 
     protected QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
         var fields = fieldsToKeyNames(parameters().get(fieldsKey));
         var value = parameters().get(searchAllKey).toString();
         return QueryBuilders
-                .multiMatchQuery(value)
-                .fields(fields)
-                .type(Type.CROSS_FIELDS)
-                .operator(Operator.AND);
+            .multiMatchQuery(value)
+            .fields(fields)
+            .type(Type.CROSS_FIELDS)
+            .operator(Operator.AND);
     }
 
     protected boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
         return Optional.ofNullable(aggregationBuilder)
-                .map(AggregationBuilder::getName)
-                .map(this::isDefined)
-                .orElse(false);
+            .map(AggregationBuilder::getName)
+            .map(this::isDefined)
+            .orElse(false);
     }
 
     private boolean isMustNot(K key) {
         return NO_ITEMS.equals(key.searchOperator())
-                || NOT_ONE_ITEM.equals(key.searchOperator());
+            || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
         requestParameter.remove(Words.FROM);
         var sortParameter =
-                response.getSort().stream()
-                        .map(Object::toString)
-                        .collect(Collectors.joining(COMMA));
+            response.getSort().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(COMMA));
         if (!hasContent(sortParameter)) {
             return null;
         }
         var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
         requestParameter.put(searchAfter, sortParameter);
         return fromUri(gatewayUri)
-                .addQueryParameters(requestParameter)
-                .getUri();
+            .addQueryParameters(requestParameter)
+            .getUri();
     }
 
     private void logSearchKeys() {
         logger.info(
-                parameters().getSearchKeys()
-                        .map(ParameterKey::asCamelCase)
-                        .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
+            parameters().getSearchKeys()
+                .map(ParameterKey::asCamelCase)
+                .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }
 

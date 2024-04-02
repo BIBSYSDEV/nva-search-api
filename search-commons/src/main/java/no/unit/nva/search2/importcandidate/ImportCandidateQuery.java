@@ -4,7 +4,9 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENT;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
@@ -16,6 +18,7 @@ import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
+import no.unit.nva.search2.common.enums.*;
 import static no.unit.nva.search2.importcandidate.Constants.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
@@ -29,10 +32,6 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARC
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
-import static no.unit.nva.search2.importcandidate.ImportCandidateSort.INVALID;
-import static no.unit.nva.search2.importcandidate.ImportCandidateSort.fromSortKey;
-import static no.unit.nva.search2.importcandidate.ImportCandidateSort.validSortKeys;
-import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
@@ -46,7 +45,6 @@ import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
@@ -90,10 +88,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return parameters().get(SIZE).as();
     }
 
-    @Override
-    protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
-    }
 
     @Override
     protected FilterAggregationBuilder getAggregationsWithFilter() {
@@ -139,6 +133,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
+    protected SortKey fromSortKey(String sortName) {
+        return ImportCandidateSort.fromSortKey(sortName);
+    }
+
+    @Override
     protected boolean isDefined(String keyName) {
         return parameters().get(AGGREGATION)
             .asSplitStream(COMMA)
@@ -160,8 +159,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
 
     @SuppressWarnings("PMD.GodClass")
-    public static class ImportCandidateValidator
-        extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
+    public static class ImportCandidateValidator extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
 
         ImportCandidateValidator() {
             super(new ImportCandidateQuery());
@@ -203,12 +201,18 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         }
 
         @Override
-        protected void validateSortEntry(Entry<String, SortOrder> entry) {
-            if (fromSortKey(entry.getKey()) == INVALID) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
+        protected void validateSortKeyName(String name) {
+            var nameSort = name.split(COLON_OR_SPACE);
+            if (nameSort.length == 2) {
+                SortOrder.fromString(nameSort[1]);
+            } else if (nameSort.length > 2) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
             }
-            attempt(entry::getValue)
-                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
+            if (ImportCandidateSort.fromSortKey(nameSort[0]) == ImportCandidateSort.INVALID) {
+                throw new IllegalArgumentException(
+                    INVALID_VALUE_WITH_SORT.formatted(name, ImportCandidateSort.validSortKeys())
+                );
+            }
         }
 
         @Override
