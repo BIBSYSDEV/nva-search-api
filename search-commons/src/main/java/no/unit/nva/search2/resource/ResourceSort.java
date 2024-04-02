@@ -43,7 +43,6 @@ public enum ResourceSort implements SortKey {
         this.path = jsonPath;
     }
 
-
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -86,17 +85,4 @@ public enum ResourceSort implements SortKey {
             .map(Enum::name)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
-
-//    public static String sortToJson(String sortParameters) {
-//        return
-//            Arrays.stream(sortParameters.split(COMMA))
-//                .flatMap(param -> {
-//                    var split = param.split(COLON_OR_SPACE);
-//                    var direction = split.length == 2 ? split[1] : "asc";
-//                    return Arrays.stream(fromSortKey(split[0]).jsonPaths())
-//                        .map(path -> "{\"" + path + "\":{ \"order\": \"" + direction + "\",\"missing\": \"_last\"}}");
-//                })
-//                .collect(Collectors.joining(COMMA, "[", "]"));
-//    }
 }
