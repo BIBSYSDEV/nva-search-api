@@ -1,5 +1,21 @@
 package no.unit.nva.search2.common;
 
+import static com.google.common.net.MediaType.CSV_UTF_8;
+import static com.google.common.net.MediaType.JSON_UTF_8;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.Locale;
@@ -33,22 +49,6 @@ import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.google.common.net.MediaType.CSV_UTF_8;
-import static com.google.common.net.MediaType.JSON_UTF_8;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
-import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 
 @SuppressWarnings("PMD.GodClass")
 public abstract class Query<K extends Enum<K> & ParameterKey> {
