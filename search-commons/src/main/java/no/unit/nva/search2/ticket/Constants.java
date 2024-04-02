@@ -34,6 +34,9 @@ public final class Constants {
     public static final String PUBLICATION = "publication";
     public static final String PUBLICATION_STATUS = "publicationStatus";
     public static final String USERNAME = "username";
+    public static final String NOTIFICATION = "notification";
+    public static final String UNHANDLED_KEY = "unhandled key -> ";
+
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
     public static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;

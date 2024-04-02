@@ -19,10 +19,12 @@ import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.enums.TicketStatus.PENDING;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
+import static no.unit.nva.search2.ticket.Constants.NOTIFICATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
+import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
@@ -39,6 +41,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import java.net.URI;
@@ -255,7 +258,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
         return switch (key) {
             case ASSIGNEE -> byAssignee();
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+            default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
         };
     }
 
@@ -271,7 +274,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private boolean isNotificationAggregation(String name) {
-        return name.contains("notification");
+        return name.contains(NOTIFICATION);
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
@@ -372,7 +375,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             return
                 ALL.equalsIgnoreCase(aggregationName) ||
                     NONE.equalsIgnoreCase(aggregationName) ||
-                    getTicketsAggregations("").stream()
+                    getTicketsAggregations(EMPTY_STRING).stream()
                         .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
