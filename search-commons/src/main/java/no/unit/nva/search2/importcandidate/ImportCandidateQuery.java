@@ -13,6 +13,7 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
@@ -203,9 +204,9 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void validateSortKeyName(String name) {
             var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == 2) {
+            if (nameSort.length == NAME_AND_SORT) {
                 SortOrder.fromString(nameSort[1]);
-            } else if (nameSort.length > 2) {
+            } else if (nameSort.length > NAME_AND_SORT) {
                 throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
             }
             if (ImportCandidateSort.fromSortKey(nameSort[0]) == ImportCandidateSort.INVALID) {

@@ -6,6 +6,9 @@ public final class Words {
 
     public static final float PI = 3.14F;        // π -> used for boosting.
     public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
+
+    public static final int NAME_AND_SORT = 2;
+
     public static final String POST_FILTER = "withAppliedFilter";
     public static final String ROOT = "root";
 

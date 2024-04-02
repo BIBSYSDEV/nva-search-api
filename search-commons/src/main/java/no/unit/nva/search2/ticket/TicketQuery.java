@@ -11,6 +11,7 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
@@ -330,9 +331,9 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected void validateSortKeyName(String name) {
             var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == 2) {
+            if (nameSort.length == NAME_AND_SORT) {
                 SortOrder.fromString(nameSort[1]);
-            } else if (nameSort.length > 2) {
+            } else if (nameSort.length > NAME_AND_SORT) {
                 throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
             }
             if (TicketSort.fromSortKey(nameSort[0]) == TicketSort.INVALID) {

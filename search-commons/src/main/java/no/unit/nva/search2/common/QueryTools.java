@@ -1,19 +1,14 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static nva.commons.core.attempt.Try.attempt;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.search.sort.SortOrder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
