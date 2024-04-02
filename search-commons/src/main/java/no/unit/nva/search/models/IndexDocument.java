@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.search.constants.ApplicationConstants;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
@@ -21,6 +22,9 @@ public class IndexDocument implements JsonSerializable {
     public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
     public static final String MISSING_IDENTIFIER_IN_RESOURCE = "Missing identifier in resource";
     public static final String MISSING_INDEX_NAME_IN_RESOURCE = "Missing index name in resource";
+    private static final String IMPORT_CANDIDATE = "ImportCandidate";
+    private static final String TICKET = "Ticket";
+    private static final String RESOURCE = "Resource";
     @JsonProperty(CONSUMPTION_ATTRIBUTES)
     private final EventConsumptionAttributes consumptionAttributes;
     @JsonProperty(BODY)
@@ -37,6 +41,22 @@ public class IndexDocument implements JsonSerializable {
         Objects.requireNonNull(getIndexName());
         Objects.requireNonNull(getDocumentIdentifier());
         return this;
+    }
+
+    @JsonIgnore
+    public String getType() {
+        var indexName = consumptionAttributes.getIndex();
+        if (ApplicationConstants.RESOURCES_INDEX.equals(indexName)) {
+            return RESOURCE;
+        }
+        if (ApplicationConstants.TICKETS_INDEX.equals(indexName)) {
+            return TICKET;
+        }
+        if (ApplicationConstants.IMPORT_CANDIDATES_INDEX.equals(indexName)) {
+            return IMPORT_CANDIDATE;
+        } else {
+            throw new IllegalArgumentException("Unknown type!");
+        }
     }
 
     public static IndexDocument fromJsonString(String json) {

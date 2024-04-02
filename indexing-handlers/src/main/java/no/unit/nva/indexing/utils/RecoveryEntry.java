@@ -3,6 +3,7 @@ package no.unit.nva.indexing.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
+import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search.utils.QueueClient;
 import nva.commons.core.Environment;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
@@ -12,19 +13,28 @@ public final class RecoveryEntry {
 
     private static final String ID = "id";
     private static final String RECOVERY_QUEUE = "RECOVERY_QUEUE";
-    private static final String INDEX_NAME = "index";
+    private static final String TYPE = "type";
     public static final String DATA_TYPE_STRING = "String";
+    public static final String RESOURCES_INDEX_NAME = "resources";
+    public static final String RESOURCE = "Resource";
+    public static final String TICKETS_INDEX_NAME = "tickets";
+    public static final String UNSUPPORTED_DOCUMENT_MESSAGE = "Unsupported document!";
+    public static final String TICKET = "Ticket";
     private final String identifier;
-    private final String index;
+    private final String type;
     private final String exception;
-    private RecoveryEntry(String identifier, String index, String exception) {
+    private RecoveryEntry(String identifier, String type, String exception) {
         this.identifier = identifier;
-        this.index = index;
+        this.type = type;
         this.exception = exception;
     }
 
-    public static RecoveryEntry withIdentifier(String identifier) {
-        return builder().withIdentifier(identifier).build();
+    public static RecoveryEntry fromIndexDocument(IndexDocument indexDocument) {
+        return builder().withType(indexDocument.getType()).build();
+    }
+
+    public RecoveryEntry withIdentifier(String identifier) {
+        return this.copy().withIdentifier(identifier).build();
     }
 
     public void persist(QueueClient queueClient) {
@@ -34,7 +44,7 @@ public final class RecoveryEntry {
     private SendMessageRequest createSendMessageRequest() {
         return SendMessageRequest.builder()
                    .messageAttributes(Map.of(ID, convertToMessageAttribute(identifier),
-                                             INDEX_NAME, convertToMessageAttribute(index)))
+                                             TYPE, convertToMessageAttribute(type)))
                    .messageBody(exception)
                    .queueUrl(new Environment().readEnv(RECOVERY_QUEUE))
                    .build();
@@ -52,7 +62,7 @@ public final class RecoveryEntry {
     }
 
     public RecoveryEntry withIndex(String type) {
-        return this.copy().withIndex(type).build();
+        return this.copy().withType(type).build();
     }
 
     private String getStackTrace(Exception exception) {
@@ -66,7 +76,7 @@ public final class RecoveryEntry {
     }
 
     private Builder copy() {
-        return new Builder().withIdentifier(this.identifier).withIndex(this.index).withException(this.exception);
+        return new Builder().withIdentifier(this.identifier).withType(this.type).withException(this.exception);
     }
 
     private static final class Builder {
@@ -83,7 +93,7 @@ public final class RecoveryEntry {
             return this;
         }
 
-        public Builder withIndex(String type) {
+        public Builder withType(String type) {
             this.type = type;
             return this;
         }

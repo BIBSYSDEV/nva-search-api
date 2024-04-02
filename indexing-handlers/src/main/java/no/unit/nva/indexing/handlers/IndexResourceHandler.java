@@ -62,12 +62,11 @@ public class IndexResourceHandler extends DestinationsEventBridgeEventHandler<Ev
 
     private Void persistRecoveryMessage(Failure<Void> failure, IndexDocument indexDocument) {
         var documentIdentifier = indexDocument.getDocumentIdentifier();
-        var indexName = indexDocument.getIndexName();
-        RecoveryEntry.withIdentifier(documentIdentifier)
-            .withIndex(indexName)
+        RecoveryEntry.fromIndexDocument(indexDocument)
+            .withIdentifier(documentIdentifier)
             .withException(failure.getException())
             .persist(queueClient);
-        LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexName, documentIdentifier);
+        LOGGER.error(SENT_TO_RECOVERY_QUEUE_MESSAGE, indexDocument.getIndexName(), documentIdentifier);
         return null;
     }
 
