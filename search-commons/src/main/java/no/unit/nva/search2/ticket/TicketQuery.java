@@ -1,20 +1,26 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENT;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.enums.TicketStatus.PENDING;
+import no.unit.nva.search2.resource.ResourceParameter;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
@@ -24,8 +30,10 @@ import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
+import static no.unit.nva.search2.ticket.TicketParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
+import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
 import static no.unit.nva.search2.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
 import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
@@ -34,32 +42,35 @@ import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
-import static no.unit.nva.search2.ticket.TicketSort.INVALID;
-import static no.unit.nva.search2.ticket.TicketSort.fromSortKey;
-import static no.unit.nva.search2.ticket.TicketSort.validSortKeys;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
-import static nva.commons.core.attempt.Try.attempt;
+import nva.commons.core.paths.UriWrapper;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.FuzzyQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import static org.opensearch.index.query.QueryBuilders.termQuery;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
@@ -83,10 +94,13 @@ public final class TicketQuery extends Query<TicketParameter> {
      * <p>i.e.In order to return any results, withFilter* must be set </p>
      */
     private void assignImpossibleWhiteListFilters() {
+        var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
         var filterType =
-            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE).queryName(TYPE + POST_FILTER);
+            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE)
+                .queryName(TicketParameter.TYPE.asCamelCase() + POST_FILTER);
         final var filterId =
-            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, UUID.randomUUID()).queryName(ORGANIZATION + ID);
+            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
+                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
         filters.set(filterType, filterId);
     }
 
@@ -125,7 +139,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         this.currentUser = userName;
         if (isUserOnly(ticketTypes)) {
             final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
-                    .queryName(OWNER.asCamelCase());
+                .queryName(OWNER.asCamelCase() + POST_FILTER);
             this.filters.add(viewOwnerOnly);
         }
         return this;
@@ -140,8 +154,11 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @return ResourceQuery (builder pattern)
      */
     public TicketQuery withFilterOrganization(URI organization) {
-        final var filter = new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, organization.toString())
-            .queryName(ORGANIZATION + ID);
+        final var filter =
+            ORGANIZATION_ID.searchFields(KEYWORD_TRUE)
+                .map(searchField -> new TermsQueryBuilder(searchField, organization.toString()))
+                .collect(BoolQueryBuilder::new, BoolQueryBuilder::should, BoolQueryBuilder::should)
+                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
         this.filters.add(filter);
         return this;
     }
@@ -160,7 +177,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         this.ticketTypes = ticketTypes.clone();
         final var filter =
             new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::toString).toList())
-                .queryName(TICKETS + TYPE);
+                .queryName(TicketParameter.TYPE.asCamelCase() + POST_FILTER);
         this.filters.add(filter);
         return this;
     }
@@ -218,8 +235,8 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     @Override
-    protected String getSortFieldName(Entry<String, SortOrder> entry) {
-        return fromSortKey(entry.getKey()).jsonPath();
+    protected SortKey fromSortKey(String sortName) {
+        return TicketSort.fromSortKey(sortName);
     }
 
     @Override
@@ -254,6 +271,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
         return switch (key) {
             case ASSIGNEE -> byAssignee();
+            case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> byOrganization(key);
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
@@ -264,8 +282,8 @@ public final class TicketQuery extends Query<TicketParameter> {
             .asSplitStream(COMMA)
             .map(String::toLowerCase)
             .anyMatch(name -> name.equalsIgnoreCase(ALL) ||
-                              name.equalsIgnoreCase(keyName) ||
-                              isNotificationAggregation(keyName.toLowerCase(Locale.getDefault()))
+                name.equalsIgnoreCase(keyName) ||
+                isNotificationAggregation(keyName.toLowerCase(Locale.getDefault()))
             );
     }
 
@@ -276,10 +294,21 @@ public final class TicketQuery extends Query<TicketParameter> {
     private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
         var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
             ? currentUser
-                : parameters().get(TicketParameter.ASSIGNEE).toString();
+            : parameters().get(TicketParameter.ASSIGNEE).toString();
 
         return new OpensearchQueryText<TicketParameter>()
             .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+    }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> byOrganization(TicketParameter key) {
+        return
+            parameters().get(EXCLUDE_SUBUNITS).asBoolean()
+                ? queryTools.queryToEntry(key, termQuery(useFirstPathOnly(key), parameters().get(key).as()))
+                : new OpensearchQueryFuzzyKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
+    }
+
+    private String useFirstPathOnly(TicketParameter key) {
+        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
     }
 
     @SuppressWarnings("PMD.GodClass")
@@ -323,27 +352,31 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected Collection<String> validKeys() {
             return TICKET_PARAMETER_SET.stream()
-                    .map(Enum::name)
-                    .toList();
+                .map(Enum::name)
+                .toList();
         }
 
         @Override
-        protected void validateSortEntry(Entry<String, SortOrder> entry) {
-            if (fromSortKey(entry.getKey()) == INVALID) {
+        protected void validateSortKeyName(String name) {
+            var nameSort = name.split(COLON_OR_SPACE);
+            if (nameSort.length == NAME_AND_SORT) {
+                SortOrder.fromString(nameSort[1]);
+            } else if (nameSort.length > NAME_AND_SORT) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
+            }
+            if (TicketSort.fromSortKey(nameSort[0]) == TicketSort.INVALID) {
                 throw new IllegalArgumentException(
-                    INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys())
+                    INVALID_VALUE_WITH_SORT.formatted(name, TicketSort.validSortKeys())
                 );
             }
-            attempt(entry::getValue)
-                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
         }
 
         @Override
         protected void setValue(String key, String value) {
             var qpKey = TicketParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-                    ? decodeUTF(value)
-                    : value;
+                ? decodeUTF(value)
+                : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
@@ -352,7 +385,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                        query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                    query.parameters().set(qpKey, expandYearToDate(decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
@@ -365,10 +398,10 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected boolean isAggregationValid(String aggregationName) {
             return
-                    ALL.equalsIgnoreCase(aggregationName) ||
-                            NONE.equalsIgnoreCase(aggregationName) ||
-                            getTicketsAggregations("").stream()
-                                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
+                ALL.equalsIgnoreCase(aggregationName) ||
+                    NONE.equalsIgnoreCase(aggregationName) ||
+                    getTicketsAggregations("").stream()
+                        .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

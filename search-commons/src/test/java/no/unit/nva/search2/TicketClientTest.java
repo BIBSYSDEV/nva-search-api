@@ -140,7 +140,7 @@ class TicketClientTest {
             assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
 
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(10));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(11));
             assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
         }
 
@@ -265,7 +265,7 @@ class TicketClientTest {
 
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
-                createArgument("page=0&aggregation=all,the,best,", 19),
+                createArgument("page=0&aggregation=all,the,best,", 20),
                 createArgument("page=1&aggregation=all&size=1", 1),
                 createArgument("page=2&aggregation=all&size=1", 1),
                 createArgument("page=3&aggregation=all&size=1", 1),
