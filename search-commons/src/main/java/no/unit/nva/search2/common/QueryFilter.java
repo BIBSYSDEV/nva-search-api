@@ -7,7 +7,7 @@ import org.opensearch.index.query.QueryBuilders;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 
 public class QueryFilter {
@@ -24,10 +24,8 @@ public class QueryFilter {
 
     public void set(QueryBuilder... filters) {
         this.filters.clear();
-        var filterMap = Arrays.stream(filters)
-            .map(filter -> Map.entry(filter.queryName(), filter))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        this.filters.putAll(filterMap);
+        Arrays.stream(filters)
+            .forEach(this::add);
     }
 
     public void add(QueryBuilder builder) {
