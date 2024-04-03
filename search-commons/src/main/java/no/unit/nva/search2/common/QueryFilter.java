@@ -5,27 +5,35 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 
 public class QueryFilter {
-    private final transient List<QueryBuilder> filters = new ArrayList<>();
+    private final transient HashMap<String, QueryBuilder> filters = new HashMap<>();
 
     public QueryFilter() {
     }
 
     public BoolQueryBuilder get() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        filters.forEach(boolQueryBuilder::must);
+        filters.values().forEach(boolQueryBuilder::must);
         return boolQueryBuilder;
     }
 
     public void set(QueryBuilder... filters) {
         this.filters.clear();
-        this.filters.addAll(List.of(filters));
+        var filterMap = Arrays.stream(filters)
+            .map(filter -> Map.entry(filter.queryName(), filter))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        this.filters.putAll(filterMap);
     }
 
     public void add(QueryBuilder builder) {
-        this.filters.removeIf(filter -> filter.queryName().equals(builder.queryName()));
-        this.filters.add(builder);
+        this.filters.put(builder.queryName(), builder);
     }
 }
