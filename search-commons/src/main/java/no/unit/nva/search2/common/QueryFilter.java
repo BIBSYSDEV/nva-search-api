@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 
 public class QueryFilter {
-    private final transient HashMap<String, QueryBuilder> filters = new HashMap<>();
+    private final transient Map<String, QueryBuilder> filters = new HashMap<>();
 
     public QueryFilter() {
     }
