@@ -4,7 +4,8 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENT;
+
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
@@ -13,13 +14,12 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
-import no.unit.nva.search2.common.enums.*;
 import static no.unit.nva.search2.importcandidate.Constants.DEFAULT_IMPORT_CANDIDATE_SORT;
 import static no.unit.nva.search2.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
@@ -46,6 +46,8 @@ import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.SortKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
@@ -204,10 +206,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void validateSortKeyName(String name) {
             var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == NAME_AND_SORT) {
+            if (nameSort.length == NAME_AND_SORT_LENGTH) {
                 SortOrder.fromString(nameSort[1]);
-            } else if (nameSort.length > NAME_AND_SORT) {
-                throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
+            } else if (nameSort.length > NAME_AND_SORT_LENGTH) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
             }
             if (ImportCandidateSort.fromSortKey(nameSort[0]) == ImportCandidateSort.INVALID) {
                 throw new IllegalArgumentException(

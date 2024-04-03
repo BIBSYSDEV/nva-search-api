@@ -6,7 +6,7 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
@@ -19,7 +19,7 @@ import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
-import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
@@ -30,7 +30,6 @@ import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
-import no.unit.nva.search2.common.enums.*;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -74,6 +73,9 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.PublicationStatus;
+import no.unit.nva.search2.common.enums.SortKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
@@ -380,11 +382,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void validateSortKeyName(String name) {
             var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == NAME_AND_SORT) {
+            if (nameSort.length == NAME_AND_SORT_LENGTH) {
                 SortOrder.fromString(nameSort[1]);
             }
-            if (nameSort.length > NAME_AND_SORT) {
-                throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
+            if (nameSort.length > NAME_AND_SORT_LENGTH) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
             }
 
             if (ResourceSort.fromSortKey(nameSort[0]) == INVALID) {
