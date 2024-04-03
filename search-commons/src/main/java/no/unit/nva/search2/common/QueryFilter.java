@@ -25,7 +25,7 @@ public class QueryFilter {
     }
 
     public void add(QueryBuilder builder) {
-        this.filters.removeIf(filter -> filter.getName().equals(builder.getName()));
+        this.filters.removeIf(filter -> filter.queryName().equals(builder.queryName()));
         this.filters.add(builder);
     }
 }
