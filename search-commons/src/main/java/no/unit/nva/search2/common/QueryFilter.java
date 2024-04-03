@@ -4,14 +4,11 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 
 public class QueryFilter {
     private final transient HashMap<String, QueryBuilder> filters = new HashMap<>();
