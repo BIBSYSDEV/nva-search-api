@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
 public class QueryFilter {
     private final transient Map<String, QueryBuilder> filters = new HashMap<>();
 
