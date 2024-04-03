@@ -16,6 +16,8 @@
   "MESSAGES_NOT=en+DOI": 19,
   "MODIFIED_DATE=1872-01-01,2024": 1,
   "ORGANIZATION_ID=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0": 20,
+  "viewingScope=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0": 20,
+  "viewingScope=https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0&excludeSubunits=true": 19,
   "ORGANIZATION_ID_NOT=20754.0.0.0": 0,
   "OWNER=1492596@20754.0.0.0": 2,
   "OWNER=Kir,Truhacev": 2,

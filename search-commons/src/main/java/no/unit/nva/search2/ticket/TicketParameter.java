@@ -34,7 +34,6 @@ import static no.unit.nva.search2.ticket.Constants.CUSTOMER_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.FINALIZED_BY_FIELDS;
 import static no.unit.nva.search2.ticket.Constants.ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.MESSAGE_FIELDS;
-import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_PATHS;
 import static no.unit.nva.search2.ticket.Constants.OWNER_FIELDS;
 import static no.unit.nva.search2.ticket.Constants.PUBLICATION_ID_OR_IDENTIFIER_KEYWORD;
