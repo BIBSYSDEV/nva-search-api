@@ -5,6 +5,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_V
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
@@ -146,7 +147,7 @@ public enum ImportCandidateParameter implements ParameterKey {
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
-            ? fieldsToSearch.split("\\|")
+            ? fieldsToSearch.split(PATTERN_IS_PIPE)
             : new String[]{name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
