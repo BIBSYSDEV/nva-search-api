@@ -1,9 +1,9 @@
 package no.unit.nva.search2.ticket;
 
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.common.constant.Patterns.*;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
+import no.unit.nva.search2.common.enums.*;
 import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -13,11 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.stream.*;
+
 import no.unit.nva.search2.common.constant.Words;
 import org.apache.commons.text.CaseUtils;
 
-public enum TicketSort {
+public enum TicketSort implements SortKey {
     INVALID(EMPTY_STRING),
     CREATED_DATE(Words.CREATED_DATE),
     MODIFIED_DATE(Words.MODIFIED_DATE),
@@ -37,20 +38,29 @@ public enum TicketSort {
         this.path = jsonPath;
     }
 
+    @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
     }
 
+    @Override
     public String asLowerCase() {
         return this.name().toLowerCase(Locale.getDefault());
     }
 
+    @Override
     public String keyPattern() {
         return keyValidationRegEx;
     }
 
+    @Override
     public String jsonPath() {
         return path;
+    }
+
+    @Override
+    public Stream<String> jsonPaths() {
+        return Arrays.stream(path.split(PATTERN_IS_PIPE));
     }
 
     public static TicketSort fromSortKey(String keyName) {

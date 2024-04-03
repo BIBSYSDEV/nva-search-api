@@ -43,6 +43,8 @@ public final class Patterns {
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
 
+    public static final String PATTERN_IS_PIPE = "\\|";
+
     /**
      * Pattern for matching a funding string. funding source and project_id together separated by ':'
      */

@@ -17,14 +17,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,14 +112,14 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            query.getSortStream()
-                .forEach(this::validateSortEntry);
+            query.getSort().asSplitStream(COMMA)
+                .forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
     }
 
-    protected abstract void validateSortEntry(Entry<String, SortOrder> entry);
+    protected abstract void validateSortKeyName(String name);
 
     protected Set<String> getMissingKeys() {
         return

@@ -8,12 +8,15 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAG
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENT;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
@@ -22,10 +25,12 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.enums.TicketStatus.PENDING;
 import no.unit.nva.search2.resource.ResourceParameter;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
+import static no.unit.nva.search2.ticket.Constants.NOTIFICATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
+import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
@@ -45,6 +50,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import nva.commons.core.paths.UriWrapper;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import java.net.URI;
@@ -272,7 +278,7 @@ public final class TicketQuery extends Query<TicketParameter> {
         return switch (key) {
             case ASSIGNEE -> byAssignee();
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> byOrganization(key);
-            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+            default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
         };
     }
 
@@ -288,7 +294,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private boolean isNotificationAggregation(String name) {
-        return name.contains("notification");
+        return name.contains(NOTIFICATION);
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
@@ -359,10 +365,10 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected void validateSortKeyName(String name) {
             var nameSort = name.split(COLON_OR_SPACE);
-            if (nameSort.length == NAME_AND_SORT) {
+            if (nameSort.length == NAME_AND_SORT_LENGTH) {
                 SortOrder.fromString(nameSort[1]);
-            } else if (nameSort.length > NAME_AND_SORT) {
-                throw new IllegalArgumentException(TOO_MANY_ARGUMENT + name);
+            } else if (nameSort.length > NAME_AND_SORT_LENGTH) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
             }
             if (TicketSort.fromSortKey(nameSort[0]) == TicketSort.INVALID) {
                 throw new IllegalArgumentException(
@@ -400,7 +406,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             return
                 ALL.equalsIgnoreCase(aggregationName) ||
                     NONE.equalsIgnoreCase(aggregationName) ||
-                    getTicketsAggregations("").stream()
+                    getTicketsAggregations(EMPTY_STRING).stream()
                         .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }

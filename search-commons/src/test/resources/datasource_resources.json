@@ -498,7 +498,7 @@
       ],
       "mainTitle": "Kjetils ticket test",
       "publicationDate": {
-        "type": "PublicationDate",
+        "type": "Date",
         "day": "6",
         "month": "11",
         "year": "2023"
