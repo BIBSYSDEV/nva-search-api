@@ -17,7 +17,7 @@ import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
-import static no.unit.nva.search2.common.enums.TicketStatus.PENDING;
+import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.NOTIFICATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
@@ -382,6 +382,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
                     query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
