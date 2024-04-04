@@ -4,28 +4,30 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class QueryFilter {
-    private final transient List<QueryBuilder> filters = new ArrayList<>();
+    private final transient Map<String, QueryBuilder> filters = new HashMap<>();
 
     public QueryFilter() {
     }
 
     public BoolQueryBuilder get() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        filters.forEach(boolQueryBuilder::must);
+        filters.values().forEach(boolQueryBuilder::must);
         return boolQueryBuilder;
     }
 
     public void set(QueryBuilder... filters) {
         this.filters.clear();
-        this.filters.addAll(List.of(filters));
+        Arrays.stream(filters)
+            .forEach(this::add);
     }
 
     public void add(QueryBuilder builder) {
-        this.filters.removeIf(filter -> filter.queryName().equals(builder.queryName()));
-        this.filters.add(builder);
+        this.filters.put(builder.queryName(), builder);
     }
 }
