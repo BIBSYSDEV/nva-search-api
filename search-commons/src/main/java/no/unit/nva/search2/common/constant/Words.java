@@ -9,8 +9,6 @@ public final class Words {
 
     public static final int NAME_AND_SORT_LENGTH = 2;
 
-    public static final String POST_FILTER = "withAppliedFilter";
-    public static final String ROOT = "root";
 
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
@@ -22,7 +20,6 @@ public final class Words {
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
     public static final char CHAR_UNDERSCORE = '_';
-
     public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";
@@ -41,7 +38,6 @@ public final class Words {
     public static final String EQUAL = "=";
     public static final String FILES = "files";
     public static final String FILES_STATUS = "filesStatus";
-    public static final String FILTER = "filter";
     public static final String FROM = "from";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
@@ -74,6 +70,7 @@ public final class Words {
     public static final String PAGE = "page";
     public static final String PIPE = "|";
     public static final String PLUS = "+";
+    public static final String POST_FILTER = "withAppliedFilter";
     public static final String PREFIX = "(";
     public static final String PRINT_ISSN = "printIssn";
     public static final String PROJECTS_ID = "projects.id.keyword";
