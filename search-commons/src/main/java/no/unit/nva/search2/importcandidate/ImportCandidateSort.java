@@ -1,21 +1,16 @@
 package no.unit.nva.search2.importcandidate;
 
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
-import no.unit.nva.search2.common.enums.*;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Locale;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.SortKey;
 import org.apache.commons.text.CaseUtils;
 
 public enum ImportCandidateSort implements SortKey {
@@ -27,16 +22,11 @@ public enum ImportCandidateSort implements SortKey {
     TITLE(Constants.MAIN_TITLE_KEYWORD),
     TYPE(Constants.TYPE_KEYWORD);
 
-    public static final Set<ImportCandidateSort> VALID_SORT_PARAMETER_KEYS =
-        Arrays.stream(ImportCandidateSort.values())
-            .sorted(ImportCandidateSort::compareAscending)
-            .skip(1)    // skip INVALID
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-
     private final String keyValidationRegEx;
     private final String path;
+
     ImportCandidateSort(String jsonPath) {
-        this.keyValidationRegEx = getIgnoreCaseAndUnderscoreKeyExpression(this.name());
+        this.keyValidationRegEx = SortKey.getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.path = jsonPath;
     }
 
@@ -67,31 +57,19 @@ public enum ImportCandidateSort implements SortKey {
 
     public static ImportCandidateSort fromSortKey(String keyName) {
         var result = Arrays.stream(ImportCandidateSort.values())
-            .filter(ImportCandidateSort.equalTo(keyName))
+            .filter(SortKey.equalTo(keyName))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
 
-    public static Predicate<ImportCandidateSort> equalTo(String name) {
-        return key -> name.matches(key.keyPattern());
-    }
-
     public static Collection<String> validSortKeys() {
-        return VALID_SORT_PARAMETER_KEYS.stream()
-            .map(ImportCandidateSort::asLowerCase)
+        return
+            Arrays.stream(ImportCandidateSort.values())
+                .sorted(SortKey::compareAscending)
+                .skip(1)    // skip INVALID
+                .map(SortKey::asLowerCase)
             .toList();
-    }
-
-    private static int compareAscending(ImportCandidateSort key1, ImportCandidateSort key2) {
-        return key1.ordinal() - key2.ordinal();
-    }
-
-    private static String getIgnoreCaseAndUnderscoreKeyExpression(String keyName) {
-        var keyNameIgnoreUnderscoreExpression =
-            keyName.toLowerCase(Locale.getDefault())
-                .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
-        return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
     }
 }
