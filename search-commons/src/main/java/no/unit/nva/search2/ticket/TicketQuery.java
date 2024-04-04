@@ -1,7 +1,6 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -58,6 +57,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
@@ -382,6 +382,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
                     query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                case TYPE -> mergeToKey(qpKey, TicketType.fromString(decodedValue).toString());
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
