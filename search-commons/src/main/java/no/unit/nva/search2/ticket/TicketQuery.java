@@ -16,7 +16,6 @@ import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
-import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.NOTIFICATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
@@ -39,6 +38,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
+import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -375,6 +375,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
                     query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }

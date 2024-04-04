@@ -14,6 +14,7 @@ import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static nva.commons.core.StringUtils.SPACE;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -279,7 +279,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         return
             Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
                 .map(fromString)
-                .map(Object::toString)
+                .map(Enum::toString)
                 .collect(Collectors.joining(COMMA));
     }
 
