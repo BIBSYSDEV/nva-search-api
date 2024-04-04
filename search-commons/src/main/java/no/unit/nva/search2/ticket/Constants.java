@@ -18,7 +18,7 @@ import static no.unit.nva.search2.common.constant.Words.VIEWED_BY;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import no.unit.nva.search2.common.enums.TicketStatus;
+
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
