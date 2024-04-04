@@ -6,9 +6,7 @@ import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 
 import java.util.Locale;
 import java.util.function.Predicate;
-import java.util.stream.*;
-
-import no.unit.nva.search2.resource.ResourceSort;
+import java.util.stream.Stream;
 
 public interface SortKey {
 
@@ -28,7 +26,7 @@ public interface SortKey {
         return key -> name.matches(key.keyPattern());
     }
 
-    static int compareAscending(ResourceSort key1, ResourceSort key2) {
+    static int compareAscending(Enum<?> key1, Enum<?> key2) {
         return key1.ordinal() - key2.ordinal();
     }
 
