@@ -12,12 +12,15 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static nva.commons.core.StringUtils.SPACE;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
@@ -105,6 +108,21 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract Collection<String> validKeys();
 
+    protected abstract boolean isKeyValid(String keyName);
+
+    protected abstract boolean isAggregationValid(String aggregationName);
+
+    protected abstract void validateSortKeyName(String name);
+
+    /**
+     * Sample code for setValue.
+     * <p>Usage:</p>
+     * <samp>var qpKey = keyFromString(key,value);<br>
+     * if(qpKey.equals(INVALID)) {<br> invalidKeys.add(key);<br> } else {<br> query.setValue(qpKey, value);<br> }<br>
+     * </samp>
+     */
+    protected abstract void setValue(String key, String value);
+
     /**
      * Validate sort keys.
      *
@@ -118,8 +136,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
             throw new BadRequestException(e.getMessage());
         }
     }
-
-    protected abstract void validateSortKeyName(String name);
 
     protected Set<String> getMissingKeys() {
         return
@@ -175,15 +191,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         testParameters.forEach(this::setValue);
         return this;
     }
-
-    /**
-     * Sample code for setValue.
-     * <p>Usage:</p>
-     * <samp>var qpKey = keyFromString(key,value);<br>
-     * if(qpKey.equals(INVALID)) {<br> invalidKeys.add(key);<br> } else {<br> query.setValue(qpKey, value);<br> }<br>
-     * </samp>
-     */
-    protected abstract void setValue(String key, String value);
 
     /**
      * Adds testParameters from query.
@@ -255,8 +262,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .collect(Collectors.joining(COMMA));
     }
 
-    protected abstract boolean isKeyValid(String keyName);
-
     protected String ignoreInvalidAggregations(String value) {
         return isNull(value) || value.contains(ALL) || value.contains("ALL")
             ? ALL
@@ -265,10 +270,16 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .collect(Collectors.joining(COMMA));
     }
 
-    protected abstract boolean isAggregationValid(String aggregationName);
-
     protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;
+    }
+
+    protected String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
+        return
+            Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
+                .map(fromString)
+                .map(Enum::toString)
+                .collect(Collectors.joining(COMMA));
     }
 
 }

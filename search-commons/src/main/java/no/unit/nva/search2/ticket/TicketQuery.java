@@ -382,7 +382,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
                     query.parameters().set(qpKey, expandYearToDate(decodedValue));
-                case TYPE -> mergeToKey(qpKey, TicketType.fromString(decodedValue).toString());
+                case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
