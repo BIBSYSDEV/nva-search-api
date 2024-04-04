@@ -340,7 +340,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             }
             if (query.parameters().isPresent(BY_USER_PENDING)) {
                 query.parameters().set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
-                query.parameters().set(STATUS, PENDING.toString());
+                query.parameters().set(STATUS, TicketStatus.PENDING.toString());
             }
         }
 
