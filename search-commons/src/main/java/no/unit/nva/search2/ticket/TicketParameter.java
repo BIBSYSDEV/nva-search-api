@@ -13,6 +13,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.PHI;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
@@ -34,6 +35,7 @@ import static no.unit.nva.search2.ticket.Constants.CUSTOMER_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.FINALIZED_BY_FIELDS;
 import static no.unit.nva.search2.ticket.Constants.ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.MESSAGE_FIELDS;
+import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_PATHS;
 import static no.unit.nva.search2.ticket.Constants.OWNER_FIELDS;
@@ -76,7 +78,7 @@ public enum TicketParameter implements ParameterKey {
     CUSTOMER_ID_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, CUSTOMER_ID_KEYWORD),
     ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ID_KEYWORD),
     ID_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, ID_KEYWORD),
-    EXCLUDE_SUBUNITS(IGNORED, ONE_OR_MORE_ITEM, ORGANIZATION_ID_KEYWORD),
+    EXCLUDE_SUBUNITS(IGNORED, ONE_OR_MORE_ITEM, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
     FINALIZED_BY(TEXT, ALL_ITEMS, FINALIZED_BY_FIELDS),
     FINALIZED_BY_NOT(TEXT, NO_ITEMS, FINALIZED_BY_FIELDS),
     MESSAGES(FUZZY_TEXT, ALL_ITEMS, MESSAGE_FIELDS),

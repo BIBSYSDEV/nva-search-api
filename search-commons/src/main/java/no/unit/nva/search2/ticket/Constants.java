@@ -45,8 +45,10 @@ public final class Constants {
     public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.asCamelCase();
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
+    public static final String ORGANIZATION_IDENTIFIER_KEYWORD = ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
 
     public static final String ORGANIZATION_PATHS = ORGANIZATION_ID_KEYWORD
+        + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD
         + PIPE + ORGANIZATION + DOT + PART_OF + DOT + KEYWORD;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
     public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
