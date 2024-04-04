@@ -1,7 +1,6 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -57,6 +56,7 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.apigateway.AccessRight;
