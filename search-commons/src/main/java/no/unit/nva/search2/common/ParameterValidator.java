@@ -12,6 +12,8 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static nva.commons.core.StringUtils.SPACE;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,12 +23,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static no.unit.nva.search2.common.constant.Words.PIPE;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
-import static nva.commons.core.StringUtils.SPACE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
