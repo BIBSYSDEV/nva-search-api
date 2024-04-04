@@ -5,12 +5,13 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_V
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
@@ -31,7 +32,6 @@ import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -45,6 +45,7 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.text.CaseUtils;
 
 /**
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
@@ -108,13 +109,12 @@ public enum ImportCandidateParameter implements ParameterKey {
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ImportCandidateParameter> VALID_LUCENE_PARAMETER_KEYS =
+    public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
         Arrays.stream(ImportCandidateParameter.values())
             .filter(ImportCandidateParameter::isSearchField)
             .sorted(ParameterKey::compareAscending)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    private final String key;
     private final ValueEncoding encoding;
     private final String keyPattern;
     private final String validValuePattern;
@@ -144,26 +144,28 @@ public enum ImportCandidateParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.key = this.name().toLowerCase(Locale.getDefault());
         this.fieldOperator = operator;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
-            ? fieldsToSearch.split("\\|")
-            : new String[]{key};
+            ? fieldsToSearch.split(PATTERN_IS_PIPE)
+            : new String[]{name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
         this.keyPattern = nonNull(keyPattern)
             ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + key.replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
+    }
+    @Override
+    public String asCamelCase() {
+        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
     }
 
     @Override
-    public String fieldName() {
-        return key;
+    public String asLowerCase() {
+        return this.name().toLowerCase(Locale.getDefault());
     }
-
     @Override
     public Float fieldBoost() {
         return boost;
@@ -190,16 +192,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     @Override
-    public Stream<String> searchFields() {
+    public Stream<String> searchFields(boolean... isKeyWord) {
         return Arrays.stream(fieldsToSearch)
-            .map(String::trim)
-            .map(trimmed -> isNotKeyword()
-                ? trimmed.replace(DOT + Words.KEYWORD, EMPTY_STRING)
-                : trimmed);
-    }
-
-    private boolean isNotKeyword() {
-        return !fieldType().equals(KEYWORD);
+            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
     @Override
@@ -218,7 +213,7 @@ public enum ImportCandidateParameter implements ParameterKey {
         return
             new StringJoiner(COLON, "Key[", "]")
                 .add(String.valueOf(ordinal()))
-                .add(name().toLowerCase(Locale.ROOT))
+                .add(asCamelCase())
                 .toString();
     }
 

@@ -10,8 +10,11 @@ import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
-@JacocoGenerated
 final class FacetsBuilder {
+
+    @JacocoGenerated
+    public FacetsBuilder() {
+    }
 
     public static Map<String, List<Facet>> build(String aggregations, URI id) {
         return toMapOfFacets(aggregations)

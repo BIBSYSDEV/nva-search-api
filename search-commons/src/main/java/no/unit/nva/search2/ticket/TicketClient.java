@@ -33,7 +33,6 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketQuery> {
                 .findFirst().orElseThrow();
     }
 
-    @Override
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

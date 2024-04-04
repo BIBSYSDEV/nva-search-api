@@ -16,14 +16,6 @@
       "type": "nested",
       "include_in_parent": true
     },
-    "organizations": {
-      "properties": {
-        "partOf": {
-          "type": "nested",
-          "include_in_parent": true
-        }
-      }
-    },
     "publication": {
       "include_in_parent": true,
       "properties": {

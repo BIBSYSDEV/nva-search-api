@@ -1,20 +1,21 @@
 package no.unit.nva.search2.importcandidate;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -26,76 +27,43 @@ import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_IN
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.VALID_LUCENE_PARAMETER_KEYS;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.keyFromString;
-import static no.unit.nva.search2.importcandidate.ImportCandidateSort.INVALID;
-import static no.unit.nva.search2.importcandidate.ImportCandidateSort.fromSortKey;
-import static no.unit.nva.search2.importcandidate.ImportCandidateSort.validSortKeys;
-import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
-
-    public static Builder builder() {
-        return new Builder();
-    }
 
     ImportCandidateQuery() {
         super();
     }
 
-    @Override
-    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> customQueryBuilders(
-        ImportCandidateParameter key) {
-        return switch (key) {
-            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            default -> {
-                logger.error("unhandled key -> {}", key.name());
-                yield Stream.empty();
-            }
-        };
-    }
-
-
-    @Override
-    protected Integer getFrom() {
-        return getValue(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return getValue(SIZE).as();
+    public static ImportCandidateValidator builder() {
+        return new ImportCandidateValidator();
     }
 
     @Override
@@ -104,18 +72,33 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected Map<String, Float> fieldsToKeyNames(String field) {
-        return ALL.equals(field) || isNull(field)
-            ? Map.of(ASTERISK,1F)     // NONE or ALL -> ['*']
-            : Arrays.stream(field.split(COMMA))
-            .map(ImportCandidateParameter::keyFromString)
-            .flatMap(this::getFieldNameBoost)
-            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    protected ImportCandidateParameter getSortOrderKey() {
+        return SORT_ORDER;
     }
 
     @Override
-    public AsType getSort() {
-        return getValue(SORT);
+    protected Map<String, String> aggregationsDefinition() {
+        return FACET_IMPORT_CANDIDATE_PATHS;
+    }
+
+    @Override
+    protected Integer getFrom() {
+        return parameters().get(FROM).as();
+    }
+
+    @Override
+    protected Integer getSize() {
+        return parameters().get(SIZE).as();
+    }
+
+
+    @Override
+    protected FilterAggregationBuilder getAggregationsWithFilter() {
+        var aggrFilter = AggregationBuilders.filter(Words.POST_FILTER, filters.get());
+        IMPORT_CANDIDATES_AGGREGATIONS
+                .stream().filter(this::isRequestedAggregation)
+                .forEach(aggrFilter::subAggregation);
+        return aggrFilter;
     }
 
     @Override
@@ -127,63 +110,46 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
-    protected boolean isPagingValue(ImportCandidateParameter key) {
-        return key.ordinal() >= FIELDS.ordinal() && key.ordinal() <= SORT_ORDER.ordinal();
+    protected ImportCandidateParameter getSearchAfterKey() {
+        return SEARCH_AFTER;
     }
 
     @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return FACET_IMPORT_CANDIDATE_PATHS;
+    public AsType<ImportCandidateParameter> getSort() {
+        return parameters().get(SORT);
     }
 
-    public Stream<QueryContentWrapper> createQueryBuilderStream() {
-        var queryBuilder =
-            this.hasNoSearchValue()
-                ? QueryBuilders.matchAllQuery()
-                : mainQuery();
-
-        var builder = defaultSearchSourceBuilder(queryBuilder);
-
-        handleSearchAfter(builder);
-
-        builder.aggregation(getAggregationsWithFilter());
-
-        getSortStream().forEach(entry -> builder.sort(fromSortKey(entry.getKey()).getFieldName(), entry.getValue()));
-
-        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    @Override
+    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> customQueryBuilders(
+        ImportCandidateParameter key) {
+        return switch (key) {
+            case CRISTIN_IDENTIFIER -> additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
+        };
     }
 
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = removeKey(SEARCH_AFTER).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
-        }
+    @Override
+    protected ImportCandidateParameter keyFromString(String keyName) {
+        return ImportCandidateParameter.keyFromString(keyName);
     }
 
-    private FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(Words.FILTER, getFilters());
-        IMPORT_CANDIDATES_AGGREGATIONS
-            .stream().filter(this::isRequestedAggregation)
-            .forEach(aggrFilter::subAggregation);
-        return aggrFilter;
+    @Override
+    protected SortKey fromSortKey(String sortName) {
+        return ImportCandidateSort.fromSortKey(sortName);
     }
 
-    private boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
-        return Optional.ofNullable(aggregationBuilder)
-            .map(AggregationBuilder::getName)
-            .map(this::isDefined)
-            .orElse(false);
-    }
-
-    private boolean isDefined(String key) {
-        return getValue(AGGREGATION).asStream()
-            .flatMap(item -> Arrays.stream(item.split(COMMA)).sequential())
-            .anyMatch(name -> name.equals(ALL) || name.equals(key));
+    @Override
+    protected boolean isDefined(String keyName) {
+        return parameters().get(AGGREGATION)
+            .asSplitStream(COMMA)
+            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
     }
 
     public Stream<Entry<ImportCandidateParameter, QueryBuilder>> additionalIdentifierQuery(
         ImportCandidateParameter key, String source) {
-        var value = getValue(key).as();
+        var value = parameters().get(key).as();
         var query = QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
@@ -196,9 +162,9 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
 
     @SuppressWarnings("PMD.GodClass")
-    public static class Builder extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
+    public static class ImportCandidateValidator extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
 
-        Builder() {
+        ImportCandidateValidator() {
             super(new ImportCandidateQuery());
         }
 
@@ -206,25 +172,62 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         protected void assignDefaultValues() {
             requiredMissing().forEach(key -> {
                 switch (key) {
-                    case FROM -> setValue(key.fieldName(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.fieldName(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.fieldName(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.fieldName(), Words.NONE);
+                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.name(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case AGGREGATION -> setValue(key.name(), ALL);
                     default -> { /* do nothing */
                     }
                 }
             });
         }
 
+        @JacocoGenerated
+        @Override
+        protected void applyRulesAfterValidation() {
+            // convert page to offset if offset is not set
+            if (query.parameters().isPresent(PAGE)) {
+                if (query.parameters().isPresent(FROM)) {
+                    var page = query.parameters().get(PAGE).<Number>as();
+                    var perPage = query.parameters().get(SIZE).<Number>as();
+                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                }
+                query.parameters().remove(PAGE);
+            }
+        }
+
+        @Override
+        protected Collection<String> validKeys() {
+            return IMPORT_CANDIDATE_PARAMETER_SET.stream()
+                    .map(Enum::name)
+                    .toList();
+        }
+
+        @Override
+        protected void validateSortKeyName(String name) {
+            var nameSort = name.split(COLON_OR_SPACE);
+            if (nameSort.length == NAME_AND_SORT_LENGTH) {
+                SortOrder.fromString(nameSort[1]);
+            } else if (nameSort.length > NAME_AND_SORT_LENGTH) {
+                throw new IllegalArgumentException(TOO_MANY_ARGUMENTS + name);
+            }
+            if (ImportCandidateSort.fromSortKey(nameSort[0]) == ImportCandidateSort.INVALID) {
+                throw new IllegalArgumentException(
+                    INVALID_VALUE_WITH_SORT.formatted(name, ImportCandidateSort.validSortKeys())
+                );
+            }
+        }
+
         @Override
         protected void setValue(String key, String value) {
-            var qpKey = keyFromString(key);
+            var qpKey = ImportCandidateParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-                ? decodeUTF(value)
-                : value;
+                    ? QueryTools.decodeUTF(value)
+                    : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.setKeyValue(qpKey, decodedValue);
-                case FIELDS -> query.setKeyValue(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
+                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case AGGREGATION -> query.parameters().set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
@@ -232,39 +235,18 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             }
         }
 
-        @JacocoGenerated
-        @Override
-        protected void applyRulesAfterValidation() {
-            // convert page to offset if offset is not set
-            if (query.isPresent(PAGE)) {
-                if (query.isPresent(FROM)) {
-                    var page = query.getValue(PAGE).<Number>as();
-                    var perPage = query.getValue(SIZE).<Number>as();
-                    query.setKeyValue(FROM, String.valueOf(page.longValue() * perPage.longValue()));
-                }
-                query.removeKey(PAGE);
-            }
-        }
-
-        @Override
-        protected void validateSortEntry(Entry<String, SortOrder> entry) {
-            if (fromSortKey(entry.getKey()) == INVALID) {
-                throw new IllegalArgumentException(INVALID_VALUE_WITH_SORT.formatted(entry.getKey(), validSortKeys()));
-            }
-            attempt(entry::getValue)
-                .orElseThrow(e -> new IllegalArgumentException(e.getException().getMessage()));
-        }
-
-        @Override
-        protected Collection<String> validKeys() {
-            return VALID_LUCENE_PARAMETER_KEYS.stream()
-                .map(ParameterKey::fieldName)
-                .toList();
-        }
-
         @Override
         protected boolean isKeyValid(String keyName) {
-            return keyFromString(keyName) != ImportCandidateParameter.INVALID;
+            return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
+        }
+
+        @Override
+        protected boolean isAggregationValid(String aggregationName) {
+            return
+                    ALL.equalsIgnoreCase(aggregationName) ||
+                            NONE.equalsIgnoreCase(aggregationName) ||
+                            IMPORT_CANDIDATES_AGGREGATIONS.stream()
+                                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

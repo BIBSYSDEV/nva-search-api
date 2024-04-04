@@ -10,15 +10,20 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NUMBER;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
+import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.constant.Words;
 
 public interface ParameterKey {
+    String asCamelCase();
 
-    String fieldName();
-
+    String asLowerCase();
     Float fieldBoost();
-
     ParameterKind fieldType();
 
     String fieldPattern();
@@ -27,7 +32,7 @@ public interface ParameterKey {
 
     ValueEncoding valueEncoding();
 
-    Stream<String> searchFields();
+    Stream<String> searchFields(boolean... isKeyWord);
 
     FieldOperator searchOperator();
 
@@ -66,5 +71,18 @@ public interface ParameterKey {
             case INVALID -> PATTERN_IS_NONE_OR_ONE;
             default -> PATTERN_IS_NON_EMPTY;
         };
+    }
+
+    static Function<String, String> trimKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
+        return field -> isNotKeyword(parameterKind, isKeyWord)
+            ? field.trim().replace(DOT + Words.KEYWORD, EMPTY_STRING)
+            : field.trim();
+    }
+
+    static boolean isNotKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
+        var result = !(parameterKind.equals(KEYWORD) || parameterKind.equals(CUSTOM));
+        return isKeyWord.length == 1
+            ? !isKeyWord[0]
+            : result;
     }
 }

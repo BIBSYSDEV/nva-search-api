@@ -3,6 +3,7 @@ package no.unit.nva.search2;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREATED_DATE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
@@ -34,7 +35,6 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
-import no.unit.nva.search2.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search2.importcandidate.ImportCandidateQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -85,7 +85,7 @@ class ImportCandidateClientTest {
     }
 
     @Nested
-    class ImportCandidateTest {
+    class NestedTests {
 
         @Test
         void openSearchFailedResponse() throws IOException, InterruptedException {
@@ -114,7 +114,7 @@ class ImportCandidateClientTest {
             var query =
                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
@@ -122,8 +122,8 @@ class ImportCandidateClientTest {
             var pagedResponse = query.toPagedResponse(swsResponse);
 
             assertNotNull(pagedResponse);
-            assertThat(pagedResponse.hits().size(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
-            assertThat(pagedResponse.totalHits(), is(equalTo(query.getValue(ImportCandidateParameter.SIZE).as())));
+            assertThat(pagedResponse.hits().size(), is(equalTo(query.parameters().get(SIZE).as())));
+            assertThat(pagedResponse.totalHits(), is(equalTo(query.parameters().get(SIZE).as())));
         }
 
         @ParameterizedTest
@@ -131,7 +131,7 @@ class ImportCandidateClientTest {
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult = ImportCandidateQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .withMediaType(Words.TEXT_CSV)
                 .build()
@@ -145,7 +145,7 @@ class ImportCandidateClientTest {
             var query =
                 ImportCandidateQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
@@ -162,8 +162,8 @@ class ImportCandidateClientTest {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
-                             .withOpensearchUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE)
+                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                             .withRequiredParameters(FROM, SIZE, AGGREGATION)
                              .build()
                              .doSearch(importCandidateClient));
         }
@@ -174,7 +174,7 @@ class ImportCandidateClientTest {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))
-                             .withOpensearchUri(URI.create(container.getHttpHostAddress()))
+                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                              .withRequiredParameters(FROM, SIZE, CREATED_DATE)
                              .build()
                              .doSearch(importCandidateClient));
@@ -182,22 +182,20 @@ class ImportCandidateClientTest {
 
         static Stream<URI> uriSortingProvider() {
             return Stream.of(
-                URI.create(
-                    "https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date&order"
-                    + "=desc"),
+                URI.create("https://example.com/?sort=title&sortOrder=asc&sort=created_date&order=desc"),
                 URI.create("https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
                 URI.create("https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
                 URI.create("https://example.com/?category=AcademicArticle&size=10&from=0&sort=created_date"),
-                URI.create(
-                    "https://example.com/?category=AcademicArticle&orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
-                URI.create("https://example.com/?category=AcademicArticle&orderBy=title:asc,"
-                           + "CREATED_DATE:desc&searchAfter=1241234,23412"),
+                URI.create("https://example.com/?orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
+                URI.create("https://example.com/?orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
                 URI.create("https://example.com/?category=AcademicArticle&sort=TYPE+asc&sort=INSTANCE_TYPE+desc"));
         }
 
         static Stream<URI> uriProvider() {
             return Stream.of(
                 URI.create("https://example.com/?size=8"),
+                URI.create("https://example.com/?aggregation=ALL&size=8"),
+                URI.create("https://example.com/?aggregation=importStatus&size=8"),
                 URI.create("https://example.com/?category=AcademicArticle&size=5"),
                 URI.create("https://example.com/?CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
                 URI.create("https://example.com/?CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),

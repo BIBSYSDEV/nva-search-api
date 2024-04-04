@@ -20,6 +20,8 @@ public final class ErrorMessages {
     public static final String INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
     public static final String MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
     public static final String OPERATOR_NOT_SUPPORTED = "Operator not supported";
+    public static final String TOO_MANY_ARGUMENTS = "too many arguments: ";
+
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
         "Invalid query parameter supplied %s. "
         + " Valid parameters: %s"

@@ -45,9 +45,29 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         this.jwtProvider = jwtProvider;
     }
 
-    public abstract R doSearch(Q query);
+    @JacocoGenerated
+    public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
+        return
+            getUsernamePasswordStream(reader)
+                .map(OpenSearchClient::getCognitoCredentials)
+                .map(CognitoAuthenticator::prepareWithCognitoCredentials)
+                .map(CachedJwtProvider::prepareWithAuthenticator)
+                .findFirst().orElseThrow();
+    }
 
-    protected abstract R handleResponse(HttpResponse<String> response);
+    @JacocoGenerated
+    public static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
+        return Stream.of(
+            secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
+    }
+
+    @JacocoGenerated
+    public static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
+        var uri = URI.create(readSearchInfrastructureAuthUri());
+        return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
+    }
+
+    public abstract R doSearch(Q query);
 
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
         return attempt(() -> httpClient.send(httpRequest, bodyHandler))
@@ -69,28 +89,6 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
                 AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
             .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
-    }
-
-    @JacocoGenerated
-    public static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
-        return Stream.of(
-            secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
-    }
-
-    @JacocoGenerated
-    public static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
-        var uri = URI.create(readSearchInfrastructureAuthUri());
-        return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
-    }
-
-    @JacocoGenerated
-    public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
-        return
-            getUsernamePasswordStream(reader)
-                .map(OpenSearchClient::getCognitoCredentials)
-                .map(CognitoAuthenticator::prepareWithCognitoCredentials)
-                .map(CachedJwtProvider::prepareWithAuthenticator)
-                .findFirst().orElseThrow();
     }
 
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {

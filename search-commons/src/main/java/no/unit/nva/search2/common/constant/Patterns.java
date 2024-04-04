@@ -25,6 +25,7 @@ public final class Patterns {
     public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
     public static final String PATTERN_IS_FROM_KEY = "(?i)offset|from";
     public static final String PATTERN_IS_NO_FILES = "(?i)(no_?public_?file)$";
+    public static final String PATTERN_IS_ORGANIZATION = "(?i)(organization_?id|viewing_?scope)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER = "(?i)(funding_?identifier|grant_?id)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER_NOT = "(?i)(funding_?identifier_?not|grant_?id_?not)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER_SHOULD =
@@ -41,6 +42,8 @@ public final class Patterns {
     public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort_?order|order";
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
+
+    public static final String PATTERN_IS_PIPE = "\\|";
 
     /**
      * Pattern for matching a funding string. funding source and project_id together separated by ':'

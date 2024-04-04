@@ -7,6 +7,11 @@ public final class Words {
     public static final float PI = 3.14F;        // π -> used for boosting.
     public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
 
+    public static final int NAME_AND_SORT_LENGTH = 2;
+
+    public static final String POST_FILTER = "withAppliedFilter";
+    public static final String ROOT = "root";
+
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
     public static final String AFFILIATIONS = "affiliations";
@@ -16,6 +21,8 @@ public final class Words {
     public static final String ASTERISK = "*";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
+    public static final char CHAR_UNDERSCORE = '_';
+
     public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";
@@ -108,6 +115,10 @@ public final class Words {
     public static final String VIEWED_BY = "viewedBy";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
+
+    public static final boolean KEYWORD_TRUE = true;
+    public static final boolean KEYWORD_FALSE = false;
+
 
     @JacocoGenerated
     public Words() {

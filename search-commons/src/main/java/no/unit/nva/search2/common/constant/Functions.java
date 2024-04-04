@@ -8,6 +8,7 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +17,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
@@ -54,7 +57,7 @@ public final class Functions {
 
     public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
         return
-            nestedBranchBuilder(TOP_LEVEL_ORGANIZATIONS, TOP_LEVEL_ORGANIZATIONS)
+            nestedBranchBuilder(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
                 .subAggregation(
                     branchBuilder(ID, TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD)
                         .subAggregation(
@@ -83,6 +86,10 @@ public final class Functions {
 
     public static NestedAggregationBuilder nestedBranchBuilder(String name, String... pathElements) {
         return new NestedAggregationBuilder(name, jsonPath(pathElements));
+    }
+
+    public static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
+        return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 
     public static <K, V> Optional<String> mapToJson(Map<K, V> keymap) {

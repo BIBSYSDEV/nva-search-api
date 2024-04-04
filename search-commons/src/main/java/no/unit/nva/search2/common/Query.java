@@ -1,33 +1,27 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.isNull;
+import static com.google.common.net.MediaType.CSV_UTF_8;
+import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
-import static no.unit.nva.search2.common.constant.Functions.mapToJson;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.PLUS;
-import static no.unit.nva.search2.common.constant.Words.SPACE;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.CsvTransformer;
@@ -37,19 +31,21 @@ import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.enums.ParameterKind;
-import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
-import org.joda.time.DateTime;
 import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.sort.FieldSortBuilder;
+import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,17 +54,14 @@ import org.slf4j.LoggerFactory;
 public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected static final Logger logger = LoggerFactory.getLogger(Query.class);
-
-    protected final transient Map<K, String> pageParameters;
-    protected final transient Map<K, String> searchParameters;
-    protected final transient Set<K> otherRequiredKeys;
-    protected final transient QueryTools<K> queryTools;
+    public static final String LAST = "_last";
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
-    private final transient List<QueryBuilder> filters = new ArrayList<>();
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
-    public abstract AsType getSort();
+    protected final transient QueryTools<K> queryTools;
+    private final transient QueryKeys<K> queryKeys;
+    protected final transient QueryFilter filters;
 
     protected abstract Integer getFrom();
 
@@ -76,7 +69,15 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract K getFieldsKey();
 
-    protected abstract Map<String, Float> fieldsToKeyNames(String field);
+    protected abstract K getSortOrderKey();
+
+    protected abstract K getSearchAfterKey();
+
+    protected abstract K keyFromString(String keyName);
+
+    protected abstract SortKey fromSortKey(String sortName);
+
+    protected abstract AsType<K> getSort();
 
     /**
      * Builds URI to query SWS based on post body.
@@ -85,33 +86,56 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      */
     protected abstract URI getOpenSearchUri();
 
-    protected abstract boolean isPagingValue(K key);
+    protected abstract AggregationBuilder getAggregationsWithFilter();
 
     protected abstract Map<String, String> aggregationsDefinition();
 
-    protected Query() {
-        searchParameters = new ConcurrentHashMap<>();
-        pageParameters = new ConcurrentHashMap<>();
-        otherRequiredKeys = new HashSet<>();
-        queryTools = new QueryTools<>();
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
 
+    protected abstract boolean isDefined(String keyName);
+
+
+    protected Query() {
+        queryTools = new QueryTools<>();
+        queryKeys = new QueryKeys<>(getFieldsKey(), getSortOrderKey());
+        filters = new QueryFilter();
         setMediaType(MediaType.JSON_UTF_8.toString());
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
         logSearchKeys();
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
-        return MediaType.CSV_UTF_8.is(this.getMediaType())
+        return CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
             : toPagedResponse(response).toJsonString();
     }
 
-    protected String toCsvText(SwsResponse response) {
-        return CsvTransformer.transform(response.getSearchHits());
+    public Stream<QueryContentWrapper> createQueryBuilderStream() {
+        var queryBuilder =
+            parameters().getSearchKeys().findAny().isEmpty()
+                ? QueryBuilders.matchAllQuery()
+                : makeBoolQuery();
+
+        var builder = defaultSearchSourceBuilder(queryBuilder);
+
+        handleSearchAfter(builder);
+
+        getSortStream().forEach(builder::sort);
+
+        if (getMediaType().is(JSON_UTF_8)) {
+            builder.aggregation(getAggregationsWithFilter());
+        }
+        logger.debug(builder.toString());
+        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+    }
+
+    public QueryKeys<K> parameters() {
+        return queryKeys;
     }
 
     public PagedSearch toPagedResponse(SwsResponse response) {
-        final var requestParameter = toNvaSearchApiRequestParameter();
+        final var requestParameter = parameters().asMap();
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
         final var aggregationFormatted = AggregationFormat.apply(response.aggregations(), aggregationsDefinition())
             .toString();
@@ -126,99 +150,25 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .build();
     }
 
-    /**
-     * Query Parameters with string Keys.
-     *
-     * @return Map of String and String
-     */
-    public Map<String, String> toNvaSearchApiRequestParameter() {
-        var results = new LinkedHashMap<String, String>();
-        Stream.of(searchParameters.entrySet(), pageParameters.entrySet())
-            .flatMap(Set::stream)
-            .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-            .forEach(entry -> results.put(toNvaSearchApiKey(entry), toNvaSearchApiValue(entry)));
-        return results;
+    protected String toCsvText(SwsResponse response) {
+        return CsvTransformer.transform(response.getSearchHits());
     }
 
-    /**
-     * Get value from Query Parameter Map with key.
-     *
-     * @param key to look up.
-     * @return String content raw
-     */
-    public AsType getValue(K key) {
-        return new AsType(
-            searchParameters.containsKey(key)
-                ? searchParameters.get(key)
-                : pageParameters.get(key),
-            key
-        );
-    }
-
-    /**
-     * Add a key value pair to Parameters.
-     *
-     * @param key   to add to.
-     * @param value to assign
-     */
-    public void setKeyValue(K key, String value) {
-        if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != ValueEncoding.NONE
-                ? decodeUTF(value)
-                : value;
-            if (isPagingValue(key)) {
-                pageParameters.put(key, decodedValue);
-            } else {
-                searchParameters.put(key, decodedValue);
-            }
-        }
-    }
-
-    public AsType removeKey(K key) {
-        return new AsType(
-            searchParameters.containsKey(key)
-            ? searchParameters.remove(key)
-                : pageParameters.remove(key),
-            key
-        );
-    }
-
-    public boolean isPresent(K key) {
-        return searchParameters.containsKey(key) || pageParameters.containsKey(key);
-    }
-
-    protected Stream<Entry<String, Float>> getFieldNameBoost(K key) {
-        return key.searchFields()
-            .sorted()
-            .map(fieldName -> Map.entry(fieldName, key.fieldBoost()));
-    }
-
-    protected boolean hasOneValue(K key) {
-        return getValue(key)
-            .asStream()
-            .anyMatch(p -> !p.contains(COMMA));
-    }
-
-    protected boolean hasNoSearchValue() {
-        return searchParameters.isEmpty();
-    }
-
-    private MediaType getMediaType() {
+    protected MediaType getMediaType() {
         return mediaType;
     }
 
     final void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
-            this.mediaType = MediaType.CSV_UTF_8;
+            this.mediaType = CSV_UTF_8;
         } else {
-            this.mediaType = MediaType.JSON_UTF_8;
+            this.mediaType = JSON_UTF_8;
         }
     }
 
     public URI getNvaSearchApiUri() {
         return gatewayUri;
     }
-
 
     @JacocoGenerated
     public void setNvaSearchApiUri(URI gatewayUri) {
@@ -229,63 +179,36 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         this.openSearchUri = openSearchUri;
     }
 
-
-    protected BoolQueryBuilder getFilters() {
-        var boolQueryBuilder = QueryBuilders.boolQuery();
-        filters.forEach(boolQueryBuilder::must);
-        return boolQueryBuilder;
-    }
-
-    protected void setFilters(QueryBuilder... filters) {
-        this.filters.clear();
-        this.filters.addAll(List.of(filters));
-    }
-
-    protected void addFilter(QueryBuilder builder) {
-        this.filters.removeIf(filter -> filter.getName().equals(builder.getName()));
-        this.filters.add(builder);
-    }
-
-    protected String toNvaSearchApiKey(Entry<K, String> entry) {
-        return entry.getKey().fieldName().toLowerCase(Locale.getDefault());
-    }
-
-    protected String toNvaSearchApiValue(Entry<K, String> entry) {
-        return entry.getValue().replace(SPACE, PLUS);
-    }
-
     /**
-     * Creates a boolean query, with all the search parameters.
+     * Creates a multi match query, all words needs to be present, within a document.
      *
-     * @return a BoolQueryBuilder
+     * @return a MultiMatchQueryBuilder
      */
-    protected BoolQueryBuilder mainQuery() {
-        var boolQueryBuilder = QueryBuilders.boolQuery();
-        searchParameters.keySet().stream()
-            .flatMap(this::getQueryBuilders)
-            .forEach(entry -> {
-                if (isMustNot(entry.getKey())) {
-                    boolQueryBuilder.mustNot(entry.getValue());
-                } else {
-                    boolQueryBuilder.must(entry.getValue());
-                }
+    protected Map<String, Float> fieldsToKeyNames(AsType<K> fieldValue) {
+        return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
+            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
+            : fieldValue.asSplitStream(COMMA)
+            .map(this::keyFromString)
+            .flatMap(key -> key.searchFields(KEYWORD_FALSE)
+                .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
+            )
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    }
+
+    protected Stream<FieldSortBuilder> getSortStream() {
+        return getSort().asSplitStream(COMMA)
+            .flatMap(item -> {
+                final var parts = item.split(COLON_OR_SPACE);
+                final var order = SortOrder.fromString(
+                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
+                return fromSortKey(parts[0]).jsonPaths()
+                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(LAST));
             });
-        return boolQueryBuilder;
     }
 
-    // SORTING
-    protected Stream<Entry<String, SortOrder>> getSortStream() {
-        return getSort().asStream()
-            .map(items -> items.split(COMMA))
-            .flatMap(Arrays::stream)
-            .map(QueryTools::objectToSortEntry);
-    }
-
-
-    private Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
-        final var value = searchParameters.get(key);
+    protected Stream<Entry<K, QueryBuilder>> getQueryBuilders(K key) {
+        final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
-            case BOOLEAN -> queryTools.boolQuery(key, value); //TODO make validation pattern... (assumes one value)
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
@@ -300,30 +223,58 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         };
     }
 
-    protected abstract Stream<Entry<K, QueryBuilder>> customQueryBuilders(K key);
-
+    protected BoolQueryBuilder makeBoolQuery() {
+        return mainQuery();
+    }
 
     /**
-     * Creates a multi match query, all words needs to be present, within a document.
+     * Creates a boolean query, with all the search parameters.
      *
-     * @return a MultiMatchQueryBuilder
+     * @return a BoolQueryBuilder
      */
-    private MultiMatchQueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
-        var fields = fieldsToKeyNames(getValue(fieldsKey).toString());
+    protected BoolQueryBuilder mainQuery() {
+        var boolQueryBuilder = QueryBuilders.boolQuery();
+        parameters().getSearchKeys()
+            .flatMap(this::getQueryBuilders)
+            .forEach(entry -> {
+                if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
+                } else {
+                    boolQueryBuilder.must(entry.getValue());
+                }
+            });
+        return boolQueryBuilder;
+    }
 
-        mapToJson(fields).ifPresent(logger::info);
+    protected SearchSourceBuilder defaultSearchSourceBuilder(QueryBuilder queryBuilder) {
+        return new SearchSourceBuilder()
+            .query(queryBuilder)
+            .size(getSize())
+            .from(getFrom())
+            .postFilter(filters.get())
+            .trackTotalHits(true);
+    }
 
-        var value = getValue(searchAllKey).toString();
+    protected QueryBuilder multiMatchQuery(K searchAllKey, K fieldsKey) {
+        var fields = fieldsToKeyNames(parameters().get(fieldsKey));
+        var value = parameters().get(searchAllKey).toString();
         return QueryBuilders
             .multiMatchQuery(value)
             .fields(fields)
-            .lenient(true)
-            .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+            .type(Type.CROSS_FIELDS)
             .operator(Operator.AND);
     }
 
-    private Stream<K> getSearchParameterKeys() {
-        return searchParameters.keySet().stream();
+    protected boolean isRequestedAggregation(AggregationBuilder aggregationBuilder) {
+        return Optional.ofNullable(aggregationBuilder)
+            .map(AggregationBuilder::getName)
+            .map(this::isDefined)
+            .orElse(false);
+    }
+
+    private boolean isMustNot(K key) {
+        return NO_ITEMS.equals(key.searchOperator())
+            || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
@@ -344,120 +295,16 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     private void logSearchKeys() {
         logger.info(
-            getSearchParameterKeys()
-                .map(Enum::name)
+            parameters().getSearchKeys()
+                .map(ParameterKey::asCamelCase)
                 .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
         );
     }
 
-    private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-               || NOT_ONE_ITEM.equals(key.searchOperator());
-    }
-
-
-    protected SearchSourceBuilder defaultSearchSourceBuilder(QueryBuilder queryBuilder) {
-        return new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(getSize())
-            .from(getFrom())
-            .postFilter(getFilters())
-            .trackTotalHits(true);
-    }
-
-    /**
-     * AutoConvert value to Date, Number (or String)
-     * <p>Also holds key and can return value as <samp>optional stream</samp></p>
-     */
-    @SuppressWarnings({"PMD.ShortMethodName"})
-    public class AsType {
-
-        private final String value;
-        private final K key;
-
-        public AsType(String value, K key) {
-            this.value = value;
-            this.key = key;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public <T> T as() {
-            if (isNull(value)) {
-                return null;
-            }
-            if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
-                logger.warn("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
-            }
-            return (T) switch (getKey().fieldType()) {
-                case DATE -> castDateTime();
-                case NUMBER -> castNumber();
-                case BOOLEAN -> castBoolean();
-                default -> value;
-            };
-        }
-
-        public String stripped() {
-            return nonNull(value)
-                ? value.replaceAll(" .-/", "")
-                : null;
-        }
-
-        /**
-         * @param delimiter regex to split on
-         * @return The value split, or null.
-         */
-        public String[] split(String delimiter) {
-            return nonNull(value)
-                ? value.split(delimiter)
-                : null;
-        }
-
-        /**
-         * @param delimiter regex to split on
-         * @return The value as an optional Stream, split by delimiter.
-         */
-        public Stream<String> asSplitStream(String delimiter) {
-            return asStream()
-                .flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
-        }
-
-        /**
-         * @return The value as an optional Stream.
-         */
-        public Stream<String> asStream() {
-            return Optional.ofNullable(value).stream();
-        }
-
-        public Boolean asBoolean() {
-            return Boolean.parseBoolean(value);
-        }
-
-        public DateTime asDateTime() {
-            return DateTime.parse(value);
-        }
-
-        public Number asNumber() {
-            return Integer.parseInt(value);
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-
-        private <T> T castDateTime() {
-            return ((Class<T>) DateTime.class).cast(asDateTime());
-        }
-
-        private <T extends Number> T castNumber() {
-            return (T) attempt(this::asNumber).orElseThrow();
-        }
-
-        private <T> T castBoolean() {
-            return ((Class<T>) Boolean.class).cast(asBoolean());
+    private void handleSearchAfter(SearchSourceBuilder builder) {
+        var sortKeys = parameters().remove(getSearchAfterKey()).split(COMMA);
+        if (nonNull(sortKeys)) {
+            builder.searchAfter(sortKeys);
         }
     }
 }

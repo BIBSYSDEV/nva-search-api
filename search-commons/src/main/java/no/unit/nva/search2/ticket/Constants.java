@@ -1,6 +1,7 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
+import static no.unit.nva.search2.common.constant.Functions.filterBranchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ID;
@@ -14,13 +15,10 @@ import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.VIEWED_BY;
-import static org.opensearch.index.query.QueryBuilders.termQuery;
-import static org.opensearch.index.query.QueryBuilders.termsQuery;
-
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import no.unit.nva.search2.common.enums.TicketStatus;
+
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
@@ -36,12 +34,20 @@ public final class Constants {
     public static final String PUBLICATION = "publication";
     public static final String PUBLICATION_STATUS = "publicationStatus";
     public static final String USERNAME = "username";
+    public static final String NOTIFICATION = "notification";
+    public static final String UNHANDLED_KEY = "unhandled key -> ";
+
+    public static final String PART_OF = "partOf";
+
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
     public static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-    public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.name().toLowerCase(Locale.getDefault());
+    public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.asCamelCase();
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
+
+    public static final String ORGANIZATION_PATHS = ORGANIZATION_ID_KEYWORD
+        + PIPE + ORGANIZATION + DOT + PART_OF + DOT + KEYWORD;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
     public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
         PUBLICATION + DOT + ID + DOT + KEYWORD + PIPE
@@ -50,6 +56,7 @@ public final class Constants {
     public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
+    public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
     public static final String MESSAGE_FIELDS =
         MESSAGES + DOT + TYPE_KEYWORD + PIPE
         + MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
@@ -58,7 +65,7 @@ public final class Constants {
         OWNER + DOT + TYPE_KEYWORD + PIPE
         + OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
         + OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-        + OWNER + DOT + USERNAME + DOT + KEYWORD;
+        + OWNER_USERNAME;
     public static final String VIEWED_BY_FIELDS =
         VIEWED_BY + DOT + TYPE_KEYWORD + PIPE
         + VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
@@ -69,7 +76,6 @@ public final class Constants {
     public static final String DOI_REQUEST_NOTIFICATIONS = "DoiRequestNotification";
     public static final String PUBLISHING_REQUEST_NOTIFICATIONS = "PublishingRequestNotification";
     public static final String GENERAL_SUPPORT_NOTIFICATIONS = "GeneralSupportNotification";
-
     public static final String ASSIGNEE = "assignee";
     public static final String ASSIGNEE_FIELDS =
         ASSIGNEE + DOT + TYPE_KEYWORD + PIPE
@@ -83,15 +89,17 @@ public final class Constants {
         + FINALIZED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
         + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
 
+    public static final String BY_USER_PENDING = "byUserPending";
     public static final Map<String, String> facetTicketsPaths = Map.of(
-        USER_NOTIFICATIONS, "/filter/UserNotification",
-        UNASSIGNED_NOTIFICATIONS, "/filter/UnassignedNotification",
-        DOI_REQUEST_NOTIFICATIONS, "/filter/DoiRequestNotification",
-        GENERAL_SUPPORT_NOTIFICATIONS, "/filter/GeneralSupportNotification",
-        PUBLISHING_REQUEST_NOTIFICATIONS, "/filter/PublishingRequestNotification",
-        STATUS, "/filter/status",
-        TYPE, "/filter/type",
-        PUBLICATION_STATUS, "/filter/publication/status");
+        USER_NOTIFICATIONS, "/withAppliedFilter/UserNotification",
+        UNASSIGNED_NOTIFICATIONS, "/withAppliedFilter/UnassignedNotification",
+        DOI_REQUEST_NOTIFICATIONS, "/withAppliedFilter/DoiRequestNotification",
+        GENERAL_SUPPORT_NOTIFICATIONS, "/withAppliedFilter/GeneralSupportNotification",
+        PUBLISHING_REQUEST_NOTIFICATIONS, "/withAppliedFilter/PublishingRequestNotification",
+        BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
+        STATUS, "/withAppliedFilter/status",
+        TYPE, "/withAppliedFilter/type",
+        PUBLICATION_STATUS, "/withAppliedFilter/publication/status");
 
     @JacocoGenerated
     public Constants() {
@@ -102,13 +110,26 @@ public final class Constants {
             branchBuilder(STATUS, STATUS_KEYWORD),
             branchBuilder(TYPE, TYPE_KEYWORD),
             branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD),
+            notificationsByUser(username),
             unassignedNotifications(),
-            notifications(username),
+            notifications(username, Arrays.stream(TicketType.values()).toList()),
             doiRequestNotifications(username),
             publishingRequestNotifications(username),
             generalSupportNotifications(username)
         );
     }
+
+    private static AggregationBuilder notificationsByUser(String username) {
+        return
+            filterBranchBuilder(BY_USER_PENDING, username, ASSIGNEE, USERNAME, KEYWORD)
+                .subAggregation(
+                    filterBranchBuilder(STATUS, TicketStatus.PENDING.toString(), STATUS_KEYWORD)
+                        .subAggregation(
+                            branchBuilder(TYPE, TYPE_KEYWORD)
+                        )
+                );
+    }
+
 
     private static AggregationBuilder generalSupportNotifications(String username) {
         return getTicketAggregationFor(GENERAL_SUPPORT_NOTIFICATIONS, username, TicketType.GENERAL_SUPPORT_CASE);
@@ -124,20 +145,23 @@ public final class Constants {
 
     private static FilterAggregationBuilder getTicketAggregationFor(String aggregationName, String username,
                                                                     TicketType... types) {
-        var query = QueryBuilders.boolQuery()
-            .must(termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()))
-            .must(termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username))
-            .must(termsQuery(jsonPath(TYPE, KEYWORD), types));
-        return AggregationBuilders.filter(aggregationName , query);
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
+        query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), types));
+        return AggregationBuilders.filter(aggregationName, query);
     }
 
-    private static AggregationBuilder notifications(String username) {
-        return getTicketAggregationFor(USER_NOTIFICATIONS, username);
+    private static AggregationBuilder notifications(String username, List<TicketType> ticketTypes) {
+        return getTicketAggregationFor(USER_NOTIFICATIONS,
+                                       username,
+                                       ticketTypes.toArray(new TicketType[0]));
     }
 
     private static AggregationBuilder unassignedNotifications() {
-        var query = QueryBuilders.boolQuery()
-            .must(termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.NEW.toString()));
+        var query = QueryBuilders.boolQuery();
+        query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.NEW.toString()));
+        //        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), ticketTypes));
         return AggregationBuilders.filter(UNASSIGNED_NOTIFICATIONS, query);
     }
 }
