@@ -38,6 +38,7 @@ import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
+import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
@@ -340,7 +341,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             }
             if (query.parameters().isPresent(BY_USER_PENDING)) {
                 query.parameters().set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
-                query.parameters().set(STATUS, TicketStatus.PENDING.toString());
+                query.parameters().set(STATUS, PENDING.toString());
             }
         }
 

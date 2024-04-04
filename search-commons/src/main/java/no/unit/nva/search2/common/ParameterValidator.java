@@ -14,6 +14,7 @@ import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static nva.commons.core.StringUtils.SPACE;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
