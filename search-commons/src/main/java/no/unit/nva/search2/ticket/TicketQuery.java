@@ -297,14 +297,12 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> byOrganization(TicketParameter key) {
-        return
-            parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-                ? queryTools.queryToEntry(key, termQuery(useFirstPathOnly(key), parameters().get(key).as()))
-                : new OpensearchQueryFuzzyKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
-    }
+        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean()
+            ? EXCLUDE_SUBUNITS
+            : key;
 
-    private String useFirstPathOnly(TicketParameter key) {
-        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
+        return
+            new OpensearchQueryFuzzyKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
     @SuppressWarnings("PMD.GodClass")
