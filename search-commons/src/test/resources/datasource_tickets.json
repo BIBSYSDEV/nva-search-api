@@ -106,8 +106,10 @@
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
       "identifier": "20754.3.0.0",
       "partOf": [
-        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-        "20754.0.0.0"
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        }
       ]
     }
   },
@@ -206,10 +208,14 @@
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.1.0",
       "identifier": "20754.3.1.0",
       "partOf": [
-        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-        "20754.0.0.0",
-        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
-        "20754.3.0.0"
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        },
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+          "identifier": "20754.3.0.0"
+        }
       ]
     },
     "status": "New"
@@ -1517,8 +1523,10 @@
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
       "identifier": "20754.2.0.0",
       "partOf": [
-        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-        "20754.0.0.0"
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        }
       ]
     },
     "status": "Completed"

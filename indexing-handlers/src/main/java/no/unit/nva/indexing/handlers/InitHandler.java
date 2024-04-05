@@ -29,11 +29,15 @@ public class InitHandler implements RequestHandler<Object, String> {
 
     private static final String RESOURCES_MAPPINGS =
             IoUtils.stringFromResources(Path.of("resources_mapping.json"));
+
+    public static final String TICKET_MAPPINGS =
+        IoUtils.stringFromResources(Path.of("tickets_mapping.json"));
+
     private static final List<IndexRequest> INDEXES = List.of(
             new IndexRequest(RESOURCES_INDEX, RESOURCES_MAPPINGS),
             new IndexRequest(DOIREQUESTS_INDEX),
             new IndexRequest(MESSAGES_INDEX),
-            new IndexRequest(TICKETS_INDEX),
+        new IndexRequest(TICKETS_INDEX, TICKET_MAPPINGS),
             new IndexRequest(PUBLISHING_REQUESTS_INDEX)
     );
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);

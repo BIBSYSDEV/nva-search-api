@@ -46,14 +46,18 @@ public final class Constants {
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String ORGANIZATION_IDENTIFIER_KEYWORD = ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
+    public static final String ORGANIZATION_PART_OF =
+        ORGANIZATION + DOT + PART_OF + DOT + ID
+            + PIPE + ORGANIZATION + DOT + PART_OF + DOT + IDENTIFIER;
 
-    public static final String ORGANIZATION_PATHS = ORGANIZATION_ID_KEYWORD
-        + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD
-        + PIPE + ORGANIZATION + DOT + PART_OF + DOT + KEYWORD;
+    public static final String ORGANIZATION_PATHS =
+        ORGANIZATION_ID_KEYWORD
+            + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD
+            + PIPE + ORGANIZATION_PART_OF;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
     public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
-        PUBLICATION + DOT + ID + DOT + KEYWORD + PIPE
-        + PUBLICATION + DOT + IDENTIFIER + DOT + KEYWORD;
+        PUBLICATION + DOT + ID + DOT + KEYWORD
+            + PIPE + PUBLICATION + DOT + IDENTIFIER + DOT + KEYWORD;
     public static final String PUBLICATION_MAIN_TITLE_KEYWORD = PUBLICATION + DOT + MAIN_TITLE + DOT + KEYWORD;
     public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
@@ -61,18 +65,18 @@ public final class Constants {
     public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
     public static final String MESSAGE_FIELDS =
         MESSAGES + DOT + TYPE_KEYWORD + PIPE
-        + MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
-        + MESSAGES + DOT + STATUS + DOT + KEYWORD;
+            + MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
+            + MESSAGES + DOT + STATUS + DOT + KEYWORD;
     public static final String OWNER_FIELDS =
         OWNER + DOT + TYPE_KEYWORD + PIPE
-        + OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-        + OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-        + OWNER_USERNAME;
+            + OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+            + OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE
+            + OWNER_USERNAME;
     public static final String VIEWED_BY_FIELDS =
         VIEWED_BY + DOT + TYPE_KEYWORD + PIPE
-        + VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-        + VIEWED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-        + VIEWED_BY + DOT + USERNAME + DOT + KEYWORD;
+            + VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+            + VIEWED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
+            + VIEWED_BY + DOT + USERNAME + DOT + KEYWORD;
     public static final String USER_NOTIFICATIONS = "UserNotification";
     public static final String UNASSIGNED_NOTIFICATIONS = "UnassignedNotification";
     public static final String DOI_REQUEST_NOTIFICATIONS = "DoiRequestNotification";
@@ -81,15 +85,15 @@ public final class Constants {
     public static final String ASSIGNEE = "assignee";
     public static final String ASSIGNEE_FIELDS =
         ASSIGNEE + DOT + TYPE_KEYWORD + PIPE
-        + ASSIGNEE + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-        + ASSIGNEE + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-        + ASSIGNEE + DOT + USERNAME + DOT + KEYWORD;
+            + ASSIGNEE + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+            + ASSIGNEE + DOT + LAST_NAME + DOT + KEYWORD + PIPE
+            + ASSIGNEE + DOT + USERNAME + DOT + KEYWORD;
     private static final String FINALIZED_BY = "finalizedBy";
     public static final String FINALIZED_BY_FIELDS =
         FINALIZED_BY + DOT + TYPE_KEYWORD + PIPE
-        + FINALIZED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-        + FINALIZED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-        + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
+            + FINALIZED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+            + FINALIZED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
+            + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
 
     public static final String BY_USER_PENDING = "byUserPending";
     public static final Map<String, String> facetTicketsPaths = Map.of(
@@ -156,8 +160,8 @@ public final class Constants {
 
     private static AggregationBuilder notifications(String username, List<TicketType> ticketTypes) {
         return getTicketAggregationFor(USER_NOTIFICATIONS,
-                                       username,
-                                       ticketTypes.toArray(new TicketType[0]));
+            username,
+            ticketTypes.toArray(new TicketType[0]));
     }
 
     private static AggregationBuilder unassignedNotifications() {
