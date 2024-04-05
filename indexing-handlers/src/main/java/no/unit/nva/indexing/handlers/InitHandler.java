@@ -65,7 +65,7 @@ public class InitHandler implements RequestHandler<Object, String> {
         return failState.get() ? FAILED : SUCCESS;
     }
 
-    private Void handleFailure(AtomicBoolean failState, Failure failure) {
+    private Void handleFailure(AtomicBoolean failState, Failure<?> failure) {
         failState.set(true);
         logger.warn("Index creation failed", failure.getException());
         return null;
