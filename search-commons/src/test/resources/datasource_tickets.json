@@ -103,8 +103,14 @@
       "username": "1492596@20754.0.0.0"
     },
     "organization": {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+      "identifier": "20754.3.0.0",
+      "partOf": [
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        }
+      ]
     }
   },
   {
@@ -199,8 +205,18 @@
       "username": "1492596@20754.0.0.0"
     },
     "organization": {
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.1.0",
+      "identifier": "20754.3.1.0",
+      "partOf": [
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        },
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+          "identifier": "20754.3.0.0"
+        }
+      ]
     },
     "status": "New"
   },
@@ -357,7 +373,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/5923.0.0.0",
-      "partOf": []
+      "identifier": "5923.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -461,7 +479,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "New"
   },
@@ -565,7 +585,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "New"
   },
@@ -678,7 +700,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -779,7 +803,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Pending"
   },
@@ -898,7 +924,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     }
   },
   {
@@ -1008,7 +1036,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     }
   },
   {
@@ -1114,7 +1144,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -1221,7 +1253,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -1334,7 +1368,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -1485,8 +1521,12 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+      "identifier": "20754.2.0.0",
       "partOf": [
-        "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+        {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+          "identifier": "20754.0.0.0"
+        }
       ]
     },
     "status": "Completed"
@@ -1587,7 +1627,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -1691,7 +1733,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -1780,7 +1824,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     }
   },
   {
@@ -1880,7 +1926,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -1980,7 +2028,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -2080,7 +2130,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -2186,7 +2238,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     },
     "status": "Completed"
   },
@@ -2284,7 +2338,9 @@
     },
     "organization": {
       "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "partOf": []
+      "identifier": "20754.0.0.0",
+      "partOf": [
+      ]
     }
   }
 ]

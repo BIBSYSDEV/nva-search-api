@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMEN
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
@@ -43,7 +42,6 @@ import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import static org.opensearch.index.query.QueryBuilders.termQuery;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -57,15 +55,14 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
-import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
@@ -151,10 +148,8 @@ public final class TicketQuery extends Query<TicketParameter> {
      */
     public TicketQuery withFilterOrganization(URI organization) {
         final var filter =
-            ORGANIZATION_ID.searchFields(KEYWORD_TRUE)
-                .map(searchField -> new TermsQueryBuilder(searchField, organization.toString()))
-                .collect(BoolQueryBuilder::new, BoolQueryBuilder::should, BoolQueryBuilder::should)
-                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
+            new OpensearchQueryKeyword<TicketParameter>().buildQuery(ORGANIZATION_ID, organization.toString())
+                .findFirst().get().getValue().queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
         this.filters.add(filter);
         return this;
     }
@@ -297,14 +292,12 @@ public final class TicketQuery extends Query<TicketParameter> {
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> byOrganization(TicketParameter key) {
-        return
-            parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-                ? queryTools.queryToEntry(key, termQuery(useFirstPathOnly(key), parameters().get(key).as()))
-                : new OpensearchQueryFuzzyKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
-    }
+        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean()
+            ? EXCLUDE_SUBUNITS
+            : key;
 
-    private String useFirstPathOnly(TicketParameter key) {
-        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
+        return
+            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
     @SuppressWarnings("PMD.GodClass")

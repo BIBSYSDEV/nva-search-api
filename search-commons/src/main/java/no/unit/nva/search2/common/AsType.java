@@ -90,6 +90,9 @@ public class AsType<K extends Enum<K> & ParameterKey> {
         return Optional.ofNullable(value).stream();
     }
 
+    /**
+     * @return False if value is null or FALSE, otherwise True
+     */
     public Boolean asBoolean() {
         return Boolean.parseBoolean(value);
     }
