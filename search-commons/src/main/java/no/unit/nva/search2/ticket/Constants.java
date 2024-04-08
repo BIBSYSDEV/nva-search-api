@@ -47,8 +47,8 @@ public final class Constants {
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String ORGANIZATION_IDENTIFIER_KEYWORD = ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
     public static final String ORGANIZATION_PART_OF =
-        ORGANIZATION + DOT + PART_OF + DOT + ID
-            + PIPE + ORGANIZATION + DOT + PART_OF + DOT + IDENTIFIER;
+        ORGANIZATION + DOT + PART_OF + DOT + ID_KEYWORD
+            + PIPE + ORGANIZATION + DOT + PART_OF + DOT + IDENTIFIER + DOT + KEYWORD;
 
     public static final String ORGANIZATION_PATHS =
         ORGANIZATION_ID_KEYWORD

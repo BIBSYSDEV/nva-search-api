@@ -42,7 +42,8 @@
     "organization": {
       "properties": {
         "partOf": {
-          "type": "flat_object"
+          "type": "nested",
+          "include_in_parent": true
         }
       }
     }

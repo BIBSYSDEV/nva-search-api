@@ -123,7 +123,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
         getSortStream().forEach(builder::sort);
 
-        if (getMediaType().is(JSON_UTF_8)) {
+        if (getMediaType().is(JSON_UTF_8) && isDefined(ALL)) {
             builder.aggregation(getAggregationsWithFilter());
         }
         logger.debug(builder.toString());
