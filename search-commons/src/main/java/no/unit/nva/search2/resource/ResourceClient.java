@@ -37,7 +37,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     public SwsResponse doSearch(ResourceQuery query) {
         return
             query.withUserSettings(userSettingsClient)
-                .createQueryBuilderStream()
+                .assemble()
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
@@ -45,6 +45,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     }
 
 
+    @Override
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

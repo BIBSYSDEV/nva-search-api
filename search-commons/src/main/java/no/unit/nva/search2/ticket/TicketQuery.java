@@ -9,14 +9,12 @@ import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
-import static no.unit.nva.search2.ticket.Constants.NOTIFICATION;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
@@ -47,7 +45,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.UUID;
@@ -66,8 +64,7 @@ import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
@@ -77,7 +74,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private TicketQuery() {
         super();
-        assignImpossibleWhiteListFilters();
+        applyImpossibleWhiteListFilters();
     }
 
     /**
@@ -86,7 +83,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * <p>This whitelist the Query from any forgetful developer (me)</p>
      * <p>i.e.In order to return any results, withFilter* must be set </p>
      */
-    private void assignImpossibleWhiteListFilters() {
+    private void applyImpossibleWhiteListFilters() {
         var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
         var filterType =
             new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE)
@@ -173,6 +170,94 @@ public final class TicketQuery extends Query<TicketParameter> {
         return this;
     }
 
+    @Override
+    protected TicketParameter keyAggregation() {
+        return AGGREGATION;
+    }
+
+    @Override
+    protected TicketParameter keyFields() {
+        return FIELDS;
+    }
+
+    @Override
+    protected TicketParameter keySortOrder() {
+        return SORT_ORDER;
+    }
+
+    @Override
+    protected TicketParameter keySearchAfter() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected TicketParameter toKey(String keyName) {
+        return TicketParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected SortKey toSortKey(String sortName) {
+        return TicketSort.fromSortKey(sortName);
+    }
+
+    @Override
+    protected AsType<TicketParameter> getFrom() {
+        return parameters().get(FROM);
+    }
+
+    @Override
+    protected AsType<TicketParameter> getSize() {
+        return parameters().get(SIZE);
+    }
+
+    @Override
+    public AsType<TicketParameter> getSort() {
+        return parameters().get(SORT);
+    }
+
+    @Override
+    public URI getOpenSearchUri() {
+        return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
+    }
+
+    @Override
+    protected Map<String, String> facetPaths() {
+        return facetTicketsPaths;
+    }
+
+    @Override
+    protected List<AggregationBuilder> builderAggregations() {
+        return getTicketsAggregations(currentUser);
+    }
+
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    @Override
+    protected Stream<Entry<TicketParameter, QueryBuilder>> builderStreamCustomQuery(TicketParameter key) {
+        return switch (key) {
+            case ASSIGNEE -> builderStreamByAssignee();
+            case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);
+            default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
+        };
+    }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
+        var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
+            ? currentUser
+            : parameters().get(TicketParameter.ASSIGNEE).toString();
+
+        return new OpensearchQueryText<TicketParameter>()
+            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+    }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(TicketParameter key) {
+        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean()
+            ? EXCLUDE_SUBUNITS
+            : key;
+
+        return
+            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
+    }
+
     private TicketType[] validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
         var allowed = new HashSet<TicketType>();
         if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
@@ -193,111 +278,6 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     private boolean isUserOnly(TicketType... ticketTypes) {
         return Arrays.stream(ticketTypes).allMatch(pre -> pre.equals(TicketType.GENERAL_SUPPORT_CASE));
-    }
-
-    @Override
-    protected Integer getFrom() {
-        return parameters().get(FROM).as();
-    }
-
-    @Override
-    protected Integer getSize() {
-        return parameters().get(SIZE).as();
-    }
-
-    @Override
-    protected TicketParameter getFieldsKey() {
-        return FIELDS;
-    }
-
-    @Override
-    protected TicketParameter getSortOrderKey() {
-        return SORT_ORDER;
-    }
-
-    @Override
-    protected TicketParameter getSearchAfterKey() {
-        return SEARCH_AFTER;
-    }
-
-    @Override
-    protected TicketParameter keyFromString(String keyName) {
-        return TicketParameter.keyFromString(keyName);
-    }
-
-    @Override
-    protected SortKey fromSortKey(String sortName) {
-        return TicketSort.fromSortKey(sortName);
-    }
-
-    @Override
-    public AsType<TicketParameter> getSort() {
-        return parameters().get(SORT);
-    }
-
-    @Override
-    public URI getOpenSearchUri() {
-        return
-            fromUri(openSearchUri)
-                .addChild(TICKETS, SEARCH)
-                .getUri();
-    }
-
-    @Override
-    protected FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
-        getTicketsAggregations(currentUser)
-            .stream().filter(this::isRequestedAggregation)
-            .forEach(aggrFilter::subAggregation);
-        return aggrFilter;
-    }
-
-    @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return facetTicketsPaths;
-    }
-
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
-    @Override
-    protected Stream<Entry<TicketParameter, QueryBuilder>> customQueryBuilders(TicketParameter key) {
-        return switch (key) {
-            case ASSIGNEE -> byAssignee();
-            case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> byOrganization(key);
-            default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
-        };
-    }
-
-    @Override
-    protected boolean isDefined(String keyName) {
-        return parameters().get(AGGREGATION)
-            .asSplitStream(COMMA)
-            .map(String::toLowerCase)
-            .anyMatch(name -> name.equalsIgnoreCase(ALL) ||
-                name.equalsIgnoreCase(keyName) ||
-                isNotificationAggregation(keyName.toLowerCase(Locale.getDefault()))
-            );
-    }
-
-    private boolean isNotificationAggregation(String name) {
-        return name.contains(NOTIFICATION);
-    }
-
-    private Stream<Entry<TicketParameter, QueryBuilder>> byAssignee() {
-        var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? currentUser
-            : parameters().get(TicketParameter.ASSIGNEE).toString();
-
-        return new OpensearchQueryText<TicketParameter>()
-            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
-    }
-
-    private Stream<Entry<TicketParameter, QueryBuilder>> byOrganization(TicketParameter key) {
-        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-            ? EXCLUDE_SUBUNITS
-            : key;
-
-        return
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
     @SuppressWarnings("PMD.GodClass")

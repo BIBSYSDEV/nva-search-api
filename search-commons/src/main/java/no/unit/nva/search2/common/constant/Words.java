@@ -95,6 +95,7 @@ public final class Words {
     public static final String SERIES = "series";
     public static final String SERIES_AS_TYPE = "Series";
     public static final String SLASH = "/";
+    public static final String SORT_LAST = "_last";
     public static final String SOURCE = "source";
     public static final String SOURCE_NAME = "sourceName";
     public static final String SPACE = " ";

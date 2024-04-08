@@ -4,7 +4,6 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
@@ -22,7 +21,6 @@ import static no.unit.nva.search2.common.enums.PublicationStatus.NEW;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
@@ -58,7 +56,6 @@ import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -81,7 +78,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
-import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,22 +157,6 @@ class ResourceClientTest {
             var response1 = searchClient.doSearch(query1);
 
             assertNotNull(response1);
-
-            var aggregationsList = RESOURCES_AGGREGATIONS.stream()
-                .map(AggregationBuilder::getName)
-                .collect(Collectors.joining(COMMA));
-            var uri2 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + aggregationsList);
-
-            var query2 = ResourceQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri2))
-                .withDockerHostUri(hostAddress)
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
-            var response2 = searchClient.doSearch(query2);
-
-            assertNotNull(response2);
-            assertEquals(response1.aggregations(), response2.aggregations());
 
             var aggregations = query1.toPagedResponse(response1).aggregations();
 

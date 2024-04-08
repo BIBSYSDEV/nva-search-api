@@ -22,7 +22,6 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
-import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
@@ -86,8 +85,7 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
@@ -156,30 +154,49 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected ResourceParameter getFieldsKey() {
+    protected ResourceParameter keyAggregation() {
+        return AGGREGATION;
+    }
+
+    @Override
+    protected ResourceParameter keyFields() {
         return FIELDS;
     }
 
     @Override
-    protected ResourceParameter getSortOrderKey() {
+    protected ResourceParameter keySearchAfter() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected ResourceParameter keySortOrder() {
         return SORT_ORDER;
     }
 
     @Override
-    protected Integer getFrom() {
-        return parameters().get(FROM).as();
+    protected ResourceParameter toKey(String keyName) {
+        return ResourceParameter.keyFromString(keyName);
     }
 
     @Override
-    protected Integer getSize() {
-        return parameters().get(SIZE).as();
+    protected SortKey toSortKey(String sortName) {
+        return ResourceSort.fromSortKey(sortName);
     }
 
     @Override
-    protected Map<String, String> aggregationsDefinition() {
-        return facetResourcePaths;
+    protected AsType<ResourceParameter> getFrom() {
+        return parameters().get(FROM);
     }
 
+    @Override
+    protected AsType<ResourceParameter> getSize() {
+        return parameters().get(SIZE);
+    }
+
+    @Override
+    public AsType<ResourceParameter> getSort() {
+        return parameters().get(SORT);
+    }
 
     @Override
     public URI getOpenSearchUri() {
@@ -190,22 +207,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected FilterAggregationBuilder getAggregationsWithFilter() {
-        var aggregationFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
-        RESOURCES_AGGREGATIONS
-            .stream().filter(this::isRequestedAggregation)
-            .forEach(aggregationFilter::subAggregation);
-        return aggregationFilter;
+    protected Map<String, String> facetPaths() {
+        return facetResourcePaths;
     }
 
     @Override
-    public AsType<ResourceParameter> getSort() {
-        return parameters().get(SORT);
+    protected List<AggregationBuilder> builderAggregations() {
+        return RESOURCES_AGGREGATIONS;
     }
 
     @Override
-    protected BoolQueryBuilder makeBoolQuery() {
-        var queryBuilder = mainQuery();
+    protected BoolQueryBuilder builderMainQuery() {
+        var queryBuilder = super.builderMainQuery();
         if (isLookingForOneContributor()) {
             addPromotedPublications(this.userSettingsClient, queryBuilder);
         }
@@ -213,40 +226,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
-    protected Stream<Entry<ResourceParameter, QueryBuilder>> customQueryBuilders(ResourceParameter key) {
+    protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
         return switch (key) {
-            case FUNDING -> fundingQueryStream(key);
-            case CRISTIN_IDENTIFIER -> additionalIdentifierQueryStream(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> additionalIdentifierQueryStream(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> subUnitIncludedQueryStream(key);
-            case SEARCH_ALL -> multiMatchQueryStream();
+            case FUNDING -> builderStreamFundingQuery(key);
+            case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            case TOP_LEVEL_ORGANIZATION, UNIT -> builderStreamSubUnitIncludedQuery(key);
+            case SEARCH_ALL -> builderStreamSearchAllWithBoostsQuery();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
-    @Override
-    protected ResourceParameter keyFromString(String keyName) {
-        return ResourceParameter.keyFromString(keyName);
-    }
-
-    @Override
-    protected SortKey fromSortKey(String sortName) {
-        return ResourceSort.fromSortKey(sortName);
-    }
-
-    @Override
-    protected ResourceParameter getSearchAfterKey() {
-        return SEARCH_AFTER;
-    }
-
-    @Override
-    protected boolean isDefined(String keyName) {
-        return parameters().get(AGGREGATION)
-            .asSplitStream(COMMA)
-            .anyMatch(name -> name.equalsIgnoreCase(ALL) || name.equalsIgnoreCase(keyName));
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQueryStream(ResourceParameter key, String source) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamAdditionalIdentifierQuery(ResourceParameter key, String source) {
         var query = QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
@@ -257,7 +248,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryTools.queryToEntry(key, query);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> fundingQueryStream(ResourceParameter key) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamFundingQuery(ResourceParameter key) {
         var values = parameters().get(key).split(COLON);
         var query = QueryBuilders.nestedQuery(
             FUNDINGS,
@@ -268,7 +259,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryTools.queryToEntry(key, query);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> multiMatchQueryStream() {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamSearchAllWithBoostsQuery() {
         var fields = fieldsToKeyNames(parameters().get(FIELDS));
         var sevenValues = parameters().get(SEARCH_ALL).asSplitStream(SPACE)
             .limit(7)
@@ -295,20 +286,20 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryTools.queryToEntry(SEARCH_ALL, query);
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> subUnitIncludedQueryStream(ResourceParameter key) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamSubUnitIncludedQuery(ResourceParameter key) {
         var query =
             parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-                ? termQuery(getTermPath(key), parameters().get(key).as())
-                : termQuery(getMatchPath(key), parameters().get(key).as());
+                ? termQuery(extractTermPath(key), parameters().get(key).as())
+                : termQuery(extractMatchPath(key), parameters().get(key).as());
 
         return queryTools.queryToEntry(key, query);
     }
 
-    private String getTermPath(ResourceParameter key) {
+    private String extractTermPath(ResourceParameter key) {
         return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
     }
 
-    private String getMatchPath(ResourceParameter key) {
+    private String extractMatchPath(ResourceParameter key) {
         return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
     }
 

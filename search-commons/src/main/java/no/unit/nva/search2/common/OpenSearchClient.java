@@ -67,16 +67,13 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
 
-    public abstract R doSearch(Q query);
-
-    protected HttpResponse<String> fetch(HttpRequest httpRequest) {
-        return attempt(() -> httpClient.send(httpRequest, bodyHandler))
-            .orElse(responseFailure -> {
-                logger.error(
-                    new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString()
-                );
-                return null;
-            });
+    public R doSearch(Q query) {
+        return
+            query.assemble()
+                .map(this::createRequest)
+                .map(this::fetch)
+                .map(this::handleResponse)
+                .findFirst().orElseThrow();
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
@@ -90,6 +87,19 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
             .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
+
+    protected HttpResponse<String> fetch(HttpRequest httpRequest) {
+        return attempt(() -> httpClient.send(httpRequest, bodyHandler))
+            .orElse(responseFailure -> {
+                logger.error(
+                    new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString()
+                );
+                return null;
+            });
+    }
+
+    protected abstract R handleResponse(HttpResponse<String> response);
+
 
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
         return result -> {

@@ -4,15 +4,12 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
-import static no.unit.nva.search2.resource.ResourceParameter.CREATED_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.DOI;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.FUNDING;
-import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.resource.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.PUBLISHED_BEFORE;
-import static no.unit.nva.search2.resource.ResourceParameter.PUBLISHED_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -87,10 +84,10 @@ class ResourceQueryTest {
         assertNotNull(resource.parameters().get(SIZE).as());
         var uri2 =
             UriWrapper.fromUri(resource.getNvaSearchApiUri())
-                    .addQueryParameters(resource.parameters().asMap()).getUri();
+                .addQueryParameters(resource.parameters().asMap()).getUri();
 
         logger.info(
-                resource.parameters().asMap()
+            resource.parameters().asMap()
                 .entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&")));
@@ -101,45 +98,25 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
-        var resource =
+        var query =
             ResourceQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
 
-        var modified =
-                resource.parameters().get(MODIFIED_BEFORE).<DateTime>as();
-        if (nonNull(modified)) {
-            logger.info("modified: {}", modified);
+        query.parameters().getSearchKeys()
+            .forEach(key -> logger.info("{} : {}", key.asCamelCase(), query.parameters().get(key).as()));
+
+        var modified = query.parameters().get(MODIFIED_BEFORE);
+        if (!modified.isEmpty()) {
+            logger.info("modified0: {}", modified.asDateTime());
         }
 
-        var publishedBefore =
-                resource.parameters().isPresent(PUBLISHED_BEFORE)
-                        ? resource.parameters().get(PUBLISHED_BEFORE).<DateTime>as()
-                : null;
+        var publishedBefore = query.parameters().ifPresent(PUBLISHED_BEFORE);
         if (nonNull(publishedBefore)) {
-            logger.info("publishedBefore: {}", publishedBefore);
+            logger.info("published1: {}", publishedBefore.<DateTime>as());
         }
 
-        var publishedSince =
-                resource.parameters().isPresent(PUBLISHED_SINCE)
-                        ? resource.parameters().get(PUBLISHED_SINCE).<DateTime>as()
-                : null;
-        if (nonNull(publishedSince)) {
-            logger.info("publishedSince: {}", publishedSince);
-        }
-
-        var created =
-                resource.parameters().get(CREATED_BEFORE).<DateTime>as();
-        if (nonNull(created)) {
-            logger.info("created: {}", created);
-        }
-
-        var category =
-                resource.parameters().get(INSTANCE_TYPE).<String>as();
-        if (nonNull(category)) {
-            logger.info("category: {}", category);
-        }
     }
 
     @ParameterizedTest
@@ -182,8 +159,8 @@ class ResourceQueryTest {
             URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
             URI.create("https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
             URI.create("https://example.com/?CONTRIBUTOR_NOT="
-                       + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                       + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
             URI.create("https://example.com/?fields=all"),
             URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
             URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),
@@ -194,10 +171,10 @@ class ResourceQueryTest {
             URI.create("https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
             URI.create(
                 "https://example.com/?PARENT_PUBLICATION=https://api.dev.nva.aws.unit"
-                + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
+                    + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
             URI.create("https://example.com/?published_before=2020-01-01&lang=en&user=1%2023"),
             URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
-                       + "%20Eplekjekk"));
+                + "%20Eplekjekk"));
     }
 
     static Stream<URI> uriSortingProvider() {
