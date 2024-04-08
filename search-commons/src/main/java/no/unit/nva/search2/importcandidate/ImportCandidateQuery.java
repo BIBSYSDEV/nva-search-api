@@ -14,7 +14,6 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -218,9 +217,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryTools.decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
                 case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.parameters().set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
@@ -231,15 +229,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected boolean isKeyValid(String keyName) {
             return ImportCandidateParameter.keyFromString(keyName) != ImportCandidateParameter.INVALID;
-        }
-
-        @Override
-        protected boolean isAggregationValid(String aggregationName) {
-            return
-                ALL.equalsIgnoreCase(aggregationName)
-                    || NONE.equalsIgnoreCase(aggregationName)
-                    || IMPORT_CANDIDATES_AGGREGATIONS.stream()
-                        .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }

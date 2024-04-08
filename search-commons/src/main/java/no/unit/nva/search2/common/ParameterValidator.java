@@ -111,8 +111,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract boolean isKeyValid(String keyName);
 
-    protected abstract boolean isAggregationValid(String aggregationName);
-
     protected abstract void validateSortKeyName(String name);
 
     /**
@@ -260,14 +258,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
             ? ALL
             : Arrays.stream(value.split(COMMA))
                 .filter(this::isKeyValid)           // ignoring invalid keys
-                .collect(Collectors.joining(COMMA));
-    }
-
-    protected String ignoreInvalidAggregations(String value) {
-        return isNull(value) || value.contains(ALL) || value.contains("ALL")
-            ? ALL
-            : Arrays.stream(value.split(COMMA))
-                .filter(this::isAggregationValid)           // ignoring invalid keys
                 .collect(Collectors.joining(COMMA));
     }
 

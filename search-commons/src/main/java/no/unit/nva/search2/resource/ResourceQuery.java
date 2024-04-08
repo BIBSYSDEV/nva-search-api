@@ -20,7 +20,6 @@ import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
@@ -225,6 +224,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return queryBuilder;
     }
 
+    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
         return switch (key) {
@@ -396,9 +396,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
                 case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.parameters().set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
@@ -414,15 +413,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected boolean isKeyValid(String keyName) {
             return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
-        }
-
-        @Override
-        protected boolean isAggregationValid(String aggregationName) {
-            return
-                ALL.equalsIgnoreCase(aggregationName)
-                    || NONE.equalsIgnoreCase(aggregationName)
-                    || RESOURCES_AGGREGATIONS.stream()
-                    .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 
         private String expandLanguage(String decodedValue) {

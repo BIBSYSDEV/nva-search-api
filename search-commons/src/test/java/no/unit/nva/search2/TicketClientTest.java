@@ -21,17 +21,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -41,9 +48,15 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.ticket.TicketClient;
+import no.unit.nva.search2.ticket.TicketParameter;
 import no.unit.nva.search2.ticket.TicketQuery;
+import no.unit.nva.search2.ticket.TicketStatus;
+import no.unit.nva.search2.ticket.TicketType;
+import nva.commons.apigateway.AccessRight;
+import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -77,8 +90,10 @@ class TicketClientTest {
     private static TicketClient searchClient;
     private static IndexingClient indexingClient;
 
+    private static RequestInfo mockedRequestInfo = mock(RequestInfo.class);
+
     @BeforeAll
-    static void setUp() throws IOException, InterruptedException {
+    static void setUp() throws IOException, InterruptedException, UnauthorizedException {
         container.start();
 
         var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
@@ -86,7 +101,19 @@ class TicketClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
         searchClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
-
+        when(mockedRequestInfo.getTopLevelOrgCristinId())
+            .thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfo.getUserName())
+            .thenReturn(CURRENT_USERNAME);
+        when(mockedRequestInfo.userIsAuthorized(AccessRight.SUPPORT))
+            .thenReturn(Boolean.TRUE)
+            .thenReturn(Boolean.FALSE);
+        when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_DOI))
+            .thenReturn(Boolean.FALSE)
+            .thenReturn(Boolean.TRUE);
+        when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_PUBLISHING_REQUESTS))
+            .thenReturn(Boolean.FALSE)
+            .thenReturn(Boolean.TRUE);
         createIndex();
         populateIndex();
         logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
@@ -119,6 +146,26 @@ class TicketClientTest {
         }
 
         @Test
+        void openSearchFailedResponse() throws IOException, InterruptedException {
+            HttpClient httpClient = mock(HttpClient.class);
+            var response = mock(HttpResponse.class);
+            when(httpClient.send(any(), any())).thenReturn(response);
+            when(response.statusCode()).thenReturn(500);
+            when(response.body()).thenReturn("EXPECTED ERROR");
+            var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
+            var resourceClient2 = new TicketClient(httpClient, setupMockedCachedJwtProvider());
+            assertThrows(
+                RuntimeException.class,
+                () -> TicketQuery.builder()
+                    .withRequiredParameters(TicketParameter.SIZE, TicketParameter.FROM)
+                    .fromQueryParameters(toMapEntries)
+                    .build()
+                    .withFilterOrganization(testOrganizationId)
+                    .doSearch(resourceClient2)
+            );
+        }
+
+        @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
@@ -130,6 +177,11 @@ class TicketClientTest {
                 .withFilterOrganization(testOrganizationId)
                 .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                 .withFilterCurrentUser(CURRENT_USERNAME);
+
+            assertNotNull(FROM.asLowerCase());
+
+            assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
+            assertEquals(TicketType.fromString("wre"), TicketType.NONE);
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -222,9 +274,7 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME)
+                    .applyContextAndAuthorize(mockedRequestInfo)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -263,6 +313,21 @@ class TicketClientTest {
                     .doSearch(searchClient));
         }
 
+        @Test
+        void uriRequestReturnsUnauthorized() {
+            var uri = uriSortingProvider().findFirst().get();
+            var mockedRequestInfoLocal = mock(RequestInfo.class);
+            assertThrows(
+                UnauthorizedException.class,
+                () -> TicketQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .applyContextAndAuthorize(mockedRequestInfoLocal)
+                    .doSearch(searchClient));
+        }
+
+
         static Stream<Arguments> uriPagingProvider() {
             return Stream.of(
                 createArgument("page=0&aggregation=all,the,best,", 20),
@@ -294,8 +359,13 @@ class TicketClientTest {
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
+                URI.create(REQUEST_BASE_URL + "feilName=epler"),
+                URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
                 URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
                 URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
                 URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
                 URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
                 URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
@@ -307,9 +377,6 @@ class TicketClientTest {
         }
     }
 
-    private String joinBy(String delimiter, String... values) {
-        return String.join(delimiter, values);
-    }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
         return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);

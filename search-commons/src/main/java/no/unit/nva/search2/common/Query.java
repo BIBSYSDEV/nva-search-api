@@ -100,7 +100,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract List<AggregationBuilder> builderAggregations();
 
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     protected abstract Stream<Entry<K, QueryBuilder>> builderStreamCustomQuery(K key);
 
     protected Query() {

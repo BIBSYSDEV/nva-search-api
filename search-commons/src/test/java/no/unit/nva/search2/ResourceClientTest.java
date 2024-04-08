@@ -343,7 +343,7 @@ class ResourceClientTest {
             var query =
                 ResourceQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE, AGGREGATION)
+                    .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);

@@ -12,6 +12,7 @@ import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.PUBLISHED_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,9 +24,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -40,6 +43,13 @@ import org.slf4j.LoggerFactory;
 class ResourceQueryTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
+
+    @Test
+    void emptyPagesearch(){
+        var page = new PagedSearch(null,0,null,null,null,null,null);
+        assertEquals(page.aggregations(), Map.of());
+    }
+
 
     @Test
     void openSearchFailedResponse() throws IOException, InterruptedException {

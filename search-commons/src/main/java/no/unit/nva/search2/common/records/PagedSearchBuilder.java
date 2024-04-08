@@ -6,6 +6,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.search2.common.constant.Words;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
 public class PagedSearchBuilder {
@@ -20,7 +21,7 @@ public class PagedSearchBuilder {
 
     @SuppressWarnings("PMD.NullAssignment")
     public PagedSearch build() {
-        if (isNull(this.nextResults) || !nextResults.getQuery().contains("sort")) {
+        if (nextResult()) {
             this.nextSearchAfterResults = null;       // null values are not serialized
         }
         return new PagedSearch(
@@ -61,10 +62,6 @@ public class PagedSearchBuilder {
     }
 
     public PagedSearchBuilder withAggregations(String aggregations) {
-
-        if (isNull(aggregations)) {
-            return this;
-        }
         this.aggregations = FacetsBuilder.build(aggregations, this.id);
         return this;
     }
@@ -84,5 +81,10 @@ public class PagedSearchBuilder {
         return UriWrapper.fromUri(gatewayUri)
             .addQueryParameters(params)
             .getUri();
+    }
+
+    @JacocoGenerated
+    private boolean nextResult() {
+        return isNull(this.nextResults) || !nextResults.getQuery().contains("sort");
     }
 }

@@ -5,7 +5,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_NUMBER;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_BOOLEAN;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
@@ -67,7 +66,7 @@ public interface ParameterKey {
 
     static String getValuePattern(ParameterKind kind, String pattern) {
         return nonNull(pattern) ? pattern : switch (kind) {
-            case BOOLEAN -> PATTERN_IS_BOOLEAN;
+            //    case BOOLEAN -> PATTERN_IS_BOOLEAN;
             case DATE -> PATTERN_IS_DATE;
             case NUMBER -> PATTERN_IS_NUMBER;
             case INVALID -> PATTERN_IS_NONE_OR_ONE;

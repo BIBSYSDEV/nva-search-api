@@ -14,8 +14,6 @@ public interface SortKey {
 
     String keyPattern();
 
-    String jsonPath();
-
     Stream<String> jsonPaths();
 
     String asCamelCase();

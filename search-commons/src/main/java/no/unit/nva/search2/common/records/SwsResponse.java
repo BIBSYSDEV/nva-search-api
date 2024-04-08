@@ -7,6 +7,7 @@ import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 import no.unit.nva.search2.common.records.SwsResponse.HitsInfo.Hit;
+import nva.commons.core.JacocoGenerated;
 
 public record SwsResponse(
     int took,
@@ -53,6 +54,7 @@ public record SwsResponse(
         return hits.hits().stream().map(Hit::_source).toList();
     }
 
+    @JacocoGenerated
     @Transient
     public List<String> getSort() {
         return

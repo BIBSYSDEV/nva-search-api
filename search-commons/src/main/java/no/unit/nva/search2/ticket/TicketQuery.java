@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMEN
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
@@ -38,7 +37,6 @@ import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import java.net.URI;
@@ -270,7 +268,6 @@ public final class TicketQuery extends Query<TicketParameter> {
             allowed.add(TicketType.PUBLISHING_REQUEST);
         }
         if (allowed.isEmpty()) {
-            allowed.add(TicketType.NONE);       // either set filter = none OR throw UnauthorizedException
             throw new UnauthorizedException();
         }
         return allowed.toArray(TicketType[]::new);
@@ -300,7 +297,6 @@ public final class TicketQuery extends Query<TicketParameter> {
             });
         }
 
-        @JacocoGenerated
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
@@ -348,9 +344,8 @@ public final class TicketQuery extends Query<TicketParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE -> query.parameters().set(qpKey, decodedValue);
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
                 case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-                case AGGREGATION -> query.parameters().set(qpKey, ignoreInvalidAggregations(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
@@ -364,15 +359,6 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected boolean isKeyValid(String keyName) {
             return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
-        }
-
-        @Override
-        protected boolean isAggregationValid(String aggregationName) {
-            return
-                ALL.equalsIgnoreCase(aggregationName)
-                    || NONE.equalsIgnoreCase(aggregationName)
-                    || getTicketsAggregations(EMPTY_STRING).stream()
-                        .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }
 }
