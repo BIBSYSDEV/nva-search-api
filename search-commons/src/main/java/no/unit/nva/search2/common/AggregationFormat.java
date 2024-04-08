@@ -31,7 +31,7 @@ public final class AggregationFormat {
     public AggregationFormat() {
     }
 
-    public static JsonNode apply(JsonNode aggregations, Map<String, String> definitions ) {
+    public static JsonNode apply(JsonNode aggregations, Map<String, String> definitions) {
         var objectNode = JsonUtils.dtoObjectMapper.createObjectNode();
         if (nonNull(aggregations)) {
             getAggregationFieldStreams(aggregations, definitions)
@@ -82,7 +82,7 @@ public final class AggregationFormat {
             outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
         } else if (keyIsName(entry)) {
             outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-        } else if(rootHasUniquePublicationsCount(entry)) {
+        } else if (rootHasUniquePublicationsCount(entry)) {
             outputAggregationNode.set(DOC_COUNT, entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
         } else {
             outputAggregationNode.set(entry.getKey(), entry.getValue());
@@ -91,7 +91,7 @@ public final class AggregationFormat {
 
     private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
         return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
-               && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
+            && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations,
@@ -99,7 +99,7 @@ public final class AggregationFormat {
         return definitions
             .entrySet().stream()
             .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
-        );
+            );
     }
 
     private static boolean keyIsName(Entry<String, JsonNode> entry) {
@@ -112,7 +112,7 @@ public final class AggregationFormat {
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
         return Map.entry(getNormalizedFieldName(entry.getKey()),
-                         getBucketOrValue(entry.getValue()));
+            getBucketOrValue(entry.getValue()));
     }
 
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -157,5 +157,4 @@ public final class AggregationFormat {
         public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;
         public static final String BUCKETS_KEY_PTR = SLASH + BUCKETS + KEY_PTR;
     }
-
 }

@@ -408,7 +408,7 @@ class ResourceClientTest {
 
 
         @Test
-        void shouldNotReturnResourcesContainingAffiliationThatShouldBeExcludedWhenAffiliationIsSubunitOfRequestedViewingScopeI()
+        void shouldNotReturnResourcesContainingAffiliationThatShouldBeExcludedWhenIsSubunitOfRequestedViewingScopeI()
             throws BadRequestException {
             var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
                                                  StandardCharsets.UTF_8);

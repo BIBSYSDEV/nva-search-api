@@ -116,6 +116,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
                 .getUri();
     }
+
     @Override
     protected Map<String, String> facetPaths() {
         return FACET_IMPORT_CANDIDATE_PATHS;
@@ -235,9 +236,9 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected boolean isAggregationValid(String aggregationName) {
             return
-                ALL.equalsIgnoreCase(aggregationName) ||
-                    NONE.equalsIgnoreCase(aggregationName) ||
-                    IMPORT_CANDIDATES_AGGREGATIONS.stream()
+                ALL.equalsIgnoreCase(aggregationName)
+                    || NONE.equalsIgnoreCase(aggregationName)
+                    || IMPORT_CANDIDATES_AGGREGATIONS.stream()
                         .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }

@@ -170,7 +170,7 @@ class ImportCandidateClientTest {
 
         @ParameterizedTest
         @MethodSource("uriInvalidProvider")
-        void failToSetREQUIRED(URI uri) {
+        void failToSetRequired(URI uri) {
             assertThrows(BadRequestException.class,
                          () -> ImportCandidateQuery.builder()
                              .fromQueryParameters(queryToMapEntries(uri))

@@ -23,7 +23,9 @@ public interface ParameterKey {
     String asCamelCase();
 
     String asLowerCase();
+
     Float fieldBoost();
+
     ParameterKind fieldType();
 
     String fieldPattern();

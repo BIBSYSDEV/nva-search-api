@@ -12,7 +12,7 @@ import no.unit.nva.search2.common.enums.ParameterKind;
 import org.joda.time.DateTime;
 
 /**
- * AutoConvert value to Date, Number (or String)
+ * AutoConvert value to Date, Number (or String).
  * <p>Also holds key and can return value as <samp>optional stream</samp></p>
  */
 @SuppressWarnings({"PMD.ShortMethodName"})

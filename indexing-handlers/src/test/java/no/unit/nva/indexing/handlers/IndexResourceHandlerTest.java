@@ -166,12 +166,12 @@ public class IndexResourceHandlerTest {
         };
     }
 
-    private URI prepareEventStorageResourceFile() throws IOException {
-        return prepareEventStorageResourceFile(SAMPLE_RESOURCE);
-    }
-
     private URI prepareEventStorageTicketFile() throws IOException {
         return prepareEventStorageResourceFile(SAMPLE_TICKET);
+    }
+
+    private URI prepareEventStorageResourceFile() throws IOException {
+        return prepareEventStorageResourceFile(SAMPLE_RESOURCE);
     }
 
     private URI prepareEventStorageResourceFile(IndexDocument resource) throws IOException {

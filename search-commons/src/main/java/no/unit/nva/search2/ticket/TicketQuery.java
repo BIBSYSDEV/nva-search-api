@@ -369,9 +369,9 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected boolean isAggregationValid(String aggregationName) {
             return
-                ALL.equalsIgnoreCase(aggregationName) ||
-                    NONE.equalsIgnoreCase(aggregationName) ||
-                    getTicketsAggregations(EMPTY_STRING).stream()
+                ALL.equalsIgnoreCase(aggregationName)
+                    || NONE.equalsIgnoreCase(aggregationName)
+                    || getTicketsAggregations(EMPTY_STRING).stream()
                         .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
     }

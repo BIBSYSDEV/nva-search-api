@@ -237,7 +237,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         };
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamAdditionalIdentifierQuery(ResourceParameter key, String source) {
+    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamAdditionalIdentifierQuery(
+        ResourceParameter key, String source) {
         var query = QueryBuilders.nestedQuery(
             ADDITIONAL_IDENTIFIERS,
             boolQuery()
@@ -401,10 +402,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                    PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
+                     PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
-                    MODIFIED_BEFORE, MODIFIED_SINCE,
-                    PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                     MODIFIED_BEFORE, MODIFIED_SINCE,
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
@@ -418,9 +419,9 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected boolean isAggregationValid(String aggregationName) {
             return
-                ALL.equalsIgnoreCase(aggregationName) ||
-                NONE.equalsIgnoreCase(aggregationName) ||
-                RESOURCES_AGGREGATIONS.stream()
+                ALL.equalsIgnoreCase(aggregationName)
+                    || NONE.equalsIgnoreCase(aggregationName)
+                    || RESOURCES_AGGREGATIONS.stream()
                     .anyMatch(builder -> builder.getName().equalsIgnoreCase(aggregationName));
         }
 

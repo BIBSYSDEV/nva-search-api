@@ -92,7 +92,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected abstract URI getOpenSearchUri();
 
     /**
-     * Path to each and every facet defined in  builderAggregations()
+     * Path to each and every facet defined in  builderAggregations().
+     *
      * @return MapOf(Name, Path)
      */
     protected abstract Map<String, String> facetPaths();
@@ -192,7 +193,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             case FREE_TEXT -> queryTools.queryToEntry(key, builderSearchAllQuery(key));
             case CUSTOM -> builderStreamCustomQuery(key);
             case IGNORED -> Stream.empty();
-            default -> throw new RuntimeException("handler NOT defined -> "+ key.name());
+            default -> throw new RuntimeException("handler NOT defined -> " + key.name());
         };
     }
 
@@ -245,7 +246,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             });
     }
 
-    protected AggregationBuilder builderAggregationsWithFilter(){
+    protected AggregationBuilder builderAggregationsWithFilter() {
         var aggrFilter = AggregationBuilders.filter(POST_FILTER, filters.get());
         builderAggregations().forEach(aggrFilter::subAggregation);
         return aggrFilter;

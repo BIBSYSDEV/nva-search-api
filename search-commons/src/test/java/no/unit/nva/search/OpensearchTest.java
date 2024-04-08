@@ -544,8 +544,8 @@ public class OpensearchTest {
             }
 
             @Test
-            void shouldOnlyReturnPublishingRequestsWhenUserOnlyHasAccessToPublishingRequest() throws ApiGatewayException,
-                                                                             InterruptedException {
+            void shouldOnlyReturnPublishingRequestsWhenUserOnlyHasAccessToPublishingRequest()
+                throws ApiGatewayException, InterruptedException {
 
                 addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
                     "ticket_general_support_case_of_published_publication.json");
@@ -563,8 +563,8 @@ public class OpensearchTest {
             }
 
             @Test
-            void shouldNotReturnAnyDocumentsWhenNoAllowedCuratorSearchTypes() throws ApiGatewayException,
-                                                                                                     InterruptedException {
+            void shouldNotReturnAnyDocumentsWhenNoAllowedCuratorSearchTypes()
+                throws ApiGatewayException, InterruptedException {
 
                 addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
                     "ticket_general_support_case_of_published_publication.json");

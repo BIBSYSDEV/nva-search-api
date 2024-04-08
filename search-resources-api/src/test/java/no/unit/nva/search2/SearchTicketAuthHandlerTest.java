@@ -107,13 +107,13 @@ class SearchTicketAuthHandlerTest {
     private InputStream getInputStreamWithAccessRight(URI organization, AccessRight accessRight)
         throws JsonProcessingException {
         var personAffiliationId = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.1.0.0";
-        var PERSON_AFFILIATION = "custom:personAffiliation";
+        var personAffiliation = "custom:personAffiliation";
         var topLevelOrgCristinId = URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withHeaders(Map.of(ACCEPT, "application/json"))
             .withRequestContext(getRequestContext())
             .withTopLevelCristinOrgId(topLevelOrgCristinId)
-            .withAuthorizerClaim(PERSON_AFFILIATION, personAffiliationId)
+            .withAuthorizerClaim(personAffiliation, personAffiliationId)
             .withUserName(randomString())
             .withCurrentCustomer(organization)
             .withAccessRights(organization, accessRight)
