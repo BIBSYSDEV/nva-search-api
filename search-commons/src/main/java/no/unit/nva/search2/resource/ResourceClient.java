@@ -5,6 +5,8 @@ import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.time.Instant;
+
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.SwsResponse;
@@ -35,6 +37,8 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
 
     @Override
     public SwsResponse doSearch(ResourceQuery query) {
+        doSearchStart = Instant.now();
+        queryBuilderStart = query.getStartTime();
         return
             query.withUserSettings(userSettingsClient)
                 .assemble()

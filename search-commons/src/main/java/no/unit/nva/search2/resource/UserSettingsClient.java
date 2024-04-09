@@ -17,6 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.stream.Stream;
 import no.unit.nva.search.CachedJwtProvider;
@@ -31,6 +32,9 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
 
     @Override
     public UserSettings doSearch(ResourceQuery query) {
+        doSearchStart = Instant.now();
+        queryBuilderStart = query.getStartTime();
+
         return
             createQueryBuilderStream(query)
                 .map(this::createRequest)

@@ -20,6 +20,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -61,9 +62,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
+    protected final transient QueryFilter filters;
     protected final transient QueryTools<K> queryTools;
     private final transient QueryKeys<K> queryKeys;
-    protected final transient QueryFilter filters;
+    private final transient Instant startTime;
 
 
     protected abstract AsType<K> getFrom();
@@ -103,10 +105,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected abstract Stream<Entry<K, QueryBuilder>> builderStreamCustomQuery(K key);
 
     protected Query() {
+        startTime = Instant.now();
         queryTools = new QueryTools<>();
         queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
         filters = new QueryFilter();
-        setMediaType(MediaType.JSON_UTF_8.toString());
+        setMediaType(JSON_UTF_8.toString());
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
@@ -115,6 +118,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
             : toPagedResponse(response).toJsonString();
+    }
+
+    public Instant getStartTime() {
+        return startTime;
     }
 
     public PagedSearch toPagedResponse(SwsResponse response) {

@@ -1,6 +1,7 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
@@ -114,6 +115,12 @@ class TicketClientTest {
         when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_PUBLISHING_REQUESTS))
             .thenReturn(Boolean.FALSE)
             .thenReturn(Boolean.TRUE);
+        when(mockedRequestInfo.getHeaders())
+            .thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
+        when(mockedRequestInfo.getRequestUri())
+            .thenReturn(URI.create(container.getHttpHostAddress()));
+        when(mockedRequestInfo.getQueryParameters())
+            .thenReturn(Map.of("invalidkey", "bogus value"));
         createIndex();
         populateIndex();
         logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
@@ -268,10 +275,9 @@ class TicketClientTest {
         void uriRequestReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult =
                 TicketQuery.builder()
+                    .fromRequestInfo(mockedRequestInfo)
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withMediaType(Words.TEXT_CSV)
                     .build()
                     .applyContextAndAuthorize(mockedRequestInfo)
                     .doSearch(searchClient);

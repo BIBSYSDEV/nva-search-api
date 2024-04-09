@@ -3,13 +3,11 @@ package no.unit.nva.search2.common.records;
 import no.unit.nva.commons.json.JsonSerializable;
 
 public record ResponseLogInfo(
-    long queryTime,
-    long fetchTime,
-    long postFetchTime,
-    long clientTime,
-    long totalTime,
-    int totalHits
-
+    int totalHits,
+    long queryDuration,
+    long networkDuration,
+    long prePostDuration,
+    long totalDuration
 )  implements JsonSerializable {
 
     public static Builder builder() {
@@ -21,7 +19,6 @@ public record ResponseLogInfo(
 
         private int totalHits;
         private long totalTime;
-        private long clientTime;
         private long fetchTime;
         private long searchTime;
 
@@ -30,11 +27,6 @@ public record ResponseLogInfo(
 
         public Builder withFetchTime(long fetchDuration) {
             this.fetchTime = fetchDuration;
-            return this;
-        }
-
-        public Builder withClientTime(long milliseconds) {
-            this.clientTime = milliseconds;
             return this;
         }
 
@@ -61,12 +53,11 @@ public record ResponseLogInfo(
 
         public String toJsonString() {
             return new ResponseLogInfo(
+                totalHits,
                 searchTime,
                 fetchTime - searchTime,
                 totalTime - fetchTime,
-                clientTime,
-                totalTime,
-                totalHits
+                totalTime
             ).toJsonString();
         }
     }

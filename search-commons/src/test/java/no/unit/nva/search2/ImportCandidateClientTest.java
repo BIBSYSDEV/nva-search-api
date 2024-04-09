@@ -102,7 +102,8 @@ class ImportCandidateClientTest {
                 RuntimeException.class,
                 () -> ImportCandidateQuery.builder()
                     .withRequiredParameters(SIZE, FROM)
-                    .fromQueryParameters(toMapEntries).build()
+                    .fromQueryParameters(toMapEntries)
+                    .build()
                     .doSearch(importCandidateClient)
             );
         }
