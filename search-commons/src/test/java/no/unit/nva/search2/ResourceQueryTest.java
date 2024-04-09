@@ -45,8 +45,8 @@ class ResourceQueryTest {
     private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
 
     @Test
-    void emptyPagesearch(){
-        var page = new PagedSearch(null,0,null,null,null,null,null);
+    void emptyPagesearch() {
+        var page = new PagedSearch(null, 0, null, null, null, null, null);
         assertEquals(page.aggregations(), Map.of());
     }
 

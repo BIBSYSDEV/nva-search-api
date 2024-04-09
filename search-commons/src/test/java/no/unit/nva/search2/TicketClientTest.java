@@ -39,6 +39,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -48,7 +49,6 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.ticket.TicketClient;
-import no.unit.nva.search2.ticket.TicketParameter;
 import no.unit.nva.search2.ticket.TicketQuery;
 import no.unit.nva.search2.ticket.TicketStatus;
 import no.unit.nva.search2.ticket.TicketType;
@@ -90,7 +90,7 @@ class TicketClientTest {
     private static TicketClient searchClient;
     private static IndexingClient indexingClient;
 
-    private static RequestInfo mockedRequestInfo = mock(RequestInfo.class);
+    private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
 
     @BeforeAll
     static void setUp() throws IOException, InterruptedException, UnauthorizedException {
@@ -157,7 +157,7 @@ class TicketClientTest {
             assertThrows(
                 RuntimeException.class,
                 () -> TicketQuery.builder()
-                    .withRequiredParameters(TicketParameter.SIZE, TicketParameter.FROM)
+                    .withRequiredParameters(SIZE, FROM)
                     .fromQueryParameters(toMapEntries)
                     .build()
                     .withFilterOrganization(testOrganizationId)
@@ -178,11 +178,6 @@ class TicketClientTest {
                 .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                 .withFilterCurrentUser(CURRENT_USERNAME);
 
-            assertNotNull(FROM.asLowerCase());
-
-            assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
-            assertEquals(TicketType.fromString("wre"), TicketType.NONE);
-
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
@@ -194,6 +189,10 @@ class TicketClientTest {
             assertThat(aggregations.get(TYPE).size(), is(3));
             assertThat(aggregations.get(STATUS).get(0).count(), is(11));
             assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
+            assertNotNull(FROM.asLowerCase());
+            assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
+            assertEquals(TicketType.fromString("wre"), TicketType.NONE);
+
         }
 
         @Test
@@ -315,12 +314,13 @@ class TicketClientTest {
 
         @Test
         void uriRequestReturnsUnauthorized() {
-            var uri = uriSortingProvider().findFirst().get();
+            AtomicReference<URI> uri = new AtomicReference<>();
+            uriSortingProvider().findFirst().ifPresent(uri::set);
             var mockedRequestInfoLocal = mock(RequestInfo.class);
             assertThrows(
                 UnauthorizedException.class,
                 () -> TicketQuery.builder()
-                    .fromQueryParameters(queryToMapEntries(uri))
+                    .fromQueryParameters(queryToMapEntries(uri.get()))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .applyContextAndAuthorize(mockedRequestInfoLocal)
