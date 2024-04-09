@@ -238,6 +238,28 @@ class ResourceClientTest {
         }
 
         @Test
+        void userSettingsFailswithWrongFormat() throws IOException, InterruptedException, BadRequestException {
+            var mochedHttpClient = mock(HttpClient.class);
+            var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
+            when(mochedHttpClient.send(any(), any()))
+                .thenReturn(mockedHttpResponse("user_settings_empty.json", 200));
+            var searchClient =
+                new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, setupMockedCachedJwtProvider());
+
+            var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
+            var response = ResourceQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .withRequiredParameters(FROM, SIZE)
+                .build()
+                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .doSearch(searchClient);
+
+            assertNotNull(response);
+        }
+
+
+        @Test
         void emptyResultShouldIncludeHits() throws BadRequestException {
             var uri = URI.create("https://x.org/?id=018b857b77b7");
 

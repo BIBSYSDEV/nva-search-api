@@ -57,6 +57,7 @@ class ImportCandidateClientTest {
     public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.11.0";
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+    public static final String REQUEST_BASE_URL = "https://example.com/?";
     private static IndexingClient indexingClient;
     private static ImportCandidateClient importCandidateClient;
 
@@ -94,7 +95,7 @@ class ImportCandidateClientTest {
             when(httpClient.send(any(), any())).thenReturn(response);
             when(response.statusCode()).thenReturn(500);
             when(response.body()).thenReturn("EXPECTED ERROR");
-            var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
+            var toMapEntries = queryToMapEntries(URI.create(REQUEST_BASE_URL + "size=2"));
             var importCandidateClient = new ImportCandidateClient(httpClient, setupMockedCachedJwtProvider());
 
             assertThrows(
@@ -182,49 +183,58 @@ class ImportCandidateClientTest {
 
         static Stream<URI> uriSortingProvider() {
             return Stream.of(
-                URI.create("https://example.com/?sort=title&sortOrder=asc&sort=created_date&order=desc"),
-                URI.create("https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
-                URI.create("https://example.com/?category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
-                URI.create("https://example.com/?category=AcademicArticle&size=10&from=0&sort=created_date"),
-                URI.create("https://example.com/?orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
-                URI.create("https://example.com/?orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
-                URI.create("https://example.com/?category=AcademicArticle&sort=TYPE+asc&sort=INSTANCE_TYPE+desc"));
+                URI.create(REQUEST_BASE_URL + "sort=title&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
+                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
+                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=10&from=0&sort=created_date"),
+                URI.create(REQUEST_BASE_URL + "orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
+                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=TYPE+asc&sort=INSTANCE_TYPE+desc"));
         }
 
         static Stream<URI> uriProvider() {
             return Stream.of(
-                URI.create("https://example.com/?size=8"),
-                URI.create("https://example.com/?aggregation=ALL&size=8"),
-                URI.create("https://example.com/?aggregation=importStatus&size=8"),
-                URI.create("https://example.com/?category=AcademicArticle&size=5"),
-                URI.create("https://example.com/?CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
-                URI.create("https://example.com/?CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
-                URI.create("https://example.com/?CONTRIBUTOR_NAME_NOT=George+Rigos&size=7"),
-                URI.create("https://example.com/?PUBLICATION_YEAR_BEFORE=2023&size=5"),
-                URI.create("https://example.com/?publication_year=2022&size=1"),
-                URI.create("https://example.com/?PublicationYearBefore=2024&publication_year_since=2023&size=3"),
-                URI.create("https://example.com/?title=In+reply:+Why+big+data&size=1"),
-                URI.create("https://example.com/?title=chronic+diseases&size=1"),
-                URI.create("https://example.com/?title_should=antibacterial,Fishing&size=2"),
-                URI.create("https://example.com/?query=antibacterial&fields=category,title&size=1"),
-                URI.create("https://example.com/?query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
-                URI.create("https://example.com/?query=European&fields=all&size=3"),
-                URI.create("https://example.com/?CRISTIN_IDENTIFIER=3212342&size=1"),
-                URI.create("https://example.com/?SCOPUS_IDENTIFIER=3212342&size=1"));
+                URI.create(REQUEST_BASE_URL + "size=8"),
+                URI.create(REQUEST_BASE_URL + "aggregation=ALL&size=8"),
+                URI.create(REQUEST_BASE_URL + "aggregation=importStatus&size=8"),
+                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=5"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME_NOT=George+Rigos&size=7"),
+                URI.create(REQUEST_BASE_URL + "PUBLICATION_YEAR_BEFORE=2023&size=5"),
+                URI.create(REQUEST_BASE_URL + "publication_year=2022&size=1"),
+                URI.create(REQUEST_BASE_URL + "PublicationYearBefore=2024&publication_year_since=2023&size=3"),
+                URI.create(REQUEST_BASE_URL + "title=In+reply:+Why+big+data&size=1"),
+                URI.create(REQUEST_BASE_URL + "title=chronic+diseases&size=1"),
+                URI.create(REQUEST_BASE_URL + "title_should=antibacterial,Fishing&size=2"),
+                URI.create(REQUEST_BASE_URL + "query=antibacterial&fields=category,title&size=1"),
+                URI.create(REQUEST_BASE_URL + "query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
+                URI.create(REQUEST_BASE_URL + "query=European&fields=all&size=3"),
+                URI.create(REQUEST_BASE_URL + "CRISTIN_IDENTIFIER=3212342&size=1"),
+                URI.create(REQUEST_BASE_URL + "SCOPUS_IDENTIFIER=3212342&size=1"));
         }
 
         static Stream<URI> uriInvalidProvider() {
             return Stream.of(
-                URI.create("https://example.com/?size=7&sort="),
-                URI.create("https://example.com/?query=European&fields"),
-                URI.create("https://example.com/?size=8&sort=epler"),
-                URI.create("https://example.com/?size=8&sort=type:DEdd"),
-                URI.create("https://example.com/?categories=hello+world"),
-                URI.create("https://example.com/?tittles=hello+world&modified_before=2019-01"),
-                URI.create("https://example.com/?conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),
-                URI.create("https://example.com/?category=PhdThesis&sort=beunited+asc"),
-                URI.create("https://example.com/?funding=NFR,296896"),
-                URI.create("https://example.com/?useers=hello+world"));
+                URI.create(REQUEST_BASE_URL + "size=7&sort="),
+                URI.create(REQUEST_BASE_URL + "query=European&fields"),
+
+                URI.create(REQUEST_BASE_URL + "feilName=epler"),
+                URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
+                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
+
+                URI.create(REQUEST_BASE_URL + "size=8&sort=epler"),
+                URI.create(REQUEST_BASE_URL + "size=8&sort=type:DEdd"),
+                URI.create(REQUEST_BASE_URL + "categories=hello+world"),
+                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01"),
+                URI.create(REQUEST_BASE_URL + "conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),
+                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
+                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
+                URI.create(REQUEST_BASE_URL + "useers=hello+world"));
         }
     }
 
