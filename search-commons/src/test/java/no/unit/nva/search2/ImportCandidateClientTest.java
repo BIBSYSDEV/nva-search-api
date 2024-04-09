@@ -54,7 +54,7 @@ class ImportCandidateClientTest {
 
     protected static final Logger logger = LoggerFactory.getLogger(ImportCandidateClientTest.class);
     public static final String SAMPLE_IMPORT_CANDIDATES = "datasource_import_candidates.json";
-    public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.12.0";
+    public static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.11.0";
     public static final long DELAY_AFTER_INDEXING = 1000L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     private static IndexingClient indexingClient;
