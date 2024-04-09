@@ -67,6 +67,7 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Defaults;
@@ -208,6 +209,7 @@ public final class Constants {
         ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD
     );
+    public static final String PAINLESS = "painless";
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
@@ -401,7 +403,7 @@ public final class Constants {
         return
             AggregationBuilders
                 .terms(LICENSE)
-                .script(uriAsGroup())
+                .script(groupByLicenses())
                 .size(Defaults.DEFAULT_AGGREGATION_SIZE)
                 .subAggregation(AggregationBuilders
                     .terms(NAME)
@@ -427,11 +429,11 @@ public final class Constants {
             def path_parts = doc[params['path']].value.splitOnToken('/');
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
-        return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of("path", path));
     }
 
 
-    public static Script uriAsGroup() {
+    public static Script groupByLicenses() {
         var script = """
             if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
             def url = doc['associatedArtifacts.license.keyword'].value;
@@ -450,8 +452,37 @@ public final class Constants {
             }
             return "Other";
             """;
-        return new Script(ScriptType.INLINE, "painless", script, Map.of());
+        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
     }
+
+    public static Script selectByLicense(String license) {
+        var script = """
+            if (doc['associatedArtifacts.license.keyword'].size()==0) { return false;}
+            def url = doc['associatedArtifacts.license.keyword'].value;
+            if (url.contains("/by-nc-nd")) {
+              return "CC-NC-ND".equals(params.license);
+            } else if (url.contains("/by-nc-sa")) {
+              return "CC-NC-SA".equals(params.license);
+            } else if (url.contains("/by-nc")) {
+              return "CC-NC".equals(params.license);
+            } else if (url.contains("/by-nd")) {
+              return "CC-ND".equals(params.license);
+            } else if (url.contains("/by-sa")) {
+              return "CC-SA".equals(params.license);
+            } else if (url.contains("/by")) {
+              return "CC-BY".equals(params.license);
+            } else {
+                return "Other".equals(params.license);
+            }
+            """;
+        return new Script(
+            ScriptType.INLINE,
+            PAINLESS,
+            script,
+            Map.of("license", license.toUpperCase(Locale.getDefault()))
+        );
+    }
+
 
     public static Script licenseLabel() {
         var script = """
@@ -472,7 +503,7 @@ public final class Constants {
             }
             return "Other license";
             """;
-        return new Script(ScriptType.INLINE, "painless", script, Map.of());
+        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
     }
 
     private static String multipleFields(String... values) {
