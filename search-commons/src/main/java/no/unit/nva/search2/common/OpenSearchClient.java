@@ -37,7 +37,8 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final HttpClient httpClient;
     protected final BodyHandler<String> bodyHandler;
     protected final CachedJwtProvider jwtProvider;
-    protected Instant requestStart;
+    protected Instant queryBuilderStart;
+    protected long fetchDuration;
 
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
@@ -67,21 +68,34 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
 
-    public abstract R doSearch(Q query);
+    public R doSearch(Q query) {
+        queryBuilderStart = query.getStartTime();
+        return
+            query.assemble()
+                .map(this::createRequest)
+                .map(this::fetch)
+                .map(this::handleResponse)
+                .findFirst().orElseThrow();
+    }
+
+    protected abstract R handleResponse(HttpResponse<String> response);
 
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
+        var fetchStart = Instant.now();
         return attempt(() -> httpClient.send(httpRequest, bodyHandler))
+            .map(response -> {
+                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+                return response;
+            })
             .orElse(responseFailure -> {
-                logger.error(
-                    new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString()
-                );
+                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+                logger.error(new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString());
                 return null;
             });
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.debug(qbs.source().query().toString());
-        requestStart = Instant.now();
         return HttpRequest
             .newBuilder(qbs.requestUri())
             .headers(
@@ -91,20 +105,24 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
     }
 
+
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
         return result -> {
-            logger.info(
-                ResponseLogInfo.builder()
-                    .withResponseTime(getRequestDuration())
-                    .withSwsResponse(result)
-                    .toJsonString()
+            logger.info(ResponseLogInfo.builder()
+                .withTotalTime(totalDuration())
+                .withFetchTime(fetchDuration)
+                .withSwsResponse(result)
+                .toJsonString()
             );
             return result;
         };
     }
 
-    private long getRequestDuration() {
-        return Duration.between(requestStart, Instant.now()).toMillis();
+
+    private long totalDuration() {
+        return Duration
+            .between(queryBuilderStart, Instant.now())
+            .toMillis();
     }
 
     record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {

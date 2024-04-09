@@ -3,10 +3,11 @@ package no.unit.nva.search2.common.records;
 import no.unit.nva.commons.json.JsonSerializable;
 
 public record ResponseLogInfo(
-    long opensearchTime,
-    long processingTime,
-    int totalHits
-
+    int totalHits,
+    long queryDuration,
+    long networkDuration,
+    long prePostDuration,
+    long totalDuration
 )  implements JsonSerializable {
 
     public static Builder builder() {
@@ -17,24 +18,30 @@ public record ResponseLogInfo(
     public static final class Builder {
 
         private int totalHits;
-        private long responseTime;
-        private long opensearchResponseTime;
+        private long totalTime;
+        private long fetchTime;
+        private long searchTime;
 
         private Builder() {
         }
 
-        public Builder withTotalHits(int totalHits) {
-            this.totalHits = totalHits;
+        public Builder withFetchTime(long fetchDuration) {
+            this.fetchTime = fetchDuration;
             return this;
         }
 
-        public Builder withResponseTime(long milliseconds) {
-            this.responseTime = milliseconds;
+        public Builder withTotalTime(long milliseconds) {
+            this.totalTime = milliseconds;
             return this;
         }
 
         public Builder withOpensearchResponseTime(long milliseconds) {
-            this.opensearchResponseTime = milliseconds;
+            this.searchTime = milliseconds;
+            return this;
+        }
+
+        public Builder withTotalHits(int totalHits) {
+            this.totalHits = totalHits;
             return this;
         }
 
@@ -46,9 +53,11 @@ public record ResponseLogInfo(
 
         public String toJsonString() {
             return new ResponseLogInfo(
-                opensearchResponseTime,
-                responseTime,
-                totalHits
+                totalHits,
+                searchTime,
+                fetchTime - searchTime,
+                totalTime - fetchTime,
+                totalTime
             ).toJsonString();
         }
     }

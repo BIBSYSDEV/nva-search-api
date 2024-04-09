@@ -59,11 +59,6 @@ public enum ResourceSort implements SortKey {
     }
 
     @Override
-    public String jsonPath() {
-        return path;
-    }
-
-    @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
     }
@@ -82,7 +77,7 @@ public enum ResourceSort implements SortKey {
         return Arrays.stream(ResourceSort.values())
             .sorted(SortKey::compareAscending)
             .skip(1)
-            .map(Enum::name)
+            .map(SortKey::asLowerCase)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

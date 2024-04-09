@@ -162,7 +162,6 @@ public final class Constants {
     public static final String TOP_LEVEL_ORG_ID = multipleFields(
         TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD,
         jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-        //        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
     );
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;

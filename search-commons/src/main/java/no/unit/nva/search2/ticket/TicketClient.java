@@ -24,15 +24,6 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketQuery> {
     }
 
     @Override
-    public SwsResponse doSearch(TicketQuery query) {
-        return
-            query.createQueryBuilderStream()
-                .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
-                .findFirst().orElseThrow();
-    }
-
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

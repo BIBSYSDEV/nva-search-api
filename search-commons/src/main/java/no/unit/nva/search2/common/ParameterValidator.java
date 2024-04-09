@@ -111,8 +111,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     protected abstract boolean isKeyValid(String keyName);
 
-    protected abstract boolean isAggregationValid(String aggregationName);
-
     protected abstract void validateSortKeyName(String name);
 
     /**
@@ -167,15 +165,9 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         }
     }
 
-    protected boolean invalidQueryParameter(K key, String value) {
-        return isNull(value) || Arrays.stream(value.split(COMMA))
-            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
-    }
-
     /**
      * Adds query and path parameters from requestInfo.
      */
-    @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         query.setNvaSearchApiUri(requestInfo.getRequestUri());
@@ -187,7 +179,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      *
      * @apiNote This is intended to be used when setting up tests.
      */
-    @JacocoGenerated
     public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> testParameters) {
         testParameters.forEach(this::setValue);
         return this;
@@ -255,22 +246,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }
 
-    protected String ignoreInvalidFields(String value) {
-        return ALL.equalsIgnoreCase(value) || isNull(value)
-            ? ALL
-            : Arrays.stream(value.split(COMMA))
-                .filter(this::isKeyValid)           // ignoring invalid keys
-                .collect(Collectors.joining(COMMA));
-    }
-
-    protected String ignoreInvalidAggregations(String value) {
-        return isNull(value) || value.contains(ALL) || value.contains("ALL")
-            ? ALL
-            : Arrays.stream(value.split(COMMA))
-                .filter(this::isAggregationValid)           // ignoring invalid keys
-                .collect(Collectors.joining(COMMA));
-    }
-
     protected String expandYearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;
     }
@@ -281,6 +256,22 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
                 .map(fromString)
                 .map(Enum::toString)
                 .collect(Collectors.joining(COMMA));
+    }
+
+
+    @JacocoGenerated
+    protected String ignoreInvalidFields(String value) {
+        return ALL.equalsIgnoreCase(value) || isNull(value)
+            ? ALL
+            : Arrays.stream(value.split(COMMA))
+            .filter(this::isKeyValid)           // ignoring invalid keys
+            .collect(Collectors.joining(COMMA));
+    }
+
+    @JacocoGenerated
+    protected boolean invalidQueryParameter(K key, String value) {
+        return isNull(value) || Arrays.stream(value.split(COMMA))
+            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
     }
 
 }

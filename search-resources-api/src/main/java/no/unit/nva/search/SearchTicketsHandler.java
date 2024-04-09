@@ -99,6 +99,7 @@ public class SearchTicketsHandler extends ApiGatewayHandler<Void, SearchResponse
                    .must(QueryBuilders.matchQuery(mustField, owner).operator(Operator.AND))
                    .mustNot(QueryBuilders.matchQuery(notInField, owner).operator(Operator.AND));
     }
+
     private SearchResponseDto handleSearch(RequestInfo requestInfo, String indexName)
         throws ApiGatewayException {
         var role = requestInfo.getQueryParameterOpt(PARAM_ROLE).orElse(ROLE_CURATOR);

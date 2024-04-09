@@ -151,7 +151,7 @@ public enum TicketParameter implements ParameterKey {
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[]{name()};
+            : new String[] {name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
@@ -160,14 +160,17 @@ public enum TicketParameter implements ParameterKey {
             : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
     }
+
     @Override
     public String asLowerCase() {
         return this.name().toLowerCase(Locale.getDefault());
     }
+
     @Override
     public Float fieldBoost() {
         return boost;

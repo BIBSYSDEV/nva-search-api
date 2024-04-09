@@ -115,4 +115,10 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
     public boolean isPresent(K key) {
         return search.containsKey(key) || page.containsKey(key);
     }
+
+    public AsType<K> ifPresent(K key) {
+        return isPresent(key)
+            ? get(key)
+            : null;
+    }
 }

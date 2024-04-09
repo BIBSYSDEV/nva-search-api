@@ -45,7 +45,7 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
     private Stream<QueryBuilder> phrasePrefixBuilder(String singleValue, K key) {
         return Stream.concat(
             key.searchFields(KEYWORD_FALSE).map(fieldName -> matchPhrasePrefixQuery(fieldName, singleValue)
-                .boost(key.fieldBoost()+0.1F)),
+                .boost(key.fieldBoost() + 0.1F)),
             key.searchFields(KEYWORD_FALSE).map(fieldName -> matchQuery(fieldName, singleValue)
                 .operator(Operator.AND)
                 .boost(key.fieldBoost())));
