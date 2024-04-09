@@ -24,16 +24,6 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
     }
 
     @Override
-    public SwsResponse doSearch(ImportCandidateQuery query) {
-        return
-            query.createQueryBuilderStream()
-                .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
-                .findFirst().orElseThrow();
-    }
-
-
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

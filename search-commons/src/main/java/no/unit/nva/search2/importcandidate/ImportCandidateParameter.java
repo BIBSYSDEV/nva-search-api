@@ -157,6 +157,7 @@ public enum ImportCandidateParameter implements ParameterKey {
             : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -166,6 +167,7 @@ public enum ImportCandidateParameter implements ParameterKey {
     public String asLowerCase() {
         return this.name().toLowerCase(Locale.getDefault());
     }
+
     @Override
     public Float fieldBoost() {
         return boost;

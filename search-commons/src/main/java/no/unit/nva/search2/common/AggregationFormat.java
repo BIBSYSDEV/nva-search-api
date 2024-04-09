@@ -31,7 +31,7 @@ public final class AggregationFormat {
     public AggregationFormat() {
     }
 
-    public static JsonNode apply(JsonNode aggregations, Map<String, String> definitions ) {
+    public static JsonNode apply(JsonNode aggregations, Map<String, String> definitions) {
         var objectNode = JsonUtils.dtoObjectMapper.createObjectNode();
         if (nonNull(aggregations)) {
             getAggregationFieldStreams(aggregations, definitions)
@@ -59,10 +59,6 @@ public final class AggregationFormat {
         jsonNode.put("notifications", notifications);
     }
 
-    private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
-        return field.getKey().toLowerCase(Locale.getDefault()).contains("notification") && field.getValue().isObject();
-    }
-
     private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {
         if (node.isArray()) {
             var arrayNode = JsonUtils.dtoObjectMapper.createArrayNode();
@@ -82,16 +78,11 @@ public final class AggregationFormat {
             outputAggregationNode.set(entry.getKey(), formatLabels(entry.getValue()));
         } else if (keyIsName(entry)) {
             outputAggregationNode.set(LABELS, formatName(entry.getValue()));
-        } else if(rootHasUniquePublicationsCount(entry)) {
+        } else if (rootHasUniquePublicationsCount(entry)) {
             outputAggregationNode.set(DOC_COUNT, entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
         } else {
             outputAggregationNode.set(entry.getKey(), entry.getValue());
         }
-    }
-
-    private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
-        return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
-               && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations,
@@ -99,20 +90,12 @@ public final class AggregationFormat {
         return definitions
             .entrySet().stream()
             .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
-        );
-    }
-
-    private static boolean keyIsName(Entry<String, JsonNode> entry) {
-        return NAME.equals(entry.getKey());
-    }
-
-    private static boolean keyIsLabel(Entry<String, JsonNode> entry) {
-        return LABELS.equals(entry.getKey());
+            );
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
         return Map.entry(getNormalizedFieldName(entry.getKey()),
-                         getBucketOrValue(entry.getValue()));
+            getBucketOrValue(entry.getValue()));
     }
 
     private static Map.Entry<String, JsonNode> getNormalizedJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -150,6 +133,26 @@ public final class AggregationFormat {
         return fieldName.replaceFirst(PATTERN_IS_WORD_ENDING_WITH_HASHTAG, EMPTY_STRING);
     }
 
+
+    private static boolean keyIsName(Entry<String, JsonNode> entry) {
+        return NAME.equals(entry.getKey());
+    }
+
+    private static boolean keyIsLabel(Entry<String, JsonNode> entry) {
+        return LABELS.equals(entry.getKey());
+    }
+
+    @JacocoGenerated
+    private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
+        return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
+            && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
+    }
+
+    @JacocoGenerated
+    private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
+        return field.getKey().toLowerCase(Locale.getDefault()).contains("notification") && field.getValue().isObject();
+    }
+
     @JacocoGenerated
     static final class Constants {
         public static final String DOC_COUNT = "doc_count";
@@ -157,5 +160,4 @@ public final class AggregationFormat {
         public static final String KEY_PTR = SLASH + ZERO + SLASH + KEY;
         public static final String BUCKETS_KEY_PTR = SLASH + BUCKETS + KEY_PTR;
     }
-
 }

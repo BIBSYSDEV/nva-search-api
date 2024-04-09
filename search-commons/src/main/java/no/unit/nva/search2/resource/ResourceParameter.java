@@ -291,6 +291,7 @@ public enum ResourceParameter implements ParameterKey {
     public String asLowerCase() {
         return this.name().toLowerCase(Locale.getDefault());
     }
+
     @Override
     public Float fieldBoost() {
         return boost;

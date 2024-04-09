@@ -12,7 +12,7 @@ import no.unit.nva.search2.common.enums.ParameterKind;
 import org.joda.time.DateTime;
 
 /**
- * AutoConvert value to Date, Number (or String)
+ * AutoConvert value to Date, Number (or String).
  * <p>Also holds key and can return value as <samp>optional stream</samp></p>
  */
 @SuppressWarnings({"PMD.ShortMethodName"})
@@ -31,7 +31,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
             return null;
         }
         if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
-            Query.logger.warn("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
+            Query.logger.debug("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
         }
         return (T) switch (getKey().fieldType()) {
             case DATE -> castDateTime();
@@ -65,6 +65,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
+     * Split
      * @param delimiter regex to split on
      * @return The value split, or null.
      */
@@ -75,6 +76,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
+     * asSplitStream
      * @param delimiter regex to split on
      * @return The value as an optional Stream, split by delimiter.
      */
@@ -84,6 +86,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
+     * asStream
      * @return The value as an optional Stream.
      */
     public Stream<String> asStream() {
@@ -91,6 +94,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
+     * asBoolean
      * @return False if value is null or FALSE, otherwise True
      */
     public Boolean asBoolean() {

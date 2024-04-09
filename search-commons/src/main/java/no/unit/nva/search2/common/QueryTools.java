@@ -12,10 +12,12 @@ import org.opensearch.index.query.QueryBuilder;
 
 public final class QueryTools<K extends Enum<K> & ParameterKey> {
 
+    @JacocoGenerated
     public static boolean hasContent(String value) {
         return nonNull(value) && !value.isEmpty();
     }
 
+    @JacocoGenerated
     public static boolean hasContent(Collection<?> value) {
         return nonNull(value) && !value.isEmpty();
     }

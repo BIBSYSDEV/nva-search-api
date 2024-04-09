@@ -49,8 +49,9 @@ public class DeleteImportCandidateFromIndexHandlerTest {
     void shouldThrowRuntimeExceptionWhenIndexingClientIsThrowingException() throws IOException {
         indexingClient = new DeleteImportCandidateFromIndexHandlerTest.FakeIndexingClientThrowingException();
         handler = new DeleteImportCandidateFromIndexHandler(indexingClient);
-        var eventReference = createEventBridgeEvent(SortableIdentifier.next());
-        assertThrows(RuntimeException.class, () -> handler.handleRequest(eventReference, output, CONTEXT));
+        try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
+            assertThrows(RuntimeException.class, () -> handler.handleRequest(eventReference, output, CONTEXT));
+        }
     }
 
     @Test
@@ -58,8 +59,9 @@ public class DeleteImportCandidateFromIndexHandlerTest {
         var resourceIdentifier = SortableIdentifier.next();
         var sampleDocument = createSampleResource(resourceIdentifier);
         indexingClient.addDocumentToIndex(sampleDocument);
-        var eventReference = createEventBridgeEvent(resourceIdentifier);
-        handler.handleRequest(eventReference, output, CONTEXT);
+        try (var eventReference = createEventBridgeEvent(resourceIdentifier)) {
+            handler.handleRequest(eventReference, output, CONTEXT);
+        }
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
         assertThat(allIndexedDocuments, not(contains(sampleDocument.getResource())));
     }

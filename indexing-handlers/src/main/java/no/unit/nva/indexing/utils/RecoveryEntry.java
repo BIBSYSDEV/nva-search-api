@@ -23,6 +23,7 @@ public final class RecoveryEntry {
     private final String identifier;
     private final String type;
     private final String exception;
+
     private RecoveryEntry(String identifier, String type, String exception) {
         this.identifier = identifier;
         this.type = type;

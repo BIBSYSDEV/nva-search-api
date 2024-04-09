@@ -46,11 +46,6 @@ public enum ImportCandidateSort implements SortKey {
     }
 
     @Override
-    public String jsonPath() {
-        return path;
-    }
-
-    @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
     }
