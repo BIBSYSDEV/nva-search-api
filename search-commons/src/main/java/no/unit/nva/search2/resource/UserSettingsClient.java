@@ -32,9 +32,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
 
     @Override
     public UserSettings doSearch(ResourceQuery query) {
-        doSearchStart = Instant.now();
-        queryBuilderStart = query.getStartTime();
-
+        queryBuilderStart = Instant.now();
         return
             createQueryBuilderStream(query)
                 .map(this::createRequest)

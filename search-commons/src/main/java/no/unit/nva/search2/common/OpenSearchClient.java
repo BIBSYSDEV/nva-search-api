@@ -1,6 +1,5 @@
 package no.unit.nva.search2.common;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
@@ -39,7 +38,6 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final BodyHandler<String> bodyHandler;
     protected final CachedJwtProvider jwtProvider;
     protected Instant queryBuilderStart;
-    protected Instant doSearchStart;
     protected long fetchDuration;
 
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
@@ -71,7 +69,6 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     }
 
     public R doSearch(Q query) {
-        doSearchStart = Instant.now();
         queryBuilderStart = query.getStartTime();
         return
             query.assemble()
@@ -124,7 +121,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     private long totalDuration() {
         return Duration
-            .between(nonNull(queryBuilderStart) ? queryBuilderStart : doSearchStart, Instant.now())
+            .between(queryBuilderStart, Instant.now())
             .toMillis();
     }
 
