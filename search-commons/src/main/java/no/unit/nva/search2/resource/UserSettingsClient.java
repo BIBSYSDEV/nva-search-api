@@ -62,6 +62,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
     }
 
 
+    @Override
     protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             logger.error("Error fetching user settings: {}", response.body());
