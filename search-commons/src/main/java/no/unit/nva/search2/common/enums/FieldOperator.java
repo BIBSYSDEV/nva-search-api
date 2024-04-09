@@ -18,15 +18,15 @@ public enum FieldOperator {
      */
     NOT_ONE_ITEM,
     /**
-     * GREATER_THAN_OR_EQUAL_TO
+     * Greater than or equal to.
      */
     GREATER_THAN_OR_EQUAL_TO,
     /**
-     * LESS_THAN
+     * Less than.
      */
     LESS_THAN,
     /**
-     * BETWEEN
+     * Between.
      */
     BETWEEN
 }

@@ -123,7 +123,9 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
 
     private long totalDuration() {
-        return Duration.between(nonNull(queryBuilderStart) ? queryBuilderStart : doSearchStart, Instant.now()).toMillis();
+        return Duration
+            .between(nonNull(queryBuilderStart) ? queryBuilderStart : doSearchStart, Instant.now())
+            .toMillis();
     }
 
     record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {

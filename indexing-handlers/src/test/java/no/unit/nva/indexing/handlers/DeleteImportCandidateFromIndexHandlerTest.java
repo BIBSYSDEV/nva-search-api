@@ -49,7 +49,7 @@ public class DeleteImportCandidateFromIndexHandlerTest {
     void shouldThrowRuntimeExceptionWhenIndexingClientIsThrowingException() throws IOException {
         indexingClient = new DeleteImportCandidateFromIndexHandlerTest.FakeIndexingClientThrowingException();
         handler = new DeleteImportCandidateFromIndexHandler(indexingClient);
-        try(var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
+        try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
             assertThrows(RuntimeException.class, () -> handler.handleRequest(eventReference, output, CONTEXT));
         }
     }
