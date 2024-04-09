@@ -222,8 +222,8 @@ class ResourceClientTest {
             var userSettingsClient = new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
             when(mochedHttpClient.send(any(), any()))
                 .thenThrow(new IOException("Not found"));
-            var searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient,
-                                                  setupMockedCachedJwtProvider());
+            var searchClient =
+                new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
             var response = ResourceQuery.builder()

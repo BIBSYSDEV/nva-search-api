@@ -31,7 +31,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
             return null;
         }
         if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
-            Query.logger.warn("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
+            Query.logger.debug("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
         }
         return (T) switch (getKey().fieldType()) {
             case DATE -> castDateTime();

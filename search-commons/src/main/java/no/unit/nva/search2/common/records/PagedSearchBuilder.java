@@ -21,7 +21,7 @@ public class PagedSearchBuilder {
 
     @SuppressWarnings("PMD.NullAssignment")
     public PagedSearch build() {
-        if (nextResult()) {
+        if (hasNoNextResult()) {
             this.nextSearchAfterResults = null;       // null values are not serialized
         }
         return new PagedSearch(
@@ -84,7 +84,7 @@ public class PagedSearchBuilder {
     }
 
     @JacocoGenerated
-    private boolean nextResult() {
+    private boolean hasNoNextResult() {
         return isNull(this.nextResults) || !nextResults.getQuery().contains("sort");
     }
 }
