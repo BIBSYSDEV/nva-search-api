@@ -1,6 +1,8 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
+import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
@@ -75,11 +77,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class TicketClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
-    private static final String OPEN_SEARCH_IMAGE = "opensearchproject/opensearch:2.11.0";
     private static final String TEST_TICKETS_MAPPINGS_JSON = "mapping_test_tickets.json";
     private static final String TICKETS_VALID_TEST_URL_JSON = "datasource_urls_ticket.json";
     private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";
-    private static final long DELAY_AFTER_INDEXING = 1500L;
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 5;
