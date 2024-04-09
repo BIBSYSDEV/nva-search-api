@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -82,7 +83,7 @@ class TicketClientTest {
     private static final String TICKETS_VALID_TEST_URL_JSON = "datasource_urls_ticket.json";
     private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 5;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
@@ -102,10 +103,9 @@ class TicketClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
         searchClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
-        when(mockedRequestInfo.getTopLevelOrgCristinId())
-            .thenReturn(Optional.of(testOrganizationId));
-        when(mockedRequestInfo.getUserName())
-            .thenReturn(CURRENT_USERNAME);
+
+        when(mockedRequestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
         when(mockedRequestInfo.userIsAuthorized(AccessRight.SUPPORT))
             .thenReturn(Boolean.TRUE)
             .thenReturn(Boolean.FALSE);
@@ -115,12 +115,7 @@ class TicketClientTest {
         when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_PUBLISHING_REQUESTS))
             .thenReturn(Boolean.FALSE)
             .thenReturn(Boolean.TRUE);
-        when(mockedRequestInfo.getHeaders())
-            .thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
-        when(mockedRequestInfo.getRequestUri())
-            .thenReturn(URI.create(container.getHttpHostAddress()));
-        when(mockedRequestInfo.getQueryParameters())
-            .thenReturn(Map.of("invalidkey", "bogus value"));
+        when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
         createIndex();
         populateIndex();
         logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
@@ -273,11 +268,18 @@ class TicketClientTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void uriRequestReturnsCsvResponse(URI uri) throws ApiGatewayException {
+            var query =
+                queryToMapEntries(uri).stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            when(mockedRequestInfo.getQueryParameters())
+                .thenReturn(query);
+
             var csvResult =
                 TicketQuery.builder()
                     .fromRequestInfo(mockedRequestInfo)
-                    .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE)
                     .build()
                     .applyContextAndAuthorize(mockedRequestInfo)
                     .doSearch(searchClient);
