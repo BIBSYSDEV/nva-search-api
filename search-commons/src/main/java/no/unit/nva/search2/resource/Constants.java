@@ -400,8 +400,14 @@ public final class Constants {
 
     private static TermsAggregationBuilder license() {
         return
-            branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD)
-                .subAggregation(getReverseNestedAggregationBuilder());
+            AggregationBuilders
+                .terms(LICENSE)
+                .script(uriAsGroup())
+                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+                .subAggregation(AggregationBuilders
+                    .terms(NAME)
+                    .script(licenseLabel()));
+
     }
 
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
@@ -423,6 +429,51 @@ public final class Constants {
             if (path_parts.length == 0) { return null; }
             return path_parts[path_parts.length - 2];""";
         return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+    }
+
+
+    public static Script uriAsGroup() {
+        var script = """
+            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
+            def url = doc['associatedArtifacts.license.keyword'].value;
+            if (url.contains("/by-nc-nd")) {
+              return "CC-NC-ND";
+            } else if (url.contains("/by-nc-sa")) {
+              return "CC-NC-SA";
+            } else if (url.contains("/by-nc")) {
+              return "CC-NC";
+            } else if (url.contains("/by-nd")) {
+              return "CC-ND";
+            } else if (url.contains("/by-sa")) {
+              return "CC-SA";
+            } else if (url.contains("/by")) {
+              return "CC-BY";
+            }
+            return "Other";
+            """;
+        return new Script(ScriptType.INLINE, "painless", script, Map.of());
+    }
+
+    public static Script licenseLabel() {
+        var script = """
+            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
+            def url = doc['associatedArtifacts.license.keyword'].value;
+            if (url.contains("/by-nc-nd")) {
+              return "Creative Commons - Attribution-NonCommercial-NoDerivs";
+            } else if (url.contains("/by-nc-sa")) {
+              return "Creative Commons - Attribution-NonCommercial-ShareAlike";
+            } else if (url.contains("/by-nc")) {
+              return "Creative Commons - Attribution-NonCommercial";
+            } else if (url.contains("/by-nd")) {
+              return "Creative Commons - Attribution-NoDerivs";
+            } else if (url.contains("/by-sa")) {
+              return "Creative Commons - Attribution-ShareAlike";
+            } else if (url.contains("/by")) {
+              return "Creative Commons - Attribution";
+            }
+            return "Other license";
+            """;
+        return new Script(ScriptType.INLINE, "painless", script, Map.of());
     }
 
     private static String multipleFields(String... values) {
