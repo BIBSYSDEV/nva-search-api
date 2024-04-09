@@ -182,6 +182,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
+    @JacocoGenerated        // default can only be tested if we add a new fieldtype not in use....
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
