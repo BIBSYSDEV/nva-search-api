@@ -59,10 +59,6 @@ public final class AggregationFormat {
         jsonNode.put("notifications", notifications);
     }
 
-    private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
-        return field.getKey().toLowerCase(Locale.getDefault()).contains("notification") && field.getValue().isObject();
-    }
-
     private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {
         if (node.isArray()) {
             var arrayNode = JsonUtils.dtoObjectMapper.createArrayNode();
@@ -89,25 +85,12 @@ public final class AggregationFormat {
         }
     }
 
-    private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
-        return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
-            && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
-    }
-
     private static Stream<Entry<String, JsonNode>> getAggregationFieldStreams(JsonNode aggregations,
                                                                               Map<String, String> definitions) {
         return definitions
             .entrySet().stream()
             .map(entry -> Map.entry(entry.getKey(), aggregations.at(entry.getValue()))
             );
-    }
-
-    private static boolean keyIsName(Entry<String, JsonNode> entry) {
-        return NAME.equals(entry.getKey());
-    }
-
-    private static boolean keyIsLabel(Entry<String, JsonNode> entry) {
-        return LABELS.equals(entry.getKey());
     }
 
     private static Map.Entry<String, JsonNode> getJsonNodeEntry(Map.Entry<String, JsonNode> entry) {
@@ -148,6 +131,26 @@ public final class AggregationFormat {
 
     private static String getNormalizedFieldName(String fieldName) {
         return fieldName.replaceFirst(PATTERN_IS_WORD_ENDING_WITH_HASHTAG, EMPTY_STRING);
+    }
+
+
+    private static boolean keyIsName(Entry<String, JsonNode> entry) {
+        return NAME.equals(entry.getKey());
+    }
+
+    private static boolean keyIsLabel(Entry<String, JsonNode> entry) {
+        return LABELS.equals(entry.getKey());
+    }
+
+    @JacocoGenerated
+    private static boolean rootHasUniquePublicationsCount(Entry<String, JsonNode> entry) {
+        return nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS))
+            && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
+    }
+
+    @JacocoGenerated
+    private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
+        return field.getKey().toLowerCase(Locale.getDefault()).contains("notification") && field.getValue().isObject();
     }
 
     @JacocoGenerated

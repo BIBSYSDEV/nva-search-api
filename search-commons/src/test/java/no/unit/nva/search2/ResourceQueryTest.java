@@ -64,7 +64,8 @@ class ResourceQueryTest {
             RuntimeException.class,
             () -> ResourceQuery.builder()
                 .withRequiredParameters(SIZE, FROM)
-                .fromQueryParameters(toMapEntries).build()
+                .fromQueryParameters(toMapEntries)
+                .build()
                 .doSearch(resourceClient)
         );
     }
@@ -78,6 +79,7 @@ class ResourceQueryTest {
             () -> ResourceQuery.builder()
                 .withRequiredParameters(ABSTRACT, FUNDING)
                 .fromQueryParameters(toMapEntries)
+                .validate()
                 .build()
         );
     }
