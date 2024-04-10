@@ -295,6 +295,30 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  ExportResourcesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for searching Resources
+      CodeUri: search-resources-api
+      Handler: no.unit.nva.search2.ExportResourceHandler::handleRequest
+      Runtime: java17
+      Timeout: 180
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Enabled: true
+        Role: !GetAtt CustomCodeDeployServiceRole.Arn
+        Type: AllAtOnce
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+      Events:
+        GetResources:
+          Type: Api
+          Properties:
+            Path: /resources/export
+            Method: get
+            RestApiId: !Ref NvaSearchApi
 
   SearchAwsResourcesFunction:
     Type: AWS::Serverless::Function
