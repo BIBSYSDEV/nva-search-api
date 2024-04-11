@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
@@ -83,13 +84,10 @@ public final class TicketQuery extends Query<TicketParameter> {
      */
     private void applyImpossibleWhiteListFilters() {
         var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
-        var filterType =
-            new TermsQueryBuilder(TYPE_KEYWORD, TicketType.NONE)
-                .queryName(TicketParameter.TYPE.asCamelCase() + POST_FILTER);
         final var filterId =
             new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
                 .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        filters.set(filterType, filterId);
+        filters.set(filterId);
     }
 
     public static TicketParameterValidator builder() {
@@ -106,12 +104,21 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @return TicketQuery (builder pattern)
      */
     public TicketQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
+        if (Objects.isNull(requestInfo.getUserName())) {
+            throw new UnauthorizedException();
+        }
+
         var organization = requestInfo.getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
+        var adminAccess = getAccessRights(requestInfo);
 
-        return withFilterTicketType(validateAccessRight(requestInfo))
-            .withFilterOrganization(organization)
-            .withFilterCurrentUser(requestInfo.getUserName());
+        if (adminAccess.isEmpty()) {
+            withCurrentUser(requestInfo.getUserName())
+                .applyFilterCurrentUser();
+        } else {
+            withFilterTicketType(adminAccess.toArray(TicketType[]::new));
+        }
+        return withFilterOrganization(organization);
     }
 
     /**
@@ -123,13 +130,15 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param userName current user
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery withFilterCurrentUser(String userName) {
+    public TicketQuery withCurrentUser(String userName) {
         this.currentUser = userName;
-        if (isUserOnly(ticketTypes)) {
-            final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, userName)
-                .queryName(OWNER.asCamelCase() + POST_FILTER);
-            this.filters.add(viewOwnerOnly);
-        }
+        return this;
+    }
+
+    public TicketQuery applyFilterCurrentUser() {
+        final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, currentUser)
+            .queryName(OWNER.asCamelCase() + POST_FILTER);
+        this.filters.add(viewOwnerOnly);
         return this;
     }
 
@@ -256,7 +265,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
-    private TicketType[] validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
+    private HashSet<TicketType> getAccessRights(RequestInfo requestInfo) {
         var allowed = new HashSet<TicketType>();
         if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
@@ -267,15 +276,9 @@ public final class TicketQuery extends Query<TicketParameter> {
         if (requestInfo.userIsAuthorized(MANAGE_PUBLISHING_REQUESTS)) {
             allowed.add(TicketType.PUBLISHING_REQUEST);
         }
-        if (allowed.isEmpty()) {
-            throw new UnauthorizedException();
-        }
-        return allowed.toArray(TicketType[]::new);
+        return allowed;
     }
 
-    private boolean isUserOnly(TicketType... ticketTypes) {
-        return Arrays.stream(ticketTypes).allMatch(pre -> pre.equals(TicketType.GENERAL_SUPPORT_CASE));
-    }
 
     @SuppressWarnings("PMD.GodClass")
     public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketQuery> {

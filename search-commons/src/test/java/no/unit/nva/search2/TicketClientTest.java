@@ -81,6 +81,7 @@ class TicketClientTest {
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
     private static final String TEST_TICKETS_MAPPINGS_JSON = "mapping_test_tickets.json";
     private static final String TICKETS_VALID_TEST_URL_JSON = "datasource_urls_ticket.json";
+    private static final String USER_TICKETS_VALID_TEST_URL_JSON = "datasource_urls_user_ticket.json";
     private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
@@ -178,7 +179,7 @@ class TicketClientTest {
                 .build()
                 .withFilterOrganization(testOrganizationId)
                 .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withFilterCurrentUser(CURRENT_USERNAME);
+                .withCurrentUser(CURRENT_USERNAME);
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -209,7 +210,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME)
+                    .withCurrentUser(CURRENT_USERNAME)
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -227,7 +228,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME);
+                    .withCurrentUser(CURRENT_USERNAME);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -238,8 +239,8 @@ class TicketClientTest {
         }
 
         @ParameterizedTest
-        @MethodSource("uriProvider")
-        void uriRequestReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {
+        @MethodSource("uriProviderAsAdmin")
+        void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
                 TicketQuery.builder()
@@ -248,8 +249,7 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilterOrganization(testOrganizationId)
-                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME);
+                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -266,7 +266,30 @@ class TicketClientTest {
         }
 
         @ParameterizedTest
-        @MethodSource("uriProvider")
+        @MethodSource("uriProviderAsUser")
+        void uriRequestReturnsSuccessfulResponseAsUser(URI uri, int expectedCount) throws ApiGatewayException {
+
+            var query =
+                TicketQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withFilterOrganization(testOrganizationId)
+                    .withCurrentUser(CURRENT_USERNAME)
+                    .applyFilterCurrentUser();
+
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertNotNull(pagedSearchResourceDto);
+            assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
+            assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+        }
+
+
+        @ParameterizedTest
+        @MethodSource("uriProviderAsAdmin")
         void uriRequestReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var query =
                 queryToMapEntries(uri).stream()
@@ -297,7 +320,7 @@ class TicketClientTest {
                     .build()
                     .withFilterOrganization(testOrganizationId)
                     .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME);
+                    .withCurrentUser(CURRENT_USERNAME);
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -379,8 +402,13 @@ class TicketClientTest {
                 URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
         }
 
-        static Stream<Arguments> uriProvider() {
+        static Stream<Arguments> uriProviderAsAdmin() {
             return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
+                .map(entry -> createArgument(entry.getKey(), entry.getValue()));
+        }
+
+        static Stream<Arguments> uriProviderAsUser() {
+            return loadMapFromResource(USER_TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
         }
     }
