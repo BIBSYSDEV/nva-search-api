@@ -11,6 +11,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import no.unit.nva.search2.common.SearchService;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -35,14 +36,8 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
 
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-        return
-            ResourceQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .validate()
-                .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .doSearch(opensearchClient);
+        return new SearchService(opensearchClient).searchResources(requestInfo);
+
     }
 
     @Override
