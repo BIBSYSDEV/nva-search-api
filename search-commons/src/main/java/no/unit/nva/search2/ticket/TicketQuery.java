@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
@@ -69,7 +70,6 @@ import org.opensearch.search.sort.SortOrder;
 public final class TicketQuery extends Query<TicketParameter> {
 
     private String currentUser;
-    private TicketType[] ticketTypes;
 
     private TicketQuery() {
         super();
@@ -169,7 +169,6 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @return TicketQuery (builder pattern)
      */
     public TicketQuery withFilterTicketType(TicketType... ticketTypes) {
-        this.ticketTypes = ticketTypes.clone();
         final var filter =
             new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::toString).toList())
                 .queryName(TicketParameter.TYPE.asCamelCase() + POST_FILTER);
@@ -265,7 +264,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
-    private HashSet<TicketType> getAccessRights(RequestInfo requestInfo) {
+    private Set<TicketType> getAccessRights(RequestInfo requestInfo) {
         var allowed = new HashSet<TicketType>();
         if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
