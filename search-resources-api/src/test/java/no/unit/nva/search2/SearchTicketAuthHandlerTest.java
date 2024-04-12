@@ -82,19 +82,6 @@ class SearchTicketAuthHandlerTest {
         assertEquals(HTTP_OK, gatewayResponse.statusCode());
     }
 
-    //    @Test
-    //    void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
-    //        prepareRestHighLevelClientOkResponse();
-    //
-    //        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.USER);
-    //        handler.handleRequest(input, outputStream, contextMock);
-    //
-    //        var gatewayResponse = FakeGatewayResponse.of(outputStream);
-    //
-    //        assertNotNull(gatewayResponse.headers());
-    //        assertEquals(HTTP_UNAUTHORIZED, gatewayResponse.statusCode());
-    //    }
-
     private void prepareRestHighLevelClientOkResponse() throws IOException {
         var jsonResponse = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON));
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
