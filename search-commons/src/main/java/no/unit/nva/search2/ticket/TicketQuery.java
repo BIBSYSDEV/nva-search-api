@@ -110,7 +110,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         var organization = requestInfo.getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
-        var adminAccess = getAccessRights(requestInfo);
+        var ticketAccessRights = getAccessRights(requestInfo);
 
         if (adminAccess.isEmpty()) {
             withCurrentUser(requestInfo.getUserName())
