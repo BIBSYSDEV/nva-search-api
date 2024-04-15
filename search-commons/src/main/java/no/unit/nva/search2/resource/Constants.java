@@ -216,7 +216,7 @@ public final class Constants {
         COURSE, "/withAppliedFilter/entityDescription/reference/publicationContext/course",
         SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
         STATUS, "/withAppliedFilter/status",
-        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
+        LICENSE, "/withAppliedFilter/associatedArtifacts/root/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
         FILES, "/withAppliedFilter/files",
@@ -399,15 +399,19 @@ public final class Constants {
                 );
     }
 
-    private static TermsAggregationBuilder license() {
+    private static ReverseNestedAggregationBuilder license() {
         return
-            AggregationBuilders
-                .terms(LICENSE)
-                .script(groupByLicenses())
-                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
-                .subAggregation(AggregationBuilders
-                    .terms(NAME)
-                    .script(licenseLabel()));
+            AggregationBuilders.reverseNested(ROOT)
+                .subAggregation(
+                    AggregationBuilders
+                        .terms(LICENSE)
+                        .script(groupByLicenses())
+                        .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+                        .subAggregation(AggregationBuilders
+                            .terms(NAME)
+                            .script(licenseLabel())
+                        )
+                );
 
     }
 
