@@ -1,5 +1,6 @@
 package no.unit.nva.search2.ticket;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
@@ -26,7 +27,6 @@ import static no.unit.nva.search2.ticket.TicketParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
-import static no.unit.nva.search2.ticket.TicketParameter.OWNER;
 import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
 import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
@@ -62,6 +62,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
@@ -70,6 +71,7 @@ import org.opensearch.search.sort.SortOrder;
 public final class TicketQuery extends Query<TicketParameter> {
 
     private String currentUser;
+    private List<String> ticketTypes;
 
     private TicketQuery() {
         super();
@@ -110,20 +112,18 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         var organization = requestInfo.getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
-        var curatorRights = getAccessRights(requestInfo);
+        var curatorRights = getAccessRights(requestInfo).toArray(TicketType[]::new);
 
-        if (curatorRights.isEmpty()) {
-            withCurrentUser(requestInfo.getUserName())
-                .applyFilterCurrentUser();
-        } else {
-            withFilterTicketType(curatorRights.toArray(TicketType[]::new));
-        }
-        return withFilterOrganization(organization);
+        return withFilterOrganization(organization)
+            .withCurrentUser(requestInfo.getUserName())
+            .withTicketType(curatorRights)
+            .applyFilters();
     }
 
     /**
      * Filter on owner (user).
      *
+     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
      * <p>Only tickets owned by user will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      *
@@ -135,15 +135,27 @@ public final class TicketQuery extends Query<TicketParameter> {
         return this;
     }
 
-    public TicketQuery applyFilterCurrentUser() {
-        final var viewOwnerOnly = new TermQueryBuilder(OWNER_USERNAME, currentUser)
-            .queryName(OWNER.asCamelCase() + POST_FILTER);
-        this.filters.add(viewOwnerOnly);
+    /**
+     * Applies user and type filters
+     *
+     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
+     *
+     * @return ResourceQuery (builder pattern)
+     */
+    public TicketQuery applyFilters() {
+
+        var disMax = QueryBuilders.disMaxQuery().queryName("anyOfTicketTypeUserName")
+            .add(new TermQueryBuilder(OWNER_USERNAME, currentUser));
+        if (nonNull(ticketTypes)) {
+            disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes));
+        }
+        this.filters.add(disMax);
         return this;
     }
 
     /**
      * Filter on organization.
+     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
      * <P>Only documents belonging to organization specified are searchable (for the user)
      * </p>
      *
@@ -161,6 +173,7 @@ public final class TicketQuery extends Query<TicketParameter> {
     /**
      * Filter on Required Types.
      *
+     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
      * <p>Only TYPE specified here will be available for the Query.</p>
      * <p>This is to avoid the Query to return documents that are not available for the user.</p>
      * <p>See {@link TicketType} for available values.</p>
@@ -168,11 +181,8 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param ticketTypes the required types
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery withFilterTicketType(TicketType... ticketTypes) {
-        final var filter =
-            new TermsQueryBuilder(TYPE_KEYWORD, Arrays.stream(ticketTypes).map(TicketType::toString).toList())
-                .queryName(TicketParameter.TYPE.asCamelCase() + POST_FILTER);
-        this.filters.add(filter);
+    public TicketQuery withTicketType(TicketType... ticketTypes) {
+        this.ticketTypes = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
         return this;
     }
 
