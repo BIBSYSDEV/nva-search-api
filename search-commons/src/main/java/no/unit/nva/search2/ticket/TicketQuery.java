@@ -110,13 +110,13 @@ public final class TicketQuery extends Query<TicketParameter> {
 
         var organization = requestInfo.getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
-        var ticketAccessRights = getAccessRights(requestInfo);
+        var curatorRights = getAccessRights(requestInfo);
 
-        if (adminAccess.isEmpty()) {
+        if (curatorRights.isEmpty()) {
             withCurrentUser(requestInfo.getUserName())
                 .applyFilterCurrentUser();
         } else {
-            withFilterTicketType(adminAccess.toArray(TicketType[]::new));
+            withFilterTicketType(curatorRights.toArray(TicketType[]::new));
         }
         return withFilterOrganization(organization);
     }
