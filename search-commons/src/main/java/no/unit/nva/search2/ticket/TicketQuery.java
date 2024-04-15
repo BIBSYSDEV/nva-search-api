@@ -110,13 +110,16 @@ public final class TicketQuery extends Query<TicketParameter> {
             throw new UnauthorizedException();
         }
 
-        var organization = requestInfo.getTopLevelOrgCristinId()
+        final var organization = requestInfo
+            .getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
-        var curatorRights = getAccessRights(requestInfo).toArray(TicketType[]::new);
+
+        final var curatorRights = getAccessRights(requestInfo)
+            .toArray(TicketType[]::new);
 
         return withFilterOrganization(organization)
-            .withCurrentUser(requestInfo.getUserName())
             .withTicketType(curatorRights)
+            .withCurrentUser(requestInfo.getUserName())
             .applyFilters();
     }
 
@@ -143,8 +146,9 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @return ResourceQuery (builder pattern)
      */
     public TicketQuery applyFilters() {
-
-        var disMax = QueryBuilders.disMaxQuery().queryName("anyOfTicketTypeUserName")
+        var disMax = QueryBuilders
+            .disMaxQuery()
+            .queryName("anyOfTicketTypeUserName")
             .add(new TermQueryBuilder(OWNER_USERNAME, currentUser));
         if (nonNull(ticketTypes)) {
             disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes));
@@ -164,8 +168,10 @@ public final class TicketQuery extends Query<TicketParameter> {
      */
     public TicketQuery withFilterOrganization(URI organization) {
         final var filter =
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(ORGANIZATION_ID, organization.toString())
-                .findFirst().get().getValue().queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
+            new OpensearchQueryKeyword<TicketParameter>()
+                .buildQuery(ORGANIZATION_ID, organization.toString())
+                .findFirst().orElseThrow().getValue()
+                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
         this.filters.add(filter);
         return this;
     }
