@@ -13,6 +13,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import no.unit.nva.search2.common.SearchService;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceQuery;
 import nva.commons.apigateway.AccessRight;
@@ -43,15 +44,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
         validateAccessRight(requestInfo);
 
-        return
-            ResourceQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .validate()
-                .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
-                .withOrganization(requestInfo.getCurrentCustomer())
-                .doSearch(opensearchClient);
+        return new SearchService().searchResourcesAuthenticated(opensearchClient, requestInfo);
     }
 
     @Override
