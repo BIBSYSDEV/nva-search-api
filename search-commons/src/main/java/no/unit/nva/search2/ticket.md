@@ -2,6 +2,9 @@
 
 ## Data model
 
+<details>
+<summary>JSON</summary>
+
 ```json
   {
   "type": "PublishingRequest",
@@ -68,6 +71,9 @@
   "status": "New"
 }
 ```
+
+</details>
+
 ## Search
 
 ### By a specific contributor

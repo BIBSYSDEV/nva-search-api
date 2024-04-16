@@ -2,6 +2,9 @@
 
 ## Data model
 
+<details>
+<summary>JSON</summary>
+
 ```json
 {
   "type": "Publication",
@@ -134,8 +137,10 @@
   }
   ]
 }
-
 ```
+
+</details>
+
 ## Search
 
 ### By a specific contributor

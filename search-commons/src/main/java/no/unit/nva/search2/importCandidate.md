@@ -2,6 +2,9 @@
 
 ## Data model
 
+<details>
+<summary>JSON</summary>
+
 ```json
 {
   "importStatus": {
@@ -138,6 +141,8 @@
 }
 
 ```
+
+</details>
 
 ## Search
 
