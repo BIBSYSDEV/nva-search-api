@@ -9,7 +9,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
-import no.unit.nva.search2.common.SearchService;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -37,7 +36,13 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
         throws BadRequestException, UnauthorizedException {
 
-        return new SearchService().searchTickets(opensearchClient, requestInfo);
+        return
+            TicketQuery.builder()
+                .fromRequestInfo(requestInfo)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .build()
+                .applyContextAndAuthorize(requestInfo)
+                .doSearch(opensearchClient);
     }
 
     @Override
