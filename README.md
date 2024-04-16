@@ -31,8 +31,9 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-Valid search parameters  
-[/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+> [!IMPORTANT]
+> Valid search parameters
+> [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
 ## Resource (logged in user)
 
@@ -42,8 +43,9 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-Valid search parameters  
-[/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+> [!IMPORTANT]
+> Valid search parameters
+> [/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
 **Structure in response from Response endpoints**
 
@@ -81,8 +83,9 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-Valid search parameters  
-[/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
+> [!IMPORTANT]
+> Valid search parameters
+> [/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
 
 **Structure in response from ticket endpoint**
 
@@ -111,8 +114,9 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-Valid search parameters  
-[/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
+> [!IMPORTANT]
+> Valid search parameters
+> [/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
 
 **Structure in response from import-candidate endpoint**
 
