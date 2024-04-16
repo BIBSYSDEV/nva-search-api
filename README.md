@@ -45,7 +45,8 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-**Structure in response from Response endpoints**
+<details>
+<summary>Structure in response from Response endpoints</summary>
 
 ```JSON
 {
@@ -73,6 +74,8 @@ Accept: application/json
 }
 ```
 
+</details>
+
 ## Ticket
 
 Valid search parameters
@@ -84,7 +87,8 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-**Structure in response from ticket endpoint**
+<details>
+<summary>Structure in response from ticket endpoint</summary>
 
 ```JSON
 {
@@ -103,6 +107,8 @@ Accept: application/json
 }
 ```
 
+</details>
+
 ## Import-candidate
 
 Valid search parameters
@@ -114,8 +120,8 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-
-**Structure in response from import-candidate endpoint**
+<details>
+<summary>Structure in response from import-candidate endpoint</summary>
 
 ```JSON
 {
@@ -128,6 +134,8 @@ Accept: application/json
   "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
 }
 ```
+
+</details>
 
 ### All aggregations have the following format
 
