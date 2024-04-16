@@ -316,8 +316,8 @@ Accept: application/json
 | page         | number                      | 0 to 10000/size |
 | from         | number                      | 0 to 10000-size |
 | size         | number                      | 0 to 1000       |
-| sort         | key1:asc/desc,key2:desc/asc |
-| sort_order   | asc/desc                    |
+| sort         | key1:asc/desc,key2:desc/asc |                 |
+| sort_order   | asc/desc                    |                 |
 | search_after | sortindex                   | api only        |
 
 
