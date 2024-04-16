@@ -1,5 +1,7 @@
 package no.unit.nva.search2.common.enums;
 
+import java.util.Locale;
+
 public enum FieldOperator {
     /**
      * ALL must match in document (Only sensible for collections).
@@ -28,5 +30,13 @@ public enum FieldOperator {
     /**
      * Between.
      */
-    BETWEEN
+    BETWEEN,
+    /**
+     * Not Applicable
+     */
+    NA;
+
+    public String asLowerCase() {
+        return this.name().toLowerCase(Locale.getDefault());
+    }
 }

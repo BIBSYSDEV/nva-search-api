@@ -15,6 +15,7 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
+import static no.unit.nva.search2.common.enums.FieldOperator.NA;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
@@ -144,7 +145,7 @@ public enum ImportCandidateParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.fieldOperator = operator;
+        this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split(PATTERN_IS_PIPE)

@@ -1,89 +1,165 @@
 # nva-search-api
-A common search API for NVA across resources
 
-**Parameters to GET /search/resources**
+Public search API for resources in NVA. The API is backed by Amazon OpenSearch.
 
-|Parameter|Description|Default value |
-|-----|-----|-----|
-| query | Term to search for in resource. | * 
-| orderBy | Field to order result by. |  modifiedDate 
-| sortOrder | Order of search results (**asc**ending or **desc**ending). | desc
-| from | Start posision for results, 0-based. | 0
-| results | Maximum number of publications in response. | 10
+## Query Parameters
 
+### Passed to sws/opensearch
 
-**Structure in response from the search API**
+| key_name   | keyName   | queryKind         | scope                      |
+|------------|-----------|-------------------|----------------------------|
+| search_all | searchAll | text with ranking | all_items accross document |
+| fields     | fields    | list of keys      | user, tags, title          |
 
+### Pagination parameters
+
+| key_name     | keyName     | queryKind                   | example         |
+|--------------|-------------|-----------------------------|-----------------|
+| aggregation  | aggregation | Enum                        | all, none       |
+| page         | page        | number                      | 0 to 10000/size |
+| from         | from        | number                      | 0 to 10000-size |
+| size         | size        | number                      | 0 to 1000       |
+| sort         | sort        | key1:asc/desc,key2:desc/asc |                 |
+| sort_order   | sortOrder   | asc/desc                    |                 |
+| search_after | searchAfter | sortindex                   | api only        |
+
+## Resource
+
+Valid search parameters
+[/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+
+```http request
+GET /search/resources HTTP/1.1
+Host: api.test.nva.aws.unit.no
+Accept: application/json
+```
+
+## Resource (logged in user)
+
+Valid search parameters
+[/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+
+```http request
+GET /search/customer/resources HTTP/1.1
+Host: api.test.nva.aws.unit.no
+Accept: application/json
+```
+
+<details>
+<summary>Structure in response from Response endpoints</summary>
 
 ```JSON
 {
-  "@context": "https://api.nva.unit.no/resources/search",
-  "took": 7,
-  "total": 2,
-  "hits": [
-    {
-      "publicationType": "JournalArticle",
-      "id": "7565828d-1de6-490b-bcf2-00b3de3ab5b3",
-      "contributors": [
-        {
-          "name": "Nogueira, Flavio S."
-        },
-        {
-          "name": "van den Brink, Jeroen"
-        },
-        {
-          "name": "Sudbø, Asle"
-        }
-      ],
-      "title": "Conformality loss and quantum criticality in topological Higgs electrodynamics in 2+1 dimension",
-      "owner": "tehe@unit.no",
-      "publishedDate": {
-        "type": "IndexDate",
-        "year": "2020",
-        "month": "9",
-        "day": "25"
-      },
-      "publisher": {
-        "id": "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
-        "name": "Organization"
-      },
-      "modifiedDate": "2020-11-05T15:40:35.646028Z"
-    },
-    {
-      "publicationType": "JournalArticle",
-      "id": "ff8f8307-2958-4bb2-bb6d-d9a701f67849",
-      "contributors": [
-        {
-          "id": "1600776277420",
-          "name": "Hellesvik, Terje"
-        },
-        {
-          "id": "90806386",
-          "name": "Hellesvik, Terje"
-        },
-        {
-          "name": "Paskin, N."
-        },
-        {
-          "id": "3089669",
-          "name": "Garshol, Jan Erik"
-        }
-      ],
-      "title": "Toward unique identifiers",
-      "owner": "tehe@unit.no",
-      "publishedDate": {
-        "type": "IndexDate",
-        "year": "1999"
-      },
-      "publisher": {
-        "id": "https://api.dev.nva.aws.unit.no/customer/f54c8aa9-073a-46a1-8f7c-dde66c853934",
-        "name": "Organization"
-      },
-      "modifiedDate": "2020-11-05T15:32:32.974093Z"
-    }
-  ]
- }
+  "id": "https://api.dev.nva.aws.unit.no/search/resources",
+  "totalHits": 120387,
+  "hits": [],
+  "nextResults": "https://api.dev.nva.aws.unit.no/search/resources?aggregation=all&size=10&from=20",
+  "previousResults": "https://api.dev.nva.aws.unit.no/search/resources?aggregation=all&size=10&from=0",
+  "aggregations": {
+    "type": [],
+    "license": [],
+    "contributor": [],
+    "journal": [],
+    "series": [],
+    "contextType": [],
+    "course": [],
+    "publisher": [],
+    "files": [],
+    "fundingSource": [],
+    "scientificIndex": [],
+    "status": [],
+    "topLevelOrganization": []
+  },
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}
 ```
+
+</details>
+
+## Ticket
+
+Valid search parameters
+[/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
+
+```http request
+GET /search/customer/tickets HTTP/1.1
+Host: api.test.nva.aws.unit.no
+Accept: application/json
+```
+
+<details>
+<summary>Structure in response from ticket endpoint</summary>
+
+```JSON
+{
+  "id": "https://api.dev.nva.aws.unit.no/search/customer/tickets",
+  "totalHits": 120387,
+  "hits": [],
+  "nextResults": "https://api.dev.nva.aws.unit.no/search/customer/tickets?aggregation=all&size=10&from=20",
+  "previousResults": "https://api.dev.nva.aws.unit.no/search/customer/tickets?aggregation=all&size=10&from=0",
+  "aggregations": {
+    "type": [],
+    "notifications": [],
+    "status": [],
+    "byUserPending": []
+  },
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}
+```
+
+</details>
+
+## Import-candidate
+
+Valid search parameters
+[/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
+
+```http request
+GET /search/import-candidates2 HTTP/1.1
+Host: api.test.nva.aws.unit.no
+Accept: application/json
+```
+
+<details>
+<summary>Structure in response from import-candidate endpoint</summary>
+
+```JSON
+{
+  "id": "https://api.dev.nva.aws.unit.no/search/importcandidates2",
+  "totalHits": 120387,
+  "hits": [],
+  "nextResults": "https://api.dev.nva.aws.unit.no/search/importcandidates2?aggregation=all&size=10&from=20",
+  "previousResults": "https://api.dev.nva.aws.unit.no/search/importcandidates2?aggregation=all&size=10&from=0",
+  "aggregations": {},
+  "@context": "https://bibsysdev.github.io/src/search/paginated-search-result.json"
+}
+```
+
+</details>
+
+### All aggregations have the following format
+
+```JSON
+{
+  "type": {
+    "id": "https://unset/resource/search?type=RequestType&aggregation=all&size=10&from=0",
+    "key": "RequestType",
+    "count": 1,
+    "labels": {
+      "nb": "Første type",
+      "en": "First kind"
+    }
+  }
+}
+```
+
+**"id"** is the current query with the selected aggregation/filter added to it, useful for drill-downs into
+sub-selections of the resource.    
+If you want to filter on an aggregation without the current filter included, you can construct a search key by using the
+aggregation name + key value .
+(i.e. type=RequestType)
+  
 ---
-### Utility startpoints and flows ###
+
+## Utility startpoints and flows ###
 ![](utilities_flow.png)

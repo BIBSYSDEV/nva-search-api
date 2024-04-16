@@ -2,6 +2,9 @@
 
 ## Data model
 
+<details>
+<summary>JSON</summary>
+
 ```json
   {
   "type": "PublishingRequest",
@@ -68,6 +71,9 @@
   "status": "New"
 }
 ```
+
+</details>
+
 ## Search
 
 ### By a specific contributor
@@ -115,61 +121,46 @@ Accept: application/json
 * fuzzy_keyword
   * will hit on partial field, boost hits on complete field
 * text
-  * hits on any partial match in field(s)
+  * hits on any partial match in field(s), boosts on exact match and phrases
 * free_text
   * Search through whole document
 * custom
   * 
 
 ### All available filters
-|key |queryKind|scope|
-|----|---|---|
-|assignee|custom|all_items|
-|assignee_not|text|no_items|
-|by_user_pending| custom| |
-|created_date|date|between|
-|customer_id|fuzzy_keyword|one_or_more_item|
-|customer_id_not|fuzzy_keyword|not_one_item|
-|id|fuzzy_keyword|one_or_more_item|
-|id_not|fuzzy_keyword|not_one_item|
-|exclude_subunits|ignored|one_or_more_item|
-|finalized_by|text|all_items|
-|finalized_by_not|text|no_items|
-|messages|text|all_items|
-|messages_not|text|no_items|
-|modified_date|date|between|
-|organization_id|custom|one_or_more_item|
-|organization_id_not|custom|not_one_item|
-|owner|fuzzy_keyword|one_or_more_item|
-|owner_not|fuzzy_keyword|not_one_item|
-|publication_id|fuzzy_keyword|one_or_more_item|
-|publication_id_not|fuzzy_keyword|not_one_item|
-|publication_modified_date|date|between|
-|publication_owner|fuzzy_keyword|one_or_more_item|
-|publication_owner_not|fuzzy_keyword|not_one_item|
-|publication_status|keyword|one_or_more_item|
-|publication_status_not|keyword|not_one_item|
-|publication_title|text|all_items|
-|status|keyword|one_or_more_item|
-|status_not|keyword|not_one_item|
-|type|keyword|one_or_more_item|
-|type_not|keyword|not_one_item|
-|viewed_by|text|all_items|
-|viewed_by_not|text|no_items|
-###  Query parameters passed to sws/opensearch
-|key | queryKind         | scope                      |
-|----|-------------------|----------------------------|
-|search_all| text with ranking | all_items accross document |
-|fields | list of keys | user, tags, title          |
-####  Pagination parameters
-|key | queryKind                   | example         |
-|----|-----------------------------|-----------------|
-| aggregation| Enum  | all, none       |
-| page| number | 0 to 10000/size |
-| from| number | 0 to 10000-size |
-| size| number | 0 to 1000       |
-| sort| key1:asc/desc,key2:desc/asc |
-| sort_order| asc/desc           |
-| search_after| sortindex          | api only        |
 
+| key_name                  | keyName                 | queryKind    | scope            | paths                                                                                                            |
+|---------------------------|-------------------------|--------------|------------------|------------------------------------------------------------------------------------------------------------------|
+| assignee                  | assignee                | custom       | all_items        | assignee.type.keyword, assignee.firstName.keyword, assignee.lastName.keyword, assignee.username.keyword          |
+| assignee_not              | assigneeNot             | text         | no_items         | assignee.type, assignee.firstName, assignee.lastName, assignee.username                                          |
+| by_user_pending           | byUserPending           | ignored      | all_items        | BY_USER_PENDING                                                                                                  |
+| created_date              | createdDate             | date         | between          | createdDate                                                                                                      |
+| customer_id               | customerId              | fuzzyKeyword | one_or_more_item | customerId                                                                                                       |
+| customer_id_not           | customerIdNot           | fuzzyKeyword | not_one_item     | customerId                                                                                                       |
+| id                        | id                      | fuzzyKeyword | one_or_more_item | id                                                                                                               |
+| id_not                    | idNot                   | fuzzyKeyword | not_one_item     | id                                                                                                               |
+| exclude_subunits          | excludeSubunits         | ignored      | one_or_more_item | organization.id, organization.identifier                                                                         |
+| finalized_by              | finalizedBy             | text         | all_items        | finalizedBy.type, finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                              |
+| finalized_by_not          | finalizedByNot          | text         | no_items         | finalizedBy.type, finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                              |
+| messages                  | messages                | text         | all_items        | messages.type, messages.text, messages.status                                                                    |
+| messages_not              | messagesNot             | text         | no_items         | messages.type, messages.text, messages.status                                                                    |
+| modified_date             | modifiedDate            | date         | between          | modifiedDate                                                                                                     |
+| organization_id           | organizationId          | custom       | one_or_more_item | organization.id.keyword, organization.identifier.keyword, organization.partOf.id, organization.partOf.identifier |
+| organization_id_not       | organizationIdNot       | custom       | not_one_item     | organization.id.keyword, organization.identifier.keyword, organization.partOf.id, organization.partOf.identifier |
+| owner                     | owner                   | fuzzyKeyword | one_or_more_item | owner.type, owner.firstName, owner.lastName, owner.username                                                      |
+| owner_not                 | ownerNot                | fuzzyKeyword | not_one_item     | owner.type, owner.firstName, owner.lastName, owner.username                                                      |
+| publication_id            | publicationId           | fuzzyKeyword | one_or_more_item | publication.id, publication.identifier                                                                           |
+| publication_id_not        | publicationIdNot        | fuzzyKeyword | not_one_item     | publication.id, publication.identifier                                                                           |
+| publication_modified_date | publicationModifiedDate | date         | between          | publication.modifiedDate                                                                                         |
+| publication_owner         | publicationOwner        | fuzzyKeyword | one_or_more_item | publication.owner                                                                                                |
+| publication_owner_not     | publicationOwnerNot     | fuzzyKeyword | not_one_item     | publication.owner                                                                                                |
+| publication_status        | publicationStatus       | keyword      | one_or_more_item | publication.status.keyword                                                                                       |
+| publication_status_not    | publicationStatusNot    | keyword      | not_one_item     | publication.status.keyword                                                                                       |
+| publication_title         | publicationTitle        | text         | all_items        | publication.mainTitle                                                                                            |
+| status                    | status                  | keyword      | one_or_more_item | status.keyword                                                                                                   |
+| status_not                | statusNot               | keyword      | not_one_item     | status.keyword                                                                                                   |
+| type                      | type                    | keyword      | one_or_more_item | type.keyword                                                                                                     |
+| type_not                  | typeNot                 | keyword      | not_one_item     | type.keyword                                                                                                     |
+| viewed_by                 | viewedBy                | text         | all_items        | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
+| viewed_by_not             | viewedByNot             | text         | no_items         | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
 

@@ -32,6 +32,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.common.enums.FieldOperator.NA;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
@@ -208,11 +209,11 @@ public enum ResourceParameter implements ParameterKey {
     UNIT_NOT(KEYWORD, NO_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_SHOULD(TEXT, ONE_OR_MORE_ITEM, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER_NOT(KEYWORD, NO_ITEMS, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER_SHOULD(TEXT, ONE_OR_MORE_ITEM, RESOURCE_OWNER_OWNER_KEYWORD),
     USER_AFFILIATION(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_NOT(KEYWORD, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    USER_NOT(KEYWORD, NO_ITEMS, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_SHOULD(TEXT, ONE_OR_MORE_ITEM, RESOURCE_OWNER_OWNER_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(CUSTOM, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(IGNORED),
@@ -267,7 +268,7 @@ public enum ResourceParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.fieldOperator = operator;
+        this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
