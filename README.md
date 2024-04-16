@@ -75,7 +75,7 @@ A common search API for NVA across resources
 ```JSON
 {
   "type": {
-    "id": "https://unset/resource/search?type=RequestType",
+    "id": "https://unset/resource/search?type=RequestType&aggregation=all&size=10&from=0",
     "key": "RequestType",
     "count": 1,
     "labels": {
@@ -86,6 +86,11 @@ A common search API for NVA across resources
 }
 ```
 
+**"id"** is the current query with the selected aggregation/filter added to it, useful for drill-downs into
+sub-selections of the resource.    
+If you want to filter on an aggregation without the current filter included, you can construct a search key by using the
+aggregation name + key value .
+(i.e. type=RequestType)
   
 ---
 ### Utility startpoints and flows ###
