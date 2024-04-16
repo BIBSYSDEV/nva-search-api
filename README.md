@@ -23,7 +23,7 @@ Public search API for resources in NVA. The API is backed by Amazon OpenSearch.
 | sort_order   | sortOrder   | asc/desc                    |                 |
 | search_after | searchAfter | sortindex                   | api only        |
 
-### Resource
+## Resource
 
 ```http request
 GET /search/resources HTTP/1.1
@@ -34,7 +34,7 @@ Accept: application/json
 Valid search parameters  
 [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
-### Resource (logged in user)
+## Resource (logged in user)
 
 ```http request
 GET /search/customer/resources HTTP/1.1
@@ -73,7 +73,7 @@ Valid search parameters
 }
 ```
 
-### Ticket
+## Ticket
 
 ```http request
 GET /search/customer/tickets HTTP/1.1
@@ -103,7 +103,7 @@ Valid search parameters
 }
 ```
 
-### Import-candidate
+## Import-candidate
 
 ```http request
 GET /search/import-candidates2 HTTP/1.1
@@ -151,5 +151,6 @@ aggregation name + key value .
 (i.e. type=RequestType)
   
 ---
-### Utility startpoints and flows ###
+
+## Utility startpoints and flows ###
 ![](utilities_flow.png)
