@@ -46,19 +46,19 @@ class OpensearchQueryToolsTest {
     }
 
     @Test
-//    @Disabled
+    @Disabled
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
 
     @Test
-//    @Disabled
+    @Disabled
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
     }
 
     @Test
-//    @Disabled
+    @Disabled
     void printImportCandidateParameter() {
         printEnum(Arrays.stream(ImportCandidateParameter.values()));
     }
@@ -66,7 +66,7 @@ class OpensearchQueryToolsTest {
 
     private void printEnum(Stream<ParameterKey> parameterKeyStream) {
         parameterKeyStream.forEach(key ->
-            logger.info("|{} / {}|{}|{}|{}|",
+            logger.info("|{}|{}|{}|{}|{}|",
                 key.asLowerCase(),
                 key.asCamelCase(),
                 key.fieldType().asCamelCase(),
