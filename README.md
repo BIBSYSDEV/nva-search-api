@@ -50,7 +50,7 @@ A common search API for NVA across resources
 }
 ```
 
-### Parameters to GET /search/importcandidates? [import-candidate parameters](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
+### GET /search/importcandidates? [import-candidate parameters](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
 
 **Structure in response from import-candidate endpoint**
 
