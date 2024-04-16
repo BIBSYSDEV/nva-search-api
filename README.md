@@ -5,7 +5,7 @@ A common search API for NVA across resources
 
 ### GET /search/customer/resources? [resource parameters](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
-#### Structure in response from Response endpoints
+**Structure in response from Response endpoints**
 
 ```JSON
 {
@@ -70,7 +70,7 @@ A common search API for NVA across resources
 }
 ```
 
-**All aggregations have the following format**
+### All aggregations have the following format
 
 ```JSON
 {
