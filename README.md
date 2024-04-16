@@ -3,13 +3,17 @@ A common search API for NVA across resources
 
 **Parameters to GET /search/resources**
 
-|Parameter|Description|Default value |
-|-----|-----|-----|
-| query | Term to search for in resource. | * 
-| orderBy | Field to order result by. |  modifiedDate 
-| sortOrder | Order of search results (**asc**ending or **desc**ending). | desc
-| from | Start posision for results, 0-based. | 0
-| results | Maximum number of publications in response. | 10
+[Importcandaidates](no/unit/nva/search2/importCandidate.md)
+[Resources](no/unit/nva/search2/resource.md)
+[Tickets](no/unit/nva/search2/ticket.md)
+
+| Parameter | Description                                                | Default value |
+|-----------|------------------------------------------------------------|---------------|
+| query     | Term to search for in resource.                            | *             |
+| orderBy   | Field to order result by.                                  | modifiedDate  | 
+| sortOrder | Order of search results (**asc**ending or **desc**ending). | desc          |
+| from      | Start posision for results, 0-based.                       | 0             |
+| results   | Maximum number of publications in response.                | 10            |
 
 
 **Structure in response from the search API**
