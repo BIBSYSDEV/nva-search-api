@@ -158,21 +158,3 @@ Accept: application/json
 | viewed_by                 | viewedBy                | text         | all_items        | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
 | viewed_by_not             | viewedByNot             | text         | no_items         | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
 
-###  Query parameters passed to sws/opensearch
-
-| key_name   | keyName   | queryKind         | scope                      |
-|------------|-----------|-------------------|----------------------------|
-| search_all | searchAll | text with ranking | all_items accross document |
-| fields     | fields    | list of keys      | user, tags, title          |
-
-####  Pagination parameters
-
-| key_name     | keyName     | queryKind                   | example         |
-|--------------|-------------|-----------------------------|-----------------|
-| aggregation  | aggregation | Enum                        | all, none       |
-| page         | page        | number                      | 0 to 10000/size |
-| from         | from        | number                      | 0 to 10000-size |
-| size         | size        | number                      | 0 to 1000       |
-| sort         | sort        | key1:asc/desc,key2:desc/asc |                 |
-| sort_order   | sortOrder   | asc/desc                    |                 |
-| search_after | searchAfter | sortindex                   | api only        |
