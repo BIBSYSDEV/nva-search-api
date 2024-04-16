@@ -70,7 +70,7 @@ class OpensearchQueryToolsTest {
                 key.asLowerCase(),
                 key.asCamelCase(),
                 key.fieldType().asCamelCase(),
-                key.searchOperator().asCamelCase(),
+                key.searchOperator().asLowerCase(),
                 key.searchFields().collect(Collectors.joining(", "))
             )
         );

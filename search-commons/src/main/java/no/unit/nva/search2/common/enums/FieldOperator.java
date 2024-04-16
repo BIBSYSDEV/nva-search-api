@@ -1,7 +1,6 @@
 package no.unit.nva.search2.common.enums;
 
-import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
-import org.apache.commons.text.CaseUtils;
+import java.util.Locale;
 
 public enum FieldOperator {
     /**
@@ -37,7 +36,7 @@ public enum FieldOperator {
      */
     NA;
 
-    public String asCamelCase() {
-        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+    public String asLowerCase() {
+        return this.name().toLowerCase(Locale.getDefault());
     }
 }
