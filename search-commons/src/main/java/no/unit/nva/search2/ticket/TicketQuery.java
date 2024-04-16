@@ -55,6 +55,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
@@ -216,6 +217,11 @@ public final class TicketQuery extends Query<TicketParameter> {
     @Override
     public URI getOpenSearchUri() {
         return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
+    }
+
+    @Override
+    protected String toCsvText(SwsResponse response) {
+        throw new IllegalArgumentException("Not implemented");
     }
 
     @Override

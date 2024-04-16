@@ -11,7 +11,7 @@ import java.util.stream.StreamSupport;
 import no.unit.nva.search.csv.HeaderColumnNameAndOrderMappingStrategy;
 import no.unit.nva.search.models.SearchResponseDto;
 
-public final class CsvTransformer {
+public final class ResourceCsvTransformer {
 
     private static final String IDENTITY_NAME_JSON_POINTER = "/identity/name";
     private static final String CONTRIBUTORS_JSON_POINTER = "/entityDescription/contributors";
@@ -28,7 +28,7 @@ public final class CsvTransformer {
     private static final char SEPARATOR = ';';
     private static final String LINE_END = "\r\n";
 
-    private CsvTransformer() {
+    private ResourceCsvTransformer() {
     }
 
     public static String transform(SearchResponseDto searchResponseDto) {
@@ -55,7 +55,7 @@ public final class CsvTransformer {
     }
 
     private static List<ExportCsv> extractedJsonSearchResults(List<JsonNode> searchResults) {
-        return searchResults.stream().map(CsvTransformer::createLine).collect(Collectors.toList());
+        return searchResults.stream().map(ResourceCsvTransformer::createLine).collect(Collectors.toList());
     }
 
     private static ExportCsv createLine(JsonNode searchResult) {
@@ -97,7 +97,7 @@ public final class CsvTransformer {
     private static List<String> getContributorsName(JsonNode document) {
         var contributors = document.at(CONTRIBUTORS_JSON_POINTER);
         return StreamSupport.stream(contributors.spliterator(), false)
-                   .map(CsvTransformer::extractName)
+                   .map(ResourceCsvTransformer::extractName)
                    .collect(Collectors.toList());
     }
 

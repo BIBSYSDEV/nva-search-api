@@ -67,6 +67,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
@@ -74,6 +75,7 @@ import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
@@ -203,6 +205,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             fromUri(openSearchUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
                 .getUri();
+    }
+
+    @Override
+    protected String toCsvText(SwsResponse response) {
+        return ResourceCsvTransformer.transform(response.getSearchHits());
     }
 
     @Override
@@ -414,6 +421,8 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected boolean isKeyValid(String keyName) {
             return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
         }
+
+
 
         private String expandLanguage(String decodedValue) {
             var startIndex = decodedValue.length() - 3;
