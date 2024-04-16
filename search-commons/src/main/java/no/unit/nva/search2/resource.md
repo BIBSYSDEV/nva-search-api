@@ -319,3 +319,19 @@ Accept: application/json
 | sort         | sort        | key1:asc/desc,key2:desc/asc |                 |
 | sort_order   | sortOrder   | asc/desc                    |                 |
 | search_after | searchAfter | sortindex                   | api only        |
+
+> [!NOTE]
+> ```
+> Valid contextType (aliases; type/contextType/category)   
+> 
+> AcademicArticle, AcademicChapter, AcademicLiteratureReview, AcademicMonograph, Architecture, ArtisticDesign,
+> BookAbstracts, BookAnthology, BookMonograph, CaseReport, ChapterArticle, ChapterConferenceAbstract, ChapterInReport,
+> ConferenceAbstract, ConferenceLecture, ConferencePoster, ConferenceReport, DataManagementPlan, DataSet,
+> DegreeBachelor, DegreeLicentiate, DegreeMaster, DegreePhd, Encyclopedia, EncyclopediaChapter, ExhibitionCatalog,
+> ExhibitionCatalogChapter, ExhibitionProduction, FeatureArticle, Introduction, JournalArticle, JournalCorrigendum,
+> JournalInterview, JournalIssue, JournalLeader, JournalLetter, JournalReview, Lecture, LiteraryArts, MediaBlogPost,
+> MediaFeatureArticle, MediaInterview, MediaParticipationInRadioOrTv, MediaReaderOpinion, MovingPicture,
+> MusicPerformance, NonFictionChapter, NonFictionMonograph, OtherPresentation, OtherStudentWork, PerformingArts, PopularScienceArticle,
+> PopularScienceChapter, PopularScienceMonograph, ProfessionalArticle, ReportBasic, ReportBookOfAbstract, ReportPolicy,
+> ReportResearch, ReportWorkingPaper, StudyProtocol, Textbook, TextbookChapter, VisualArts
+> ```

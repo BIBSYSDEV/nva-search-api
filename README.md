@@ -1,9 +1,10 @@
 # nva-search-api
-A common search API for NVA across resources
 
-### GET /search/resources? [resource parameters](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+Public search API for resources in NVA. The API is backed by Amazon OpenSearch and uses
 
-### GET /search/customer/resources? [resource parameters](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+### GET [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+
+### GET [/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
 **Structure in response from Response endpoints**
 
@@ -33,7 +34,7 @@ A common search API for NVA across resources
 }
 ```
 
-### GET /search/customer/tickets? [ticket parameters](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
+### GET [/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
 
 **Structure in response from ticket endpoint**
 
@@ -54,7 +55,7 @@ A common search API for NVA across resources
 }
 ```
 
-### GET /search/importcandidates? [import-candidate parameters](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
+### GET [/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
 
 **Structure in response from import-candidate endpoint**
 
