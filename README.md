@@ -25,27 +25,25 @@ Public search API for resources in NVA. The API is backed by Amazon OpenSearch.
 
 ## Resource
 
+Valid search parameters
+[/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+
 ```http request
 GET /search/resources HTTP/1.1
 Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-> [!IMPORTANT]
-> Valid search parameters
-> [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
-
 ## Resource (logged in user)
+
+Valid search parameters
+[/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
 ```http request
 GET /search/customer/resources HTTP/1.1
 Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
-
-> [!IMPORTANT]
-> Valid search parameters
-> [/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
 **Structure in response from Response endpoints**
 
@@ -77,15 +75,14 @@ Accept: application/json
 
 ## Ticket
 
+Valid search parameters
+[/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
+
 ```http request
 GET /search/customer/tickets HTTP/1.1
 Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
-
-> [!IMPORTANT]
-> Valid search parameters
-> [/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
 
 **Structure in response from ticket endpoint**
 
@@ -108,15 +105,15 @@ Accept: application/json
 
 ## Import-candidate
 
+Valid search parameters
+[/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
+
 ```http request
 GET /search/import-candidates2 HTTP/1.1
 Host: api.test.nva.aws.unit.no
 Accept: application/json
 ```
 
-> [!IMPORTANT]
-> Valid search parameters
-> [/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
 
 **Structure in response from import-candidate endpoint**
 
