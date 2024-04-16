@@ -64,6 +64,7 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
@@ -222,6 +223,11 @@ public final class TicketQuery extends Query<TicketParameter> {
     @Override
     protected String toCsvText(SwsResponse response) {
         throw new IllegalArgumentException("Not implemented");
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        builder.fetchSource(true);
     }
 
     @Override

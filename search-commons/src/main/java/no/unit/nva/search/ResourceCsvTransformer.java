@@ -14,14 +14,22 @@ import no.unit.nva.search.models.SearchResponseDto;
 public final class ResourceCsvTransformer {
 
     private static final String IDENTITY_NAME_JSON_POINTER = "/identity/name";
+    private static final String IDENTITY_NAME_SOURCE_POINTER = "entityDescription.contributors.identity.name";
     private static final String CONTRIBUTORS_JSON_POINTER = "/entityDescription/contributors";
     private static final String ID_JSON_POINTER = "/id";
+    private static final String ID_SOURCE_POINTER = "id";
     private static final String MAIN_TITLE_JSON_POINTER = "/entityDescription/mainTitle";
+    private static final String MAIN_TITLE_SOURCE_POINTER = "entityDescription.mainTitle";
     private static final String PUBLICATION_DATE_YEAR_JSON_POINTER = "/entityDescription/publicationDate/year";
+    private static final String PUBLICATION_DATE_YEAR_SOURCE_POINTER = "entityDescription.publicationDate.year";
     private static final String PUBLICATION_DATE_MONTH_JSON_POINTER = "/entityDescription/publicationDate/month";
+    private static final String PUBLICATION_DATE_MONTH_SOURCE_POINTER = "entityDescription.publicationDate.month";
     private static final String PUBLICATION_DATE_DAY_JSON_POINTER = "/entityDescription/publicationDate/day";
+    private static final String PUBLICATION_DATE_DAY_SOURCE_POINTER = "entityDescription.publicationDate.day";
     private static final String PUBLICATION_INSTANCE_TYPE_JSON_POINTER
         = "/entityDescription/reference/publicationInstance/type";
+    private static final String PUBLICATION_INSTANCE_TYPE_SOURCE_POINTER
+        = "entityDescription.reference.publicationInstance.type";
     private static final String EMPTY_STRING = "";
     private static final char UTF8_BOM = '\ufeff';
     private static final char QUOTE_CHAR = '"';
@@ -52,6 +60,18 @@ public final class ResourceCsvTransformer {
             throw new RuntimeException(e);
         }
         return stringWriter.toString();
+    }
+
+    public static List<String> getJsonFields() {
+        return List.of(
+            ID_SOURCE_POINTER,
+            MAIN_TITLE_SOURCE_POINTER,
+            PUBLICATION_DATE_YEAR_SOURCE_POINTER,
+            PUBLICATION_DATE_MONTH_SOURCE_POINTER,
+            PUBLICATION_DATE_DAY_SOURCE_POINTER,
+            PUBLICATION_INSTANCE_TYPE_SOURCE_POINTER,
+            IDENTITY_NAME_SOURCE_POINTER
+        );
     }
 
     private static List<ExportCsv> extractedJsonSearchResults(List<JsonNode> searchResults) {

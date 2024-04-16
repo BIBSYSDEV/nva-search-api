@@ -52,6 +52,7 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
@@ -120,6 +121,11 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     @Override
     protected String toCsvText(SwsResponse response) {
         throw new IllegalArgumentException("Not implemented");
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        builder.fetchSource(true);
     }
 
     @Override

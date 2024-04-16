@@ -87,12 +87,14 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
+    private boolean useCsvFieldsAsSource;
 
     private ResourceQuery() {
         super();
@@ -146,6 +148,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
             .queryName(PUBLISHER);
         this.filters.add(filter);
+        return this;
+    }
+
+    public ResourceQuery withOnlyCsvFields() {
+        this.useCsvFieldsAsSource = true;
         return this;
     }
 
@@ -210,6 +217,15 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected String toCsvText(SwsResponse response) {
         return ResourceCsvTransformer.transform(response.getSearchHits());
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        if (this.useCsvFieldsAsSource) {
+            builder.fetchSource(ResourceCsvTransformer.getJsonFields().toArray(String[]::new), null);
+        } else {
+            builder.fetchSource(true);
+        }
     }
 
     @Override
@@ -421,8 +437,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         protected boolean isKeyValid(String keyName) {
             return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
         }
-
-
 
         private String expandLanguage(String decodedValue) {
             var startIndex = decodedValue.length() - 3;

@@ -94,6 +94,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected abstract URI getOpenSearchUri();
 
     protected abstract String toCsvText(SwsResponse response);
+    protected abstract void setFetchSource(SearchSourceBuilder builder);
 
 
     /**
@@ -121,6 +122,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         return CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
             : toPagedResponse(response).toJsonString();
+    }
+
+    public <R, Q extends Query<K>> String doExport(OpenSearchClient<R, Q> queryClient) {
+        logSearchKeys();
+        final var response = (SwsResponse) queryClient.doSearch((Q) this);
+        return toCsvText(response);
     }
 
     public Instant getStartTime() {
@@ -316,5 +323,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
+
     }
 }

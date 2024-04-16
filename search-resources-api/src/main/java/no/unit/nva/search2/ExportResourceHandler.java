@@ -42,7 +42,8 @@ public class ExportResourceHandler extends ApiGatewayHandler<Void, String> {
                 .validate()
                 .build()
                 .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .doSearch(opensearchClient);
+                .withOnlyCsvFields()
+                .doExport(opensearchClient);
     }
 
     @Override
