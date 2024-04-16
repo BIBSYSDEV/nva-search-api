@@ -32,6 +32,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search2.common.enums.FieldOperator.LESS_THAN;
+import static no.unit.nva.search2.common.enums.FieldOperator.NA;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
@@ -267,7 +268,7 @@ public enum ResourceParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.fieldOperator = operator;
+        this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")

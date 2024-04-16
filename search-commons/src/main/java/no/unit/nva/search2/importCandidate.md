@@ -202,47 +202,47 @@ Accept: application/json
 
 ### All available filters
 
-| key                                                         | queryKind | scope                    | paths                                                                |
-|-------------------------------------------------------------|-----------|--------------------------|----------------------------------------------------------------------|
-| cristin_identifier / cristinIdentifier                      | CUSTOM    | ALL_ITEMS                | CRISTIN_IDENTIFIER                                                   |
-| scopus_identifier / scopusIdentifier                        | CUSTOM    | ALL_ITEMS                | SCOPUS_IDENTIFIER                                                    |
-| additional_identifiers_not / additionalIdentifiersNot       | KEYWORD   | NO_ITEMS                 | additionalIdentifiers.value.keyword                                  |
-| additional_identifiers_should / additionalIdentifiersShould | TEXT      | ONE_OR_MORE_ITEM         | additionalIdentifiers.value                                          |
-| category / category                                         | KEYWORD   | ALL_ITEMS                | publicationInstance.type                                             |
-| category_not / categoryNot                                  | KEYWORD   | NO_ITEMS                 | publicationInstance.type                                             |
-| category_should / categoryShould                            | TEXT      | ONE_OR_MORE_ITEM         | publicationInstance.type                                             |
-| created_date / createdDate                                  | DATE      | ALL_ITEMS                | createdDate                                                          |
-| contributor / contributor                                   | KEYWORD   | ALL_ITEMS                | contributors.identity.id.keyword, contributors.identity.name.keyword |
-| contributor_not / contributorNot                            | KEYWORD   | NO_ITEMS                 | contributors.identity.id.keyword, contributors.identity.name.keyword |
-| contributor_should / contributorShould                      | TEXT      | ONE_OR_MORE_ITEM         | contributors.identity.id, contributors.identity.name                 |
-| contributor_name / contributorName                          | KEYWORD   | ALL_ITEMS                | contributors.identity.name.keyword                                   |
-| contributor_name_not / contributorNameNot                   | KEYWORD   | NO_ITEMS                 | contributors.identity.name.keyword                                   |
-| contributor_name_should / contributorNameShould             | TEXT      | ONE_OR_MORE_ITEM         | contributors.identity.name                                           |
-| collaboration_type / collaborationType                      | KEYWORD   | ALL_ITEMS                | collaborationType.keyword                                            |
-| collaboration_type_not / collaborationTypeNot               | KEYWORD   | NO_ITEMS                 | collaborationType.keyword                                            |
-| collaboration_type_should / collaborationTypeShould         | TEXT      | ONE_OR_MORE_ITEM         | collaborationType                                                    |
-| doi / doi                                                   | KEYWORD   | ALL_ITEMS                | doi.keyword                                                          |
-| doi_not / doiNot                                            | TEXT      | NO_ITEMS                 | doi                                                                  |
-| doi_should / doiShould                                      | TEXT      | ONE_OR_MORE_ITEM         | doi                                                                  |
-| id / id                                                     | KEYWORD   | ALL_ITEMS                | id.keyword                                                           |
-| id_not / idNot                                              | KEYWORD   | NO_ITEMS                 | id.keyword                                                           |
-| id_should / idShould                                        | TEXT      | ONE_OR_MORE_ITEM         | id                                                                   |
-| import_status / importStatus                                | KEYWORD   | ALL_ITEMS                | importStatus.candidateStatus.keyword                                 |
-| import_status_not / importStatusNot                         | KEYWORD   | NO_ITEMS                 | importStatus.candidateStatus.keyword                                 |
-| import_status_should / importStatusShould                   | TEXT      | ONE_OR_MORE_ITEM         | importStatus.candidateStatus                                         |
-| instance_type / instanceType                                | KEYWORD   | ALL_ITEMS                | publicationInstance.type                                             |
-| instance_type_not / instanceTypeNot                         | KEYWORD   | NO_ITEMS                 | publicationInstance.type                                             |
-| instance_type_should / instanceTypeShould                   | TEXT      | ONE_OR_MORE_ITEM         | publicationInstance.type                                             |
-| publication_year / publicationYear                          | KEYWORD   | ALL_ITEMS                | publicationYear.keyword                                              |
-| publication_year_before / publicationYearBefore             | NUMBER    | LESS_THAN                | publicationYear                                                      |
-| publication_year_since / publicationYearSince               | NUMBER    | GREATER_THAN_OR_EQUAL_TO | publicationYear                                                      |
-| publisher / publisher                                       | KEYWORD   | ALL_ITEMS                | publisher.id.keyword                                                 |
-| publisher_not / publisherNot                                | KEYWORD   | NO_ITEMS                 | publisher.id.keyword                                                 |
-| publisher_should / publisherShould                          | TEXT      | ONE_OR_MORE_ITEM         | publisher.id                                                         |
-| title / title                                               | TEXT      | ALL_ITEMS                | mainTitle                                                            |
-| title_not / titleNot                                        | TEXT      | NO_ITEMS                 | mainTitle                                                            |
-| title_should / titleShould                                  | TEXT      | ONE_OR_MORE_ITEM         | mainTitle                                                            |
-| type / type                                                 | KEYWORD   | ALL_ITEMS                | type.keyword                                                         |
+| key                                                         | queryKind | scope                | paths                                                                |
+|-------------------------------------------------------------|-----------|----------------------|----------------------------------------------------------------------|
+| cristin_identifier / cristinIdentifier                      | custom    | allItems             | CRISTIN_IDENTIFIER                                                   |
+| scopus_identifier / scopusIdentifier                        | custom    | allItems             | SCOPUS_IDENTIFIER                                                    |
+| additional_identifiers_not / additionalIdentifiersNot       | keyword   | noItems              | additionalIdentifiers.value.keyword                                  |
+| additional_identifiers_should / additionalIdentifiersShould | text      | oneOrMoreItem        | additionalIdentifiers.value                                          |
+| category / category                                         | keyword   | allItems             | publicationInstance.type                                             |
+| category_not / categoryNot                                  | keyword   | noItems              | publicationInstance.type                                             |
+| category_should / categoryShould                            | text      | oneOrMoreItem        | publicationInstance.type                                             |
+| created_date / createdDate                                  | date      | allItems             | createdDate                                                          |
+| contributor / contributor                                   | keyword   | allItems             | contributors.identity.id.keyword, contributors.identity.name.keyword |
+| contributor_not / contributorNot                            | keyword   | noItems              | contributors.identity.id.keyword, contributors.identity.name.keyword |
+| contributor_should / contributorShould                      | text      | oneOrMoreItem        | contributors.identity.id, contributors.identity.name                 |
+| contributor_name / contributorName                          | keyword   | allItems             | contributors.identity.name.keyword                                   |
+| contributor_name_not / contributorNameNot                   | keyword   | noItems              | contributors.identity.name.keyword                                   |
+| contributor_name_should / contributorNameShould             | text      | oneOrMoreItem        | contributors.identity.name                                           |
+| collaboration_type / collaborationType                      | keyword   | allItems             | collaborationType.keyword                                            |
+| collaboration_type_not / collaborationTypeNot               | keyword   | noItems              | collaborationType.keyword                                            |
+| collaboration_type_should / collaborationTypeShould         | text      | oneOrMoreItem        | collaborationType                                                    |
+| doi / doi                                                   | keyword   | allItems             | doi.keyword                                                          |
+| doi_not / doiNot                                            | text      | noItems              | doi                                                                  |
+| doi_should / doiShould                                      | text      | oneOrMoreItem        | doi                                                                  |
+| id / id                                                     | keyword   | allItems             | id.keyword                                                           |
+| id_not / idNot                                              | keyword   | noItems              | id.keyword                                                           |
+| id_should / idShould                                        | text      | oneOrMoreItem        | id                                                                   |
+| import_status / importStatus                                | keyword   | allItems             | importStatus.candidateStatus.keyword                                 |
+| import_status_not / importStatusNot                         | keyword   | noItems              | importStatus.candidateStatus.keyword                                 |
+| import_status_should / importStatusShould                   | text      | oneOrMoreItem        | importStatus.candidateStatus                                         |
+| instance_type / instanceType                                | keyword   | allItems             | publicationInstance.type                                             |
+| instance_type_not / instanceTypeNot                         | keyword   | noItems              | publicationInstance.type                                             |
+| instance_type_should / instanceTypeShould                   | text      | oneOrMoreItem        | publicationInstance.type                                             |
+| publication_year / publicationYear                          | keyword   | allItems             | publicationYear.keyword                                              |
+| publication_year_before / publicationYearBefore             | number    | lessThan             | publicationYear                                                      |
+| publication_year_since / publicationYearSince               | number    | greaterThanOrEqualTo | publicationYear                                                      |
+| publisher / publisher                                       | keyword   | allItems             | publisher.id.keyword                                                 |
+| publisher_not / publisherNot                                | keyword   | noItems              | publisher.id.keyword                                                 |
+| publisher_should / publisherShould                          | text      | oneOrMoreItem        | publisher.id                                                         |
+| title / title                                               | text      | allItems             | mainTitle                                                            |
+| title_not / titleNot                                        | text      | noItems              | mainTitle                                                            |
+| title_should / titleShould                                  | text      | oneOrMoreItem        | mainTitle                                                            |
+| type / type                                                 | keyword   | allItems             | type.keyword                                                         |
 
 ### Query parameters passed to sws/opensearch
 

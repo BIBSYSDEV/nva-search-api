@@ -1,5 +1,8 @@
 package no.unit.nva.search2.common.enums;
 
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
+import org.apache.commons.text.CaseUtils;
+
 public enum FieldOperator {
     /**
      * ALL must match in document (Only sensible for collections).
@@ -28,5 +31,13 @@ public enum FieldOperator {
     /**
      * Between.
      */
-    BETWEEN
+    BETWEEN,
+    /**
+     * Not Applicable
+     */
+    NA;
+
+    public String asCamelCase() {
+        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+    }
 }

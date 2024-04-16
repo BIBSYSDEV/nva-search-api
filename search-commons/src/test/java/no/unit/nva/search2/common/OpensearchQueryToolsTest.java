@@ -46,7 +46,7 @@ class OpensearchQueryToolsTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
@@ -69,8 +69,8 @@ class OpensearchQueryToolsTest {
             logger.info("|{} / {}|{}|{}|{}|",
                 key.asLowerCase(),
                 key.asCamelCase(),
-                key.fieldType(),
-                key.searchOperator(),
+                key.fieldType().asCamelCase(),
+                key.searchOperator().asCamelCase(),
                 key.searchFields().collect(Collectors.joining(", "))
             )
         );
