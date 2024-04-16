@@ -439,7 +439,7 @@ public final class Constants {
 
     public static Script groupByLicenses() {
         var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
+            if (doc['associatedArtifacts'].size()==0) { return null;}
             def url = doc['associatedArtifacts.license.keyword'].value;
             if (url.contains("/by-nc-nd")) {
               return "CC-NC-ND";
@@ -461,22 +461,24 @@ public final class Constants {
 
     public static Script selectByLicense(String license) {
         var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return false;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "CC-NC-ND".equals(params.license);
-            } else if (url.contains("/by-nc-sa")) {
-              return "CC-NC-SA".equals(params.license);
-            } else if (url.contains("/by-nc")) {
-              return "CC-NC".equals(params.license);
-            } else if (url.contains("/by-nd")) {
-              return "CC-ND".equals(params.license);
-            } else if (url.contains("/by-sa")) {
-              return "CC-SA".equals(params.license);
-            } else if (url.contains("/by")) {
-              return "CC-BY".equals(params.license);
-            } else {
-                return "Other".equals(params.license);
+            if (doc['associatedArtifacts'].length==0) { return false;}
+            for(item in doc['associatedArtifacts']) {
+                def url = item['license.keyword'].value;
+                if (url.contains("/by-nc-nd")) {
+                  return "CC-NC-ND".equals(params.license);
+                } else if (url.contains("/by-nc-sa")) {
+                  return "CC-NC-SA".equals(params.license);
+                } else if (url.contains("/by-nc")) {
+                  return "CC-NC".equals(params.license);
+                } else if (url.contains("/by-nd")) {
+                  return "CC-ND".equals(params.license);
+                } else if (url.contains("/by-sa")) {
+                  return "CC-SA".equals(params.license);
+                } else if (url.contains("/by")) {
+                  return "CC-BY".equals(params.license);
+                } else {
+                    return "Other".equals(params.license);
+                }
             }
             """;
         return new Script(

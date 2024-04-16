@@ -14,7 +14,7 @@ junit = { strictly = '5.10.2' }
 log4j = { strictly = '2.23.0' }
 mockito = { strictly = '4.2.0' }
 nvaCommons = { prefer = '1.38.3' }
-nvaDatamodel = { strictly = '0.20.73' }
+#nvaDatamodel = { strictly = '0.20.73' }
 open-csv = { strictly = '5.8' }
 openSearchRestClient = { strictly = '2.9.0' }
 opensearch = { strictly = '2.6.0' }
@@ -45,7 +45,7 @@ aws-sdk2-sqs = { group = 'software.amazon.awssdk', name = 'sqs', version.ref = '
 aws-sdk2-urlconnection = { group = 'software.amazon.awssdk', name = 'url-connection-client', version.ref = 'awsSdk2' }
 aws-sdk2-eventbridge = { group = 'software.amazon.awssdk', name = 'eventbridge', version.ref = 'awsSdk2' }
 aws-apache-client = { group = 'software.amazon.awssdk', name = 'apache-client', version.ref = 'awsSdk2' }
-aws-java-sdk-core = { group = 'com.amazonaws', name = 'aws-java-sdk-core', version.ref = 'awsSdk2' }
+#aws-java-sdk-core = { group = 'com.amazonaws', name = 'aws-java-sdk-core', version.ref = 'awsSdk2' }
 aws-lambda-java-core = { group = 'com.amazonaws', name = 'aws-lambda-java-core', version.ref = 'awsLambdaJavaCore' }
 aws-lambda-events = { group = 'com.amazonaws', name = 'aws-lambda-java-events', version.ref = 'awsLambdaEvents' }
 
@@ -62,7 +62,7 @@ jackson-datatype-jsr310 = { group = 'com.fasterxml.jackson.datatype', name = 'ja
 jackson-datatype-jdk8 = { group = 'com.fasterxml.jackson.datatype', name = 'jackson-datatype-jdk8', version.ref = 'jackson' }
 
 jackson-jr-objects = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-objects', version.ref = 'jackson' }
-jackson-jr-stree = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-stree', version.ref = 'jackson' }
+#jackson-jr-stree = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-stree', version.ref = 'jackson' }
 jackson-jr-annotations = { group = 'com.fasterxml.jackson.jr', name = 'jackson-jr-annotation-support', version.ref = 'jackson' }
 
 slf4j = { group = 'org.slf4j', name = 'slf4j-api', version.ref = 'slf4j' }
