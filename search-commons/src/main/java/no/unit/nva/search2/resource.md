@@ -140,7 +140,7 @@
 
 ### By a specific contributor
 ```http request
-GET /search/resources?contributor=https%3A%2F%2Fapi.test.nva.aws.unit.no%2Fcristin%2Fperson%2F538786 HTTP/1.1
+GET /search/resources?contributor=2F538786 HTTP/1.1
 Host: api.test.nva.aws.unit.no
 Accept: application/json
 
@@ -301,29 +301,10 @@ Accept: application/json
 | user_affiliation_not            | userAffiliationNot           | keyword      | all_items                | resourceOwner.ownerAffiliation.keyword                                                                                                                                                                                                                                                 |
 | user_affiliation_should         | userAffiliationShould        | text         | all_items                | resourceOwner.ownerAffiliation                                                                                                                                                                                                                                                         |
 
-####  Query parameters passed to sws/opensearch
-
-| key_name   | keyName   | queryKind         | scope                      |
-|------------|-----------|-------------------|----------------------------|
-| search_all | searchAll | text with ranking | all_items accross document |
-| fields     | fields    | list of keys      | user, tags, title          |
-
-####  Pagination parameters
-
-| key_name     | keyName     | queryKind                   | example         |
-|--------------|-------------|-----------------------------|-----------------|
-| aggregation  | aggregation | Enum                        | all, none       |
-| page         | page        | number                      | 0 to 10000/size |
-| from         | from        | number                      | 0 to 10000-size |
-| size         | size        | number                      | 0 to 1000       |
-| sort         | sort        | key1:asc/desc,key2:desc/asc |                 |
-| sort_order   | sortOrder   | asc/desc                    |                 |
-| search_after | searchAfter | sortindex                   | api only        |
-
 > [!NOTE]
+> <p>Valid contextType (aliases; type/contextType/category)</p>
+>
 > ```
-> Valid contextType (aliases; type/contextType/category)   
-> 
 > AcademicArticle, AcademicChapter, AcademicLiteratureReview, AcademicMonograph, Architecture, ArtisticDesign,
 > BookAbstracts, BookAnthology, BookMonograph, CaseReport, ChapterArticle, ChapterConferenceAbstract, ChapterInReport,
 > ConferenceAbstract, ConferenceLecture, ConferencePoster, ConferenceReport, DataManagementPlan, DataSet,
