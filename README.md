@@ -97,26 +97,6 @@ aggregation name + key value .
 
 </details>
 
-## Useful links
-
-- API documentation
-    - [NVA git README](https://github.com/BIBSYSDEV/nva-api-documentation/blob/main/README.md)
-    - [NVA swagger (test)](https://swagger-ui.test.nva.aws.unit.no/#/NVA+Public+Search+API)
-    - [NVA swagger (production)](https://swagger-ui.nva.unit.no/#/NVA+Public+Search+API)
-    - READMES (Endpoint parameter documentation)
-        - [Resources](search-commons/src/main/java/no/unit/nva/search2/resource.md)
-        - [Tickets](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
-        - [Import-candidates](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
-- API Endpoints
-    - Test
-        - https://api.test.nva.aws.unit.no/search/resources
-        - https://api.test.nva.aws.unit.no/search/customer/resources
-        - https://api.test.nva.aws.unit.no/search/customer/tickets
-        - https://api.test.nva.aws.unit.no/search/import-candidates2
-    - Production
-        - https://api.nva.unit.no/search/resources
-        - https://api.nva.unit.no/search/customer/resources
-        - https://api.nva.unit.no/search/customer/tickets
 
 ## EndPoints
 
@@ -238,8 +218,29 @@ Accept: application/json
 ```
 </details>
 
-  
 ---
 
+## Useful links
+
+- API documentation
+    - [NVA git README](https://github.com/BIBSYSDEV/nva-api-documentation/blob/main/README.md)
+    - [NVA swagger (test)](https://swagger-ui.test.nva.aws.unit.no/#/NVA+Public+Search+API)
+    - [NVA swagger (production)](https://swagger-ui.nva.unit.no/#/NVA+Public+Search+API)
+    - READMES (Endpoint parameter documentation)
+        - [Resources](search-commons/src/main/java/no/unit/nva/search2/resource.md)
+        - [Tickets](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
+        - [Import-candidates](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
+- API Endpoints
+    - Test
+        - https://api.test.nva.aws.unit.no/search/resources
+        - https://api.test.nva.aws.unit.no/search/customer/resources
+        - https://api.test.nva.aws.unit.no/search/customer/tickets
+        - https://api.test.nva.aws.unit.no/search/import-candidates2
+    - Production
+        - https://api.nva.unit.no/search/resources
+        - https://api.nva.unit.no/search/customer/resources
+        - https://api.nva.unit.no/search/customer/tickets
+  
+---
 ## Utility startpoints and flows ###
 ![](utilities_flow.png)
