@@ -1,9 +1,7 @@
 # Tickets
 
-## Data model
-
 <details>
-<summary>JSON</summary>
+<summary>JSON Data model</summary>
 
 ```json
   {
@@ -73,8 +71,9 @@
 ```
 
 </details>
-
-## Search
+<p></p>
+<details>
+<summary>Search examples</summary>
 
 ### By a specific contributor
 ```http request
@@ -107,10 +106,9 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 
 ```
-## Filters
-* Filters are case-insensitive and can be spelled with camelCase as well
-  * <code>context_type_should</code> could also be spelled <code>contextTypeShould</code>
-* Every filter applied are joined with <code>AND</code> between them, making the query more restricted
+
+</details>
+
 ### QueryKind
 * number
   * Integer

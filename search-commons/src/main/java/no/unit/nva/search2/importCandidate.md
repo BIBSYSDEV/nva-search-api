@@ -1,9 +1,7 @@
 # Import Candidate
 
-## Data model
-
 <details>
-<summary>JSON</summary>
+<summary>JSON Data model</summary>
 
 ```json
 {
@@ -143,8 +141,10 @@
 ```
 
 </details>
+<p></p>
 
-## Search
+<details>
+<summary>Search examples</summary>
 
 ### By a specific contributor
 
@@ -182,11 +182,8 @@ Accept: application/json
 
 ```
 
-## Filters
+</details>
 
-* Filters are case-insensitive and can be spelled with camelCase as well
-    * <code>context_type_should</code> could also be spelled <code>contextTypeShould</code>
-* Every filter applied are joined with <code>AND</code> between them, making the query more restricted
 
 ### QueryKind
 
