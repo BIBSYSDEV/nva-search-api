@@ -1,7 +1,8 @@
-# Resource
+# /Resource
 
+## Data Model
 <details>
-<summary>JSON Data model</summary>
+<summary>JSON</summary>
 
 ```json
 {
@@ -138,7 +139,7 @@
 ```
 </details>
 
-<p></p>
+## Examples
 
 <details>
 <summary>Search examples</summary>
@@ -177,7 +178,9 @@ Accept: application/json
 
 </details>
 
-## QueryKind
+## Available Keys (filters)
+
+### QueryKind descriptions
 * number
   * Integer
 * date
@@ -191,9 +194,8 @@ Accept: application/json
 * free_text
   * Search through whole document
 * custom
-  * 
 
-## All available filters
+### Key details
 
 | key_name                        | keyName                      | queryKind    | scope                    | paths                                                                                                                                                                                                                                                                                  |
 |---------------------------------|------------------------------|--------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

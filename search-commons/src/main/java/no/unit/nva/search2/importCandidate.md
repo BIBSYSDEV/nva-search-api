@@ -1,7 +1,8 @@
 # Import Candidate
 
+## Data Model
 <details>
-<summary>JSON Data model</summary>
+<summary>JSON</summary>
 
 ```json
 {
@@ -141,10 +142,12 @@
 ```
 
 </details>
-<p></p>
+
+## Examples
 
 <details>
 <summary>Search examples</summary>
+
 
 ### By a specific contributor
 
@@ -184,25 +187,24 @@ Accept: application/json
 
 </details>
 
+## Available Keys (filters)
 
-### QueryKind
-
+### QueryKind descriptions
 * number
-    * Integer
+  * Integer
 * date
-    * DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
+  * DateTimeFormat -> <code> yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ</code>
 * keyword
-    * Only hit on complete field
+  * Only hit on complete field
 * fuzzy_keyword
-    * will hit on partial field, boost hits on complete field
+  * will hit on partial field, boost hits on complete field
 * text
   * hits on any partial match in field(s), boosts on exact match and phrases
 * free_text
-    * Search through whole document
+  * Search through whole document
 * custom
-    *
 
-### All available filters
+### Key details
 
 | key_name                      | keyName                     | queryKind | scope                    | paths                                                                |
 |-------------------------------|-----------------------------|-----------|--------------------------|----------------------------------------------------------------------|
