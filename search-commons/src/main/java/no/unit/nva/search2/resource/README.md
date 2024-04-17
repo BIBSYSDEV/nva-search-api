@@ -148,34 +148,26 @@
 
 ### By a specific contributor
 ```http request
-GET /search/resources?contributor=2F538786 HTTP/1.1
-Host: api.test.nva.aws.unit.no
+GET https://api.test.nva.aws.unit.no/search/resources?contributor=2F538786
 Accept: application/json
-
 ```
 
 ### By title
 ```http request
-GET /search/resources?title=My+very+specific+title HTTP/1.1
-Host: api.test.nva.aws.unit.no
+GET https://api.test.nva.aws.unit.no/search/resources?title=My+very+specific+title
 Accept: application/json
-
 ```
 
 ### By category
 ```http request
-GET /search/resources?category=AcademicArticle&category=AcademicMonograph HTTP/1.1
-Host: api.test.nva.aws.unit.no
+GET https://api.test.nva.aws.unit.no/search/resources?category=AcademicArticle&category=AcademicMonograph
 Accept: application/json
-
 ```
 
 ### Free text
 ```http request
-GET /search/resources?query=Some+specific+phrase HTTP/1.1
-Host: api.test.nva.aws.unit.no
+GET https://api.test.nva.aws.unit.no/search/resources?query=Some+specific+phrase
 Accept: application/json
-
 ```
 
 </details>
