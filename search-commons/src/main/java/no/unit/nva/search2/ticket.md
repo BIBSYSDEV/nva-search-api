@@ -1,4 +1,4 @@
-# Tickets
+# /Tickets
 
 ## Data Model
 <details>
