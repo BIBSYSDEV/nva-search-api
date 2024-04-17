@@ -164,3 +164,9 @@ Accept: application/json
 | viewed_by                 | viewedBy                | text         | all_items        | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
 | viewed_by_not             | viewedByNot             | text         | no_items         | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
 
+> [!NOTE]
+> <p>Valid SortKeys </p>
+>
+> ```
+> category, instanceType, createdDate, modifiedDate, publishedDate, publicationDate, title, unitId, user
+> ```

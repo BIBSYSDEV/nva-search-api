@@ -1,9 +1,7 @@
 # Resource
 
-## Data model
-
 <details>
-<summary>JSON</summary>
+<summary>JSON Data model</summary>
 
 ```json
 {
@@ -138,10 +136,12 @@
   ]
 }
 ```
-
 </details>
 
-## Search
+<p></p>
+
+<details>
+<summary>Search examples</summary>
 
 ### By a specific contributor
 ```http request
@@ -174,11 +174,10 @@ Host: api.test.nva.aws.unit.no
 Accept: application/json
 
 ```
-## Filters
-* Filters are case-insensitive and can be spelled with camelCase as well
-  * <code>context_type_should</code> could also be spelled <code>contextTypeShould</code>
-* Every filter applied are joined with <code>AND</code> between them, making the query more restricted
-### QueryKind
+
+</details>
+
+## QueryKind
 * number
   * Integer
 * date
@@ -194,7 +193,7 @@ Accept: application/json
 * custom
   * 
 
-### All available filters
+## All available filters
 
 | key_name                        | keyName                      | queryKind    | scope                    | paths                                                                                                                                                                                                                                                                                  |
 |---------------------------------|------------------------------|--------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -306,6 +305,8 @@ Accept: application/json
 | user_affiliation_not            | userAffiliationNot           | keyword      | all_items                | resourceOwner.ownerAffiliation.keyword                                                                                                                                                                                                                                                 |
 | user_affiliation_should         | userAffiliationShould        | text         | all_items                | resourceOwner.ownerAffiliation                                                                                                                                                                                                                                                         |
 
+## Notes
+
 > [!NOTE]
 > <p>Valid contextType (aliases; type/contextType/category)</p>
 >
@@ -320,4 +321,11 @@ Accept: application/json
 > MusicPerformance, NonFictionChapter, NonFictionMonograph, OtherPresentation, OtherStudentWork, PerformingArts, PopularScienceArticle,
 > PopularScienceChapter, PopularScienceMonograph, ProfessionalArticle, ReportBasic, ReportBookOfAbstract, ReportPolicy,
 > ReportResearch, ReportWorkingPaper, StudyProtocol, Textbook, TextbookChapter, VisualArts
+> ```
+
+> [!NOTE]
+> <p>Valid SortKeys </p>
+>
+> ```
+> category, instanceType, createdDate, modifiedDate, publishedDate, publicationDate, title, unitId, user
 > ```

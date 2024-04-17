@@ -248,3 +248,10 @@ Accept: application/json
 | title_not                     | titleNot                    | text      | no_items                 | mainTitle                                                            |
 | title_should                  | titleShould                 | text      | one_or_more_item         | mainTitle                                                            |
 | type                          | type                        | keyword   | all_items                | type.keyword                                                         |
+
+> [!NOTE]
+> <p>Valid SortKeys </p>
+>
+> ```
+> category, instanceType, createdDate, modifiedDate, publishedDate, publicationDate, title, unitId, user
+> ```
