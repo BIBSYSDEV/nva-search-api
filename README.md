@@ -118,7 +118,9 @@ aggregation name + key value .
         - https://api.nva.unit.no/search/customer/resources
         - https://api.nva.unit.no/search/customer/tickets
 
-## Resource
+## EndPoints
+
+### /Resource
 
 Valid search parameters [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
 
@@ -134,7 +136,7 @@ Host: api.test.nva.aws.unit.no
 Accept: application/csv
 ```
 
-## Resource (logged in user)
+### /Resource (logged in user)
 
 Valid search
 parameters [/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource.md)
@@ -176,7 +178,7 @@ Accept: application/json
 
 </details>
 
-## Ticket
+### /Ticket
 
 Valid search parameters
 [/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket.md)
@@ -209,7 +211,7 @@ Accept: application/json
 
 </details>
 
-## Import-candidate
+### /Import-candidate
 
 Valid search parameters
 [/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importCandidate.md)
