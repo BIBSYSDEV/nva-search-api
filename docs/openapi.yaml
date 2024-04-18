@@ -4,155 +4,6 @@ info:
   version: '0.2.0'
   description: Public search API for resources in NVA. The API is backed by Amazon OpenSearch and uses [OpenSearch query syntax](https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/).
 paths:
-  /tickets:
-    get:
-      description: Listing of all tickets
-      parameters:
-        - in: query
-          name: viewingScope
-          description: 'Only return tickets with a resource owner in one of the selected organisation. Including their sub-units. Formatted as a comma separated list of affiliations ids.'
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: excludeSubUnits
-          description: 'Exclude sub-units of the given viewingScope.'
-          required: false
-          schema:
-            type: boolean
-        - in: query
-          name: role
-          description: "The role you have when getting tickets"
-          required: false
-          schema:
-            type: string
-            default: "curator"
-            enum: [ curator, creator ]
-        - in: query
-          name: query
-          description: "Term to search for in resource."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: orderBy
-          description: "Field to order result by."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: sortOrder
-          description: "Order of search results (asc or desc)."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: from
-          description: "Start position from results, 0-based."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: results
-          description: "Maximum number of publications in response."
-          required: false
-          schema:
-            type: string
-      security:
-        - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend", "aws.cognito.signin.user.admin" ]
-      x-amazon-apigateway-integration:
-        uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}:live/invocations
-        responses: { }
-        httpMethod: POST
-        type: AWS_PROXY
-      responses:
-        '200':
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TicketSearchResponse"
-
-  /customer/tickets:
-    get:
-      description: "Search for Tickets by customer"
-      parameters:
-        - $ref: '#/components/parameters/assigneeParam'
-        - $ref: '#/components/parameters/assigneeNotParam'
-        - $ref: '#/components/parameters/createdDateParam'
-        - $ref: '#/components/parameters/customerIdParam'
-        - $ref: '#/components/parameters/customerIdNotParam'
-        - $ref: '#/components/parameters/idParam'
-        - $ref: '#/components/parameters/idNotParam'
-        - $ref: '#/components/parameters/finalizedByParam'
-        - $ref: '#/components/parameters/finalizedByNotParam'
-        - $ref: '#/components/parameters/messagesParam'
-        - $ref: '#/components/parameters/messagesNotParam'
-        - $ref: '#/components/parameters/modifiedDateParam'
-        - $ref: '#/components/parameters/organizationIdParam'
-        - $ref: '#/components/parameters/organizationIdNotParam'
-        - $ref: '#/components/parameters/ownerParam'
-        - $ref: '#/components/parameters/ownerNotParam'
-        - $ref: '#/components/parameters/publicationIdParam'
-        - $ref: '#/components/parameters/publicationIdNotParam'
-        - $ref: '#/components/parameters/publicationModifiedDateParam'
-        - $ref: '#/components/parameters/publicationOwnerParam'
-        - $ref: '#/components/parameters/publicationOwnerNotParam'
-        - $ref: '#/components/parameters/publicationStatusParam'
-        - $ref: '#/components/parameters/publicationStatusNotParam'
-        - $ref: '#/components/parameters/publicationTitleParam'
-        - $ref: '#/components/parameters/statusParam'
-        - $ref: '#/components/parameters/statusNotParam'
-        - $ref: '#/components/parameters/typeParam'
-        - $ref: '#/components/parameters/typeNotParam'
-        - $ref: '#/components/parameters/viewedByParam'
-        - $ref: '#/components/parameters/viewedByNotParam'
-        - $ref: '#/components/parameters/fieldsParam'
-        - $ref: '#/components/parameters/fromParam'
-        - $ref: '#/components/parameters/orderParam'
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/queryParam'
-        - $ref: '#/components/parameters/sizeParam'
-        - $ref: '#/components/parameters/sortParam'
-      security:
-        - CognitoUserPool: [
-          "https://api.nva.unit.no/scopes/backend",
-          "https://api.nva.unit.no/scopes/frontend",
-          "aws.cognito.signin.user.admin"
-        ]
-      x-amazon-apigateway-integration:
-        uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchParamTicketsFunction.Arn}:live/invocations
-        responses: { }
-        httpMethod: POST
-        type: AWS_PROXY
-      responses:
-        '200':
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TicketSearchResponse"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "500":
-          description: "500 info description"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-
 
   /resources:
     get:
@@ -465,6 +316,84 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /customer/tickets:
+    get:
+      description: "Search for Tickets by customer"
+      parameters:
+        - $ref: '#/components/parameters/assigneeParam'
+        - $ref: '#/components/parameters/assigneeNotParam'
+        - $ref: '#/components/parameters/createdDateParam'
+        - $ref: '#/components/parameters/customerIdParam'
+        - $ref: '#/components/parameters/customerIdNotParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/finalizedByParam'
+        - $ref: '#/components/parameters/finalizedByNotParam'
+        - $ref: '#/components/parameters/messagesParam'
+        - $ref: '#/components/parameters/messagesNotParam'
+        - $ref: '#/components/parameters/modifiedDateParam'
+        - $ref: '#/components/parameters/organizationIdParam'
+        - $ref: '#/components/parameters/organizationIdNotParam'
+        - $ref: '#/components/parameters/ownerParam'
+        - $ref: '#/components/parameters/ownerNotParam'
+        - $ref: '#/components/parameters/publicationIdParam'
+        - $ref: '#/components/parameters/publicationIdNotParam'
+        - $ref: '#/components/parameters/publicationModifiedDateParam'
+        - $ref: '#/components/parameters/publicationOwnerParam'
+        - $ref: '#/components/parameters/publicationOwnerNotParam'
+        - $ref: '#/components/parameters/publicationStatusParam'
+        - $ref: '#/components/parameters/publicationStatusNotParam'
+        - $ref: '#/components/parameters/publicationTitleParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/typeParam'
+        - $ref: '#/components/parameters/typeNotParam'
+        - $ref: '#/components/parameters/viewedByParam'
+        - $ref: '#/components/parameters/viewedByNotParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+      security:
+        - CognitoUserPool: [
+          "https://api.nva.unit.no/scopes/backend",
+          "https://api.nva.unit.no/scopes/frontend",
+          "aws.cognito.signin.user.admin"
+        ]
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchParamTicketsFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "500 info description"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 
   /import-candidates2:
     get:

@@ -80,7 +80,6 @@ public class SearchImportCandidatesApiHandlerTest {
     }
 
     private void prepareRestHighLevelClientOkResponse() throws IOException {
-        String result = stringFromResources(Path.of(SAMPLE_OPENSEARCH_RESPONSE));
         SearchResponse searchResponse = createSearchResponseWithHits(SAMPLE_OPENSEARCH_RESPONSE);
 
         when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
