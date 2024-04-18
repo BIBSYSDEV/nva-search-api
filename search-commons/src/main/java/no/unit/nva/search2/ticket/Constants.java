@@ -34,7 +34,6 @@ public final class Constants {
     public static final String PUBLICATION = "publication";
     public static final String PUBLICATION_STATUS = "publicationStatus";
     public static final String USERNAME = "username";
-    public static final String NOTIFICATION = "notification";
     public static final String UNHANDLED_KEY = "unhandled key -> ";
 
     public static final String PART_OF = "partOf";
@@ -151,10 +150,11 @@ public final class Constants {
 
     private static FilterAggregationBuilder getTicketAggregationFor(String aggregationName, String username,
                                                                     TicketType... types) {
+        var ticketTypeNames = Arrays.stream(types).toList();
         var query = QueryBuilders.boolQuery();
         query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
         query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
-        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), types));
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), ticketTypeNames));
         return AggregationBuilders.filter(aggregationName, query);
     }
 
