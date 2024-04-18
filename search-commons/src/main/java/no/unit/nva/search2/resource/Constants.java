@@ -341,17 +341,12 @@ public final class Constants {
                 SERIES_AS_TYPE,
                 ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD);
 
-        var seriesUriAsUuid =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
-
-        var seriesName =
-            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
-
         return filterBySeriesType
             .subAggregation(
-                seriesUriAsUuid
-                    .subAggregation(seriesName)
+                branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, IDENTIFIER_KEYWORD)
+                    .subAggregation(
+                        branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD)
+                    )
             );
     }
 
@@ -362,16 +357,12 @@ public final class Constants {
                 JOURNAL_AS_TYPE,
                 ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
 
-        var contextTypeUriASUuiId =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
-
         var seriesName =
             branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
 
         return filterByJournalType
             .subAggregation(
-                contextTypeUriASUuiId
+                branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, IDENTIFIER_KEYWORD)
                     .subAggregation(seriesName)
             );
     }
@@ -388,14 +379,9 @@ public final class Constants {
 
     private static TermsAggregationBuilder publisher() {
         return
-            AggregationBuilders
-                .terms(PUBLISHER)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
-                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, IDENTIFIER_KEYWORD)
                 .subAggregation(
-                    branchBuilder(
-                        NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD
-                    )
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD)
                 );
     }
 
@@ -419,17 +405,6 @@ public final class Constants {
 
     private static CardinalityAggregationBuilder uniquePublications() {
         return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
-    }
-
-
-    public static Script uriAsUuid(String... paths) {
-        var path = String.join(DOT, paths);
-        var script = """
-            if (params['path']==null||doc[params['path']]==null||doc[params['path']].size()==0) { return null;}
-            def path_parts = doc[params['path']].value.splitOnToken('/');
-            if (path_parts.length == 0) { return null; }
-            return path_parts[path_parts.length - 2];""";
-        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of("path", path));
     }
 
 
