@@ -1,13 +1,6 @@
 package no.unit.nva.search;
 
-import static java.util.Objects.isNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.SearchClient.DOCUMENT_TYPE;
-import static no.unit.nva.search.SearchClient.DOI_REQUEST;
-import static no.unit.nva.search.SearchClient.ID_FIELD;
-import static no.unit.nva.search.SearchClient.ORGANIZATION_FIELD;
-import static no.unit.nva.search.SearchClient.PART_OF_FIELD;
-import static no.unit.nva.search.SearchClient.TICKET_STATUS;
 import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
@@ -22,8 +15,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.opensearch.search.sort.SortOrder.DESC;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,7 +24,6 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonUtils;
@@ -46,13 +36,10 @@ import no.unit.nva.testutils.RandomDataGenerator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.search.aggregations.AbstractAggregationBuilder;
 import org.opensearch.testcontainers.OpensearchContainer;
@@ -61,8 +48,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class OpensearchTest {
 
-    public static final String STATUS_TO_INCLUDE_IN_RESULT = "Pending";
-    public static final String TEST_RESOURCES_MAPPINGS = "mapping_test_resources.json";
     public static final String TEST_IMPORT_CANDIDATES_MAPPINGS = "mapping_test_import_candidates.json";
     private static final int SAMPLE_NUMBER_OF_RESULTS = 7;
     private static final int SAMPLE_FROM = 0;
@@ -93,44 +78,11 @@ public class OpensearchTest {
     }
 
 
-    void assertAggregation(JsonNode aggregationNode, String key, int expectedDocCount) {
-        AtomicBoolean found = new AtomicBoolean(false);
-        aggregationNode.forEach(
-            bucketNode -> {
-                if (bucketNode.get("key").asText().equals(key)) {
-                    found.set(true);
-                    assertThat(bucketNode.get("docCount").asInt(), is(equalTo(expectedDocCount)));
-                }
-            }
-        );
-        assertThat(found.get(), is(equalTo(true)));
-    }
-
     private String generateIndexName() {
         return RandomDataGenerator.randomString().toLowerCase();
     }
 
-    private IndexDocument getTicketIndexDocument(String indexName, URI organization, List<URI> partOf) {
-        return getTicketIndexDocument(indexName, organization, partOf, STATUS_TO_INCLUDE_IN_RESULT);
-    }
 
-    private IndexDocument getTicketIndexDocument(String indexName, URI organization, List<URI> partOf, String status) {
-        var eventConsumptionAttributes = new EventConsumptionAttributes(
-            indexName,
-            SortableIdentifier.next()
-        );
-        Map<String, Object> map = Map.of(
-            ORGANIZATION_FIELD, Map.of(
-                ID_FIELD, isNull(organization) ? "" : organization.toString(),
-                "test", "test2",
-                PART_OF_FIELD, isNull(partOf) ? List.of() : partOf.stream().map(URI::toString).toList()
-            ),
-            DOCUMENT_TYPE, DOI_REQUEST,
-            TICKET_STATUS, status
-        );
-        var jsonNode = objectMapperWithEmpty.convertValue(map, JsonNode.class);
-        return new IndexDocument(eventConsumptionAttributes, jsonNode);
-    }
 
     private IndexDocument crateSampleIndexDocument(String indexName, String jsonFile) throws IOException {
         var eventConsumptionAttributes = new EventConsumptionAttributes(
@@ -245,55 +197,4 @@ public class OpensearchTest {
         }
     }
 
-    @Nested
-    class AddDocumentToIndexTest {
-
-        @AfterEach
-        void afterEachTest() throws Exception {
-            indexingClient.deleteIndex(indexName);
-        }
-
-        @Nested
-        class ResourcesTests {
-
-            @BeforeEach
-            void beforeEachTest() throws IOException {
-                indexName = generateIndexName();
-
-                var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS));
-                var type = new TypeReference<Map<String, Object>>() {
-                };
-                var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-                indexingClient.createIndex(indexName, mappings);
-            }
-
-            @Test
-            void shouldNotReturnAggregationsWhenNotRequested()
-                throws ApiGatewayException, InterruptedException {
-
-                addDocumentsToIndex("publication_draft_publishing_request.json",
-                    "publication_published_publishing_request.json");
-
-                var query = queryWithTermAndAggregation(SEARCH_ALL, null);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-
-                assertThat(response, notNullValue());
-                assertThat(response.getAggregations(), nullValue());
-            }
-
-
-            @ParameterizedTest()
-            @ValueSource(strings = {"navnesen", "navn", "navn+navnesen"})
-            void shouldReturnHitsWhenSearchedForPartianMatchOfCuratorName(String queryStr) throws Exception {
-                addDocumentsToIndex("publication.json");
-
-                var query = queryWithTermAndAggregation(queryStr, null);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-                assertThat(response.getHits(), hasSize(1));
-            }
-        }
-
-    }
 }

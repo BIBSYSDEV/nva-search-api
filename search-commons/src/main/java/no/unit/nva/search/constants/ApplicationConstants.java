@@ -16,7 +16,6 @@ import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 public final class ApplicationConstants {
 
     public static final String OPENSEARCH_ENDPOINT_INDEX = "resources";
-    public static final String OPENSEARCH_TICKET_ENDPOINT_INDEX = "messages";
     public static final String RESOURCES_INDEX = "resources";
     public static final String IMPORT_CANDIDATES_INDEX = "import-candidates";
     public static final String DOIREQUESTS_INDEX = "doirequests";
@@ -50,14 +49,6 @@ public final class ApplicationConstants {
         generateImportedByUserAggregation()
     );
 
-    public static final TermsAggregationBuilder TYPE_TERMS_AGGREGATION =
-        generateSimpleAggregation("type", "type.keyword");
-    public static final TermsAggregationBuilder STATUS_TERMS_AGGREGATION =
-        generateSimpleAggregation("status", "status.keyword");
-    public static final List<AbstractAggregationBuilder<? extends AbstractAggregationBuilder<?>>> TICKETS_AGGREGATIONS =
-        List.of(TYPE_TERMS_AGGREGATION,
-                STATUS_TERMS_AGGREGATION
-        );
 
     public static final String TYPE = "type";
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";

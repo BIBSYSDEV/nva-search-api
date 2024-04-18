@@ -16,7 +16,10 @@ import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.common.xcontent.XContentType;
 
-public class IndexDocument implements JsonSerializable {
+public record IndexDocument(
+    @JsonProperty(CONSUMPTION_ATTRIBUTES) EventConsumptionAttributes consumptionAttributes,
+    @JsonProperty(BODY) JsonNode resource
+) implements JsonSerializable {
 
     public static final String BODY = "body";
     public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
@@ -25,16 +28,9 @@ public class IndexDocument implements JsonSerializable {
     private static final String IMPORT_CANDIDATE = "ImportCandidate";
     private static final String TICKET = "Ticket";
     private static final String RESOURCE = "Resource";
-    @JsonProperty(CONSUMPTION_ATTRIBUTES)
-    private final EventConsumptionAttributes consumptionAttributes;
-    @JsonProperty(BODY)
-    private final JsonNode resource;
 
     @JsonCreator
-    public IndexDocument(@JsonProperty(CONSUMPTION_ATTRIBUTES) EventConsumptionAttributes consumptionAttributes,
-                         @JsonProperty(BODY) JsonNode resource) {
-        this.consumptionAttributes = consumptionAttributes;
-        this.resource = resource;
+    public IndexDocument {
     }
 
     public IndexDocument validate() {
@@ -45,7 +41,7 @@ public class IndexDocument implements JsonSerializable {
 
     @JsonIgnore
     public String getType() {
-        var indexName = consumptionAttributes.getIndex();
+        var indexName = consumptionAttributes.index();
         if (ApplicationConstants.RESOURCES_INDEX.equals(indexName)) {
             return RESOURCE;
         }
@@ -63,26 +59,28 @@ public class IndexDocument implements JsonSerializable {
         return attempt(() -> objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
     }
 
+    @Override
     @JacocoGenerated
-    public EventConsumptionAttributes getConsumptionAttributes() {
+    public EventConsumptionAttributes consumptionAttributes() {
         return consumptionAttributes;
     }
 
+    @Override
     @JacocoGenerated
-    public JsonNode getResource() {
+    public JsonNode resource() {
         return resource;
     }
 
     @JsonIgnore
     public String getIndexName() {
-        return Optional.ofNullable(consumptionAttributes.getIndex())
+        return Optional.ofNullable(consumptionAttributes.index())
             .filter(StringUtils::isNotBlank)
             .orElseThrow(() -> new RuntimeException(MISSING_INDEX_NAME_IN_RESOURCE));
     }
 
     @JsonIgnore
     public String getDocumentIdentifier() {
-        return Optional.ofNullable(consumptionAttributes.getDocumentIdentifier())
+        return Optional.ofNullable(consumptionAttributes.documentIdentifier())
             .map(SortableIdentifier::toString)
             .orElseThrow(() -> new RuntimeException(MISSING_IDENTIFIER_IN_RESOURCE));
     }
@@ -99,18 +97,17 @@ public class IndexDocument implements JsonSerializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof IndexDocument)) {
+        if (!(o instanceof IndexDocument that)) {
             return false;
         }
-        IndexDocument that = (IndexDocument) o;
-        return Objects.equals(getConsumptionAttributes(), that.getConsumptionAttributes())
-               && Objects.equals(getResource(), that.getResource());
+        return Objects.equals(consumptionAttributes(), that.consumptionAttributes())
+            && Objects.equals(resource(), that.resource());
     }
 
     @JacocoGenerated
     @Override
     public int hashCode() {
-        return Objects.hash(getConsumptionAttributes(), getResource());
+        return Objects.hash(consumptionAttributes(), resource());
     }
 
     private String serializeResource() {

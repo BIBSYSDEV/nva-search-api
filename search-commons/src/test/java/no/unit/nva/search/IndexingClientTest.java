@@ -98,11 +98,11 @@ class IndexingClientTest {
     @Test
     void shouldSendIndexRequestWithIndexNameSpecifiedByIndexDocument() throws IOException {
         var indexDocument = sampleIndexDocument();
-        var expectedIndex = indexDocument.getConsumptionAttributes().getIndex();
+        var expectedIndex = indexDocument.consumptionAttributes().index();
         indexingClient.addDocumentToIndex(indexDocument);
 
         assertThat(submittedIndexRequest.get().index(), is(equalTo(expectedIndex)));
-        assertThat(extractDocumentFromSubmittedIndexRequest(), is(equalTo(indexDocument.getResource())));
+        assertThat(extractDocumentFromSubmittedIndexRequest(), is(equalTo(indexDocument.resource())));
     }
 
     @Test
