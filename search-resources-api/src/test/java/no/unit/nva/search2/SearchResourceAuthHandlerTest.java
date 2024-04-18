@@ -87,7 +87,7 @@ class SearchResourceAuthHandlerTest {
     void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
         prepareRestHighLevelClientOkResponse();
 
-        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.USER);
+        var input = getInputStreamWithAccessRight(randomUri(), AccessRight.SUPPORT);
         handler.handleRequest(input, outputStream, contextMock);
 
         var gatewayResponse = FakeGatewayResponse.of(outputStream);
