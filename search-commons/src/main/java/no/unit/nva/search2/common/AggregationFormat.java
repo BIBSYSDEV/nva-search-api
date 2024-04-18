@@ -56,7 +56,7 @@ public final class AggregationFormat {
             }
         }
         keysToRemove.forEach(jsonNode::remove);
-        jsonNode.put("notifications", notifications);
+        jsonNode.putIfAbsent("notifications", notifications);
     }
 
     private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {

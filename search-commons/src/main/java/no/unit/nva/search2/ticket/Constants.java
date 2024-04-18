@@ -151,10 +151,11 @@ public final class Constants {
 
     private static FilterAggregationBuilder getTicketAggregationFor(String aggregationName, String username,
                                                                     TicketType... types) {
+        var ticketTypeNames = Arrays.stream(types).toList();
         var query = QueryBuilders.boolQuery();
         query.must(QueryBuilders.termQuery(jsonPath(STATUS, KEYWORD), TicketStatus.PENDING.toString()));
         query.must(QueryBuilders.termQuery(jsonPath(ASSIGNEE, USERNAME, KEYWORD), username));
-        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), types));
+        query.must(QueryBuilders.termsQuery(jsonPath(TYPE, KEYWORD), ticketTypeNames));
         return AggregationBuilders.filter(aggregationName, query);
     }
 
