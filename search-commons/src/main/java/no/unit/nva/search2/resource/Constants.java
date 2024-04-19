@@ -212,7 +212,7 @@ public final class Constants {
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
         SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id"
-//        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
+        //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
         FILES, "/withAppliedFilter/files",
@@ -227,7 +227,7 @@ public final class Constants {
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
         List.of(
             filesHierarchy(),
-//            associatedArtifactsHierarchy(),
+            //            associatedArtifactsHierarchy(),
             entityDescriptionHierarchy(),
             fundingSourceHierarchy(),
             scientificIndexHierarchy(),
