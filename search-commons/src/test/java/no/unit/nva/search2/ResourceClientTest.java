@@ -506,6 +506,14 @@ class ResourceClientTest {
                 URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date&sortOrder=asc&sort=category"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&size=10&from=0&sort=modified_date"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=instanceType"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=createdDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=publishedDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=publicationDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=title"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=user"),
                 URI.create(REQUEST_BASE_URL
                     + "category=Ma&orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date+asc&sort=category+desc"));
