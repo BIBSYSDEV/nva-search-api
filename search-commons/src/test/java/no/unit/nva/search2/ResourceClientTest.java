@@ -95,7 +95,7 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 14;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 11;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -506,6 +506,14 @@ class ResourceClientTest {
                 URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date&sortOrder=asc&sort=category"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&size=10&from=0&sort=modified_date"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=instanceType"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=createdDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=publishedDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=publicationDate"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=title"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "category=Ma&sort=user"),
                 URI.create(REQUEST_BASE_URL
                     + "category=Ma&orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
                 URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date+asc&sort=category+desc"));
