@@ -9,7 +9,6 @@ import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceQuery;
