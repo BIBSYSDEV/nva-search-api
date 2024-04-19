@@ -17,6 +17,7 @@ Globals:
         SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
         COGNITO_URI: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
+        LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucket
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
@@ -143,6 +144,14 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:BackendCognitoClientCredentials*'
+        - PolicyName: accessLargeResponseBucket
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource: !Sub '${LargeApiResponsesBucket.Arn}/*'
 
   SearchHandlerRole:
     Type: AWS::IAM::Role
@@ -799,6 +808,18 @@ Resources:
           - Id: DeleteContentAfter3Days
             Status: Enabled
             ExpirationInDays: 3
+
+  LargeApiResponsesBucket: # Temporary, Will be moved to common resources
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${large-api-responses}-${AWS::AccountId}'
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            ExpirationInDays: 1
+    DeletionPolicy: Retain
+
 
   IndexingErrorsBucket:
     Type: AWS::S3::Bucket

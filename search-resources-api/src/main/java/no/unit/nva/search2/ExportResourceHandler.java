@@ -18,23 +18,32 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-public class ExportResourceHandler extends ApiGatewayHandler<Void, String> {
+public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
     public ExportResourceHandler() {
-        this(new Environment(), defaultClient());
+        this(new Environment(),
+             defaultClient(),
+             defaultS3Client(),
+             defaultS3Presigner());
     }
 
-    public ExportResourceHandler(Environment environment, ResourceClient resourceClient) {
-        super(Void.class, environment);
+    public ExportResourceHandler(Environment environment,
+                                 ResourceClient resourceClient,
+                                    S3Client s3Client,
+                                 S3Presigner s3Presigner
+    ) {
+        super(Void.class, environment, s3Client, s3Presigner);
         this.opensearchClient = resourceClient;
     }
 
     @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
+    String processS3Input(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
             ResourceQuery.builder()
                 .fromRequestInfo(requestInfo)
