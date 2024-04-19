@@ -1,27 +1,25 @@
 package no.unit.nva.search2;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.HttpURLConnection;
 import java.time.Duration;
 import java.util.Map;
+import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
-import java.net.HttpURLConnection;
-import nva.commons.apigateway.ApiGatewayHandler;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import nva.commons.core.Environment;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 public abstract class ApiS3GatewayHandler<I> extends ApiGatewayHandler<I, String> {
 

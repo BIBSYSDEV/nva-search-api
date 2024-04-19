@@ -13,7 +13,6 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceQuery;
-import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
