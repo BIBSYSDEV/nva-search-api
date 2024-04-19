@@ -11,7 +11,6 @@ import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.CODE;
-import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
@@ -84,7 +83,6 @@ import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
 public final class Constants {
 
-    //entityDescription/reference/publicationContext/publisher
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String DEFAULT_RESOURCE_SORT = ResourceSort.PUBLISHED_DATE.asCamelCase();
@@ -213,9 +211,7 @@ public final class Constants {
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
-        COURSE, "/withAppliedFilter/entityDescription/reference/publicationContext/course",
         SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
-        STATUS, "/withAppliedFilter/status",
         LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
@@ -223,7 +219,6 @@ public final class Constants {
         PUBLISHER, "/withAppliedFilter/entityDescription/reference/publicationContext/publisher",
         JOURNAL, "/withAppliedFilter/entityDescription/reference/publicationContext/journal/id",
         CONTRIBUTOR, "/withAppliedFilter/entityDescription/contributor/id",
-        CONTEXT_TYPE, "/withAppliedFilter/entityDescription/reference/publicationContext/contextType",
         FUNDING_SOURCE, "/withAppliedFilter/fundings/id",
         TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/topLevelOrganization/id",
         SCIENTIFIC_INDEX, "/withAppliedFilter/scientificIndex/year"
@@ -235,7 +230,6 @@ public final class Constants {
             associatedArtifactsHierarchy(),
             entityDescriptionHierarchy(),
             fundingSourceHierarchy(),
-            publishStatusHierarchy(),
             scientificIndexHierarchy(),
             topLevelOrganisationsHierarchy()
         );
@@ -269,9 +263,6 @@ public final class Constants {
             );
     }
 
-    private static TermsAggregationBuilder publishStatusHierarchy() {
-        return branchBuilder(STATUS, STATUS, KEYWORD);
-    }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
         return
@@ -307,10 +298,8 @@ public final class Constants {
             nestedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
                 .subAggregation(
                     publicationContext()
-                        .subAggregation(publicationContextType())
                         .subAggregation(publisher())
                         .subAggregation(series())
-                        .subAggregation(courses())
                         .subAggregation(journal())
                 )
                 .subAggregation(
@@ -341,17 +330,12 @@ public final class Constants {
                 SERIES_AS_TYPE,
                 ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD);
 
-        var seriesUriAsUuid =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
-
-        var seriesName =
-            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
-
         return filterBySeriesType
             .subAggregation(
-                seriesUriAsUuid
-                    .subAggregation(seriesName)
+                branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, IDENTIFIER_KEYWORD)
+                    .subAggregation(
+                        branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD)
+                    )
             );
     }
 
@@ -362,40 +346,22 @@ public final class Constants {
                 JOURNAL_AS_TYPE,
                 ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
 
-        var contextTypeUriASUuiId =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
-
         var seriesName =
             branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
 
         return filterByJournalType
             .subAggregation(
-                contextTypeUriASUuiId
+                branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, IDENTIFIER_KEYWORD)
                     .subAggregation(seriesName)
             );
     }
 
-    private static TermsAggregationBuilder courses() {
-        return
-            branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
-    }
-
-    private static TermsAggregationBuilder publicationContextType() {
-        return
-            branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
-    }
 
     private static TermsAggregationBuilder publisher() {
         return
-            AggregationBuilders
-                .terms(PUBLISHER)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
-                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, IDENTIFIER_KEYWORD)
                 .subAggregation(
-                    branchBuilder(
-                        NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD
-                    )
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD)
                 );
     }
 
@@ -419,17 +385,6 @@ public final class Constants {
 
     private static CardinalityAggregationBuilder uniquePublications() {
         return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
-    }
-
-
-    public static Script uriAsUuid(String... paths) {
-        var path = String.join(DOT, paths);
-        var script = """
-            if (params['path']==null||doc[params['path']]==null||doc[params['path']].size()==0) { return null;}
-            def path_parts = doc[params['path']].value.splitOnToken('/');
-            if (path_parts.length == 0) { return null; }
-            return path_parts[path_parts.length - 2];""";
-        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of("path", path));
     }
 
 
