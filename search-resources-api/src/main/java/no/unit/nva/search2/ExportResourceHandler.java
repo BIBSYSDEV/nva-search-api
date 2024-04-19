@@ -55,11 +55,6 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
-
-    @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
