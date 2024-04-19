@@ -812,7 +812,7 @@ Resources:
   LargeApiResponsesBucket: # Temporary, Will be moved to common resources
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub '${large-api-responses}-${AWS::AccountId}'
+      BucketName: !Sub 'large-api-responses-${AWS::AccountId}'
       AccessControl: Private
       LifecycleConfiguration:
         Rules:
