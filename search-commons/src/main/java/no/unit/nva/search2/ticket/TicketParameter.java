@@ -18,6 +18,7 @@ import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
+import static no.unit.nva.search2.common.enums.FieldOperator.NA;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
@@ -25,7 +26,6 @@ import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
-import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_TEXT;
 import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
@@ -81,8 +81,8 @@ public enum TicketParameter implements ParameterKey {
     EXCLUDE_SUBUNITS(IGNORED, ONE_OR_MORE_ITEM, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
     FINALIZED_BY(TEXT, ALL_ITEMS, FINALIZED_BY_FIELDS),
     FINALIZED_BY_NOT(TEXT, NO_ITEMS, FINALIZED_BY_FIELDS),
-    MESSAGES(FUZZY_TEXT, ALL_ITEMS, MESSAGE_FIELDS),
-    MESSAGES_NOT(FUZZY_TEXT, NO_ITEMS, MESSAGE_FIELDS),
+    MESSAGES(TEXT, ALL_ITEMS, MESSAGE_FIELDS),
+    MESSAGES_NOT(TEXT, NO_ITEMS, MESSAGE_FIELDS),
     MODIFIED_DATE(DATE, BETWEEN, Words.MODIFIED_DATE),
     ORGANIZATION_ID(CUSTOM, ONE_OR_MORE_ITEM, ORGANIZATION_PATHS, PATTERN_IS_ORGANIZATION, null, null),
     ORGANIZATION_ID_NOT(CUSTOM, NOT_ONE_ITEM, ORGANIZATION_PATHS),
@@ -95,7 +95,7 @@ public enum TicketParameter implements ParameterKey {
     PUBLICATION_OWNER_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, PUBLICATION_OWNER_KEYWORD),
     PUBLICATION_STATUS(KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_STATUS_KEYWORD),
     PUBLICATION_STATUS_NOT(KEYWORD, NOT_ONE_ITEM, PUBLICATION_STATUS_KEYWORD),
-    PUBLICATION_TITLE(FUZZY_TEXT, ALL_ITEMS, PUBLICATION_MAIN_TITLE_KEYWORD, PHI),
+    PUBLICATION_TITLE(TEXT, ALL_ITEMS, PUBLICATION_MAIN_TITLE_KEYWORD, PHI),
     STATUS(KEYWORD, ONE_OR_MORE_ITEM, STATUS_KEYWORD),
     STATUS_NOT(KEYWORD, NOT_ONE_ITEM, STATUS_KEYWORD),
     TYPE(KEYWORD, ONE_OR_MORE_ITEM, TYPE_KEYWORD),
@@ -147,7 +147,7 @@ public enum TicketParameter implements ParameterKey {
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
         Float boost) {
 
-        this.fieldOperator = operator;
+        this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")

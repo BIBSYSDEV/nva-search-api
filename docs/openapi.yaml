@@ -2168,7 +2168,7 @@ components:
             type: string
     AggregationNames:
       type: string
-      enum: [ all, none, associatedArtifact, entityDescription, fundingSource, status, topLevelOrganisations, scientificIndex ]
+      enum: [ all, none ]
     CategoryEnum:
       type: string
       enum: [ AcademicArticle,AcademicChapter,AcademicLiteratureReview,AcademicMonograph,Architecture,ArtisticDesign,BookAbstracts,BookAnthology,BookMonograph,CaseReport,ChapterArticle,
