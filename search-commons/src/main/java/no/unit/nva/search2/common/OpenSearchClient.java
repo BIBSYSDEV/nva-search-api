@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import static java.util.stream.Collectors.joining;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
@@ -71,7 +72,10 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     public R doSearch(Q query) {
         queryBuilderStart = query.getStartTime();
-        queryParameters = query.getNvaSearchApiUri().getQuery();
+        queryParameters = query.parameters().asMap()
+            .entrySet().stream()
+            .map(Object::toString)
+            .collect(joining("&"));
         return
             query.assemble()
                 .map(this::createRequest)

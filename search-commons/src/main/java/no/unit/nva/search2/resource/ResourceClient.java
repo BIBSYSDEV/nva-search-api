@@ -1,6 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.util.stream.Collectors.joining;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
@@ -37,7 +38,10 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     @Override
     public SwsResponse doSearch(ResourceQuery query) {
         queryBuilderStart = query.getStartTime();
-        queryParameters = query.getNvaSearchApiUri().getQuery();
+        queryParameters = query.parameters().asMap()
+            .entrySet().stream()
+            .map(Object::toString)
+            .collect(joining("&"));
         return
             query.withUserSettings(userSettingsClient)
                 .assemble()
