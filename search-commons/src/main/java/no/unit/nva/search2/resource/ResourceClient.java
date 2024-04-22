@@ -37,6 +37,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     @Override
     public SwsResponse doSearch(ResourceQuery query) {
         queryBuilderStart = query.getStartTime();
+        queryParameters = query.getNvaSearchApiUri().getQuery();
         return
             query.withUserSettings(userSettingsClient)
                 .assemble()

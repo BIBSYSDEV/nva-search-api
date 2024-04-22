@@ -39,6 +39,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected final CachedJwtProvider jwtProvider;
     protected Instant queryBuilderStart;
     protected long fetchDuration;
+    protected String queryParameters;
 
     public OpenSearchClient(HttpClient httpClient, CachedJwtProvider jwtProvider) {
         this.bodyHandler = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
@@ -70,6 +71,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     public R doSearch(Q query) {
         queryBuilderStart = query.getStartTime();
+        queryParameters = query.getNvaSearchApiUri().getQuery();
         return
             query.assemble()
                 .map(this::createRequest)
@@ -112,6 +114,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .withTotalTime(totalDuration())
                 .withFetchTime(fetchDuration)
                 .withSwsResponse(result)
+                .withSearchQuery(queryParameters)
                 .toJsonString()
             );
             return result;

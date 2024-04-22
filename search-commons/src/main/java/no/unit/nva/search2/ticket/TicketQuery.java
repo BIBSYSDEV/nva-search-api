@@ -114,7 +114,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             .getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
 
-        final var curatorRights = getAccessRights(requestInfo)
+        final var curatorRights = getAccessRights(requestInfo.getAccessRights())
             .toArray(TicketType[]::new);
 
         return withFilterOrganization(organization)
@@ -280,15 +280,15 @@ public final class TicketQuery extends Query<TicketParameter> {
             new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
-    private Set<TicketType> getAccessRights(RequestInfo requestInfo) {
+    private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
         var allowed = new HashSet<TicketType>();
-        if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
+        if (accessRights.contains(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
         }
-        if (requestInfo.userIsAuthorized(AccessRight.SUPPORT)) {
+        if (accessRights.contains(AccessRight.SUPPORT)) {
             allowed.add(TicketType.GENERAL_SUPPORT_CASE);
         }
-        if (requestInfo.userIsAuthorized(MANAGE_PUBLISHING_REQUESTS)) {
+        if (accessRights.contains(MANAGE_PUBLISHING_REQUESTS)) {
             allowed.add(TicketType.PUBLISHING_REQUEST);
         }
         return allowed;
