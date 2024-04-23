@@ -71,6 +71,38 @@ Each endpoint have their own list of valid sortKeys, see README for each endpoin
 | sort_order   | sortOrder   | Enum         | asc, desc                                     |
 | search_after | searchAfter | sortindex    | supplied by api                               |
 
+#### Valid sort query parameters
+
+The reason we support that many different sort formatting, is due to legacy systems we need to support.
+
+    orderBy=created_date&order=desc
+
+    order_by=createdDate&order=desc
+
+    sort=created_date&sortOrder=desc
+
+    sort=createdDate:desc
+
+    sort=created_date desc                      //use '+' or URL-encode
+
+    sort=createdDate                            //default sort order : desc
+    
+    orderBy=created_date:asc,modifiedDate:desc
+
+    orderBy=createdDate:asc,modified_date:desc
+
+    sort=created_date,modifiedDate              //default sort order : desc
+
+    sort=createdDate:asc,modifiedDate:desc
+
+    sort=created_date&sortOrder=asc&sort=modifiedDate&order=desc
+
+    sort=createdDate&sortOrder=asc&orderBy=modifiedDate
+
+    sort=created_date&sortOrder=asc&orderBy=modifiedDate:desc
+
+    sort=createdDate asc&sort=modifiedDate desc    //use '+' or URL-encode
+
 <details>
 <summary>Aggregations have the following JSON format</summary>
 
