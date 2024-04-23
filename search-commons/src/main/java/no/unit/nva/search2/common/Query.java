@@ -117,7 +117,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
-        logSearchKeys();
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
@@ -310,13 +309,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
-    private void logSearchKeys() {
-        logger.info(
-            parameters().getSearchKeys()
-                .map(ParameterKey::asCamelCase)
-                .collect(Collectors.joining("\", \"", "{\"keys\":[\"", "\"]}"))
-        );
-    }
 
     private void handleSearchAfter(SearchSourceBuilder builder) {
         var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);

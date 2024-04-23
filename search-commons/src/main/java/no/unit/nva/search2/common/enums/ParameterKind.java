@@ -1,5 +1,8 @@
 package no.unit.nva.search2.common.enums;
 
+import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
+import org.apache.commons.text.CaseUtils;
+
 public enum ParameterKind {
     INVALID,
     /**
@@ -16,5 +19,9 @@ public enum ParameterKind {
     FUZZY_TEXT,
     FREE_TEXT,
     SORT_KEY,
-    CUSTOM
+    CUSTOM;
+
+    public String asCamelCase() {
+        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+    }
 }

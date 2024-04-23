@@ -11,7 +11,6 @@ import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.CODE;
-import static no.unit.nva.search2.common.constant.Words.CONTEXT_TYPE;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
@@ -67,6 +66,7 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.constant.Defaults;
@@ -83,7 +83,6 @@ import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
 public final class Constants {
 
-    //entityDescription/reference/publicationContext/publisher
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String DEFAULT_RESOURCE_SORT = ResourceSort.PUBLISHED_DATE.asCamelCase();
@@ -208,20 +207,18 @@ public final class Constants {
         ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD
     );
+    public static final String PAINLESS = "painless";
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
-        COURSE, "/withAppliedFilter/entityDescription/reference/publicationContext/course",
-        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
-        STATUS, "/withAppliedFilter/status",
-        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
+        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id"
+        //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
         FILES, "/withAppliedFilter/files",
         PUBLISHER, "/withAppliedFilter/entityDescription/reference/publicationContext/publisher",
         JOURNAL, "/withAppliedFilter/entityDescription/reference/publicationContext/journal/id",
         CONTRIBUTOR, "/withAppliedFilter/entityDescription/contributor/id",
-        CONTEXT_TYPE, "/withAppliedFilter/entityDescription/reference/publicationContext/contextType",
         FUNDING_SOURCE, "/withAppliedFilter/fundings/id",
         TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/topLevelOrganization/id",
         SCIENTIFIC_INDEX, "/withAppliedFilter/scientificIndex/year"
@@ -230,10 +227,9 @@ public final class Constants {
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
         List.of(
             filesHierarchy(),
-            associatedArtifactsHierarchy(),
+            //            associatedArtifactsHierarchy(),
             entityDescriptionHierarchy(),
             fundingSourceHierarchy(),
-            publishStatusHierarchy(),
             scientificIndexHierarchy(),
             topLevelOrganisationsHierarchy()
         );
@@ -267,9 +263,6 @@ public final class Constants {
             );
     }
 
-    private static TermsAggregationBuilder publishStatusHierarchy() {
-        return branchBuilder(STATUS, STATUS, KEYWORD);
-    }
 
     public static NestedAggregationBuilder fundingSourceHierarchy() {
         return
@@ -305,10 +298,8 @@ public final class Constants {
             nestedBranchBuilder(REFERENCE, ENTITY_DESCRIPTION, REFERENCE)
                 .subAggregation(
                     publicationContext()
-                        .subAggregation(publicationContextType())
                         .subAggregation(publisher())
                         .subAggregation(series())
-                        .subAggregation(courses())
                         .subAggregation(journal())
                 )
                 .subAggregation(
@@ -339,17 +330,12 @@ public final class Constants {
                 SERIES_AS_TYPE,
                 ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, TYPE, KEYWORD);
 
-        var seriesUriAsUuid =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, ID, KEYWORD));
-
-        var seriesName =
-            branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD);
-
         return filterBySeriesType
             .subAggregation(
-                seriesUriAsUuid
-                    .subAggregation(seriesName)
+                branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, IDENTIFIER_KEYWORD)
+                    .subAggregation(
+                        branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, SERIES, NAME, KEYWORD)
+                    )
             );
     }
 
@@ -360,47 +346,35 @@ public final class Constants {
                 JOURNAL_AS_TYPE,
                 ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
 
-        var contextTypeUriASUuiId =
-            branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, ID, KEYWORD));
-
         var seriesName =
             branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, NAME, KEYWORD);
 
         return filterByJournalType
             .subAggregation(
-                contextTypeUriASUuiId
+                branchBuilder(ID, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, IDENTIFIER_KEYWORD)
                     .subAggregation(seriesName)
             );
     }
 
-    private static TermsAggregationBuilder courses() {
-        return
-            branchBuilder(COURSE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, COURSE, CODE, KEYWORD);
-    }
-
-    private static TermsAggregationBuilder publicationContextType() {
-        return
-            branchBuilder(CONTEXT_TYPE, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, TYPE, KEYWORD);
-    }
 
     private static TermsAggregationBuilder publisher() {
         return
-            AggregationBuilders
-                .terms(PUBLISHER)
-                .script(uriAsUuid(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, ID, KEYWORD))
-                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+            branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, IDENTIFIER_KEYWORD)
                 .subAggregation(
-                    branchBuilder(
-                        NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD
-                    )
+                    branchBuilder(NAME, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, NAME, KEYWORD)
                 );
     }
 
     private static TermsAggregationBuilder license() {
         return
-            branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, KEYWORD)
-                .subAggregation(getReverseNestedAggregationBuilder());
+            AggregationBuilders
+                .terms(LICENSE)
+                .script(groupByLicenses())
+                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
+                .subAggregation(AggregationBuilders
+                    .terms(NAME)
+                    .script(licenseLabel()));
+
     }
 
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
@@ -414,14 +388,77 @@ public final class Constants {
     }
 
 
-    public static Script uriAsUuid(String... paths) {
-        var path = String.join(DOT, paths);
+    public static Script groupByLicenses() {
         var script = """
-            if (params['path']==null||doc[params['path']]==null||doc[params['path']].size()==0) { return null;}
-            def path_parts = doc[params['path']].value.splitOnToken('/');
-            if (path_parts.length == 0) { return null; }
-            return path_parts[path_parts.length - 2];""";
-        return new Script(ScriptType.INLINE, "painless", script, Map.of("path", path));
+            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
+            def url = doc['associatedArtifacts.license.keyword'].value;
+            if (url.contains("/by-nc-nd")) {
+              return "CC-NC-ND";
+            } else if (url.contains("/by-nc-sa")) {
+              return "CC-NC-SA";
+            } else if (url.contains("/by-nc")) {
+              return "CC-NC";
+            } else if (url.contains("/by-nd")) {
+              return "CC-ND";
+            } else if (url.contains("/by-sa")) {
+              return "CC-SA";
+            } else if (url.contains("/by")) {
+              return "CC-BY";
+            }
+            return "Other";
+            """;
+        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
+    }
+
+    public static Script selectByLicense(String license) {
+        var script = """
+            if (doc['associatedArtifacts.license.keyword'].size()==0) { return false;}
+            def url = doc['associatedArtifacts.license.keyword'].value;
+            if (url.contains("/by-nc-nd")) {
+              return "CC-NC-ND".equals(params.license);
+            } else if (url.contains("/by-nc-sa")) {
+              return "CC-NC-SA".equals(params.license);
+            } else if (url.contains("/by-nc")) {
+              return "CC-NC".equals(params.license);
+            } else if (url.contains("/by-nd")) {
+              return "CC-ND".equals(params.license);
+            } else if (url.contains("/by-sa")) {
+              return "CC-SA".equals(params.license);
+            } else if (url.contains("/by")) {
+              return "CC-BY".equals(params.license);
+            } else {
+                return "Other".equals(params.license);
+            }
+            """;
+        return new Script(
+            ScriptType.INLINE,
+            PAINLESS,
+            script,
+            Map.of("license", license.toUpperCase(Locale.getDefault()))
+        );
+    }
+
+
+    public static Script licenseLabel() {
+        var script = """
+            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
+            def url = doc['associatedArtifacts.license.keyword'].value;
+            if (url.contains("/by-nc-nd")) {
+              return "Creative Commons - Attribution-NonCommercial-NoDerivs";
+            } else if (url.contains("/by-nc-sa")) {
+              return "Creative Commons - Attribution-NonCommercial-ShareAlike";
+            } else if (url.contains("/by-nc")) {
+              return "Creative Commons - Attribution-NonCommercial";
+            } else if (url.contains("/by-nd")) {
+              return "Creative Commons - Attribution-NoDerivs";
+            } else if (url.contains("/by-sa")) {
+              return "Creative Commons - Attribution-ShareAlike";
+            } else if (url.contains("/by")) {
+              return "Creative Commons - Attribution";
+            }
+            return "Other license";
+            """;
+        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
     }
 
     private static String multipleFields(String... values) {

@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMEN
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
@@ -20,6 +19,7 @@ import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
@@ -36,6 +36,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
+import static no.unit.nva.search2.resource.Constants.selectByLicense;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
@@ -251,6 +252,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
         return switch (key) {
+            case LICENSE, LICENSE_NOT -> builderStreamLicenseQuery(key);
             case FUNDING -> builderStreamFundingQuery(key);
             case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, SCOPUS_AS_TYPE);
@@ -258,6 +260,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case SEARCH_ALL -> builderStreamSearchAllWithBoostsQuery();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
+    }
+
+    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamLicenseQuery(ResourceParameter key) {
+        var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
+        return queryTools.queryToEntry(key, query);
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamAdditionalIdentifierQuery(
@@ -367,7 +374,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.name(), ALL);
+                    case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* ignore and continue */ }
                 }
             });

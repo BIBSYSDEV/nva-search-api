@@ -7,7 +7,8 @@ public record ResponseLogInfo(
     long queryDuration,
     long networkDuration,
     long prePostDuration,
-    long totalDuration
+    long totalDuration,
+    String query
 )  implements JsonSerializable {
 
     public static Builder builder() {
@@ -21,6 +22,7 @@ public record ResponseLogInfo(
         private long totalTime;
         private long fetchTime;
         private long searchTime;
+        private String searchQuery;
 
         private Builder() {
         }
@@ -45,6 +47,11 @@ public record ResponseLogInfo(
             return this;
         }
 
+        public Builder withSearchQuery(String searchQuery) {
+            this.searchQuery = searchQuery;
+            return this;
+        }
+
         public Builder withSwsResponse(SwsResponse response) {
             return
                 this.withOpensearchResponseTime(response.took())
@@ -57,7 +64,8 @@ public record ResponseLogInfo(
                 searchTime,
                 fetchTime - searchTime,
                 totalTime - fetchTime,
-                totalTime
+                totalTime,
+                searchQuery
             ).toJsonString();
         }
     }

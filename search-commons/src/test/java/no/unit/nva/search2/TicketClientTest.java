@@ -1,5 +1,6 @@
 package no.unit.nva.search2;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
@@ -18,6 +19,8 @@ import static no.unit.nva.search2.ticket.TicketParameter.SORT;
 import static no.unit.nva.search2.ticket.TicketType.DOI_REQUEST;
 import static no.unit.nva.search2.ticket.TicketType.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search2.ticket.TicketType.PUBLISHING_REQUEST;
+import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
+import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,6 +43,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -64,6 +69,7 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -178,8 +184,9 @@ class TicketClientTest {
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withFilterOrganization(testOrganizationId)
-                .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withFilterCurrentUser(CURRENT_USERNAME);
+                .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .withCurrentUser(CURRENT_USERNAME)
+                .applyFilters();
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -209,8 +216,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
                     .withFilterOrganization(testOrganizationId)
-                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME)
+                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withCurrentUser(CURRENT_USERNAME)
+                    .applyFilters()
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -227,8 +235,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilterOrganization(testOrganizationId)
-                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME);
+                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withCurrentUser(CURRENT_USERNAME)
+                    .applyFilters();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -239,8 +248,8 @@ class TicketClientTest {
         }
 
         @ParameterizedTest
-        @MethodSource("uriProvider")
-        void uriRequestReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {
+        @MethodSource("uriProviderAsAdmin")
+        void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
                 TicketQuery.builder()
@@ -249,8 +258,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilterOrganization(testOrganizationId)
-                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME);
+                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withCurrentUser(CURRENT_USERNAME)
+                    .applyFilters();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -267,7 +277,42 @@ class TicketClientTest {
         }
 
         @ParameterizedTest
-        @MethodSource("uriProvider")
+        @MethodSource("uriAccessRights")
+        void uriRequestReturnsSuccessfulResponseAsUser(URI uri, Integer expectedCount, String userName, AccessRight... accessRights) throws ApiGatewayException {
+
+            final var accessRightList = nonNull(accessRights)
+                ? Arrays.asList(accessRights)
+                : List.<AccessRight>of();
+
+            var mockedRequestInfoLocal = mock(RequestInfo.class);
+            when(mockedRequestInfoLocal.getUserName())
+                .thenReturn(userName);
+            when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
+
+            when(mockedRequestInfoLocal.getAccessRights())
+                .thenReturn(accessRightList);
+
+
+            var query =
+                TicketQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withRequiredParameters(FROM, SIZE)
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .applyContextAndAuthorize(mockedRequestInfoLocal);
+
+            var response = searchClient.doSearch(query);
+            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            assertNotNull(pagedSearchResourceDto);
+            assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
+            assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+        }
+
+
+        @ParameterizedTest
+        @MethodSource("uriProviderAsAdmin")
         @Disabled("Does not work. When test was written it returned an empty string even if there were supposed to be"
                   + " hits. Now we throw an exception instead as the method is not implemented.")
         void uriRequestReturnsCsvResponse(URI uri) throws ApiGatewayException {
@@ -299,8 +344,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilterOrganization(testOrganizationId)
-                    .withFilterTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withFilterCurrentUser(CURRENT_USERNAME);
+                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .withCurrentUser(CURRENT_USERNAME)
+                    .applyFilters();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -355,6 +401,24 @@ class TicketClientTest {
             );
         }
 
+        static Stream<Arguments> uriAccessRights() {
+            return Stream.of(
+                createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
+                createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
+                createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
+                createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
+                createAccessRightArgument("", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
+                createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
+                createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
+                createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
+                createAccessRightArgument("", 20, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT, MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 20, "1412322@20754.0.0.0", MANAGE_DOI, AccessRight.SUPPORT, MANAGE_PUBLISHING_REQUESTS)
+            );
+        }
+
+
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
@@ -382,9 +446,13 @@ class TicketClientTest {
                 URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
         }
 
-        static Stream<Arguments> uriProvider() {
+        static Stream<Arguments> uriProviderAsAdmin() {
             return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
+        }
+
+        private static Arguments createAccessRightArgument(String searchUri, int expectedCount, String userName, AccessRight... accessRights) {
+            return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
         }
     }
 
