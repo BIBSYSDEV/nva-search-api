@@ -7,7 +7,8 @@ paths:
 
   /customer/tickets:
     get:
-      description: "Search for Tickets by customer"
+      description: "Search for Tickets by customer
+      [More info in README](https://github.com/BIBSYSDEV/nva-search-api/blob/main/search-commons/src/main/java/no/unit/nva/search2/ticket/README.md)"
       parameters:
         - $ref: '#/components/parameters/assigneeParam'
         - $ref: '#/components/parameters/assigneeNotParam'
@@ -84,7 +85,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-
   /resources:
     get:
       tags:
@@ -93,7 +93,8 @@ paths:
       <p>All parameters documented with <code>snake_case</code>, but <code>camelCase</code> is also accepted. 
       They accept more than one value, each value must be separated by a <code>comma</code>. 
       If you use <code>space</code> between search phrases, it will usually be interpreted as words that should be found in the text.
-      The more hits it gets, the closer to the top of search result an item will be.</p>'
+      The more hits it gets, the closer to the top of search result an item will be.</p>
+      [More info in README](https://github.com/BIBSYSDEV/nva-search-api/blob/main/search-commons/src/main/java/no/unit/nva/search2/resource/README.md)'
       parameters:
         - $ref: '#/components/parameters/aggregationParam'
         - $ref: '#/components/parameters/abstractNotParam'
@@ -244,7 +245,8 @@ paths:
 
   /customer/resources:
     get:
-      description: "Search for publications by customer"
+      description: "Search for publications by customer
+      [More info in README](https://github.com/BIBSYSDEV/nva-search-api/blob/main/search-commons/src/main/java/no/unit/nva/search2/resource/README.md)"
       parameters:
         - $ref: '#/components/parameters/abstractNotParam'
         - $ref: '#/components/parameters/abstractParam'
@@ -396,10 +398,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-
   /import-candidates2:
     get:
-      description: "Search for import candidates by given criteria"
+      description: "Search for import candidates by given criteria
+      [More info in README](https://github.com/BIBSYSDEV/nva-search-api/blob/main/search-commons/src/main/java/no/unit/nva/search2/importcandidate/README.md)"
       parameters:
         - in: query
           name: query
@@ -1885,37 +1887,47 @@ components:
       explode: true
       schema:
         type: string
-        enum: [ asc, desc ]
+        default: desc
+        enum:
+          - asc
+          - desc
     pageParam:
       name: page
       in: query
-      description: "Page number, zero based, see from and size."
+      description: "Page number, zero based, see from and size. { page * size <=10000 }"
       example: "0"
       required: false
       style: form
       explode: true
       schema:
         type: number
+        minimum: 0
+        default: 0
     fromParam:
       name: from
       in: query
-      description: "Start result from item no. zero based [offset] is also accepted. Default is 0."
+      description: "Start result from item no. zero based [offset] is also accepted. { from + size <=10000 }"
       example: "0"
       required: false
       style: form
       explode: true
       schema:
         type: number
+        minimum: 0
+        default: 0
     sizeParam:
       name: size
       in: query
-      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15."
-      example: "15"
+      description: "Number of items returned. [per_page|perPage|results|limit] are also accepted. (see from or page)"
+      example: "10"
       required: false
       style: form
       explode: true
       schema:
         type: number
+        minimum: 0
+        maximum: 1000
+        default: 15
     queryParam:
       name: query
       in: query
@@ -1941,14 +1953,6 @@ components:
           value: "category:asc,created_date:desc"
       schema:
         type: string
-        enum:
-          - category:asc
-          - category:desc
-          - created_date
-          - modified_date
-          - published_date
-          - title
-          - unit_id
     #--- not in use
     langParam:
       deprecated: true
