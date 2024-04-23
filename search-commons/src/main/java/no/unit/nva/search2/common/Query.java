@@ -308,5 +308,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
+        builder.fetchSource(true);
     }
 }

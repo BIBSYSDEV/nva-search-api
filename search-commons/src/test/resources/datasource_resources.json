@@ -431,18 +431,36 @@
       "year": "2020"
     },
     "filesStatus": "noFiles",
+    "licenses": [
+      {
+        "type": "License",
+        "name": "CC-BY",
+        "labels": {
+          "en": "Creative Commons - Attribution",
+          "nb": "Creative Commons - Navngivelse"
+        }
+      }
+    ],
     "associatedArtifacts": [
       {
         "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "95ffa438-7367-49aa-ade7-5851daa6a8a3",
-        "license": "https://creativecommons.org/licenses/by/2.0",
         "mimeType": "image/jpeg",
         "name": "osteloff1.jpg",
         "publishedDate": "2023-11-06T08:48:11.786959336Z",
         "publisherAuthority": false,
         "size": 4656,
-        "visibleForNonOwner": false
+        "visibleForNonOwner": false,
+        "license": {
+          "type": "License",
+          "name": "CC-BY",
+          "id": "https://creativecommons.org/licenses/by/2.0",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        }
       },
       {
         "type": "UnPublishedFile",
@@ -790,6 +808,7 @@
       "year": "2023"
     },
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -932,6 +951,7 @@
       "year": "2011"
     },
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1042,6 +1062,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b8579f0ad-db0bd29b-ad7c-4068-afa3-f300a1af61ef",
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1134,6 +1155,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b858395d7-02aaf128-dc44-457e-b471-675a952e8cff",
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1345,6 +1367,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857af565-f63a53df-6c4f-4051-8686-8547f45ef726",
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -1521,6 +1544,7 @@
     ],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018c443840f1-b14a5947-2eae-4d67-9d95-c2e591059942",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "UnpublishedFile",
@@ -2165,6 +2189,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857a85ae-110bf68d-c0f7-42b5-b635-b154ed6208dd",
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2275,6 +2300,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857b89d9-b5053ac9-fe14-4ea9-9922-8130b306b720",
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2466,6 +2492,7 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b857b28b5-25e3138f-5914-44e3-b322-5ed790a97f36",
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2582,6 +2609,7 @@
         "value": "someId"
       }
     ],
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2707,6 +2735,7 @@
         "value": "123455"
       }
     ],
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2776,6 +2805,7 @@
         "value": "2179545"
       }
     ],
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2845,6 +2875,7 @@
         "value": "2179523"
       }
     ],
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -2914,6 +2945,7 @@
         "value": "2178703"
       }
     ],
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -3062,6 +3094,7 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -3135,6 +3168,7 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -3211,6 +3245,7 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",
@@ -3286,6 +3321,7 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
+    "license": [],
     "associatedArtifacts": [
       {
         "type": "UnPublishedFile",
@@ -3419,6 +3455,16 @@
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
     "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
     "filesStatus": "hasPublicFiles",
+    "license": [
+      {
+        "type": "License",
+        "name": "CC-BY-SA",
+        "labels": {
+          "en": "Creative Commons - SA",
+          "nb": "Creative Commons - SA"
+        }
+      }
+    ],
     "associatedArtifacts": [
       {
         "type": "PublishedFile",

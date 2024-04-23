@@ -66,13 +66,10 @@ import static no.unit.nva.search2.common.constant.Words.TYPE;
 import static no.unit.nva.search2.common.constant.Words.YEAR;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.constant.Defaults;
+
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -122,7 +119,7 @@ public final class Constants {
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
-    public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
+    public static final String ASSOCIATED_ARTIFACTS_LICENSE = LICENSE + DOT + NAME + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
@@ -211,8 +208,8 @@ public final class Constants {
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
-        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id"
-        //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
+        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
+        LICENSE, "/withAppliedFilter/licenses"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
         FILES, "/withAppliedFilter/files",
@@ -228,6 +225,7 @@ public final class Constants {
         List.of(
             filesHierarchy(),
             //            associatedArtifactsHierarchy(),
+            license(),
             entityDescriptionHierarchy(),
             fundingSourceHierarchy(),
             scientificIndexHierarchy(),
@@ -248,10 +246,10 @@ public final class Constants {
         return branchBuilder(FILES, jsonPath(FILES_STATUS, KEYWORD));
     }
 
-    public static NestedAggregationBuilder associatedArtifactsHierarchy() {
-        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
-            .subAggregation(license());
-    }
+//    public static NestedAggregationBuilder associatedArtifactsHierarchy() {
+//        return nestedBranchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+//            .subAggregation(license());
+//    }
 
     private static NestedAggregationBuilder scientificIndexHierarchy() {
         return nestedBranchBuilder(SCIENTIFIC_INDEX, SCIENTIFIC_INDEX)
@@ -365,16 +363,14 @@ public final class Constants {
                 );
     }
 
-    private static TermsAggregationBuilder license() {
+    private static NestedAggregationBuilder license() {
         return
-            AggregationBuilders
-                .terms(LICENSE)
-                .script(groupByLicenses())
-                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
-                .subAggregation(AggregationBuilders
-                    .terms(NAME)
-                    .script(licenseLabel()));
-
+            nestedBranchBuilder(LICENSE, LICENSE)
+                .subAggregation(
+                    branchBuilder(NAME, LICENSE, NAME, KEYWORD)
+                        .subAggregation(labels(LICENSE))
+                )
+                .subAggregation(AggregationBuilders.reverseNested(ROOT));
     }
 
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
@@ -388,78 +384,6 @@ public final class Constants {
     }
 
 
-    public static Script groupByLicenses() {
-        var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "CC-NC-ND";
-            } else if (url.contains("/by-nc-sa")) {
-              return "CC-NC-SA";
-            } else if (url.contains("/by-nc")) {
-              return "CC-NC";
-            } else if (url.contains("/by-nd")) {
-              return "CC-ND";
-            } else if (url.contains("/by-sa")) {
-              return "CC-SA";
-            } else if (url.contains("/by")) {
-              return "CC-BY";
-            }
-            return "Other";
-            """;
-        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
-    }
-
-    public static Script selectByLicense(String license) {
-        var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return false;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "CC-NC-ND".equals(params.license);
-            } else if (url.contains("/by-nc-sa")) {
-              return "CC-NC-SA".equals(params.license);
-            } else if (url.contains("/by-nc")) {
-              return "CC-NC".equals(params.license);
-            } else if (url.contains("/by-nd")) {
-              return "CC-ND".equals(params.license);
-            } else if (url.contains("/by-sa")) {
-              return "CC-SA".equals(params.license);
-            } else if (url.contains("/by")) {
-              return "CC-BY".equals(params.license);
-            } else {
-                return "Other".equals(params.license);
-            }
-            """;
-        return new Script(
-            ScriptType.INLINE,
-            PAINLESS,
-            script,
-            Map.of("license", license.toUpperCase(Locale.getDefault()))
-        );
-    }
-
-
-    public static Script licenseLabel() {
-        var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "Creative Commons - Attribution-NonCommercial-NoDerivs";
-            } else if (url.contains("/by-nc-sa")) {
-              return "Creative Commons - Attribution-NonCommercial-ShareAlike";
-            } else if (url.contains("/by-nc")) {
-              return "Creative Commons - Attribution-NonCommercial";
-            } else if (url.contains("/by-nd")) {
-              return "Creative Commons - Attribution-NoDerivs";
-            } else if (url.contains("/by-sa")) {
-              return "Creative Commons - Attribution-ShareAlike";
-            } else if (url.contains("/by")) {
-              return "Creative Commons - Attribution";
-            }
-            return "Other license";
-            """;
-        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
-    }
 
     private static String multipleFields(String... values) {
         return String.join(PIPE, values);

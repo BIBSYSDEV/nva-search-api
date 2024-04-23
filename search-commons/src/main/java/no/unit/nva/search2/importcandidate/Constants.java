@@ -7,9 +7,9 @@ import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
 import static no.unit.nva.search2.resource.Constants.filesHierarchy;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,7 @@ public final class Constants {
             filesHierarchy()
         );
 
+
     public static final Map<String, String> FACET_IMPORT_CANDIDATE_PATHS = Map.of(
         ASSOCIATED_ARTIFACTS, "/filter/associatedArtifacts/license",
         COLLABORATION_TYPE, "/filter/collaborationType/id",
@@ -72,6 +73,13 @@ public final class Constants {
                 .subAggregation(branchBuilder(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD))
                 .subAggregation(branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD));
     }
+
+    private static AggregationBuilder associatedArtifactsHierarchy() {
+        return
+            branchBuilder(ASSOCIATED_ARTIFACTS, ASSOCIATED_ARTIFACTS)
+                .subAggregation(branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, "license.keyword"));
+    }
+
 
     @JacocoGenerated
     public Constants() {

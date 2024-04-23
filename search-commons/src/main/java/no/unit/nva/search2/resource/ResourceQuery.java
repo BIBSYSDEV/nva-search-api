@@ -36,7 +36,6 @@ import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search2.resource.Constants.selectByLicense;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
@@ -229,7 +228,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
         return switch (key) {
-            case LICENSE, LICENSE_NOT -> builderStreamLicenseQuery(key);
             case FUNDING -> builderStreamFundingQuery(key);
             case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, SCOPUS_AS_TYPE);
@@ -237,11 +235,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             case SEARCH_ALL -> builderStreamSearchAllWithBoostsQuery();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamLicenseQuery(ResourceParameter key) {
-        var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
-        return queryTools.queryToEntry(key, query);
     }
 
     private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamAdditionalIdentifierQuery(
