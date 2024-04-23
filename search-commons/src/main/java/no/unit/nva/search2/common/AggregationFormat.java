@@ -15,7 +15,6 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,25 +37,7 @@ public final class AggregationFormat {
                 .map(AggregationFormat::getJsonNodeEntry)
                 .forEach(item -> objectNode.set(item.getKey(), fixNodes(item, item.getValue())));
         }
-        combineNotificationAggregations(objectNode);
         return objectNode;
-    }
-
-
-    private static void combineNotificationAggregations(ObjectNode jsonNode) {
-        var notifications = JsonUtils.dtoObjectMapper.createObjectNode().arrayNode();
-        var keysToRemove = new ArrayList<String>();
-        for (var field : jsonNode.properties()) {
-            var fieldName = field.getKey();
-            if (isNotificationAggregation(field)) {
-                JsonNode value = field.getValue();
-                ((ObjectNode) value).put("key", fieldName);
-                notifications.add(value);
-                keysToRemove.add(fieldName);
-            }
-        }
-        keysToRemove.forEach(jsonNode::remove);
-        jsonNode.putIfAbsent("notifications", notifications);
     }
 
     private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {

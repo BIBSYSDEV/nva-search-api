@@ -89,7 +89,7 @@ public final class Constants {
         BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
         STATUS, "/withAppliedFilter/status",
         TYPE, "/withAppliedFilter/type",
-        PUBLICATION_STATUS, "/withAppliedFilter/publication/status");
+        PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
 
     @JacocoGenerated
     public Constants() {
