@@ -288,12 +288,8 @@ class TicketClientTest {
             when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
                 .thenReturn(Optional.of(testOrganizationId));
 
-            when(mockedRequestInfoLocal.userIsAuthorized(MANAGE_DOI))
-                .thenReturn(accessRightList.contains(MANAGE_DOI));
-            when(mockedRequestInfoLocal.userIsAuthorized(AccessRight.SUPPORT))
-                .thenReturn(accessRightList.contains(AccessRight.SUPPORT));
-            when(mockedRequestInfoLocal.userIsAuthorized(MANAGE_PUBLISHING_REQUESTS))
-                .thenReturn(accessRightList.contains(MANAGE_PUBLISHING_REQUESTS));
+            when(mockedRequestInfoLocal.getAccessRights())
+                .thenReturn(accessRightList);
 
 
             var query =

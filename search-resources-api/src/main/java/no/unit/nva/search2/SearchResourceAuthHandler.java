@@ -41,7 +41,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
         throws BadRequestException, UnauthorizedException {
 
-        validateAccessRight(requestInfo);
+        validateAccessRight(requestInfo.getAccessRights());
 
         return
             ResourceQuery.builder()
@@ -64,9 +64,9 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
 
-    private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        if (requestInfo.userIsAuthorized(AccessRight.MANAGE_OWN_AFFILIATION)
-            || requestInfo.userIsAuthorized(AccessRight.MANAGE_RESOURCES_STANDARD)) {
+    private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
+        if (accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
+            || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
             return;
         }
 
