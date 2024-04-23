@@ -158,7 +158,7 @@ Accept: application/json
 | owner_not                 | ownerNot                | acrossFields | not_one_item     | owner.firstName, owner.lastName, owner.username                                                                  |
 | publication_id            | publicationId           | fuzzyKeyword | one_or_more_item | publication.id, publication.identifier                                                                           |
 | publication_id_not        | publicationIdNot        | fuzzyKeyword | not_one_item     | publication.id, publication.identifier                                                                           |
-| publication_instance      | publicationInstance     | fuzzyKeyword | not_one_item     | publication.publicationInstance.type                                                                             |
+| publication_instance      | publicationInstance     | fuzzyKeyword | one_or_more_item | publication.publicationInstance.type                                                                             |
 | publication_instance_not  | publicationInstanceNot  | fuzzyKeyword | not_one_item     | publication.publicationInstance.type                                                                             |
 | publication_modified_date | publicationModifiedDate | date         | between          | publication.modifiedDate                                                                                         |
 | publication_owner         | publicationOwner        | fuzzyKeyword | one_or_more_item | publication.owner                                                                                                |
