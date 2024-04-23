@@ -16,8 +16,8 @@ public enum ParameterKind {
     KEYWORD,
     FUZZY_KEYWORD,
     TEXT,
-    FUZZY_TEXT,
     FREE_TEXT,
+    ACROSS_FIELDS,
     SORT_KEY,
     CUSTOM;
 

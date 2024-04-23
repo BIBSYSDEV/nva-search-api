@@ -130,14 +130,16 @@ Accept: application/json
   * hits on any partial match in field(s), boosts on exact match and phrases
 * free_text
   * Search through whole document
+* acrossFields
+  * Search through all paths as it where one field
 * custom
 
 ### Key details
 
 | key_name                  | keyName                 | queryKind    | scope            | paths                                                                                                            |
 |---------------------------|-------------------------|--------------|------------------|------------------------------------------------------------------------------------------------------------------|
-| assignee                  | assignee                | custom       | all_items        | assignee.type.keyword, assignee.firstName.keyword, assignee.lastName.keyword, assignee.username.keyword          |
-| assignee_not              | assigneeNot             | text         | no_items         | assignee.type, assignee.firstName, assignee.lastName, assignee.username                                          |
+| assignee                  | assignee                | custom       | all_items        | assignee.firstName.keyword, assignee.lastName.keyword, assignee.username.keyword                                 |
+| assignee_not              | assigneeNot             | acrossFields | no_items         | assignee.firstName, assignee.lastName, assignee.username                                                         |
 | by_user_pending           | byUserPending           | ignored      | all_items        | BY_USER_PENDING                                                                                                  |
 | created_date              | createdDate             | date         | between          | createdDate                                                                                                      |
 | customer_id               | customerId              | fuzzyKeyword | one_or_more_item | customerId                                                                                                       |
@@ -145,17 +147,19 @@ Accept: application/json
 | id                        | id                      | fuzzyKeyword | one_or_more_item | id                                                                                                               |
 | id_not                    | idNot                   | fuzzyKeyword | not_one_item     | id                                                                                                               |
 | exclude_subunits          | excludeSubunits         | ignored      | one_or_more_item | organization.id, organization.identifier                                                                         |
-| finalized_by              | finalizedBy             | text         | all_items        | finalizedBy.type, finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                              |
-| finalized_by_not          | finalizedByNot          | text         | no_items         | finalizedBy.type, finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                              |
-| messages                  | messages                | text         | all_items        | messages.type, messages.text, messages.status                                                                    |
-| messages_not              | messagesNot             | text         | no_items         | messages.type, messages.text, messages.status                                                                    |
+| finalized_by              | finalizedBy             | acrossFields | all_items        | finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                                                |
+| finalized_by_not          | finalizedByNot          | acrossFields | no_items         | finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                                                |
+| messages                  | messages                | text         | all_items        | messages.text, messages.status                                                                                   |
+| messages_not              | messagesNot             | text         | no_items         | messages.text, messages.status                                                                                   |
 | modified_date             | modifiedDate            | date         | between          | modifiedDate                                                                                                     |
 | organization_id           | organizationId          | custom       | one_or_more_item | organization.id.keyword, organization.identifier.keyword, organization.partOf.id, organization.partOf.identifier |
 | organization_id_not       | organizationIdNot       | custom       | not_one_item     | organization.id.keyword, organization.identifier.keyword, organization.partOf.id, organization.partOf.identifier |
-| owner                     | owner                   | fuzzyKeyword | one_or_more_item | owner.type, owner.firstName, owner.lastName, owner.username                                                      |
-| owner_not                 | ownerNot                | fuzzyKeyword | not_one_item     | owner.type, owner.firstName, owner.lastName, owner.username                                                      |
+| owner                     | owner                   | acrossFields | one_or_more_item | owner.firstName, owner.lastName, owner.username                                                                  |
+| owner_not                 | ownerNot                | acrossFields | not_one_item     | owner.firstName, owner.lastName, owner.username                                                                  |
 | publication_id            | publicationId           | fuzzyKeyword | one_or_more_item | publication.id, publication.identifier                                                                           |
 | publication_id_not        | publicationIdNot        | fuzzyKeyword | not_one_item     | publication.id, publication.identifier                                                                           |
+| publication_instance      | publicationInstance     | fuzzyKeyword | not_one_item     | publication.publicationInstance.type                                                                             |
+| publication_instance_not  | publicationInstanceNot  | fuzzyKeyword | not_one_item     | publication.publicationInstance.type                                                                             |
 | publication_modified_date | publicationModifiedDate | date         | between          | publication.modifiedDate                                                                                         |
 | publication_owner         | publicationOwner        | fuzzyKeyword | one_or_more_item | publication.owner                                                                                                |
 | publication_owner_not     | publicationOwnerNot     | fuzzyKeyword | not_one_item     | publication.owner                                                                                                |
@@ -166,8 +170,9 @@ Accept: application/json
 | status_not                | statusNot               | keyword      | not_one_item     | status.keyword                                                                                                   |
 | type                      | type                    | keyword      | one_or_more_item | type.keyword                                                                                                     |
 | type_not                  | typeNot                 | keyword      | not_one_item     | type.keyword                                                                                                     |
-| viewed_by                 | viewedBy                | text         | all_items        | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
-| viewed_by_not             | viewedByNot             | text         | no_items         | viewedBy.type, viewedBy.firstName, viewedBy.lastName, viewedBy.username                                          |
+| viewed_by                 | viewedBy                | acrossFields | all_items        | viewedBy.firstName, viewedBy.lastName, viewedBy.username                                                         |
+| viewed_by_not             | viewedByNot             | acrossFields | no_items         | viewedBy.firstName, viewedBy.lastName, viewedBy.username                                                         |
+| search_all                | searchAll               | freeText     | all_items        | *                                                                                                                |
 
 > [!NOTE]
 > <p>Valid SortKeys </p>

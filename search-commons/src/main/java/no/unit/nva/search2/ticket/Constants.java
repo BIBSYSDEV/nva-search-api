@@ -33,6 +33,7 @@ public final class Constants {
     public static final String ORGANIZATION = "organization";
     public static final String PUBLICATION = "publication";
     public static final String PUBLICATION_STATUS = "publicationStatus";
+    public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String USERNAME = "username";
     public static final String UNHANDLED_KEY = "unhandled key -> ";
 
@@ -55,25 +56,26 @@ public final class Constants {
             + PIPE + ORGANIZATION_PART_OF;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
     public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
-        PUBLICATION + DOT + ID + DOT + KEYWORD
-            + PIPE + PUBLICATION + DOT + IDENTIFIER + DOT + KEYWORD;
+        PUBLICATION + DOT + ID + DOT + KEYWORD + PIPE
+            + PUBLICATION + DOT + IDENTIFIER + DOT + KEYWORD;
+
+    public static final String PUBLICATION_INSTANCE_KEYWORD =
+        PUBLICATION + DOT + PUBLICATION_INSTANCE + DOT + TYPE_KEYWORD;
+
     public static final String PUBLICATION_MAIN_TITLE_KEYWORD = PUBLICATION + DOT + MAIN_TITLE + DOT + KEYWORD;
     public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
     public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
     public static final String MESSAGE_FIELDS =
-        MESSAGES + DOT + TYPE_KEYWORD + PIPE
-            + MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
+        MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
             + MESSAGES + DOT + STATUS + DOT + KEYWORD;
     public static final String OWNER_FIELDS =
-        OWNER + DOT + TYPE_KEYWORD + PIPE
-            + OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+        OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
             + OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE
             + OWNER_USERNAME;
     public static final String VIEWED_BY_FIELDS =
-        VIEWED_BY + DOT + TYPE_KEYWORD + PIPE
-            + VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+        VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
             + VIEWED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
             + VIEWED_BY + DOT + USERNAME + DOT + KEYWORD;
     public static final String USER_NOTIFICATIONS = "UserNotification";
@@ -83,14 +85,12 @@ public final class Constants {
     public static final String GENERAL_SUPPORT_NOTIFICATIONS = "GeneralSupportNotification";
     public static final String ASSIGNEE = "assignee";
     public static final String ASSIGNEE_FIELDS =
-        ASSIGNEE + DOT + TYPE_KEYWORD + PIPE
-            + ASSIGNEE + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+        ASSIGNEE + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
             + ASSIGNEE + DOT + LAST_NAME + DOT + KEYWORD + PIPE
             + ASSIGNEE + DOT + USERNAME + DOT + KEYWORD;
     private static final String FINALIZED_BY = "finalizedBy";
     public static final String FINALIZED_BY_FIELDS =
-        FINALIZED_BY + DOT + TYPE_KEYWORD + PIPE
-            + FINALIZED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
+        FINALIZED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
             + FINALIZED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
             + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
 
