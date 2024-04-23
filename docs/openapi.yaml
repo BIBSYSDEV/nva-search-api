@@ -4,75 +4,6 @@ info:
   version: '0.2.0'
   description: Public search API for resources in NVA. The API is backed by Amazon OpenSearch and uses [OpenSearch query syntax](https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/).
 paths:
-  /tickets:
-    get:
-      description: Listing of all tickets
-      parameters:
-        - in: query
-          name: viewingScope
-          description: 'Only return tickets with a resource owner in one of the selected organisation. Including their sub-units. Formatted as a comma separated list of affiliations ids.'
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: excludeSubUnits
-          description: 'Exclude sub-units of the given viewingScope.'
-          required: false
-          schema:
-            type: boolean
-        - in: query
-          name: role
-          description: "The role you have when getting tickets"
-          required: false
-          schema:
-            type: string
-            default: "curator"
-            enum: [ curator, creator ]
-        - in: query
-          name: query
-          description: "Term to search for in resource."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: orderBy
-          description: "Field to order result by."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: sortOrder
-          description: "Order of search results (asc or desc)."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: from
-          description: "Start position from results, 0-based."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: results
-          description: "Maximum number of publications in response."
-          required: false
-          schema:
-            type: string
-      security:
-        - CognitoUserPool: [ "https://api.nva.unit.no/scopes/frontend", "aws.cognito.signin.user.admin" ]
-      x-amazon-apigateway-integration:
-        uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsFunction.Arn}:live/invocations
-        responses: { }
-        httpMethod: POST
-        type: AWS_PROXY
-      responses:
-        '200':
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TicketSearchResponse"
 
   /customer/tickets:
     get:
@@ -605,6 +536,8 @@ components:
       in: query
       description: "Returns document with these words in the abstract."
       required: false
+      style: form
+      explode: true
       examples:
         documents with all words:
           value: covid threat
@@ -617,6 +550,8 @@ components:
       in: query
       description: "Returns document without these words in the abstract."
       required: false
+      style: form
+      explode: true
       examples:
         documents with all words:
           value: covid threat
@@ -629,6 +564,8 @@ components:
       in: query
       description: "Returns document with these words in the abstract."
       required: false
+      style: form
+      explode: true
       examples:
         documents with all words:
           value: covid threat
@@ -641,6 +578,8 @@ components:
       in: query
       description: "Aggregations to include in the search."
       required: false
+      style: form
+      explode: true
       examples:
         all aggregations:
           value: all
@@ -655,6 +594,8 @@ components:
       in: query
       description: "Returns document without these contextTypes."
       required: false
+      style: form
+      explode: true
       example: "Anthology"
       schema:
         $ref: '#/components/schemas/ContextValues'
@@ -663,6 +604,8 @@ components:
       in: query
       description: "Returns document with these contextTypes."
       required: false
+      style: form
+      explode: true
       example: "Degree"
       schema:
         $ref: '#/components/schemas/ContextValues'
@@ -671,6 +614,8 @@ components:
       in: query
       description: "Returns document with these contextTypes."
       required: false
+      style: form
+      explode: true
       example: Book
       schema:
         $ref: '#/components/schemas/ContextValues'
@@ -680,6 +625,8 @@ components:
       description: "Returns document without Author's name."
       example: "John Doe"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     contributorNameParam:
@@ -688,6 +635,8 @@ components:
       description: "Returns document with Author's name."
       example: "John Doe"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     contributorNameShouldParam:
@@ -696,6 +645,8 @@ components:
       description: "Returns document with similar Author names."
       example: "John Doe"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     contributorParam:
@@ -704,6 +655,8 @@ components:
       description: "Returns document with Author's id(URI)."
       example: 'https://api.dev.nva.aws.unit.no/cristin/person/1306838'
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     contributorNotParam:
@@ -712,6 +665,8 @@ components:
       description: "Returns document without Author's ids(URI)."
       example: 'https://api.dev.nva.aws.unit.no/cristin/person/1306838'
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     contributorShouldParam:
@@ -720,6 +675,8 @@ components:
       description: "Returns document with Author's ids(URI)."
       example: '1306838'
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     createdBeforeParam:
@@ -728,6 +685,8 @@ components:
       description: "Results created before and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -737,6 +696,8 @@ components:
       description: "Results created since and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -746,6 +707,8 @@ components:
       description: "Returns documents with this course code."
       example: "GENV395"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     courseNotParam:
@@ -754,6 +717,8 @@ components:
       description: "Returns documents without this course code."
       example: "GENV395"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     courseShouldParam:
@@ -762,6 +727,8 @@ components:
       description: "Returns documents with these course codes."
       example: "GENV395"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     cristinIdentifierParam:
@@ -770,6 +737,8 @@ components:
       description: "Returns documents with the cristin identifier."
       example: "1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     scopusIdentifierParam:
@@ -778,6 +747,8 @@ components:
       description: "Returns documents with the cristin identifier."
       example: "1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     doiParam:
@@ -786,6 +757,8 @@ components:
       description: "Returns document with this DOI id."
       example: "10.1000/123456"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     doiNotParam:
@@ -794,6 +767,8 @@ components:
       description: "Returns document without these DOI ids."
       example: "10.1000/123456"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     doiShouldParam:
@@ -802,6 +777,8 @@ components:
       description: "Returns document with these DOI ids."
       example: "10.1000/123456"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     scientificValueParam:
@@ -810,6 +787,8 @@ components:
       description: "Returns document with provided scientific values separated by comma."
       example: "LevelOne,LevelTwo"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fieldsParam:
@@ -818,6 +797,8 @@ components:
       description: "'fields=all' will search all fields in documents, or you can specify a comma separated list of fields to search in."
       example: category,contributor,funding
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         enum: [ all, category,contributor,created_before,created_since,doi,funding,funding_source,id,institution ,isbn,issn,orcid,modified_before,modified_since,project_code,published_before,published_since,title,unit,user,year_reported ]
@@ -827,6 +808,8 @@ components:
       description: "Funding source code e.g: NFR, and project_code together separated by ':'."
       example: "NFR:1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fundingIdentifierParam:
@@ -835,6 +818,8 @@ components:
       description: "Returns documents with the funding identifier, also known as grant identifier."
       example: "1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fundingIdentifierNotParam:
@@ -843,6 +828,8 @@ components:
       description: "Returns documents without the funding identifier, also known as grant identifier."
       example: "1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fundingIdentifierShouldParam:
@@ -851,6 +838,8 @@ components:
       description: "Returns documents with the funding identifiers, also known as grant identifiers."
       example: "1234,4321"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fundingSourceParam:
@@ -859,6 +848,8 @@ components:
       description: "Returns document with this funding source code or project code."
       example: "NFR"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fundingSourceNotParam:
@@ -867,6 +858,8 @@ components:
       description: "Returns document without these funding source codes."
       example: "NFR"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     fundingSourceShouldParam:
@@ -875,6 +868,8 @@ components:
       description: "Returns document with these funding source codes."
       example: "NFR"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     grantIdentifierParam:
@@ -883,6 +878,8 @@ components:
       description: "Returns documents with the grant id, also known as funding identifier."
       example: "1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     grantIdentifierNotParam:
@@ -891,6 +888,8 @@ components:
       description: "Returns documents without the grant id, also known as funding identifier."
       example: "1234"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     grantIdentifierShouldParam:
@@ -899,6 +898,8 @@ components:
       description: "Returns documents with the grant id, also known as funding identifiers."
       example: "1234,4321"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     hasFileParam:
@@ -907,6 +908,8 @@ components:
       description: "Returns documents with visibleForNonOwner=true/false."
       example: "true"
       required: false
+      style: form
+      explode: true
       schema:
         type: boolean
         enum: [ true, false ]
@@ -915,6 +918,8 @@ components:
       in: query
       description: "Returns document with the identifier (UUID)."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: uuid
@@ -923,6 +928,8 @@ components:
       in: query
       description: "Returns document without these identifiers (UUID)."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: uuid
@@ -931,6 +938,8 @@ components:
       in: query
       description: "Returns document with these identifiers (UUID)."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: uuid
@@ -940,6 +949,8 @@ components:
       description: "Returns document with this instanceType."
       example: JournalArticle
       required: false
+      style: form
+      explode: true
       schema:
         $ref: "#/components/schemas/CategoryEnum"
     instanceTypeNotParam:
@@ -948,6 +959,8 @@ components:
       description: "Returns document without this instanceType."
       example: JournalArticle
       required: false
+      style: form
+      explode: true
       schema:
         $ref: "#/components/schemas/CategoryEnum"
     instanceTypeShouldParam:
@@ -956,6 +969,8 @@ components:
       description: "Returns document with these instanceTypes."
       example: JournalArticle
       required: false
+      style: form
+      explode: true
       schema:
         $ref: "#/components/schemas/CategoryEnum"
     institutionParam:
@@ -970,6 +985,8 @@ components:
         Name:
           value: "University of Oslo"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     institutionNotParam:
@@ -984,6 +1001,8 @@ components:
         Name:
           value: "University of Oslo"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     institutionShouldParam:
@@ -998,6 +1017,8 @@ components:
         Name:
           value: "University of Oslo"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     isbnParam:
@@ -1006,6 +1027,8 @@ components:
       description: "Returns document with this ISBN id"
       example: "978-3-16-148410-0"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     isbnNotParam:
@@ -1014,6 +1037,8 @@ components:
       description: "Returns document without these ISBN ids."
       example: "978-3-16-148410-0"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     isbnShouldParam:
@@ -1022,6 +1047,8 @@ components:
       description: "Returns document with these ISBN ids."
       example: "978-3-16-148410-0"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     issnParam:
@@ -1030,6 +1057,8 @@ components:
       description: "Returns document with this issn"
       example: "1234-5678"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     issnNotParam:
@@ -1038,6 +1067,8 @@ components:
       description: "Returns document without these issn."
       example: "1234-5678"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     issnShouldParam:
@@ -1046,6 +1077,8 @@ components:
       description: "Returns document with these issn."
       example: "1234-5678"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     licenseNotParam:
@@ -1053,6 +1086,8 @@ components:
       in: query
       description: "Returns document without this license key (without version)."
       required: false
+      style: form
+      explode: true
       example: "CC BY-NC-ND"
       schema:
         $ref: "#/components/schemas/LicenseValues"
@@ -1061,6 +1096,8 @@ components:
       in: query
       description: "Returns document with this license key (without version)."
       required: false
+      style: form
+      explode: true
       example: "CC BY-NC-ND"
       schema:
         $ref: "#/components/schemas/LicenseValues"
@@ -1069,6 +1106,8 @@ components:
       in: query
       description: "Returns document with these license key (without version)."
       required: false
+      style: form
+      explode: true
       example: "CC BY-NC-ND"
       schema:
         $ref: "#/components/schemas/LicenseValues"
@@ -1078,6 +1117,8 @@ components:
       description: "Results modified before and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1087,6 +1128,8 @@ components:
       description: "Results modified since and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1096,6 +1139,8 @@ components:
       description: "Returns document with this ORCID id."
       example: "0000-0002-1825-0097"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     orcidNotParam:
@@ -1104,6 +1149,8 @@ components:
       description: "Returns document without these ORCID ids."
       example: "0000-0002-1825-0097"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     orcidShouldParam:
@@ -1112,6 +1159,8 @@ components:
       description: "Returns document with these ORCID ids."
       example: "0000-0002-1825-0097"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     parentPublicationParam:
@@ -1119,6 +1168,8 @@ components:
       in: query
       description: "Returns document with this parentPublication."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     parentPublicationShouldParam:
@@ -1126,6 +1177,8 @@ components:
       in: query
       description: "Returns document with these parentPublications."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     projectParam:
@@ -1134,6 +1187,8 @@ components:
       description: "Returns document with this project id (URI)."
       example: "NFR"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     projectNotParam:
@@ -1142,6 +1197,8 @@ components:
       description: "Returns document without these project ids (URI)."
       example: "NFR"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     projectShouldParam:
@@ -1150,6 +1207,8 @@ components:
       description: "Returns document with these project ids (URI)."
       example: "NFR"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationLanguageParam:
@@ -1158,6 +1217,8 @@ components:
       description: "Returns document with these publication languages (URI)."
       example: "http://lexvo.org/id/iso639-3/nob"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationLanguageNotParam:
@@ -1166,6 +1227,8 @@ components:
       description: "Returns document without these publication languages (URI)."
       example: "http://lexvo.org/id/iso639-3/nob"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationLanguageShouldParam:
@@ -1174,6 +1237,8 @@ components:
       description: "Returns document with these publication languages codes ()."
       example: "nob, eng, nor, etc"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationYearParam:
@@ -1182,6 +1247,8 @@ components:
       description: "Returns document with this publication year."
       example: "2022"
       required: false
+      style: form
+      explode: true
       schema:
         type: number
     publicationYearBeforeParam:
@@ -1189,6 +1256,8 @@ components:
       in: query
       description: "Returns document with publication year prior to value."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1197,6 +1266,8 @@ components:
       in: query
       description: "Returns document with publication year starting from value."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1206,6 +1277,8 @@ components:
       description: "Returns document with any of these publication years."
       example: "2022 2023"
       required: false
+      style: form
+      explode: true
       schema:
         type: number
     publishedBeforeParam:
@@ -1214,6 +1287,8 @@ components:
       description: "Results published before and inclusive the given date, (yyyy-mm-dd)"
       example: "2005-03-17"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1223,6 +1298,8 @@ components:
       description: "Returns document with date between values."
       example: "2005-03-17, 2010-01-01"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1232,6 +1309,8 @@ components:
       description: "Results published since and inclusive the given date, (yyyy-mm-dd)."
       example: "2005-03-17"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         format: date
@@ -1240,6 +1319,8 @@ components:
       in: query
       description: "Returns document without this Id."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publisherIdParam:
@@ -1247,6 +1328,8 @@ components:
       in: query
       description: "Returns document with this Id."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publisherIdShouldParam:
@@ -1254,6 +1337,8 @@ components:
       in: query
       description: "Returns document with these Ids."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publisherNotParam:
@@ -1261,6 +1346,8 @@ components:
       in: query
       description: "Returns document without this publisher."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publisherParam:
@@ -1268,6 +1355,8 @@ components:
       in: query
       description: "Returns document with this publisher."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publisherShouldParam:
@@ -1275,6 +1364,8 @@ components:
       in: query
       description: "Returns document with these publishers."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     seriesNotParam:
@@ -1282,6 +1373,8 @@ components:
       in: query
       description: "Returns document without this ID/name."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     seriesParam:
@@ -1289,6 +1382,8 @@ components:
       in: query
       description: "Returns document with this ID/name."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     seriesShouldParam:
@@ -1296,6 +1391,8 @@ components:
       in: query
       description: "Returns document with these ID/name."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     statusParam:
@@ -1304,6 +1401,8 @@ components:
       description: "Returns documents with given status."
       example: "PUBLISHED"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     statusNotParam:
@@ -1312,6 +1411,8 @@ components:
       description: "Returns documents without given status."
       example: "PUBLISHED"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     statusShouldParam:
@@ -1320,6 +1421,8 @@ components:
       description: "Returns documents without any of the given statuses."
       example: "PUBLISHED"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     tagsParam:
@@ -1327,6 +1430,8 @@ components:
       in: query
       description: "Returns document with these tags."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     tagsNotParam:
@@ -1334,6 +1439,8 @@ components:
       in: query
       description: "Returns document without these tags."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     tagsShouldParam:
@@ -1341,6 +1448,8 @@ components:
       in: query
       description: "Returns document with these tags."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     titleParam:
@@ -1349,6 +1458,8 @@ components:
       description: "Returns document with these words in the title."
       example: "covid-19 unsafe"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     titleNotParam:
@@ -1357,6 +1468,8 @@ components:
       description: "Returns document without these words in the title."
       example: "covid-19 safe"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     titleShouldParam:
@@ -1365,6 +1478,8 @@ components:
       description: "Returns document with any of these words in the title."
       example: "covid-19 save"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     topLevelOrganizationParam:
@@ -1372,6 +1487,8 @@ components:
       in: query
       description: "Returns documents with this reference."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     unitParam:
@@ -1380,6 +1497,8 @@ components:
       description: "Returns document with these words in the Id."
       example: 185.53.18.10
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     unitNotParam:
@@ -1388,6 +1507,8 @@ components:
       description: "Returns document without these words in the Id."
       example: 185.53.18.10
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     unitShouldParam:
@@ -1396,6 +1517,8 @@ components:
       description: "Returns document with any of these words in the Id."
       example: 185.53.18.10
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     userParam:
@@ -1404,6 +1527,8 @@ components:
       description: "Returns document with this resource owner (user id (URI))."
       example: "askeladd:185"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     userNotParam:
@@ -1412,6 +1537,8 @@ components:
       description: "Returns document without these resource owners (user id (URI))."
       example: "askeladd:185"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     userShouldParam:
@@ -1420,6 +1547,8 @@ components:
       description: "Returns document with any of these resource owners (user id (URI))."
       example: "askeladd:185"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     scientificReportingPeriodSinceParam:
@@ -1428,6 +1557,8 @@ components:
       description: "Returns document with scientific reporting year after this value."
       example: "2011"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     scientificReportingPeriodBeforeParam:
@@ -1436,6 +1567,8 @@ components:
       description: "Returns document with scientific reporting year before this value."
       example: "2023"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     excludeSubunits:
@@ -1444,6 +1577,8 @@ components:
       description: "Exclude sub-units of the provided viewingScope"
       example: 'true'
       required: false
+      style: form
+      explode: true
       schema:
         type: boolean
     userAffiliationParam:
@@ -1451,6 +1586,8 @@ components:
       in: query
       description: "Returns document with these owner affiliations."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     userAffiliationNotParam:
@@ -1458,6 +1595,8 @@ components:
       in: query
       description: "Returns document without these owner affiliations."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     userAffiliationShouldParam:
@@ -1465,188 +1604,242 @@ components:
       in: query
       description: "Returns document with these owner affiliations."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     assigneeParam:
       name: assignee
       in: query
-      description: "TBA"
+      description: "Returns document with these assignees"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     assigneeNotParam:
       name: assignee_not
       in: query
-      description: "TBA"
+      description: "Returns document without these assignees"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     createdDateParam:
       name: created_date
       in: query
-      description: "TBA"
+      description: "Returns document with these created dates"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     customerIdParam:
       name: customer_id
       in: query
-      description: "TBA"
+      description: "Returns document with these customer ids"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     customerIdNotParam:
       name: customer_id_not
       in: query
-      description: "TBA"
+      description: "Returns document without these customer ids"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     finalizedByParam:
       name: finalized_by
       in: query
-      description: "TBA"
+      description: "Returns document with these finalized by users"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     finalizedByNotParam:
       name: finalized_by_not
       in: query
-      description: "TBA"
+      description: "Returns document without these finalized by users"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     messagesParam:
       name: messages
       in: query
-      description: "TBA"
+      description: "Returns document with these words in the message"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     messagesNotParam:
       name: messages_not
       in: query
-      description: "TBA"
+      description: "Returns document without these words in the message"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     modifiedDateParam:
       name: modified_date
       in: query
-      description: "TBA"
+      description: "Returns document with these modified dates"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     organizationIdParam:
       name: organization_id
       in: query
-      description: "TBA"
+      description: "Returns document with these organization ids"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     organizationIdNotParam:
       name: organization_id_not
       in: query
-      description: "TBA"
+      description: "Returns document without these organization ids"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     ownerParam:
       name: owner
       in: query
-      description: "TBA"
+      description: "Returns document with these owners"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     ownerNotParam:
       name: owner_not
       in: query
-      description: "TBA"
+      description: "Returns document without these owners"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationIdParam:
       name: publication_id
       in: query
-      description: "TBA"
+      description: "Returns document with these publication ids"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationIdNotParam:
       name: publication_id_not
       in: query
-      description: "TBA"
+      description: "Returns document without these publication ids"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationModifiedDateParam:
       name: publication_modified_date
       in: query
-      description: "TBA"
+      description: "Returns document with these publication modified dates"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationOwnerParam:
       name: publication_owner
       in: query
-      description: "TBA"
+      description: "Returns document with these publication owners"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationOwnerNotParam:
       name: publication_owner_not
       in: query
-      description: "TBA"
+      description: "Returns document without these publication owners"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationStatusParam:
       name: publication_status
       in: query
-      description: "TBA"
+      description: "Returns document with these publication statuses"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationStatusNotParam:
       name: publication_status_not
       in: query
-      description: "TBA"
+      description: "Returns document without these publication statuses"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     publicationTitleParam:
       name: publication_title
       in: query
-      description: "TBA"
+      description: "Returns document with these publication titles"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     typeParam:
       name: type
       in: query
-      description: "TBA"
+      description: "Returns document with these types"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     typeNotParam:
       name: type_not
       in: query
-      description: "TBA"
+      description: "Returns document without these types"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     viewedByParam:
       name: viewed_by
       in: query
-      description: "TBA"
+      description: "Returns document with these viewed by users"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     viewedByNotParam:
       name: viewed_by_not
       in: query
-      description: "TBA"
+      description: "Returns document without these viewed by users"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
 
@@ -1657,6 +1850,8 @@ components:
       description: "Returns documents with this category code, only one category code is allowed."
       example: JournalArticle
       required: false
+      style: form
+      explode: true
       schema:
         $ref: "#/components/schemas/CategoryEnum"
     categoryNotParam:
@@ -1665,6 +1860,8 @@ components:
       description: "Returns documents without these category codes. Support list of Enums."
       example: JournalArticle
       required: false
+      style: form
+      explode: true
       schema:
         $ref: "#/components/schemas/CategoryEnum"
     categoryShouldParam:
@@ -1673,6 +1870,8 @@ components:
       description: "Returns documents with these category codes. Support list of Enums."
       example: "JournalArticle"
       required: false
+      style: form
+      explode: true
       schema:
         $ref: "#/components/schemas/CategoryEnum"
     #--- paging
@@ -1682,6 +1881,8 @@ components:
       description: "SortOrder is either 'asc' or 'desc'. See Search and sort Default sort order is on 'cristin_result_id' in ascending order."
       example: "asc"
       required: false
+      style: form
+      explode: true
       schema:
         type: string
         enum: [ asc, desc ]
@@ -1691,6 +1892,8 @@ components:
       description: "Page number, zero based, see from and size."
       example: "0"
       required: false
+      style: form
+      explode: true
       schema:
         type: number
     fromParam:
@@ -1699,6 +1902,8 @@ components:
       description: "Start result from item no. zero based [offset] is also accepted. Default is 0."
       example: "0"
       required: false
+      style: form
+      explode: true
       schema:
         type: number
     sizeParam:
@@ -1707,6 +1912,8 @@ components:
       description: "Number of items returned. [per_page|perPage|results|limit] are also accepted.  Default is 15."
       example: "15"
       required: false
+      style: form
+      explode: true
       schema:
         type: number
     queryParam:
@@ -1714,6 +1921,8 @@ components:
       in: query
       description: "free text search, all words are searched for in all fields, only documents containing all words are returned."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
     sortParam:
@@ -1721,6 +1930,8 @@ components:
       in: query
       description: "Sorts on the given field. Default sort order is on 'published_date' in ascending order."
       required: false
+      style: form
+      explode: true
       examples:
         ascending:
           value: "category:asc"
@@ -1745,6 +1956,8 @@ components:
       in: query
       description: "Two letter language code. IGNORED, here to be compatible with CristinAPI."
       required: false
+      style: form
+      explode: true
       schema:
         type: string
 
