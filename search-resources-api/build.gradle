@@ -9,6 +9,7 @@ dependencies {
     implementation libs.bundles.opensearch
     implementation libs.nva.core
     implementation libs.nva.json
+    implementation libs.nva.s3 //TODO: Temporary until refactor to commons
     implementation libs.nva.auth
     implementation libs.nva.apigateway
     implementation libs.bundles.logging
@@ -16,6 +17,8 @@ dependencies {
     implementation libs.opensearch.java
     implementation libs.bundles.jena
 
+    implementation libs.aws.sdk2.s3 //TODO: Temporary until refactor to commons
+    implementation libs.aws.sdk2.urlconnection //TODO: Temporary until refactor to commons
     testImplementation libs.opensearch.rest.highlevel.client
     implementation libs.com.auth0.jwt
 
@@ -26,6 +29,8 @@ dependencies {
 }
 
 test{
+    environment "AWS_REGION", "eu-west-1"
+    environment "LARGE_API_RESPONSES_BUCKET", "some-bucket"
     environment "ALLOWED_ORIGIN", "*"
     environment "COGNITO_URI", "https://example.org"
     environment "COGNITO_HOST", "https://example.org"
