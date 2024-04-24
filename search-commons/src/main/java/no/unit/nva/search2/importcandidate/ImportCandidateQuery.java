@@ -46,11 +46,13 @@ import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
@@ -114,6 +116,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
             fromUri(openSearchUri)
                 .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
                 .getUri();
+    }
+
+    @Override
+    protected String toCsvText(SwsResponse response) {
+        throw new IllegalArgumentException("Not implemented");
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        builder.fetchSource(true);
     }
 
     @Override

@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
@@ -86,12 +85,17 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract SortKey toSortKey(String sortName);
 
+
     /**
      * Builds URI to query SWS based on post body.
      *
      * @return an URI to Sws search without parameters.
      */
     protected abstract URI getOpenSearchUri();
+
+    protected abstract String toCsvText(SwsResponse response);
+    protected abstract void setFetchSource(SearchSourceBuilder builder);
+
 
     /**
      * Path to each and every facet defined in  builderAggregations().
@@ -119,6 +123,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             : toPagedResponse(response).toJsonString();
     }
 
+    public <R, Q extends Query<K>> String doExport(OpenSearchClient<R, Q> queryClient) {
+        final var response = (SwsResponse) queryClient.doSearch((Q) this);
+        return toCsvText(response);
+    }
+
     public Instant getStartTime() {
         return startTime;
     }
@@ -139,9 +148,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .build();
     }
 
-    protected String toCsvText(SwsResponse response) {
-        return CsvTransformer.transform(response.getSearchHits());
-    }
 
     public QueryKeys<K> parameters() {
         return queryKeys;
@@ -308,5 +314,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
+        setFetchSource(builder);
     }
 }

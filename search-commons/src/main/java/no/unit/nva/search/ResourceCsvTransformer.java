@@ -11,24 +11,32 @@ import java.util.stream.StreamSupport;
 import no.unit.nva.search.csv.HeaderColumnNameAndOrderMappingStrategy;
 import no.unit.nva.search.models.SearchResponseDto;
 
-public final class CsvTransformer {
+public final class ResourceCsvTransformer {
 
     private static final String IDENTITY_NAME_JSON_POINTER = "/identity/name";
+    private static final String IDENTITY_NAME_SOURCE_POINTER = "entityDescription.contributors.identity.name";
     private static final String CONTRIBUTORS_JSON_POINTER = "/entityDescription/contributors";
     private static final String ID_JSON_POINTER = "/id";
+    private static final String ID_SOURCE_POINTER = "id";
     private static final String MAIN_TITLE_JSON_POINTER = "/entityDescription/mainTitle";
+    private static final String MAIN_TITLE_SOURCE_POINTER = "entityDescription.mainTitle";
     private static final String PUBLICATION_DATE_YEAR_JSON_POINTER = "/entityDescription/publicationDate/year";
+    private static final String PUBLICATION_DATE_YEAR_SOURCE_POINTER = "entityDescription.publicationDate.year";
     private static final String PUBLICATION_DATE_MONTH_JSON_POINTER = "/entityDescription/publicationDate/month";
+    private static final String PUBLICATION_DATE_MONTH_SOURCE_POINTER = "entityDescription.publicationDate.month";
     private static final String PUBLICATION_DATE_DAY_JSON_POINTER = "/entityDescription/publicationDate/day";
+    private static final String PUBLICATION_DATE_DAY_SOURCE_POINTER = "entityDescription.publicationDate.day";
     private static final String PUBLICATION_INSTANCE_TYPE_JSON_POINTER
         = "/entityDescription/reference/publicationInstance/type";
+    private static final String PUBLICATION_INSTANCE_TYPE_SOURCE_POINTER
+        = "entityDescription.reference.publicationInstance.type";
     private static final String EMPTY_STRING = "";
     private static final char UTF8_BOM = '\ufeff';
     private static final char QUOTE_CHAR = '"';
     private static final char SEPARATOR = ';';
     private static final String LINE_END = "\r\n";
 
-    private CsvTransformer() {
+    private ResourceCsvTransformer() {
     }
 
     public static String transform(SearchResponseDto searchResponseDto) {
@@ -54,8 +62,20 @@ public final class CsvTransformer {
         return stringWriter.toString();
     }
 
+    public static List<String> getJsonFields() {
+        return List.of(
+            ID_SOURCE_POINTER,
+            MAIN_TITLE_SOURCE_POINTER,
+            PUBLICATION_DATE_YEAR_SOURCE_POINTER,
+            PUBLICATION_DATE_MONTH_SOURCE_POINTER,
+            PUBLICATION_DATE_DAY_SOURCE_POINTER,
+            PUBLICATION_INSTANCE_TYPE_SOURCE_POINTER,
+            IDENTITY_NAME_SOURCE_POINTER
+        );
+    }
+
     private static List<ExportCsv> extractedJsonSearchResults(List<JsonNode> searchResults) {
-        return searchResults.stream().map(CsvTransformer::createLine).collect(Collectors.toList());
+        return searchResults.stream().map(ResourceCsvTransformer::createLine).collect(Collectors.toList());
     }
 
     private static ExportCsv createLine(JsonNode searchResult) {
@@ -97,7 +117,7 @@ public final class CsvTransformer {
     private static List<String> getContributorsName(JsonNode document) {
         var contributors = document.at(CONTRIBUTORS_JSON_POINTER);
         return StreamSupport.stream(contributors.spliterator(), false)
-                   .map(CsvTransformer::extractName)
+                   .map(ResourceCsvTransformer::extractName)
                    .collect(Collectors.toList());
     }
 
