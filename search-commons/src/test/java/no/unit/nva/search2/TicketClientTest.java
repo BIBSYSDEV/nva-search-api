@@ -276,7 +276,8 @@ class TicketClientTest {
 
         @ParameterizedTest
         @MethodSource("uriAccessRights")
-        void uriRequestReturnsSuccessfulResponseAsUser(URI uri, Integer expectedCount, String userName, AccessRight... accessRights) throws ApiGatewayException {
+        void uriRequestReturnsSuccessfulResponseAsUser(URI uri, Integer expectedCount, String userName,
+                                                       AccessRight... accessRights) throws ApiGatewayException {
 
             final var accessRightList = nonNull(accessRights)
                 ? Arrays.asList(accessRights)
@@ -409,8 +410,10 @@ class TicketClientTest {
                 createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
                 createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
                 createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
-                createAccessRightArgument("", 20, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT, MANAGE_PUBLISHING_REQUESTS),
-                createAccessRightArgument("", 20, "1412322@20754.0.0.0", MANAGE_DOI, AccessRight.SUPPORT, MANAGE_PUBLISHING_REQUESTS)
+                createAccessRightArgument("", 20, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
+                    MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 20, "1412322@20754.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
+                    MANAGE_PUBLISHING_REQUESTS)
             );
         }
 
@@ -447,7 +450,8 @@ class TicketClientTest {
                 .map(entry -> createArgument(entry.getKey(), entry.getValue()));
         }
 
-        private static Arguments createAccessRightArgument(String searchUri, int expectedCount, String userName, AccessRight... accessRights) {
+        private static Arguments createAccessRightArgument(String searchUri, int expectedCount, String userName,
+                                                           AccessRight... accessRights) {
             return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
         }
     }
