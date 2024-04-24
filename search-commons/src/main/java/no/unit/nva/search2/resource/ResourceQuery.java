@@ -137,6 +137,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return this;
     }
 
+    public ResourceQuery withoutRange() {
+        this.parameters().set(FROM, "0");
+        this.parameters().set(SIZE, "3000");
+        return this;
+    }
+
+    public ResourceQuery withoutAggregation() {
+        this.parameters().set(AGGREGATION, NONE);
+        return this;
+    }
+
     /**
      * Filter on organization.
      * <P>Only documents belonging to organization specified are searchable (for the user)

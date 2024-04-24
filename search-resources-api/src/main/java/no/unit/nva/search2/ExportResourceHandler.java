@@ -3,9 +3,6 @@ package no.unit.nva.search2;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.resource.ResourceClient.defaultClient;
-import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search2.resource.ResourceParameter.FROM;
-import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceQuery;
@@ -38,13 +35,14 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     @Override
     public String processS3Input(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return ResourceQuery.builder()
-            .fromRequestInfo(requestInfo)
-            .withRequiredParameters(FROM, SIZE, AGGREGATION)
-            .validate()
-            .build()
-            .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
-            .withOnlyCsvFields()
-            .doExport(opensearchClient);
+                   .fromRequestInfo(requestInfo)
+                   .validate()
+                   .build()
+                   .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                   .withoutRange()
+                   .withoutAggregation()
+                   .withOnlyCsvFields()
+                   .doExport(opensearchClient);
     }
 
     @Override
