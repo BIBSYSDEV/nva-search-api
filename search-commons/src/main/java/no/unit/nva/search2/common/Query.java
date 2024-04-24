@@ -4,6 +4,7 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
+import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
@@ -201,8 +202,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
-            case TEXT, FUZZY_TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
+            case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
             case FREE_TEXT -> queryTools.queryToEntry(key, builderSearchAllQuery(key));
+            case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderStreamCustomQuery(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException("handler NOT defined -> " + key.name());

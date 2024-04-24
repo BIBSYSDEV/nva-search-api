@@ -8,11 +8,12 @@ import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
-import static no.unit.nva.search2.common.constant.Words.NOTIFICATIONS;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
@@ -91,7 +92,7 @@ class TicketClientTest {
     private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 5;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
@@ -198,7 +199,9 @@ class TicketClientTest {
 
             assertThat(aggregations.get(TYPE).size(), is(3));
             assertThat(aggregations.get(STATUS).get(0).count(), is(11));
-            assertThat(aggregations.get(NOTIFICATIONS).size(), is(5));
+            assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
+            assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
+
             assertNotNull(FROM.asLowerCase());
             assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
             assertEquals(TicketType.fromString("wre"), TicketType.NONE);
