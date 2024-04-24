@@ -109,7 +109,6 @@ class ImportCandidateClientTest {
         }
 
 
-
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
@@ -162,24 +161,24 @@ class ImportCandidateClientTest {
         @MethodSource("uriInvalidProvider")
         void failToSearchUri(URI uri) {
             assertThrows(BadRequestException.class,
-                         () -> ImportCandidateQuery.builder()
-                             .fromQueryParameters(queryToMapEntries(uri))
-                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                             .build()
-                             .doSearch(importCandidateClient));
+                () -> ImportCandidateQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .build()
+                    .doSearch(importCandidateClient));
         }
 
         @ParameterizedTest
         @MethodSource("uriInvalidProvider")
         void failToSetRequired(URI uri) {
             assertThrows(BadRequestException.class,
-                         () -> ImportCandidateQuery.builder()
-                             .fromQueryParameters(queryToMapEntries(uri))
-                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE, CREATED_DATE)
-                             .build()
-                             .doSearch(importCandidateClient));
+                () -> ImportCandidateQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE, CREATED_DATE)
+                    .build()
+                    .doSearch(importCandidateClient));
         }
 
         static Stream<URI> uriSortingProvider() {
