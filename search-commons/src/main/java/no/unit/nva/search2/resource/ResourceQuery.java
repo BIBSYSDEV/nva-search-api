@@ -68,6 +68,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
@@ -75,6 +76,7 @@ import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
@@ -86,12 +88,14 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceQuery extends Query<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
+    private boolean useCsvFieldsAsSource;
 
     private ResourceQuery() {
         super();
@@ -133,6 +137,17 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return this;
     }
 
+    public ResourceQuery withoutRange() {
+        this.parameters().set(FROM, "0");
+        this.parameters().set(SIZE, "3000");
+        return this;
+    }
+
+    public ResourceQuery withoutAggregation() {
+        this.parameters().set(AGGREGATION, NONE);
+        return this;
+    }
+
     /**
      * Filter on organization.
      * <P>Only documents belonging to organization specified are searchable (for the user)
@@ -145,6 +160,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
             .queryName(PUBLISHER);
         this.filters.add(filter);
+        return this;
+    }
+
+    public ResourceQuery withOnlyCsvFields() {
+        this.useCsvFieldsAsSource = true;
         return this;
     }
 
@@ -204,6 +224,20 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             fromUri(openSearchUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
                 .getUri();
+    }
+
+    @Override
+    protected String toCsvText(SwsResponse response) {
+        return ResourceCsvTransformer.transform(response.getSearchHits());
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        if (this.useCsvFieldsAsSource) {
+            builder.fetchSource(ResourceCsvTransformer.getJsonFields().toArray(String[]::new), null);
+        } else {
+            builder.fetchSource(true);
+        }
     }
 
     @Override
