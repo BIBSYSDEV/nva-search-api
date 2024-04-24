@@ -3,7 +3,7 @@ package no.unit.nva.search2.common;
 import static java.util.stream.Collectors.joining;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureAuthUri;
 import static no.unit.nva.search2.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static nva.commons.core.attempt.Try.attempt;
@@ -19,12 +19,12 @@ import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search.CognitoAuthenticator;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.ResponseLogInfo;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.common.records.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.security.CachedJwtProvider;
+import no.unit.nva.search2.common.security.CognitoAuthenticator;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
@@ -67,7 +67,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     @JacocoGenerated
     public static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
         var uri = URI.create(readSearchInfrastructureAuthUri());
-        return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
+        return new CognitoCredentials(wrapper::username, wrapper::password, uri);
     }
 
     public R doSearch(Q query) {

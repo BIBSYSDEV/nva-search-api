@@ -15,11 +15,6 @@ public final class RecoveryEntry {
     private static final String RECOVERY_QUEUE = "RECOVERY_QUEUE";
     private static final String TYPE = "type";
     public static final String DATA_TYPE_STRING = "String";
-    public static final String RESOURCES_INDEX_NAME = "resources";
-    public static final String RESOURCE = "Resource";
-    public static final String TICKETS_INDEX_NAME = "tickets";
-    public static final String UNSUPPORTED_DOCUMENT_MESSAGE = "Unsupported document!";
-    public static final String TICKET = "Ticket";
     private final String identifier;
     private final String type;
     private final String exception;
@@ -60,10 +55,6 @@ public final class RecoveryEntry {
 
     public RecoveryEntry withException(Exception exception) {
         return this.copy().withException(getStackTrace(exception)).build();
-    }
-
-    public RecoveryEntry withIndex(String type) {
-        return this.copy().withType(type).build();
     }
 
     private String getStackTrace(Exception exception) {

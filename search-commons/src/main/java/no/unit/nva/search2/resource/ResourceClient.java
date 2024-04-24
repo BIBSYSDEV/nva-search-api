@@ -7,9 +7,9 @@ import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
-import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.common.security.CachedJwtProvider;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 

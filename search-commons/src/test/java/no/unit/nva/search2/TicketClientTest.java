@@ -1,11 +1,11 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.NOTIFICATIONS;
@@ -52,10 +52,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.RestHighLevelClientWrapper;
-import no.unit.nva.search.models.EventConsumptionAttributes;
-import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.common.EventConsumptionAttributes;
+import no.unit.nva.search2.common.IndexDocument;
+import no.unit.nva.search2.common.IndexingClient;
+import no.unit.nva.search2.common.RestHighLevelClientWrapper;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketQuery;

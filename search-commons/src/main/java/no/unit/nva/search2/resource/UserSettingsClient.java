@@ -3,8 +3,8 @@ package no.unit.nva.search2.resource;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readApiHost;
 import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;
@@ -20,9 +20,9 @@ import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.stream.Stream;
-import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.UserSettings;
+import no.unit.nva.search2.common.security.CachedJwtProvider;
 
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
 
