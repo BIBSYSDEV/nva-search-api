@@ -124,7 +124,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     }
 
     public <R, Q extends Query<K>> String doExport(OpenSearchClient<R, Q> queryClient) {
-        logSearchKeys();
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return toCsvText(response);
     }

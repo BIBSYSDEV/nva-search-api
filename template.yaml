@@ -17,7 +17,7 @@ Globals:
         SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
         COGNITO_URI: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
-        LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucket
+        LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
@@ -91,6 +91,12 @@ Parameters:
   SlackSnsArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: '/NVA/Monitoring/SlackSnsArn'
+  LargeApiResponsesBucketArn:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/NVA/LargeApiResponsesBucketArn'
+  LargeApiResponsesBucketName:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/NVA/LargeApiResponsesBucketName'
 
 Conditions:
   WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
@@ -151,7 +157,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:*
-                Resource: !Sub '${LargeApiResponsesBucket.Arn}/*'
+                Resource: !Sub '${LargeApiResponsesBucketArn}/*'
 
   SearchHandlerRole:
     Type: AWS::IAM::Role
@@ -808,18 +814,6 @@ Resources:
           - Id: DeleteContentAfter3Days
             Status: Enabled
             ExpirationInDays: 3
-
-  LargeApiResponsesBucket: # Temporary, Will be moved to common resources
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub 'large-api-responses-${AWS::AccountId}'
-      AccessControl: Private
-      LifecycleConfiguration:
-        Rules:
-          - Status: Enabled
-            ExpirationInDays: 1
-    DeletionPolicy: Retain
-
 
   IndexingErrorsBucket:
     Type: AWS::S3::Bucket
