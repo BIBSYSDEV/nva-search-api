@@ -208,50 +208,41 @@ Accept: application/json
 
 ### Key details
 
-| key_name                      | keyName                     | queryKind    | scope                    | paths                                                                |
-|-------------------------------|-----------------------------|--------------|--------------------------|----------------------------------------------------------------------|
-| cristin_identifier            | cristinIdentifier           | custom       | all_items                | CRISTIN_IDENTIFIER                                                   |
-| scopus_identifier             | scopusIdentifier            | custom       | all_items                | SCOPUS_IDENTIFIER                                                    |
-| additional_identifiers_not    | additionalIdentifiersNot    | keyword      | no_items                 | additionalIdentifiers.value.keyword                                  |
-| additional_identifiers_should | additionalIdentifiersShould | text         | one_or_more_item         | additionalIdentifiers.value                                          |
-| category                      | category                    | keyword      | all_items                | publicationInstance.type.keyword                                     |
-| category_not                  | categoryNot                 | keyword      | no_items                 | publicationInstance.type.keyword                                     |
-| category_should               | categoryShould              | text         | one_or_more_item         | publicationInstance.type                                             |
-| created_date                  | createdDate                 | date         | all_items                | createdDate                                                          |
-| contributor                   | contributor                 | fuzzyKeyword | all_items                | contributors.identity.id, contributors.identity.name                 |
-| contributor_not               | contributorNot              | keyword      | no_items                 | contributors.identity.id.keyword, contributors.identity.name.keyword |
-| contributor_name              | contributorName             | keyword      | all_items                | contributors.identity.name.keyword                                   |
-| contributor_name_not          | contributorNameNot          | keyword      | no_items                 | contributors.identity.name.keyword                                   |
-| contributor_name_should       | contributorNameShould       | text         | one_or_more_item         | contributors.identity.name                                           |
-| collaboration_type            | collaborationType           | keyword      | all_items                | collaborationType.keyword                                            |
-| collaboration_type_not        | collaborationTypeNot        | keyword      | no_items                 | collaborationType.keyword                                            |
-| collaboration_type_should     | collaborationTypeShould     | text         | one_or_more_item         | collaborationType                                                    |
-| doi                           | doi                         | keyword      | all_items                | doi.keyword                                                          |
-| doi_not                       | doiNot                      | text         | no_items                 | doi                                                                  |
-| doi_should                    | doiShould                   | text         | one_or_more_item         | doi                                                                  |
-| id                            | id                          | keyword      | one_or_more_item         | id.keyword                                                           |
-| id_not                        | idNot                       | keyword      | no_items                 | id.keyword                                                           |
-| import_status                 | importStatus                | keyword      | all_items                | importStatus.candidateStatus.keyword                                 |
-| import_status_not             | importStatusNot             | keyword      | no_items                 | importStatus.candidateStatus.keyword                                 |
-| import_status_should          | importStatusShould          | text         | one_or_more_item         | importStatus.candidateStatus                                         |
-| instance_type                 | instanceType                | fuzzyKeyword | one_or_more_item         | type                                                                 |
-| instance_type_not             | instanceTypeNot             | keyword      | no_items                 | type.keyword                                                         |
-| publication_instance          | publicationInstance         | fuzzyKeyword | one_or_more_item         | publicationInstance.type                                             |
-| publication_instance_not      | publicationInstanceNot      | fuzzyKeyword | no_items                 | publicationInstance.type                                             |
-| publication_year              | publicationYear             | keyword      | all_items                | publicationYear.keyword                                              |
-| publication_year_before       | publicationYearBefore       | number       | less_than                | publicationYear                                                      |
-| publication_year_since        | publicationYearSince        | number       | greater_than_or_equal_to | publicationYear                                                      |
-| publisher                     | publisher                   | keyword      | all_items                | publisher.id.keyword                                                 |
-| publisher_not                 | publisherNot                | keyword      | no_items                 | publisher.id.keyword                                                 |
-| publisher_should              | publisherShould             | text         | one_or_more_item         | publisher.id                                                         |
-| top_level_organization        | topLevelOrganization        | fuzzyKeyword | one_or_more_item         | organizations.id                                                     |
-| top_level_organization_not    | topLevelOrganizationNot     | fuzzyKeyword | no_items                 | organizations.id                                                     |
-| title                         | title                       | text         | all_items                | mainTitle                                                            |
-| title_not                     | titleNot                    | text         | no_items                 | mainTitle                                                            |
-| title_should                  | titleShould                 | text         | one_or_more_item         | mainTitle                                                            |
-| type                          | type                        | keyword      | all_items                | type.keyword                                                         |
-| search_all                    | searchAll                   | freeText     | all_items                | q                                                                    |
-
+| key_name                   | keyName                  | queryKind     | scope                    | paths                                                                |
+|----------------------------|--------------------------|---------------|--------------------------|----------------------------------------------------------------------|
+| additional_identifiers     | additionalIdentifiers    | fuzzyKeyword  | one_or_more_item         | additionalIdentifiers.value                                          |
+| additional_identifiers_not | additionalIdentifiersNot | keyword       | no_items                 | additionalIdentifiers.value.keyword                                  |
+| category                   | category                 | fuzzyKeyword  | one_or_more_item         | publicationInstance.type                                             |
+| category_not               | categoryNot              | keyword       | no_items                 | publicationInstance.type.keyword                                     |
+| created_date               | createdDate              | date          | between                  | createdDate                                                          |
+| contributor                | contributor              | fuzzyKeyword  | all_items                | contributors.identity.id, contributors.identity.name                 |
+| contributor_not            | contributorNot           | keyword       | no_items                 | contributors.identity.id.keyword, contributors.identity.name.keyword |
+| contributor_name           | contributorName          | fuzzyKeyword  | all_items                | contributors.identity.name                                           |
+| contributor_name_not       | contributorNameNot       | keyword       | no_items                 | contributors.identity.name.keyword                                   |
+| collaboration_type         | collaborationType        | fuzzyKeyword  | one_or_more_item         | collaborationType                                                    |
+| collaboration_type_not     | collaborationTypeNot     | keyword       | no_items                 | collaborationType.keyword                                            |
+| cristin_identifier         | cristinIdentifier        | custom        | all_items                | CRISTIN_IDENTIFIER                                                   |
+| doi                        | doi                      | fuzzyKeyword  | one_or_more_item         | doi                                                                  |
+| doi_not                    | doiNot                   | text          | no_items                 | doi                                                                  |
+| id                         | id                       | keyword       | one_or_more_item         | id.keyword                                                           |
+| id_not                     | idNot                    | keyword       | no_items                 | id.keyword                                                           |
+| import_status              | importStatus             | fuzzyKeyword  | one_or_more_item         | importStatus.candidateStatus                                         |
+| import_status_not          | importStatusNot          | keyword       | no_items                 | importStatus.candidateStatus.keyword                                 |
+| instance_type              | instanceType             | fuzzyKeyword  | one_or_more_item         | type                                                                 |
+| instance_type_not          | instanceTypeNot          | keyword       | no_items                 | type.keyword                                                         |
+| publication_year           | publicationYear          | number        | between                  | publicationYear                                                      |
+| publication_year_before    | publicationYearBefore    | number        | less_than                | publicationYear                                                      |
+| publication_year_since     | publicationYearSince     | number        | greater_than_or_equal_to | publicationYear                                                      |
+| publisher                  | publisher                | keyword       | all_items                | publisher.id.keyword                                                 |
+| publisher_not              | publisherNot             | keyword       | no_items                 | publisher.id.keyword                                                 |
+| scopus_identifier          | scopusIdentifier         | custom        | all_items                | SCOPUS_IDENTIFIER                                                    |
+| top_level_organization     | topLevelOrganization     | fuzzyKeyword  | one_or_more_item         | organizations.id                                                     |
+| top_level_organization_not | topLevelOrganizationNot  | fuzzyKeyword  | no_items                 | organizations.id                                                     |
+| title                      | title                    | text          | all_items                | mainTitle                                                            |
+| title_not                  | titleNot                 | text          | no_items                 | mainTitle                                                            |
+| type                       | type                     | keyword       | all_items                | type.keyword                                                         |
+| type_not                   | typeNot                  | keyword       | no_items                 | type.keyword                                                         |
+| search_all                 | searchAll                | freeText      | all_items                | q                                                                    |
 > [!NOTE]
 > <p>Valid SortKeys </p>
 >
