@@ -13,6 +13,8 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.NAME;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+
 import java.util.List;
 import java.util.Map;
 import nva.commons.core.JacocoGenerated;
@@ -52,7 +54,7 @@ public final class Constants {
         List.of(
             branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
             branchBuilder(INSTANCE_TYPE, TYPE_KEYWORD),
-            branchBuilder(PUBLICATION_INSTANCE, PUBLICATION_INSTANCE_TYPE),
+            branchBuilder(TYPE, PUBLICATION_INSTANCE_TYPE),
             branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
             branchBuilder(IMPORT_STATUS,  IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
             contributor(),
@@ -63,7 +65,7 @@ public final class Constants {
         COLLABORATION_TYPE, "/withAppliedFilter/collaborationType",
         INSTANCE_TYPE, "/withAppliedFilter/instanceType",
         IMPORT_STATUS, "/withAppliedFilter/importStatus",
-        PUBLICATION_INSTANCE, "/withAppliedFilter/publicationInstance",
+        TYPE, "/withAppliedFilter/type",
         PUBLICATION_YEAR, "/withAppliedFilter/publicationYear",
         CONTRIBUTOR, "/withAppliedFilter/contributor/id",
         TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/organizations/id"

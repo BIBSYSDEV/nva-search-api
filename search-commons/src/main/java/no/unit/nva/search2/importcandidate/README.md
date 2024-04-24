@@ -217,7 +217,7 @@ Accept: application/json
 | created_date               | createdDate              | date          | between                  | createdDate                                                          |
 | contributor                | contributor              | fuzzyKeyword  | all_items                | contributors.identity.id, contributors.identity.name                 |
 | contributor_not            | contributorNot           | keyword       | no_items                 | contributors.identity.id.keyword, contributors.identity.name.keyword |
-| contributor_name           | contributorName          | fuzzyKeyword  | all_items                | contributors.identity.name                                           |
+| contributor_name           | contributorName          | fuzzyKeyword  | one_or_more_item         | contributors.identity.name                                           |
 | contributor_name_not       | contributorNameNot       | keyword       | no_items                 | contributors.identity.name.keyword                                   |
 | collaboration_type         | collaborationType        | fuzzyKeyword  | one_or_more_item         | collaborationType                                                    |
 | collaboration_type_not     | collaborationTypeNot     | keyword       | no_items                 | collaborationType.keyword                                            |
@@ -238,12 +238,13 @@ Accept: application/json
 | scopus_identifier          | scopusIdentifier         | custom        | all_items                | SCOPUS_IDENTIFIER                                                    |
 | top_level_organization     | topLevelOrganization     | fuzzyKeyword  | one_or_more_item         | organizations.id                                                     |
 | top_level_organization_not | topLevelOrganizationNot  | fuzzyKeyword  | no_items                 | organizations.id                                                     |
-| title                      | title                    | text          | all_items                | mainTitle                                                            |
+| title                      | title                    | text          | one_or_more_item         | mainTitle                                                            |
 | title_not                  | titleNot                 | text          | no_items                 | mainTitle                                                            |
-| type                       | type                     | keyword       | all_items                | type.keyword                                                         |
-| type_not                   | typeNot                  | keyword       | no_items                 | type.keyword                                                         |
+| type                       | type                     | fuzzyKeyword  | one_or_more_item         | publicationInstance.type                                             |
+| type_not                   | typeNot                  | keyword       | no_items                 | publicationInstance.type.keyword                                     |
 | search_all                 | searchAll                | freeText      | all_items                | q                                                                    |
-> [!NOTE]
+
+ [!NOTE]
 > <p>Valid SortKeys </p>
 >
 > ```

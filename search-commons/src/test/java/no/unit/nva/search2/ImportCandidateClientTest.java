@@ -14,11 +14,11 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREAT
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_STATUS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.INSTANCE_TYPE;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PUBLICATION_INSTANCE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PUBLICATION_YEAR;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.TYPE;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -120,7 +120,7 @@ class ImportCandidateClientTest {
             assertThat(aggregations.get(COLLABORATION_TYPE.asCamelCase()).size(), is(2));
             assertThat(aggregations.get(INSTANCE_TYPE.asCamelCase()).size(), is(1));
             assertThat(aggregations.get(PUBLICATION_YEAR.asCamelCase()).size(), is(4));
-            assertThat(aggregations.get(PUBLICATION_INSTANCE.asCamelCase()).size(), is(4));
+            assertThat(aggregations.get(TYPE.asCamelCase()).size(), is(4));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION.asCamelCase()).size(), is(9));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION.asCamelCase()).get(1).labels().get("nb"),
                 is(equalTo("Universitetet i Bergen")));
@@ -238,14 +238,14 @@ class ImportCandidateClientTest {
                 URI.create(REQUEST_BASE_URL + "aggregation=importStatus&size=8"),
                 URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=5"),
                 URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME_SHOULD=Andrew+Morrison,George+Rigos&size=2"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME=Andrew+Morrison,George+Rigos&size=2"),
                 URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME_NOT=George+Rigos&size=7"),
                 URI.create(REQUEST_BASE_URL + "PUBLICATION_YEAR_BEFORE=2023&size=5"),
-                URI.create(REQUEST_BASE_URL + "publication_year=2022&size=1"),
+                URI.create(REQUEST_BASE_URL + "publication_year=2022,2022&size=1"),
                 URI.create(REQUEST_BASE_URL + "PublicationYearBefore=2024&publication_year_since=2023&size=3"),
                 URI.create(REQUEST_BASE_URL + "title=In+reply:+Why+big+data&size=1"),
                 URI.create(REQUEST_BASE_URL + "title=chronic+diseases&size=1"),
-                URI.create(REQUEST_BASE_URL + "title_should=antibacterial,Fishing&size=2"),
+                URI.create(REQUEST_BASE_URL + "title=antibacterial,Fishing&size=2"),
                 URI.create(REQUEST_BASE_URL + "query=antibacterial&fields=category,title&size=1"),
                 URI.create(REQUEST_BASE_URL + "query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
                 URI.create(REQUEST_BASE_URL + "query=European&fields=all&size=3"),
