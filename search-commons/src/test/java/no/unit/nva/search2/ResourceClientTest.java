@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -95,7 +94,7 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 9;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
