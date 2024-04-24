@@ -8,9 +8,9 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAG
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
@@ -114,7 +114,7 @@ public final class TicketQuery extends Query<TicketParameter> {
             .getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
 
-        final var curatorRights = getAccessRights(requestInfo)
+        final var curatorRights = getAccessRights(requestInfo.getAccessRights())
             .toArray(TicketType[]::new);
 
         return withFilterOrganization(organization)
@@ -280,15 +280,15 @@ public final class TicketQuery extends Query<TicketParameter> {
             new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
-    private Set<TicketType> getAccessRights(RequestInfo requestInfo) {
+    private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
         var allowed = new HashSet<TicketType>();
-        if (requestInfo.userIsAuthorized(MANAGE_DOI)) {
+        if (accessRights.contains(MANAGE_DOI)) {
             allowed.add(TicketType.DOI_REQUEST);
         }
-        if (requestInfo.userIsAuthorized(AccessRight.SUPPORT)) {
+        if (accessRights.contains(AccessRight.SUPPORT)) {
             allowed.add(TicketType.GENERAL_SUPPORT_CASE);
         }
-        if (requestInfo.userIsAuthorized(MANAGE_PUBLISHING_REQUESTS)) {
+        if (accessRights.contains(MANAGE_PUBLISHING_REQUESTS)) {
             allowed.add(TicketType.PUBLISHING_REQUEST);
         }
         return allowed;
@@ -309,7 +309,7 @@ public final class TicketQuery extends Query<TicketParameter> {
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.name(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.name(), ALL);
+                    case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* ignore and continue */ }
                 }
             });

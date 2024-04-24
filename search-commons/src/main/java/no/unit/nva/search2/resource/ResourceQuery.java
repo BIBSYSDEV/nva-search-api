@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMEN
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
@@ -20,6 +19,7 @@ import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
@@ -351,7 +351,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.name(), DEFAULT_RESOURCE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.name(), ALL);
+                    case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* ignore and continue */ }
                 }
             });

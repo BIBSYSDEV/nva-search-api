@@ -9,11 +9,11 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMEN
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -167,7 +167,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
                     case SORT -> setValue(key.name(), DEFAULT_IMPORT_CANDIDATE_SORT + COLON + DEFAULT_SORT_ORDER);
-                    case AGGREGATION -> setValue(key.name(), ALL);
+                    case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* do nothing */
                     }
                 }
