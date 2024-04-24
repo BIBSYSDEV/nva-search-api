@@ -9,9 +9,13 @@
       "include_in_parent": true,
       "properties": {
         "labels": {
-          "type": "flat_object"
+          "type": "nested"
         }
       }
+    },
+    "contributors": {
+      "type": "nested",
+      "include_in_parent": true
     },
     "associatedArtifacts": {
       "type": "nested",
