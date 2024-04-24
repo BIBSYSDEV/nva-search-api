@@ -5,16 +5,26 @@ import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATE
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.COLLABORATION_TYPE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREATED_DATE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_STATUS;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.INSTANCE_TYPE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PUBLICATION_INSTANCE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PUBLICATION_YEAR;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.TOP_LEVEL_ORGANIZATION;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,6 +97,34 @@ class ImportCandidateClientTest {
 
     @Nested
     class NestedTests {
+
+        @Test
+        void shouldCheckFacets() throws BadRequestException {
+            var hostAddress = URI.create(container.getHttpHostAddress());
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
+
+            var query1 = ImportCandidateQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri1))
+                .withDockerHostUri(hostAddress)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .build();
+            var response1 =  importCandidateClient.doSearch(query1);
+
+            assertNotNull(response1);
+
+            var aggregations = query1.toPagedResponse(response1).aggregations();
+
+            assertFalse(aggregations.isEmpty());
+            assertThat(aggregations.get(IMPORT_STATUS.asCamelCase()).size(), is(2));
+            assertThat(aggregations.get(CONTRIBUTOR.asCamelCase()).size(), is(5));
+            assertThat(aggregations.get(COLLABORATION_TYPE.asCamelCase()).size(), is(2));
+            assertThat(aggregations.get(INSTANCE_TYPE.asCamelCase()).size(), is(1));
+            assertThat(aggregations.get(PUBLICATION_YEAR.asCamelCase()).size(), is(4));
+            assertThat(aggregations.get(PUBLICATION_INSTANCE.asCamelCase()).size(), is(4));
+            assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION.asCamelCase()).size(), is(9));
+            assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION.asCamelCase()).get(1).labels().get("nb"),
+                is(equalTo("Universitetet i Bergen")));
+        }
 
         @Test
         void openSearchFailedResponse() throws IOException, InterruptedException {

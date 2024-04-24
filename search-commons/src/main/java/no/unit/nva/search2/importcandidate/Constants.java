@@ -1,21 +1,24 @@
 package no.unit.nva.search2.importcandidate;
 
 import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
-import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
-import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search2.common.constant.Functions.labels;
+import static no.unit.nva.search2.common.constant.Functions.nestedBranchBuilder;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
-import static no.unit.nva.search2.common.constant.Words.FILES;
+import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.IDENTITY;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NAME;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.resource.Constants.associatedArtifactsHierarchy;
-import static no.unit.nva.search2.resource.Constants.filesHierarchy;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import java.util.List;
 import java.util.Map;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+
 
 public final class Constants {
 
@@ -29,14 +32,14 @@ public final class Constants {
     public static final String CONTRIBUTOR_IDENTITY_KEYWORDS =
         CONTRIBUTORS_IDENTITY_ID + PIPE + CONTRIBUTORS_IDENTITY_NAME;
     public static final String DOI_KEYWORD = DOI + DOT + KEYWORD;
-    public static final String IDENTIFIER = "id.keyword";
-    public static final String IMPORTED_BY_USER = "importedByUser";
     public static final String IMPORT_CANDIDATES_INDEX_NAME = "import-candidates";
-    public static final String IMPORT_STATUS_SET_BY_KEYWORD = "importStatus.setBy.keyword";
     public static final String INSTANCE_TYPE = "instanceType";
-    public static final String INSTANCE_TYPE_KEYWORD = "publicationInstance.type";
+    public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String MAIN_TITLE_KEYWORD = "mainTitle.keyword";
-    public static final String PUBLICATION_INSTANCE_TYPE = "publicationInstance.type";
+    public static final String ORGANIZATIONS = "organizations";
+    public static final String ORGANIZATIONS_PATH = ORGANIZATIONS + DOT + ID_KEYWORD;
+    public static final String PUBLICATION_INSTANCE = "publicationInstance";
+    public static final String PUBLICATION_INSTANCE_TYPE = "publicationInstance.type.keyword";
     public static final String PUBLICATION_YEAR = "publicationYear";
     public static final String PUBLICATION_YEAR_KEYWORD = PUBLICATION_YEAR + DOT + KEYWORD;
     public static final String PUBLISHER_ID_KEYWORD = "publisher.id.keyword";
@@ -47,30 +50,45 @@ public final class Constants {
 
     public static final List<AggregationBuilder> IMPORT_CANDIDATES_AGGREGATIONS =
         List.of(
-            associatedArtifactsHierarchy(),
             branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
-            branchBuilder(INSTANCE_TYPE, PUBLICATION_INSTANCE_TYPE),
+            branchBuilder(INSTANCE_TYPE, TYPE_KEYWORD),
+            branchBuilder(PUBLICATION_INSTANCE, PUBLICATION_INSTANCE_TYPE),
             branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
-            importStatusHierarchy(),
-            topLevelOrganisationsHierarchy(),
-            filesHierarchy()
+            branchBuilder(IMPORT_STATUS,  IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
+            contributor(),
+            topLevelOrganisationsHierarchy()
         );
 
     public static final Map<String, String> FACET_IMPORT_CANDIDATE_PATHS = Map.of(
-        ASSOCIATED_ARTIFACTS, "/filter/associatedArtifacts/license",
-        COLLABORATION_TYPE, "/filter/collaborationType/id",
-        IMPORT_STATUS, "/filter/status",
-        INSTANCE_TYPE, "/filter/publicationInstance.type",
-        PUBLICATION_YEAR, "/filter/publicationYear",
-        TOP_LEVEL_ORGANIZATIONS, "/filter/topLevelOrganizations/id",
-        FILES, "/filter/filesStatus"
+        COLLABORATION_TYPE, "/withAppliedFilter/collaborationType",
+        INSTANCE_TYPE, "/withAppliedFilter/instanceType",
+        IMPORT_STATUS, "/withAppliedFilter/importStatus",
+        PUBLICATION_INSTANCE, "/withAppliedFilter/publicationInstance",
+        PUBLICATION_YEAR, "/withAppliedFilter/publicationYear",
+        CONTRIBUTOR, "/withAppliedFilter/contributor/id",
+        TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/organizations/id"
+        //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
 
-    private static TermsAggregationBuilder importStatusHierarchy() {
+    private static NestedAggregationBuilder contributor() {
+        return nestedBranchBuilder(CONTRIBUTOR,  CONTRIBUTORS)
+            .subAggregation(
+                branchBuilder(ID,  CONTRIBUTORS, IDENTITY, ID, KEYWORD)
+                    .subAggregation(
+                        branchBuilder(NAME,  CONTRIBUTORS, IDENTITY, NAME, KEYWORD)
+                    )
+            );
+    }
+
+    public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
         return
-            branchBuilder(IMPORT_STATUS, IMPORT_STATUS)
-                .subAggregation(branchBuilder(CANDIDATE_STATUS, STATUS_TYPE_KEYWORD))
-                .subAggregation(branchBuilder(IMPORTED_BY_USER, IMPORT_STATUS_SET_BY_KEYWORD));
+            nestedBranchBuilder(ORGANIZATIONS, ORGANIZATIONS)
+                .subAggregation(
+                    branchBuilder(ID, ORGANIZATIONS, ID, KEYWORD)
+                        .subAggregation(
+                            labels(ORGANIZATIONS)
+                        )
+                );
     }
 
     @JacocoGenerated

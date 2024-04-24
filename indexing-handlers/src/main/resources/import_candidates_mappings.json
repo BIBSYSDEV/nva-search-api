@@ -2,36 +2,20 @@
   "properties": {
     "publicationInstance": {
       "type": "nested",
-      "include_in_parent": true,
-      "properties": {
-        "type": {
-          "type": "keyword"
-        }
-      }
+      "include_in_parent": true
     },
     "organizations": {
       "type": "nested",
       "include_in_parent": true,
       "properties": {
-        "id": {
-          "type": "keyword"
-        },
         "labels": {
-          "type": "nested"
+          "type": "flat_object"
         }
       }
     },
     "associatedArtifacts": {
       "type": "nested",
-      "include_in_parent": true,
-      "properties": {
-        "identifier": {
-          "type": "keyword"
-        },
-        "name": {
-          "type": "keyword"
-        }
-      }
+      "include_in_parent": true
     },
     "additionalIdentifiers": {
       "type": "nested",
