@@ -51,7 +51,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                    .withOnlyCsvFields()
                    .doSearchRaw(opensearchClient);
 
-        logger.info("scroll_id" + initalResponse.scroll_id());
+        logger.info("scroll_id" + initalResponse._scroll_id());
         logger.info("hits" + initalResponse.hits().total().value());
 
         return toCsv(List.of(initalResponse));
