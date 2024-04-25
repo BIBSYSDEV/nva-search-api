@@ -103,16 +103,16 @@ class ImportCandidateClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
-            var query = ImportCandidateQuery.builder()
+            var candidateQuery = ImportCandidateQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build();
-            var response1 =  importCandidateClient.doSearch(query1);
+            var response1 = importCandidateClient.doSearch(candidateQuery);
 
             assertNotNull(response1);
 
-            var aggregations = query1.toPagedResponse(response1).aggregations();
+            var aggregations = candidateQuery.toPagedResponse(response1).aggregations();
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(IMPORT_STATUS.asCamelCase()).size(), is(2));
@@ -145,7 +145,6 @@ class ImportCandidateClientTest {
                     .doSearch(importCandidateClient)
             );
         }
-
 
 
         @ParameterizedTest
@@ -200,24 +199,24 @@ class ImportCandidateClientTest {
         @MethodSource("uriInvalidProvider")
         void failToSearchUri(URI uri) {
             assertThrows(BadRequestException.class,
-                         () -> ImportCandidateQuery.builder()
-                             .fromQueryParameters(queryToMapEntries(uri))
-                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                             .build()
-                             .doSearch(importCandidateClient));
+                () -> ImportCandidateQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .build()
+                    .doSearch(importCandidateClient));
         }
 
         @ParameterizedTest
         @MethodSource("uriInvalidProvider")
         void failToSetRequired(URI uri) {
             assertThrows(BadRequestException.class,
-                         () -> ImportCandidateQuery.builder()
-                             .fromQueryParameters(queryToMapEntries(uri))
-                             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                             .withRequiredParameters(FROM, SIZE, CREATED_DATE)
-                             .build()
-                             .doSearch(importCandidateClient));
+                () -> ImportCandidateQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE, CREATED_DATE)
+                    .build()
+                    .doSearch(importCandidateClient));
         }
 
         static Stream<URI> uriSortingProvider() {

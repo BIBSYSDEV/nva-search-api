@@ -1,18 +1,33 @@
 package no.unit.nva.search2.common.constant;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ID;
+import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import static nva.commons.core.StringUtils.SPACE;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -87,4 +102,32 @@ public final class Functions {
     public static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
+
+    public static String mergeWithColonOrComma(String oldValue, String newValue) {
+        if (nonNull(oldValue)) {
+            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
+            return String.join(delimiter, oldValue, newValue);
+        } else {
+            return newValue;
+        }
+    }
+
+    public static String trimSpace(String value) {
+        return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
+    }
+
+    public static String expandYearToDate(String value) {
+        return value.length() == 4 ? value + JANUARY_FIRST : value;
+    }
+
+    public static String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
+        return
+            Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
+                .map(fromString)
+                .map(Enum::toString)
+                .collect(Collectors.joining(COMMA));
+    }
+
+
+
 }

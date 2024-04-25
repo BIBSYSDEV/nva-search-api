@@ -62,7 +62,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
-    protected final transient QueryFilter filters;
+    public final transient QueryFilter filters;
     protected final transient QueryTools<K> queryTools;
     private final transient QueryKeys<K> queryKeys;
     private final transient Instant startTime;

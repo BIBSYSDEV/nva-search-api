@@ -40,7 +40,6 @@ public final class Constants {
     public static final String MAIN_TITLE_KEYWORD = "mainTitle.keyword";
     public static final String ORGANIZATIONS = "organizations";
     public static final String ORGANIZATIONS_PATH = ORGANIZATIONS + DOT + ID_KEYWORD;
-    public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String PUBLICATION_INSTANCE_TYPE = "publicationInstance.type.keyword";
     public static final String PUBLICATION_YEAR = "publicationYear";
     public static final String PUBLICATION_YEAR_KEYWORD = PUBLICATION_YEAR + DOT + KEYWORD;
@@ -56,7 +55,7 @@ public final class Constants {
             branchBuilder(INSTANCE_TYPE, TYPE_KEYWORD),
             branchBuilder(TYPE, PUBLICATION_INSTANCE_TYPE),
             branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
-            branchBuilder(IMPORT_STATUS,  IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
+            branchBuilder(IMPORT_STATUS, IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
             contributor(),
             topLevelOrganisationsHierarchy()
         );
@@ -73,11 +72,11 @@ public final class Constants {
     );
 
     private static NestedAggregationBuilder contributor() {
-        return nestedBranchBuilder(CONTRIBUTOR,  CONTRIBUTORS)
+        return nestedBranchBuilder(CONTRIBUTOR, CONTRIBUTORS)
             .subAggregation(
-                branchBuilder(ID,  CONTRIBUTORS, IDENTITY, ID, KEYWORD)
+                branchBuilder(ID, CONTRIBUTORS, IDENTITY, ID, KEYWORD)
                     .subAggregation(
-                        branchBuilder(NAME,  CONTRIBUTORS, IDENTITY, NAME, KEYWORD)
+                        branchBuilder(NAME, CONTRIBUTORS, IDENTITY, NAME, KEYWORD)
                     )
             );
     }
