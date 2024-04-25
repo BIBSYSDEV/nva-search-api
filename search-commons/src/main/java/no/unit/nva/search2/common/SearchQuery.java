@@ -4,7 +4,6 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
-import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
@@ -21,13 +20,13 @@ import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
-import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
 import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
@@ -55,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("PMD.GodClass")
-public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
+public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
@@ -64,8 +63,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected final transient QueryFilter filters;
     protected final transient QueryTools<K> queryTools;
-    private final transient QueryKeys<K> queryKeys;
-    private final transient Instant startTime;
 
 
     protected abstract AsType<K> getFrom();
@@ -110,10 +107,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
     protected abstract Stream<Entry<K, QueryBuilder>> builderStreamCustomQuery(K key);
 
     protected SearchQuery() {
-        startTime = Instant.now();
+        super();
         queryTools = new QueryTools<>();
-        queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
         filters = new QueryFilter();
+        queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
         setMediaType(JSON_UTF_8.toString());
     }
 
@@ -126,10 +123,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
 
     public <R, Q extends SearchQuery<K>> SwsResponse doSearchRaw(OpenSearchClient<R, Q> queryClient) {
         return (SwsResponse) queryClient.doSearch((Q) this);
-    }
-
-    public Instant getStartTime() {
-        return startTime;
     }
 
     public PagedSearch toPagedResponse(SwsResponse response) {
@@ -146,11 +139,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
                 .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
                 .withAggregations(aggregationFormatted)
                 .build();
-    }
-
-
-    public QueryKeys<K> parameters() {
-        return queryKeys;
     }
 
     protected MediaType getMediaType() {
@@ -210,6 +198,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
         };
     }
 
+    @Override
     public Stream<QueryContentWrapper> assemble() {
         var queryBuilder =
             parameters().getSearchKeys().findAny().isEmpty()
