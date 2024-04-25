@@ -15,7 +15,7 @@ public record SwsResponse(
     ShardsInfo _shards,
     HitsInfo hits,
     JsonNode aggregations,
-    String scroll_id) {
+    String _scroll_id) {
 
     public record ShardsInfo(
         Long total,
