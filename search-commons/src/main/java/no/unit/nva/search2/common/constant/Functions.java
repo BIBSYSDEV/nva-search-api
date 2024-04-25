@@ -1,11 +1,9 @@
 package no.unit.nva.search2.common.constant;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
-import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
@@ -127,7 +125,5 @@ public final class Functions {
                 .map(Enum::toString)
                 .collect(Collectors.joining(COMMA));
     }
-
-
 
 }
