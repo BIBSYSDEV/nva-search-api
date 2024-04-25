@@ -1,6 +1,5 @@
 package no.unit.nva.search2.common;
 
-import no.unit.nva.search.IndicesClientWrapper;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.action.index.IndexResponse;

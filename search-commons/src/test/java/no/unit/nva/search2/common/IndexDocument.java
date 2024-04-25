@@ -15,7 +15,6 @@ import org.opensearch.common.xcontent.XContentType;
 import java.util.Objects;
 import java.util.Optional;
 
-import static no.unit.nva.search.IndexingClient.objectMapper;
 import static nva.commons.core.attempt.Try.attempt;
 
 public record IndexDocument(
@@ -81,7 +80,7 @@ public record IndexDocument(
 
     public IndexRequest toIndexRequest() {
         return new IndexRequest(getIndexName())
-            .source(serializeResource(), XContentType.JSON)
+            .source(toJsonString(), XContentType.JSON)
             .id(getDocumentIdentifier());
     }
 
@@ -104,7 +103,5 @@ public record IndexDocument(
         return Objects.hash(consumptionAttributes(), resource());
     }
 
-    private String serializeResource() {
-        return attempt(() -> objectMapper.writeValueAsString(resource)).orElseThrow();
-    }
+
 }
