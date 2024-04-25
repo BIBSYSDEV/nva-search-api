@@ -124,9 +124,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             : toPagedResponse(response).toJsonString();
     }
 
-    public <R, Q extends Query<K>> String doExport(OpenSearchClient<R, Q> queryClient) {
-        final var response = (SwsResponse) queryClient.doSearch((Q) this);
-        return toCsvText(response);
+    public <R, Q extends Query<K>> SwsResponse doSearchRaw(OpenSearchClient<R, Q> queryClient) {
+        return (SwsResponse) queryClient.doSearch((Q) this);
     }
 
     public Instant getStartTime() {

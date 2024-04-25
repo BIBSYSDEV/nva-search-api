@@ -62,6 +62,7 @@ import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -96,6 +97,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
     private boolean useCsvFieldsAsSource;
+    private final Map<String,String> additionalQueryParameters = new HashMap<>();
 
     private ResourceQuery() {
         super();
@@ -145,6 +147,11 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     public ResourceQuery withoutAggregation() {
         this.parameters().set(AGGREGATION, NONE);
+        return this;
+    }
+
+    public ResourceQuery withScrollTime(String time) {
+        this.additionalQueryParameters.put("scroll", time);
         return this;
     }
 
@@ -223,7 +230,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return
             fromUri(openSearchUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
+                .addQueryParameters(getQueryParameters())
                 .getUri();
+    }
+
+    private Map<String, String> getQueryParameters() {
+        return additionalQueryParameters;
     }
 
     @Override
