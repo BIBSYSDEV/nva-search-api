@@ -66,7 +66,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -147,7 +147,7 @@ class ResourceClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
-            var query1 = ResourceQuery.builder()
+            var query1 = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
@@ -182,7 +182,7 @@ class ResourceClientTest {
                 setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
@@ -204,7 +204,7 @@ class ResourceClientTest {
                 setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
@@ -225,7 +225,7 @@ class ResourceClientTest {
                 new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
@@ -246,7 +246,7 @@ class ResourceClientTest {
                 new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
@@ -263,7 +263,7 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?id=018b857b77b7&from=10");
 
             var pagedResult =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
@@ -279,7 +279,7 @@ class ResourceClientTest {
         void withOrganizationDoWork() throws BadRequestException {
             var uri = URI.create("https://x.org/");
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
@@ -300,7 +300,7 @@ class ResourceClientTest {
         void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -323,7 +323,7 @@ class ResourceClientTest {
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -348,7 +348,7 @@ class ResourceClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -363,7 +363,7 @@ class ResourceClientTest {
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -383,7 +383,7 @@ class ResourceClientTest {
         void failToSearchUri(URI uri) {
             assertThrows(
                 BadRequestException.class,
-                () -> ResourceQuery.builder()
+                () -> ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -394,7 +394,7 @@ class ResourceClientTest {
         @Test
         void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2022"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
@@ -412,7 +412,7 @@ class ResourceClientTest {
         @Test
         void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
@@ -434,7 +434,7 @@ class ResourceClientTest {
             var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
                 StandardCharsets.UTF_8);
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), viewingScope,
                         EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
@@ -460,7 +460,7 @@ class ResourceClientTest {
             var topLevelOrg = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
                 StandardCharsets.UTF_8);
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))

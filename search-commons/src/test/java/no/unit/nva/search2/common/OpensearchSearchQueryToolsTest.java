@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class OpensearchQueryToolsTest {
-    private static final Logger logger = LoggerFactory.getLogger(OpensearchQueryToolsTest.class);
+class OpensearchSearchQueryToolsTest {
+    private static final Logger logger = LoggerFactory.getLogger(OpensearchSearchQueryToolsTest.class);
 
     @Test
     void invalidRangeQueryMust() {

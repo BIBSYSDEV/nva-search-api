@@ -52,7 +52,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
@@ -70,12 +70,12 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class TicketQuery extends Query<TicketParameter> {
+public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private String currentUser;
     private List<String> ticketTypes;
 
-    private TicketQuery() {
+    private TicketSearchQuery() {
         super();
         applyImpossibleWhiteListFilters();
     }
@@ -107,7 +107,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param requestInfo all required is here
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
+    public TicketSearchQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
         if (Objects.isNull(requestInfo.getUserName())) {
             throw new UnauthorizedException();
         }
@@ -135,7 +135,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param userName current user
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery withCurrentUser(String userName) {
+    public TicketSearchQuery withCurrentUser(String userName) {
         this.currentUser = userName;
         return this;
     }
@@ -147,7 +147,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      *
      * @return ResourceQuery (builder pattern)
      */
-    public TicketQuery applyFilters() {
+    public TicketSearchQuery applyFilters() {
         var disMax = QueryBuilders
             .disMaxQuery()
             .queryName("anyOfTicketTypeUserName")
@@ -168,7 +168,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
-    public TicketQuery withFilterOrganization(URI organization) {
+    public TicketSearchQuery withFilterOrganization(URI organization) {
         final var filter =
             new OpensearchQueryKeyword<TicketParameter>()
                 .buildQuery(ORGANIZATION_ID, organization.toString())
@@ -189,7 +189,7 @@ public final class TicketQuery extends Query<TicketParameter> {
      * @param ticketTypes the required types
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery withTicketType(TicketType... ticketTypes) {
+    public TicketSearchQuery withTicketType(TicketType... ticketTypes) {
         this.ticketTypes = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
         return this;
     }
@@ -308,10 +308,10 @@ public final class TicketQuery extends Query<TicketParameter> {
 
 
     @SuppressWarnings("PMD.GodClass")
-    public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketQuery> {
+    public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketSearchQuery> {
 
         TicketParameterValidator() {
-            super(new TicketQuery());
+            super(new TicketSearchQuery());
         }
 
         @Override
@@ -330,17 +330,17 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (searchQuery.parameters().isPresent(PAGE)) {
+                if (searchQuery.parameters().isPresent(FROM)) {
+                    var page = searchQuery.parameters().get(PAGE).<Number>as();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
+                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters().remove(PAGE);
+                searchQuery.parameters().remove(PAGE);
             }
-            if (query.parameters().isPresent(BY_USER_PENDING)) {
-                query.parameters().set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
-                query.parameters().set(STATUS, PENDING.toString());
+            if (searchQuery.parameters().isPresent(BY_USER_PENDING)) {
+                searchQuery.parameters().set(TicketParameter.TYPE, searchQuery.parameters().get(BY_USER_PENDING).as());
+                searchQuery.parameters().set(STATUS, PENDING.toString());
             }
         }
 
@@ -374,12 +374,12 @@ public final class TicketQuery extends Query<TicketParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
-                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
+                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                    searchQuery.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);

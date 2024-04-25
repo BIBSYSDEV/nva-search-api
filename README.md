@@ -11,7 +11,7 @@ documents as search keys.
 Key names are case-insensitive and can be in <code>camelCase</code> or <code>SNAKE_CASE</code>. Each search key allow
 searching a field or sometimes fields for content, and most keys comes
 in three variants.
-Every search key applied are joined with <code>AND</code> between them, making the query more restricted for each key
+Every search key applied are joined with <code>AND</code> between them, making the searchQuery more restricted for each key
 added to the search.
 
 - **keyName**
@@ -53,7 +53,7 @@ It is possible to specify which fields to search through, but its use is limited
 | key_name   | keyName   | queryKind         | scope                     |
 |------------|-----------|-------------------|---------------------------|
 | search_all | searchAll | text with ranking | all_items across document |
-| query      | query     | text with ranking | all_items across document |
+| searchQuery      | searchQuery     | text with ranking | all_items across document |
 | fields     | fields    | list of keys      | user, tags, title         |
 
 ### Pagination, aggregation & sorting
@@ -71,7 +71,7 @@ Each endpoint have their own list of valid sortKeys, see README for each endpoin
 | sort_order   | sortOrder   | Enum         | asc, desc                                     |
 | search_after | searchAfter | sortindex    | supplied by api                               |
 
-#### Valid sort query parameters
+#### Valid sort searchQuery parameters
 
 The reason we support that many different sort formatting, is due to legacy systems we need to support.
 
@@ -106,7 +106,7 @@ The reason we support that many different sort formatting, is due to legacy syst
 <details>
 <summary>Aggregations have the following JSON format</summary>
 
-**"id"** is the current query with the selected aggregation/filter added to it, useful for drill-downs into
+**"id"** is the current searchQuery with the selected aggregation/filter added to it, useful for drill-downs into
 sub-selections of the resource.
 
 If you want to filter on an aggregation without the current filter included, you can construct a search key by using the

@@ -10,7 +10,7 @@ import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
-import no.unit.nva.search2.importcandidate.ImportCandidateQuery;
+import no.unit.nva.search2.importcandidate.ImportCandidateSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -34,7 +34,7 @@ public class SearchImportCandidateHandler extends ApiGatewayHandler<Void, String
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ImportCandidateQuery.builder()
+            ImportCandidateSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()

@@ -11,7 +11,7 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
-public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateQuery> {
+public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
 
     public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);

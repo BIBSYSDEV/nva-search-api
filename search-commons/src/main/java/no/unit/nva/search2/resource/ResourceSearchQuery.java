@@ -72,7 +72,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.SortKey;
@@ -93,13 +93,13 @@ import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
-public final class ResourceQuery extends Query<ResourceParameter> {
+public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
     private boolean useCsvFieldsAsSource;
     private final Map<String,String> additionalQueryParameters = new HashMap<>();
 
-    private ResourceQuery() {
+    private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
     }
@@ -129,7 +129,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * @param publicationStatus the required statues
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
+    public ResourceSearchQuery withRequiredStatus(PublicationStatus... publicationStatus) {
         final var values = Arrays.stream(publicationStatus)
             .map(PublicationStatus::toString)
             .toArray(String[]::new);
@@ -139,18 +139,18 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return this;
     }
 
-    public ResourceQuery withoutRange() {
+    public ResourceSearchQuery withoutRange() {
         this.parameters().set(FROM, "0");
         this.parameters().set(SIZE, "3000");
         return this;
     }
 
-    public ResourceQuery withoutAggregation() {
+    public ResourceSearchQuery withoutAggregation() {
         this.parameters().set(AGGREGATION, NONE);
         return this;
     }
 
-    public ResourceQuery withScrollTime(String time) {
+    public ResourceSearchQuery withScrollTime(String time) {
         this.additionalQueryParameters.put("scroll", time);
         return this;
     }
@@ -163,19 +163,19 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceQuery withOrganization(URI organization) {
+    public ResourceSearchQuery withOrganization(URI organization) {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
             .queryName(PUBLISHER);
         this.filters.add(filter);
         return this;
     }
 
-    public ResourceQuery withOnlyCsvFields() {
+    public ResourceSearchQuery withOnlyCsvFields() {
         this.useCsvFieldsAsSource = true;
         return this;
     }
 
-    public ResourceQuery withUserSettings(UserSettingsClient userSettingsClient) {
+    public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
         this.userSettingsClient = userSettingsClient;
         return this;
     }
@@ -384,10 +384,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
+    public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
         ResourceParameterValidator() {
-            super(new ResourceQuery());
+            super(new ResourceSearchQuery());
         }
 
         @Override
@@ -407,13 +407,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (searchQuery.parameters().isPresent(PAGE)) {
+                if (searchQuery.parameters().isPresent(FROM)) {
+                    var page = searchQuery.parameters().get(PAGE).<Number>as();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
+                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters().remove(PAGE);
+                searchQuery.parameters().remove(PAGE);
             }
         }
 
@@ -449,15 +449,15 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
-                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
+                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                     PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
+                     PUBLICATION_LANGUAGE_SHOULD -> searchQuery.parameters().set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                      MODIFIED_BEFORE, MODIFIED_SINCE,
-                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> searchQuery.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }

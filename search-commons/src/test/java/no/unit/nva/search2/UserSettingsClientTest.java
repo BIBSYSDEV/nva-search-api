@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.stream.Stream;
-import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ class UserSettingsClientTest {
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var resourceAwsQuery =
-            ResourceQuery.builder()
+            ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();

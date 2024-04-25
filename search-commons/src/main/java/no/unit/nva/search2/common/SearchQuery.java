@@ -55,9 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("PMD.GodClass")
-public abstract class Query<K extends Enum<K> & ParameterKey> {
+public abstract class SearchQuery<K extends Enum<K> & ParameterKey> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(Query.class);
+    protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
@@ -109,7 +109,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract Stream<Entry<K, QueryBuilder>> builderStreamCustomQuery(K key);
 
-    protected Query() {
+    protected SearchQuery() {
         startTime = Instant.now();
         queryTools = new QueryTools<>();
         queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
@@ -117,14 +117,14 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         setMediaType(JSON_UTF_8.toString());
     }
 
-    public <R, Q extends Query<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
+    public <R, Q extends SearchQuery<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
         final var response = (SwsResponse) queryClient.doSearch((Q) this);
         return CSV_UTF_8.is(this.getMediaType())
             ? toCsvText(response)
             : toPagedResponse(response).toJsonString();
     }
 
-    public <R, Q extends Query<K>> SwsResponse doSearchRaw(OpenSearchClient<R, Q> queryClient) {
+    public <R, Q extends SearchQuery<K>> SwsResponse doSearchRaw(OpenSearchClient<R, Q> queryClient) {
         return (SwsResponse) queryClient.doSearch((Q) this);
     }
 

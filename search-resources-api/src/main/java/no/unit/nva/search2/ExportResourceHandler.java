@@ -8,7 +8,7 @@ import java.util.List;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -40,7 +40,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     @Override
     public String processS3Input(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-        var initalResponse = ResourceQuery.builder()
+        var initalResponse = ResourceSearchQuery.builder()
                    .fromRequestInfo(requestInfo)
                    .validate()
                    .build()
@@ -57,8 +57,10 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
         return toCsv(List.of(initalResponse));
     }
 
-    private String toCsv(List<SwsResponse> initalResponse) {
-        return ResourceCsvTransformer.transform(initalResponse.get(0).getSearchHits());
+    private String toCsv(List<SwsResponse> responses) {
+        var allHits = responses.stream()
+                          .map(SwsResponse::getSearchHits).flatMap(List::stream).toList();
+        return ResourceCsvTransformer.transform(allHits);
     }
 
     @Override

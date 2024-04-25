@@ -181,7 +181,7 @@ Accept: application/json
 ### Free text
 
 ```http request
-GET /search/resources?query=Some+specific+phrase HTTP/1.1
+GET /search/resources?searchQuery=Some+specific+phrase HTTP/1.1
 Host: api.test.nva.aws.unit.no
 Accept: application/json
 
