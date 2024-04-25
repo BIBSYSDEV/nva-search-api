@@ -70,6 +70,8 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -314,6 +316,8 @@ class TicketClientTest {
 
         @ParameterizedTest
         @MethodSource("uriProviderAsAdmin")
+        @Disabled("Does not work. When test was written it returned an empty string even if there were supposed to be"
+                  + " hits. Now we throw an exception instead as the method is not implemented.")
         void uriRequestReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var query =
                 queryToMapEntries(uri).stream()

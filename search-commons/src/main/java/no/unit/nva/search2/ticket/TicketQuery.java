@@ -57,6 +57,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
@@ -66,6 +67,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
@@ -240,6 +242,16 @@ public final class TicketQuery extends Query<TicketParameter> {
     @Override
     public URI getOpenSearchUri() {
         return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
+    }
+
+    @Override
+    protected String toCsvText(SwsResponse response) {
+        throw new IllegalArgumentException("Not implemented");
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        builder.fetchSource(true);
     }
 
     @Override

@@ -15,7 +15,6 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -129,10 +128,6 @@ public final class AggregationFormat {
             && nonNull(entry.getValue().get(UNIQUE_PUBLICATIONS).get(VALUE));
     }
 
-    @JacocoGenerated
-    private static boolean isNotificationAggregation(Entry<String, JsonNode> field) {
-        return field.getKey().toLowerCase(Locale.getDefault()).contains("notification") && field.getValue().isObject();
-    }
 
     @JacocoGenerated
     static final class Constants {
