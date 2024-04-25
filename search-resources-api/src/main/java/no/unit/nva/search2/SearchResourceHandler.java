@@ -43,6 +43,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
                 .build()
                 .withFilter().requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(opensearchClient);
+
     }
 
     @Override

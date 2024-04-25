@@ -4,6 +4,7 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
+import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
@@ -27,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.CsvTransformer;
 import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
@@ -86,12 +86,17 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     protected abstract SortKey toSortKey(String sortName);
 
+
     /**
      * Builds URI to query SWS based on post body.
      *
      * @return an URI to Sws search without parameters.
      */
     protected abstract URI getOpenSearchUri();
+
+    protected abstract String toCsvText(SwsResponse response);
+    protected abstract void setFetchSource(SearchSourceBuilder builder);
+
 
     /**
      * Path to each and every facet defined in  builderAggregations().
@@ -119,6 +124,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             : toPagedResponse(response).toJsonString();
     }
 
+    public <R, Q extends Query<K>> String doExport(OpenSearchClient<R, Q> queryClient) {
+        final var response = (SwsResponse) queryClient.doSearch((Q) this);
+        return toCsvText(response);
+    }
+
     public Instant getStartTime() {
         return startTime;
     }
@@ -139,9 +149,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
                 .build();
     }
 
-    protected String toCsvText(SwsResponse response) {
-        return CsvTransformer.transform(response.getSearchHits());
-    }
 
     public QueryKeys<K> parameters() {
         return queryKeys;
@@ -195,8 +202,9 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
             case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
-            case TEXT, FUZZY_TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
+            case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
             case FREE_TEXT -> queryTools.queryToEntry(key, builderSearchAllQuery(key));
+            case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderStreamCustomQuery(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException("handler NOT defined -> " + key.name());
@@ -308,5 +316,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
+        setFetchSource(builder);
     }
 }

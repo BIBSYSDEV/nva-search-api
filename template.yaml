@@ -17,6 +17,7 @@ Globals:
         SEARCH_INFRASTRUCTURE_AUTH_URI: !Ref SearchInfrastructureAuthUri
         COGNITO_URI: !Ref CognitoUri
         API_HOST: !Sub 'api.${CustomDomain}'
+        LARGE_API_RESPONSES_BUCKET: !Ref LargeApiResponsesBucketName
   Api:
     Cors:
       AllowMethods: "'PUT, GET,OPTIONS,DELETE,POST'"
@@ -90,6 +91,12 @@ Parameters:
   SlackSnsArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: '/NVA/Monitoring/SlackSnsArn'
+  LargeApiResponsesBucketArn:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/NVA/LargeApiResponsesBucketArn'
+  LargeApiResponsesBucketName:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: '/NVA/LargeApiResponsesBucketName'
 
 Conditions:
   WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
@@ -143,6 +150,14 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:BackendCognitoClientCredentials*'
+        - PolicyName: accessLargeResponseBucket
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource: !Sub '${LargeApiResponsesBucketArn}/*'
 
   SearchHandlerRole:
     Type: AWS::IAM::Role
@@ -295,6 +310,30 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
+  ExportResourcesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda for searching Resources
+      CodeUri: search-resources-api
+      Handler: no.unit.nva.search2.ExportResourceHandler::handleRequest
+      Runtime: java17
+      Timeout: 180
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Enabled: true
+        Role: !GetAtt CustomCodeDeployServiceRole.Arn
+        Type: AllAtOnce
+      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+      Events:
+        GetResources:
+          Type: Api
+          Properties:
+            Path: /resources/export
+            Method: get
+            RestApiId: !Ref NvaSearchApi
 
   SearchAwsResourcesFunction:
     Type: AWS::Serverless::Function

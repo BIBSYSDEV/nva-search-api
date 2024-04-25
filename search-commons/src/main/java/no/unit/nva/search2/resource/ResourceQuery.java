@@ -56,12 +56,14 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
@@ -70,6 +72,7 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
@@ -78,6 +81,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
+    private boolean useCsvFieldsAsSource;
 
     private ResourceQuery() {
         super();
@@ -144,6 +148,20 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     }
 
     @Override
+    protected String toCsvText(SwsResponse response) {
+        return ResourceCsvTransformer.transform(response.getSearchHits());
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        if (this.useCsvFieldsAsSource) {
+            builder.fetchSource(ResourceCsvTransformer.getJsonFields().toArray(String[]::new), null);
+        } else {
+            builder.fetchSource(true);
+        }
+    }
+
+    @Override
     protected Map<String, String> facetPaths() {
         return facetResourcePaths;
     }
@@ -180,6 +198,21 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return filterBuilder;
     }
 
+    public ResourceQuery withOnlyCsvFields() {
+        this.useCsvFieldsAsSource = true;
+        return this;
+    }
+
+    public ResourceQuery withoutRange() {
+        this.parameters().set(FROM, "0");
+        this.parameters().set(SIZE, "3000");
+        return this;
+    }
+
+    public ResourceQuery withoutAggregation() {
+        this.parameters().set(AGGREGATION, NONE);
+        return this;
+    }
 
     public ResourceQuery withUserSettings(UserSettingsClient userSettingsClient) {
         this.userSettingsClient = userSettingsClient;
