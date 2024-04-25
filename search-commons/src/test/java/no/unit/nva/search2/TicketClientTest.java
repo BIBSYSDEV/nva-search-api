@@ -71,7 +71,6 @@ import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -114,15 +113,6 @@ class TicketClientTest {
 
         when(mockedRequestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(testOrganizationId));
         when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
-        when(mockedRequestInfo.userIsAuthorized(AccessRight.SUPPORT))
-            .thenReturn(Boolean.TRUE)
-            .thenReturn(Boolean.FALSE);
-        when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_DOI))
-            .thenReturn(Boolean.FALSE)
-            .thenReturn(Boolean.TRUE);
-        when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_PUBLISHING_REQUESTS))
-            .thenReturn(Boolean.FALSE)
-            .thenReturn(Boolean.TRUE);
         when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
         createIndex();
         populateIndex();
@@ -371,10 +361,12 @@ class TicketClientTest {
         }
 
         @Test
-        void uriRequestReturnsUnauthorized() {
+        void uriRequestReturnsUnauthorized() throws UnauthorizedException {
             AtomicReference<URI> uri = new AtomicReference<>();
             uriSortingProvider().findFirst().ifPresent(uri::set);
             var mockedRequestInfoLocal = mock(RequestInfo.class);
+            when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of());
+            when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(null);
             assertThrows(
                 UnauthorizedException.class,
                 () -> TicketQuery.builder()
@@ -382,7 +374,7 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .fromRequestInfo(mockedRequestInfo)
+                    .fromRequestInfo(mockedRequestInfoLocal)
                     .doSearch(searchClient));
         }
 
