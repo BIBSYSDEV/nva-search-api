@@ -1,8 +1,8 @@
 package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.nonNull;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
+import no.unit.nva.search2.common.records.FilterBuilder;
 import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
@@ -22,19 +22,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class TicketFilter {
+public class TicketFilter implements FilterBuilder<TicketQuery> {
 
     private final TicketQuery ticketQuery;
     private String currentUser;
-    private List<String> ticketTypes;
 
     public TicketFilter(TicketQuery ticketQuery) {
-        Objects.requireNonNull(ticketQuery);
         this.ticketQuery = ticketQuery;
     }
 
-    public String getCurrentUser() {
-        return currentUser;
+    @Override
+    public TicketQuery apply() {
+        return ticketQuery;
     }
 
     /**
@@ -46,7 +45,8 @@ public class TicketFilter {
      * @param requestInfo all required is here
      * @return TicketQuery (builder pattern)
      */
-    public TicketQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
+    @Override
+    public TicketQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
         if (Objects.isNull(requestInfo.getUserName())) {
             throw new UnauthorizedException();
         }
@@ -58,11 +58,12 @@ public class TicketFilter {
         final var curatorRights = getAccessRights(requestInfo.getAccessRights())
             .toArray(TicketType[]::new);
 
-        return withFilterOrganization(organization)
-            .withTicketType(curatorRights)
-            .withCurrentUser(requestInfo.getUserName())
-            .applyFilters();
+        return
+            organization(organization)
+                .userAndTicketTypes(requestInfo.getUserName(), curatorRights)
+                .apply();
     }
+
 
     /**
      * Filter on owner (user).
@@ -74,28 +75,18 @@ public class TicketFilter {
      * @param userName current user
      * @return TicketQuery (builder pattern)
      */
-    public TicketFilter withCurrentUser(String userName) {
+    public TicketFilter userAndTicketTypes(String userName, TicketType... ticketTypes) {
         this.currentUser = userName;
-        return this;
-    }
-
-    /**
-     * Applies user and type filters
-     *
-     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-     *
-     * @return ResourceQuery (builder pattern)
-     */
-    public TicketQuery applyFilters() {
+        var ticketTypeList = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
         var disMax = QueryBuilders
             .disMaxQuery()
             .queryName("anyOfTicketTypeUserName")
             .add(new TermQueryBuilder(OWNER_USERNAME, currentUser));
-        if (nonNull(ticketTypes)) {
-            disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes));
+        if (!ticketTypeList.isEmpty()) {
+            disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypeList));
         }
         this.ticketQuery.filters.add(disMax);
-        return ticketQuery;
+        return this;
     }
 
     /**
@@ -107,30 +98,18 @@ public class TicketFilter {
      * @param organization uri of publisher
      * @return ResourceQuery (builder pattern)
      */
-    public TicketFilter withFilterOrganization(URI organization) {
-        final var filter =
+    public TicketFilter organization(URI organization) {
+        final var organisationId =
             new OpensearchQueryKeyword<TicketParameter>()
                 .buildQuery(ORGANIZATION_ID, organization.toString())
                 .findFirst().orElseThrow().getValue()
                 .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        this.ticketQuery.filters.add(filter);
+        this.ticketQuery.filters.add(organisationId);
         return this;
     }
 
-    /**
-     * Filter on Required Types.
-     *
-     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-     * <p>Only TYPE specified here will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link TicketType} for available values.</p>
-     *
-     * @param ticketTypes the required types
-     * @return TicketQuery (builder pattern)
-     */
-    public TicketFilter withTicketType(TicketType... ticketTypes) {
-        this.ticketTypes = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
-        return this;
+    public String getCurrentUser() {
+        return currentUser;
     }
 
 

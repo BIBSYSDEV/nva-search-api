@@ -17,7 +17,6 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
@@ -25,7 +24,6 @@ import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
@@ -51,7 +49,6 @@ import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +69,6 @@ import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
@@ -82,11 +78,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
+    private final ResourceFilter filterBuilder;
 
     private ResourceQuery() {
         super();
         assignStatusImpossibleWhiteList();
         streamBuilders = new ResourceStreamBuilders(this.queryTools, parameters());
+        filterBuilder = new ResourceFilter(this);
     }
 
     public static ResourceParameterValidator builder() {
@@ -179,41 +177,10 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         };
     }
 
-
-    /**
-     * Filter on Required Status.
-     *
-     * <p>Only STATUES specified here will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link PublicationStatus} for available values.</p>
-     *
-     * @param publicationStatus the required statues
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
-        final var values = Arrays.stream(publicationStatus)
-            .map(PublicationStatus::toString)
-            .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
-            .queryName(STATUS);
-        this.filters.add(filter);
-        return this;
+    public ResourceFilter withFilter() {
+        return filterBuilder;
     }
 
-    /**
-     * Filter on organization.
-     * <P>Only documents belonging to organization specified are searchable (for the user)
-     * </p>
-     *
-     * @param organization uri of publisher
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceQuery withOrganization(URI organization) {
-        final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-            .queryName(PUBLISHER);
-        this.filters.add(filter);
-        return this;
-    }
 
     public ResourceQuery withUserSettings(UserSettingsClient userSettingsClient) {
         this.userSettingsClient = userSettingsClient;
@@ -279,7 +246,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      *
      * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
      * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
+     * <p>See {@link #ResourceFilter.requiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
         filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));

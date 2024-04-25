@@ -49,8 +49,10 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
-                .withOrganization(requestInfo.getCurrentCustomer())
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+                .organization(requestInfo.getCurrentCustomer())
+                .apply()
                 .doSearch(opensearchClient);
     }
 

@@ -59,12 +59,12 @@ import org.opensearch.search.sort.SortOrder;
 
 public final class TicketQuery extends Query<TicketParameter> {
 
-    TicketFilter ticketFilter;
+    private final TicketFilter filterBuilder;
 
     private TicketQuery() {
         super();
         applyImpossibleWhiteListFilters();
-        this.ticketFilter = new TicketFilter(this);
+        filterBuilder = new TicketFilter(this);
     }
 
     public static TicketParameterValidator builder() {
@@ -129,7 +129,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     @Override
     protected List<AggregationBuilder> builderAggregations() {
-        return getTicketsAggregations(ticketFilter.getCurrentUser());
+        return getTicketsAggregations(filterBuilder.getCurrentUser());
     }
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
@@ -142,9 +142,14 @@ public final class TicketQuery extends Query<TicketParameter> {
         };
     }
 
+    public TicketFilter withFilter() {
+        return filterBuilder;
+    }
+
+
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
         var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? currentUser
+            ? filterBuilder.getCurrentUser()
             : parameters().get(TicketParameter.ASSIGNEE).toString();
 
         return new OpensearchQueryText<TicketParameter>()
@@ -159,117 +164,6 @@ public final class TicketQuery extends Query<TicketParameter> {
         return
             new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
-
-//    private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
-//        var allowed = new HashSet<TicketType>();
-//        if (accessRights.contains(MANAGE_DOI)) {
-//            allowed.add(TicketType.DOI_REQUEST);
-//        }
-//        if (accessRights.contains(AccessRight.SUPPORT)) {
-//            allowed.add(TicketType.GENERAL_SUPPORT_CASE);
-//        }
-//        if (accessRights.contains(MANAGE_PUBLISHING_REQUESTS)) {
-//            allowed.add(TicketType.PUBLISHING_REQUEST);
-//        }
-//        return allowed;
-//    }
-//
-//    /**
-//     * Authorize and set 'ViewScope'.
-//     *
-//     * <p>Authorize and set filters -> ticketTypes, organization & owner</p>
-//     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-//     *
-//     * @param requestInfo all required is here
-//     * @return TicketQuery (builder pattern)
-//     */
-//    public TicketQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
-//        if (Objects.isNull(requestInfo.getUserName())) {
-//            throw new UnauthorizedException();
-//        }
-//
-//        final var organization = requestInfo
-//            .getTopLevelOrgCristinId()
-//            .orElse(requestInfo.getPersonAffiliation());
-//
-//        final var curatorRights = getAccessRights(requestInfo.getAccessRights())
-//            .toArray(TicketType[]::new);
-//
-//        return withFilterOrganization(organization)
-//            .withTicketType(curatorRights)
-//            .withCurrentUser(requestInfo.getUserName())
-//            .applyFilters();
-//    }
-//
-//    /**
-//     * Filter on owner (user).
-//     *
-//     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-//     * <p>Only tickets owned by user will be available for the Query.</p>
-//     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-//     *
-//     * @param userName current user
-//     * @return TicketQuery (builder pattern)
-//     */
-//    public TicketQuery withCurrentUser(String userName) {
-//        this.currentUser = userName;
-//        return this;
-//    }
-//
-//    /**
-//     * Applies user and type filters
-//     *
-//     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-//     *
-//     * @return ResourceQuery (builder pattern)
-//     */
-//    public TicketQuery applyFilters() {
-//        var disMax = QueryBuilders
-//            .disMaxQuery()
-//            .queryName("anyOfTicketTypeUserName")
-//            .add(new TermQueryBuilder(OWNER_USERNAME, currentUser));
-//        if (nonNull(ticketTypes)) {
-//            disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes));
-//        }
-//        this.filters.add(disMax);
-//        return this;
-//    }
-//
-//    /**
-//     * Filter on organization.
-//     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-//     * <P>Only documents belonging to organization specified are searchable (for the user)
-//     * </p>
-//     *
-//     * @param organization uri of publisher
-//     * @return ResourceQuery (builder pattern)
-//     */
-//    public TicketQuery withFilterOrganization(URI organization) {
-//        final var filter =
-//            new OpensearchQueryKeyword<TicketParameter>()
-//                .buildQuery(ORGANIZATION_ID, organization.toString())
-//                .findFirst().orElseThrow().getValue()
-//                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-//        this.filters.add(filter);
-//        return this;
-//    }
-//
-//    /**
-//     * Filter on Required Types.
-//     *
-//     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-//     * <p>Only TYPE specified here will be available for the Query.</p>
-//     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-//     * <p>See {@link TicketType} for available values.</p>
-//     *
-//     * @param ticketTypes the required types
-//     * @return TicketQuery (builder pattern)
-//     */
-//    public TicketQuery withTicketType(TicketType... ticketTypes) {
-//        this.ticketTypes = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
-//        return this;
-//    }
-
 
     /**
      * Add a (default) filter to the query that will never match any document.

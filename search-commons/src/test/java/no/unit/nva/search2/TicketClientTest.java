@@ -167,7 +167,8 @@ class TicketClientTest {
                     .withRequiredParameters(SIZE, FROM)
                     .fromQueryParameters(toMapEntries)
                     .build()
-                    .withFilterOrganization(testOrganizationId)
+                    .withFilter()
+                    .organization(testOrganizationId).apply()
                     .doSearch(resourceClient2)
             );
         }
@@ -181,10 +182,9 @@ class TicketClientTest {
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withFilterOrganization(testOrganizationId)
-                .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withCurrentUser(CURRENT_USERNAME)
-                .applyFilters();
+                .withFilter()
+                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .organization(testOrganizationId).apply();
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -213,10 +213,9 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -232,10 +231,10 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters();
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply();
+            ;
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -255,10 +254,9 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters();
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -298,7 +296,8 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .applyContextAndAuthorize(mockedRequestInfoLocal);
+                    .withFilter()
+                    .fromRequestInfo(mockedRequestInfoLocal);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -325,7 +324,7 @@ class TicketClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .applyContextAndAuthorize(mockedRequestInfo)
+                    .withFilter().fromRequestInfo(mockedRequestInfo)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -339,10 +338,10 @@ class TicketClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters();
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId)
+                    .apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -376,7 +375,8 @@ class TicketClientTest {
                     .fromQueryParameters(queryToMapEntries(uri.get()))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .applyContextAndAuthorize(mockedRequestInfoLocal)
+                    .withFilter()
+                    .fromRequestInfo(mockedRequestInfo)
                     .doSearch(searchClient));
         }
 
