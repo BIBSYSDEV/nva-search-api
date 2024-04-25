@@ -234,7 +234,6 @@ class TicketClientTest {
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .organization(testOrganizationId).apply();
-            ;
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);

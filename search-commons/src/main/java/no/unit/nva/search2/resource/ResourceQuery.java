@@ -60,7 +60,6 @@ import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.Query;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.UserSettings;
@@ -246,7 +245,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
      *
      * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
      * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     * <p>See {@link #ResourceFilter.requiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
      */
     private void assignStatusImpossibleWhiteList() {
         filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
