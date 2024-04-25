@@ -33,6 +33,8 @@ paths:
         - $ref: '#/components/parameters/publicationStatusParam'
         - $ref: '#/components/parameters/publicationStatusNotParam'
         - $ref: '#/components/parameters/publicationTitleParam'
+        - $ref: '#/components/parameters/publicationTypeParam'
+        - $ref: '#/components/parameters/publicationTypeNotParam'
         - $ref: '#/components/parameters/statusParam'
         - $ref: '#/components/parameters/statusNotParam'
         - $ref: '#/components/parameters/typeParam'
@@ -1801,6 +1803,24 @@ components:
       name: publication_title
       in: query
       description: "Returns document with these publication titles"
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    publicationTypeParam:
+      name: publication_type
+      in: query
+      description: "Returns document with these types"
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    publicationTypeNotParam:
+      name: publication_type_not
+      in: query
+      description: "Returns document without these types"
       required: false
       style: form
       explode: true
