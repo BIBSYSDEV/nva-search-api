@@ -19,7 +19,7 @@ import java.util.Map;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.common.scroll.ScrollClient;
+import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;

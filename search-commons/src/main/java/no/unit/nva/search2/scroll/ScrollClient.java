@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common.scroll;
+package no.unit.nva.search2.scroll;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
