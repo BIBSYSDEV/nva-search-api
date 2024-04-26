@@ -3,7 +3,9 @@ package no.unit.nva.search2;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import com.amazonaws.services.lambda.runtime.Context;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.scroll.ScrollClient;
@@ -56,17 +58,32 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                    .withOnlyCsvFields()
                    .doSearchRaw(opensearchClient);
 
-        var scrollId = initalResponse._scroll_id();
+        var allPages = new ArrayList<SwsResponse>();
+        allPages.add(initalResponse);
+        scrollResults(allPages, initalResponse);
 
-        logger.info("scroll_id" + initalResponse._scroll_id());
-        logger.info("hits" + initalResponse.hits().total().value());
+        return toCsv(allPages);
+    }
 
-        var nextResponse = ScrollQuery.forScrollId(scrollId).doSearchRaw(this.scrollClient);
+    private void scrollResults(List<SwsResponse> allPages, SwsResponse previousResponse) {
+        if (Objects.isNull(previousResponse._scroll_id()) || previousResponse.getSearchHits().isEmpty()) {
+            return;
+        }
 
-        logger.info("nextResponse scroll_id" + nextResponse._scroll_id());
-        logger.info("nextResponse hits" + nextResponse.hits().total().value());
+        if (allPages.size() > MAX_PAGES()) {
+            logger.warn("Stopped recurssion due to too many pages");
+        }
+        var scrollId = previousResponse._scroll_id();
+        logger.info("Scrolling on scrollId" + scrollId + " pagecount " + allPages.size());
 
-        return toCsv(List.of(initalResponse, nextResponse));
+        var scrollResponse = ScrollQuery.forScrollId(scrollId).doSearchRaw(this.scrollClient);
+
+        allPages.add(scrollResponse);
+        scrollResults(allPages, scrollResponse);
+    }
+
+    private static int MAX_PAGES() {
+        return 20;
     }
 
     private String toCsv(List<SwsResponse> responses) {

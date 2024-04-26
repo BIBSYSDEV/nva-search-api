@@ -5,7 +5,6 @@ import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +24,7 @@ import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,10 +53,9 @@ class ExportResourceHandlerTest {
         );
 
         var s3data = handler.processS3Input(null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), null);
-
-        assertThat(s3data, containsString(expectedTitle1));
-        assertThat(s3data, containsString(expectedTitle2));
-        //assertThat(s3data, containsString(expectedTitle3));
+        assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
+        assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));
+        assertThat(StringUtils.countMatches(s3data, expectedTitle3), is(1));
     }
 
     private void prepareRestHighLevelClientOkResponse(ExportCsv initialSearchResult,
@@ -64,15 +63,15 @@ class ExportResourceHandlerTest {
                                                       ExportCsv scroll2SearchResult) throws IOException {
 
         when(mockedResourceClient.doSearch(any()))
-            .thenReturn(CsvToSwsResponse(initialSearchResult));
+            .thenReturn(CsvToSwsResponse(initialSearchResult, "scrollId1"));
 
         when(mockedScrollClient.doSearch(any()))
-            .thenReturn(CsvToSwsResponse(scroll1SearchResult))
-            .thenReturn(CsvToSwsResponse(scroll2SearchResult));
+            .thenReturn(CsvToSwsResponse(scroll1SearchResult, "scrollId2"))
+            .thenReturn(CsvToSwsResponse(scroll2SearchResult, null));
     }
 
-    private static SwsResponse CsvToSwsResponse(ExportCsv csv) throws JsonProcessingException {
-        var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv));
+    private static SwsResponse CsvToSwsResponse(ExportCsv csv, String scrollId) throws JsonProcessingException {
+        var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
         return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
     }
 

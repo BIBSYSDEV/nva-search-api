@@ -23,7 +23,7 @@ class ResourceCsvTransformerTest {
     @Test
     void shouldAllowCreationOfCsv() throws IOException {
         var expected = List.of(csvWithYearOnly(), csvWithYearAndMonthOnly(), csvWithFullDate());
-        var json = FakeSearchResponse.generateSearchResponseString(expected);
+        var json = FakeSearchResponse.generateSearchResponseString(expected, null);
         var searchResponse = SearchResponseDto.fromSearchResponse(getSearchResponseFromJson(json), randomUri());
 
         var value = ResourceCsvTransformer.transform(searchResponse);

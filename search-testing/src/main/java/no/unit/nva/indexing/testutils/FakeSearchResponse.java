@@ -1,5 +1,6 @@
 package no.unit.nva.indexing.testutils;
 
+import java.util.Objects;
 import no.unit.nva.search.ExportCsv;
 import nva.commons.core.ioutils.IoUtils;
 
@@ -15,14 +16,17 @@ public class FakeSearchResponse {
     public static final Path SEARCH_HIT_TEMPLATE = Path.of("publication_hit_template_json.tmpl");
     public static final Path CONTRIBUTOR_TEMPLATE = Path.of("contributor_json.tmpl");
 
-    public static String generateSearchResponseString(List<ExportCsv> csv) {
+    public static String generateSearchResponseString(List<ExportCsv> csv, String scrollId) {
         var template = IoUtils.stringFromResources(SEARCH_RESPONSE_TEMPLATE);
 
         var hits = csv.stream()
                 .map(FakeSearchResponse::generateHit)
                 .collect(Collectors.joining(COMMA_DELIMITER));
 
-        return template.replace("__HITS__", hits);
+        var scrollData = Objects.isNull(scrollId) ? "" : ",\"_scroll_id\":\""+scrollId +"\"";
+        var templateWithScroll = template.replace("__SCROLL__", scrollData);
+        return templateWithScroll
+                   .replace("__HITS__", hits);
     }
 
     private static String generateHit(ExportCsv item) {
