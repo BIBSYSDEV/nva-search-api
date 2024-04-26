@@ -142,6 +142,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return mediaType;
     }
 
+
+
     final void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = CSV_UTF_8;

@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     public static final int MAX_PAGES = 20;
-    public static final int MAX_HITS_PER_PAGE = 600;
+    public static final int MAX_HITS_PER_PAGE = 3000;
     public static final int MAX_ENTRIES = 500_000;
     public static final String SCROLL_TTL = "5m";
     private final ResourceClient opensearchClient;
