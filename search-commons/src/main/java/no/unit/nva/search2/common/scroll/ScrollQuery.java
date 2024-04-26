@@ -17,10 +17,12 @@ import org.opensearch.common.xcontent.XContentType;
 public final class ScrollQuery extends Query<ScrollParameters> {
 
     private final String scrollId;
+    private final String ttl;
 
-    private ScrollQuery(String scrollId) {
+    public ScrollQuery(String scrollId, String ttl) {
         super();
         this.scrollId = scrollId;
+        this.ttl = ttl;
     }
 
     @Override
@@ -37,16 +39,12 @@ public final class ScrollQuery extends Query<ScrollParameters> {
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
-        var scrollRequest  = new SearchScrollRequest(scrollId);
+        var scrollRequest  = new SearchScrollRequest(scrollId).scroll(ttl);
         return Stream.of(new QueryContentWrapper(scrollRequestToString(scrollRequest), this.getOpenSearchUri()));
     }
 
     private static String scrollRequestToString(SearchScrollRequest request)  {
         return attempt(() -> toXContent(request, XContentType.JSON, EMPTY_PARAMS, true).utf8ToString())
                    .orElseThrow();
-    }
-
-    public static ScrollQuery forScrollId(String scrollId) {
-        return new ScrollQuery(scrollId);
     }
 }

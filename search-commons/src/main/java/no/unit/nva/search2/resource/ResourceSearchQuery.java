@@ -139,9 +139,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return this;
     }
 
-    public ResourceSearchQuery withoutRange() {
-        this.parameters().set(FROM, "0");
-        this.parameters().set(SIZE, "500"); //TODO: adjust
+    public ResourceSearchQuery withFixedRange(int from, int size) {
+        this.parameters().set(FROM, String.valueOf(from));
+        this.parameters().set(SIZE, String.valueOf(size));
         return this;
     }
 

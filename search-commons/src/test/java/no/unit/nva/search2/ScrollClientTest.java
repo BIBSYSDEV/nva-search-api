@@ -45,8 +45,7 @@ class ScrollClientTest {
     @Test
     void searchWithUriReturnsOpenSearchAwsResponse() {
         var scrollId = randomString();
-        var resourceAwsQuery =
-            ScrollQuery.forScrollId(scrollId);
+        var resourceAwsQuery = new ScrollQuery(scrollId, "1m");
         var result = scrollClient.doSearch(resourceAwsQuery);
         logger.debug(result.toString());
         assertNotNull(result);

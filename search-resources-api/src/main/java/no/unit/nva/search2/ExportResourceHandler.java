@@ -24,6 +24,9 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     public static final int MAX_PAGES = 20;
+    public static final int MAX_HITS_PER_PAGE = 600;
+    public static final int MAX_ENTRIES = 500_000;
+    public static final String SCROLL_TTL = "5m";
     private final ResourceClient opensearchClient;
     private final ScrollClient scrollClient;
     private static final Logger logger = LoggerFactory.getLogger(ExportResourceHandler.class);
@@ -53,9 +56,9 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                    .validate()
                    .build()
                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                   .withoutRange()
+                   .withFixedRange(0, MAX_HITS_PER_PAGE)
                    .withoutAggregation()
-                   .withScrollTime("10m")
+                   .withScrollTime(SCROLL_TTL)
                    .withOnlyCsvFields()
                    .doSearchRaw(opensearchClient);
 
@@ -68,6 +71,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     private void scrollResults(List<SwsResponse> allPages, SwsResponse previousResponse) {
         if (Objects.isNull(previousResponse._scroll_id()) || previousResponse.getSearchHits().isEmpty()) {
+            logger.warn("Stopped recurssion due to no more hits");
             return;
         }
 
@@ -75,10 +79,16 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
             logger.warn("Stopped recurssion due to too many pages");
             return;
         }
+
+        if (allPages.size() * MAX_HITS_PER_PAGE > MAX_ENTRIES) {
+            logger.warn("Stopped recurssion due to too many entries");
+            return;
+        }
         var scrollId = previousResponse._scroll_id();
         logger.info("Scrolling on scrollId" + scrollId + " pagecount " + allPages.size());
 
-        var scrollResponse = ScrollQuery.forScrollId(scrollId).doSearchRaw(this.scrollClient);
+        var scrollResponse = new ScrollQuery(scrollId, SCROLL_TTL)
+                                 .doSearchRaw(this.scrollClient);
 
         allPages.add(scrollResponse);
         scrollResults(allPages, scrollResponse);
