@@ -22,18 +22,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class TicketFilter implements FilterBuilder<TicketQuery> {
+public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
 
-    private final TicketQuery ticketQuery;
+    private final TicketSearchQuery ticketSearchQuery;
     private String currentUser;
 
-    public TicketFilter(TicketQuery ticketQuery) {
-        this.ticketQuery = ticketQuery;
+    public TicketFilter(TicketSearchQuery ticketSearchQuery) {
+        this.ticketSearchQuery = ticketSearchQuery;
     }
 
     @Override
-    public TicketQuery apply() {
-        return ticketQuery;
+    public TicketSearchQuery apply() {
+        return ticketSearchQuery;
     }
 
     /**
@@ -46,7 +46,7 @@ public class TicketFilter implements FilterBuilder<TicketQuery> {
      * @return TicketQuery (builder pattern)
      */
     @Override
-    public TicketQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
+    public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
         if (Objects.isNull(requestInfo.getUserName())) {
             throw new UnauthorizedException();
         }
@@ -85,7 +85,7 @@ public class TicketFilter implements FilterBuilder<TicketQuery> {
         if (!ticketTypeList.isEmpty()) {
             disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypeList));
         }
-        this.ticketQuery.filters.add(disMax);
+        this.ticketSearchQuery.filters.add(disMax);
         return this;
     }
 
@@ -104,7 +104,7 @@ public class TicketFilter implements FilterBuilder<TicketQuery> {
                 .buildQuery(ORGANIZATION_ID, organization.toString())
                 .findFirst().orElseThrow().getValue()
                 .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        this.ticketQuery.filters.add(organisationId);
+        this.ticketSearchQuery.filters.add(organisationId);
         return this;
     }
 

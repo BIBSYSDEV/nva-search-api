@@ -47,7 +47,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
-import no.unit.nva.search2.importcandidate.ImportCandidateQuery;
+import no.unit.nva.search2.importcandidate.ImportCandidateSearchQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -104,7 +104,7 @@ class ImportCandidateClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
-            var candidateQuery = ImportCandidateQuery.builder()
+            var candidateQuery = ImportCandidateSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
@@ -139,7 +139,7 @@ class ImportCandidateClientTest {
 
             assertThrows(
                 RuntimeException.class,
-                () -> ImportCandidateQuery.builder()
+                () -> ImportCandidateSearchQuery.builder()
                     .withRequiredParameters(SIZE, FROM)
                     .fromQueryParameters(toMapEntries)
                     .build()
@@ -152,7 +152,7 @@ class ImportCandidateClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ImportCandidateQuery.builder()
+                ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
@@ -171,7 +171,7 @@ class ImportCandidateClientTest {
         @Disabled("Does not work. When test was written it returned an empty string even if there were supposed to be"
                   + " hits. Now we throw an exception instead as the method is not implemented.")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
-            var csvResult = ImportCandidateQuery.builder()
+            var csvResult = ImportCandidateSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE, SORT)
@@ -185,7 +185,7 @@ class ImportCandidateClientTest {
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ImportCandidateQuery.builder()
+                ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
@@ -202,7 +202,7 @@ class ImportCandidateClientTest {
         @MethodSource("uriInvalidProvider")
         void failToSearchUri(URI uri) {
             assertThrows(BadRequestException.class,
-                () -> ImportCandidateQuery.builder()
+                () -> ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
@@ -214,7 +214,7 @@ class ImportCandidateClientTest {
         @MethodSource("uriInvalidProvider")
         void failToSetRequired(URI uri) {
             assertThrows(BadRequestException.class,
-                () -> ImportCandidateQuery.builder()
+                () -> ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, CREATED_DATE)

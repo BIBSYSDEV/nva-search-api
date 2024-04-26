@@ -3,7 +3,6 @@ package no.unit.nva.search2;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
-import no.unit.nva.search2.resource.ResourceParameter;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.DOI;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.Disabled;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,14 +25,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
 import org.joda.time.DateTime;
@@ -43,9 +40,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ResourceQueryTest {
+class ResourceSearchQueryTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceQueryTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceSearchQueryTest.class);
 
     @Test
     void emptyPagesearch() {
@@ -65,7 +62,7 @@ class ResourceQueryTest {
         var resourceClient = new ResourceClient(httpClient, setupMockedCachedJwtProvider());
         assertThrows(
             RuntimeException.class,
-            () -> ResourceQuery.builder()
+            () -> ResourceSearchQuery.builder()
                 .withRequiredParameters(SIZE, FROM)
                 .fromQueryParameters(toMapEntries)
                 .build()
@@ -79,7 +76,7 @@ class ResourceQueryTest {
             queryToMapEntries(URI.create("https://example.com/?doi=2&Title=wqerasdfg"));
         assertThrows(
             BadRequestException.class,
-            () -> ResourceQuery.builder()
+            () -> ResourceSearchQuery.builder()
                 .withRequiredParameters(ABSTRACT, FUNDING)
                 .fromQueryParameters(toMapEntries)
                 .validate()
@@ -91,7 +88,7 @@ class ResourceQueryTest {
     @MethodSource("uriProvider")
     void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
         var resource =
-            ResourceQuery.builder()
+            ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
@@ -114,7 +111,7 @@ class ResourceQueryTest {
     @MethodSource("uriDatesProvider")
     void uriParamsDateToResourceParams(URI uri) throws BadRequestException {
         var query =
-            ResourceQuery.builder()
+            ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
@@ -137,7 +134,7 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("uriSortingProvider")
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
-        var resource = ResourceQuery.builder()
+        var resource = ResourceSearchQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, SORT)
             .build();
@@ -149,7 +146,7 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("uriProvider")
     void failToBuildOpenSearchSwsUriFromMissingRequired(URI uri) {
-        assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
+        assertThrows(BadRequestException.class, () -> ResourceSearchQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE, DOI)
             .validate()
@@ -160,7 +157,7 @@ class ResourceQueryTest {
     @ParameterizedTest
     @MethodSource("invalidUriProvider")
     void failToBuildOpenSearchSwsUriFromInvalidGatewayUri(URI uri) {
-        assertThrows(BadRequestException.class, () -> ResourceQuery.builder()
+        assertThrows(BadRequestException.class, () -> ResourceSearchQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE)
             .build()

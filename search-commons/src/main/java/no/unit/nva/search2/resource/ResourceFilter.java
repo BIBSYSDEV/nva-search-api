@@ -14,21 +14,21 @@ import org.opensearch.index.query.TermsQueryBuilder;
 import java.net.URI;
 import java.util.Arrays;
 
-public class ResourceFilter implements FilterBuilder<ResourceQuery> {
+public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
-    private final ResourceQuery resourceQuery;
+    private final ResourceSearchQuery resourceSearchQuery;
 
-    public ResourceFilter(ResourceQuery query) {
-        this.resourceQuery = query;
+    public ResourceFilter(ResourceSearchQuery query) {
+        this.resourceSearchQuery = query;
     }
 
     @Override
-    public ResourceQuery apply() {
-        return resourceQuery;
+    public ResourceSearchQuery apply() {
+        return resourceSearchQuery;
     }
 
     @Override
-    public ResourceQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
+    public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
         return null;
     }
 
@@ -48,7 +48,7 @@ public class ResourceFilter implements FilterBuilder<ResourceQuery> {
             .toArray(String[]::new);
         final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
             .queryName(STATUS);
-        this.resourceQuery.filters.add(filter);
+        this.resourceSearchQuery.filters.add(filter);
         return this;
     }
 
@@ -63,7 +63,7 @@ public class ResourceFilter implements FilterBuilder<ResourceQuery> {
     public ResourceFilter organization(URI organization) {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
             .queryName(PUBLISHER);
-        this.resourceQuery.filters.add(filter);
+        this.resourceSearchQuery.filters.add(filter);
         return this;
     }
 }

@@ -59,7 +59,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.ticket.TicketClient;
-import no.unit.nva.search2.ticket.TicketQuery;
+import no.unit.nva.search2.ticket.TicketSearchQuery;
 import no.unit.nva.search2.ticket.TicketStatus;
 import no.unit.nva.search2.ticket.TicketType;
 import nva.commons.apigateway.AccessRight;
@@ -156,7 +156,7 @@ class TicketClientTest {
             var resourceClient2 = new TicketClient(httpClient, setupMockedCachedJwtProvider());
             assertThrows(
                 RuntimeException.class,
-                () -> TicketQuery.builder()
+                () -> TicketSearchQuery.builder()
                     .withRequiredParameters(SIZE, FROM)
                     .fromQueryParameters(toMapEntries)
                     .build()
@@ -170,7 +170,7 @@ class TicketClientTest {
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
-            var query1 = TicketQuery.builder()
+            var query1 = TicketSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
@@ -203,7 +203,7 @@ class TicketClientTest {
             var uri = URI.create("https://x.org/?id=018b857b77b7");
 
             var pagedResult =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
@@ -221,7 +221,7 @@ class TicketClientTest {
         void uriRequestPageableReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -243,7 +243,7 @@ class TicketClientTest {
         void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -285,7 +285,7 @@ class TicketClientTest {
 
 
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -315,7 +315,7 @@ class TicketClientTest {
                 .thenReturn(query);
 
             var csvResult =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromRequestInfo(mockedRequestInfo)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
@@ -329,7 +329,7 @@ class TicketClientTest {
         @MethodSource("uriSortingProvider")
         void uriRequestWithSortingReturnsSuccessfulResponse(URI uri) throws ApiGatewayException {
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -352,7 +352,7 @@ class TicketClientTest {
         void uriRequestReturnsBadRequest(URI uri) {
             assertThrows(
                 BadRequestException.class,
-                () -> TicketQuery.builder()
+                () -> TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -369,7 +369,7 @@ class TicketClientTest {
             when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(null);
             assertThrows(
                 UnauthorizedException.class,
-                () -> TicketQuery.builder()
+                () -> TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri.get()))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()

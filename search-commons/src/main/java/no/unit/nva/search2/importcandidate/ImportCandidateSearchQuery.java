@@ -43,7 +43,7 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
@@ -56,9 +56,9 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
+public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidateParameter> {
 
-    ImportCandidateQuery() {
+    ImportCandidateSearchQuery() {
         super();
     }
 
@@ -166,10 +166,10 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
 
 
     public static class ImportCandidateValidator
-        extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
+        extends ParameterValidator<ImportCandidateParameter, ImportCandidateSearchQuery> {
 
         ImportCandidateValidator() {
-            super(new ImportCandidateQuery());
+            super(new ImportCandidateSearchQuery());
         }
 
         @Override
@@ -190,13 +190,13 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (searchQuery.parameters().isPresent(PAGE)) {
+                if (searchQuery.parameters().isPresent(FROM)) {
+                    var page = searchQuery.parameters().get(PAGE).<Number>as();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
+                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters().remove(PAGE);
+                searchQuery.parameters().remove(PAGE);
             }
         }
 
@@ -229,8 +229,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryTools.decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
-                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
+                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);
