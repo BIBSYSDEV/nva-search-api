@@ -152,7 +152,8 @@ class ResourceClientTest {
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
             var response1 = searchClient.doSearch(query1);
 
             assertNotNull(response1);
@@ -187,7 +188,8 @@ class ResourceClientTest {
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -209,7 +211,8 @@ class ResourceClientTest {
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -230,7 +233,8 @@ class ResourceClientTest {
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -251,7 +255,8 @@ class ResourceClientTest {
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -268,8 +273,9 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
-                        DRAFT_FOR_DELETION)
+                    .withFilter()
+                    .requiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
+                        DRAFT_FOR_DELETION).apply()
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -284,9 +290,11 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                    .withOrganization(
-                        URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+                    .withFilter()
+                    .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                    .organization(
+                        URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"))
+                    .apply();
 
             var response = searchClient.doSearch(query);
             assertNotNull(response);
@@ -306,7 +314,8 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .validate()
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -328,7 +337,8 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -354,7 +364,8 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredStatus(PUBLISHED_METADATA)
+                    .withFilter()
+                    .requiredStatus(PUBLISHED_METADATA).apply()
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -368,7 +379,8 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.getSort().toString());
             var response = searchClient.doSearch(query);
@@ -400,7 +412,8 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -418,7 +431,8 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -440,7 +454,8 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -465,7 +480,8 @@ class ResourceClientTest {
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);

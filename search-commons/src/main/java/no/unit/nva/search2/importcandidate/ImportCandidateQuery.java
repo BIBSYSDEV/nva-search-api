@@ -7,6 +7,7 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WI
 
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.COLON;
@@ -164,7 +165,6 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
 
-    @SuppressWarnings("PMD.GodClass")
     public static class ImportCandidateValidator
         extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
 
