@@ -23,9 +23,8 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
-    public static final int MAX_PAGES = 12;
-    public static final int MAX_HITS_PER_PAGE = 6000;
-    public static final int MAX_ENTRIES = 500_000;
+    public static final int MAX_PAGES = 10;
+    public static final int MAX_HITS_PER_PAGE = 4000;
     public static final String SCROLL_TTL = "1m";
     private final ResourceClient opensearchClient;
     private final ScrollClient scrollClient;
@@ -100,10 +99,6 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
             return true;
         }
 
-        if (allPages.size() * MAX_HITS_PER_PAGE >= MAX_ENTRIES) {
-            logger.warn("Stopped recurssion due to too many entries");
-            return true;
-        }
         return false;
     }
 
