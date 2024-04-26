@@ -73,6 +73,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
         if (allPages.size() > MAX_PAGES) {
             logger.warn("Stopped recurssion due to too many pages");
+            return;
         }
         var scrollId = previousResponse._scroll_id();
         logger.info("Scrolling on scrollId" + scrollId + " pagecount " + allPages.size());
