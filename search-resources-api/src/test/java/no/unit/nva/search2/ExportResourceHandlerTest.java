@@ -6,7 +6,6 @@ import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +20,7 @@ import java.util.Map;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
 import no.unit.nva.search.ExportCsv;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.common.scroll.ScrollClient;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;
@@ -31,31 +31,49 @@ import org.junit.jupiter.api.Test;
 class ExportResourceHandlerTest {
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
-    private ResourceClient mockedSearchClient;
+    private ResourceClient mockedResourceClient;
+    private ScrollClient mockedScrollClient;
     private ExportResourceHandler handler;
 
     @BeforeEach
     void setUp() {
-
-        mockedSearchClient = mock(ResourceClient.class);
-        handler = new ExportResourceHandler(mockedSearchClient, null, null);
+        mockedResourceClient = mock(ResourceClient.class);
+        mockedScrollClient = mock(ScrollClient.class);
+        handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
     }
     @Test
     void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
-        var expectedTitle = randomString();
-        prepareRestHighLevelClientOkResponse(List.of(csvWithFullDate(expectedTitle)));
+        var expectedTitle1 = randomString();
+        var expectedTitle2 = randomString();
+        var expectedTitle3 = randomString();
+        prepareRestHighLevelClientOkResponse(
+            csvWithFullDate(expectedTitle1),
+            csvWithFullDate(expectedTitle2),
+            csvWithFullDate(expectedTitle3)
+        );
 
         var s3data = handler.processS3Input(null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), null);
 
-        assertThat(s3data, containsString(expectedTitle));
+        assertThat(s3data, containsString(expectedTitle1));
+        assertThat(s3data, containsString(expectedTitle2));
+        //assertThat(s3data, containsString(expectedTitle3));
     }
 
-    private void prepareRestHighLevelClientOkResponse(List<ExportCsv> exportCsvs) throws IOException {
-        var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs);
-        var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+    private void prepareRestHighLevelClientOkResponse(ExportCsv initialSearchResult,
+                                                      ExportCsv scroll1SearchResult,
+                                                      ExportCsv scroll2SearchResult) throws IOException {
 
-        when(mockedSearchClient.doSearch(any()))
-            .thenReturn(body);
+        when(mockedResourceClient.doSearch(any()))
+            .thenReturn(CsvToSwsResponse(initialSearchResult));
+
+        when(mockedScrollClient.doSearch(any()))
+            .thenReturn(CsvToSwsResponse(scroll1SearchResult))
+            .thenReturn(CsvToSwsResponse(scroll2SearchResult));
+    }
+
+    private static SwsResponse CsvToSwsResponse(ExportCsv csv) throws JsonProcessingException {
+        var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv));
+        return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
     }
 
     private static ExportCsv csvWithFullDate(String title) {

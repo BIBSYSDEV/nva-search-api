@@ -5,7 +5,6 @@ import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.common.constant.Words.ALL;
@@ -57,7 +56,6 @@ import org.slf4j.LoggerFactory;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
-    protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
@@ -89,7 +87,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
      *
      * @return an URI to Sws search without parameters.
      */
-    protected abstract URI getOpenSearchUri();
 
     protected abstract String toCsvText(SwsResponse response);
     protected abstract void setFetchSource(SearchSourceBuilder builder);
@@ -215,7 +212,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             builder.aggregation(builderAggregationsWithFilter());
         }
         logger.debug(builder.toString());
-        return Stream.of(new QueryContentWrapper(builder, this.getOpenSearchUri()));
+        return Stream.of(new QueryContentWrapper(builder.toString(), this.getOpenSearchUri()));
     }
 
     /**
