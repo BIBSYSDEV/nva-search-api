@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common.scroll;
+package no.unit.nva.search2.scroll;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;

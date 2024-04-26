@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common.scroll;
+package no.unit.nva.search2.scroll;
 
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
