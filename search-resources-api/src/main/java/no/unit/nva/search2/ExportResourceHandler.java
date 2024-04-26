@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
+    public static final int MAX_PAGES = 20;
     private final ResourceClient opensearchClient;
     private final ScrollClient scrollClient;
     private static final Logger logger = LoggerFactory.getLogger(ExportResourceHandler.class);
@@ -70,7 +71,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
             return;
         }
 
-        if (allPages.size() > MAX_PAGES()) {
+        if (allPages.size() > MAX_PAGES) {
             logger.warn("Stopped recurssion due to too many pages");
         }
         var scrollId = previousResponse._scroll_id();
@@ -80,10 +81,6 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
         allPages.add(scrollResponse);
         scrollResults(allPages, scrollResponse);
-    }
-
-    private static int MAX_PAGES() {
-        return 20;
     }
 
     private String toCsv(List<SwsResponse> responses) {
