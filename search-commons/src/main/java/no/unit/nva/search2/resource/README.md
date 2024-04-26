@@ -166,7 +166,7 @@ Accept: application/json
 
 ### Free text
 ```http request
-GET https://api.test.nva.aws.unit.no/search/resources?searchQuery=Some+specific+phrase
+GET https://api.test.nva.aws.unit.no/search/resources?query=Some+specific+phrase
 Accept: application/json
 ```
 

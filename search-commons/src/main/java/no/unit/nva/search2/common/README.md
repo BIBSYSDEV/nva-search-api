@@ -2,7 +2,7 @@
 
 ## /builder
 
-Opensearch searchQuery builders
+Opensearch query builders
 
 ### ParameterValidator
 
