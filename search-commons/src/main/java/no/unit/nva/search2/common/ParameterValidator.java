@@ -1,19 +1,12 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComma;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
-import static no.unit.nva.search2.common.constant.Words.PIPE;
-import static nva.commons.core.StringUtils.SPACE;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -21,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
@@ -232,32 +224,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     protected void mergeToKey(K key, String value) {
         searchQuery.parameters().set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
     }
-
-    private String mergeWithColonOrComma(String oldValue, String newValue) {
-        if (nonNull(oldValue)) {
-            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
-            return String.join(delimiter, oldValue, newValue);
-        } else {
-            return newValue;
-        }
-    }
-
-    protected String trimSpace(String value) {
-        return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
-    }
-
-    protected String expandYearToDate(String value) {
-        return value.length() == 4 ? value + JANUARY_FIRST : value;
-    }
-
-    protected String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
-        return
-            Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
-                .map(fromString)
-                .map(Enum::toString)
-                .collect(Collectors.joining(COMMA));
-    }
-
 
     @JacocoGenerated
     protected String ignoreInvalidFields(String value) {

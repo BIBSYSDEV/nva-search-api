@@ -52,15 +52,16 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     @Override
     public String processS3Input(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         var initalResponse = ResourceSearchQuery.builder()
-                   .fromRequestInfo(requestInfo)
-                   .validate()
-                   .build()
-                   .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                   .withFixedRange(0, MAX_HITS_PER_PAGE)
-                   .withoutAggregation()
-                   .withScrollTime(SCROLL_TTL)
-                   .withOnlyCsvFields()
-                   .doSearchRaw(opensearchClient);
+                                 .fromRequestInfo(requestInfo)
+                                 .validate()
+                                 .build()
+                                 .withFilter()
+                                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                                 .withFixedRange(0, MAX_HITS_PER_PAGE)
+                                 .withoutAggregation()
+                                 .withScrollTime(SCROLL_TTL)
+                                 .withOnlyCsvFields()
+                                 .doSearchRaw(opensearchClient);
 
         var allPages = new ArrayList<SwsResponse>();
         allPages.add(initalResponse);

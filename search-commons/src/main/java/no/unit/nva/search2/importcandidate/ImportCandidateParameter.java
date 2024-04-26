@@ -15,12 +15,14 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.Q;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
+import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.NA;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
+import static no.unit.nva.search2.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search2.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search2.common.enums.ParameterKind.NUMBER;
@@ -28,11 +30,14 @@ import static no.unit.nva.search2.common.enums.ParameterKind.SORT_KEY;
 import static no.unit.nva.search2.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search2.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.INSTANCE_TYPE_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.ID_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.ORGANIZATIONS_PATH;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.TYPE_KEYWORD;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -57,45 +62,38 @@ import org.apache.commons.text.CaseUtils;
 public enum ImportCandidateParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters converted to Lucene query
-    CRISTIN_IDENTIFIER(CUSTOM),
-    SCOPUS_IDENTIFIER(CUSTOM),
+    ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ADDITIONAL_IDENTIFIERS_KEYWORD),
     ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NO_ITEMS, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_SHOULD(TEXT, ONE_OR_MORE_ITEM, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    CATEGORY(KEYWORD, PUBLICATION_INSTANCE_TYPE),
+    CATEGORY(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, NO_ITEMS, PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE),
-    CREATED_DATE(DATE, Words.CREATED_DATE),
-    CONTRIBUTOR(KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
+    CONTRIBUTOR(FUZZY_KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     CONTRIBUTOR_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NAME(KEYWORD, Constants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR_NAME(FUZZY_KEYWORD, ONE_OR_MORE_ITEM,Constants.CONTRIBUTORS_IDENTITY_NAME),
     CONTRIBUTOR_NAME_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NAME_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.CONTRIBUTORS_IDENTITY_NAME),
-    COLLABORATION_TYPE(KEYWORD, ALL_ITEMS, COLLABORATION_TYPE_KEYWORD),
+    COLLABORATION_TYPE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_NOT(KEYWORD, NO_ITEMS, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_SHOULD(TEXT, ONE_OR_MORE_ITEM, COLLABORATION_TYPE_KEYWORD),
-    DOI(KEYWORD, Constants.DOI_KEYWORD),
+    CRISTIN_IDENTIFIER(CUSTOM),
+    DOI(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, Constants.DOI_KEYWORD),
     DOI_NOT(TEXT, NO_ITEMS, Constants.DOI_KEYWORD),
-    DOI_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.DOI_KEYWORD),
-    ID(KEYWORD, Constants.IDENTIFIER),
-    ID_NOT(KEYWORD, NO_ITEMS, Constants.IDENTIFIER),
-    ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.IDENTIFIER),
-    IMPORT_STATUS(KEYWORD, STATUS_TYPE_KEYWORD),
+    ID(KEYWORD, ONE_OR_MORE_ITEM, ID_KEYWORD),
+    ID_NOT(KEYWORD, NO_ITEMS, ID_KEYWORD),
+    IMPORT_STATUS(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, STATUS_TYPE_KEYWORD),
     IMPORT_STATUS_NOT(KEYWORD, NO_ITEMS, STATUS_TYPE_KEYWORD),
-    IMPORT_STATUS_SHOULD(TEXT, ONE_OR_MORE_ITEM, STATUS_TYPE_KEYWORD),
-    INSTANCE_TYPE(KEYWORD, ALL_ITEMS, INSTANCE_TYPE_KEYWORD),
-    INSTANCE_TYPE_NOT(KEYWORD, NO_ITEMS, INSTANCE_TYPE_KEYWORD),
-    INSTANCE_TYPE_SHOULD(TEXT, ONE_OR_MORE_ITEM, INSTANCE_TYPE_KEYWORD),
-    PUBLICATION_YEAR(KEYWORD, ALL_ITEMS, PUBLICATION_YEAR_KEYWORD),
+    INSTANCE_TYPE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, TYPE_KEYWORD),
+    INSTANCE_TYPE_NOT(KEYWORD, NO_ITEMS, TYPE_KEYWORD),
+    PUBLICATION_YEAR(NUMBER, BETWEEN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
     PUBLISHER(KEYWORD, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_NOT(KEYWORD, NO_ITEMS, PUBLISHER_ID_KEYWORD),
-    PUBLISHER_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
-    TITLE(TEXT, Constants.MAIN_TITLE_KEYWORD, 2F),
+    SCOPUS_IDENTIFIER(CUSTOM),
+    TOP_LEVEL_ORGANIZATION(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ORGANIZATIONS_PATH),
+    TOP_LEVEL_ORGANIZATION_NOT(FUZZY_KEYWORD, NO_ITEMS, ORGANIZATIONS_PATH),
+    TITLE(TEXT,ONE_OR_MORE_ITEM, Constants.MAIN_TITLE_KEYWORD,null,null, 2F),
     TITLE_NOT(TEXT, NO_ITEMS, Constants.MAIN_TITLE_KEYWORD),
-    TITLE_SHOULD(TEXT, ONE_OR_MORE_ITEM, Constants.MAIN_TITLE_KEYWORD),
-    TYPE(KEYWORD, Constants.TYPE_KEYWORD),
+    TYPE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE),
+    TYPE_NOT(KEYWORD, NO_ITEMS, PUBLICATION_INSTANCE_TYPE),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     // Pagination parameters

@@ -59,7 +59,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
-    protected final transient QueryFilter filters;
+    public final transient QueryFilter filters;
     protected final transient QueryTools<K> queryTools;
 
 

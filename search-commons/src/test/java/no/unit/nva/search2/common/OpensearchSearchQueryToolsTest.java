@@ -57,7 +57,6 @@ class OpensearchSearchQueryToolsTest {
     }
 
     @Test
-    @Disabled
     void printImportCandidateParameter() {
         printEnum(Arrays.stream(ImportCandidateParameter.values()));
     }
