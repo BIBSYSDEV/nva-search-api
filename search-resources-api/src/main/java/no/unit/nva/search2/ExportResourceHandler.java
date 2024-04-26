@@ -70,18 +70,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     }
 
     private void scrollResults(List<SwsResponse> allPages, SwsResponse previousResponse) {
-        if (Objects.isNull(previousResponse._scroll_id()) || previousResponse.getSearchHits().isEmpty()) {
-            logger.warn("Stopped recurssion due to no more hits");
-            return;
-        }
-
-        if (allPages.size() > MAX_PAGES) {
-            logger.warn("Stopped recurssion due to too many pages");
-            return;
-        }
-
-        if (allPages.size() * MAX_HITS_PER_PAGE > MAX_ENTRIES) {
-            logger.warn("Stopped recurssion due to too many entries");
+        if (shouldStopRecursion(allPages, previousResponse)) {
             return;
         }
         var scrollId = previousResponse._scroll_id();
@@ -92,6 +81,29 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
         allPages.add(scrollResponse);
         scrollResults(allPages, scrollResponse);
+    }
+
+    private static boolean shouldStopRecursion(List<SwsResponse> allPages, SwsResponse previousResponse) {
+        if (Objects.isNull(previousResponse._scroll_id())) {
+            logger.warn("Stopped recurssion due to no scroll_id");
+            return true;
+        }
+
+        if (previousResponse.getSearchHits().isEmpty()) {
+            logger.warn("Stopped recurssion due to no more hits");
+            return true;
+        }
+
+        if (allPages.size() >= MAX_PAGES) {
+            logger.warn("Stopped recurssion due to too many pages");
+            return true;
+        }
+
+        if (allPages.size() * MAX_HITS_PER_PAGE >= MAX_ENTRIES) {
+            logger.warn("Stopped recurssion due to too many entries");
+            return true;
+        }
+        return false;
     }
 
     private String toCsv(List<SwsResponse> responses) {
