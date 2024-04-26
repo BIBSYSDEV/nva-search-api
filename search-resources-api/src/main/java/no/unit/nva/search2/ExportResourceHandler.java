@@ -23,10 +23,10 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
-    public static final int MAX_PAGES = 20;
-    public static final int MAX_HITS_PER_PAGE = 3000;
+    public static final int MAX_PAGES = 12;
+    public static final int MAX_HITS_PER_PAGE = 6000;
     public static final int MAX_ENTRIES = 500_000;
-    public static final String SCROLL_TTL = "5m";
+    public static final String SCROLL_TTL = "1m";
     private final ResourceClient opensearchClient;
     private final ScrollClient scrollClient;
     private static final Logger logger = LoggerFactory.getLogger(ExportResourceHandler.class);
@@ -75,7 +75,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
             return;
         }
         var scrollId = previousResponse._scroll_id();
-        logger.info("Scrolling on scrollId" + scrollId + " pagecount " + allPages.size());
+        logger.info("Scrolling on page " + allPages.size() + " of scroll " + scrollId);
 
         var scrollResponse = new ScrollQuery(scrollId, SCROLL_TTL)
                                  .doSearchRaw(this.scrollClient);
@@ -91,7 +91,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
         }
 
         if (previousResponse.getSearchHits().isEmpty()) {
-            logger.warn("Stopped recurssion due to no more hits");
+            logger.info("Stopped recurssion due to no more hits");
             return true;
         }
 
