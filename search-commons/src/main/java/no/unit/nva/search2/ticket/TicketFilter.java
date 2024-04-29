@@ -29,6 +29,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
 
     public TicketFilter(TicketSearchQuery ticketSearchQuery) {
         this.ticketSearchQuery = ticketSearchQuery;
+        this.ticketSearchQuery.filters.set();
     }
 
     @Override
