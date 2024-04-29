@@ -1,12 +1,12 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.COLLABORATION_TYPE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CONTRIBUTOR;
@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.net.URI;
@@ -41,10 +42,10 @@ import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.RestHighLevelClientWrapper;
-import no.unit.nva.search.models.EventConsumptionAttributes;
-import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.common.EventConsumptionAttributes;
+import no.unit.nva.search2.common.IndexDocument;
+import no.unit.nva.search2.common.IndexingClient;
+import no.unit.nva.search2.common.RestHighLevelClientWrapper;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
 import no.unit.nva.search2.importcandidate.ImportCandidateSearchQuery;
@@ -91,7 +92,7 @@ class ImportCandidateClientTest {
     @AfterAll
     static void afterAll() throws IOException, InterruptedException {
         logger.info("Stopping container");
-        indexingClient.deleteIndex(IMPORT_CANDIDATES_INDEX);
+        indexingClient.deleteIndex(IMPORT_CANDIDATES_INDEX_NAME);
         Thread.sleep(DELAY_AFTER_INDEXING);
         container.stop();
     }
@@ -286,7 +287,7 @@ class ImportCandidateClientTest {
 
         jsonNodes.forEach(node -> {
             try {
-                var attributes = new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, SortableIdentifier.next());
+                var attributes = new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX_NAME, SortableIdentifier.next());
                 indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -299,6 +300,6 @@ class ImportCandidateClientTest {
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-        indexingClient.createIndex(IMPORT_CANDIDATES_INDEX, mappings);
+        indexingClient.createIndex(IMPORT_CANDIDATES_INDEX_NAME, mappings);
     }
 }

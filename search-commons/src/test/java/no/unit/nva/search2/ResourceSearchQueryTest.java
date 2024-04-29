@@ -1,8 +1,8 @@
 package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.DOI;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import no.unit.nva.search2.resource.ResourceSearchQuery;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.resource.ResourceClient;
 import nva.commons.apigateway.exceptions.BadRequestException;

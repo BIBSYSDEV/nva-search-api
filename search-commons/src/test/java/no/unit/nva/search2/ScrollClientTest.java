@@ -1,8 +1,7 @@
 package no.unit.nva.search2;
 
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search2.common.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;

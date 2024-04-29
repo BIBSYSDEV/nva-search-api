@@ -1,5 +1,7 @@
 package no.unit.nva.search2.common;
 
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search2.common.security.CachedJwtProvider;
@@ -15,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Map;
 
-import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 import static nva.commons.core.attempt.Try.attempt;
 
 public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
@@ -33,26 +34,21 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
 
-
-    public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        logger.info(INITIAL_LOG_MESSAGE, SEARCH_INFRASTRUCTURE_API_URI, indexDocument.getDocumentIdentifier());
+    public void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
+        logger.info(INITIAL_LOG_MESSAGE, readSearchInfrastructureApiUri(), indexDocument.getDocumentIdentifier());
         openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
-        return null;
     }
 
 
-
-    public Void createIndex(String indexName, Map<String, ?> mappings) throws IOException {
+    public void createIndex(String indexName, Map<String, ?> mappings) throws IOException {
         var createRequest = new CreateIndexRequest(indexName);
         createRequest.mapping(mappings);
         openSearchClient.indices().create(createRequest, getRequestOptions());
-        return null;
     }
 
 
-    public Void deleteIndex(String indexName) throws IOException {
+    public void deleteIndex(String indexName) throws IOException {
         openSearchClient.indices().delete(new DeleteIndexRequest(indexName), getRequestOptions());
-        return null;
     }
 
     public JsonNode getMapping(String indexName) {
