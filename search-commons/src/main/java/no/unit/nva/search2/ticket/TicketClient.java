@@ -11,7 +11,7 @@ import no.unit.nva.search2.common.security.CachedJwtProvider;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
-public class TicketClient extends OpenSearchClient<SwsResponse, TicketQuery> {
+public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuery> {
 
     public TicketClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);

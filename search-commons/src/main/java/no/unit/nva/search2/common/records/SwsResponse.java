@@ -14,7 +14,8 @@ public record SwsResponse(
     boolean timed_out,
     ShardsInfo _shards,
     HitsInfo hits,
-    JsonNode aggregations) {
+    JsonNode aggregations,
+    String _scroll_id) {
 
     public record ShardsInfo(
         Long total,

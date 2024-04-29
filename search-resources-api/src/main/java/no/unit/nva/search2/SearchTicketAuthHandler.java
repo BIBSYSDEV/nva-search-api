@@ -10,7 +10,7 @@ import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.search2.ticket.TicketClient;
-import no.unit.nva.search2.ticket.TicketQuery;
+import no.unit.nva.search2.ticket.TicketSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -37,11 +37,11 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         throws BadRequestException, UnauthorizedException {
 
         return
-            TicketQuery.builder()
+            TicketSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
-                .applyContextAndAuthorize(requestInfo)
+                .withFilter().fromRequestInfo(requestInfo)
                 .doSearch(opensearchClient);
     }
 

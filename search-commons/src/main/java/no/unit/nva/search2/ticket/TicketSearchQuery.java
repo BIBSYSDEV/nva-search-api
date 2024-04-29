@@ -1,11 +1,13 @@
 package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.Functions.expandYearToDate;
+import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Words.COLON;
@@ -16,8 +18,6 @@ import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
-import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
-import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
@@ -35,164 +35,44 @@ import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
-import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
-import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.SwsResponse;
-import nva.commons.apigateway.AccessRight;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class TicketQuery extends Query<TicketParameter> {
+public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
-    private String currentUser;
-    private List<String> ticketTypes;
+    private final TicketFilter filterBuilder;
 
-    private TicketQuery() {
+    private TicketSearchQuery() {
         super();
         applyImpossibleWhiteListFilters();
-    }
-
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the Query from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withFilter* must be set </p>
-     */
-    private void applyImpossibleWhiteListFilters() {
-        var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
-        final var filterId =
-            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
-                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        filters.set(filterId);
+        filterBuilder = new TicketFilter(this);
     }
 
     public static TicketParameterValidator builder() {
         return new TicketParameterValidator();
     }
 
-    /**
-     * Authorize and set 'ViewScope'.
-     *
-     * <p>Authorize and set filters -> ticketTypes, organization & owner</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     *
-     * @param requestInfo all required is here
-     * @return TicketQuery (builder pattern)
-     */
-    public TicketQuery applyContextAndAuthorize(RequestInfo requestInfo) throws UnauthorizedException {
-        if (Objects.isNull(requestInfo.getUserName())) {
-            throw new UnauthorizedException();
-        }
-
-        final var organization = requestInfo
-            .getTopLevelOrgCristinId()
-            .orElse(requestInfo.getPersonAffiliation());
-
-        final var curatorRights = getAccessRights(requestInfo.getAccessRights())
-            .toArray(TicketType[]::new);
-
-        return withFilterOrganization(organization)
-            .withTicketType(curatorRights)
-            .withCurrentUser(requestInfo.getUserName())
-            .applyFilters();
-    }
-
-    /**
-     * Filter on owner (user).
-     *
-     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-     * <p>Only tickets owned by user will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     *
-     * @param userName current user
-     * @return TicketQuery (builder pattern)
-     */
-    public TicketQuery withCurrentUser(String userName) {
-        this.currentUser = userName;
-        return this;
-    }
-
-    /**
-     * Applies user and type filters
-     *
-     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-     *
-     * @return ResourceQuery (builder pattern)
-     */
-    public TicketQuery applyFilters() {
-        var disMax = QueryBuilders
-            .disMaxQuery()
-            .queryName("anyOfTicketTypeUserName")
-            .add(new TermQueryBuilder(OWNER_USERNAME, currentUser));
-        if (nonNull(ticketTypes)) {
-            disMax.add(new TermsQueryBuilder(TYPE_KEYWORD, ticketTypes));
-        }
-        this.filters.add(disMax);
-        return this;
-    }
-
-    /**
-     * Filter on organization.
-     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-     * <P>Only documents belonging to organization specified are searchable (for the user)
-     * </p>
-     *
-     * @param organization uri of publisher
-     * @return ResourceQuery (builder pattern)
-     */
-    public TicketQuery withFilterOrganization(URI organization) {
-        final var filter =
-            new OpensearchQueryKeyword<TicketParameter>()
-                .buildQuery(ORGANIZATION_ID, organization.toString())
-                .findFirst().orElseThrow().getValue()
-                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
-        this.filters.add(filter);
-        return this;
-    }
-
-    /**
-     * Filter on Required Types.
-     *
-     * <P>ONLY SET THIS MANUALLY IN TESTS</P>
-     * <p>Only TYPE specified here will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link TicketType} for available values.</p>
-     *
-     * @param ticketTypes the required types
-     * @return TicketQuery (builder pattern)
-     */
-    public TicketQuery withTicketType(TicketType... ticketTypes) {
-        this.ticketTypes = Arrays.stream(ticketTypes).map(TicketType::toString).toList();
-        return this;
-    }
 
     @Override
     protected TicketParameter keyAggregation() {
@@ -261,7 +141,7 @@ public final class TicketQuery extends Query<TicketParameter> {
 
     @Override
     protected List<AggregationBuilder> builderAggregations() {
-        return getTicketsAggregations(currentUser);
+        return getTicketsAggregations(filterBuilder.getCurrentUser());
     }
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
@@ -274,9 +154,14 @@ public final class TicketQuery extends Query<TicketParameter> {
         };
     }
 
+    public TicketFilter withFilter() {
+        return filterBuilder;
+    }
+
+
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
         var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? currentUser
+            ? filterBuilder.getCurrentUser()
             : parameters().get(TicketParameter.ASSIGNEE).toString();
 
         return new OpensearchQueryText<TicketParameter>()
@@ -292,26 +177,24 @@ public final class TicketQuery extends Query<TicketParameter> {
             new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
-    private Set<TicketType> getAccessRights(List<AccessRight> accessRights) {
-        var allowed = new HashSet<TicketType>();
-        if (accessRights.contains(MANAGE_DOI)) {
-            allowed.add(TicketType.DOI_REQUEST);
-        }
-        if (accessRights.contains(AccessRight.SUPPORT)) {
-            allowed.add(TicketType.GENERAL_SUPPORT_CASE);
-        }
-        if (accessRights.contains(MANAGE_PUBLISHING_REQUESTS)) {
-            allowed.add(TicketType.PUBLISHING_REQUEST);
-        }
-        return allowed;
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the Query from any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withFilter* must be set </p>
+     */
+    private void applyImpossibleWhiteListFilters() {
+        var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
+        final var filterId =
+            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
+                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
+        filters.set(filterId);
     }
 
-
-    @SuppressWarnings("PMD.GodClass")
-    public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketQuery> {
+    public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketSearchQuery> {
 
         TicketParameterValidator() {
-            super(new TicketQuery());
+            super(new TicketSearchQuery());
         }
 
         @Override
@@ -330,17 +213,17 @@ public final class TicketQuery extends Query<TicketParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (searchQuery.parameters().isPresent(PAGE)) {
+                if (searchQuery.parameters().isPresent(FROM)) {
+                    var page = searchQuery.parameters().get(PAGE).<Number>as();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
+                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters().remove(PAGE);
+                searchQuery.parameters().remove(PAGE);
             }
-            if (query.parameters().isPresent(BY_USER_PENDING)) {
-                query.parameters().set(TicketParameter.TYPE, query.parameters().get(BY_USER_PENDING).as());
-                query.parameters().set(STATUS, PENDING.toString());
+            if (searchQuery.parameters().isPresent(BY_USER_PENDING)) {
+                searchQuery.parameters().set(TicketParameter.TYPE, searchQuery.parameters().get(BY_USER_PENDING).as());
+                searchQuery.parameters().set(STATUS, PENDING.toString());
             }
         }
 
@@ -374,12 +257,12 @@ public final class TicketQuery extends Query<TicketParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
-                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
+                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                    searchQuery.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);

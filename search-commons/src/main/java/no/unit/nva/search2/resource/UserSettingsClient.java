@@ -24,14 +24,14 @@ import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.UserSettings;
 import no.unit.nva.search2.common.security.CachedJwtProvider;
 
-public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQuery> {
+public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceSearchQuery> {
 
     public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
     }
 
     @Override
-    public UserSettings doSearch(ResourceQuery query) {
+    public UserSettings doSearch(ResourceSearchQuery query) {
         queryBuilderStart = Instant.now();
         queryParameters = "";
         return
@@ -43,7 +43,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceQ
                 .orElse(new UserSettings(Collections.emptyList()));
     }
 
-    private Stream<String> createQueryBuilderStream(ResourceQuery query) {
+    private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
         return query.parameters().get(CONTRIBUTOR).asStream();
     }
 

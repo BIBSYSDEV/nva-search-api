@@ -13,7 +13,7 @@ import no.unit.nva.search2.common.security.CachedJwtProvider;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
-public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery> {
+public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {
 
     private final UserSettingsClient userSettingsClient;
 
@@ -36,7 +36,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceQuery>
     }
 
     @Override
-    public SwsResponse doSearch(ResourceQuery query) {
+    public SwsResponse doSearch(ResourceSearchQuery query) {
         queryBuilderStart = query.getStartTime();
         queryParameters = query.parameters().asMap()
             .entrySet().stream()

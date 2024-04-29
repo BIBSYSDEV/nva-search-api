@@ -7,40 +7,29 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Functions.expandYearToDate;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search2.common.constant.Words.SOURCE;
-import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.DEFAULT_RESOURCE_SORT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search2.resource.Constants.selectByLicense;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
@@ -54,14 +43,14 @@ import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
-import static org.opensearch.index.query.QueryBuilders.termQuery;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,106 +60,40 @@ import java.util.stream.Stream;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.constant.Words;
-import no.unit.nva.search2.common.enums.PublicationStatus;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
-import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
-public final class ResourceQuery extends Query<ResourceParameter> {
+public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
+    private final ResourceStreamBuilders streamBuilders;
+    private final ResourceFilter filterBuilder;
     private boolean useCsvFieldsAsSource;
+    private final Map<String,String> additionalQueryParameters = new HashMap<>();
 
-    private ResourceQuery() {
+    private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
-    }
-
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     * <p>See {@link #withRequiredStatus(PublicationStatus...)} for the correct way to filter by status</p>
-     */
-    private void assignStatusImpossibleWhiteList() {
-        filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
+        streamBuilders = new ResourceStreamBuilders(this.queryTools, parameters());
+        filterBuilder = new ResourceFilter(this);
     }
 
     public static ResourceParameterValidator builder() {
         return new ResourceParameterValidator();
-    }
-
-    /**
-     * Filter on Required Status.
-     *
-     * <p>Only STATUES specified here will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link PublicationStatus} for available values.</p>
-     *
-     * @param publicationStatus the required statues
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceQuery withRequiredStatus(PublicationStatus... publicationStatus) {
-        final var values = Arrays.stream(publicationStatus)
-            .map(PublicationStatus::toString)
-            .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
-            .queryName(STATUS);
-        this.filters.add(filter);
-        return this;
-    }
-
-    public ResourceQuery withoutRange() {
-        this.parameters().set(FROM, "0");
-        this.parameters().set(SIZE, "3000");
-        return this;
-    }
-
-    public ResourceQuery withoutAggregation() {
-        this.parameters().set(AGGREGATION, NONE);
-        return this;
-    }
-
-    /**
-     * Filter on organization.
-     * <P>Only documents belonging to organization specified are searchable (for the user)
-     * </p>
-     *
-     * @param organization uri of publisher
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceQuery withOrganization(URI organization) {
-        final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-            .queryName(PUBLISHER);
-        this.filters.add(filter);
-        return this;
-    }
-
-    public ResourceQuery withOnlyCsvFields() {
-        this.useCsvFieldsAsSource = true;
-        return this;
-    }
-
-    public ResourceQuery withUserSettings(UserSettingsClient userSettingsClient) {
-        this.userSettingsClient = userSettingsClient;
-        return this;
     }
 
     @Override
@@ -223,7 +146,12 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         return
             fromUri(openSearchUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
+                .addQueryParameters(getQueryParameters())
                 .getUri();
+    }
+
+    private Map<String, String> getQueryParameters() {
+        return additionalQueryParameters;
     }
 
     @Override
@@ -263,45 +191,47 @@ public final class ResourceQuery extends Query<ResourceParameter> {
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
         return switch (key) {
-            case LICENSE, LICENSE_NOT -> builderStreamLicenseQuery(key);
-            case FUNDING -> builderStreamFundingQuery(key);
-            case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, CRISTIN_AS_TYPE);
-            case SCOPUS_IDENTIFIER -> builderStreamAdditionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> builderStreamSubUnitIncludedQuery(key);
+            case LICENSE, LICENSE_NOT -> streamBuilders.licenseQuery(key);
+            case FUNDING -> streamBuilders.fundingQuery(key);
+            case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
+            case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
+            case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
             case SEARCH_ALL -> builderStreamSearchAllWithBoostsQuery();
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamLicenseQuery(ResourceParameter key) {
-        var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
-        return queryTools.queryToEntry(key, query);
+    public ResourceFilter withFilter() {
+        return filterBuilder;
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamAdditionalIdentifierQuery(
-        ResourceParameter key, String source) {
-        var query = QueryBuilders.nestedQuery(
-            ADDITIONAL_IDENTIFIERS,
-            boolQuery()
-                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, VALUE, KEYWORD), parameters().get(key).as()))
-                .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
-            ScoreMode.None);
-
-        return queryTools.queryToEntry(key, query);
+    public ResourceSearchQuery withOnlyCsvFields() {
+        this.useCsvFieldsAsSource = true;
+        return this;
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamFundingQuery(ResourceParameter key) {
-        var values = parameters().get(key).split(COLON);
-        var query = QueryBuilders.nestedQuery(
-            FUNDINGS,
-            boolQuery()
-                .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))
-                .must(termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
-            ScoreMode.None);
-        return queryTools.queryToEntry(key, query);
+    public ResourceSearchQuery withFixedRange(int from, int size) {
+        this.parameters().set(FROM, String.valueOf(from));
+        this.parameters().set(SIZE, String.valueOf(size));
+        return this;
     }
 
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamSearchAllWithBoostsQuery() {
+    public ResourceSearchQuery withoutAggregation() {
+        this.parameters().set(AGGREGATION, NONE);
+        return this;
+    }
+
+    public ResourceSearchQuery withScrollTime(String time) {
+        this.additionalQueryParameters.put("scroll", time);
+        return this;
+    }
+
+    public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
+        this.userSettingsClient = userSettingsClient;
+        return this;
+    }
+
+    private Stream<Map.Entry<ResourceParameter, QueryBuilder>> builderStreamSearchAllWithBoostsQuery() {
         var fields = fieldsToKeyNames(parameters().get(FIELDS));
         var sevenValues = parameters().get(SEARCH_ALL).asSplitStream(SPACE)
             .limit(7)
@@ -314,7 +244,7 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             .queryName(SEARCH_ALL.asCamelCase())
             .must(QueryBuilders.multiMatchQuery(sevenValues)
                 .fields(fields)
-                .type(Type.CROSS_FIELDS)
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                 .operator(Operator.AND));
 
         if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
@@ -326,29 +256,6 @@ public final class ResourceQuery extends Query<ResourceParameter> {
             query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
         }
         return queryTools.queryToEntry(SEARCH_ALL, query);
-    }
-
-    private Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamSubUnitIncludedQuery(ResourceParameter key) {
-        var query =
-            parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-                ? termQuery(extractTermPath(key), parameters().get(key).as())
-                : termQuery(extractMatchPath(key), parameters().get(key).as());
-
-        return queryTools.queryToEntry(key, query);
-    }
-
-    private String extractTermPath(ResourceParameter key) {
-        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
-    }
-
-    private String extractMatchPath(ResourceParameter key) {
-        return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
-    }
-
-    private boolean isLookingForOneContributor() {
-        return parameters().get(CONTRIBUTOR)
-            .asSplitStream(COMMA)
-            .count() == 1;
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
@@ -372,10 +279,26 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         }
     }
 
-    public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceQuery> {
+    private boolean isLookingForOneContributor() {
+        return parameters().get(CONTRIBUTOR)
+            .asSplitStream(COMMA)
+            .count() == 1;
+    }
+
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
+     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
+     */
+    private void assignStatusImpossibleWhiteList() {
+        filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
+    }
+
+    public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
         ResourceParameterValidator() {
-            super(new ResourceQuery());
+            super(new ResourceSearchQuery());
         }
 
         @Override
@@ -395,13 +318,13 @@ public final class ResourceQuery extends Query<ResourceParameter> {
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (searchQuery.parameters().isPresent(PAGE)) {
+                if (searchQuery.parameters().isPresent(FROM)) {
+                    var page = searchQuery.parameters().get(PAGE).<Number>as();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
+                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters().remove(PAGE);
+                searchQuery.parameters().remove(PAGE);
             }
         }
 
@@ -437,15 +360,15 @@ public final class ResourceQuery extends Query<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
-                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
+                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                     PUBLICATION_LANGUAGE_SHOULD -> query.parameters().set(qpKey, expandLanguage(decodedValue));
+                     PUBLICATION_LANGUAGE_SHOULD -> searchQuery.parameters().set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                      MODIFIED_BEFORE, MODIFIED_SINCE,
-                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> query.parameters().set(qpKey, expandYearToDate(decodedValue));
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> searchQuery.parameters().set(qpKey, expandYearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }

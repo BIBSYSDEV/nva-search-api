@@ -14,7 +14,7 @@ import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -44,13 +44,15 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
         validateAccessRight(requestInfo.getAccessRights());
 
         return
-            ResourceQuery.builder()
+            ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
-                .withOrganization(requestInfo.getCurrentCustomer())
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
+                .organization(requestInfo.getCurrentCustomer())
+                .apply()
                 .doSearch(opensearchClient);
     }
 

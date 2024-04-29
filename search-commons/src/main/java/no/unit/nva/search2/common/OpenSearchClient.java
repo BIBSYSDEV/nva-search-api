@@ -101,14 +101,14 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
-        logger.debug(qbs.source().query().toString());
+        logger.debug(qbs.body());
         return HttpRequest
-            .newBuilder(qbs.requestUri())
+            .newBuilder(qbs.uri())
             .headers(
                 ACCEPT, MediaType.JSON_UTF_8.toString(),
                 CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
                 AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-            .POST(HttpRequest.BodyPublishers.ofString(qbs.source().toString())).build();
+            .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build();
     }
 
 

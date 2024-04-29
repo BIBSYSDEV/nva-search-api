@@ -225,7 +225,7 @@ class SearchResourceHandlerTest {
 
 
     private void prepareRestHighLevelClientOkResponse(List<ExportCsv> exportCsvs) throws IOException {
-        var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs);
+        var jsonResponse = FakeSearchResponse.generateSearchResponseString(exportCsvs, null);
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
         when(mockedSearchClient.doSearch(any()))

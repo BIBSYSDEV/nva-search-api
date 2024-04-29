@@ -59,7 +59,7 @@ import no.unit.nva.search2.common.IndexingClient;
 import no.unit.nva.search2.common.RestHighLevelClientWrapper;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.ticket.TicketClient;
-import no.unit.nva.search2.ticket.TicketQuery;
+import no.unit.nva.search2.ticket.TicketSearchQuery;
 import no.unit.nva.search2.ticket.TicketStatus;
 import no.unit.nva.search2.ticket.TicketType;
 import nva.commons.apigateway.AccessRight;
@@ -70,7 +70,6 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.apache.http.HttpHost;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -114,15 +113,6 @@ class TicketClientTest {
 
         when(mockedRequestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(testOrganizationId));
         when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
-        when(mockedRequestInfo.userIsAuthorized(AccessRight.SUPPORT))
-            .thenReturn(Boolean.TRUE)
-            .thenReturn(Boolean.FALSE);
-        when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_DOI))
-            .thenReturn(Boolean.FALSE)
-            .thenReturn(Boolean.TRUE);
-        when(mockedRequestInfo.userIsAuthorized(AccessRight.MANAGE_PUBLISHING_REQUESTS))
-            .thenReturn(Boolean.FALSE)
-            .thenReturn(Boolean.TRUE);
         when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
         createIndex();
         populateIndex();
@@ -166,11 +156,12 @@ class TicketClientTest {
             var resourceClient2 = new TicketClient(httpClient, setupMockedCachedJwtProvider());
             assertThrows(
                 RuntimeException.class,
-                () -> TicketQuery.builder()
+                () -> TicketSearchQuery.builder()
                     .withRequiredParameters(SIZE, FROM)
                     .fromQueryParameters(toMapEntries)
                     .build()
-                    .withFilterOrganization(testOrganizationId)
+                    .withFilter()
+                    .organization(testOrganizationId).apply()
                     .doSearch(resourceClient2)
             );
         }
@@ -179,15 +170,14 @@ class TicketClientTest {
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
-            var query1 = TicketQuery.builder()
+            var query1 = TicketSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withFilterOrganization(testOrganizationId)
-                .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .withCurrentUser(CURRENT_USERNAME)
-                .applyFilters();
+                .withFilter()
+                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                .organization(testOrganizationId).apply();
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -213,15 +203,14 @@ class TicketClientTest {
             var uri = URI.create("https://x.org/?id=018b857b77b7");
 
             var pagedResult =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -232,15 +221,14 @@ class TicketClientTest {
         void uriRequestPageableReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters();
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -255,15 +243,14 @@ class TicketClientTest {
         void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters();
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -299,12 +286,13 @@ class TicketClientTest {
 
 
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .applyContextAndAuthorize(mockedRequestInfoLocal);
+                    .withFilter()
+                    .fromRequestInfo(mockedRequestInfoLocal);
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -328,12 +316,12 @@ class TicketClientTest {
                 .thenReturn(query);
 
             var csvResult =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromRequestInfo(mockedRequestInfo)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .applyContextAndAuthorize(mockedRequestInfo)
+                    .withFilter().fromRequestInfo(mockedRequestInfo)
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -342,15 +330,15 @@ class TicketClientTest {
         @MethodSource("uriSortingProvider")
         void uriRequestWithSortingReturnsSuccessfulResponse(URI uri) throws ApiGatewayException {
             var query =
-                TicketQuery.builder()
+                TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withFilterOrganization(testOrganizationId)
-                    .withTicketType(DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .withCurrentUser(CURRENT_USERNAME)
-                    .applyFilters();
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId)
+                    .apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -365,7 +353,7 @@ class TicketClientTest {
         void uriRequestReturnsBadRequest(URI uri) {
             assertThrows(
                 BadRequestException.class,
-                () -> TicketQuery.builder()
+                () -> TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -374,17 +362,20 @@ class TicketClientTest {
         }
 
         @Test
-        void uriRequestReturnsUnauthorized() {
+        void uriRequestReturnsUnauthorized() throws UnauthorizedException {
             AtomicReference<URI> uri = new AtomicReference<>();
             uriSortingProvider().findFirst().ifPresent(uri::set);
             var mockedRequestInfoLocal = mock(RequestInfo.class);
+            when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of());
+            when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(null);
             assertThrows(
                 UnauthorizedException.class,
-                () -> TicketQuery.builder()
+                () -> TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri.get()))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .applyContextAndAuthorize(mockedRequestInfoLocal)
+                    .withFilter()
+                    .fromRequestInfo(mockedRequestInfoLocal)
                     .doSearch(searchClient));
         }
 
