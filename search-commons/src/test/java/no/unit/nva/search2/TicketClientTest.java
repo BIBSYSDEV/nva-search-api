@@ -177,7 +177,7 @@ class TicketClientTest {
                 .build()
                 .withFilter()
                 .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply();
+                .apply();
 
             var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
@@ -188,7 +188,7 @@ class TicketClientTest {
             assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
 
             assertThat(aggregations.get(TYPE).size(), is(3));
-            assertThat(aggregations.get(STATUS).get(0).count(), is(11));
+            assertThat(aggregations.get(STATUS).get(0).count(), is(12));
             assertThat(aggregations.get(BY_USER_PENDING.asCamelCase()).size(), is(2));
             assertThat(aggregations.get(PUBLICATION_STATUS).size(), is(3));
 

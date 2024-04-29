@@ -3,6 +3,8 @@ package no.unit.nva.search2.resource;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
 import no.unit.nva.search2.common.enums.PublicationStatus;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import no.unit.nva.search2.common.records.FilterBuilder;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
@@ -20,6 +22,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     public ResourceFilter(ResourceSearchQuery query) {
         this.resourceSearchQuery = query;
+        this.resourceSearchQuery.filters.set();
     }
 
     @Override
@@ -29,7 +32,14 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     @Override
     public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-        return null;
+        final var organization = requestInfo
+            .getTopLevelOrgCristinId()
+            .orElse(requestInfo.getPersonAffiliation());
+
+        return
+            organization(organization)
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply();
     }
 
     /**
