@@ -65,7 +65,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * Split
+     * Split.
      * @param delimiter regex to split on
      * @return The value split, or null.
      */
@@ -76,7 +76,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * asSplitStream
+     * AsSplitStream.
      * @param delimiter regex to split on
      * @return The value as an optional Stream, split by delimiter.
      */
@@ -86,7 +86,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * asStream
+     * AsStream.
      * @return The value as an optional Stream.
      */
     public Stream<String> asStream() {
@@ -94,7 +94,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * asBoolean
+     * AsBoolean.
      * @return False if value is null or FALSE, otherwise True
      */
     public Boolean asBoolean() {
