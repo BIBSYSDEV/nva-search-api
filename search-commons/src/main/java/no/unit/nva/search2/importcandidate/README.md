@@ -223,8 +223,8 @@ Accept: application/json
 | doi                        | doi                      | fuzzyKeyword | one_or_more_item         | doi                                                  |
 | doi_not                    | doiNot                   | text         | no_items                 | doi                                                  |
 | files_status               | filesStatus              | keyword      | all_items                | filesStatus.keyword                                  |
-| id                         | id                       | keyword      | one_or_more_item         | id.keyword                                           |
-| id_not                     | idNot                    | keyword      | no_items                 | id.keyword                                           |
+| id                         | id                       | fuzzyKeyword | one_or_more_item         | id                                                   |
+| id_not                     | idNot                    | fuzzyKeyword | no_items                 | id                                                   |
 | import_status              | importStatus             | fuzzyKeyword | one_or_more_item         | importStatus.candidateStatus                         |
 | import_status_not          | importStatusNot          | keyword      | no_items                 | importStatus.candidateStatus.keyword                 |
 | license                    | license                  | custom       | all_items                | associatedArtifacts.license.keyword                  |
@@ -242,7 +242,6 @@ Accept: application/json
 | type                       | type                     | fuzzyKeyword | one_or_more_item         | publicationInstance.type                             |
 | type_not                   | typeNot                  | keyword      | no_items                 | publicationInstance.type.keyword                     |
 | search_all                 | searchAll                | freeText     | all_items                | q                                                    |
-
  [!NOTE]
 > <p>Valid SortKeys </p>
 >
