@@ -42,8 +42,9 @@ public final class Patterns {
     public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort_?order|order";
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
-
     public static final String PATTERN_IS_PIPE = "\\|";
+    public static final String PATTERN_IS_PUBLICATION_TYPE = "(?i)publication_?instance|publication_?type";
+    public static final String PATTERN_IS_PUBLICATION_TYPE_NOT = "(?i)publication_?instance_?not|publication_?type_?not";
 
     /**
      * Pattern for matching a funding string. funding source and project_id together separated by ':'

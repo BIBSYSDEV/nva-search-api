@@ -13,6 +13,7 @@
       "type": "AcademicArticle"
     },
     "associatedArtifacts": [],
+    "filesStatus": "noFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/899497CD-FC96-431D-BE38-5B10F1428969/2021",
       "type": "Journal"
@@ -20,7 +21,29 @@
     "createdDate": "2023-11-20T19:38:32.361612653Z",
     "totalVerifiedContributors": 0,
     "mainTitle": "All-optical multi-wavelength regenerator based on four-wave mixing",
-    "organizations": [],
+    "organizations": [{
+      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/2012.0.0.0",
+      "type": "Organization",
+      "labels": {
+        "nb": "Oslo universitetssykehus HF",
+        "en": "Oslo University Hospital"
+      }
+      }, {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7476.0.0.0",
+        "type": "Organization",
+        "labels": {
+          "nb": "Statens arbeidsmiljøinstitutt",
+          "en": "National Institute of Occupational Health"
+        }
+      }, {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
+        "type": "Organization",
+        "labels": {
+          "nb": "Universitetet i Bergen",
+          "en": "University of Bergen"
+        }
+      }
+    ],
     "additionalIdentifiers": [
       {
         "sourceName": "Scopus",
@@ -181,6 +204,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/B812F187-1A4E-4348-8158-C10371B8A08C/2021",
       "type": "Journal"
@@ -345,6 +369,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "createdDate": "2023-11-20T19:38:19.691273690Z",
     "totalVerifiedContributors": 3,
     "mainTitle": "Njord: A Fishing Trawler Dataset",
@@ -548,6 +573,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/948B1795-A32A-4525-998B-36579C43795F/2021",
       "type": "Journal"
@@ -773,6 +799,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/D04CBD05-5396-425E-8777-79181FE32E6D/2020",
       "type": "Journal"
@@ -947,6 +974,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/497EF4B2-D0DE-4525-AF6E-B53E30A55420/2023",
       "type": "Journal"
@@ -1233,6 +1261,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/22E08234-76E2-4708-BE1F-12488411E67B/2023",
       "type": "Journal"
@@ -1408,6 +1437,7 @@
         "visibleForNonOwner": true
       }
     ],
+    "filesStatus": "hasPublicFiles",
     "journal": {
       "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/4CE88F3B-DEC2-4893-A1D0-A8186BF64290/2023",
       "type": "Journal"

@@ -12,7 +12,7 @@ import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
 import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -36,13 +36,14 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
-            ResourceQuery.builder()
+            ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter().requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(opensearchClient);
+
     }
 
     @Override

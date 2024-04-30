@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -67,7 +66,7 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.resource.ResourceClient;
-import no.unit.nva.search2.resource.ResourceQuery;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -95,7 +94,7 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 9;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -148,12 +147,13 @@ class ResourceClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
-            var query1 = ResourceQuery.builder()
+            var query1 = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
             var response1 = searchClient.doSearch(query1);
 
             assertNotNull(response1);
@@ -183,12 +183,13 @@ class ResourceClientTest {
                 setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -205,12 +206,13 @@ class ResourceClientTest {
                 setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -226,12 +228,13 @@ class ResourceClientTest {
                 new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -247,12 +250,13 @@ class ResourceClientTest {
                 new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, setupMockedCachedJwtProvider());
 
             var uri = URI.create("https://x.org/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254");
-            var response = ResourceQuery.builder()
+            var response = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .withRequiredParameters(FROM, SIZE)
                 .build()
-                .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .doSearch(searchClient);
 
             assertNotNull(response);
@@ -264,13 +268,14 @@ class ResourceClientTest {
             var uri = URI.create("https://x.org/?id=018b857b77b7&from=10");
 
             var pagedResult =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
-                        DRAFT_FOR_DELETION)
+                    .withFilter()
+                    .requiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
+                        DRAFT_FOR_DELETION).apply()
                     .doSearch(searchClient);
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
@@ -280,14 +285,16 @@ class ResourceClientTest {
         void withOrganizationDoWork() throws BadRequestException {
             var uri = URI.create("https://x.org/");
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withRequiredParameters(FROM, SIZE)
                     .build()
-                    .withRequiredStatus(PUBLISHED_METADATA, PUBLISHED)
-                    .withOrganization(
-                        URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+                    .withFilter()
+                    .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                    .organization(
+                        URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"))
+                    .apply();
 
             var response = searchClient.doSearch(query);
             assertNotNull(response);
@@ -301,13 +308,14 @@ class ResourceClientTest {
         void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .validate()
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -324,12 +332,13 @@ class ResourceClientTest {
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
@@ -349,13 +358,14 @@ class ResourceClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
             var csvResult =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .withMediaType(Words.TEXT_CSV)
                     .build()
-                    .withRequiredStatus(PUBLISHED_METADATA)
+                    .withFilter()
+                    .requiredStatus(PUBLISHED_METADATA).apply()
                     .doSearch(searchClient);
             assertNotNull(csvResult);
         }
@@ -364,12 +374,13 @@ class ResourceClientTest {
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.getSort().toString());
             var response = searchClient.doSearch(query);
@@ -384,7 +395,7 @@ class ResourceClientTest {
         void failToSearchUri(URI uri) {
             assertThrows(
                 BadRequestException.class,
-                () -> ResourceQuery.builder()
+                () -> ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -395,13 +406,14 @@ class ResourceClientTest {
         @Test
         void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2022"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -413,13 +425,14 @@ class ResourceClientTest {
         @Test
         void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -435,13 +448,14 @@ class ResourceClientTest {
             var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
                 StandardCharsets.UTF_8);
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), viewingScope,
                         EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);
@@ -461,12 +475,13 @@ class ResourceClientTest {
             var topLevelOrg = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
                 StandardCharsets.UTF_8);
             var query =
-                ResourceQuery.builder()
+                ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
-                    .withRequiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED);
+                    .withFilter()
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED).apply();
 
             logger.info(query.parameters().get(SORT).toString());
             var response = searchClient.doSearch(query);

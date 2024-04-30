@@ -1,19 +1,12 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
+import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComma;
 import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
-import static no.unit.nva.search2.common.constant.Words.PIPE;
-import static nva.commons.core.StringUtils.SPACE;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -21,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
@@ -35,12 +27,12 @@ import org.slf4j.LoggerFactory;
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
  */
-public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends Query<K>> {
+public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends SearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
-    protected final transient Query<K> query;
+    protected final transient SearchQuery<K> searchQuery;
     protected transient boolean notValidated = true;
 
     /**
@@ -52,8 +44,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      * .build()
      * </samp>
      */
-    public ParameterValidator(Query<K> query) {
-        this.query = query;
+    public ParameterValidator(SearchQuery<K> searchQuery) {
+        this.searchQuery = searchQuery;
     }
 
     /**
@@ -65,7 +57,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         if (notValidated) {
             validate();
         }
-        return (Q) query;
+        return (Q) searchQuery;
     }
 
     /**
@@ -74,10 +66,10 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
         assignDefaultValues();
-        for (var entry : query.parameters().getSearchEntries()) {
+        for (var entry : searchQuery.parameters().getSearchEntries()) {
             validatesEntrySet(entry);
         }
-        for (var entry : query.parameters().getPageEntries()) {
+        for (var entry : searchQuery.parameters().getPageEntries()) {
             validatesEntrySet(entry);
         }
         if (!requiredMissing().isEmpty()) {
@@ -129,7 +121,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            query.getSort().asSplitStream(COMMA)
+            searchQuery.getSort().asSplitStream(COMMA)
                 .forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
@@ -147,12 +139,12 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     protected Set<K> requiredMissing() {
         return
             required().stream()
-                    .filter(key -> !query.parameters().isPresent(key))
+                    .filter(key -> !searchQuery.parameters().isPresent(key))
                 .collect(Collectors.toSet());
     }
 
     protected Set<K> required() {
-        return query.parameters().otherRequired;
+        return searchQuery.parameters().otherRequired;
     }
 
     protected void validatesEntrySet(Map.Entry<K, String> entry) throws BadRequestException {
@@ -169,8 +161,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      * Adds query and path parameters from requestInfo.
      */
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
-        query.setMediaType(requestInfo.getHeaders().get(ACCEPT));
-        query.setNvaSearchApiUri(requestInfo.getRequestUri());
+        searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
+        searchQuery.setNvaSearchApiUri(requestInfo.getRequestUri());
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
 
@@ -209,12 +201,12 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     @SafeVarargs
     public final ParameterValidator<K, Q> withRequiredParameters(K... requiredParameters) {
         var tmpSet = Set.of(requiredParameters);
-        query.parameters().otherRequired.addAll(tmpSet);
+        searchQuery.parameters().otherRequired.addAll(tmpSet);
         return this;
     }
 
     public final ParameterValidator<K, Q> withMediaType(String mediaType) {
-        query.setMediaType(mediaType);
+        searchQuery.setMediaType(mediaType);
         return this;
     }
 
@@ -225,39 +217,13 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      * @apiNote This is intended to be used when setting up tests.
      */
     public final ParameterValidator<K, Q> withDockerHostUri(URI uri) {
-        query.setOpenSearchUri(uri);
+        searchQuery.setOpenSearchUri(uri);
         return this;
     }
 
     protected void mergeToKey(K key, String value) {
-        query.parameters().set(key, mergeWithColonOrComma(query.parameters().get(key).as(), value));
+        searchQuery.parameters().set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
     }
-
-    private String mergeWithColonOrComma(String oldValue, String newValue) {
-        if (nonNull(oldValue)) {
-            var delimiter = newValue.matches(PATTERN_IS_ASC_DESC_VALUE) ? COLON : COMMA;
-            return String.join(delimiter, oldValue, newValue);
-        } else {
-            return newValue;
-        }
-    }
-
-    protected String trimSpace(String value) {
-        return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
-    }
-
-    protected String expandYearToDate(String value) {
-        return value.length() == 4 ? value + JANUARY_FIRST : value;
-    }
-
-    protected String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
-        return
-            Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
-                .map(fromString)
-                .map(Enum::toString)
-                .collect(Collectors.joining(COMMA));
-    }
-
 
     @JacocoGenerated
     protected String ignoreInvalidFields(String value) {

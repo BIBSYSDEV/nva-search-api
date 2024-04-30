@@ -22,6 +22,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NA;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
+import static no.unit.nva.search2.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search2.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search2.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search2.common.enums.ParameterKind.FREE_TEXT;
@@ -40,6 +41,7 @@ import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_PATHS;
 import static no.unit.nva.search2.ticket.Constants.OWNER_FIELDS;
 import static no.unit.nva.search2.ticket.Constants.PUBLICATION_ID_OR_IDENTIFIER_KEYWORD;
+import static no.unit.nva.search2.ticket.Constants.PUBLICATION_INSTANCE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.PUBLICATION_MAIN_TITLE_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.PUBLICATION_OWNER_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.PUBLICATION_STATUS_KEYWORD;
@@ -71,7 +73,7 @@ public enum TicketParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
     ASSIGNEE(CUSTOM, ALL_ITEMS, ASSIGNEE_FIELDS),
-    ASSIGNEE_NOT(TEXT, NO_ITEMS, ASSIGNEE_FIELDS),
+    ASSIGNEE_NOT(ACROSS_FIELDS, NO_ITEMS, ASSIGNEE_FIELDS),
     BY_USER_PENDING(IGNORED),
     CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
     CUSTOMER_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, CUSTOMER_ID_KEYWORD),
@@ -79,17 +81,19 @@ public enum TicketParameter implements ParameterKey {
     ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ID_KEYWORD),
     ID_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, ID_KEYWORD),
     EXCLUDE_SUBUNITS(IGNORED, ONE_OR_MORE_ITEM, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
-    FINALIZED_BY(TEXT, ALL_ITEMS, FINALIZED_BY_FIELDS),
-    FINALIZED_BY_NOT(TEXT, NO_ITEMS, FINALIZED_BY_FIELDS),
+    FINALIZED_BY(ACROSS_FIELDS, ALL_ITEMS, FINALIZED_BY_FIELDS),
+    FINALIZED_BY_NOT(ACROSS_FIELDS, NO_ITEMS, FINALIZED_BY_FIELDS),
     MESSAGES(TEXT, ALL_ITEMS, MESSAGE_FIELDS),
     MESSAGES_NOT(TEXT, NO_ITEMS, MESSAGE_FIELDS),
     MODIFIED_DATE(DATE, BETWEEN, Words.MODIFIED_DATE),
     ORGANIZATION_ID(CUSTOM, ONE_OR_MORE_ITEM, ORGANIZATION_PATHS, PATTERN_IS_ORGANIZATION, null, null),
     ORGANIZATION_ID_NOT(CUSTOM, NOT_ONE_ITEM, ORGANIZATION_PATHS),
-    OWNER(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, OWNER_FIELDS),
-    OWNER_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, OWNER_FIELDS),
+    OWNER(ACROSS_FIELDS, ONE_OR_MORE_ITEM, OWNER_FIELDS),
+    OWNER_NOT(ACROSS_FIELDS, NOT_ONE_ITEM, OWNER_FIELDS),
     PUBLICATION_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
     PUBLICATION_ID_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, PUBLICATION_ID_OR_IDENTIFIER_KEYWORD),
+    PUBLICATION_TYPE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_KEYWORD),
+    PUBLICATION_TYPE_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, PUBLICATION_INSTANCE_KEYWORD),
     PUBLICATION_MODIFIED_DATE(DATE, BETWEEN, Constants.PUBLICATION_MODIFIED_DATE),
     PUBLICATION_OWNER(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_OWNER_KEYWORD),
     PUBLICATION_OWNER_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, PUBLICATION_OWNER_KEYWORD),
@@ -100,8 +104,8 @@ public enum TicketParameter implements ParameterKey {
     STATUS_NOT(KEYWORD, NOT_ONE_ITEM, STATUS_KEYWORD),
     TYPE(KEYWORD, ONE_OR_MORE_ITEM, TYPE_KEYWORD),
     TYPE_NOT(KEYWORD, NOT_ONE_ITEM, TYPE_KEYWORD),
-    VIEWED_BY(TEXT, ALL_ITEMS, VIEWED_BY_FIELDS),
-    VIEWED_BY_NOT(TEXT, NO_ITEMS, VIEWED_BY_FIELDS),
+    VIEWED_BY(ACROSS_FIELDS, ALL_ITEMS, VIEWED_BY_FIELDS),
+    VIEWED_BY_NOT(ACROSS_FIELDS, NO_ITEMS, VIEWED_BY_FIELDS),
 
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
@@ -151,7 +155,7 @@ public enum TicketParameter implements ParameterKey {
         this.boost = nonNull(boost) ? boost : 1F;
         this.fieldsToSearch = nonNull(fieldsToSearch)
             ? fieldsToSearch.split("\\|")
-            : new String[] {name()};
+            : new String[]{name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);

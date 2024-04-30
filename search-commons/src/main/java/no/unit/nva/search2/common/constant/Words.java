@@ -27,7 +27,6 @@ public final class Words {
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String CONTENT_TYPE = "Content-Type";
-    public static final String CONTEXT_TYPE = "contextType";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
     public static final String COURSE = "course";
@@ -64,7 +63,6 @@ public final class Words {
     public static final String NAME = "name";
     public static final String NONE = "none";
     public static final String NYNORSK_CODE = "nn";
-    public static final String ONE = "1";
     public static final String ONLINE_ISSN = "onlineIssn";
     public static final String ORC_ID = "orcId";
     public static final String OWNER = "owner";

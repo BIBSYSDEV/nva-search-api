@@ -1,4 +1,4 @@
-package no.unit.nva.search2.importcandidate;
+package no.unit.nva.search2.scroll;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
@@ -11,16 +11,28 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
-public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
+public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
 
-    public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
+
+    public ScrollClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
     }
 
     @JacocoGenerated
-    public static ImportCandidateClient defaultClient() {
-        var cachedJwtProvider = OpenSearchClient.getCachedJwtProvider(new SecretsReader());
-        return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
+    public static ScrollClient defaultClient() {
+        var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
+        return new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
+    }
+
+    @Override
+    public SwsResponse doSearch(ScrollQuery query)  {
+        queryBuilderStart = query.getStartTime();
+        return
+            query.assemble()
+                .map(this::createRequest)
+                .map(this::fetch)
+                .map(this::handleResponse)
+                .findFirst().orElseThrow();
     }
 
     @Override

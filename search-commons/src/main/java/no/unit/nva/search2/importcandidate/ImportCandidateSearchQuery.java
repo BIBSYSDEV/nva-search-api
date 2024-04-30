@@ -7,6 +7,7 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WI
 
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.COLON;
@@ -31,6 +32,7 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARC
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
+import static no.unit.nva.search2.resource.Constants.selectByLicense;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
@@ -42,20 +44,22 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
-import no.unit.nva.search2.common.Query;
+import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.QueryTools;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
+import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
-public final class ImportCandidateQuery extends Query<ImportCandidateParameter> {
+public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidateParameter> {
 
-    ImportCandidateQuery() {
+    ImportCandidateSearchQuery() {
         super();
     }
 
@@ -117,6 +121,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
     }
 
     @Override
+    protected String toCsvText(SwsResponse response) {
+        throw new IllegalArgumentException("Not implemented");
+    }
+
+    @Override
+    protected void setFetchSource(SearchSourceBuilder builder) {
+        builder.fetchSource(true);
+    }
+
+    @Override
     protected Map<String, String> facetPaths() {
         return FACET_IMPORT_CANDIDATE_PATHS;
     }
@@ -133,6 +147,7 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return switch (key) {
             case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifier(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> builderStreamAdditionalIdentifier(key, SCOPUS_AS_TYPE);
+            case LICENSE, LICENSE_NOT -> licenseQuery(key);
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
@@ -151,13 +166,16 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         return queryTools.queryToEntry(key, query);
     }
 
+    public Stream<Map.Entry<ImportCandidateParameter, QueryBuilder>> licenseQuery(ImportCandidateParameter key) {
+        var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
+        return queryTools.queryToEntry(key, query);
+    }
 
-    @SuppressWarnings("PMD.GodClass")
     public static class ImportCandidateValidator
-        extends ParameterValidator<ImportCandidateParameter, ImportCandidateQuery> {
+        extends ParameterValidator<ImportCandidateParameter, ImportCandidateSearchQuery> {
 
         ImportCandidateValidator() {
-            super(new ImportCandidateQuery());
+            super(new ImportCandidateSearchQuery());
         }
 
         @Override
@@ -178,13 +196,13 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
         @Override
         protected void applyRulesAfterValidation() {
             // convert page to offset if offset is not set
-            if (query.parameters().isPresent(PAGE)) {
-                if (query.parameters().isPresent(FROM)) {
-                    var page = query.parameters().get(PAGE).<Number>as();
-                    var perPage = query.parameters().get(SIZE).<Number>as();
-                    query.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+            if (searchQuery.parameters().isPresent(PAGE)) {
+                if (searchQuery.parameters().isPresent(FROM)) {
+                    var page = searchQuery.parameters().get(PAGE).<Number>as();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
+                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
                 }
-                query.parameters().remove(PAGE);
+                searchQuery.parameters().remove(PAGE);
             }
         }
 
@@ -217,8 +235,8 @@ public final class ImportCandidateQuery extends Query<ImportCandidateParameter> 
                 ? QueryTools.decodeUTF(value)
                 : value;
             switch (qpKey) {
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> query.parameters().set(qpKey, decodedValue);
-                case FIELDS -> query.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
+                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);

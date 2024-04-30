@@ -34,6 +34,8 @@ paths:
         - $ref: '#/components/parameters/publicationStatusParam'
         - $ref: '#/components/parameters/publicationStatusNotParam'
         - $ref: '#/components/parameters/publicationTitleParam'
+        - $ref: '#/components/parameters/publicationTypeParam'
+        - $ref: '#/components/parameters/publicationTypeNotParam'
         - $ref: '#/components/parameters/statusParam'
         - $ref: '#/components/parameters/statusNotParam'
         - $ref: '#/components/parameters/typeParam'
@@ -79,7 +81,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: "500 info description"
+          description: Internal Error
           content:
             application/json:
               schema:
@@ -237,12 +239,161 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: "500 info description"
+          description: Internal Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /resources/export:
+    get:
+      tags:
+        - external
+      description: '<h3>Export for up to 10.000 public available publications by given criteria</h3>
+      <p>All parameters documented with <code>snake_case</code>, but <code>camelCase</code> is also accepted. 
+      They accept more than one value, each value must be separated by a <code>comma</code>. 
+      If you use <code>space</code> between search phrases, it will usually be interpreted as words that should be found in the text.
+      The more hits it gets, the closer to the top of search result an item will be.</p>'
+      parameters:
+        - $ref: '#/components/parameters/abstractNotParam'
+        - $ref: '#/components/parameters/abstractParam'
+        - $ref: '#/components/parameters/abstractShouldParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryShouldParam'
+        - $ref: '#/components/parameters/contextTypeNotParam'
+        - $ref: '#/components/parameters/contextTypeParam'
+        - $ref: '#/components/parameters/contextTypeShouldParam'
+        - $ref: '#/components/parameters/contributorNameNotParam'
+        - $ref: '#/components/parameters/contributorNameParam'
+        - $ref: '#/components/parameters/contributorNameShouldParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorShouldParam'
+        - $ref: '#/components/parameters/courseNotParam'
+        - $ref: '#/components/parameters/courseParam'
+        - $ref: '#/components/parameters/courseShouldParam'
+        - $ref: '#/components/parameters/createdBeforeParam'
+        - $ref: '#/components/parameters/createdSinceParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiShouldParam'
+        - $ref: '#/components/parameters/fundingIdentifierNotParam'
+        - $ref: '#/components/parameters/fundingIdentifierParam'
+        - $ref: '#/components/parameters/fundingIdentifierShouldParam'
+        - $ref: '#/components/parameters/fundingParam'
+        - $ref: '#/components/parameters/fundingSourceNotParam'
+        - $ref: '#/components/parameters/fundingSourceParam'
+        - $ref: '#/components/parameters/fundingSourceShouldParam'
+        - $ref: '#/components/parameters/grantIdentifierNotParam'
+        - $ref: '#/components/parameters/grantIdentifierParam'
+        - $ref: '#/components/parameters/grantIdentifierShouldParam'
+        - $ref: '#/components/parameters/hasFileParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idShouldParam'
+        - $ref: '#/components/parameters/instanceTypeNotParam'
+        - $ref: '#/components/parameters/instanceTypeParam'
+        - $ref: '#/components/parameters/instanceTypeShouldParam'
+        - $ref: '#/components/parameters/institutionNotParam'
+        - $ref: '#/components/parameters/institutionParam'
+        - $ref: '#/components/parameters/institutionShouldParam'
+        - $ref: '#/components/parameters/isbnNotParam'
+        - $ref: '#/components/parameters/isbnParam'
+        - $ref: '#/components/parameters/isbnShouldParam'
+        - $ref: '#/components/parameters/issnNotParam'
+        - $ref: '#/components/parameters/issnParam'
+        - $ref: '#/components/parameters/issnShouldParam'
+        - $ref: '#/components/parameters/licenseNotParam'
+        - $ref: '#/components/parameters/licenseParam'
+        - $ref: '#/components/parameters/licenseShouldParam'
+        - $ref: '#/components/parameters/modifiedBeforeParam'
+        - $ref: '#/components/parameters/modifiedSinceParam'
+        - $ref: '#/components/parameters/orcidNotParam'
+        - $ref: '#/components/parameters/orcidParam'
+        - $ref: '#/components/parameters/orcidShouldParam'
+        - $ref: '#/components/parameters/parentPublicationParam'
+        - $ref: '#/components/parameters/parentPublicationShouldParam'
+        - $ref: '#/components/parameters/projectNotParam'
+        - $ref: '#/components/parameters/projectParam'
+        - $ref: '#/components/parameters/projectShouldParam'
+        - $ref: '#/components/parameters/publicationLanguageNotParam'
+        - $ref: '#/components/parameters/publicationLanguageParam'
+        - $ref: '#/components/parameters/publicationLanguageShouldParam'
+        - $ref: '#/components/parameters/publicationYearBeforeParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearShouldParam'
+        - $ref: '#/components/parameters/publicationYearSinceParam'
+        - $ref: '#/components/parameters/publishedBeforeParam'
+        - $ref: '#/components/parameters/publishedBetweenParam'
+        - $ref: '#/components/parameters/publishedSinceParam'
+        - $ref: '#/components/parameters/publisherIdNotParam'
+        - $ref: '#/components/parameters/publisherIdParam'
+        - $ref: '#/components/parameters/publisherIdShouldParam'
+        - $ref: '#/components/parameters/publisherNotParam'
+        - $ref: '#/components/parameters/publisherParam'
+        - $ref: '#/components/parameters/publisherShouldParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodBeforeParam'
+        - $ref: '#/components/parameters/scientificReportingPeriodSinceParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
+        - $ref: '#/components/parameters/seriesNotParam'
+        - $ref: '#/components/parameters/seriesParam'
+        - $ref: '#/components/parameters/seriesShouldParam'
+        - $ref: '#/components/parameters/statusNotParam'
+        - $ref: '#/components/parameters/statusParam'
+        - $ref: '#/components/parameters/statusShouldParam'
+        - $ref: '#/components/parameters/tagsNotParam'
+        - $ref: '#/components/parameters/tagsParam'
+        - $ref: '#/components/parameters/tagsShouldParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleShouldParam'
+        - $ref: '#/components/parameters/topLevelOrganizationParam'
+        - $ref: '#/components/parameters/unitNotParam'
+        - $ref: '#/components/parameters/unitParam'
+        - $ref: '#/components/parameters/unitShouldParam'
+        - $ref: '#/components/parameters/userAffiliationNotParam'
+        - $ref: '#/components/parameters/userAffiliationParam'
+        - $ref: '#/components/parameters/userAffiliationShouldParam'
+        - $ref: '#/components/parameters/userNotParam'
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/userShouldParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/excludeSubunits'
+        - $ref: '#/components/parameters/scientificValueParam'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ExportResourcesFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        "302":
+          description: Redirect to exported data
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: Internal Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /customer/resources:
     get:
       description: "Search for publications by customer
@@ -392,7 +543,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: "500 info description"
+          description: Internal Error
           content:
             application/json:
               schema:
@@ -403,36 +554,46 @@ paths:
       description: "Search for import candidates by given criteria
       [More info in README](https://github.com/BIBSYSDEV/nva-search-api/blob/main/search-commons/src/main/java/no/unit/nva/search2/importcandidate/README.md)"
       parameters:
-        - in: query
-          name: query
-          description: "Term to search for in import candidates."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: orderBy
-          description: "Field to order result by."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: sortOrder
-          description: "Order of search results (asc or desc)."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: from
-          description: "Start position from results, 0-based."
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: results
-          description: "Maximum number of import candidates in response."
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/additionalIdentifiersParam'
+        - $ref: '#/components/parameters/additionalIdentifiersNotParam'
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/createdDateParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/collaborationTypeParam'
+        - $ref: '#/components/parameters/collaborationTypeNotParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/hasFileParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/importStatusParam'
+        - $ref: '#/components/parameters/importStatusNotParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/licenseParam'
+        - $ref: '#/components/parameters/licenseNotParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearBeforeParam'
+        - $ref: '#/components/parameters/publicationYearSinceParam'
+        - $ref: '#/components/parameters/publisherParam'
+        - $ref: '#/components/parameters/publisherNotParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/topLevelOrganizationParam'
+        - $ref: '#/components/parameters/topLevelOrganizationNotParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/typeParam'
+        - $ref: '#/components/parameters/typeNotParam'
+        - $ref: '#/components/parameters/searchAllParam'
       x-amazon-apigateway-integration:
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsImportCandidatesFunction.Arn}:live/invocations
@@ -575,6 +736,26 @@ components:
           value: covid, threat
       schema:
         type: string
+    additionalIdentifiersParam:
+      name: additional_identifiers
+      in: query
+      description: "Returns document with identifier value."
+      example: "2-s2.0-85120179645"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    additionalIdentifiersNotParam:
+      name: additional_identifiers
+      in: query
+      description: "Returns document without identifier value."
+      example: "2-s2.0-85120179645"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
     aggregationParam:
       name: aggregation
       in: query
@@ -591,6 +772,26 @@ components:
           value: "fundingSource, status, topLevelOrganisations, scientificIndex"
       schema:
         $ref: '#/components/schemas/AggregationNames'
+    collaborationTypeParam:
+      name: collaboration_type
+      in: query
+      description: "Returns document with enum."
+      example: "Collaborative"
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: '#/components/schemas/CollaborationValues'
+    collaborationTypeNotParam:
+      name: collaboration_type_not
+      in: query
+      description: "Returns document without enum."
+      example: "Collaborative"
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: '#/components/schemas/CollaborationValues'
     contextTypeNotParam:
       name: context_type_not
       in: query
@@ -945,6 +1146,26 @@ components:
       schema:
         type: string
         format: uuid
+    importStatusParam:
+      name: import_status
+      in: query
+      description: "Returns document with this importStatus."
+      example: NOT_IMPORTED
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: "#/components/schemas/ImportStatusValues"
+    importStatusNotParam:
+      name: import_status_not
+      in: query
+      description: "Returns document with this importStatus."
+      example: NOT_IMPORTED
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: "#/components/schemas/ImportStatusValues"
     instanceTypeParam:
       name: instance_type
       in: query
@@ -1370,6 +1591,15 @@ components:
       explode: true
       schema:
         type: string
+    searchAllParam:
+      name: search_all
+      in: query
+      description: "Returns document with this search phrase"
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
     seriesNotParam:
       name: series_not
       in: query
@@ -1488,6 +1718,15 @@ components:
       name: top_level_organization
       in: query
       description: "Returns documents with this reference."
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    topLevelOrganizationNotParam:
+      name: top_level_organization_not
+      in: query
+      description: "Returns documents without this reference."
       required: false
       style: form
       explode: true
@@ -1803,6 +2042,24 @@ components:
       name: publication_title
       in: query
       description: "Returns document with these publication titles"
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    publicationTypeParam:
+      name: publication_type
+      in: query
+      description: "Returns document with these types"
+      required: false
+      style: form
+      explode: true
+      schema:
+        $ref: "#/components/schemas/CategoryEnum"
+    publicationTypeNotParam:
+      name: publication_type_not
+      in: query
+      description: "Returns document without these types"
       required: false
       style: form
       explode: true
@@ -2394,6 +2651,16 @@ components:
               JournalInterview,JournalIssue,JournalLeader,JournalLetter,JournalReview,Lecture,LiteraryArts,MediaBlogPost,MediaFeatureArticle,MediaInterview,MediaParticipationInRadioOrTv,
               MediaReaderOpinion,MovingPicture,MusicPerformance,NonFictionChapter,NonFictionMonograph,OtherPresentation,OtherStudentWork,PerformingArts,PopularScienceArticle,PopularScienceChapter,
               PopularScienceMonograph,ProfessionalArticle,ReportBasic,ReportBookOfAbstract,ReportPolicy,ReportResearch,ReportWorkingPaper,StudyProtocol,Textbook,TextbookChapter,VisualArts ]
+    CollaborationValues:
+      type: string
+      enum:
+        - Collaborative
+        - NonCollaborative
+    ImportStatusValues:
+      type: string
+      enum:
+        - IMPORTED
+        - NOT_IMPORTED
     ContextValues:
       type: string
       enum: [ Anthology,Artistic,Book,Degree,Event,ExhibitionContent,Journal,MediaContribution,MediaContributionPeriodical,Report,UnconfirmedJournal,UnconfirmedMediaContributionPeriodical ]

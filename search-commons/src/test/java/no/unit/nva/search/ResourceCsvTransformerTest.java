@@ -16,17 +16,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-class CsvTransformerTest {
+class ResourceCsvTransformerTest {
 
     private static final String COMMA_DELIMITER = ",";
 
     @Test
     void shouldAllowCreationOfCsv() throws IOException {
         var expected = List.of(csvWithYearOnly(), csvWithYearAndMonthOnly(), csvWithFullDate());
-        var json = FakeSearchResponse.generateSearchResponseString(expected);
+        var json = FakeSearchResponse.generateSearchResponseString(expected, null);
         var searchResponse = SearchResponseDto.fromSearchResponse(getSearchResponseFromJson(json), randomUri());
 
-        var value = CsvTransformer.transform(searchResponse);
+        var value = ResourceCsvTransformer.transform(searchResponse);
         // skipping UTF-8 BOM for some reason is needed
         var actual = CsvUtil.toExportCsv(value.substring(1));
         assertThat(actual, is(equalTo(expected)));
