@@ -74,6 +74,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.slice.SliceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
@@ -210,14 +211,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return this;
     }
 
-    public ResourceSearchQuery withFixedRange(int from, int size) {
-        this.parameters().set(FROM, String.valueOf(from));
-        this.parameters().set(SIZE, String.valueOf(size));
+    public ResourceSearchQuery withoutAggregation() {
+        this.parameters().set(AGGREGATION, NONE);
         return this;
     }
 
-    public ResourceSearchQuery withoutAggregation() {
-        this.parameters().set(AGGREGATION, NONE);
+    public ResourceSearchQuery withFixedRange(int from, int size) {
+        this.parameters().set(FROM, String.valueOf(from));
+        this.parameters().set(SIZE, String.valueOf(size));
         return this;
     }
 
@@ -228,6 +229,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
         this.userSettingsClient = userSettingsClient;
+        return this;
+    }
+
+    public ResourceSearchQuery withSlice(int id, int max) {
+        this.slice = new SliceBuilder(id, max);
         return this;
     }
 

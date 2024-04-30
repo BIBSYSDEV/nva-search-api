@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
@@ -37,6 +38,7 @@ import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.PagedSearchBuilder;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -46,6 +48,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
+import org.opensearch.search.slice.SliceBuilder;
 import org.opensearch.search.sort.FieldSortBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
@@ -61,7 +64,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     public final transient QueryFilter filters;
     protected final transient QueryTools<K> queryTools;
-
+    protected SliceBuilder slice;
 
     protected abstract AsType<K> getFrom();
 
@@ -118,8 +121,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             : toPagedResponse(response).toJsonString();
     }
 
-    public <R, Q extends SearchQuery<K>> SwsResponse doSearchRaw(OpenSearchClient<R, Q> queryClient) {
-        return (SwsResponse) queryClient.doSearch((Q) this);
+    public <R, Q extends SearchQuery<K>> CompletableFuture<SwsResponse> doSearchAsyncRaw(OpenSearchClient<R, Q> queryClient) {
+        return (CompletableFuture<SwsResponse>) queryClient.doSearchAsync((Q) this);
     }
 
     public PagedSearch toPagedResponse(SwsResponse response) {
@@ -303,6 +306,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
+        if (nonNull(slice)) {
+            builder.slice(slice);
+        }
+
         setFetchSource(builder);
     }
 }

@@ -25,17 +25,6 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
     }
 
     @Override
-    public SwsResponse doSearch(ScrollQuery query)  {
-        queryBuilderStart = query.getStartTime();
-        return
-            query.assemble()
-                .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
-                .findFirst().orElseThrow();
-    }
-
-    @Override
     protected SwsResponse handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
             throw new RuntimeException(response.body());

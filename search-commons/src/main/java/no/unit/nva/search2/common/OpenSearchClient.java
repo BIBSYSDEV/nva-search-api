@@ -16,6 +16,7 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.commons.json.JsonSerializable;
@@ -84,6 +85,24 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .findFirst().orElseThrow();
     }
 
+    public CompletableFuture<R> doSearchAsync(Q query) {
+        queryBuilderStart = query.getStartTime();
+        queryParameters = query.parameters().asMap()
+                              .entrySet().stream()
+                              .map(Object::toString)
+                              .collect(joining("&"));
+        return
+            query.assemble()
+                .map(this::createRequest)
+                .map(this::fetchAsync)
+                .map(this::handleResponseAsync)
+                .findFirst().orElseThrow();
+    }
+
+    private CompletableFuture<R> handleResponseAsync(CompletableFuture<HttpResponse<String>> responseFuture) {
+        return responseFuture.thenApply(this::handleResponse);
+    }
+
     protected abstract R handleResponse(HttpResponse<String> response);
 
     protected HttpResponse<String> fetch(HttpRequest httpRequest) {
@@ -98,6 +117,20 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 logger.error(new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString());
                 return null;
             });
+    }
+
+    protected CompletableFuture<HttpResponse<String>> fetchAsync(HttpRequest httpRequest) {
+        var fetchStart = Instant.now();
+        return attempt(() -> httpClient.sendAsync(httpRequest, bodyHandler))
+                   .map(response -> {
+                       fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+                       return response;
+                   })
+                   .orElse(responseFailure -> {
+                       fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+                       logger.error(new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString());
+                       return null;
+                   });
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {

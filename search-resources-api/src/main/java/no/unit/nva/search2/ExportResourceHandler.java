@@ -50,6 +50,12 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     @Override
     public String processS3Input(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
+        var allPages = slicedPages(requestInfo, 0);
+
+        return toCsv(allPages);
+    }
+
+    private ArrayList<SwsResponse> slicedPages(RequestInfo requestInfo, int sliceNumber, int totalSlices) throws BadRequestException {
         var initalResponse = ResourceSearchQuery.builder()
                                  .fromRequestInfo(requestInfo)
                                  .validate()
@@ -59,14 +65,14 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                                  .withFixedRange(0, MAX_HITS_PER_PAGE)
                                  .withoutAggregation()
                                  .withScrollTime(SCROLL_TTL)
+                                 .withSlice(sliceNumber, totalSlices)
                                  .withOnlyCsvFields()
-                                 .doSearchRaw(opensearchClient);
+                                 .doSearchAsyncRaw( opensearchClient);
 
         var allPages = new ArrayList<SwsResponse>();
         allPages.add(initalResponse);
         scrollResults(allPages, initalResponse);
-
-        return toCsv(allPages);
+        return allPages;
     }
 
     private void scrollResults(List<SwsResponse> allPages, SwsResponse previousResponse) {
