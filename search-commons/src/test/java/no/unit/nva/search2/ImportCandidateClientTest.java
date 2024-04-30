@@ -11,9 +11,9 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGRE
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.COLLABORATION_TYPE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.CREATED_DATE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FILES_STATUS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_STATUS;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PUBLICATION_YEAR;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
@@ -119,7 +119,7 @@ class ImportCandidateClientTest {
             assertThat(aggregations.get(IMPORT_STATUS.asCamelCase()).size(), is(2));
             assertThat(aggregations.get(CONTRIBUTOR.asCamelCase()).size(), is(5));
             assertThat(aggregations.get(COLLABORATION_TYPE.asCamelCase()).size(), is(2));
-            assertThat(aggregations.get(INSTANCE_TYPE.asCamelCase()).size(), is(1));
+            assertThat(aggregations.get(FILES_STATUS.asCamelCase()).get(0).count(), is(7));
             assertThat(aggregations.get(PUBLICATION_YEAR.asCamelCase()).size(), is(4));
             assertThat(aggregations.get(TYPE.asCamelCase()).size(), is(4));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION.asCamelCase()).size(), is(9));
@@ -239,9 +239,11 @@ class ImportCandidateClientTest {
                 URI.create(REQUEST_BASE_URL + "aggregation=ALL&size=8"),
                 URI.create(REQUEST_BASE_URL + "aggregation=importStatus&size=8"),
                 URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=5"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME=Andrew+Morrison&size=1"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME=Andrew+Morrison,George+Rigos&size=2"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NAME_NOT=George+Rigos&size=7"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR=Andrew+Morrison&size=1"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR=Andrew+Morrison,Nina+Bjørnstad&size=1"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NOT=George+Rigos&size=7"),
+                URI.create(REQUEST_BASE_URL + "filesStatus=hasPublicFiles&size=7"),
+                URI.create(REQUEST_BASE_URL + "id=018bed744c78-f53e06f7-74da-4c91-969f-ec307a7e7816&size=1"),
                 URI.create(REQUEST_BASE_URL + "PUBLICATION_YEAR_BEFORE=2023&size=5"),
                 URI.create(REQUEST_BASE_URL + "publication_year=2022,2022&size=1"),
                 URI.create(REQUEST_BASE_URL + "PublicationYearBefore=2024&publication_year_since=2023&size=3"),
