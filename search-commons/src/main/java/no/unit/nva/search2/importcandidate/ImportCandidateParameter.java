@@ -37,6 +37,7 @@ import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -50,7 +51,6 @@ import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
 
