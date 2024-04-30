@@ -23,8 +23,8 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
-    public static final int MAX_PAGES = 10;
-    public static final int MAX_HITS_PER_PAGE = 4000;
+    public static final int MAX_PAGES = 4;
+    public static final int MAX_HITS_PER_PAGE = 2500;
     public static final String SCROLL_TTL = "1m";
     private final ResourceClient opensearchClient;
     private final ScrollClient scrollClient;
