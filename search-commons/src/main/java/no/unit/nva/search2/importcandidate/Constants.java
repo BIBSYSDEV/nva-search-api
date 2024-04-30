@@ -7,6 +7,7 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
 import static no.unit.nva.search2.common.constant.Words.DOI;
 import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.FILES_STATUS;
 import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.IDENTITY;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
@@ -35,7 +36,6 @@ public final class Constants {
         CONTRIBUTORS_IDENTITY_ID + PIPE + CONTRIBUTORS_IDENTITY_NAME;
     public static final String DOI_KEYWORD = DOI + DOT + KEYWORD;
     public static final String IMPORT_CANDIDATES_INDEX_NAME = "import-candidates";
-    public static final String INSTANCE_TYPE = "instanceType";
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String MAIN_TITLE_KEYWORD = "mainTitle.keyword";
     public static final String ORGANIZATIONS = "organizations";
@@ -46,26 +46,27 @@ public final class Constants {
     public static final String PUBLISHER_ID_KEYWORD = "publisher.id.keyword";
     public static final String STATUS_TYPE_KEYWORD = "importStatus.candidateStatus.keyword";
     public static final String TYPE_KEYWORD = "type.keyword";
+    public static final String FILES_STATUS_PATH = FILES_STATUS + DOT + KEYWORD;
 
     public static final String DEFAULT_IMPORT_CANDIDATE_SORT = ImportCandidateSort.CREATED_DATE.asCamelCase();
 
     public static final List<AggregationBuilder> IMPORT_CANDIDATES_AGGREGATIONS =
         List.of(
             branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
-            branchBuilder(INSTANCE_TYPE, TYPE_KEYWORD),
             branchBuilder(TYPE, PUBLICATION_INSTANCE_TYPE),
             branchBuilder(PUBLICATION_YEAR, PUBLICATION_YEAR_KEYWORD),
             branchBuilder(IMPORT_STATUS, IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
+            branchBuilder(FILES_STATUS, FILES_STATUS, KEYWORD),
             contributor(),
             topLevelOrganisationsHierarchy()
         );
 
     public static final Map<String, String> FACET_IMPORT_CANDIDATE_PATHS = Map.of(
         COLLABORATION_TYPE, "/withAppliedFilter/collaborationType",
-        INSTANCE_TYPE, "/withAppliedFilter/instanceType",
-        IMPORT_STATUS, "/withAppliedFilter/importStatus",
         TYPE, "/withAppliedFilter/type",
         PUBLICATION_YEAR, "/withAppliedFilter/publicationYear",
+        IMPORT_STATUS, "/withAppliedFilter/importStatus",
+        FILES_STATUS, "/withAppliedFilter/filesStatus",
         CONTRIBUTOR, "/withAppliedFilter/contributor/id",
         TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/organizations/id"
         //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"

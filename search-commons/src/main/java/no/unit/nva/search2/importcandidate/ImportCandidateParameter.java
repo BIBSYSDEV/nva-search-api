@@ -30,13 +30,13 @@ import static no.unit.nva.search2.common.enums.ParameterKind.SORT_KEY;
 import static no.unit.nva.search2.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search2.importcandidate.Constants.ADDITIONAL_IDENTIFIERS_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.FILES_STATUS_PATH;
 import static no.unit.nva.search2.importcandidate.Constants.ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.ORGANIZATIONS_PATH;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.TYPE_KEYWORD;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -50,6 +50,7 @@ import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
 
@@ -61,27 +62,25 @@ import org.apache.commons.text.CaseUtils;
 
 public enum ImportCandidateParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
-    // Parameters converted to Lucene query
     ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ADDITIONAL_IDENTIFIERS_KEYWORD),
     ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NO_ITEMS, ADDITIONAL_IDENTIFIERS_KEYWORD),
     CATEGORY(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE),
     CATEGORY_NOT(KEYWORD, NO_ITEMS, PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
-    CONTRIBUTOR(FUZZY_KEYWORD, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NAME(FUZZY_KEYWORD, ONE_OR_MORE_ITEM,Constants.CONTRIBUTORS_IDENTITY_NAME),
-    CONTRIBUTOR_NAME_NOT(KEYWORD, NO_ITEMS, Constants.CONTRIBUTORS_IDENTITY_NAME),
+    CONTRIBUTOR(FUZZY_KEYWORD, ALL_ITEMS, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+    CONTRIBUTOR_NOT(FUZZY_KEYWORD, NO_ITEMS, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
     COLLABORATION_TYPE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, COLLABORATION_TYPE_KEYWORD),
     COLLABORATION_TYPE_NOT(KEYWORD, NO_ITEMS, COLLABORATION_TYPE_KEYWORD),
     CRISTIN_IDENTIFIER(CUSTOM),
     DOI(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, Constants.DOI_KEYWORD),
     DOI_NOT(TEXT, NO_ITEMS, Constants.DOI_KEYWORD),
+    FILES_STATUS(KEYWORD, ALL_ITEMS, FILES_STATUS_PATH),
     ID(KEYWORD, ONE_OR_MORE_ITEM, ID_KEYWORD),
     ID_NOT(KEYWORD, NO_ITEMS, ID_KEYWORD),
     IMPORT_STATUS(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, STATUS_TYPE_KEYWORD),
     IMPORT_STATUS_NOT(KEYWORD, NO_ITEMS, STATUS_TYPE_KEYWORD),
-    INSTANCE_TYPE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, TYPE_KEYWORD),
-    INSTANCE_TYPE_NOT(KEYWORD, NO_ITEMS, TYPE_KEYWORD),
+    LICENSE(CUSTOM, ALL_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
+    LICENSE_NOT(CUSTOM, NO_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
     PUBLICATION_YEAR(NUMBER, BETWEEN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
@@ -125,14 +124,6 @@ public enum ImportCandidateParameter implements ParameterKey {
 
     ImportCandidateParameter(ParameterKind kind) {
         this(kind, ALL_ITEMS, null, null, null, null);
-    }
-
-    ImportCandidateParameter(ParameterKind kind, String fieldsToSearch) {
-        this(kind, ALL_ITEMS, fieldsToSearch, null, null, null);
-    }
-
-    ImportCandidateParameter(ParameterKind kind, String fieldsToSearch, Float boost) {
-        this(kind, ALL_ITEMS, fieldsToSearch, null, null, boost);
     }
 
     ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {

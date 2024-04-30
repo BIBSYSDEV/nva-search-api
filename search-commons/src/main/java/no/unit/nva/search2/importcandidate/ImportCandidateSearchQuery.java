@@ -32,6 +32,7 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARC
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
+import static no.unit.nva.search2.resource.Constants.selectByLicense;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
@@ -146,6 +147,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         return switch (key) {
             case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifier(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> builderStreamAdditionalIdentifier(key, SCOPUS_AS_TYPE);
+            case LICENSE, LICENSE_NOT -> licenseQuery(key);
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
@@ -164,6 +166,10 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         return queryTools.queryToEntry(key, query);
     }
 
+    public Stream<Map.Entry<ImportCandidateParameter, QueryBuilder>> licenseQuery(ImportCandidateParameter key) {
+        var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
+        return queryTools.queryToEntry(key, query);
+    }
 
     public static class ImportCandidateValidator
         extends ParameterValidator<ImportCandidateParameter, ImportCandidateSearchQuery> {
