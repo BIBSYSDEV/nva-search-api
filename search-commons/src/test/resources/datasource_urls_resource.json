@@ -11,6 +11,8 @@
   "CONTEXT_TYPE_NOT=Report": 12,
   "CONTEXT_TYPE_SHOULD=Report": 9,
   "CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254": 3,
+  "CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136251": 0,
+  "CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136233": 0,
   "CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254,https://api.dev.nva.aws.unit.no/cristin/person/1136255": 0,
   "CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254": 18,
   "CONTRIBUTOR_NAME=Hellesvik,Møkkelgjerd": 1,

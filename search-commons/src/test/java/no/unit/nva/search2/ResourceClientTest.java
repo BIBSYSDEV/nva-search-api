@@ -111,7 +111,10 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
         var response = mockedHttpResponse("user_settings.json");
-        when(mochedHttpClient.send(any(), any())).thenReturn(response);
+        when(mochedHttpClient.send(any(), any()))
+            .thenReturn(response)
+            .thenReturn(mockedHttpResponse(""))
+            .thenReturn(mockedHttpResponse("", 500));
         searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, cachedJwtProvider);
 
         createIndex();

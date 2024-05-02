@@ -65,7 +65,6 @@ import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -258,23 +257,16 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
-        var promotedPublications =
-            attempt(() -> userSettingsClient.doSearch(this))
-                .or(() -> new UserSettings(List.of()))
-                .get().promotedPublications();
-        if (hasContent(promotedPublications)) {
+
+        var result = attempt(() -> userSettingsClient.doSearch(this));
+        if (result.isSuccess()) {
             parameters().remove(SORT);  // remove sort to avoid messing up "sorting by score"
+            var promotedPublications = result.get().promotedPublications();
             for (int i = 0; i < promotedPublications.size(); i++) {
-                var sortableIdentifier = fromUri(promotedPublications.get(i)).getLastPathElement();
-                var qb = matchQuery(IDENTIFIER_KEYWORD, sortableIdentifier)
+                var qb = matchQuery(IDENTIFIER_KEYWORD, promotedPublications.get(i))
                     .boost(PI + 1F - ((float) i / promotedPublications.size()));  // 4.14 down to 3.14 (PI)
                 bq.should(qb);
             }
-            logger.info(
-                bq.should().stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "))
-            );
         }
     }
 
