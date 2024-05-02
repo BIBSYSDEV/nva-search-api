@@ -10,6 +10,7 @@ import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -94,7 +95,7 @@ class ResourceClientTest {
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 9;
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -163,7 +164,7 @@ class ResourceClientTest {
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(5));
             assertThat(aggregations.get(FILES).get(0).count(), is(19));
-            //            assertThat(aggregations.get(LICENSE).get(0).count(), is(15));
+            assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
             assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));

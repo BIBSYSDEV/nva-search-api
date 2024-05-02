@@ -191,7 +191,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
         return switch (key) {
-            case LICENSE, LICENSE_NOT -> streamBuilders.licenseQuery(key);
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
