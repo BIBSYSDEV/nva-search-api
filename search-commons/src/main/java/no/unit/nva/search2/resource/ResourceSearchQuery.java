@@ -1,7 +1,6 @@
 package no.unit.nva.search2.resource;
 
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;

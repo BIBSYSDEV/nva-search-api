@@ -81,7 +81,6 @@ public final class Words {
     public static final String PUBLISHER = "publisher";
     public static final String Q = "q";
     public static final String QUOTE = "'";
-    public static final String DQUOTE = "\"";
     public static final String REFERENCE = "reference";
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
@@ -107,7 +106,6 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
-    public static final String NOTIFICATIONS = "notifications";
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
     public static final String YEAR = "year";
