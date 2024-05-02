@@ -45,6 +45,7 @@ class OpensearchSearchQueryToolsTest {
         );
     }
 
+
     @Test
     @Disabled
     void printResourceParameter() {

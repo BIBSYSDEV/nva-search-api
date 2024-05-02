@@ -1,16 +1,17 @@
 package no.unit.nva.search2.ticket;
 
+import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search2.common.constant.Functions.expandYearToDate;
 import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
@@ -262,7 +263,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    searchQuery.parameters().set(qpKey, expandYearToDate(decodedValue));
+                    searchQuery.parameters().set(qpKey, expandMissing(decodedValue));
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
@@ -272,6 +273,13 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         @Override
         protected boolean isKeyValid(String keyName) {
             return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
+        }
+
+        private String expandMissing(String value) {
+            if (nonNull(value) && !value.contains(COMMA)) {
+                return value + COMMA + value;
+            }
+            return value;
         }
     }
 }
