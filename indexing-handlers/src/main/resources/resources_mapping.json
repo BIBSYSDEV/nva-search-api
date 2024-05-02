@@ -5,7 +5,11 @@
       "include_in_parent": true,
       "properties": {
         "labels": {
-          "type": "nested"
+          "type": "nested",
+          "include_in_parent": true
+        },
+        "hasPart": {
+          "type": "flat_object"
         }
       }
     },
@@ -50,8 +54,6 @@
       "include_in_parent": true,
       "properties": {
         "source": {
-          "type": "nested",
-          "include_in_parent": true,
           "properties": {
             "labels": {
               "type": "nested",
@@ -67,7 +69,17 @@
     },
     "associatedArtifacts": {
       "type": "nested",
-      "include_in_parent": true
+      "include_in_parent": true,
+      "properties": {
+        "license": {
+          "properties": {
+            "labels": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        }
+      }
     },
     "additionalIdentifiers": {
       "type": "nested",
