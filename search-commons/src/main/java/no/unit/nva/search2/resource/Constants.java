@@ -43,8 +43,6 @@ public final class Constants {
     public static final String UNIT_PATHS = multipleFields(
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
         jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-
-        //        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
     );
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
@@ -220,10 +218,8 @@ public final class Constants {
             nestedBranchBuilder(FUNDINGS, FUNDINGS)
                 .subAggregation(
                     branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
-                        .subAggregation(
-                            labels(jsonPath(FUNDINGS, SOURCE)))
-                        .subAggregation(
-                            getReverseNestedAggregationBuilder())
+                        .subAggregation(labels(jsonPath(FUNDINGS, SOURCE)))
+                        .subAggregation(getReverseNestedAggregationBuilder())
                 );
     }
 
@@ -319,13 +315,8 @@ public final class Constants {
     private static TermsAggregationBuilder license() {
         return
             branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD)
-                .subAggregation(
-                    labels(jsonPath(ASSOCIATED_ARTIFACTS, LICENSE))
-                )
-                .subAggregation(
-                    getReverseNestedAggregationBuilder())
-            ;
-
+                .subAggregation(labels(jsonPath(ASSOCIATED_ARTIFACTS, LICENSE)))
+                .subAggregation(getReverseNestedAggregationBuilder());
     }
 
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
