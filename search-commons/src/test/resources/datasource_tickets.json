@@ -595,7 +595,7 @@
     "type": "PublishingRequest",
     "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
     "modifiedDate": "2024-02-28T09:25:17.970646009Z",
-    "createdDate": "2023-02-26T10:48:20.042254401Z",
+    "createdDate": "2023-03-26T10:48:20.042254401Z",
     "workflow": "RegistratorPublishesMetadataOnly",
     "approvedFiles": [],
     "filesForApproval": [],
@@ -812,8 +812,8 @@
   {
     "type": "DoiRequest",
     "status": "Pending",
-    "modifiedDate": "2024-02-27T16:54:41.974063176Z",
-    "createdDate": "2022-02-26T10:41:52.229720596Z",
+    "modifiedDate": "2024-03-27T16:54:41.974063176Z",
+    "createdDate": "2022-03-26T10:41:52.229720596Z",
     "customerId": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
     "id": "https://api.dev.nva.aws.unit.no/publication/018de4f8819a-95fc592e-ed09-4da5-a993-837982f4519d/ticket/018de501ba65-78574f92-5033-4db9-a9e2-444f15cba339",
     "messages": [
