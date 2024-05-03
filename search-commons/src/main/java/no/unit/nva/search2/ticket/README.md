@@ -133,7 +133,29 @@ Accept: application/json
 * acrossFields
   * Search through all paths as it where one field
 * custom
+### Scope
+* all_items
+   * every search word must hit  (an AND search)
+* no_items
+   * inverted of 'all_items'
+* one_or_more_item
+   * any word can hit (an OR search)
+* not_one_item
+   * inverted of 'one_or_more_item'
+* between
+  * Numbers
+    * <code>key=1000</code> -> hit all with this value
+    * <code>key=,1000</code> -> hits all values below, including value
+    * <code>key=1000,</code> -> hits all values over, including value
+    * <code>key=500,1000</code> -> hits all values bewtween numbers, including the values.
+  * Dates
+    * <code>key=2022</code> -> any date in 2022
+    * <code>key=2022,2022</code> -> any date in 2022
+    * <code>key=,2022</code> -> any date prior to 2023 (2022 and backward)
+    * <code>key=2022,</code> -> any date after 2021 (2022 and onward)
+    * <code>key=2022,2023</code> -> and date in 2022 or 2023
 
+ 
 ### Key details
 
 | key_name                  | keyName                 | queryKind    | scope            | paths                                                                                                            |
