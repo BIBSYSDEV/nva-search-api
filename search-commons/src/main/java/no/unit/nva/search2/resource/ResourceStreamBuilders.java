@@ -12,7 +12,6 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
-import static no.unit.nva.search2.resource.Constants.selectByLicense;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
@@ -34,10 +33,6 @@ public class ResourceStreamBuilders {
         this.parameters = parameters;
     }
 
-    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> licenseQuery(ResourceParameter key) {
-        var query = QueryBuilders.scriptQuery(selectByLicense(parameters.get(key).as()));
-        return queryTools.queryToEntry(key, query);
-    }
 
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
         ResourceParameter key, String source) {
