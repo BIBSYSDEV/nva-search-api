@@ -4,7 +4,7 @@ import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search2.ticket.TicketParameter;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import no.unit.nva.search2.common.builder.OpensearchQueryRange;
+import no.unit.nva.search2.common.builder.QueryBuilderRange;
 import no.unit.nva.search2.resource.ResourceParameter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class OpensearchSearchQueryToolsTest {
 
     @Test
     void invalidRangeQueryMust() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new QueryBuilderRange<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, "test")
@@ -29,7 +29,7 @@ class OpensearchSearchQueryToolsTest {
 
     @Test
     void invalidRangeQueryMustNot() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new QueryBuilderRange<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
@@ -38,7 +38,7 @@ class OpensearchSearchQueryToolsTest {
 
     @Test
     void invalidRangeQueryShould() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new QueryBuilderRange<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_SHOULD, "test")

@@ -13,7 +13,7 @@ import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
-public class OpensearchQueryAcrossFields<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class QueryBuilderAcrossFields<K extends Enum<K> & ParameterKey> extends AbstractQueryBuilder<K> {
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {

@@ -48,8 +48,8 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
-import no.unit.nva.search2.common.builder.OpensearchQueryText;
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.QueryBuilderText;
+import no.unit.nva.search2.common.builder.QueryBuilderKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.SwsResponse;
@@ -165,7 +165,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             ? filterBuilder.getCurrentUser()
             : parameters().get(TicketParameter.ASSIGNEE).toString();
 
-        return new OpensearchQueryText<TicketParameter>()
+        return new QueryBuilderText<TicketParameter>()
             .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
     }
 
@@ -175,7 +175,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             : key;
 
         return
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
+            new QueryBuilderKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
     }
 
     /**

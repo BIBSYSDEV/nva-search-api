@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common.records;
+package no.unit.nva.search2.common.builder;
 
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.search2.common.records.Facet;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 

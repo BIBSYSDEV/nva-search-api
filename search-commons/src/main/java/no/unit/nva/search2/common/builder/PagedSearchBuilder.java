@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common.records;
+package no.unit.nva.search2.common.builder;
 
 import static java.util.Objects.isNull;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.records.Facet;
+import no.unit.nva.search2.common.records.PagedSearch;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 

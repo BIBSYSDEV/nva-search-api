@@ -11,6 +11,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_ID
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_NOT;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_LICENSE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
@@ -157,7 +158,7 @@ public enum ResourceParameter implements ParameterKey {
     JOURNAL(FUZZY_KEYWORD, ALL_ITEMS, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
     JOURNAL_NOT(FUZZY_KEYWORD, NO_ITEMS, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
     JOURNAL_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
-    LICENSE(FUZZY_KEYWORD, ALL_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
+    LICENSE(FUZZY_KEYWORD, ALL_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE, PATTERN_IS_LICENSE, null, null),
     LICENSE_NOT(FUZZY_KEYWORD, NO_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
     MODIFIED_BEFORE(DATE, LESS_THAN, MODIFIED_DATE),
     MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),

@@ -1,6 +1,6 @@
 package no.unit.nva.search2.ticket;
 
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.QueryBuilderKeyword;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import no.unit.nva.search2.common.records.FilterBuilder;
 import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
@@ -101,7 +101,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
      */
     public TicketFilter organization(URI organization) {
         final var organisationId =
-            new OpensearchQueryKeyword<TicketParameter>()
+            new QueryBuilderKeyword<TicketParameter>()
                 .buildQuery(ORGANIZATION_ID, organization.toString())
                 .findFirst().orElseThrow().getValue()
                 .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);

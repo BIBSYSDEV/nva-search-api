@@ -18,12 +18,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.List;
 import java.util.stream.Stream;
 
-import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
+import no.unit.nva.search2.common.records.LogUserSettings;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.attempt.FunctionWithException;
 
@@ -78,14 +77,9 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
 
     protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnUserSettings() {
         return result -> {
-            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
+            logger.info(new LogUserSettings(userSettingUri, result).toJsonString());
             return result;
         };
     }
 
-    record UserSettingLog(URI uri, List<String> promotedPublications) implements JsonSerializable {
-        public UserSettingLog(URI uri, UserSettings userSettings) {
-            this(uri, userSettings.promotedPublications());
-        }
-    }
 }

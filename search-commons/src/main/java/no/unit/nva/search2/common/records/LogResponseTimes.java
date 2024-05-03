@@ -2,7 +2,7 @@ package no.unit.nva.search2.common.records;
 
 import no.unit.nva.commons.json.JsonSerializable;
 
-public record ResponseLogInfo(
+public record LogResponseTimes(
     int totalHits,
     long queryDuration,
     long networkDuration,
@@ -59,7 +59,7 @@ public record ResponseLogInfo(
         }
 
         public String toJsonString() {
-            return new ResponseLogInfo(
+            return new LogResponseTimes(
                 totalHits,
                 searchTime,
                 fetchTime - searchTime,

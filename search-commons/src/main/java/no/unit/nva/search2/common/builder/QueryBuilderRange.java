@@ -11,9 +11,9 @@ import org.opensearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class QueryBuilderRange<K extends Enum<K> & ParameterKey> extends AbstractQueryBuilder<K> {
 
-    private static final Logger logger = LoggerFactory.getLogger(OpensearchQueryRange.class);
+    private static final Logger logger = LoggerFactory.getLogger(QueryBuilderRange.class);
     public static final int WORD_LENGTH_YEAR = 4;
     public static final int WORD_LENGTH_YEAR_MONTH = 7;
     public static final String STR_01 = "-01";
@@ -37,7 +37,7 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
         var secondParam = getSecondParam(values, key);
 
 
-        logger.info(firstParam + " - " + secondParam);
+        logger.debug(firstParam + " - " + secondParam);
         return queryTools.queryToEntry(key, switch (key.searchOperator()) {
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
                 .rangeQuery(searchField)

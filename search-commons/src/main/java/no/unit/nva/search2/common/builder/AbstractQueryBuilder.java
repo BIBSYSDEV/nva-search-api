@@ -20,7 +20,7 @@ import org.opensearch.index.query.QueryBuilder;
  * <li>MUST  implement AND operator </li>
  * </ul>
  */
-public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
+public abstract class AbstractQueryBuilder<K extends Enum<K> & ParameterKey> {
 
     public QueryTools<K> queryTools = new QueryTools<>();
 

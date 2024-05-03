@@ -18,12 +18,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search.CognitoAuthenticator;
 import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.records.LogRequestException;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
-import no.unit.nva.search2.common.records.ResponseLogInfo;
+import no.unit.nva.search2.common.records.LogResponseTimes;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
@@ -95,7 +95,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             })
             .orElse(responseFailure -> {
                 fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-                logger.error(new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString());
+                logger.error(new LogRequestException(httpRequest.uri(), responseFailure.getException()).toJsonString());
                 return null;
             });
     }
@@ -114,7 +114,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
         return result -> {
-            logger.info(ResponseLogInfo.builder()
+            logger.info(LogResponseTimes.builder()
                 .withTotalTime(totalDuration())
                 .withFetchTime(fetchDuration)
                 .withSwsResponse(result)
@@ -132,7 +132,4 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .toMillis();
     }
 
-    record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {
-
-    }
 }

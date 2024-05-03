@@ -12,7 +12,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
-public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class QueryBuilderKeyword<K extends Enum<K> & ParameterKey> extends AbstractQueryBuilder<K> {
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
