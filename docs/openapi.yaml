@@ -247,13 +247,12 @@ paths:
     get:
       tags:
         - external
-      description: '<h3>Search for public available publications by given criteria</h3>
+      description: '<h3>Export for up to 10.000 public available publications by given criteria</h3>
       <p>All parameters documented with <code>snake_case</code>, but <code>camelCase</code> is also accepted. 
       They accept more than one value, each value must be separated by a <code>comma</code>. 
       If you use <code>space</code> between search phrases, it will usually be interpreted as words that should be found in the text.
       The more hits it gets, the closer to the top of search result an item will be.</p>'
       parameters:
-        - $ref: '#/components/parameters/aggregationParam'
         - $ref: '#/components/parameters/abstractNotParam'
         - $ref: '#/components/parameters/abstractParam'
         - $ref: '#/components/parameters/abstractShouldParam'
@@ -361,8 +360,6 @@ paths:
         - $ref: '#/components/parameters/userShouldParam'
         - $ref: '#/components/parameters/langParam'
         - $ref: '#/components/parameters/fieldsParam'
-        - $ref: '#/components/parameters/fromParam'
-        - $ref: '#/components/parameters/sizeParam'
         - $ref: '#/components/parameters/sortParam'
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/pageParam'
@@ -560,22 +557,21 @@ paths:
         - $ref: '#/components/parameters/createdDateParam'
         - $ref: '#/components/parameters/contributorParam'
         - $ref: '#/components/parameters/contributorNotParam'
-        - $ref: '#/components/parameters/contributorNameParam'
-        - $ref: '#/components/parameters/contributorNameNotParam'
         - $ref: '#/components/parameters/collaborationTypeParam'
         - $ref: '#/components/parameters/collaborationTypeNotParam'
         - $ref: '#/components/parameters/cristinIdentifierParam'
         - $ref: '#/components/parameters/doiParam'
         - $ref: '#/components/parameters/doiNotParam'
         - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/hasFileParam'
         - $ref: '#/components/parameters/fromParam'
         - $ref: '#/components/parameters/idParam'
         - $ref: '#/components/parameters/idNotParam'
         - $ref: '#/components/parameters/importStatusParam'
         - $ref: '#/components/parameters/importStatusNotParam'
-        - $ref: '#/components/parameters/instanceTypeParam'
-        - $ref: '#/components/parameters/instanceTypeNotParam'
         - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/licenseParam'
+        - $ref: '#/components/parameters/licenseNotParam'
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/publicationYearParam'

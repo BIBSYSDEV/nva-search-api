@@ -433,16 +433,33 @@
     "filesStatus": "noFiles",
     "associatedArtifacts": [
       {
-        "type": "UnPublishedFile",
+        "type": "PublishedFile",
         "administrativeAgreement": false,
-        "identifier": "95ffa438-7367-49aa-ade7-5851daa6a8a3",
-        "license": "https://creativecommons.org/licenses/by/4.0",
-        "mimeType": "image/jpeg",
-        "name": "osteloff.jpg",
-        "publishedDate": "2023-11-06T08:48:11.786959336Z",
-        "publisherAuthority": false,
-        "size": 4656,
-        "visibleForNonOwner": false
+        "identifier": "6fde746e-c986-487c-8be5-91d873eee19d",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Monitoring Mold growth and VOC Emissions from Wood Wool Insulations.pdf",
+        "publishedDate": "2024-04-25T09:45:11.388072848Z",
+        "publisherVersion": "PublishedVersion",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "Unknown"
+        },
+        "size": 896980,
+        "uploadDetails": {
+          "type": "UploadDetails",
+          "uploadedBy": "sintef@7401.0.0.0",
+          "uploadedDate": "2024-04-25T09:45:11.129728225Z"
+        },
+        "visibleForNonOwner": true
       }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
@@ -771,19 +788,44 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "98893bfd-82d3-44d8-af10-9d1097c9510e",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-03-TN_Release_area_variability.pdf",
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
-        "publisherAuthority": false,
-        "size": 699309,
+        "publisherVersion": "PublishedVersion",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "Unknown"
+        },
+        "size": 1382306,
+        "uploadDetails": {
+          "type": "UploadDetails",
+          "uploadedBy": "sintef@7401.0.0.0",
+          "uploadedDate": "2024-04-25T09:19:44.179869660Z"
+        },
         "visibleForNonOwner": true
       },
       {
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "98893bfd-82d3-44d8-af10-9d1097r23449",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-03-TN_Release_area_variability.pdf",
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
@@ -795,7 +837,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "98893bfd-82d3-44d8-af10-9d1097r2342342",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-03-TN_Release_area_variability.pdf",
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
@@ -913,7 +963,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": true,
         "identifier": "82c86bd2-f6d1-408f-b315-19e6258e3fd9",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-10-TN_Outline_PSA_model.pdf",
         "publishedDate": "2023-10-31T11:32:31.569492596Z",
@@ -1023,7 +1081,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "679555f3-8cae-40e2-bd95-80eb56fc8adb",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200431-01-TN.APALI_concept.pdf",
         "publishedDate": "2023-10-31T11:24:03.117194851Z",
@@ -1115,7 +1181,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "d42613f9-c721-4368-a346-c1886c5073c6",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-02-R.pdf",
         "publishedDate": "2023-10-31T11:34:35.223834762Z",
@@ -1127,7 +1201,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "98893bfd-82d3-44d8-3323-9d1097r23449",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+          "name": "CC-NC-ND",
+          "labels": {
+            "en": "Creative Commons - Attribution-NonCommercial-NoDerivs",
+            "nb": "Creative Commons - Navngivelse-IkkeKommersiell-IngenBearbeidelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-03-TN_Release_area_variability.pdf",
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
@@ -1326,7 +1408,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "ae0539fe-0d67-4854-80bc-b2e906b55ee1",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+          "name": "CC-NC-ND",
+          "labels": {
+            "en": "Creative Commons - Attribution-NonCommercial-NoDerivs",
+            "nb": "Creative Commons - Navngivelse-IkkeKommersiell-IngenBearbeidelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-03-R.pdf",
         "publishedDate": "2023-10-31T11:25:09.861695292Z",
@@ -1502,7 +1592,15 @@
         "type": "UnpublishedFile",
         "administrativeAgreement": false,
         "identifier": "3daa758e-1787-4c1e-979a-dae0944ce326",
-        "license": "https://creativecommons.org/licenses/by-nd/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "image/jpeg",
         "name": "osteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloffosteloff.jpg",
         "publisherAuthority": false,
@@ -1516,7 +1614,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "92636ec8-d7f6-4a56-850e-cea1cebf4e31",
-        "license": "http://rightsstatements.org/vocab/InC/1.0/",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "nb": "Rights Statements - Utgivers betingelser",
+            "en": "Rights Statements - In copyright"
+          }
+        },
         "mimeType": "image/jpeg",
         "name": "osteloff.jpg",
         "publishedDate": "2023-12-07T12:22:20.796870348Z",
@@ -2146,7 +2252,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "1a3203fc-3d7d-4e21-8fab-fc2d58dfc878",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-09-TN.pdf",
         "publishedDate": "2023-10-31T11:24:41.262439430Z",
@@ -2158,7 +2272,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "98893bfd-82d3-44d8-af10-32233",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-03-TN_Release_area_variability.pdf",
         "publishedDate": "2023-10-31T11:25:43.223366513Z",
@@ -2256,7 +2378,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "197afe52-704e-4b56-b3e1-ff6e0fc6b73e",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-01-R.pdf",
         "publishedDate": "2023-10-31T11:25:47.865702950Z",
@@ -2447,7 +2577,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "7752c3c4-cf86-4dff-8ce8-d4f61c935ca0",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "20200017-05-TN.pdf",
         "publishedDate": "2023-10-31T11:25:22.997593612Z",
@@ -2563,7 +2701,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "ecee2024-7d86-4f5b-b642-2f464c18ad13",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://rightsstatements.org/page/inc/1.0",
+          "name": "RS-INC",
+          "labels": {
+            "en": "Rights Statements - In copyright",
+            "nb": "Rights Statements - Utgivers betingelser"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "s00603-023-03585-9.pdf",
         "publishedDate": "2023-10-31T11:27:42.251599563Z",
@@ -2688,7 +2834,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "52eeff6b-796b-49e9-b536-0b3e07c2f065",
-        "license": "https://creativecommons.org/licenses/by-nc/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "2023_Conway-Moore_CoCreate+policy+ideas.pdf",
         "publishedDate": "2023-11-06T07:47:58.358558928Z",
@@ -2757,7 +2911,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "744dc95f-19c6-4bf6-a1f7-94d81ce615f3",
-        "license": "https://creativecommons.org/licenses/by-nc/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "2023_Aguiar_CoCreate+mental+wellbeing.pdf",
         "publishedDate": "2023-11-06T07:47:57.300374215Z",
@@ -2826,7 +2988,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "e4b822fc-349f-429e-b9c9-cc3187c205e3",
-        "license": "https://creativecommons.org/licenses/by-nc/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "2023_Aguiar_SD+simulation+models+on+overweight+and+obesity.pdf",
         "publishedDate": "2023-11-06T07:49:56.053770685Z",
@@ -2895,7 +3065,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "c0d766f6-982a-490c-9ff9-d8175e77478d",
-        "license": "https://rightsstatements.org/page/inc/1.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "Stein_Langford_Kahlstr%C3%B6m%282023%29.pdf",
         "publishedDate": "2023-10-31T11:30:23.434987647Z",
@@ -3043,7 +3221,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "a01ac781-2b66-4885-800d-de27cbde85c7",
-        "license": "https://creativecommons.org/licenses/by/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "Linking+brain+maturation+and+puberty+during+early+adolescence+using+longitudinal+brain+age+prediction+in+the+ABCD+cohort.pdf",
         "publishedDate": "2023-11-06T07:47:55.582942300Z",
@@ -3116,7 +3302,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "35be206e-1884-4b0e-827e-e0c2991137b0",
-        "license": "https://creativecommons.org/licenses/by/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "Risk+of+recurrent+cardiovascular+events+in+coronary+artery+disease+patients+with+Type+D+personality.pdf",
         "publishedDate": "2023-11-06T07:48:25.679851978Z",
@@ -3192,7 +3386,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "d3e2bc70-d6f3-4403-946d-56e4735bc5fa",
-        "license": "https://creativecommons.org/licenses/by/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "Egeland-Eriksen_et_al_International+Journal+of+Hydrogen+Energy_2023.pdf",
         "publishedDate": "2023-11-06T07:48:26.143738738Z",
@@ -3267,7 +3469,15 @@
         "type": "UnPublishedFile",
         "administrativeAgreement": false,
         "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
-        "license": "https://creativecommons.org/licenses/by/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
         "publishedDate": "2023-11-06T07:47:54.580766901Z",
@@ -3279,7 +3489,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "5a8a8e75-4a13-483eec-8014-werd75eb468",
-        "license": "https://creativecommons.org/licenses/by/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
         "mimeType": "application/pdf",
         "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
         "publishedDate": "2023-11-06T07:47:54.580766901Z",
@@ -3400,7 +3618,15 @@
         "type": "PublishedFile",
         "administrativeAgreement": false,
         "identifier": "79e7070e-1ae9-4ecb-affa-0d825c5f07f1",
-        "license": "https://creativecommons.org/licenses/by-nc-sa/4.0",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+          "name": "CC-NC-ND",
+          "labels": {
+            "en": "Creative Commons - Attribution-NonCommercial-NoDerivs",
+            "nb": "Creative Commons - Navngivelse-IkkeKommersiell-IngenBearbeidelser"
+          }
+        },
         "mimeType": "image/jpeg",
         "name": "osteloff.jpg",
         "publishedDate": "2023-10-30T14:08:09.021575617Z",

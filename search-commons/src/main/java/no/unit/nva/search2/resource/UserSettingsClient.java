@@ -3,8 +3,8 @@ package no.unit.nva.search2.resource;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
-import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readApiHost;
 import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;
@@ -18,13 +18,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
+
+import no.unit.nva.commons.json.JsonSerializable;
+import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.UserSettings;
-import no.unit.nva.search2.common.security.CachedJwtProvider;
+import nva.commons.core.attempt.FunctionWithException;
 
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceSearchQuery> {
+
+    private URI userSettingUri;
 
     public UserSettingsClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
         super(client, cachedJwtProvider);
@@ -39,8 +44,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
-                .findFirst()
-                .orElse(new UserSettings(Collections.emptyList()));
+                .findFirst().orElseThrow();
     }
 
     private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
@@ -49,8 +53,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
 
     private HttpRequest createRequest(String contributorId) {
         var personId = URLEncoder.encode(contributorId, Charset.defaultCharset());
-        var userSettingUri = URI.create(HTTPS + readApiHost() + PERSON_PREFERENCES + personId);
-        logger.info("{ \"userSettingUri\": \"{}\"}", userSettingUri);
+        userSettingUri = URI.create(HTTPS + readApiHost() + PERSON_PREFERENCES + personId);
         return HttpRequest
             .newBuilder(userSettingUri)
             .headers(
@@ -64,14 +67,25 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     @Override
     protected UserSettings handleResponse(HttpResponse<String> response) {
         if (response.statusCode() != HTTP_OK) {
-            logger.error("Error fetching user settings: {}", response.body());
-            return new UserSettings(Collections.emptyList());
+            throw new RuntimeException("Error fetching user settings: " + response.body());
         }
 
-        var settings =
-            attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class));
-        return settings.isSuccess()
-            ? settings.get()
-            : new UserSettings(Collections.emptyList());
+        return
+            attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
+                .map(logAndReturnUserSettings())
+                .orElseThrow();
+    }
+
+    protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnUserSettings() {
+        return result -> {
+            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
+            return result;
+        };
+    }
+
+    record UserSettingLog(URI uri, List<String> promotedPublications) implements JsonSerializable {
+        public UserSettingLog(URI uri, UserSettings userSettings) {
+            this(uri, userSettings.promotedPublications());
+        }
     }
 }

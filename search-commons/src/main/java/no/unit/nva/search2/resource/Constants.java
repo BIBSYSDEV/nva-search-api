@@ -6,70 +6,13 @@ import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
 import static no.unit.nva.search2.common.constant.Functions.nestedBranchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
-import static no.unit.nva.search2.common.constant.Words.ABSTRACT;
-import static no.unit.nva.search2.common.constant.Words.AFFILIATIONS;
-import static no.unit.nva.search2.common.constant.Words.ASSOCIATED_ARTIFACTS;
-import static no.unit.nva.search2.common.constant.Words.BOKMAAL_CODE;
-import static no.unit.nva.search2.common.constant.Words.CODE;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
-import static no.unit.nva.search2.common.constant.Words.COURSE;
-import static no.unit.nva.search2.common.constant.Words.DOI;
-import static no.unit.nva.search2.common.constant.Words.DOT;
-import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search2.common.constant.Words.FILES;
-import static no.unit.nva.search2.common.constant.Words.FILES_STATUS;
-import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
-import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search2.common.constant.Words.HANDLE;
-import static no.unit.nva.search2.common.constant.Words.ID;
-import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search2.common.constant.Words.IDENTITY;
-import static no.unit.nva.search2.common.constant.Words.ISBN_LIST;
-import static no.unit.nva.search2.common.constant.Words.ISBN_PREFIX;
-import static no.unit.nva.search2.common.constant.Words.JOURNAL;
-import static no.unit.nva.search2.common.constant.Words.JOURNAL_AS_TYPE;
-import static no.unit.nva.search2.common.constant.Words.KEYWORD;
-import static no.unit.nva.search2.common.constant.Words.LABELS;
-import static no.unit.nva.search2.common.constant.Words.LANGUAGE;
-import static no.unit.nva.search2.common.constant.Words.LICENSE;
-import static no.unit.nva.search2.common.constant.Words.MAIN_TITLE;
-import static no.unit.nva.search2.common.constant.Words.NAME;
-import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
-import static no.unit.nva.search2.common.constant.Words.ONLINE_ISSN;
-import static no.unit.nva.search2.common.constant.Words.ORC_ID;
-import static no.unit.nva.search2.common.constant.Words.OWNER;
-import static no.unit.nva.search2.common.constant.Words.OWNER_AFFILIATION;
-import static no.unit.nva.search2.common.constant.Words.PIPE;
-import static no.unit.nva.search2.common.constant.Words.PRINT_ISSN;
-import static no.unit.nva.search2.common.constant.Words.PUBLICATION_CONTEXT;
-import static no.unit.nva.search2.common.constant.Words.PUBLICATION_DATE;
-import static no.unit.nva.search2.common.constant.Words.PUBLICATION_INSTANCE;
-import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search2.common.constant.Words.REFERENCE;
-import static no.unit.nva.search2.common.constant.Words.RESOURCE_OWNER;
-import static no.unit.nva.search2.common.constant.Words.ROOT;
-import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
-import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_INDEX;
-import static no.unit.nva.search2.common.constant.Words.SCIENTIFIC_VALUE;
-import static no.unit.nva.search2.common.constant.Words.SERIES;
-import static no.unit.nva.search2.common.constant.Words.SERIES_AS_TYPE;
-import static no.unit.nva.search2.common.constant.Words.SOURCE;
-import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.common.constant.Words.TAGS;
-import static no.unit.nva.search2.common.constant.Words.TITLE;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search2.common.constant.Words.TYPE;
-import static no.unit.nva.search2.common.constant.Words.YEAR;
+import static no.unit.nva.search2.common.constant.Words.*;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.constant.Defaults;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.script.Script;
 import org.opensearch.script.ScriptType;
@@ -100,8 +43,6 @@ public final class Constants {
     public static final String UNIT_PATHS = multipleFields(
         CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
         jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-
-        //        TOP_LEVEL_ORGANIZATIONS + DOT + "hasPart"
     );
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
@@ -122,7 +63,15 @@ public final class Constants {
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + DOI + DOT + KEYWORD + PIPE + DOI + DOT + KEYWORD;
-    public static final String ASSOCIATED_ARTIFACTS_LICENSE = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + KEYWORD;
+    public static final String ASSOCIATED_ARTIFACTS_LABELS = ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + LABELS;
+    public static final String ASSOCIATED_ARTIFACTS_LICENSE = multipleFields(
+        ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + NAME + DOT + KEYWORD,
+        ASSOCIATED_ARTIFACTS + DOT + LICENSE + DOT + VALUE + DOT + KEYWORD,
+        jsonPath(ASSOCIATED_ARTIFACTS_LABELS, ENGLISH_CODE, KEYWORD),
+        jsonPath(ASSOCIATED_ARTIFACTS_LABELS, NYNORSK_CODE, KEYWORD),
+        jsonPath(ASSOCIATED_ARTIFACTS_LABELS, BOKMAAL_CODE, KEYWORD),
+        jsonPath(ASSOCIATED_ARTIFACTS_LABELS, SAMI_CODE, KEYWORD)
+    );
     public static final String PUBLISHER_ID_KEYWORD = PUBLISHER + DOT + ID + DOT + KEYWORD;
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String PUBLICATION_CONTEXT_ISBN_LIST =
@@ -211,8 +160,8 @@ public final class Constants {
 
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
-        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id"
-        //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
+        SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
+        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
     );
     private static final Map<String, String> facetResourcePaths2 = Map.of(
         FILES, "/withAppliedFilter/files",
@@ -227,7 +176,7 @@ public final class Constants {
     public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
         List.of(
             filesHierarchy(),
-            //            associatedArtifactsHierarchy(),
+            associatedArtifactsHierarchy(),
             entityDescriptionHierarchy(),
             fundingSourceHierarchy(),
             scientificIndexHierarchy(),
@@ -269,10 +218,8 @@ public final class Constants {
             nestedBranchBuilder(FUNDINGS, FUNDINGS)
                 .subAggregation(
                     branchBuilder(ID, FUNDINGS, SOURCE, IDENTIFIER, KEYWORD)
-                        .subAggregation(
-                            labels(jsonPath(FUNDINGS, SOURCE)))
-                        .subAggregation(
-                            getReverseNestedAggregationBuilder())
+                        .subAggregation(labels(jsonPath(FUNDINGS, SOURCE)))
+                        .subAggregation(getReverseNestedAggregationBuilder())
                 );
     }
 
@@ -367,14 +314,9 @@ public final class Constants {
 
     private static TermsAggregationBuilder license() {
         return
-            AggregationBuilders
-                .terms(LICENSE)
-                .script(groupByLicenses())
-                .size(Defaults.DEFAULT_AGGREGATION_SIZE)
-                .subAggregation(AggregationBuilders
-                    .terms(NAME)
-                    .script(licenseLabel()));
-
+            branchBuilder(LICENSE, ASSOCIATED_ARTIFACTS, LICENSE, NAME, KEYWORD)
+                .subAggregation(labels(jsonPath(ASSOCIATED_ARTIFACTS, LICENSE)))
+                .subAggregation(getReverseNestedAggregationBuilder());
     }
 
     private static ReverseNestedAggregationBuilder getReverseNestedAggregationBuilder() {
@@ -387,28 +329,6 @@ public final class Constants {
         return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
     }
 
-
-    public static Script groupByLicenses() {
-        var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "CC-NC-ND";
-            } else if (url.contains("/by-nc-sa")) {
-              return "CC-NC-SA";
-            } else if (url.contains("/by-nc")) {
-              return "CC-NC";
-            } else if (url.contains("/by-nd")) {
-              return "CC-ND";
-            } else if (url.contains("/by-sa")) {
-              return "CC-SA";
-            } else if (url.contains("/by")) {
-              return "CC-BY";
-            }
-            return "Other";
-            """;
-        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
-    }
 
     public static Script selectByLicense(String license) {
         var script = """
@@ -438,28 +358,6 @@ public final class Constants {
         );
     }
 
-
-    public static Script licenseLabel() {
-        var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return null;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "Creative Commons - Attribution-NonCommercial-NoDerivs";
-            } else if (url.contains("/by-nc-sa")) {
-              return "Creative Commons - Attribution-NonCommercial-ShareAlike";
-            } else if (url.contains("/by-nc")) {
-              return "Creative Commons - Attribution-NonCommercial";
-            } else if (url.contains("/by-nd")) {
-              return "Creative Commons - Attribution-NoDerivs";
-            } else if (url.contains("/by-sa")) {
-              return "Creative Commons - Attribution-ShareAlike";
-            } else if (url.contains("/by")) {
-              return "Creative Commons - Attribution";
-            }
-            return "Other license";
-            """;
-        return new Script(ScriptType.INLINE, PAINLESS, script, Map.of());
-    }
 
     private static String multipleFields(String... values) {
         return String.join(PIPE, values);
