@@ -275,7 +275,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
 
-        private String expandMissing(String value) {
+        private String expandIfMissingRange(String value) {
             if (nonNull(value) && !value.contains(COMMA)) {
                 return value + COMMA + value;
             }
