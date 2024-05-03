@@ -106,7 +106,6 @@ public final class Words {
     public static final String TOP_LEVEL_ORGANIZATION = "topLevelOrganization";
     public static final String TOP_LEVEL_ORGANIZATIONS = "topLevelOrganizations";
     public static final String TYPE = "type";
-    public static final String NOTIFICATIONS = "notifications";
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
     public static final String YEAR = "year";

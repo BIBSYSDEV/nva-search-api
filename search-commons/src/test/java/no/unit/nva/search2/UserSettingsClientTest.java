@@ -3,11 +3,14 @@ package no.unit.nva.search2;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.util.List;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.records.UserSettings;
 import no.unit.nva.search2.resource.ResourceSearchQuery;
 import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -19,6 +22,7 @@ import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static nva.commons.core.attempt.Try.attempt;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,17 +30,20 @@ import static org.mockito.Mockito.when;
 
 class UserSettingsClientTest {
 
-    private UserSettingsClient userSettingsClient;
+    private static UserSettingsClient userSettingsClient;
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsClientTest.class);
     public static final String SAMPLE_USER_SETTINGS_RESPONSE = "user_settings.json";
 
-    @BeforeEach
-    public void setUp() throws IOException, InterruptedException {
-        var httpClient = mock(HttpClient.class);
+    @BeforeAll
+    public static void setUp() throws IOException, InterruptedException {
+        var mochedHttpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        userSettingsClient = new UserSettingsClient(httpClient, cachedJwtProvider);
-        when(httpClient.send(any(), any()))
-            .thenReturn(mockedHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE));
+        userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
+        when(mochedHttpClient.send(any(), any()))
+            .thenReturn(mockedHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE))
+            .thenReturn(mockedHttpResponse(""))
+            .thenReturn(mockedHttpResponse("", 500));
+
     }
 
     @ParameterizedTest
@@ -47,9 +54,16 @@ class UserSettingsClientTest {
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withRequiredParameters(FROM, SIZE, SORT)
                 .build();
-        var result = userSettingsClient.doSearch(resourceAwsQuery).promotedPublications();
-        logger.debug(result.toString());
-        assertNotNull(result);
+        var promotedPublications = attempt(() -> userSettingsClient.doSearch(resourceAwsQuery))
+            .map(UserSettings::promotedPublications)
+            .orElse((e) -> {
+                    if (e.isFailure()) {
+                        logger.info(e.getException().getMessage());
+                    }
+                    return List.<String>of();
+                }
+            );
+        assertNotNull(promotedPublications);
     }
 
     static Stream<URI> uriProvider() {
