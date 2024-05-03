@@ -14,6 +14,11 @@ import org.slf4j.LoggerFactory;
 public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpensearchQueryRange.class);
+    public static final int WORD_LENGTH_YEAR = 4;
+    public static final int WORD_LENGTH_YEAR_MONTH = 7;
+    public static final String STR_01 = "-01";
+    public static final String STR_12 = "-12";
+    public static final String STR_31 = "-31";
 
     @JacocoGenerated    // never used
     @Override
@@ -67,35 +72,36 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
                 .orElse(null);
     }
 
+    @SuppressWarnings("PMD.NullAssignment")
     private Stream<String> valueOrNull(String value) {
         return Stream.ofNullable(value.isBlank() ? null : value);
     }
 
     private String expandDateFirst(String date, K key) {
-        var retval = date;
         if (key.fieldType() != ParameterKind.DATE) {
-            return retval;
+            return date;
         }
-        if (retval.length() == 4) {
-            retval += "-01";
+        var expandedDate = new StringBuilder(date);
+        if (WORD_LENGTH_YEAR == expandedDate.length()) {
+            expandedDate.append(STR_01);
         }
-        if (retval.length() == 7) {
-            retval += "-01";
+        if (WORD_LENGTH_YEAR_MONTH == expandedDate.length()) {
+            expandedDate.append(STR_01);
         }
-        return retval;
+        return expandedDate.toString();
     }
 
     private String expandDateLast(String date, K key) {
-        var retval = date;
         if (key.fieldType() != ParameterKind.DATE) {
-            return retval;
+            return date;
         }
-        if (retval.length() == 4) {
-            retval += "-12";
+        var expandedDate = new StringBuilder(date);
+        if (WORD_LENGTH_YEAR == expandedDate.length()) {
+            expandedDate.append(STR_12);
         }
-        if (retval.length() == 7) {
-            retval += "-31";
+        if (WORD_LENGTH_YEAR_MONTH == expandedDate.length()) {
+            expandedDate.append(STR_31);
         }
-        return retval;
+        return expandedDate.toString();
     }
 }

@@ -263,7 +263,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    searchQuery.parameters().set(qpKey, expandMissing(decodedValue));
+                    searchQuery.parameters().set(qpKey, expandIfMissingRange(decodedValue));
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
