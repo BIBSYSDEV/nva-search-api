@@ -147,7 +147,7 @@ Accept: application/json
     * <code>key=1000</code> -> hit all with this value
     * <code>key=,1000</code> -> hits all values below, including value
     * <code>key=1000,</code> -> hits all values over, including value
-    * <code>key=500,1000</code> -> hits all values bewtween numbers, including the values.
+    * <code>key=500,1000</code> -> hits all values between numbers, including the values.
   * Dates
     * <code>key=2022</code> -> any date in 2022
     * <code>key=2022,2022</code> -> any date in 2022
