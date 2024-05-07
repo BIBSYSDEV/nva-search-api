@@ -206,7 +206,7 @@ class TicketClientTest {
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE, SORT)
+                    .withRequiredParameters(FROM, SIZE)
                     .build()
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
@@ -331,7 +331,7 @@ class TicketClientTest {
             var query =
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
@@ -421,7 +421,7 @@ class TicketClientTest {
                 URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
                 URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
                 URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&SEARCH_AFTER=12312")
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&SEARCH_AFTER=3.14,12312")
 
             );
         }

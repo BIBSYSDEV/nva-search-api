@@ -12,6 +12,7 @@ import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
+import static no.unit.nva.search2.common.constant.Words.SCORE;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
@@ -208,6 +209,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
         handleSearchAfter(builder);
 
+        builder.sort(SCORE);
+
         builderStreamFieldSort().forEach(builder::sort);
 
         if (includeAggregation()) {
@@ -238,6 +241,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected Stream<FieldSortBuilder> builderStreamFieldSort() {
         return getSort().asSplitStream(COMMA)
+            .filter(pre -> !pre.equals(SCORE))
             .flatMap(item -> {
                 final var parts = item.split(COLON_OR_SPACE);
                 final var order = SortOrder.fromString(
@@ -276,7 +280,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         requestParameter.remove(Words.FROM);
         var sortParameter =
             response.getSort().stream()
-                .map(Object::toString)
+                .map(value -> nonNull(value) ? value : "null")
                 .collect(Collectors.joining(COMMA));
         if (!hasContent(sortParameter)) {
             return null;

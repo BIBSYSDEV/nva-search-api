@@ -10,7 +10,6 @@ import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
 import static no.unit.nva.search2.common.constant.Words.ID;
-import static no.unit.nva.search2.common.constant.Words.JANUARY_FIRST;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
@@ -114,9 +113,9 @@ public final class Functions {
         return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }
 
-    public static String expandYearToDate(String value) {
-        return value.length() == 4 ? value + JANUARY_FIRST : value;
-    }
+//    public static String expandYearToDate(String value) {
+//        return value.length() == 4 ? value + JANUARY_FIRST : value;
+//    }
 
     public static String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
         return
@@ -126,4 +125,8 @@ public final class Functions {
                 .collect(Collectors.joining(COMMA));
     }
 
+
+    public static String multipleFields(String... values) {
+        return String.join(PIPE, values);
+    }
 }

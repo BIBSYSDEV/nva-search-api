@@ -1,6 +1,7 @@
 package no.unit.nva.search2.common.builder;
 
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import java.util.Map;
@@ -25,7 +26,9 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
     public QueryTools<K> queryTools = new QueryTools<>();
 
     public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
-        final var values = value.split(COMMA);
+        final var values = isRangeMissingComma(key, value)
+            ? new String[]{value, value}
+            : value.split(COMMA);
         return queryAsEntryStream(key, values);
     }
 
@@ -39,5 +42,9 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values);
 
+
+    protected boolean isRangeMissingComma(K key, String value) {
+        return key.searchOperator() == BETWEEN && !value.contains(COMMA);
+    }
 
 }

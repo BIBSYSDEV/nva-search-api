@@ -4,6 +4,7 @@ import static no.unit.nva.search2.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.filterBranchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
+import static no.unit.nva.search2.common.constant.Functions.multipleFields;
 import static no.unit.nva.search2.common.constant.Functions.nestedBranchBuilder;
 import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
 import static no.unit.nva.search2.common.constant.Words.*;
@@ -28,7 +29,6 @@ public final class Constants {
 
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
-    public static final String DEFAULT_RESOURCE_SORT = ResourceSort.PUBLISHED_DATE.asCamelCase();
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
@@ -212,7 +212,6 @@ public final class Constants {
             );
     }
 
-
     public static NestedAggregationBuilder fundingSourceHierarchy() {
         return
             nestedBranchBuilder(FUNDINGS, FUNDINGS)
@@ -358,10 +357,6 @@ public final class Constants {
         );
     }
 
-
-    private static String multipleFields(String... values) {
-        return String.join(PIPE, values);
-    }
 
     @JacocoGenerated
     public Constants() {

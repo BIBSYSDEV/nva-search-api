@@ -32,11 +32,12 @@ import static no.unit.nva.search2.importcandidate.Constants.ADDITIONAL_IDENTIFIE
 import static no.unit.nva.search2.importcandidate.Constants.COLLABORATION_TYPE_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.FILES_STATUS_PATH;
 import static no.unit.nva.search2.importcandidate.Constants.ID_KEYWORD;
+import static no.unit.nva.search2.importcandidate.Constants.IMPORT_STATUS_PATH;
+import static no.unit.nva.search2.importcandidate.Constants.MODIFIED_DATE_PATH;
 import static no.unit.nva.search2.importcandidate.Constants.ORGANIZATIONS_PATH;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLICATION_YEAR_KEYWORD;
 import static no.unit.nva.search2.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search2.importcandidate.Constants.STATUS_TYPE_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 
 import java.util.Arrays;
@@ -74,12 +75,13 @@ public enum ImportCandidateParameter implements ParameterKey {
     CRISTIN_IDENTIFIER(CUSTOM),
     DOI(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, Constants.DOI_KEYWORD),
     DOI_NOT(TEXT, NO_ITEMS, Constants.DOI_KEYWORD),
-    FILES_STATUS(KEYWORD, ALL_ITEMS, FILES_STATUS_PATH),
+    FILES(KEYWORD, ALL_ITEMS, FILES_STATUS_PATH),
     ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ID_KEYWORD),
     ID_NOT(FUZZY_KEYWORD, NO_ITEMS, ID_KEYWORD),
-    IMPORT_STATUS(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, STATUS_TYPE_KEYWORD),
-    IMPORT_STATUS_NOT(KEYWORD, NO_ITEMS, STATUS_TYPE_KEYWORD),
+    IMPORT_STATUS(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, IMPORT_STATUS_PATH),
+    IMPORT_STATUS_NOT(FUZZY_KEYWORD, NO_ITEMS, IMPORT_STATUS_PATH),
     LICENSE(CUSTOM, ALL_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
+    MODIFIED_DATE(DATE, BETWEEN, MODIFIED_DATE_PATH),
     LICENSE_NOT(CUSTOM, NO_ITEMS, ASSOCIATED_ARTIFACTS_LICENSE),
     PUBLICATION_YEAR(NUMBER, BETWEEN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),

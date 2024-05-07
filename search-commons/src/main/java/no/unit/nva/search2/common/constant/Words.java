@@ -50,7 +50,6 @@ public final class Words {
     public static final String IDENTITY = "identity";
     public static final String ISBN_LIST = "isbnList";
     public static final String ISBN_PREFIX = "isbnPrefix";
-    public static final String JANUARY_FIRST = "-01-01";
     public static final String JOURNAL = "journal";
     public static final String JOURNAL_AS_TYPE = "Journal";
     public static final String KEY = "key";
@@ -86,6 +85,7 @@ public final class Words {
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";
     public static final String SCIENTIFIC_INDEX = "scientificIndex";
+    public static final String SCORE = "_score";
     public static final String SCOPUS_AS_TYPE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";

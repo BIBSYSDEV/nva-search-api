@@ -6,13 +6,17 @@ import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
@@ -26,7 +30,6 @@ import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
-import static no.unit.nva.search2.resource.ResourceParameter.INSTANCE_TYPE;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
@@ -58,6 +61,7 @@ import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -68,6 +72,7 @@ import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceSearchQuery;
+import no.unit.nva.search2.resource.ResourceSort;
 import no.unit.nva.search2.resource.UserSettingsClient;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -380,7 +385,7 @@ class ResourceClientTest {
             var query =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE, SORT, INSTANCE_TYPE)
+                    .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
@@ -390,6 +395,9 @@ class ResourceClientTest {
             var response = searchClient.doSearch(query);
             var pagedSearchResourceDto = query.toPagedResponse(response);
             assertNotNull(pagedSearchResourceDto.id());
+            var searchName = query.getSort().split(COMMA)[0].split(COLON)[0];
+            var searchFieldName = ResourceSort.fromSortKey(searchName).jsonPaths().findFirst().get();
+            logger.info(response.hits().hits().stream().map(item -> item._score() + " + " + item._source().get(searchFieldName)).collect(Collectors.joining(SPACE + PIPE + SPACE)));
             assertNotNull(pagedSearchResourceDto.context());
             assertTrue(pagedSearchResourceDto.totalHits() >= 0);
         }
@@ -520,22 +528,26 @@ class ResourceClientTest {
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&size=10&from=0&sort=modified_date"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=instanceType"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=createdDate"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=publishedDate"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=publicationDate"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=title"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=user"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(REQUEST_BASE_URL + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+                URI.create(REQUEST_BASE_URL + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
+                URI.create(REQUEST_BASE_URL + "query=infrastructure&sort=instanceType"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=createdDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publishedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publicationDate"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=title"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=user"),
                 URI.create(REQUEST_BASE_URL
-                    + "category=Ma&orderBy=created_date:asc,modifiedDate:desc&searchAfter=1241234,23412"),
-                URI.create(REQUEST_BASE_URL + "category=Ma&sort=published_date+asc&sort=category+desc"));
+                    + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
+                URI.create(REQUEST_BASE_URL
+                    + "query=year+project&orderBy=created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
+                URI.create(REQUEST_BASE_URL + "query=year+project&sort=published_date+asc&sort=category+desc"));
         }
 
         static Stream<URI> uriInvalidProvider() {

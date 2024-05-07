@@ -17,6 +17,7 @@ import org.apache.commons.text.CaseUtils;
 
 public enum TicketSort implements SortKey {
     INVALID(EMPTY_STRING),
+    SCORE(Words.SCORE),
     CREATED_DATE(Words.CREATED_DATE),
     MODIFIED_DATE(Words.MODIFIED_DATE),
     STATUS(STATUS_KEYWORD),

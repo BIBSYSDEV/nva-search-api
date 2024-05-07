@@ -21,7 +21,6 @@ import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +51,7 @@ class UserSettingsClientTest {
         var resourceAwsQuery =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE)
                 .build();
         var promotedPublications = attempt(() -> userSettingsClient.doSearch(resourceAwsQuery))
             .map(UserSettings::promotedPublications)

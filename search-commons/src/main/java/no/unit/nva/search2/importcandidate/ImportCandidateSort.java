@@ -15,6 +15,7 @@ import org.apache.commons.text.CaseUtils;
 
 public enum ImportCandidateSort implements SortKey {
     INVALID(EMPTY_STRING),
+    SCORE(Words.SCORE),
     COLLABORATION_TYPE(Constants.COLLABORATION_TYPE_KEYWORD),
     CREATED_DATE(Words.CREATED_DATE),
     INSTANCE_TYPE(Constants.TYPE_KEYWORD),
