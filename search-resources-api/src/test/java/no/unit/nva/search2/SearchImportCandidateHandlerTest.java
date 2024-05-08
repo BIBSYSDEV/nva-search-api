@@ -2,8 +2,8 @@ package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search2.common.constant.Words.ACCEPT;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -30,9 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.ExportCsv;
-import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.csv.ExportCsv;
 import no.unit.nva.search2.common.records.PagedSearch;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.importcandidate.ImportCandidateClient;
@@ -104,14 +103,9 @@ class SearchImportCandidateHandlerTest {
         var type = "AcademicArticle";
         var contributors = List.of(randomString(), randomString(), randomString());
         var date = "2022-01-22";
-        
-        var exportCsv = new ExportCsv();
-        exportCsv.setId(id);
-        exportCsv.setMainTitle(title);
-        exportCsv.setPublicationInstance(type);
-        exportCsv.setPublicationDate(date);
-        exportCsv.setContributors(String.join(COMMA, contributors));
-        return exportCsv;
+
+        return  new ExportCsv(id, title, date, type, String.join(COMMA, contributors));
+
     }
     
     private ExportCsv csvWithYearOnly() {
@@ -120,14 +114,9 @@ class SearchImportCandidateHandlerTest {
         var type = "AcademicArticle";
         var contributors = List.of(randomString(), randomString(), randomString());
         var date = "2022";
-        
-        var exportCsv = new ExportCsv();
-        exportCsv.setId(id);
-        exportCsv.setMainTitle(title);
-        exportCsv.setPublicationInstance(type);
-        exportCsv.setPublicationDate(date);
-        exportCsv.setContributors(String.join(COMMA, contributors));
-        return exportCsv;
+
+        return  new ExportCsv(id, title, date, type, String.join(COMMA, contributors));
+
     }
     
     @Test

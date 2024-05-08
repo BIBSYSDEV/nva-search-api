@@ -1,7 +1,8 @@
 package no.unit.nva.indexing.testutils;
 
 import java.util.Objects;
-import no.unit.nva.search.ExportCsv;
+
+import no.unit.nva.search2.common.csv.ExportCsv;
 import nva.commons.core.ioutils.IoUtils;
 
 import java.nio.file.Path;
@@ -32,11 +33,11 @@ public class FakeSearchResponse {
     private static String generateHit(ExportCsv item) {
         // Not efficient
         var hitTemplate = IoUtils.stringFromResources(SEARCH_HIT_TEMPLATE);
-        var date = new ParsedDate(item.getPublicationDate());
+        var date = new ParsedDate(item.publicationDate());
         var contributors = createContributorArray(item);
-        return hitTemplate.replace("__ID__", item.getId())
-                .replace("__TYPE__", item.getPublicationInstance())
-                .replace("__TITLE__", item.getMainTitle())
+        return hitTemplate.replace("__ID__", item.id())
+                .replace("__TYPE__", item.publicationInstance())
+                .replace("__TITLE__", item.mainTitle())
                 .replace("__YEAR__", "\"" + date.getYear() + "\"")
                 .replace("__MONTH__", date.getMonth())
                 .replace("__DAY__", date.getDay())
@@ -44,7 +45,7 @@ public class FakeSearchResponse {
     }
 
     private static String createContributorArray(ExportCsv item) {
-        return Arrays.stream(item.getContributors().split(COMMA_DELIMITER))
+        return Arrays.stream(item.contributors().split(COMMA_DELIMITER))
                 .map(FakeSearchResponse::createContributor)
                 .collect(Collectors.joining(COMMA_DELIMITER));
     }

@@ -10,6 +10,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
@@ -17,10 +18,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.ExportCsv;
+import no.unit.nva.search2.common.csv.ExportCsv;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -80,14 +81,7 @@ class ExportResourceHandlerTest {
         var type = "AcademicArticle";
         var contributors = List.of(randomString(), randomString(), randomString());
         var date = "2022-01-22";
-
-        var exportCsv = new ExportCsv();
-        exportCsv.setId(id);
-        exportCsv.setMainTitle(title);
-        exportCsv.setPublicationInstance(type);
-        exportCsv.setPublicationDate(date);
-        exportCsv.setContributors(String.join(COMMA, contributors));
-        return exportCsv;
+        return new ExportCsv(id, title, date, type, String.join(COMMA, contributors));
     }
 
     private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {

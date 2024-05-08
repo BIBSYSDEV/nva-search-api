@@ -10,24 +10,19 @@ import java.util.Objects;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 
 @CsvBindByNameOrder({"url", "title", "publicationDate", "type", "contributors"})
-public class ExportCsv {
-    public static final String DATE_SEPARATOR = "-";
-
+public record ExportCsv(
     @CsvBindByName(column = "url")
-    private String id;
+    String id,
     @CsvBindByName(column = "title")
-    private String mainTitle;
+    String mainTitle,
     @CsvBindByName(column = "publicationDate")
-    private String publicationDate;
+    String publicationDate,
     @CsvBindByName(column = "type")
-    private String publicationInstance;
+    String publicationInstance,
     @CsvBindByName(column = "contributors")
-    private String contributors;
-
-    @JacocoGenerated
-    public ExportCsv() {
-        // Bean constructor.
-    }
+    String contributors
+) {
+    public static final String DATE_SEPARATOR = "-";
 
     public ExportCsv(String id,
                      String mainTitle,
@@ -36,39 +31,11 @@ public class ExportCsv {
                      String day,
                      String publicationInstance,
                      List<String> contributors) {
-        this.id = id;
-        this.mainTitle = mainTitle;
-        this.publicationDate = createPublicationDate(year, month, day);
-        this.publicationInstance = publicationInstance;
-        this.contributors = createContributorsString(contributors);
+        this(id, mainTitle, createPublicationDate(year, month, day),
+            publicationInstance, createContributorsString(contributors));
     }
 
-    public String getId() {
-        return id;
-    }
-
-
-    public String getMainTitle() {
-        return mainTitle;
-    }
-
-
-    public String getPublicationDate() {
-        return publicationDate;
-    }
-
-
-    public String getPublicationInstance() {
-        return publicationInstance;
-    }
-
-
-    public String getContributors() {
-        return contributors;
-    }
-
-
-    public final String createPublicationDate(String year, String month, String day) {
+    static String createPublicationDate(String year, String month, String day) {
         var stringBuilder = new StringBuilder();
 
         if (StringUtils.isNotBlank(year)) {
@@ -85,37 +52,8 @@ public class ExportCsv {
         return stringBuilder.toString();
     }
 
-    public final String createContributorsString(List<String> contributors) {
+    static String createContributorsString(List<String> contributors) {
         return String.join(COMMA, contributors);
     }
 
-    @Override
-    @JacocoGenerated
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ExportCsv)) {
-            return false;
-        }
-        ExportCsv exportCsv = (ExportCsv) o;
-        return Objects.equals(getId(), exportCsv.getId())
-                && Objects.equals(getMainTitle(), exportCsv.getMainTitle())
-                && Objects.equals(getPublicationDate(), exportCsv.getPublicationDate())
-                && Objects.equals(getPublicationInstance(), exportCsv.getPublicationInstance())
-                && Objects.equals(getContributors(), exportCsv.getContributors());
-    }
-
-    @Override
-    @JacocoGenerated
-    public int hashCode() {
-        return Objects.hash(getId(), getMainTitle(), getPublicationDate(), getPublicationInstance(), getContributors());
-    }
-
-    @Override
-    @JacocoGenerated
-    public String toString() {
-        return "ExportCsv{id='%s', mainTitle='%s', publicationDate='%s', publicationInstance='%s', contributors='%s'}"
-                   .formatted(id, mainTitle, publicationDate, publicationInstance, contributors);
-    }
 }

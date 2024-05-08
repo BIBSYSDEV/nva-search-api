@@ -11,7 +11,7 @@ public final class Words {
 
     public static final String POST_FILTER = "withAppliedFilter";
     public static final String ROOT = "root";
-
+    public static final String ACCEPT = "Accept";
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
     public static final String AFFILIATIONS = "affiliations";

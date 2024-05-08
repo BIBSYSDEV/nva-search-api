@@ -1,8 +1,8 @@
 package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.search2.common.constant.Words.ACCEPT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -24,7 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Map;
-import no.unit.nva.search2.common.FakeGatewayResponse;
+
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.testutils.HandlerRequestBuilder;

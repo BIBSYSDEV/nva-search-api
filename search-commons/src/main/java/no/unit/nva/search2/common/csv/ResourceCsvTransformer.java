@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search2.common.csv;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -8,8 +8,6 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import no.unit.nva.search.csv.HeaderColumnNameAndOrderMappingStrategy;
-import no.unit.nva.search.models.SearchResponseDto;
 
 public final class ResourceCsvTransformer {
 
@@ -39,9 +37,6 @@ public final class ResourceCsvTransformer {
     private ResourceCsvTransformer() {
     }
 
-    public static String transform(SearchResponseDto searchResponseDto) {
-        return transform(searchResponseDto.getHits());
-    }
 
     public static String transform(List<JsonNode> hits) {
         var stringWriter = new StringWriter();

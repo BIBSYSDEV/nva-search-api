@@ -5,7 +5,6 @@ import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATE
 import static no.unit.nva.search.constants.ApplicationConstants.OPENSEARCH_ENDPOINT_INDEX;
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 import static nva.commons.core.attempt.Try.attempt;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
@@ -34,8 +33,6 @@ import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
 import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.bytes.BytesReference;
-import org.opensearch.common.compress.CompressedXContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,14 +120,14 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         return null;
     }
 
-    public JsonNode getMapping(String indexName) {
-        return attempt(() -> getMappingMetadata(indexName))
-                   .map(MappingMetadata::source)
-                   .map(CompressedXContent::uncompressed)
-                   .map(BytesReference::utf8ToString)
-                   .map(JsonUtils.dtoObjectMapper::readTree)
-                   .orElseThrow();
-    }
+//    public JsonNode getMapping(String indexName) {
+//        return attempt(() -> getMappingMetadata(indexName))
+//                   .map(MappingMetadata::source)
+//                   .map(CompressedXContent::uncompressed)
+//                   .map(BytesReference::utf8ToString)
+//                   .map(JsonUtils.dtoObjectMapper::readTree)
+//                   .orElseThrow();
+//    }
 
     private Stream<List<IndexDocument>> splitStreamToBatches(Stream<IndexDocument> indexDocuments) {
         UnmodifiableIterator<List<IndexDocument>> bulks = Iterators.partition(

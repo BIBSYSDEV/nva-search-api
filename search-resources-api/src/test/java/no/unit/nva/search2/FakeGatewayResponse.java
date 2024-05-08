@@ -1,4 +1,4 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search2;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;

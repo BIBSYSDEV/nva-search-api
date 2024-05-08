@@ -91,24 +91,6 @@ public record IndexDocument(
             .id(getDocumentIdentifier());
     }
 
-    @JacocoGenerated
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof IndexDocument that)) {
-            return false;
-        }
-        return Objects.equals(consumptionAttributes(), that.consumptionAttributes())
-            && Objects.equals(resource(), that.resource());
-    }
-
-    @JacocoGenerated
-    @Override
-    public int hashCode() {
-        return Objects.hash(consumptionAttributes(), resource());
-    }
 
     private String serializeResource() {
         return attempt(() -> objectMapper.writeValueAsString(resource)).orElseThrow();

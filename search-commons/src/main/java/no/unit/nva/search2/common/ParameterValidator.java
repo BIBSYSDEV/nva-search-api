@@ -1,10 +1,10 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComma;
+import static no.unit.nva.search2.common.constant.Words.ACCEPT;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 

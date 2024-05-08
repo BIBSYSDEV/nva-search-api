@@ -2,11 +2,13 @@ package no.unit.nva.search2;
 
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import no.unit.nva.search.ResourceCsvTransformer;
+
+import no.unit.nva.search2.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.search2.scroll.ScrollQuery;
