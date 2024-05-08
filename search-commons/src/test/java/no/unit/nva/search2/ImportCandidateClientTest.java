@@ -16,6 +16,7 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_STATUS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PUBLICATION_YEAR;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.TYPE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -187,7 +188,7 @@ class ImportCandidateClientTest {
                 ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, SORT)
                     .build();
 
             var response = importCandidateClient.doSearch(query);
@@ -228,8 +229,10 @@ class ImportCandidateClientTest {
                 URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
                 URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=10&from=0&sort=created_date"),
                 URI.create(REQUEST_BASE_URL + "orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
-                URI.create(REQUEST_BASE_URL + "orderBy=title:asc,CREATED_DATE:desc&searchAfter=3.34,1241234,23412"),
-                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=TYPE+asc&sort=INSTANCE_TYPE+desc"));
+                URI.create(REQUEST_BASE_URL
+                    + "orderBy=relevance,title:asc,CREATED_DATE:desc&searchAfter=3.34,1241234,23412"),
+                URI.create(REQUEST_BASE_URL 
+                    + "category=AcademicArticle&sort=relevance,TYPE+asc&sort=INSTANCE_TYPE+desc"));
         }
 
         static Stream<URI> uriProvider() {

@@ -12,6 +12,7 @@ import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
@@ -180,6 +181,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
                 switch (key) {
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
                     case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* do nothing */
                     }

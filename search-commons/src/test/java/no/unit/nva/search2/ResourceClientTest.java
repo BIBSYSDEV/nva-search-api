@@ -385,7 +385,7 @@ class ResourceClientTest {
             var query =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, SORT)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
@@ -546,7 +546,8 @@ class ResourceClientTest {
                 URI.create(REQUEST_BASE_URL
                     + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
                 URI.create(REQUEST_BASE_URL
-                    + "query=year+project&orderBy=created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
+                    + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912," +
+                    "1241234,23412"),
                 URI.create(REQUEST_BASE_URL + "query=year+project&sort=published_date+asc&sort=category+desc"));
         }
 

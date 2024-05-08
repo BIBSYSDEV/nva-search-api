@@ -81,6 +81,7 @@ public final class Words {
     public static final String Q = "q";
     public static final String QUOTE = "'";
     public static final String REFERENCE = "reference";
+    public static final String RELEVANCE_KEY_NAME = "relevance";
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String SAMI_CODE = "sme";

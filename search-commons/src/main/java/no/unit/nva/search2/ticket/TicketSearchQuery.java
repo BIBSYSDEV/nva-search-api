@@ -11,7 +11,7 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMEN
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
-import static no.unit.nva.search2.common.constant.Words.SCORE;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
@@ -200,7 +200,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 switch (key) {
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.name(), SCORE);
+                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
                     case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* ignore and continue */ }
                 }

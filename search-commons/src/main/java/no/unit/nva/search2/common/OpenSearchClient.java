@@ -5,6 +5,7 @@ import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
@@ -75,7 +76,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         queryParameters = query.parameters().asMap()
             .entrySet().stream()
             .map(Object::toString)
-            .collect(joining("&"));
+            .collect(joining(AMPERSAND));
         return
             query.assemble()
                 .map(this::createRequest)

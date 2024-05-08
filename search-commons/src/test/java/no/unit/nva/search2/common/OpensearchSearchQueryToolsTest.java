@@ -53,7 +53,7 @@ class OpensearchSearchQueryToolsTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
     }

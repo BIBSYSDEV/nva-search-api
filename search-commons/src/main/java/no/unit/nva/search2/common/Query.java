@@ -10,23 +10,24 @@ import no.unit.nva.search2.common.records.QueryContentWrapper;
 public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;
-
     private final transient Instant startTime;
 
-    protected Query() {
-        startTime = Instant.now();
 
-
-    }
-    public QueryKeys<K> parameters() {
-        return queryKeys;
-    }
-    public Instant getStartTime() {
-        return startTime;
-    }
+    public abstract Stream<QueryContentWrapper> assemble();
 
     protected abstract URI getOpenSearchUri();
 
-    public abstract Stream<QueryContentWrapper> assemble();
+
+    protected Query() {
+        startTime = Instant.now();
+    }
+
+    public QueryKeys<K> parameters() {
+        return queryKeys;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
+    }
 
 }

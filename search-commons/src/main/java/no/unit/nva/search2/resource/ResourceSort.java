@@ -20,7 +20,7 @@ import org.apache.commons.text.CaseUtils;
 
 public enum ResourceSort implements SortKey {
     INVALID(EMPTY_STRING),
-    SCORE(Words.SCORE),
+    RELEVANCE(Words.SCORE),
     CATEGORY(Constants.PUBLICATION_INSTANCE_TYPE),
     INSTANCE_TYPE(Constants.PUBLICATION_INSTANCE_TYPE),
     CREATED_DATE(Words.CREATED_DATE),

@@ -25,26 +25,32 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
 
     public QueryTools<K> queryTools = new QueryTools<>();
 
-    public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
-        final var values = isRangeMissingComma(key, value)
-            ? new String[]{value, value}
-            : value.split(COMMA);
-        return queryAsEntryStream(key, values);
-    }
-
-    private Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        return key.searchOperator().equals(ONE_OR_MORE_ITEM) || key.searchOperator().equals(NOT_ONE_ITEM)
-            ? buildMatchAnyKeyValuesQuery(key, values)
-            : buildMatchAllValuesQuery(key, values);
-    }
-
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values);
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values);
 
+    public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
+        final var values = splitAndFixMissingRangeValue(key, value);
+        return queryAsEntryStream(key, values);
+    }
 
-    protected boolean isRangeMissingComma(K key, String value) {
+    private Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
+        return isSearchAny(key)
+            ? buildMatchAnyKeyValuesQuery(key, values)
+            : buildMatchAllValuesQuery(key, values);
+    }
+
+    private boolean isSearchAny(K key) {
+        return key.searchOperator().equals(ONE_OR_MORE_ITEM) || key.searchOperator().equals(NOT_ONE_ITEM);
+    }
+
+    private boolean isRangeMissingComma(K key, String value) {
         return key.searchOperator() == BETWEEN && !value.contains(COMMA);
     }
 
+    private String[] splitAndFixMissingRangeValue(K key, String value) {
+        return isRangeMissingComma(key, value)
+            ? new String[] {value, value}
+            : value.split(COMMA);
+    }
 }
