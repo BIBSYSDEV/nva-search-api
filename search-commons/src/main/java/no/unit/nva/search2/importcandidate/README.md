@@ -235,8 +235,8 @@ Accept: application/json
 | publisher                  | publisher                | keyword      | all_items                | publisher.id.keyword                                 |
 | publisher_not              | publisherNot             | keyword      | no_items                 | publisher.id.keyword                                 |
 | scopus_identifier          | scopusIdentifier         | custom       | all_items                | SCOPUS_IDENTIFIER                                    |
-| top_level_organization     | topLevelOrganization     | fuzzyKeyword | one_or_more_item         | organizations.id                                     |
-| top_level_organization_not | topLevelOrganizationNot  | fuzzyKeyword | no_items                 | organizations.id                                     |
+| top_level_organization     | topLevelOrganization     | keyword      | one_or_more_item         | organizations.id.keyword                             |
+| top_level_organization_not | topLevelOrganizationNot  | keyword      | no_items                 | organizations.id.keyword                             |
 | title                      | title                    | text         | one_or_more_item         | mainTitle                                            |
 | title_not                  | titleNot                 | text         | no_items                 | mainTitle                                            |
 | type                       | type                     | fuzzyKeyword | one_or_more_item         | publicationInstance.type                             |
