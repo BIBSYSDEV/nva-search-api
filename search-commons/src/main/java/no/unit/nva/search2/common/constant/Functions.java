@@ -113,10 +113,6 @@ public final class Functions {
         return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }
 
-//    public static String expandYearToDate(String value) {
-//        return value.length() == 4 ? value + JANUARY_FIRST : value;
-//    }
-
     public static String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
         return
             Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
@@ -124,7 +120,6 @@ public final class Functions {
                 .map(Enum::toString)
                 .collect(Collectors.joining(COMMA));
     }
-
 
     public static String multipleFields(String... values) {
         return String.join(PIPE, values);
