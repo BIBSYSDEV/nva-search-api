@@ -256,7 +256,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
         var result = attempt(() -> userSettingsClient.doSearch(this));
         if (result.isSuccess()) {
-            parameters().remove(SORT);  // remove sort to avoid messing up "sorting by score"
             var promotedPublications = result.get().promotedPublications();
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var qb = matchQuery(IDENTIFIER_KEYWORD, promotedPublications.get(i))
