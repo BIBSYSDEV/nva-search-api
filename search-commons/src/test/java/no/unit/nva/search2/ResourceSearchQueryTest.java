@@ -90,7 +90,7 @@ class ResourceSearchQueryTest {
         var resource =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE)
                 .build();
         assertNotNull(resource.parameters().get(FROM).as());
         assertNotNull(resource.parameters().get(SIZE).as());
@@ -113,7 +113,7 @@ class ResourceSearchQueryTest {
         var query =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT)
+                .withRequiredParameters(FROM, SIZE)
                 .build();
 
         query.parameters().getSearchKeys()
@@ -136,7 +136,7 @@ class ResourceSearchQueryTest {
     void uriParamsToResourceParams(URI uri) throws BadRequestException {
         var resource = ResourceSearchQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri))
-            .withRequiredParameters(FROM, SIZE, SORT)
+            .withRequiredParameters(FROM, SIZE)
             .build();
         assertNotNull(resource.parameters().get(FROM).<Long>as());
         assertNull(resource.parameters().get(PAGE).<Long>as());
@@ -192,7 +192,6 @@ class ResourceSearchQueryTest {
     static Stream<URI> uriSortingProvider() {
         return Stream.of(
             URI.create("https://example.com/?sort=category&sortOrder=asc&sort=created_date&order=desc"),
-            URI.create("https://example.com/"),
             URI.create("https://example.com/?orderBy=category:asc,created_date:desc"),
             URI.create("https://example.com/?sort=category+asc&sort=created_date+desc"));
     }

@@ -24,6 +24,9 @@
             "identity": {
               "type": "nested",
               "include_in_parent": true
+            },
+            "affiliation": {
+              "type": "flat_object"
             }
           }
         },

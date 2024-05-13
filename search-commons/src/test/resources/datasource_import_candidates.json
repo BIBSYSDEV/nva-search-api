@@ -2,7 +2,7 @@
   {
     "importStatus": {
       "candidateStatus": "NOT_IMPORTED",
-      "modifiedDate": "2023-11-20T19:38:32.362135196Z"
+      "modifiedDate": "2023-10-20T19:38:32.362135196Z"
     },
     "collaborationType": "NonCollaborative",
     "type": "ImportCandidateSummary",
@@ -158,7 +158,7 @@
   {
     "importStatus": {
       "candidateStatus": "NOT_IMPORTED",
-      "modifiedDate": "2023-11-20T19:38:58.568863583Z"
+      "modifiedDate": "2023-07-20T19:38:58.568863583Z"
     },
     "collaborationType": "NonCollaborative",
     "type": "ImportCandidateSummary",
@@ -340,7 +340,7 @@
   {
     "importStatus": {
       "candidateStatus": "NOT_IMPORTED",
-      "modifiedDate": "2023-11-20T19:38:19.691279631Z"
+      "modifiedDate": "2023-06-20T19:38:19.691279631Z"
     },
     "collaborationType": "Collaborative",
     "type": "ImportCandidateSummary",
@@ -516,7 +516,7 @@
   {
     "importStatus": {
       "candidateStatus": "NOT_IMPORTED",
-      "modifiedDate": "2023-11-20T19:40:54.004861974Z"
+      "modifiedDate": "2023-05-20T19:40:54.004861974Z"
     },
     "collaborationType": "Collaborative",
     "type": "ImportCandidateSummary",
@@ -766,7 +766,7 @@
   {
     "importStatus": {
       "candidateStatus": "IMPORTED",
-      "modifiedDate": "2023-11-21T07:28:37.017917397Z",
+      "modifiedDate": "2023-04-21T07:28:37.017917397Z",
       "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf0c7ed0d-589a7f72-4b6e-4651-b902-7621439a9f06",
       "setBy": "1136326@20754.0.0.0"
     },
@@ -943,7 +943,7 @@
   {
     "importStatus": {
       "candidateStatus": "IMPORTED",
-      "modifiedDate": "2023-11-21T07:14:20.984810674Z",
+      "modifiedDate": "2023-10-21T07:14:20.984810674Z",
       "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf0badda1-f251e5ad-f5d2-4e5b-bb67-a8f78a12aa5c",
       "setBy": "1136326@20754.0.0.0"
     },
@@ -1408,7 +1408,7 @@
   {
     "importStatus": {
       "candidateStatus": "IMPORTED",
-      "modifiedDate": "2023-11-21T13:56:42.220681536Z",
+      "modifiedDate": "2023-12-21T13:56:42.220681536Z",
       "nvaPublicationId": "https://api.dev.nva.aws.unit.no/publication/018bf22b3a94-35be3f58-6dfd-47cd-b1ed-de80224c2fca",
       "setBy": "1136254@20754.0.0.0"
     },

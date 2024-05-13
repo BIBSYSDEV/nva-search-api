@@ -12,6 +12,7 @@ import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
@@ -46,7 +47,7 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
-import org.opensearch.search.sort.FieldSortBuilder;
+import org.opensearch.search.sort.SortBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -81,16 +82,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract SortKey toSortKey(String sortName);
 
-
-    /**
-     * Builds URI to query SWS based on post body.
-     *
-     * @return an URI to Sws search without parameters.
-     */
-
     protected abstract String toCsvText(SwsResponse response);
-    protected abstract void setFetchSource(SearchSourceBuilder builder);
 
+    protected abstract void setFetchSource(SearchSourceBuilder builder);
 
     /**
      * Path to each and every facet defined in  builderAggregations().
@@ -142,8 +136,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return mediaType;
     }
 
-
-
     final void setMediaType(String mediaType) {
         if (nonNull(mediaType) && mediaType.contains(Words.TEXT_CSV)) {
             this.mediaType = CSV_UTF_8;
@@ -152,6 +144,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         }
     }
 
+    /**
+     * Builds URI to query SWS based on post body.
+     *
+     * @return an URI to Sws search without parameters.
+     */
     public URI getNvaSearchApiUri() {
         return gatewayUri;
     }
@@ -213,7 +210,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         if (includeAggregation()) {
             builder.aggregation(builderAggregationsWithFilter());
         }
-        logger.debug(builder.toString());
+
         return Stream.of(new QueryContentWrapper(builder.toString(), this.getOpenSearchUri()));
     }
 
@@ -236,13 +233,17 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected Stream<FieldSortBuilder> builderStreamFieldSort() {
+    protected Stream<SortBuilder<?>> builderStreamFieldSort() {
         return getSort().asSplitStream(COMMA)
             .flatMap(item -> {
                 final var parts = item.split(COLON_OR_SPACE);
                 final var order = SortOrder.fromString(
                     attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
-                return toSortKey(parts[0]).jsonPaths()
+                final var sortKey = toSortKey(parts[0]);
+
+                return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+                    ? Stream.of(SortBuilders.scoreSort().order(order))
+                    : sortKey.jsonPaths()
                     .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
             });
     }
@@ -272,11 +273,19 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
+    private void handleSearchAfter(SearchSourceBuilder builder) {
+        var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
+        if (nonNull(sortKeys)) {
+            builder.searchAfter(sortKeys);
+        }
+        setFetchSource(builder);
+    }
+
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
         requestParameter.remove(Words.FROM);
         var sortParameter =
             response.getSort().stream()
-                .map(Object::toString)
+                .map(value -> nonNull(value) ? value : "null")
                 .collect(Collectors.joining(COMMA));
         if (!hasContent(sortParameter)) {
             return null;
@@ -295,14 +304,5 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     private boolean isMustNot(K key) {
         return NO_ITEMS.equals(key.searchOperator())
             || NOT_ONE_ITEM.equals(key.searchOperator());
-    }
-
-
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
-        }
-        setFetchSource(builder);
     }
 }

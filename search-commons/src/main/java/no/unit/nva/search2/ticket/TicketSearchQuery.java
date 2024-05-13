@@ -1,23 +1,19 @@
 package no.unit.nva.search2.ticket;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.QueryTools.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SEARCH;
 import static no.unit.nva.search2.common.constant.Words.TICKETS;
-import static no.unit.nva.search2.ticket.Constants.DEFAULT_TICKET_SORT;
 import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
 import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
@@ -204,7 +200,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 switch (key) {
                     case FROM -> setValue(key.name(), DEFAULT_OFFSET);
                     case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.name(), DEFAULT_TICKET_SORT + COLON + DEFAULT_SORT_ORDER);
+                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
                     case AGGREGATION -> setValue(key.name(), NONE);
                     default -> { /* ignore and continue */ }
                 }
@@ -262,8 +258,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case CREATED_DATE, MODIFIED_DATE, PUBLICATION_MODIFIED_DATE ->
-                    searchQuery.parameters().set(qpKey, expandIfMissingRange(decodedValue));
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
                 case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
@@ -275,11 +269,5 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
 
-        private String expandIfMissingRange(String value) {
-            if (nonNull(value) && !value.contains(COMMA)) {
-                return value + COMMA + value;
-            }
-            return value;
-        }
     }
 }

@@ -1,6 +1,7 @@
 package no.unit.nva.search2.common.builder;
 
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import java.util.Map;
@@ -24,20 +25,32 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
 
     public QueryTools<K> queryTools = new QueryTools<>();
 
-    public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
-        final var values = value.split(COMMA);
-        return queryAsEntryStream(key, values);
-    }
-
-    private Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        return key.searchOperator().equals(ONE_OR_MORE_ITEM) || key.searchOperator().equals(NOT_ONE_ITEM)
-            ? buildMatchAnyKeyValuesQuery(key, values)
-            : buildMatchAllValuesQuery(key, values);
-    }
-
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values);
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values);
 
+    public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
+        final var values = splitAndFixMissingRangeValue(key, value);
+        return queryAsEntryStream(key, values);
+    }
 
+    private Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
+        return isSearchAny(key)
+            ? buildMatchAnyKeyValuesQuery(key, values)
+            : buildMatchAllValuesQuery(key, values);
+    }
+
+    private boolean isSearchAny(K key) {
+        return key.searchOperator().equals(ONE_OR_MORE_ITEM) || key.searchOperator().equals(NOT_ONE_ITEM);
+    }
+
+    private boolean isRangeMissingComma(K key, String value) {
+        return key.searchOperator() == BETWEEN && !value.contains(COMMA);
+    }
+
+    private String[] splitAndFixMissingRangeValue(K key, String value) {
+        return isRangeMissingComma(key, value)
+            ? new String[] {value, value}
+            : value.split(COMMA);
+    }
 }
