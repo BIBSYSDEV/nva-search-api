@@ -102,7 +102,9 @@ public final class Constants {
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
-    public static final String HANDLE_KEYWORD = HANDLE + DOT + KEYWORD;
+    public static final String HANDLE_KEYWORD = multipleFields(
+        jsonPath(HANDLE, KEYWORD),
+        jsonPath("additionalIdentifiers", VALUE, KEYWORD));
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;

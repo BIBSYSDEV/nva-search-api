@@ -7,7 +7,6 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WI
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
@@ -15,15 +14,11 @@ import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
-import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
-import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
@@ -31,17 +26,12 @@ import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import static org.opensearch.index.query.QueryBuilders.boolQuery;
-import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
-import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 import java.net.URI;
 import java.util.Collection;
@@ -50,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
@@ -62,13 +51,9 @@ import no.unit.nva.search2.common.enums.ValueEncoding;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.MultiMatchQueryBuilder;
-import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
@@ -77,7 +62,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
-    private boolean useCsvFieldsAsSource;
     private final Map<String,String> additionalQueryParameters = new HashMap<>();
 
     private ResourceSearchQuery() {
@@ -155,15 +139,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected void setFetchSource(SearchSourceBuilder builder) {
-        if (this.useCsvFieldsAsSource) {
-            builder.fetchSource(ResourceCsvTransformer.getJsonFields().toArray(String[]::new), null);
-        } else {
-            builder.fetchSource(true);
-        }
-    }
-
-    @Override
     protected Map<String, String> facetPaths() {
         return facetResourcePaths;
     }
@@ -190,29 +165,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
-            case SEARCH_ALL -> builderStreamSearchAllWithBoostsQuery();
+            case SEARCH_ALL -> streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(FIELDS)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
     public ResourceFilter withFilter() {
         return filterBuilder;
-    }
-
-    public ResourceSearchQuery withOnlyCsvFields() {
-        this.useCsvFieldsAsSource = true;
-        return this;
-    }
-
-    public ResourceSearchQuery withFixedRange(int from, int size) {
-        this.parameters().set(FROM, String.valueOf(from));
-        this.parameters().set(SIZE, String.valueOf(size));
-        return this;
-    }
-
-    public ResourceSearchQuery withoutAggregation() {
-        this.parameters().set(AGGREGATION, NONE);
-        return this;
     }
 
     public ResourceSearchQuery withScrollTime(String time) {
@@ -223,33 +182,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
         this.userSettingsClient = userSettingsClient;
         return this;
-    }
-
-    private Stream<Map.Entry<ResourceParameter, QueryBuilder>> builderStreamSearchAllWithBoostsQuery() {
-        var fields = fieldsToKeyNames(parameters().get(FIELDS));
-        var sevenValues = parameters().get(SEARCH_ALL).asSplitStream(SPACE)
-            .limit(7)
-            .collect(Collectors.joining(SPACE));
-        var fifteenValues = parameters().get(SEARCH_ALL).asSplitStream(SPACE)
-            .limit(15)
-            .collect(Collectors.joining(SPACE));
-
-        var query = boolQuery()
-            .queryName(SEARCH_ALL.asCamelCase())
-            .must(QueryBuilders.multiMatchQuery(sevenValues)
-                .fields(fields)
-                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-                .operator(Operator.AND));
-
-        if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
-            query.should(
-                matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues).boost(TITLE.fieldBoost())
-            );
-        }
-        if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
-            query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
-        }
-        return queryTools.queryToEntry(SEARCH_ALL, query);
     }
 
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
@@ -348,6 +280,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
                 case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+//                case HANDLE, HANDLE_NOT -> mergeToKey(qpKey, trimHost(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
@@ -356,6 +289,20 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
+
+//        private String trimHost(String decodedValue) {
+//            return
+//                Arrays.stream(decodedValue.split(COMMA))
+//                    .map(value -> {
+//                        var lastSlash = value.lastIndexOf(SLASH);
+//                        if (lastSlash == -1) {
+//                            return value;
+//                        }
+//                        var fromIndex = value.lastIndexOf(SLASH, lastSlash - 1);
+//                        return fromIndex == -1 ? value : value.substring(fromIndex);
+//
+//                    }).collect(Collectors.joining(COMMA));
+//        }
 
         @Override
         protected boolean isKeyValid(String keyName) {

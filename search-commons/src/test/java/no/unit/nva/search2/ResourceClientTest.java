@@ -358,6 +358,9 @@ class ResourceClientTest {
             } else {
                 logger.debug(pagedSearchResourceDto.toString());
             }
+            if (expectedCount != pagedSearchResourceDto.hits().size()) {
+                logger.info(query.assemble().findFirst().get().body());
+            }
 
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
             assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
