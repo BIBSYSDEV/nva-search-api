@@ -3,7 +3,6 @@ package no.unit.nva.search2.common;
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
@@ -17,11 +16,9 @@ import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -31,11 +28,10 @@ import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.SortKey;
-import no.unit.nva.search2.common.records.PagedSearch;
-import no.unit.nva.search2.common.records.PagedSearchBuilder;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
@@ -86,9 +82,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract SortKey toSortKey(String sortName);
 
-    protected abstract String toCsvText(SwsResponse response);
-
-
     /**
      * Path to each and every facet defined in  builderAggregations().
      *
@@ -108,34 +101,21 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         setMediaType(JSON_UTF_8.toString());
     }
 
-    public <R, Q extends SearchQuery<K>> String doSearch(OpenSearchClient<R, Q> queryClient) {
-        final var response = (SwsResponse) queryClient.doSearch((Q) this);
-        return CSV_UTF_8.is(this.getMediaType())
-            ? toCsvText(response)
-            : toPagedResponse(response).toJsonString();
-    }
-
-    public <R, Q extends SearchQuery<K>> SwsResponse doSearchRaw(OpenSearchClient<R, Q> queryClient) {
-        return (SwsResponse) queryClient.doSearch((Q) this);
-    }
-
-    public PagedSearch toPagedResponse(SwsResponse response) {
+    @Override
+    public <R, Q extends Query<K>> ResponseFormatter doSearch(OpenSearchClient<R, Q> queryClient) {
         final var requestParameter = parameters().asMap();
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
-        final var aggregationFormatted = AggregationFormat.apply(response.aggregations(), facetPaths())
-            .toString();
-
-        return
-            new PagedSearchBuilder()
-                .withTotalHits(response.getTotalSize())
-                .withHits(response.getSearchHits())
-                .withIds(source, requestParameter, getFrom().as(), getSize().as())
-                .withNextResultsBySortKey(nextResultsBySortKey(response, requestParameter, source))
-                .withAggregations(aggregationFormatted)
-                .build();
+        return new ResponseFormatter(
+            (SwsResponse) queryClient.doSearch((Q) this),
+            getMediaType(),
+            source,
+            getFrom().as(),
+            getSize().as(),
+            facetPaths(),
+            requestParameter);
     }
 
-    protected MediaType getMediaType() {
+    public MediaType getMediaType() {
         return mediaType;
     }
 
@@ -289,23 +269,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             builder.searchAfter(sortKeys);
         }
     }
-
-    private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
-        requestParameter.remove(Words.FROM);
-        var sortParameter =
-            response.getSort().stream()
-                .map(value -> nonNull(value) ? value : "null")
-                .collect(Collectors.joining(COMMA));
-        if (!hasContent(sortParameter)) {
-            return null;
-        }
-        var searchAfter = Words.SEARCH_AFTER.toLowerCase(Locale.getDefault());
-        requestParameter.put(searchAfter, sortParameter);
-        return fromUri(gatewayUri)
-            .addQueryParameters(requestParameter)
-            .getUri();
-    }
-
 
     private boolean fetchSource() {
         return nonNull(getExclude()) || nonNull(getInclude());

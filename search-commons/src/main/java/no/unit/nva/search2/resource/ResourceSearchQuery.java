@@ -35,6 +35,7 @@ import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,14 +44,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
-import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
@@ -143,11 +142,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private Map<String, String> getQueryParameters() {
         return additionalQueryParameters;
-    }
-
-    @Override
-    protected String toCsvText(SwsResponse response) {
-        return ResourceCsvTransformer.transform(response.getSearchHits());
     }
 
     @Override

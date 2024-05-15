@@ -48,7 +48,6 @@ import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -133,10 +132,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
     }
 
-    @Override
-    protected String toCsvText(SwsResponse response) {
-        throw new IllegalArgumentException("Not implemented");
-    }
+
 
     @Override
     protected Map<String, String> facetPaths() {

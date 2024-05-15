@@ -70,25 +70,28 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                 .build()
                 .withFilter().requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .withScrollTime(SCROLL_TTL)
-                .doSearchRaw(opensearchClient);
-        Integer level = 0;
+                .doSearch(opensearchClient)
+                .swsResponse();
 
         return ResourceCsvTransformer
-            .transform(scrollFetch(initialResponse, level).toList());
+            .transform(scrollFetch(initialResponse, 0).toList());
     }
 
 
-    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, Integer level) {
-        var scrollId = previousResponse._scroll_id();
-        level++;
-        if (shouldStopRecursion(level, previousResponse)) {
+    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, int level) {
+        if (shouldStopRecursion(level + 1, previousResponse)) {
             return previousResponse.getSearchHits().stream();
         }
-        var result =
+        var scrollId = previousResponse._scroll_id();
+        var currentResponse =
             new ScrollQuery(scrollId, SCROLL_TTL)
-                .doSearchRaw(this.scrollClient);
+                .doSearch(this.scrollClient)
+                .swsResponse();
 
-        return Stream.concat(previousResponse.getSearchHits().stream(), scrollFetch(result, level));
+        return Stream.concat(
+            previousResponse.getSearchHits().stream(),
+            scrollFetch(currentResponse, level + 1)
+        );
     }
 
 

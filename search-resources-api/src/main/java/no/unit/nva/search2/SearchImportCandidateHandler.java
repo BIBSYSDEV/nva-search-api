@@ -39,7 +39,7 @@ public class SearchImportCandidateHandler extends ApiGatewayHandler<Void, String
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .doSearch(opensearchClient);
+                .doSearch(opensearchClient).toString();
     }
     
     @Override

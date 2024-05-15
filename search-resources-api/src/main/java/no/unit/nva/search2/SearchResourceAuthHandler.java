@@ -53,7 +53,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
                 .organization(requestInfo.getCurrentCustomer())
                 .apply()
-                .doSearch(opensearchClient);
+                .doSearch(opensearchClient).toString();
     }
 
     @Override
