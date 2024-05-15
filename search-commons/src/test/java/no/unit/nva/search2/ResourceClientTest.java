@@ -156,18 +156,18 @@ class ResourceClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
-            var query1 = ResourceSearchQuery.builder()
+            var response1 = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .build()
                 .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
-            var response1 = searchClient.doSearch(query1);
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                .doSearch(searchClient);
 
             assertNotNull(response1);
 
-            var aggregations = query1.toPagedResponse(response1).aggregations();
+            var aggregations = response1.toPagedResponse().aggregations();
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(TYPE).size(), is(5));
@@ -285,7 +285,7 @@ class ResourceClientTest {
                     .withFilter()
                     .requiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
                         DRAFT_FOR_DELETION).apply()
-                    .doSearch(searchClient);
+                    .doSearch(searchClient).toString();
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
         }
@@ -293,7 +293,7 @@ class ResourceClientTest {
         @Test
         void withOrganizationDoWork() throws BadRequestException {
             var uri = URI.create("https://x.org/");
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
@@ -303,12 +303,12 @@ class ResourceClientTest {
                     .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
                     .organization(
                         URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"))
-                    .apply();
+                    .apply()
+                    .doSearch(searchClient);
 
-            var response = searchClient.doSearch(query);
             assertNotNull(response);
 
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
             assertEquals(3, pagedSearchResourceDto.totalHits());
         }
 
@@ -316,7 +316,7 @@ class ResourceClientTest {
         @MethodSource("uriPagingProvider")
         void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
@@ -324,10 +324,10 @@ class ResourceClientTest {
                     .validate()
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                    .doSearch(searchClient);
 
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
@@ -340,26 +340,24 @@ class ResourceClientTest {
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                    .doSearch(searchClient);
 
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             assertNotNull(pagedSearchResourceDto);
             if (expectedCount == 0) {
                 logger.debug(pagedSearchResourceDto.toJsonString());
             } else {
                 logger.debug(pagedSearchResourceDto.toString());
-            }
-            if (expectedCount != pagedSearchResourceDto.hits().size()) {
-                logger.info(query.assemble().findFirst().get().body());
             }
 
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
@@ -385,22 +383,25 @@ class ResourceClientTest {
         @ParameterizedTest
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                    .doSearch(searchClient);
 
-            logger.info(query.getSort().toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+
+            var pagedSearchResourceDto = response.toPagedResponse();
             assertNotNull(pagedSearchResourceDto.id());
-            var searchName = query.getSort().split(COMMA)[0].split(COLON)[0];
+            var searchName = response.parameters().get(SORT).split(COMMA)[0].split(COLON)[0];
             var searchFieldName = ResourceSort.fromSortKey(searchName).jsonPaths().findFirst().get();
-            logger.info(response.hits().hits().stream().map(item -> item._score() + " + " + item._source().get(searchFieldName)).collect(Collectors.joining(SPACE + PIPE + SPACE)));
+            var logInfo = response.swsResponse().hits().hits().stream()
+                .map(item -> item._score() + " + " + item._source().get(searchFieldName))
+                .collect(Collectors.joining(SPACE + PIPE + SPACE));
+            logger.info(logInfo);
             assertNotNull(pagedSearchResourceDto.context());
             assertTrue(pagedSearchResourceDto.totalHits() >= 0);
         }
@@ -420,7 +421,7 @@ class ResourceClientTest {
 
         @Test
         void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2022"))
@@ -428,18 +429,16 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                    .doSearch(searchClient);
 
-            logger.info(query.parameters().get(SORT).toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
-
+            var pagedSearchResourceDto = response.toPagedResponse();
             assertThat(pagedSearchResourceDto.hits(), hasSize(2));
         }
 
         @Test
         void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
                         SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
@@ -447,12 +446,9 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
-
-            logger.info(query.parameters().get(SORT).toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
-
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                    .doSearch(searchClient);
+            var pagedSearchResourceDto = response.toPagedResponse();
             assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
 
@@ -462,7 +458,7 @@ class ResourceClientTest {
             throws BadRequestException {
             var viewingScope = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
                 StandardCharsets.UTF_8);
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), viewingScope,
                         EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
@@ -470,11 +466,10 @@ class ResourceClientTest {
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                    .doSearch(searchClient);
 
-            logger.info(query.parameters().get(SORT).toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             var excludedSubunit = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0";
 
@@ -489,18 +484,17 @@ class ResourceClientTest {
                 StandardCharsets.UTF_8);
             var topLevelOrg = URLEncoder.encode("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
                 StandardCharsets.UTF_8);
-            var query =
+            var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
                     .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED).apply();
+                    .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED).apply()
+                    .doSearch(searchClient);
 
-            logger.info(query.parameters().get(SORT).toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             var includedSubunitI = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0";
             var includedSubunitII = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.1";

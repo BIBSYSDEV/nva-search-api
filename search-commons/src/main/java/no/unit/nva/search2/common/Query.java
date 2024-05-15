@@ -15,7 +15,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     private final transient Instant startTime;
 
     public abstract Stream<QueryContentWrapper> assemble();
-    public abstract <R, Q extends Query<K>> ResponseFormatter doSearch(OpenSearchClient<R, Q> queryClient);
+    public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
     protected abstract URI getOpenSearchUri();
 
     protected Query() {

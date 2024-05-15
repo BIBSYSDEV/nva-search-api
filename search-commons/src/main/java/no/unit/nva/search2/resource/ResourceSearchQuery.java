@@ -286,7 +286,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
                 case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
-//                case HANDLE, HANDLE_NOT -> mergeToKey(qpKey, trimHost(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
@@ -295,20 +294,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
-
-//        private String trimHost(String decodedValue) {
-//            return
-//                Arrays.stream(decodedValue.split(COMMA))
-//                    .map(value -> {
-//                        var lastSlash = value.lastIndexOf(SLASH);
-//                        if (lastSlash == -1) {
-//                            return value;
-//                        }
-//                        var fromIndex = value.lastIndexOf(SLASH, lastSlash - 1);
-//                        return fromIndex == -1 ? value : value.substring(fromIndex);
-//
-//                    }).collect(Collectors.joining(COMMA));
-//        }
 
         @Override
         protected boolean isKeyValid(String keyName) {

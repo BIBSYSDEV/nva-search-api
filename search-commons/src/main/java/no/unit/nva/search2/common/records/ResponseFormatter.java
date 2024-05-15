@@ -3,7 +3,9 @@ package no.unit.nva.search2.common.records;
 import com.google.common.net.MediaType;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AggregationFormat;
+import no.unit.nva.search2.common.QueryKeys;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
 
 import java.net.URI;
 import java.util.Locale;
@@ -16,14 +18,14 @@ import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
-public final class ResponseFormatter {
+public final class ResponseFormatter<K extends Enum<K> & ParameterKey> {
     private final SwsResponse response;
     private final MediaType mediaType;
     private final URI source;
     private final Integer offset;
     private final Integer size;
     private final Map<String, String> facetPaths;
-    private final Map<String, String> requestParameter;
+    private final QueryKeys<K> queryKeys;
 
     public ResponseFormatter(
         SwsResponse response,
@@ -32,7 +34,7 @@ public final class ResponseFormatter {
         Integer offset,
         Integer size,
         Map<String, String> facetPaths,
-        Map<String, String> requestParameter
+        QueryKeys<K> requestParameter
     ) {
         this.response = response;
         this.mediaType = mediaType;
@@ -40,20 +42,19 @@ public final class ResponseFormatter {
         this.offset = offset;
         this.size = size;
         this.facetPaths = facetPaths;
-        this.requestParameter = requestParameter;
+        this.queryKeys = requestParameter;
     }
 
     public ResponseFormatter(SwsResponse response, MediaType mediaType) {
-        this(response, mediaType, null, 0, 0, Map.of(), Map.of());
+        this(response, mediaType, null, 0, 0, Map.of(), null);
+    }
+
+    public QueryKeys<K> parameters() {
+        return queryKeys;
     }
 
     public SwsResponse swsResponse() {
         return response;
-    }
-
-
-    public String toCsvText() {
-        return ResourceCsvTransformer.transform(response.getSearchHits());
     }
 
     public PagedSearch toPagedResponse() {
@@ -64,10 +65,18 @@ public final class ResponseFormatter {
             new PagedSearchBuilder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(response.getSearchHits())
-                .withIds(source, requestParameter, offset, size)
-                .withNextResultsBySortKey(nextResultsBySortKey(requestParameter, source))
+                .withIds(source, getRequestParameter(), offset, size)
+                .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
                 .withAggregations(aggregationFormatted)
                 .build();
+    }
+
+    public String toCsvText() {
+        return ResourceCsvTransformer.transform(response.getSearchHits());
+    }
+
+    private Map<String, String> getRequestParameter() {
+        return queryKeys.asMap();
     }
 
     private URI nextResultsBySortKey(Map<String, String> requestParameter, URI gatewayUri) {

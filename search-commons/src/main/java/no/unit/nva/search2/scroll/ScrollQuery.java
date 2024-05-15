@@ -42,9 +42,9 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     @Override
-    public <R, Q extends Query<ScrollParameters>> ResponseFormatter doSearch(OpenSearchClient<R, Q> queryClient) {
+    public <R, Q extends Query<ScrollParameters>> ResponseFormatter<ScrollParameters> doSearch(OpenSearchClient<R, Q> queryClient) {
         return
-            new ResponseFormatter(
+            new ResponseFormatter<>(
                 (SwsResponse) queryClient.doSearch((Q) this),
                 CSV_UTF_8
             );
