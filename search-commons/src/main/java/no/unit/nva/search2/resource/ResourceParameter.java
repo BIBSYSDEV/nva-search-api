@@ -216,6 +216,8 @@ public enum ResourceParameter implements ParameterKey {
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(CUSTOM, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     FIELDS(IGNORED),
+    INCLUDES(IGNORED),
+    EXCLUDES(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
     PAGE(NUMBER),

@@ -70,6 +70,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract AsType<K> getSort();
 
+    protected abstract String getExclude();
+
+    protected abstract String getInclude();
+
     protected abstract K keyAggregation();
 
     protected abstract K keyFields();
@@ -84,7 +88,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract String toCsvText(SwsResponse response);
 
-    protected abstract void setFetchSource(SearchSourceBuilder builder);
 
     /**
      * Path to each and every facet defined in  builderAggregations().
@@ -203,6 +206,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
         var builder = builderDefaultSearchSource(queryBuilder);
 
+        if (fetchSource()) {
+            builder.fetchSource(getInclude(), getExclude());
+        } else {
+            builder.fetchSource(true);
+        }
+
         handleSearchAfter(builder);
 
         builderStreamFieldSort().forEach(builder::sort);
@@ -213,6 +222,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
         return Stream.of(new QueryContentWrapper(builder.toString(), this.getOpenSearchUri()));
     }
+
 
     /**
      * Creates a boolean query, with all the search parameters.
@@ -278,7 +288,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
-        setFetchSource(builder);
     }
 
     private URI nextResultsBySortKey(SwsResponse response, Map<String, String> requestParameter, URI gatewayUri) {
@@ -295,6 +304,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return fromUri(gatewayUri)
             .addQueryParameters(requestParameter)
             .getUri();
+    }
+
+
+    private boolean fetchSource() {
+        return nonNull(getExclude()) || nonNull(getInclude());
     }
 
     private boolean includeAggregation() {

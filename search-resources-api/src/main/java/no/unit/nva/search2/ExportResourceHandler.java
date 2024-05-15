@@ -1,11 +1,20 @@
 package no.unit.nva.search2;
 
+import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search2.resource.ResourceParameter.INCLUDES;
+import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+
 import com.amazonaws.services.lambda.runtime.Context;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Objects;
+import java.util.stream.Stream;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.scroll.ScrollClient;
@@ -24,8 +33,9 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     public static final int MAX_PAGES = 4;
-    public static final int MAX_HITS_PER_PAGE = 2500;
+    public static final String MAX_HITS_PER_PAGE = "2500";
     public static final String SCROLL_TTL = "1m";
+    public static final String INCLUDED_NODES = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
     private final ResourceClient opensearchClient;
     private final ScrollClient scrollClient;
     private static final Logger logger = LoggerFactory.getLogger(ExportResourceHandler.class);
@@ -33,9 +43,9 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     @JacocoGenerated
     public ExportResourceHandler() {
         this(ResourceClient.defaultClient(),
-             ScrollClient.defaultClient(),
-             defaultS3Client(),
-             defaultS3Presigner());
+            ScrollClient.defaultClient(),
+            defaultS3Client(),
+            defaultS3Presigner());
     }
 
     public ExportResourceHandler(ResourceClient resourceClient,
@@ -50,40 +60,39 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     @Override
     public String processS3Input(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-        var initalResponse = ResourceSearchQuery.builder()
-                                 .fromRequestInfo(requestInfo)
-                                 .validate()
-                                 .build()
-                                 .withFilter()
-                                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
-                                 .withFixedRange(0, MAX_HITS_PER_PAGE)
-                                 .withoutAggregation()
-                                 .withScrollTime(SCROLL_TTL)
-                                 .withOnlyCsvFields()
-                                 .doSearchRaw(opensearchClient);
+        var initialResponse =
+            ResourceSearchQuery.builder()
+                .fromRequestInfo(requestInfo)
+                .withParameter(PAGE, ZERO)
+                .withParameter(SIZE, MAX_HITS_PER_PAGE)
+                .withParameter(AGGREGATION, NONE)
+                .withParameter(INCLUDES, INCLUDED_NODES)
+                .build()
+                .withFilter().requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                .withScrollTime(SCROLL_TTL)
+                .doSearchRaw(opensearchClient);
+        Integer level = 0;
 
-        var allPages = new ArrayList<SwsResponse>();
-        allPages.add(initalResponse);
-        scrollResults(allPages, initalResponse);
-
-        return toCsv(allPages);
+        return ResourceCsvTransformer
+            .transform(scrollFetch(initialResponse, level).toList());
     }
 
-    private void scrollResults(List<SwsResponse> allPages, SwsResponse previousResponse) {
-        if (shouldStopRecursion(allPages, previousResponse)) {
-            return;
-        }
+
+    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, Integer level) {
         var scrollId = previousResponse._scroll_id();
-        logger.info("Scrolling on page " + allPages.size() + " of scroll " + scrollId);
+        level++;
+        if (shouldStopRecursion(level, previousResponse)) {
+            return previousResponse.getSearchHits().stream();
+        }
+        var result =
+            new ScrollQuery(scrollId, SCROLL_TTL)
+                .doSearchRaw(this.scrollClient);
 
-        var scrollResponse = new ScrollQuery(scrollId, SCROLL_TTL)
-                                 .doSearchRaw(this.scrollClient);
-
-        allPages.add(scrollResponse);
-        scrollResults(allPages, scrollResponse);
+        return Stream.concat(previousResponse.getSearchHits().stream(), scrollFetch(result, level));
     }
 
-    private static boolean shouldStopRecursion(List<SwsResponse> allPages, SwsResponse previousResponse) {
+
+    private boolean shouldStopRecursion(Integer level, SwsResponse previousResponse) {
         if (Objects.isNull(previousResponse._scroll_id())) {
             logger.warn("Stopped recurssion due to no scroll_id");
             return true;
@@ -94,7 +103,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
             return true;
         }
 
-        if (allPages.size() >= MAX_PAGES) {
+        if (level >= MAX_PAGES) {
             logger.warn("Stopped recurssion due to too many pages");
             return true;
         }
@@ -102,11 +111,6 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
         return false;
     }
 
-    private String toCsv(List<SwsResponse> responses) {
-        var allHits = responses.stream()
-                          .map(SwsResponse::getSearchHits).flatMap(List::stream).toList();
-        return ResourceCsvTransformer.transform(allHits);
-    }
 
     @Override
     protected String getContentType() {

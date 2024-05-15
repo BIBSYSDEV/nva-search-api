@@ -13,7 +13,6 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
 
-@SuppressWarnings("PMD.GodClass")
 public final class ScrollQuery extends Query<ScrollParameters> {
 
     private final String scrollId;

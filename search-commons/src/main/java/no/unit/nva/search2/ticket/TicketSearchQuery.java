@@ -53,7 +53,6 @@ import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
@@ -117,6 +116,19 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
+    protected String getExclude() {
+        //TODO implement parameter
+        return null;
+
+    }
+
+    @Override
+    protected String getInclude() {
+        //TODO implement parameter
+        return null;
+    }
+
+    @Override
     public URI getOpenSearchUri() {
         return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
     }
@@ -124,11 +136,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     @Override
     protected String toCsvText(SwsResponse response) {
         throw new IllegalArgumentException("Not implemented");
-    }
-
-    @Override
-    protected void setFetchSource(SearchSourceBuilder builder) {
-        builder.fetchSource(true);
     }
 
     @Override

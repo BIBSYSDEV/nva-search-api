@@ -210,6 +210,20 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
         return this;
     }
 
+
+    /**
+     * Overrides/set a key value pair
+     *
+     * @param key   to assign value to
+     * @param value assigned
+     * @return builder
+     */
+    public ParameterValidator<K, Q> withParameter(K key, String value) {
+        searchQuery.parameters().set(key, value);
+        return this;
+    }
+
+
     /**
      * When running docker tests, the current host needs to be specified.
      *

@@ -24,16 +24,16 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
         return new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
-    @Override
-    public SwsResponse doSearch(ScrollQuery query)  {
-        queryBuilderStart = query.getStartTime();
-        return
-            query.assemble()
-                .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
-                .findFirst().orElseThrow();
-    }
+//    @Override
+//    public SwsResponse doSearch(ScrollQuery query)  {
+//        queryBuilderStart = query.getStartTime();
+//        return
+//            query.assemble()
+//                .map(this::createRequest)
+//                .map(this::fetch)
+//                .map(this::handleResponse)
+//                .findFirst().orElseThrow();
+//    }
 
     @Override
     protected SwsResponse handleResponse(HttpResponse<String> response) {

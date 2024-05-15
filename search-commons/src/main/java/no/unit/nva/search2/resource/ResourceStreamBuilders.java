@@ -4,6 +4,7 @@ import no.unit.nva.search2.common.QueryKeys;
 import no.unit.nva.search2.common.QueryTools;
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.FUNDINGS;
 import static no.unit.nva.search2.common.constant.Words.IDENTIFIER;
@@ -11,15 +12,27 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE;
 import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.VALUE;
+import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
+import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+
+import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
+import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ResourceStreamBuilders {
@@ -31,6 +44,32 @@ public class ResourceStreamBuilders {
     public ResourceStreamBuilders(QueryTools<ResourceParameter> queryTools, QueryKeys<ResourceParameter> parameters) {
         this.queryTools = queryTools;
         this.parameters = parameters;
+    }
+
+    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> searchAllWithBoostsQuery(Map<String, Float> fields) {
+        var sevenValues = parameters.get(SEARCH_ALL).asSplitStream(SPACE)
+            .limit(7)
+            .collect(Collectors.joining(SPACE));
+        var fifteenValues = parameters.get(SEARCH_ALL).asSplitStream(SPACE)
+            .limit(15)
+            .collect(Collectors.joining(SPACE));
+
+        var query = boolQuery()
+            .queryName(SEARCH_ALL.asCamelCase())
+            .must(QueryBuilders.multiMatchQuery(sevenValues)
+                .fields(fields)
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                .operator(Operator.AND));
+
+        if (fields.containsKey(ENTITY_DESCRIPTION_MAIN_TITLE) || fields.containsKey(ASTERISK)) {
+            query.should(
+                matchPhrasePrefixQuery(ENTITY_DESCRIPTION_MAIN_TITLE, fifteenValues).boost(TITLE.fieldBoost())
+            );
+        }
+        if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
+            query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
+        }
+        return queryTools.queryToEntry(SEARCH_ALL, query);
     }
 
 

@@ -51,7 +51,6 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidateParameter> {
@@ -110,6 +109,18 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     }
 
     @Override
+    protected String getExclude() {
+        //TODO implement parameter
+        return null;
+    }
+
+    @Override
+    protected String getInclude() {
+        //TODO implement parameter
+        return null;
+    }
+
+    @Override
     public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
@@ -122,10 +133,6 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         throw new IllegalArgumentException("Not implemented");
     }
 
-    @Override
-    protected void setFetchSource(SearchSourceBuilder builder) {
-        builder.fetchSource(true);
-    }
 
     @Override
     protected Map<String, String> facetPaths() {

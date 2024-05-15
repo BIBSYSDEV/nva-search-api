@@ -21,8 +21,10 @@ import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDES;
 import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.INCLUDES;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
@@ -118,6 +120,16 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     public AsType<ResourceParameter> getSort() {
         return parameters().get(SORT);
+    }
+
+    @Override
+    protected String getExclude() {
+        return parameters().get(EXCLUDES).as();
+    }
+
+    @Override
+    protected String getInclude() {
+        return parameters().get(INCLUDES).as();
     }
 
     @Override
