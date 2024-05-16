@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import no.unit.nva.search.ResourceCsvTransformer;
+import no.unit.nva.search2.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.search2.scroll.ScrollQuery;

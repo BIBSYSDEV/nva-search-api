@@ -9,6 +9,9 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
+import no.unit.nva.search2.common.jwt.CognitoAuthenticator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +22,8 @@ class CachedJwtTest {
     public static final Instant TOKEN_EXPIRE_AT = Instant.parse("2006-12-03T10:15:30.00Z");
     private Clock mockedClock;
 
-    private DecodedJWT jwt1 = mock(DecodedJWT.class);
-    private DecodedJWT jwt2 = mock(DecodedJWT.class);
+    private final DecodedJWT jwt1 = mock(DecodedJWT.class);
+    private final DecodedJWT jwt2 = mock(DecodedJWT.class);
 
     @BeforeEach
     void setup() {

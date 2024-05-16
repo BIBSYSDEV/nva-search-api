@@ -2,7 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;

@@ -1,7 +1,7 @@
 package no.unit.nva.search2.common.records;
 
 import com.google.common.net.MediaType;
-import no.unit.nva.search.ResourceCsvTransformer;
+import no.unit.nva.search2.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AggregationFormat;
 import no.unit.nva.search2.common.QueryKeys;
 import no.unit.nva.search2.common.constant.Words;

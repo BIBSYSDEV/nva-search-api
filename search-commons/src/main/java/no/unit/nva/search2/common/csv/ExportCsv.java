@@ -1,7 +1,6 @@
-package no.unit.nva.search;
+package no.unit.nva.search2.common.csv;
 
 import com.opencsv.bean.CsvBindByName;
-import no.unit.nva.search.csv.CsvBindByNameOrder;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 
@@ -109,10 +108,9 @@ public class ExportCsv {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ExportCsv)) {
+        if (!(o instanceof ExportCsv exportCsv)) {
             return false;
         }
-        ExportCsv exportCsv = (ExportCsv) o;
         return Objects.equals(getId(), exportCsv.getId())
                 && Objects.equals(getMainTitle(), exportCsv.getMainTitle())
                 && Objects.equals(getPublicationDate(), exportCsv.getPublicationDate())

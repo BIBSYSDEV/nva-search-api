@@ -70,7 +70,7 @@ public class IndexImportCandidateHandlerTest {
         handler.handleRequest(input, output, context);
         var allIndexedDocuments = indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());
 
-        assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.getResource()));
+        assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.resource()));
     }
 
     @Test

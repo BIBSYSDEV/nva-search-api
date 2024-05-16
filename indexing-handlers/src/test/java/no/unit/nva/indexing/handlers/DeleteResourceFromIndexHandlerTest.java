@@ -53,9 +53,10 @@ public class DeleteResourceFromIndexHandlerTest {
         final var appender = LogUtils.getTestingAppenderForRootLogger();
         indexingClient = new FakeIndexingClientThrowingException();
         handler = new DeleteResourceFromIndexHandler(indexingClient);
-        var eventReference = createEventBridgeEvent(SortableIdentifier.next());
-        assertThrows(RuntimeException.class,
-                     () -> handler.handleRequest(eventReference, output, CONTEXT));
+        try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
+            assertThrows(RuntimeException.class,
+                () -> handler.handleRequest(eventReference, output, CONTEXT));
+        }
         assertThat(appender.getMessages(), containsString(SOMETHING_BAD_HAPPENED));
     }
 
@@ -67,7 +68,7 @@ public class DeleteResourceFromIndexHandlerTest {
         var eventReference = createEventBridgeEvent(resourceIdentifier);
         handler.handleRequest(eventReference, output, CONTEXT);
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
-        assertThat(allIndexedDocuments, not(contains(sampleDocument.getResource())));
+        assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
     }
 
     private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {

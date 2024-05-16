@@ -63,7 +63,7 @@ public class DeleteImportCandidateFromIndexHandlerTest {
             handler.handleRequest(eventReference, output, CONTEXT);
         }
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
-        assertThat(allIndexedDocuments, not(contains(sampleDocument.getResource())));
+        assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
     }
 
     private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
