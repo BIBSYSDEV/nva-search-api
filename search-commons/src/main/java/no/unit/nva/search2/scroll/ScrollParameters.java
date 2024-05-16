@@ -1,14 +1,13 @@
 package no.unit.nva.search2.scroll;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.UNDERSCORE;
-import static no.unit.nva.search2.common.enums.FieldOperator.ALL_ITEMS;
 import static no.unit.nva.search2.common.enums.FieldOperator.NA;
-import java.util.Arrays;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
+
 import java.util.Locale;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
@@ -29,34 +28,9 @@ import org.apache.commons.text.CaseUtils;
 public enum ScrollParameters implements ParameterKey {
     INVALID(ParameterKind.INVALID);
 
-    private final ValueEncoding encoding;
-    private final String keyPattern;
-    private final String validValuePattern;
-    private final String[] fieldsToSearch;
-    private final FieldOperator fieldOperator;
-    private final String errorMsg;
     private final ParameterKind paramkind;
-    private final Float boost;
 
     ScrollParameters(ParameterKind kind) {
-        this(kind, ALL_ITEMS, null, null, null, null);
-    }
-
-    ScrollParameters(
-        ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
-
-        this.fieldOperator = nonNull(operator) ? operator : NA;
-        this.boost = nonNull(boost) ? boost : 1F;
-        this.fieldsToSearch = nonNull(fieldsToSearch)
-            ? fieldsToSearch.split("\\|")
-            : new String[]{name()};
-        this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
-        this.errorMsg = ParameterKey.getErrorMessage(kind);
-        this.encoding = ParameterKey.getEncoding(kind);
-        this.keyPattern = nonNull(keyPattern)
-            ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
@@ -72,7 +46,7 @@ public enum ScrollParameters implements ParameterKey {
 
     @Override
     public Float fieldBoost() {
-        return boost;
+        return 1F;
     }
 
     @Override
@@ -82,34 +56,32 @@ public enum ScrollParameters implements ParameterKey {
 
     @Override
     public String fieldPattern() {
-        return keyPattern;
+        return PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
     }
 
     @Override
     public String valuePattern() {
-        return validValuePattern;
+        return ParameterKey.getValuePattern(paramkind, null);
     }
 
     @Override
     public ValueEncoding valueEncoding() {
-        return encoding;
+        return ParameterKey.getEncoding(paramkind);
     }
 
     @Override
     public Stream<String> searchFields(boolean... isKeyWord) {
-        return Arrays.stream(fieldsToSearch)
-            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
+        return Stream.of(EMPTY_STRING);
     }
-
 
     @Override
     public FieldOperator searchOperator() {
-        return fieldOperator;
+        return NA;
     }
 
     @Override
     public String errorMessage() {
-        return errorMsg;
+        return ParameterKey.getErrorMessage(paramkind);
     }
 
     @Override

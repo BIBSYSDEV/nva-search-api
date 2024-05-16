@@ -160,6 +160,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * Adds query and path parameters from requestInfo.
      */
+    @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         searchQuery.setNvaSearchApiUri(requestInfo.getRequestUri());

@@ -206,7 +206,7 @@ class TicketClientTest {
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)

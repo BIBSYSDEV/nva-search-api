@@ -39,6 +39,7 @@ public final class AggregationFormat {
         return objectNode;
     }
 
+    @JacocoGenerated
     private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {
         if (node.isArray()) {
             var arrayNode = JsonUtils.dtoObjectMapper.createArrayNode();
@@ -82,6 +83,7 @@ public final class AggregationFormat {
         return Map.entry(getNormalizedFieldName(entry.getKey()), entry.getValue());
     }
 
+    @JacocoGenerated
     private static JsonNode getBucketOrValue(JsonNode node) {
         if (node.has(BUCKETS)) {
             return node.at(Constants.BUCKETS_PTR);

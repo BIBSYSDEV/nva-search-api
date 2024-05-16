@@ -155,7 +155,7 @@ class ImportCandidateClientTest {
                 ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
                     .doSearch(importCandidateClient);
 
@@ -174,7 +174,7 @@ class ImportCandidateClientTest {
             var csvResult = ImportCandidateSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .withRequiredParameters(FROM, SIZE)
+                .withRequiredParameters(FROM, SIZE, SORT)
                 .withMediaType(Words.TEXT_CSV)
                 .build()
                 .doSearch(importCandidateClient);
@@ -188,7 +188,7 @@ class ImportCandidateClientTest {
                 ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE, SORT)
+                    .withRequiredParameters(FROM, SIZE)
                     .build()
                     .doSearch(importCandidateClient);
 
@@ -249,6 +249,7 @@ class ImportCandidateClientTest {
                 URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=1136326@20754.0.0.0&size=2"),
                 URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=20754.0.0.0&size=4"),
                 URI.create(REQUEST_BASE_URL + "id=018bed744c78-f53e06f7-74da-4c91-969f-ec307a7e7816&size=1"),
+                URI.create(REQUEST_BASE_URL + "license=CC-BY&size=7"),
                 URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023&size=8"),
                 URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-10&size=2"),
                 URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-05,&size=7"),

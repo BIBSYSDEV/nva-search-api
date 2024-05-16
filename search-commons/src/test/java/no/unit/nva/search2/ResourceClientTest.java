@@ -13,6 +13,7 @@ import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
+import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
@@ -20,6 +21,7 @@ import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static no.unit.nva.search2.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT;
 import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
@@ -30,6 +32,7 @@ import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
@@ -70,10 +73,13 @@ import no.unit.nva.search.RestHighLevelClientWrapper;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search2.resource.ResourceClient;
 import no.unit.nva.search2.resource.ResourceSearchQuery;
 import no.unit.nva.search2.resource.ResourceSort;
 import no.unit.nva.search2.resource.UserSettingsClient;
+import no.unit.nva.search2.scroll.ScrollClient;
+import no.unit.nva.search2.scroll.ScrollQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -101,6 +107,7 @@ class ResourceClientTest {
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
+    private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
     private static IndexingClient indexingClient;
 
@@ -121,6 +128,8 @@ class ResourceClientTest {
             .thenReturn(mockedHttpResponse(""))
             .thenReturn(mockedHttpResponse("", 500));
         searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, cachedJwtProvider);
+
+        scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
         createIndex();
         populateIndex();
@@ -312,6 +321,35 @@ class ResourceClientTest {
             assertEquals(3, pagedSearchResourceDto.totalHits());
         }
 
+        @Test
+        void scrollClientExceuteOK() throws BadRequestException {
+            var INCLUDED_NODES = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
+            var firstResponse = ResourceSearchQuery.builder()
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .withParameter(FROM, ZERO)
+                .withParameter(SIZE, "5")
+                .withParameter(AGGREGATION, NONE)
+                .withParameter(NODES_INCLUDED, INCLUDED_NODES)
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED_METADATA, PUBLISHED).apply()
+                .withScrollTime("1m")
+                .doSearch(searchClient)
+                .swsResponse();
+
+            var response =
+                ScrollQuery.builder()
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withInitialResponse(firstResponse)
+                    .withScrollTime("1m")
+                    .build()
+                    .doSearch(scrollClient)
+                    .toCsvText();
+            assertNotNull(response);
+            logger.info(response);
+
+        }
+
         @ParameterizedTest
         @MethodSource("uriPagingProvider")
         void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
@@ -376,7 +414,7 @@ class ResourceClientTest {
                     .build()
                     .withFilter()
                     .requiredStatus(PUBLISHED_METADATA).apply()
-                    .doSearch(searchClient);
+                    .doSearch(searchClient).toString();
             assertNotNull(csvResult);
         }
 

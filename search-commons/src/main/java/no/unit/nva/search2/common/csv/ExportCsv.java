@@ -45,24 +45,40 @@ public class ExportCsv {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getMainTitle() {
         return mainTitle;
-    }
-
-    public void setMainTitle(String mainTitle) {
-        this.mainTitle = mainTitle;
     }
 
     public String getPublicationDate() {
         return publicationDate;
     }
 
+    public String getPublicationInstance() {
+        return publicationInstance;
+    }
+
+    public String getContributors() {
+        return contributors;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setMainTitle(String mainTitle) {
+        this.mainTitle = mainTitle;
+    }
+
     public void setPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
+    }
+
+    public void setPublicationInstance(String publicationInstance) {
+        this.publicationInstance = publicationInstance;
+    }
+
+    public void setContributors(String contributors) {
+        this.contributors = contributors;
     }
 
     public final String createPublicationDate(String year, String month, String day) {
@@ -80,22 +96,6 @@ public class ExportCsv {
             stringBuilder.append(DATE_SEPARATOR).append(day);
         }
         return stringBuilder.toString();
-    }
-
-    public String getPublicationInstance() {
-        return publicationInstance;
-    }
-
-    public void setPublicationInstance(String publicationInstance) {
-        this.publicationInstance = publicationInstance;
-    }
-
-    public String getContributors() {
-        return contributors;
-    }
-
-    public void setContributors(String contributors) {
-        this.contributors = contributors;
     }
 
     public final String createContributorsString(List<String> contributors) {
