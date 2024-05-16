@@ -173,7 +173,10 @@
   "USER_NOT=1136254@20754.0.0.0": 18,
   "USER_SHOULD=1136254@": 3,
   "SCIENTIFIC_VALUE=LevelTwo": 1,
-  "SCIENTIFIC_VALUE=LevelOne,LevelTwo": 4
+  "SCIENTIFIC_VALUE=LevelOne,LevelTwo": 4,
+  "NODES_INCLUDED=identifier,projects.name,entityDescription.contributors.affiliations&size=21": 21,
+  "id=018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4&nodes_included=status,topLevelOrganizations,resourceOwner.owner": 1,
+  "NODES_INCLUDED=identifier,projects.name&nodesExcluded=projects.name&size=21": 21
 }
 
 

@@ -5,6 +5,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_V
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_SHOULD_KEYS;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER;
@@ -215,9 +216,9 @@ public enum ResourceParameter implements ParameterKey {
     USER_AFFILIATION_SHOULD(TEXT, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(CUSTOM, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    FIELDS(IGNORED),
-    INCLUDES(IGNORED),
-    EXCLUDES(IGNORED),
+    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    NODES_INCLUDED(IGNORED),
+    NODES_EXCLUDED(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
     PAGE(NUMBER),

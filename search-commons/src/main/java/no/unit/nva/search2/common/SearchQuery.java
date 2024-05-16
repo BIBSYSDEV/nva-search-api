@@ -66,9 +66,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract AsType<K> getSort();
 
-    protected abstract String getExclude();
+    protected abstract String[] getExclude();
 
-    protected abstract String getInclude();
+    protected abstract String[] getInclude();
 
     protected abstract K keyAggregation();
 

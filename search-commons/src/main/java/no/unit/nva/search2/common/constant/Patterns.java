@@ -24,7 +24,8 @@ public final class Patterns {
      */
     public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
     public static final String PATTERN_IS_FROM_KEY = "(?i)offset|from";
-    public static final String PATTERN_IS_NO_FILES = "(?i)(no_?public_?file)$";
+    public static final String PATTERN_IS_FIELDS_SEARCHED = "(?i)fields|nodes_?searched";
+
     public static final String PATTERN_IS_ORGANIZATION = "(?i)(organization_?id|viewing_?scope)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER = "(?i)(funding_?identifier|grant_?id)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER_NOT = "(?i)(funding_?identifier_?not|grant_?id_?not)$";
@@ -43,8 +44,6 @@ public final class Patterns {
     public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
     public static final String PATTERN_IS_PIPE = "\\|";
-    public static final String PATTERN_IS_PUBLICATION_TYPE = "(?i)publication_?instance|publication_?type";
-    public static final String PATTERN_IS_PUBLICATION_TYPE_NOT = "(?i)publication_?instance_?not|publication_?type_?not";
 
     /**
      * Pattern for matching a funding string. funding source and project_id together separated by ':'
@@ -54,6 +53,4 @@ public final class Patterns {
     @JacocoGenerated
     public Patterns() {
     }
-
-
 }

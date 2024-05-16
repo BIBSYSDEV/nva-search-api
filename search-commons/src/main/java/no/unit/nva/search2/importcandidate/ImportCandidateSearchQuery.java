@@ -8,6 +8,7 @@ import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
@@ -21,9 +22,11 @@ import static no.unit.nva.search2.importcandidate.Constants.FACET_IMPORT_CANDIDA
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FIELDS;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.NODES_INCLUDED;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.NODES_SEARCHED;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
@@ -69,7 +72,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
     @Override
     protected ImportCandidateParameter keyFields() {
-        return FIELDS;
+        return NODES_SEARCHED;
     }
 
     @Override
@@ -108,15 +111,13 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     }
 
     @Override
-    protected String getExclude() {
-        //TODO implement parameter
-        return null;
+    protected String[] getExclude() {
+        return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
-    protected String getInclude() {
-        //TODO implement parameter
-        return null;
+    protected String[] getInclude() {
+        return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
@@ -234,7 +235,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
                 : value;
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
-                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case INVALID -> invalidKeys.add(key);

@@ -5,7 +5,7 @@ import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search2.resource.ResourceParameter.INCLUDES;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 
@@ -66,7 +66,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
                 .withParameter(PAGE, ZERO)
                 .withParameter(SIZE, MAX_HITS_PER_PAGE)
                 .withParameter(AGGREGATION, NONE)
-                .withParameter(INCLUDES, INCLUDED_NODES)
+                .withParameter(NODES_INCLUDED, INCLUDED_NODES)
                 .build()
                 .withFilter().requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                 .withScrollTime(SCROLL_TTL)

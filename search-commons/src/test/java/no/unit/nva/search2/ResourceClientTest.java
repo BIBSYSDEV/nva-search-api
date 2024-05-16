@@ -355,7 +355,7 @@ class ResourceClientTest {
 
             assertNotNull(pagedSearchResourceDto);
             if (expectedCount == 0) {
-                logger.debug(pagedSearchResourceDto.toJsonString());
+                logger.info(pagedSearchResourceDto.toJsonString());
             } else {
                 logger.debug(pagedSearchResourceDto.toString());
             }

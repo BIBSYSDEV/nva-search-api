@@ -21,10 +21,10 @@ import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDES;
-import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_SEARCHED;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
-import static no.unit.nva.search2.resource.ResourceParameter.INCLUDES;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
@@ -83,7 +83,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected ResourceParameter keyFields() {
-        return FIELDS;
+        return NODES_SEARCHED;
     }
 
     @Override
@@ -122,13 +122,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected String getExclude() {
-        return parameters().get(EXCLUDES).as();
+    protected String[] getExclude() {
+        return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
-    protected String getInclude() {
-        return parameters().get(INCLUDES).as();
+    protected String[] getInclude() {
+        return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
@@ -171,7 +171,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
-            case SEARCH_ALL -> streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(FIELDS)));
+            case SEARCH_ALL ->
+                streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
@@ -285,7 +286,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
-                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
