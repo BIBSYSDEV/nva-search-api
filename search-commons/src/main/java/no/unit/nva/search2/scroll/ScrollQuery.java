@@ -30,7 +30,6 @@ public final class ScrollQuery extends Query<ScrollParameters> {
         super();
         this.ttl = ttl;
         this.scrollId = scrollId;
-        this.firstResponse = null;
     }
 
     ScrollQuery(String ttl, SwsResponse firstResponse) {
@@ -50,7 +49,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
                 .getUri();
     }
 
-    private ScrollQuery setOpenSearchUri(final URI uri) {
+    private ScrollQuery withOpenSearchUri(final URI uri) {
         openSearchUri = uri;
         return this;
     }
@@ -110,7 +109,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
 
         public ScrollQuery build() {
             return nonNull(openSearchUri)
-                ? new ScrollQuery(ttl, firstResponse).setOpenSearchUri(openSearchUri)
+                ? new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri)
                 : new ScrollQuery(ttl, firstResponse);
         }
 
