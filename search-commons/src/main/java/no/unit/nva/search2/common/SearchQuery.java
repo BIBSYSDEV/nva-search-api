@@ -28,6 +28,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
@@ -57,7 +58,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
     public final transient QueryFilter filters;
-    protected final transient QueryTools<K> queryTools;
 
 
     protected abstract AsType<K> getFrom();
@@ -95,7 +95,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected SearchQuery() {
         super();
-        queryTools = new QueryTools<>();
         filters = new QueryFilter();
         queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
         setMediaType(JSON_UTF_8.toString());
@@ -168,7 +167,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
             case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
-            case FREE_TEXT -> queryTools.queryToEntry(key, builderSearchAllQuery(key));
+            case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderStreamCustomQuery(key);
             case IGNORED -> Stream.empty();

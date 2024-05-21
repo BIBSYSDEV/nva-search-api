@@ -5,6 +5,8 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.common.unit.Fuzziness;
 import org.opensearch.index.query.DisMaxQueryBuilder;
@@ -22,7 +24,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
             .should(buildMatchAnyKeyword(key, values))
             .must(buildMatchAnyFuzzy(key, values))
             .queryName("FuzzyKeywordAny" + key.asCamelCase());
-        return queryTools.queryToEntry(key, boolQuery);
+        return Functions.queryToEntry(key, boolQuery);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> exten
         buildMatchAllKeyword(key, values).forEach(boolQuery::should);
         buildMatchAllFuzzy(key, values).forEach(boolQuery::must);
 
-        return queryTools.queryToEntry(key, boolQuery);
+        return Functions.queryToEntry(key, boolQuery);
     }
 
 

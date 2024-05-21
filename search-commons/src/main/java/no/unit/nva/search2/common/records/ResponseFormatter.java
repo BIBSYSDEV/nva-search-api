@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.hasContent;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 

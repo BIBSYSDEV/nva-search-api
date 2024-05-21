@@ -18,13 +18,21 @@ import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.enums.ParameterKey;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import static nva.commons.core.StringUtils.SPACE;
+
+import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -123,5 +131,41 @@ public final class Functions {
 
     public static String multipleFields(String... values) {
         return String.join(PIPE, values);
+    }
+
+    @JacocoGenerated
+    public static boolean hasContent(String value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
+    @JacocoGenerated
+    public static boolean hasContent(Collection<?> value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
+    public static String decodeUTF(String encoded) {
+        return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
+    }
+
+    public static  <K extends Enum<K> & ParameterKey> Stream<Map.Entry<K, QueryBuilder>> queryToEntry(
+        K key, QueryBuilder qb) {
+        final var entry = new Map.Entry<K, QueryBuilder>() {
+            @Override
+            public K getKey() {
+                return key;
+            }
+
+            @Override
+            public QueryBuilder getValue() {
+                return qb;
+            }
+
+            @Override
+            @JacocoGenerated
+            public QueryBuilder setValue(QueryBuilder value) {
+                return null;
+            }
+        };
+        return Stream.of(entry);
     }
 }

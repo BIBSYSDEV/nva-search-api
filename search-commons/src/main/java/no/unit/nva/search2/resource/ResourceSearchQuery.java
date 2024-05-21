@@ -1,6 +1,6 @@
 package no.unit.nva.search2.resource;
 
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
@@ -68,7 +68,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private ResourceSearchQuery() {
         super();
         assignStatusImpossibleWhiteList();
-        streamBuilders = new ResourceStreamBuilders(this.queryTools, parameters());
+        streamBuilders = new ResourceStreamBuilders(parameters());
         filterBuilder = new ResourceFilter(this);
     }
 

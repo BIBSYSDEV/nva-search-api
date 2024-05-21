@@ -22,6 +22,7 @@ import org.opensearch.common.xcontent.XContentType;
 public final class ScrollQuery extends Query<ScrollParameters> {
 
     private static final int MAX_PAGES = 4;
+    private static final String SEARCH_SCROLL = "_search/scroll";
     private final String ttl;
     private String scrollId;
     private SwsResponse firstResponse;
@@ -45,7 +46,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     protected URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
-                .addChild("_search/scroll")
+                .addChild(SEARCH_SCROLL)
                 .getUri();
     }
 

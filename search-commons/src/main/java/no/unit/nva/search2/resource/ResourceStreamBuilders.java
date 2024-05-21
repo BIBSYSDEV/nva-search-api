@@ -1,7 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import no.unit.nva.search2.common.QueryKeys;
-import no.unit.nva.search2.common.QueryTools;
+
 import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
@@ -18,6 +18,8 @@ import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
+
+import no.unit.nva.search2.common.constant.Functions;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -37,12 +39,10 @@ import java.util.stream.Stream;
 
 public class ResourceStreamBuilders {
 
-    protected final transient QueryTools<ResourceParameter> queryTools;
     private final QueryKeys<ResourceParameter> parameters;
 
 
-    public ResourceStreamBuilders(QueryTools<ResourceParameter> queryTools, QueryKeys<ResourceParameter> parameters) {
-        this.queryTools = queryTools;
+    public ResourceStreamBuilders(QueryKeys<ResourceParameter> parameters) {
         this.parameters = parameters;
     }
 
@@ -69,7 +69,7 @@ public class ResourceStreamBuilders {
         if (fields.containsKey(ENTITY_ABSTRACT) || fields.containsKey(ASTERISK)) {
             query.should(matchPhraseQuery(ENTITY_ABSTRACT, fifteenValues).boost(ABSTRACT.fieldBoost()));
         }
-        return queryTools.queryToEntry(SEARCH_ALL, query);
+        return Functions.queryToEntry(SEARCH_ALL, query);
     }
 
 
@@ -82,7 +82,7 @@ public class ResourceStreamBuilders {
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
-        return queryTools.queryToEntry(key, query);
+        return Functions.queryToEntry(key, query);
     }
 
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
@@ -93,7 +93,7 @@ public class ResourceStreamBuilders {
                 .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))
                 .must(termQuery(jsonPath(FUNDINGS, SOURCE, IDENTIFIER, KEYWORD), values[0])),
             ScoreMode.None);
-        return queryTools.queryToEntry(key, query);
+        return Functions.queryToEntry(key, query);
     }
 
 
@@ -103,7 +103,7 @@ public class ResourceStreamBuilders {
                 ? termQuery(extractTermPath(key), parameters.get(key).as())
                 : termQuery(extractMatchPath(key), parameters.get(key).as());
 
-        return queryTools.queryToEntry(key, query);
+        return Functions.queryToEntry(key, query);
     }
 
     private String extractTermPath(ResourceParameter key) {

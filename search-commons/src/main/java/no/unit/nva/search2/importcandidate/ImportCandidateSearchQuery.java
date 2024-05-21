@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
-import no.unit.nva.search2.common.QueryTools;
+import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
@@ -162,12 +162,12 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
                 .must(termQuery(jsonPath(ADDITIONAL_IDENTIFIERS, SOURCE_NAME, KEYWORD), source)),
             ScoreMode.None);
 
-        return queryTools.queryToEntry(key, query);
+        return Functions.queryToEntry(key, query);
     }
 
     public Stream<Map.Entry<ImportCandidateParameter, QueryBuilder>> licenseQuery(ImportCandidateParameter key) {
         var query = QueryBuilders.scriptQuery(selectByLicense(parameters().get(key).as()));
-        return queryTools.queryToEntry(key, query);
+        return Functions.queryToEntry(key, query);
     }
 
     public static class ImportCandidateValidator
@@ -231,7 +231,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
         protected void setValue(String key, String value) {
             var qpKey = ImportCandidateParameter.keyFromString(key);
             var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-                ? QueryTools.decodeUTF(value)
+                ? Functions.decodeUTF(value)
                 : value;
             switch (qpKey) {
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);

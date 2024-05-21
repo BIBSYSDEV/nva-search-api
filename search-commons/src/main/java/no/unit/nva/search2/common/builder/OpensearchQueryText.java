@@ -4,6 +4,8 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.Operator;
@@ -18,13 +20,13 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return buildAnyComboMustHitQuery(key, values)
-            .flatMap(builder -> queryTools.queryToEntry(key, builder));
+            .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         return buildAllMustHitQuery(key, values)
-            .flatMap(builder -> queryTools.queryToEntry(key, builder));
+            .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 
     private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {

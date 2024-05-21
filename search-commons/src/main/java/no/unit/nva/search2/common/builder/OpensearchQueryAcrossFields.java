@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
+import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -17,7 +18,7 @@ public class OpensearchQueryAcrossFields<K extends Enum<K> & ParameterKey> exten
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
-        return queryTools.queryToEntry(key,
+        return Functions.queryToEntry(key,
             buildMultiMatchQueryStream(key, values)
                 .collect(BoolQueryBuilder::new, BoolQueryBuilder::should, BoolQueryBuilder::should)
                 .queryName("AcrossFieldsAnyValue" + key.asCamelCase()));
@@ -25,7 +26,7 @@ public class OpensearchQueryAcrossFields<K extends Enum<K> & ParameterKey> exten
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
-        return queryTools.queryToEntry(key,
+        return Functions.queryToEntry(key,
             buildMultiMatchQueryStream(key, values)
                 .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must)
                 .queryName("AcrossFieldsAllValues" + key.asCamelCase()));
