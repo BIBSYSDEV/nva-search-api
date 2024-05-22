@@ -18,7 +18,6 @@ import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
