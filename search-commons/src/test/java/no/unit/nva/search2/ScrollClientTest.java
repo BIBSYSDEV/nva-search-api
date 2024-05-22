@@ -35,33 +35,6 @@ class ScrollClientTest {
     }
 
 
-//    @Test
-//    void openSearchFailedResponse() throws IOException, InterruptedException, BadRequestException {
-//        HttpClient httpClient = mock(HttpClient.class);
-//        var INCLUDED_NODES = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
-//
-//        var response = mock(HttpResponse.class);
-//        when(httpClient.send(any(), any())).thenReturn(response);
-//        when(response.statusCode()).thenReturn(500);
-//        when(response.body()).thenReturn("EXPECTED ERROR");
-//        var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
-//        var resourceClient = new ScrollClient(httpClient, setupMockedCachedJwtProvider());
-//        var rQuery= ResourceSearchQuery.builder()
-//            .withParameter(PAGE, ZERO)
-//            .withParameter(SIZE, "1")
-//            .withParameter(AGGREGATION, NONE)
-//            .withParameter(NODES_INCLUDED, INCLUDED_NODES)
-//            .build()
-//            .withScrollTime("1m")
-//            .doSearch(opensearchClient)
-//            .swsResponse();
-//        assertThrows(
-//            RuntimeException.class,
-//            () ->
-//
-//        );
-//    }
-
     @Test
     void searchWithUriReturnsOpenSearchAwsResponse() {
         var scrollId = randomString();
