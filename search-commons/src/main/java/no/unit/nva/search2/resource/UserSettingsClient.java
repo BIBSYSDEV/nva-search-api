@@ -4,7 +4,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readApiHost;
 import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;

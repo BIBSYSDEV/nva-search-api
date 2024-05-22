@@ -3,6 +3,8 @@ package no.unit.nva.search2.common.builder;
 import static no.unit.nva.search2.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
 import nva.commons.core.JacocoGenerated;
@@ -32,13 +34,13 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
     }
 
     protected Stream<Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        final var searchField = queryTools.getFirstSearchField(key);
+        final var searchField = key.searchFields().findFirst().orElseThrow();
         var firstParam = getFirstParam(values, key);
         var secondParam = getSecondParam(values, key);
 
 
         logger.info(firstParam + " - " + secondParam);
-        return queryTools.queryToEntry(key, switch (key.searchOperator()) {
+        return Functions.queryToEntry(key, switch (key.searchOperator()) {
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
                 .rangeQuery(searchField)
                 .gte(firstParam)

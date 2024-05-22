@@ -2,7 +2,7 @@ package no.unit.nva.search2;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_ALL;

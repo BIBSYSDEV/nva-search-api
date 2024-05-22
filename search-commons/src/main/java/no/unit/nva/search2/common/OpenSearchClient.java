@@ -3,7 +3,7 @@ package no.unit.nva.search2.common;
 import static java.util.stream.Collectors.joining;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureAuthUri;
 import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;

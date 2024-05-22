@@ -6,17 +6,13 @@ import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Functions.labels;
 import static no.unit.nva.search2.common.constant.Functions.multipleFields;
 import static no.unit.nva.search2.common.constant.Functions.nestedBranchBuilder;
-import static no.unit.nva.search2.common.constant.Functions.topLevelOrganisationsHierarchy;
 import static no.unit.nva.search2.common.constant.Words.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import nva.commons.core.JacocoGenerated;
-import org.opensearch.script.Script;
-import org.opensearch.script.ScriptType;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
@@ -102,7 +98,9 @@ public final class Constants {
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
-    public static final String HANDLE_KEYWORD = HANDLE + DOT + KEYWORD;
+    public static final String HANDLE_KEYWORD = multipleFields(
+        jsonPath(HANDLE, KEYWORD),
+        jsonPath("additionalIdentifiers", VALUE, KEYWORD));
     public static final String RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD =
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
@@ -191,6 +189,17 @@ public final class Constants {
             (map, entry) -> map.put(entry.getKey(), entry.getValue()),
             LinkedHashMap::putAll
         );
+
+    public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
+        return
+            nestedBranchBuilder(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
+                .subAggregation(
+                    branchBuilder(ID, TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD)
+                        .subAggregation(
+                            labels(TOP_LEVEL_ORGANIZATIONS)
+                        )
+                );
+    }
 
 
     public static TermsAggregationBuilder filesHierarchy() {
@@ -326,35 +335,6 @@ public final class Constants {
 
     private static CardinalityAggregationBuilder uniquePublications() {
         return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
-    }
-
-
-    public static Script selectByLicense(String license) {
-        var script = """
-            if (doc['associatedArtifacts.license.keyword'].size()==0) { return false;}
-            def url = doc['associatedArtifacts.license.keyword'].value;
-            if (url.contains("/by-nc-nd")) {
-              return "CC-NC-ND".equals(params.license);
-            } else if (url.contains("/by-nc-sa")) {
-              return "CC-NC-SA".equals(params.license);
-            } else if (url.contains("/by-nc")) {
-              return "CC-NC".equals(params.license);
-            } else if (url.contains("/by-nd")) {
-              return "CC-ND".equals(params.license);
-            } else if (url.contains("/by-sa")) {
-              return "CC-SA".equals(params.license);
-            } else if (url.contains("/by")) {
-              return "CC-BY".equals(params.license);
-            } else {
-                return "Other".equals(params.license);
-            }
-            """;
-        return new Script(
-            ScriptType.INLINE,
-            PAINLESS,
-            script,
-            Map.of("license", license.toUpperCase(Locale.getDefault()))
-        );
     }
 
 
