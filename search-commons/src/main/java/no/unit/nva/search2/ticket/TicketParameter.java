@@ -2,6 +2,7 @@ package no.unit.nva.search2.ticket;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -109,7 +110,9 @@ public enum TicketParameter implements ParameterKey {
 
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    FIELDS(IGNORED),
+    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    NODES_INCLUDED(IGNORED),
+    NODES_EXCLUDED(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
     PAGE(NUMBER),

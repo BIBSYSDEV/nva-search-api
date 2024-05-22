@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.ExportCsv;
+import no.unit.nva.search2.common.csv.ExportCsv;
 import no.unit.nva.search2.common.FakeGatewayResponse;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.records.SwsResponse;

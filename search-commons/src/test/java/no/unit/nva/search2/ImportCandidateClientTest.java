@@ -104,16 +104,16 @@ class ImportCandidateClientTest {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
 
-            var candidateQuery = ImportCandidateSearchQuery.builder()
+            var response1 = ImportCandidateSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .build();
-            var response1 = importCandidateClient.doSearch(candidateQuery);
+                .build()
+                .doSearch(importCandidateClient);
 
             assertNotNull(response1);
 
-            var aggregations = candidateQuery.toPagedResponse(response1).aggregations();
+            var aggregations = response1.toPagedResponse().aggregations();
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.get(IMPORT_STATUS.asCamelCase()).size(), is(2));
@@ -151,19 +151,19 @@ class ImportCandidateClientTest {
         @ParameterizedTest
         @MethodSource("uriProvider")
         void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
-            var query =
+            var response =
                 ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
-                    .build();
+                    .withRequiredParameters(FROM, SIZE, SORT)
+                    .build()
+                    .doSearch(importCandidateClient);
 
-            var swsResponse = importCandidateClient.doSearch(query);
-            var pagedResponse = query.toPagedResponse(swsResponse);
+            var pagedResponse = response.toPagedResponse();
 
-            assertNotNull(pagedResponse);
-            assertThat(pagedResponse.hits().size(), is(equalTo(query.parameters().get(SIZE).as())));
-            assertThat(pagedResponse.totalHits(), is(equalTo(query.parameters().get(SIZE).as())));
+            assertNotNull(response.toPagedResponse());
+            assertThat(pagedResponse.hits().size(), is(equalTo(response.parameters().get(SIZE).as())));
+            assertThat(pagedResponse.totalHits(), is(equalTo(response.parameters().get(SIZE).as())));
         }
 
         @ParameterizedTest
@@ -174,7 +174,7 @@ class ImportCandidateClientTest {
             var csvResult = ImportCandidateSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .withRequiredParameters(FROM, SIZE)
+                .withRequiredParameters(FROM, SIZE, SORT)
                 .withMediaType(Words.TEXT_CSV)
                 .build()
                 .doSearch(importCandidateClient);
@@ -184,15 +184,15 @@ class ImportCandidateClientTest {
         @ParameterizedTest
         @MethodSource("uriSortingProvider")
         void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
-            var query =
+            var response =
                 ImportCandidateSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE, SORT)
-                    .build();
+                    .withRequiredParameters(FROM, SIZE)
+                    .build()
+                    .doSearch(importCandidateClient);
 
-            var response = importCandidateClient.doSearch(query);
-            var pagedResponse = query.toPagedResponse(response);
+            var pagedResponse = response.toPagedResponse();
             assertNotNull(pagedResponse.id());
             assertNotNull(pagedResponse.context());
             assertTrue(pagedResponse.id().getScheme().contains("https"));
@@ -249,6 +249,7 @@ class ImportCandidateClientTest {
                 URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=1136326@20754.0.0.0&size=2"),
                 URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=20754.0.0.0&size=4"),
                 URI.create(REQUEST_BASE_URL + "id=018bed744c78-f53e06f7-74da-4c91-969f-ec307a7e7816&size=1"),
+                URI.create(REQUEST_BASE_URL + "license=CC-BY&size=7"),
                 URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023&size=8"),
                 URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-10&size=2"),
                 URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-05,&size=7"),

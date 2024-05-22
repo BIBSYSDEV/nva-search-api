@@ -1,6 +1,7 @@
 package no.unit.nva.indexing.testutils.csv;
 
-import no.unit.nva.search.ExportCsv;
+
+import no.unit.nva.search2.common.csv.ExportCsv;
 
 import java.util.ArrayList;
 import java.util.List;

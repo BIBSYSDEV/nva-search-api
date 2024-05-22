@@ -4,6 +4,8 @@ import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastruc
 import java.net.URI;
 import java.time.Instant;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 
@@ -12,11 +14,10 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected transient QueryKeys<K> queryKeys;
     private final transient Instant startTime;
 
-
     public abstract Stream<QueryContentWrapper> assemble();
 
+    public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
     protected abstract URI getOpenSearchUri();
-
 
     protected Query() {
         startTime = Instant.now();

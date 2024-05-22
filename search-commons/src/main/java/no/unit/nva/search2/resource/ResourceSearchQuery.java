@@ -21,8 +21,10 @@ import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search2.resource.ResourceParameter.FIELDS;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_SEARCHED;
 import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
@@ -33,6 +35,7 @@ import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,20 +44,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
-import no.unit.nva.search.ResourceCsvTransformer;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 @SuppressWarnings("PMD.GodClass")
@@ -63,7 +63,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
-    private boolean useCsvFieldsAsSource;
     private final Map<String,String> additionalQueryParameters = new HashMap<>();
 
     private ResourceSearchQuery() {
@@ -84,7 +83,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected ResourceParameter keyFields() {
-        return FIELDS;
+        return NODES_SEARCHED;
     }
 
     @Override
@@ -123,6 +122,16 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
+    protected String[] getExclude() {
+        return parameters().get(NODES_EXCLUDED).split(COMMA);
+    }
+
+    @Override
+    protected String[] getInclude() {
+        return parameters().get(NODES_INCLUDED).split(COMMA);
+    }
+
+    @Override
     public URI getOpenSearchUri() {
         return
             fromUri(openSearchUri)
@@ -133,20 +142,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private Map<String, String> getQueryParameters() {
         return additionalQueryParameters;
-    }
-
-    @Override
-    protected String toCsvText(SwsResponse response) {
-        return ResourceCsvTransformer.transform(response.getSearchHits());
-    }
-
-    @Override
-    protected void setFetchSource(SearchSourceBuilder builder) {
-        if (this.useCsvFieldsAsSource) {
-            builder.fetchSource(ResourceCsvTransformer.getJsonFields().toArray(String[]::new), null);
-        } else {
-            builder.fetchSource(true);
-        }
     }
 
     @Override
@@ -176,29 +171,14 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
-            case SEARCH_ALL -> streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(FIELDS)));
+            case SEARCH_ALL ->
+                streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
     }
 
     public ResourceFilter withFilter() {
         return filterBuilder;
-    }
-
-    public ResourceSearchQuery withOnlyCsvFields() {
-        this.useCsvFieldsAsSource = true;
-        return this;
-    }
-
-    public ResourceSearchQuery withFixedRange(int from, int size) {
-        this.parameters().set(FROM, String.valueOf(from));
-        this.parameters().set(SIZE, String.valueOf(size));
-        return this;
-    }
-
-    public ResourceSearchQuery withoutAggregation() {
-        this.parameters().set(AGGREGATION, NONE);
-        return this;
     }
 
     public ResourceSearchQuery withScrollTime(String time) {
@@ -306,7 +286,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
-                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,

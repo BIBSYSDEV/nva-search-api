@@ -81,7 +81,7 @@ public class FakeIndexingClient extends IndexingClient {
                                                .stream()
                                                .map(
                                                    doc -> new BulkItemResponse(doc.hashCode(), OpType.UPDATE, response))
-                                               .collect(Collectors.toList());
+            .toList();
         BulkItemResponse[] responsesArray = responses.toArray(BulkItemResponse[]::new);
         return List.of(new BulkResponse(responsesArray, IGNORED_PROCESSING_TIME));
     }

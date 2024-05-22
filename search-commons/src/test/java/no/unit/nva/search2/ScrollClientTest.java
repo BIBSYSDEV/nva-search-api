@@ -1,7 +1,6 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,7 +9,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.http.HttpClient;
+
 import no.unit.nva.search2.scroll.ScrollClient;
+import no.unit.nva.search2.scroll.ScrollParameters;
 import no.unit.nva.search2.scroll.ScrollQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ class ScrollClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
     public static final String SAMPLE_PUBLICATION_SEARCH = "publication_response.json";
 
+
     @BeforeEach
     public void setUp() throws IOException, InterruptedException {
         var httpClient = mock(HttpClient.class);
@@ -32,6 +34,34 @@ class ScrollClientTest {
             .thenReturn(mockedHttpResponse(SAMPLE_PUBLICATION_SEARCH));
     }
 
+
+//    @Test
+//    void openSearchFailedResponse() throws IOException, InterruptedException, BadRequestException {
+//        HttpClient httpClient = mock(HttpClient.class);
+//        var INCLUDED_NODES = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
+//
+//        var response = mock(HttpResponse.class);
+//        when(httpClient.send(any(), any())).thenReturn(response);
+//        when(response.statusCode()).thenReturn(500);
+//        when(response.body()).thenReturn("EXPECTED ERROR");
+//        var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
+//        var resourceClient = new ScrollClient(httpClient, setupMockedCachedJwtProvider());
+//        var rQuery= ResourceSearchQuery.builder()
+//            .withParameter(PAGE, ZERO)
+//            .withParameter(SIZE, "1")
+//            .withParameter(AGGREGATION, NONE)
+//            .withParameter(NODES_INCLUDED, INCLUDED_NODES)
+//            .build()
+//            .withScrollTime("1m")
+//            .doSearch(opensearchClient)
+//            .swsResponse();
+//        assertThrows(
+//            RuntimeException.class,
+//            () ->
+//
+//        );
+//    }
+
     @Test
     void searchWithUriReturnsOpenSearchAwsResponse() {
         var scrollId = randomString();
@@ -39,6 +69,17 @@ class ScrollClientTest {
         var result = scrollClient.doSearch(resourceAwsQuery);
         logger.debug(result.toString());
         assertNotNull(result);
+        assertNotNull(ScrollParameters.INVALID.asCamelCase());
+        assertNotNull(ScrollParameters.INVALID.asLowerCase());
+        assertNotNull(ScrollParameters.INVALID.errorMessage());
+        assertNotNull(ScrollParameters.INVALID.fieldBoost());
+        assertNotNull(ScrollParameters.INVALID.fieldPattern());
+        assertNotNull(ScrollParameters.INVALID.fieldPattern());
+        assertNotNull(ScrollParameters.INVALID.fieldType());
+        assertNotNull(ScrollParameters.INVALID.searchOperator());
+        assertNotNull(ScrollParameters.INVALID.searchFields(true));
+        assertNotNull(ScrollParameters.INVALID.valueEncoding());
+        assertNotNull(ScrollParameters.INVALID.valuePattern());
     }
 
 }

@@ -23,6 +23,7 @@ public final class Patterns {
      */
     public static final String PATTERN_IS_DATE = "\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?)?)?)?";
     public static final String PATTERN_IS_FROM_KEY = "(?i)offset|from";
+    public static final String PATTERN_IS_FIELDS_SEARCHED = "(?i)fields|nodes_?searched";
 
     public static final String PATTERN_IS_ORGANIZATION = "(?i)(organization_?id|viewing_?scope)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER = "(?i)(funding_?identifier|grant_?id)$";
