@@ -1,7 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.decodeUTF;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import java.util.Comparator;

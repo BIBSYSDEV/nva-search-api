@@ -3,8 +3,9 @@ package no.unit.nva.search2.common;
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.QueryTools.hasContent;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Functions.hasContent;
+import static no.unit.nva.search2.common.constant.Functions.queryToEntry;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.common.constant.Words.ALL;
@@ -61,8 +62,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     private transient URI gatewayUri = URI.create("https://unset/resource/search");
 
     public final transient QueryFilter filters;
-    protected final transient QueryTools<K> queryTools;
-
 
     protected abstract AsType<K> getFrom();
 
@@ -99,7 +98,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected SearchQuery() {
         super();
-        queryTools = new QueryTools<>();
         filters = new QueryFilter();
         queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
         setMediaType(JSON_UTF_8.toString());
@@ -186,7 +184,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
             case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
             case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
-            case FREE_TEXT -> queryTools.queryToEntry(key, builderSearchAllQuery(key));
+            case FREE_TEXT -> queryToEntry(key, builderSearchAllQuery(key));
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderStreamCustomQuery(key);
             case IGNORED -> Stream.empty();

@@ -18,6 +18,7 @@ import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -116,6 +117,16 @@ public final class Functions {
 
     public static String multipleFields(String... values) {
         return String.join(PIPE, values);
+    }
+
+    @JacocoGenerated
+    public static boolean hasContent(String value) {
+        return nonNull(value) && !value.isEmpty();
+    }
+
+    @JacocoGenerated
+    public static boolean hasContent(Collection<?> value) {
+        return nonNull(value) && !value.isEmpty();
     }
 
     public static String decodeUTF(String encoded) {
