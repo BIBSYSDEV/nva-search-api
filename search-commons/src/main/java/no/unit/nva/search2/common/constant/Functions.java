@@ -9,14 +9,11 @@ import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.ENGLISH_CODE;
-import static no.unit.nva.search2.common.constant.Words.ID;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LABELS;
 import static no.unit.nva.search2.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.SAMI_CODE;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -69,17 +66,6 @@ public final class Functions {
 
     public static String readApiHost() {
         return ENVIRONMENT.readEnv(API_HOST);
-    }
-
-    public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
-        return
-            nestedBranchBuilder(TOP_LEVEL_ORGANIZATION, TOP_LEVEL_ORGANIZATIONS)
-                .subAggregation(
-                    branchBuilder(ID, TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD)
-                        .subAggregation(
-                            labels(TOP_LEVEL_ORGANIZATIONS)
-                        )
-                );
     }
 
     public static NestedAggregationBuilder labels(String jsonPath) {
@@ -147,7 +133,7 @@ public final class Functions {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    public static  <K extends Enum<K> & ParameterKey> Stream<Map.Entry<K, QueryBuilder>> queryToEntry(
+    public static <K extends Enum<K> & ParameterKey> Stream<Map.Entry<K, QueryBuilder>> queryToEntry(
         K key, QueryBuilder qb) {
         final var entry = new Map.Entry<K, QueryBuilder>() {
             @Override
