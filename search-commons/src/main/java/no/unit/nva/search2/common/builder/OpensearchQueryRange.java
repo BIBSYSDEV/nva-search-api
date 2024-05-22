@@ -34,7 +34,7 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
     }
 
     protected Stream<Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
-        final var searchField =  key.searchFields().findFirst().orElseThrow();
+        final var searchField = key.searchFields().findFirst().orElseThrow();
         var firstParam = getFirstParam(values, key);
         var secondParam = getSecondParam(values, key);
 

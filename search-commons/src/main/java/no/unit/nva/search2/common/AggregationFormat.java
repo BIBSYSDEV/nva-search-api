@@ -34,16 +34,16 @@ public final class AggregationFormat {
         if (nonNull(aggregations)) {
             getAggregationFieldStreams(aggregations, definitions)
                 .map(AggregationFormat::getJsonNodeEntry)
-                .forEach(item -> objectNode.set(item.getKey(), fixNodes(item, item.getValue())));
+                .forEach(item -> objectNode.set(item.getKey(), fixNodes(item.getValue())));
         }
         return objectNode;
     }
 
     @JacocoGenerated
-    private static JsonNode fixNodes(Entry<String, JsonNode> item, JsonNode node) {
+    private static JsonNode fixNodes(JsonNode node) {
         if (node.isArray()) {
             var arrayNode = JsonUtils.dtoObjectMapper.createArrayNode();
-            node.forEach(element -> arrayNode.add(fixNodes(item, element)));
+            node.forEach(element -> arrayNode.add(fixNodes(element)));
             return arrayNode;
         } else {
             var outputAggregationNode = JsonUtils.dtoObjectMapper.createObjectNode();

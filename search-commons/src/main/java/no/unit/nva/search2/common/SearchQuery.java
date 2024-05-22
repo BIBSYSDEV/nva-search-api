@@ -59,7 +59,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     public final transient QueryFilter filters;
 
-
     protected abstract AsType<K> getFrom();
 
     protected abstract AsType<K> getSize();
