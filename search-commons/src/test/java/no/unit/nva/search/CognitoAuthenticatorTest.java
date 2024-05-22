@@ -42,9 +42,9 @@ class CognitoAuthenticatorTest {
 
     final HttpClient httpClient = mock(HttpClient.class);
 
-    HttpResponse<String> okResponse = mock(HttpResponse.class);
-    HttpResponse<String> invalidResponse = mock(HttpResponse.class);
-    HttpResponse<String> errorResponse = mock(HttpResponse.class);
+    final HttpResponse<String> okResponse = mock(HttpResponse.class);
+    final HttpResponse<String> invalidResponse = mock(HttpResponse.class);
+    final HttpResponse<String> errorResponse = mock(HttpResponse.class);
     private CognitoCredentials credentials;
 
     @BeforeEach
