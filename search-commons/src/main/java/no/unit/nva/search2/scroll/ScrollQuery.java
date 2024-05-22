@@ -4,8 +4,8 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import static org.opensearch.common.xcontent.ToXContent.EMPTY_PARAMS;
 import static org.opensearch.common.xcontent.XContentHelper.toXContent;
+import static org.opensearch.core.xcontent.ToXContent.EMPTY_PARAMS;
 
 import java.net.URI;
 import java.util.Objects;

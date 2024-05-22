@@ -71,7 +71,7 @@ opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content'
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
 opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'openSearchRestClient' }
 opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch' }
-opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'openSearchRestClient'}
+opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
