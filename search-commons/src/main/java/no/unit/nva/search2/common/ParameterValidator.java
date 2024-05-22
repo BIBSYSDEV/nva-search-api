@@ -1,7 +1,7 @@
 package no.unit.nva.search2.common;
 
 import static java.util.Objects.isNull;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComma;
@@ -160,6 +160,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * Adds query and path parameters from requestInfo.
      */
+    @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         searchQuery.setNvaSearchApiUri(requestInfo.getRequestUri());

@@ -7,7 +7,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.QueryTools;
+
 import no.unit.nva.search2.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
 
@@ -22,8 +22,6 @@ import org.opensearch.index.query.QueryBuilder;
  * </ul>
  */
 public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
-
-    public QueryTools<K> queryTools = new QueryTools<>();
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values);
 

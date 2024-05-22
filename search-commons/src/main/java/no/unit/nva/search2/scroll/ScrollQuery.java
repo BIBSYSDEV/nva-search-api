@@ -2,7 +2,6 @@ package no.unit.nva.search2.scroll;
 
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import static org.opensearch.common.xcontent.ToXContent.EMPTY_PARAMS;
 import static org.opensearch.common.xcontent.XContentHelper.toXContent;
 import java.net.URI;
 import java.util.stream.Stream;
@@ -44,7 +43,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     private static String scrollRequestToString(SearchScrollRequest request)  {
-        return attempt(() -> toXContent(request, XContentType.JSON, EMPTY_PARAMS, true).utf8ToString())
+        return attempt(() -> toXContent(request, XContentType.JSON, true).utf8ToString())
                    .orElseThrow();
     }
 }

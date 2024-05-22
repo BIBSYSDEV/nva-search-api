@@ -194,7 +194,7 @@ Accept: application/json
 | type_not                  | typeNot                 | keyword      | not_one_item     | type.keyword                                                                                                     |
 | viewed_by                 | viewedBy                | acrossFields | all_items        | viewedBy.firstName, viewedBy.lastName, viewedBy.username                                                         |
 | viewed_by_not             | viewedByNot             | acrossFields | no_items         | viewedBy.firstName, viewedBy.lastName, viewedBy.username                                                         |
-| search_all                | searchAll               | freeText     | all_items        | *                                                                                                                |
+| search_all                | searchAll               | freeText     | all_items        | q                                                                                                                |
 
 > [!NOTE]
 > <p>Valid SortKeys </p>
