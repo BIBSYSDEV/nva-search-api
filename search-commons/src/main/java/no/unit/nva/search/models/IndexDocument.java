@@ -2,7 +2,6 @@ package no.unit.nva.search.models;
 
 import static no.unit.nva.search.IndexingClient.objectMapper;
 import static nva.commons.core.attempt.Try.attempt;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,7 +10,6 @@ import java.util.Optional;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.constants.ApplicationConstants;
-import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.common.xcontent.XContentType;
@@ -29,9 +27,6 @@ public record IndexDocument(
     private static final String TICKET = "Ticket";
     private static final String RESOURCE = "Resource";
 
-    @JsonCreator
-    public IndexDocument {
-    }
 
     public IndexDocument validate() {
         Objects.requireNonNull(getIndexName());
@@ -57,18 +52,6 @@ public record IndexDocument(
 
     public static IndexDocument fromJsonString(String json) {
         return attempt(() -> objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
-    }
-
-    @Override
-    @JacocoGenerated
-    public EventConsumptionAttributes consumptionAttributes() {
-        return consumptionAttributes;
-    }
-
-    @Override
-    @JacocoGenerated
-    public JsonNode resource() {
-        return resource;
     }
 
     @JsonIgnore
