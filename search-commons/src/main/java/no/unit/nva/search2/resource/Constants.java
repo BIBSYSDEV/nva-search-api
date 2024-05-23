@@ -36,11 +36,6 @@ public final class Constants {
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
 
-    public static final String UNIT_PATHS = multipleFields(
-        CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
-        jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-    );
-
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS;
     public static final String CONTRIBUTORS_IDENTITY_ID =
@@ -105,10 +100,11 @@ public final class Constants {
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
-    public static final String TOP_LEVEL_ORG_ID = multipleFields(
-        TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD,
-        jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-    );
+
+    //-----------------------------------
+    public static final String TOP_LEVEL_ORG_ID = jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD);
+
+
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
     public static final String SCIENTIFIC_INDEX_YEAR = SCIENTIFIC_INDEX + DOT + YEAR;
