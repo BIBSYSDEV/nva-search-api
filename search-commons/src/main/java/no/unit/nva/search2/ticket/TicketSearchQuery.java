@@ -133,7 +133,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
 
-
     @Override
     protected Map<String, String> facetPaths() {
         return facetTicketsPaths;
