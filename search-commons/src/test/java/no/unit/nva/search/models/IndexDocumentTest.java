@@ -32,7 +32,7 @@ class IndexDocumentTest {
         var consumptionAttributes = randomConsumptionAttributes();
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         var indexRequest = indexDocument.toIndexRequest();
-        assertThat(indexRequest.index(), is(equalTo(consumptionAttributes.getIndex())));
+        assertThat(indexRequest.index(), is(equalTo(consumptionAttributes.index())));
     }
 
     @Test
@@ -47,7 +47,7 @@ class IndexDocumentTest {
     void shouldReturnDocumentIdentifierOfContainedObjectWhenEventConsumptionAttributesContainIdentifier() {
         var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
         assertThat(indexDocument.getDocumentIdentifier(),
-                   is(equalTo(indexDocument.getConsumptionAttributes().getDocumentIdentifier().toString())));
+            is(equalTo(indexDocument.consumptionAttributes().documentIdentifier().toString())));
     }
 
     @Test

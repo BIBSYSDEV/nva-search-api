@@ -39,7 +39,7 @@ public class FakeIndexingClient extends IndexingClient {
         }
 
         indexContents.get(indexDocument.getIndexName())
-                .put(indexDocument.getDocumentIdentifier(), indexDocument.getResource());
+            .put(indexDocument.getDocumentIdentifier(), indexDocument.resource());
         return null;
     }
 

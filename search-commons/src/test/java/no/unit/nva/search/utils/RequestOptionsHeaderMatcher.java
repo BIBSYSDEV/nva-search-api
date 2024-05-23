@@ -5,7 +5,7 @@ import org.opensearch.client.RequestOptions;
 
 public class RequestOptionsHeaderMatcher implements ArgumentMatcher<RequestOptions> {
 
-    private RequestOptions sourceRequestOptions;
+    private final RequestOptions sourceRequestOptions;
 
     public RequestOptionsHeaderMatcher(RequestOptions sourceRequestOptions) {
         this.sourceRequestOptions = sourceRequestOptions;

@@ -7,8 +7,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
-import no.unit.nva.search.CachedJwtProvider;
-import no.unit.nva.search.CognitoAuthenticator;
+
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
+import no.unit.nva.search2.common.jwt.CognitoAuthenticator;
 
 public class MockedJwtProvider {
 
