@@ -8,6 +8,8 @@ import java.net.URI;
 import no.unit.nva.search.models.SearchDocumentsQuery;
 import no.unit.nva.search.models.SearchResponseDto;
 import no.unit.nva.search.models.SearchTicketsQuery;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
+import no.unit.nva.search2.common.jwt.CognitoAuthenticator;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadGatewayException;
 import nva.commons.core.JacocoGenerated;

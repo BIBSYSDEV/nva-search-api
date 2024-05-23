@@ -33,7 +33,8 @@ import java.util.stream.IntStream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.records.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -98,11 +99,11 @@ class IndexingClientTest {
     @Test
     void shouldSendIndexRequestWithIndexNameSpecifiedByIndexDocument() throws IOException {
         var indexDocument = sampleIndexDocument();
-        var expectedIndex = indexDocument.getConsumptionAttributes().getIndex();
+        var expectedIndex = indexDocument.consumptionAttributes().index();
         indexingClient.addDocumentToIndex(indexDocument);
 
         assertThat(submittedIndexRequest.get().index(), is(equalTo(expectedIndex)));
-        assertThat(extractDocumentFromSubmittedIndexRequest(), is(equalTo(indexDocument.getResource())));
+        assertThat(extractDocumentFromSubmittedIndexRequest(), is(equalTo(indexDocument.resource())));
     }
 
     @Test

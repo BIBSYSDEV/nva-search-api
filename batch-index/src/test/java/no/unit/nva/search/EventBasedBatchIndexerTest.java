@@ -109,12 +109,12 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         for (var expectedFile : expectedFiles) {
             IndexDocument indexDocument = fetchIndexDocumentFromS3(expectedFile);
             assertThat(openSearchClient.getIndex(indexDocument.getIndexName()),
-                       hasItem(indexDocument.getResource()));
+                hasItem(indexDocument.resource()));
         }
 
         IndexDocument notYetIndexedDocument = fetchIndexDocumentFromS3(unexpectedFile);
         assertThat(openSearchClient.getIndex(notYetIndexedDocument.getIndexName()),
-                   not(hasItem(notYetIndexedDocument.getResource())));
+            not(hasItem(notYetIndexedDocument.resource())));
     }
 
     @Test
@@ -162,17 +162,17 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     private void assertThatIndexHasBothDocuments(IndexDocument firstDocumentToIndex,
                                                  IndexDocument secondDocumentIndex) {
         assertThat(openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
-                   hasItem(firstDocumentToIndex.getResource()));
+            hasItem(firstDocumentToIndex.resource()));
         assertThat(openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
-                   hasItem(secondDocumentIndex.getResource()));
+            hasItem(secondDocumentIndex.resource()));
     }
 
     private void assertThatIndexHasFirstButNotSecondDocument(IndexDocument firstDocumentToIndex,
                                                              IndexDocument secondDocumentIndex) {
         assertThat(openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
-                   hasItem(firstDocumentToIndex.getResource()));
+            hasItem(firstDocumentToIndex.resource()));
         assertThat(openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
-                   not(hasItem(secondDocumentIndex.getResource())));
+            not(hasItem(secondDocumentIndex.resource())));
     }
 
     private IndexDocument fetchIndexDocumentFromS3(UriWrapper expectedFile) {

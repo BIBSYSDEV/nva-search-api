@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
+import no.unit.nva.search2.common.jwt.CognitoAuthenticator;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Try;
 import nva.commons.secrets.SecretsReader;
@@ -142,7 +143,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         List<IndexRequest> indexRequests = bulk.stream()
                                                .parallel()
                                                .map(IndexDocument::toIndexRequest)
-                                               .collect(Collectors.toList());
+            .toList();
 
         BulkRequest request = new BulkRequest();
         indexRequests.forEach(request::add);
