@@ -1,4 +1,4 @@
-package no.unit.nva.search.csv;
+package no.unit.nva.search2.common.csv;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

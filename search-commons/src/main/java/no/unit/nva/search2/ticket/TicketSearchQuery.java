@@ -8,6 +8,7 @@ import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
@@ -21,8 +22,10 @@ import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.EXCLUDE_SUBUNITS;
-import static no.unit.nva.search2.ticket.TicketParameter.FIELDS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
+import static no.unit.nva.search2.ticket.TicketParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.ticket.TicketParameter.NODES_INCLUDED;
+import static no.unit.nva.search2.ticket.TicketParameter.NODES_SEARCHED;
 import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
 import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
 import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
@@ -48,12 +51,10 @@ import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
-import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
-import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortOrder;
 
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
@@ -78,7 +79,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @Override
     protected TicketParameter keyFields() {
-        return FIELDS;
+        return NODES_SEARCHED;
     }
 
     @Override
@@ -117,19 +118,20 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
+    protected String[] getExclude() {
+        return parameters().get(NODES_EXCLUDED).split(COMMA);
+    }
+
+    @Override
+    protected String[] getInclude() {
+        return parameters().get(NODES_INCLUDED).split(COMMA);
+    }
+
+    @Override
     public URI getOpenSearchUri() {
         return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
     }
 
-    @Override
-    protected String toCsvText(SwsResponse response) {
-        throw new IllegalArgumentException("Not implemented");
-    }
-
-    @Override
-    protected void setFetchSource(SearchSourceBuilder builder) {
-        builder.fetchSource(true);
-    }
 
     @Override
     protected Map<String, String> facetPaths() {
@@ -255,7 +257,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
-                case FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));

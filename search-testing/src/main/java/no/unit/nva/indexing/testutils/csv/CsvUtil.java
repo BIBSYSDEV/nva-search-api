@@ -1,7 +1,7 @@
 package no.unit.nva.indexing.testutils.csv;
 
 import com.opencsv.bean.CsvToBeanBuilder;
-import no.unit.nva.search.ExportCsv;
+import no.unit.nva.search2.common.csv.ExportCsv;
 
 import java.io.StringReader;
 import java.util.List;

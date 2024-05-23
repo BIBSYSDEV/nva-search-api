@@ -2,7 +2,7 @@ package no.unit.nva.search2;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.utils.UriRetriever.ACCEPT;
+import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
@@ -170,19 +170,19 @@ class TicketClientTest {
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
             var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
-            var query1 = TicketSearchQuery.builder()
+            var response1 = TicketSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
                 .withDockerHostUri(hostAddress)
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withFilter()
                 .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .apply();
+                .apply()
+                .doSearch(searchClient);
 
-            var response1 = searchClient.doSearch(query1);
             assertNotNull(response1);
 
-            var aggregations = query1.toPagedResponse(response1).aggregations();
+            var aggregations = response1.toPagedResponse().aggregations();
 
             assertFalse(aggregations.isEmpty());
             assertThat(aggregations.size(), is(equalTo(EXPECTED_NUMBER_OF_AGGREGATIONS)));
@@ -206,21 +206,21 @@ class TicketClientTest {
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, SORT)
                     .build()
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .organization(testOrganizationId).apply()
                     .doSearch(searchClient);
-            assertNotNull(pagedResult);
-            assertTrue(pagedResult.contains("\"hits\":["));
+            assertNotNull(pagedResult.swsResponse());
+            assertTrue(pagedResult.toString().contains("\"hits\":["));
         }
 
         @ParameterizedTest
         @MethodSource("uriPagingProvider")
         void uriRequestPageableReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
-            var query =
+            var response =
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
@@ -228,10 +228,10 @@ class TicketClientTest {
                     .build()
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .organization(testOrganizationId).apply();
+                    .organization(testOrganizationId).apply()
+                    .doSearch(searchClient);
 
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
@@ -242,7 +242,7 @@ class TicketClientTest {
         @MethodSource("uriProviderAsAdmin")
         void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount) throws ApiGatewayException {
 
-            var query =
+            var response =
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
@@ -250,10 +250,9 @@ class TicketClientTest {
                     .build()
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                    .organization(testOrganizationId).apply();
+                    .organization(testOrganizationId).apply().doSearch(searchClient);
 
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             assertNotNull(pagedSearchResourceDto);
             if (expectedCount == 0) {
@@ -284,17 +283,17 @@ class TicketClientTest {
                 .thenReturn(accessRightList);
 
 
-            var query =
+            var response =
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
-                    .fromRequestInfo(mockedRequestInfoLocal);
+                    .fromRequestInfo(mockedRequestInfoLocal)
+                    .doSearch(searchClient);
 
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             assertNotNull(pagedSearchResourceDto);
             assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
@@ -328,7 +327,7 @@ class TicketClientTest {
         @ParameterizedTest
         @MethodSource("uriSortingProvider")
         void uriRequestWithSortingReturnsSuccessfulResponse(URI uri) throws ApiGatewayException {
-            var query =
+            var response =
                 TicketSearchQuery.builder()
                     .fromQueryParameters(queryToMapEntries(uri))
                     .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
@@ -337,11 +336,9 @@ class TicketClientTest {
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .organization(testOrganizationId)
-                    .apply();
+                    .apply().doSearch(searchClient);
 
-            logger.info(query.parameters().get(SORT).toString());
-            var response = searchClient.doSearch(query);
-            var pagedSearchResourceDto = query.toPagedResponse(response);
+            var pagedSearchResourceDto = response.toPagedResponse();
             assertNotNull(pagedSearchResourceDto.id());
             assertNotNull(pagedSearchResourceDto.context());
             assertTrue(pagedSearchResourceDto.totalHits() >= 0);

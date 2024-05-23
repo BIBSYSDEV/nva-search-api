@@ -2,6 +2,7 @@ package no.unit.nva.search2.importcandidate;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
@@ -98,7 +99,9 @@ public enum ImportCandidateParameter implements ParameterKey {
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_ITEMS, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     // Pagination parameters
-    FIELDS(IGNORED),
+    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    NODES_INCLUDED(IGNORED),
+    NODES_EXCLUDED(IGNORED),
     AGGREGATION(IGNORED),
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),

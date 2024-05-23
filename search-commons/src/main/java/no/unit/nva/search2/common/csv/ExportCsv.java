@@ -1,7 +1,6 @@
-package no.unit.nva.search;
+package no.unit.nva.search2.common.csv;
 
 import com.opencsv.bean.CsvBindByName;
-import no.unit.nva.search.csv.CsvBindByNameOrder;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 
@@ -46,24 +45,40 @@ public class ExportCsv {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getMainTitle() {
         return mainTitle;
-    }
-
-    public void setMainTitle(String mainTitle) {
-        this.mainTitle = mainTitle;
     }
 
     public String getPublicationDate() {
         return publicationDate;
     }
 
+    public String getPublicationInstance() {
+        return publicationInstance;
+    }
+
+    public String getContributors() {
+        return contributors;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setMainTitle(String mainTitle) {
+        this.mainTitle = mainTitle;
+    }
+
     public void setPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
+    }
+
+    public void setPublicationInstance(String publicationInstance) {
+        this.publicationInstance = publicationInstance;
+    }
+
+    public void setContributors(String contributors) {
+        this.contributors = contributors;
     }
 
     public final String createPublicationDate(String year, String month, String day) {
@@ -83,22 +98,6 @@ public class ExportCsv {
         return stringBuilder.toString();
     }
 
-    public String getPublicationInstance() {
-        return publicationInstance;
-    }
-
-    public void setPublicationInstance(String publicationInstance) {
-        this.publicationInstance = publicationInstance;
-    }
-
-    public String getContributors() {
-        return contributors;
-    }
-
-    public void setContributors(String contributors) {
-        this.contributors = contributors;
-    }
-
     public final String createContributorsString(List<String> contributors) {
         return String.join(DELIMITER, contributors);
     }
@@ -109,10 +108,9 @@ public class ExportCsv {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ExportCsv)) {
+        if (!(o instanceof ExportCsv exportCsv)) {
             return false;
         }
-        ExportCsv exportCsv = (ExportCsv) o;
         return Objects.equals(getId(), exportCsv.getId())
                 && Objects.equals(getMainTitle(), exportCsv.getMainTitle())
                 && Objects.equals(getPublicationDate(), exportCsv.getPublicationDate())
