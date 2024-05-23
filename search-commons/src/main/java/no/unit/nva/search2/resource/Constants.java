@@ -28,9 +28,11 @@ public final class Constants {
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
-    public static final String REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD = "entityDescription.reference.publicationContext.id.keyword";
     public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
+
+    public static final String REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD = ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD;
+
     public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
 
