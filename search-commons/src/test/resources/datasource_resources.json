@@ -5048,5 +5048,1186 @@
         }
       }
     ]
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/1864A370-80CA-4BE5-9CB7-40B0CCEF23CA/2024"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018f29b1419a-d65b6926-5b06-4e7f-966e-edd2041eb9aa",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.50.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.53.0.0"
+    ],
+    "createdDate": "2024-04-29T11:50:33.626252096Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "hdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEK",
+      "alternativeAbstracts": {
+        "und": "iofgfhfghsjateyhdjkdhdslhsjsdlshjalyewqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFwuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateyhdjkdhdslhsjsdlshjalyewqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFwuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewu"
+      },
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for data og infrastruktur",
+                "nb": "Divisjon data og infrastruktur",
+                "en": "The Organisational Development Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.53.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Institutt for klinisk medisin",
+                "en": "Institute of Clinical Medicine"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1421086",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684843",
+            "type": "Identity",
+            "name": "Nina  Andersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "description": "wuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateyhdjkdhdslhsjsdlshjalyewqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHFTFYUEKqioklJAJKHFTFYUEKhdjkdhdslhsjsdlshjalyewuiofgfhfghsjateywqioklJAJKHF",
+      "mainTitle": "Test Nina",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "28",
+        "month": "4",
+        "year": "2024"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/1864A370-80CA-4BE5-9CB7-40B0CCEF23CA/2024",
+          "type": "Journal",
+          "identifier": "1864A370-80CA-4BE5-9CB7-40B0CCEF23CA",
+          "name": "ACS Chemical Biology",
+          "onlineIssn": "1554-8937",
+          "printIssn": "1554-8929",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=1864A370-80CA-4BE5-9CB7-40B0CCEF23CA",
+          "scientificValue": "LevelTwo"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "identifier": "018f29b1419a-d65b6926-5b06-4e7f-966e-edd2041eb9aa",
+    "modelVersion": "0.21.18",
+    "modifiedDate": "2024-05-06T09:07:39.076795910Z",
+    "publishedDate": "2024-04-30T07:13:20.981868037Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1684843@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.50.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "hasPart": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.53.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nb": "Institutt for klinisk medisin",
+              "en": "Institute of Clinical Medicine"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.50.0.0"
+            }
+          },
+          "labels": {
+            "nb": "Det medisinske fakultet",
+            "en": "Faculty of Medicine"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Universitetet i Oslo",
+          "en": "University of Oslo"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nn": "Noregs teknisk-naturvitskaplege universitet",
+          "nb": "Norges teknisk-naturvitenskapelige universitet",
+          "en": "Norwegian University of Science and Technology"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Divisjon for data og infrastruktur",
+              "nb": "Divisjon data og infrastruktur",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Divisjon for forskings- og kunnskapsressursar",
+              "nb": "Divisjon forsknings- og kunnskapsressurser",
+              "en": "The Research and Education Resources Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      }
+    ],
+    "filesStatus": "noFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018f4eb4af57-67d0ea13-f129-4838-85e9-cb11b4ef3eb9",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "d8530933-ed80-45ca-b153-9b70ce064e83",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "My thesis.pdf",
+        "publishedDate": "2024-05-06T16:22:01.064487748Z",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "OverridableRightsRetentionStrategy"
+        },
+        "size": 6186,
+        "visibleForNonOwner": true
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "createdDate": "2024-05-06T16:20:15.319975718Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684843",
+            "type": "Identity",
+            "name": "Nina  Andersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684769",
+            "type": "Identity",
+            "name": "Navn Navnertsen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "mainTitle": "My thesis",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "17",
+        "month": "4",
+        "year": "2024"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/018ef728381e-2d04ac55-5ceb-4322-ad07-7f1897eadafb",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "Ross Wilson"
+                }
+              }
+            ],
+            "mainTitle": "New York : A literary history",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "isbnList": [
+                  "9781108470810"
+                ],
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/8E1B4D14-6859-4CE2-A81A-CDBFD6578BCD/2020",
+                  "type": "Publisher",
+                  "identifier": "8E1B4D14-6859-4CE2-A81A-CDBFD6578BCD",
+                  "isbnPrefix": "978-1-316,978-1-107,978-0-521,978-0-511",
+                  "name": "Cambridge University Press",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=8E1B4D14-6859-4CE2-A81A-CDBFD6578BCD",
+                  "scientificValue": "LevelTwo",
+                  "valid": true
+                },
+                "revision": "Unrevised"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "AcademicChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "20",
+            "end": "100"
+          }
+        }
+      }
+    },
+    "identifier": "018f4eb4af57-67d0ea13-f129-4838-85e9-cb11b4ef3eb9",
+    "modelVersion": "0.21.18",
+    "modifiedDate": "2024-05-06T16:22:08.191502554Z",
+    "publishedDate": "2024-05-06T16:22:01.229349647Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1684843@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "labels": {
+            "nn": "Divisjon for forskings- og kunnskapsressursar",
+            "nb": "Divisjon forsknings- og kunnskapsressurser",
+            "en": "The Research and Education Resources Division"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      }
+    ],
+    "filesStatus": "hasPublicFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/4EDD1E76-9270-4749-B1DC-EEE311F13343/2024"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018f4eb01698-c07feda8-e765-4e6c-a7d4-d6aa0c03b20e",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "4c95958a-4f77-42a4-bdce-131000fb1e26",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "My thesis.pdf",
+        "publishedDate": "2024-05-06T16:23:13.050366107Z",
+        "publisherVersion": "AcceptedVersion",
+        "rightsRetentionStrategy": {
+          "type": "CustomerRightsRetentionStrategy",
+          "configuredType": "OverridableRightsRetentionStrategy"
+        },
+        "size": 6186,
+        "visibleForNonOwner": true
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "createdDate": "2024-05-06T16:15:14.072902488Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Min fantastiske publikasjon - et sammendrag",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684843",
+            "type": "Identity",
+            "name": "Nina  Andersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nob",
+      "mainTitle": "Min fantastiske publikasjon",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "3",
+        "month": "5",
+        "year": "2024"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/4EDD1E76-9270-4749-B1DC-EEE311F13343/2024",
+          "type": "Journal",
+          "identifier": "4EDD1E76-9270-4749-B1DC-EEE311F13343",
+          "name": "ACM Transactions on Computer Systems",
+          "onlineIssn": "1557-7333",
+          "printIssn": "0734-2071",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=4EDD1E76-9270-4749-B1DC-EEE311F13343",
+          "scientificValue": "LevelTwo"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "issue": "3",
+          "pages": {
+            "type": "Range",
+            "begin": "1",
+            "end": "100"
+          },
+          "volume": "2"
+        }
+      }
+    },
+    "identifier": "018f4eb01698-c07feda8-e765-4e6c-a7d4-d6aa0c03b20e",
+    "modelVersion": "0.21.18",
+    "modifiedDate": "2024-05-06T16:23:14.134756347Z",
+    "publishedDate": "2024-05-06T16:23:13.105236122Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1684843@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "labels": {
+            "nn": "Divisjon for forskings- og kunnskapsressursar",
+            "nb": "Divisjon forsknings- og kunnskapsressurser",
+            "en": "The Research and Education Resources Division"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      }
+    ],
+    "filesStatus": "hasPublicFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/6EF23D04-C5BB-4024-8802-F4B3AB75BAE1/2024"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018f0a37361c-c8875797-104c-4a9f-afe3-fdc7fe362ca7",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "embargoDate": "2024-05-09T22:00:00Z",
+        "identifier": "d79f09d1-c799-41f7-8231-2a29116ec2f9",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by-sa/4.0",
+          "name": "CC-SA",
+          "labels": {
+            "en": "Creative Commons - Attribution-ShareAlike",
+            "nb": "Creative Commons - Navngivelse-DelPåSammeVilkår"
+          }
+        },
+        "mimeType": "image/jpeg",
+        "name": "osteloff.jpg",
+        "publishedDate": "2024-04-23T09:15:43.153827714Z",
+        "publisherVersion": "PublishedVersion",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "OverridableRightsRetentionStrategy"
+        },
+        "size": 4656,
+        "visibleForNonOwner": false
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.53.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.50.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
+    ],
+    "createdDate": "2024-04-23T09:09:01.596925087Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "doi": "https://handle.stage.datacite.org/10.15157/hrrx-r658",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for data og infrastruktur",
+                "nb": "Divisjon data og infrastruktur",
+                "en": "The Organisational Development Department"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Noregs teknisk-naturvitskaplege universitet",
+                "nb": "Norges teknisk-naturvitenskapelige universitet",
+                "en": "Norwegian University of Science and Technology"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.53.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Institutt for klinisk medisin",
+                "en": "Institute of Clinical Medicine"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1421086",
+            "type": "Identity",
+            "name": "Kjetil Møkkelgjerd",
+            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "SINTEF AS",
+                "nb": "SINTEF AS",
+                "en": "SINTEF"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1269057",
+            "type": "Identity",
+            "name": "Terje Hellesvik",
+            "orcId": "https://sandbox.orcid.org/0000-0002-8617-3281",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684843",
+            "type": "Identity",
+            "name": "Nina  Andersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "mainTitle": "Kjetils forskningsresultat",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "23",
+        "month": "4",
+        "year": "2024"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/6EF23D04-C5BB-4024-8802-F4B3AB75BAE1/2024",
+          "type": "Journal",
+          "identifier": "6EF23D04-C5BB-4024-8802-F4B3AB75BAE1",
+          "name": "Acta Naturae",
+          "printIssn": "2075-8251",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=6EF23D04-C5BB-4024-8802-F4B3AB75BAE1",
+          "scientificValue": "Unassigned"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "identifier": "018f0a37361c-c8875797-104c-4a9f-afe3-fdc7fe362ca7",
+    "modelVersion": "0.21.19",
+    "modifiedDate": "2024-05-08T06:27:23.552617389Z",
+    "publishedDate": "2024-04-23T09:15:43.313571140Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1421086@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nn": "Noregs teknisk-naturvitskaplege universitet",
+          "nb": "Norges teknisk-naturvitenskapelige universitet",
+          "en": "Norwegian University of Science and Technology"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.50.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "hasPart": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.53.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nb": "Institutt for klinisk medisin",
+              "en": "Institute of Clinical Medicine"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.50.0.0"
+            }
+          },
+          "labels": {
+            "nb": "Det medisinske fakultet",
+            "en": "Faculty of Medicine"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/185.90.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Universitetet i Oslo",
+          "en": "University of Oslo"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7401.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "labels": {
+          "nn": "SINTEF AS",
+          "nb": "SINTEF AS",
+          "en": "SINTEF"
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.3.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Divisjon for data og infrastruktur",
+              "nb": "Divisjon data og infrastruktur",
+              "en": "The Organisational Development Department"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          },
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nn": "Divisjon for forskings- og kunnskapsressursar",
+              "nb": "Divisjon forsknings- og kunnskapsressurser",
+              "en": "The Research and Education Resources Division"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      }
+    ],
+    "filesStatus": "noFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/F54596D3-6ACD-4A06-8B68-15145E6A9610/2024"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018f5255bc7a-f29567ab-682a-4ece-8175-47b4aec723e8",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "9026de4b-f734-4795-9da6-003a7bc03cd4",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "My thesis.pdf",
+        "publishedDate": "2024-05-07T09:33:58.041931489Z",
+        "publisherVersion": "AcceptedVersion",
+        "rightsRetentionStrategy": {
+          "type": "CustomerRightsRetentionStrategy",
+          "configuredType": "OverridableRightsRetentionStrategy"
+        },
+        "size": 6186,
+        "visibleForNonOwner": true
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
+    ],
+    "createdDate": "2024-05-07T09:15:01.626412900Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684843",
+            "type": "Identity",
+            "name": "Nina  Andersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1504353",
+            "type": "Identity",
+            "name": "test testesen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "mainTitle": "NVIna",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "12",
+        "month": "4",
+        "year": "2024"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/F54596D3-6ACD-4A06-8B68-15145E6A9610/2024",
+          "type": "Journal",
+          "identifier": "F54596D3-6ACD-4A06-8B68-15145E6A9610",
+          "name": "American Journal of Bioinformatics Research",
+          "onlineIssn": "2167-6976",
+          "printIssn": "2167-6992",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=F54596D3-6ACD-4A06-8B68-15145E6A9610",
+          "scientificValue": "LevelZero"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "identifier": "018f5255bc7a-f29567ab-682a-4ece-8175-47b4aec723e8",
+    "modelVersion": "0.21.18",
+    "modifiedDate": "2024-05-07T09:38:43.984899337Z",
+    "publishedDate": "2024-05-07T09:33:58.189415461Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1684843@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "labels": {
+            "nn": "Divisjon for forskings- og kunnskapsressursar",
+            "nb": "Divisjon forsknings- og kunnskapsressurser",
+            "en": "The Research and Education Resources Division"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      }
+    ],
+    "filesStatus": "hasPublicFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/3A7DF5FC-4A12-41D5-946F-FD8B87E470D5/2024"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018f296eaab5-300438da-14ac-4ee2-ae0e-3ba1f8de6fc9",
+    "associatedArtifacts": [
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "ea9a848c-e970-4313-b38c-0ba251862d5b",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "My thesis-kopi My thesis-kopi My thesis-kopi My thesis-kopi My thesis-kopi.pdf",
+        "publishedDate": "2024-05-08T11:48:06.571437790Z",
+        "publisherVersion": "PublishedVersion",
+        "rightsRetentionStrategy": {
+          "type": "NullRightsRetentionStrategy",
+          "configuredType": "OverridableRightsRetentionStrategy"
+        },
+        "size": 6186,
+        "visibleForNonOwner": true
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0"
+    ],
+    "createdDate": "2024-04-29T10:37:49.621846718Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Test sammendrag 2..",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684769",
+            "type": "Identity",
+            "name": "Navn Navnertsen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1684843",
+            "type": "Identity",
+            "name": "Nina  Andersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/140",
+            "type": "Identity",
+            "name": "Ivar Test Arnstsen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nob",
+      "mainTitle": "Test tittel 2",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "day": "29",
+        "month": "4",
+        "year": "2024"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/3A7DF5FC-4A12-41D5-946F-FD8B87E470D5/2024",
+          "type": "Journal",
+          "identifier": "3A7DF5FC-4A12-41D5-946F-FD8B87E470D5",
+          "name": "ACM Communications in Computer Algebra",
+          "onlineIssn": "1932-2240",
+          "printIssn": "1932-2232",
+          "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=3A7DF5FC-4A12-41D5-946F-FD8B87E470D5",
+          "scientificValue": "LevelZero"
+        },
+        "publicationInstance": {
+          "type": "AcademicArticle",
+          "issue": "3",
+          "pages": {
+            "type": "Range",
+            "begin": "100",
+            "end": "150"
+          },
+          "volume": "23"
+        }
+      }
+    },
+    "identifier": "018f296eaab5-300438da-14ac-4ee2-ae0e-3ba1f8de6fc9",
+    "modelVersion": "0.21.19",
+    "modifiedDate": "2024-05-14T10:12:09.369868664Z",
+    "publishedDate": "2024-04-30T07:13:50.707033522Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "1684843@20754.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "labels": {
+            "nn": "Divisjon for forskings- og kunnskapsressursar",
+            "nb": "Divisjon forsknings- og kunnskapsressurser",
+            "en": "The Research and Education Resources Division"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+        }
+      }
+    ],
+    "filesStatus": "hasPublicFiles"
   }
 ]
