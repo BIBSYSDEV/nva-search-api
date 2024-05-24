@@ -72,6 +72,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KE
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
@@ -80,6 +81,7 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIE
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
 import static no.unit.nva.search2.resource.Constants.UNIT_PATHS;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -186,6 +188,7 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(TEXT, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(TEXT, NO_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
+    REFERENCED_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
     SCIENTIFIC_VALUE(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ONE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
@@ -363,4 +366,5 @@ public enum ResourceParameter implements ParameterKey {
     private static boolean isSearchField(ResourceParameter enumParameter) {
         return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
+
 }
