@@ -5,6 +5,88 @@ info:
   description: Public search API for resources in NVA. The API is backed by Amazon OpenSearch and uses [OpenSearch query syntax](https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/).
 paths:
 
+  /customer/import-candidates:
+    get:
+      description: "Search for import candidates by given criteria"
+      parameters:
+        - $ref: '#/components/parameters/additionalIdentifiersParam'
+        - $ref: '#/components/parameters/additionalIdentifiersNotParam'
+        - $ref: '#/components/parameters/categoryParam'
+        - $ref: '#/components/parameters/categoryNotParam'
+        - $ref: '#/components/parameters/createdDateParam'
+        - $ref: '#/components/parameters/contributorParam'
+        - $ref: '#/components/parameters/contributorNotParam'
+        - $ref: '#/components/parameters/collaborationTypeParam'
+        - $ref: '#/components/parameters/collaborationTypeNotParam'
+        - $ref: '#/components/parameters/cristinIdentifierParam'
+        - $ref: '#/components/parameters/doiParam'
+        - $ref: '#/components/parameters/doiNotParam'
+        - $ref: '#/components/parameters/fieldsParam'
+        - $ref: '#/components/parameters/hasFileParam'
+        - $ref: '#/components/parameters/fromParam'
+        - $ref: '#/components/parameters/idParam'
+        - $ref: '#/components/parameters/idNotParam'
+        - $ref: '#/components/parameters/importStatusParam'
+        - $ref: '#/components/parameters/importStatusNotParam'
+        - $ref: '#/components/parameters/langParam'
+        - $ref: '#/components/parameters/licenseParam'
+        - $ref: '#/components/parameters/licenseNotParam'
+        - $ref: '#/components/parameters/orderParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/publicationYearParam'
+        - $ref: '#/components/parameters/publicationYearBeforeParam'
+        - $ref: '#/components/parameters/publicationYearSinceParam'
+        - $ref: '#/components/parameters/publisherParam'
+        - $ref: '#/components/parameters/publisherNotParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/scopusIdentifierParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/topLevelOrganizationParam'
+        - $ref: '#/components/parameters/topLevelOrganizationNotParam'
+        - $ref: '#/components/parameters/titleParam'
+        - $ref: '#/components/parameters/titleNotParam'
+        - $ref: '#/components/parameters/typeParam'
+        - $ref: '#/components/parameters/typeNotParam'
+        - $ref: '#/components/parameters/searchAllParam'
+      security:
+        - CognitoUserPool: [
+          "https://api.nva.unit.no/scopes/backend",
+          "https://api.nva.unit.no/scopes/frontend",
+          "aws.cognito.signin.user.admin"
+        ]
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchImportCandidatesAuthorizedFunction.Arn}:live/invocations
+        responses: { }
+        httpMethod: POST
+        type: AWS_PROXY
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedImportCandidateSearchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /customer/tickets:
     get:
       description: "Search for Tickets by customer"
@@ -56,7 +138,7 @@ paths:
         ]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchParamTicketsFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchTicketsAuthorizedFunction.Arn}:live/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -210,7 +292,7 @@ paths:
         ]
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAuthAwsResourcesFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchResourcesAuthorizedFunction.Arn}:live/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY
@@ -593,7 +675,7 @@ paths:
         - $ref: '#/components/parameters/searchAllParam'
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchAwsImportCandidatesFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SearchImportCandidates2Function.Arn}:live/invocations
         responses: { }
         httpMethod: POST
         type: AWS_PROXY

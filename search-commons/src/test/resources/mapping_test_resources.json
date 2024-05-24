@@ -45,6 +45,9 @@
                 "publisher": {
                   "type": "nested",
                   "include_in_parent": true
+                },
+                "entityDescription": {
+                  "type": "flat_object"
                 }
               }
             }

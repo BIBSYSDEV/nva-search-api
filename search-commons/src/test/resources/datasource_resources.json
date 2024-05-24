@@ -3525,13 +3525,91 @@
       },
       "reference": {
         "type": "Reference",
+        "doi": "https://doi.org/10.3233/978-1-61499-862-4-441",
         "publicationContext": {
-          "type": "UnconfirmedJournal"
-        },
-        "publicationInstance": {
-          "type": "AcademicArticle",
-          "pages": {
-            "type": "Range"
+          "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "affiliations": [
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
+                    "type": "Organization",
+                    "countryCode": "NO",
+                    "labels": {
+                      "nb": "Institutt for IKT og realfag",
+                      "en": "Department of ICT and Natural Sciences"
+                    }
+                  },
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+                    "type": "Organization",
+                    "countryCode": "IQ",
+                    "labels": {
+                      "nn": "Al-Iraqia University",
+                      "nb": "Al-Iraqia University",
+                      "en": "Al-Iraqia University"
+                    }
+                  },
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+                    "type": "Organization",
+                    "countryCode": "NO",
+                    "labels": {
+                      "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                      "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+                    }
+                  },
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+                    "type": "Organization",
+                    "countryCode": "NO",
+                    "labels": {
+                      "en": "Norwegian Defence University College",
+                      "nb": "Forsvarets høgskole"
+                    }
+                  }
+                ],
+                "correspondingAuthor": false,
+                "identity": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+                  "type": "Identity",
+                  "name": "Kjetil Møkkelgjerd",
+                  "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+                  "verificationStatus": "Verified"
+                },
+                "role": {
+                  "type": "Creator"
+                },
+                "sequence": 1
+              }
+            ],
+            "description": "Min beskrivelse",
+            "mainTitle": "Kjetils kapittel",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
+                  "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+                  "type": "Publisher",
+                  "valid": true
+                },
+                "series": {
+                  "type": "Series",
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
+                  "identifier": "B24919B5-5DC4-4787-8D84-7922852E1073",
+                  "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
+                  "printIssn": "0809-6058",
+                  "scientificValue": "Unassigned"
+                }
+              }
+            }
           }
         }
       }

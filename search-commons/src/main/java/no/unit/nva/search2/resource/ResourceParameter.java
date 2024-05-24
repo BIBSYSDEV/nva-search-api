@@ -1,10 +1,10 @@
 package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_SHOULD_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING;
@@ -13,15 +13,14 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_ID
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
-import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SHOULD;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URI;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
-import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.common.constant.Words.PHI;
@@ -80,7 +79,7 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
-
+import static no.unit.nva.search2.resource.Constants.UNIT_PATHS;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -88,8 +87,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
@@ -186,6 +183,7 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(TEXT, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(TEXT, NO_ITEMS, PUBLISHER_ID_KEYWORD),
     //    PUBLISHER_ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
+    REFERENCED_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
     SCIENTIFIC_VALUE(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ONE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
