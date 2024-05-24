@@ -498,21 +498,20 @@ class ResourceClientTest {
                 StandardCharsets.UTF_8);
             var response =
                 ResourceSearchQuery.builder()
-                    .fromQueryParameters(Map.of(UNIT.asCamelCase(), viewingScope,
+                    .fromQueryParameters(
+                        Map.of(UNIT.asCamelCase(), viewingScope,
                         EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
-                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
                     .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                     .doSearch(searchClient);
 
-            var pagedSearchResourceDto = response.toPagedResponse();
 
             var excludedSubunit = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0";
 
-            assertThat(pagedSearchResourceDto.toJsonString(), not(containsString(excludedSubunit)));
-            assertThat(pagedSearchResourceDto.hits(), hasSize(1));
+            assertThat(response.toString(), not(containsString(excludedSubunit)));
+            assertThat(response.toPagedResponse().hits(), hasSize(1));
         }
 
 
