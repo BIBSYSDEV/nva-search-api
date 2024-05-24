@@ -289,8 +289,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case PUBLICATION_LANGUAGE, PUBLICATION_LANGUAGE_NOT,
-                     PUBLICATION_LANGUAGE_SHOULD -> searchQuery.parameters().set(qpKey, expandLanguage(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
@@ -301,9 +299,5 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
         }
 
-        private String expandLanguage(String decodedValue) {
-            var startIndex = decodedValue.length() - 3;
-            return Constants.LEXVO_ORG_ID_ISO_639_3 + decodedValue.substring(startIndex);
-        }
     }
 }
