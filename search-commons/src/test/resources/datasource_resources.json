@@ -66,6 +66,7 @@
         }
       ],
       "mainTitle": "Kjetils ticket test",
+      "language": "http://lexvo.org/id/iso639-3/nor",
       "publicationDate": {
         "type": "PublicationDate",
         "day": "6",
@@ -516,6 +517,7 @@
         }
       ],
       "mainTitle": "Kjetils ticket test",
+      "language": "http://lexvo.org/id/iso639-3/nor",
       "publicationDate": {
         "type": "Date",
         "day": "6",
@@ -1528,7 +1530,7 @@
           "sequence": 7
         }
       ],
-      "language": "http://lexvo.org/id/iso639-3/eng",
+      "language": "http://lexvo.org/id/iso639-3/nor",
       "mainTitle": "Annual Report 2021",
       "publicationDate": {
         "type": "PublicationDate",
