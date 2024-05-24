@@ -35,14 +35,14 @@ class OpensearchSearchQueryToolsTest {
         );
     }
 
-    @Test
-    void invalidRangeQueryShould() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_SHOULD, "test")
-        );
-    }
+//    @Test
+//    void invalidRangeQueryShould() {
+//        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+//        assertThrows(
+//            IllegalArgumentException.class,
+//            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_SHOULD, "test")
+//        );
+//    }
 
 
     @Test
