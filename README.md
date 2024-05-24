@@ -50,11 +50,14 @@ We support free text search through all parts of our indexed documents. As with 
 searching for several phrases, comma separated. All phrases have to match.
 It is possible to specify which fields to search through, but its use is limited and not recommended to use.
 
-| key_name   | keyName   | queryKind         | scope                     |
-|------------|-----------|-------------------|---------------------------|
-| search_all | searchAll | text with ranking | all_items across document |
-| query      | query     | text with ranking | all_items across document |
-| fields     | fields    | list of keys      | user, tags, title         |
+| key_name       | keyName       | queryKind                     | scope                                   |
+|----------------|---------------|-------------------------------|-----------------------------------------|
+| search_all     | searchAll     | text with ranking             | all_items across document               |
+| query          | query         | text with ranking             | all_items across document               |
+| fields         | fields        | list of search keys           | user, tags, title                       |
+| nodes_searched | nodesSearched | list of search keys           | user, tags, title                       |
+| nodes_included | nodesIncluded | list of node names to include | publisher.id, id, topLevelOrganizations |
+| nodes_excluded | nodesExcluded | list of node names to exclude | publisher.id, id, topLevelOrganizations |
 
 ### Pagination, aggregation & sorting
 

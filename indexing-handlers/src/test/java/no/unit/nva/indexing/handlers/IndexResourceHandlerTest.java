@@ -82,7 +82,7 @@ public class IndexResourceHandlerTest {
         InputStream input = createEventBridgeEvent(resourceLocation);
         indexResourceHandler.handleRequest(input, output, context);
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());
-        assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.getResource()));
+        assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.resource()));
     }
 
     @Test
@@ -117,10 +117,11 @@ public class IndexResourceHandlerTest {
     void shouldThrowExceptionWhenResourceIsMissingIdentifier() throws Exception {
         URI resourceLocation = prepareEventStorageResourceFile(SAMPLE_RESOURCE_MISSING_IDENTIFIER);
 
-        InputStream input = createEventBridgeEvent(resourceLocation);
+        RuntimeException exception;
+        try (InputStream input = createEventBridgeEvent(resourceLocation)) {
 
-        RuntimeException exception =
-            assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
+            exception = assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
+        }
 
         assertThat(exception.getMessage(), stringContainsInOrder(MISSING_IDENTIFIER_IN_RESOURCE));
     }
@@ -129,10 +130,12 @@ public class IndexResourceHandlerTest {
     void shouldThrowNoSuchKeyExceptionWhenResourceIsMissingFromEventStorage() throws Exception {
         URI missingResourceLocation = RandomDataGenerator.randomUri();
 
-        InputStream input = createEventBridgeEvent(missingResourceLocation);
+        NoSuchKeyException exception;
+        try (InputStream input = createEventBridgeEvent(missingResourceLocation)) {
 
-        NoSuchKeyException exception = assertThrows(NoSuchKeyException.class,
-                                                    () -> indexResourceHandler.handleRequest(input, output, context));
+            exception = assertThrows(NoSuchKeyException.class,
+                () -> indexResourceHandler.handleRequest(input, output, context));
+        }
 
         assertThat(exception.getMessage(), stringContainsInOrder(FILE_DOES_NOT_EXIST));
     }
@@ -141,11 +144,13 @@ public class IndexResourceHandlerTest {
     void shouldThrowExceptionWhenEventConsumptionAttributesIsMissingIndexName() throws Exception {
         URI resourceLocation = prepareEventStorageResourceFile(SAMPLE_RESOURCE_MISSING_INDEX_NAME);
 
-        InputStream input = createEventBridgeEvent(resourceLocation);
+        RuntimeException exception;
+        try (InputStream input = createEventBridgeEvent(resourceLocation)) {
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                                                  () -> indexResourceHandler.handleRequest(input, output,
-                                                                                           context));
+            exception = assertThrows(RuntimeException.class,
+                () -> indexResourceHandler.handleRequest(input, output,
+                    context));
+        }
 
         assertThat(exception.getMessage(), stringContainsInOrder(MISSING_INDEX_NAME_IN_RESOURCE));
     }

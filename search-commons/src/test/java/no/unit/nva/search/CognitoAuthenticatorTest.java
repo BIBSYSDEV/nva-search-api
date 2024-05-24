@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.utils.HttpRequestMetadataMatcher;
+import no.unit.nva.search2.common.jwt.CognitoAuthenticator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_URLENCODED;
 import static no.unit.nva.indexing.testutils.Constants.TEST_SCOPE;
 import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
-import static no.unit.nva.search.CognitoAuthenticator.AUTHORIZATION_ERROR_MESSAGE;
+import static no.unit.nva.search2.common.jwt.CognitoAuthenticator.AUTHORIZATION_ERROR_MESSAGE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.apache.http.protocol.HTTP.CONTENT_TYPE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,9 +42,9 @@ class CognitoAuthenticatorTest {
 
     final HttpClient httpClient = mock(HttpClient.class);
 
-    HttpResponse<String> okResponse = mock(HttpResponse.class);
-    HttpResponse<String> invalidResponse = mock(HttpResponse.class);
-    HttpResponse<String> errorResponse = mock(HttpResponse.class);
+    final HttpResponse<String> okResponse = mock(HttpResponse.class);
+    final HttpResponse<String> invalidResponse = mock(HttpResponse.class);
+    final HttpResponse<String> errorResponse = mock(HttpResponse.class);
     private CognitoCredentials credentials;
 
     @BeforeEach

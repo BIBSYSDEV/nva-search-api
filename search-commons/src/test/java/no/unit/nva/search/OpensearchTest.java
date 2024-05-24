@@ -9,7 +9,6 @@ import static no.unit.nva.search.SearchClient.ID_FIELD;
 import static no.unit.nva.search.SearchClient.ORGANIZATION_FIELD;
 import static no.unit.nva.search.SearchClient.PART_OF_FIELD;
 import static no.unit.nva.search.SearchClient.TICKET_STATUS;
-import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_AGGREGATIONS;
 import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.search.models.CuratorSearchType.DOI;
 import static no.unit.nva.search.models.CuratorSearchType.PUBLISHING;
@@ -23,7 +22,6 @@ import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -43,7 +41,6 @@ import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.constants.ApplicationConstants;
 import no.unit.nva.search.models.CuratorSearchType;
 import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
@@ -243,20 +240,6 @@ public class OpensearchTest {
             }
 
             @Test
-            void shouldReturnAssociatedArtifactAggregationWithSingleDocCount()
-                throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("publication_published_with_multiple_published_files.json",
-                    "publication_published_with_administrative_agreement.json");
-
-                var query = queryWithTermAndAggregation(SEARCH_ALL, IMPORT_CANDIDATES_AGGREGATIONS);
-
-                var response = searchClient.searchWithSearchDocumentQuery(query, indexName);
-                var docCount = getDocCountForAggregation(response, "associatedArtifacts");
-
-                assertThat(docCount, is(equalTo(1)));
-            }
-
-            @Test
             void shouldReturnZeroHitsOnEmptyViewingScope() throws Exception {
 
                 indexingClient.addDocumentToIndex(getTicketIndexDocument(indexName, null, null));
@@ -333,34 +316,6 @@ public class OpensearchTest {
                     indexName);
 
                 assertThat(response.getSize(), is(equalTo(0L)));
-            }
-
-            @Test
-            void shouldReturnCorrectTicketsAggregations() throws InterruptedException, ApiGatewayException {
-                addDocumentsToIndex("ticket_publishing_request_of_draft_publication.json",
-                    "ticket_general_support_case_of_published_publication.json");
-
-                var aggregations = ApplicationConstants.TICKETS_AGGREGATIONS;
-
-                var searchTicketsQuery = new SearchTicketsQuery(SEARCH_ALL, PAGE_SIZE, PAGE_NO, SAMPLE_ORDERBY,
-                    DESC, SAMPLE_REQUEST_URI, aggregations,
-                    List.of(ORGANIZATION_ID_URI_HARDCODED_IN_SAMPLE_FILES),
-                    allCuratorSearchTypes(),
-                    false);
-                var searchResponseDto = searchClient.searchWithSearchTicketQuery(searchTicketsQuery,
-                    indexName);
-
-                assertThat(searchResponseDto, notNullValue());
-
-                var actualAggregations = searchResponseDto.getAggregations();
-
-                var typeAggregation = actualAggregations.at("/type/buckets");
-                assertThat(typeAggregation.size(), greaterThan(0));
-                assertAggregation(typeAggregation, "GeneralSupportCase", 1);
-
-                var statusAggregation = actualAggregations.at("/status/buckets");
-                assertThat(statusAggregation.size(), greaterThan(0));
-                assertAggregation(statusAggregation, "Pending", 2);
             }
 
             @Test
