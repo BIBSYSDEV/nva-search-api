@@ -19,6 +19,7 @@ import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TIT
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.constant.Functions;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -96,22 +97,13 @@ public class ResourceStreamBuilders {
         return Functions.queryToEntry(key, query);
     }
 
-
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> subUnitIncludedQuery(ResourceParameter key) {
-        var query =
-            parameters.get(EXCLUDE_SUBUNITS).asBoolean()
-                ? termQuery(extractTermPath(key), parameters.get(key).as())
-                : termQuery(extractMatchPath(key), parameters.get(key).as());
+        var searchKey = parameters.get(ResourceParameter.EXCLUDE_SUBUNITS).asBoolean()
+            ? ResourceParameter.EXCLUDE_SUBUNITS
+            : key;
 
-        return Functions.queryToEntry(key, query);
-    }
-
-    private String extractTermPath(ResourceParameter key) {
-        return key.searchFields(KEYWORD_TRUE).findFirst().orElseThrow();
-    }
-
-    private String extractMatchPath(ResourceParameter key) {
-        return key.searchFields(KEYWORD_TRUE).skip(1).findFirst().orElseThrow();
+        return
+            new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as());
     }
 
 }

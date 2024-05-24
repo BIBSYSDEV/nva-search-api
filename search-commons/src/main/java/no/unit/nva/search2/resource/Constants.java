@@ -36,10 +36,6 @@ public final class Constants {
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
 
-    public static final String UNIT_PATHS = multipleFields(
-        CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
-        jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-    );
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS;
@@ -105,15 +101,12 @@ public final class Constants {
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
-    public static final String TOP_LEVEL_ORG_ID = multipleFields(
-        TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD,
-        jsonPath(CONTRIBUTOR_ORGANIZATIONS, KEYWORD)
-    );
+    public static final String TOP_LEVEL_ORG_ID = TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD;
+
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
     public static final String SCIENTIFIC_INDEX_YEAR = SCIENTIFIC_INDEX + DOT + YEAR;
     public static final String SCIENTIFIC_INDEX_STATUS_KEYWORD = SCIENTIFIC_INDEX + DOT + STATUS_KEYWORD;
-    public static final String LEXVO_ORG_ID_ISO_639_3 = "http://lexvo.org/id/iso639-3/";
 
     public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD = multipleFields(
         jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD),

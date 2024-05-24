@@ -1,6 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -20,6 +21,7 @@ import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_SORT_ORDER
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URI;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search2.common.constant.Words.CREATED_DATE;
 import static no.unit.nva.search2.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search2.common.constant.Words.PHI;
@@ -78,7 +80,7 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
-import static no.unit.nva.search2.resource.Constants.UNIT_PATHS;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -86,6 +88,8 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
@@ -124,7 +128,7 @@ public enum ResourceParameter implements ParameterKey {
     DOI(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, REFERENCE_DOI_KEYWORD),
     DOI_NOT(FUZZY_KEYWORD, NO_ITEMS, REFERENCE_DOI_KEYWORD),
     //    DOI_SHOULD(TEXT, ONE_OR_MORE_ITEM, REFERENCE_DOI_KEYWORD),
-    EXCLUDE_SUBUNITS(IGNORED),
+    EXCLUDE_SUBUNITS(IGNORED, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
     FUNDING(CUSTOM, ALL_ITEMS, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
     FUNDING_IDENTIFIER(KEYWORD, ALL_ITEMS, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
     FUNDING_IDENTIFIER_NOT(KEYWORD, NO_ITEMS, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
@@ -144,8 +148,8 @@ public enum ResourceParameter implements ParameterKey {
     INSTANCE_TYPE_NOT(KEYWORD, NOT_ONE_ITEM, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null),
     //    INSTANCE_TYPE_SHOULD(KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_SHOULD_KEYS, null,
     //                         null),
-    INSTITUTION(TEXT, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION(TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
+    INSTITUTION_NOT(TEXT, NOT_ONE_ITEM, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     //    INSTITUTION_SHOULD(TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     ISBN(KEYWORD, ONE_OR_MORE_ITEM, PUBLICATION_CONTEXT_ISBN_LIST),
     ISBN_NOT(KEYWORD, NOT_ONE_ITEM, PUBLICATION_CONTEXT_ISBN_LIST),
@@ -201,7 +205,7 @@ public enum ResourceParameter implements ParameterKey {
     TITLE_NOT(TEXT, NO_ITEMS, ENTITY_DESCRIPTION_MAIN_TITLE),
     //    TITLE_SHOULD(TEXT, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_MAIN_TITLE),
     TOP_LEVEL_ORGANIZATION(CUSTOM, ONE_OR_MORE_ITEM, TOP_LEVEL_ORG_ID),
-    UNIT(CUSTOM, ALL_ITEMS, UNIT_PATHS),
+    UNIT(CUSTOM, ALL_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     UNIT_NOT(KEYWORD, NO_ITEMS, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     //    UNIT_SHOULD(TEXT, ONE_OR_MORE_ITEM, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, RESOURCE_OWNER_OWNER_KEYWORD),
