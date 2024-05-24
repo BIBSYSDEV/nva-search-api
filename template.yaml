@@ -364,7 +364,7 @@ Resources:
     Properties:
       Description: Lambda for searching Import Candidates
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.SearchImportCandidateHandler::handleRequest
+      Handler: no.unit.nva.search2.SearchImportCandidateAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
