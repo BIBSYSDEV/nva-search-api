@@ -21,7 +21,7 @@ import org.opensearch.common.xcontent.XContentType;
 
 public final class ScrollQuery extends Query<ScrollParameters> {
 
-    private static final int MAX_PAGES = 8;
+    private static final int MAX_PAGES = 4;
     private static final String SEARCH_SCROLL = "_search/scroll";
     private final String ttl;
     private String scrollId;
