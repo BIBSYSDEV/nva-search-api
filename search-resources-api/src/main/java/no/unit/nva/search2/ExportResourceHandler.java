@@ -5,8 +5,8 @@ import static no.unit.nva.search2.common.constant.Words.ZERO;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
 import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -54,7 +54,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
         var initialResponse =
             ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
-                .withParameter(PAGE, ZERO)
+                .withParameter(FROM, ZERO)
                 .withParameter(SIZE, MAX_HITS_PER_PAGE)
                 .withParameter(AGGREGATION, NONE)
                 .withParameter(NODES_INCLUDED, INCLUDED_NODES)
