@@ -3,7 +3,7 @@ package no.unit.nva.indexing.handlers;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import no.unit.nva.indexing.model.IndexRequest;
-import no.unit.nva.search.IndexingClient;
+import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
 import nva.commons.core.ioutils.IoUtils;
@@ -14,12 +14,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static no.unit.nva.search.IndexingClient.defaultIndexingClient;
-import static no.unit.nva.search.constants.ApplicationConstants.DOIREQUESTS_INDEX;
-import static no.unit.nva.search.constants.ApplicationConstants.MESSAGES_INDEX;
-import static no.unit.nva.search.constants.ApplicationConstants.PUBLISHING_REQUESTS_INDEX;
-import static no.unit.nva.search.constants.ApplicationConstants.RESOURCES_INDEX;
-import static no.unit.nva.search.constants.ApplicationConstants.TICKETS_INDEX;
+import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.DOIREQUESTS_INDEX;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.MESSAGES_INDEX;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.PUBLISHING_REQUESTS_INDEX;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.TICKETS_INDEX;
 import static nva.commons.core.attempt.Try.attempt;
 
 public class InitHandler implements RequestHandler<Object, String> {

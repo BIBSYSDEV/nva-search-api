@@ -2,7 +2,8 @@ package no.unit.nva.indexing.testutils;
 
 import java.util.ArrayList;
 import java.util.List;
-import no.unit.nva.search.utils.QueueClient;
+
+import no.unit.nva.indexingclient.models.QueueClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 public class FakeSqsClient implements QueueClient {

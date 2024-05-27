@@ -138,7 +138,7 @@ aggregation name + key value .
 ### /Resource
 
 Valid search
-parameters [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource/README.md)
+parameters [/search/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search/resource/README.md)
 
 ```http request
 GET /search/resources HTTP/1.1
@@ -155,7 +155,7 @@ Accept: application/csv
 ### /Resource (logged in user)
 
 Valid search
-parameters [/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search2/resource/README.md)
+parameters [/search/customer/resources?parameters=...](search-commons/src/main/java/no/unit/nva/search/resource/README.md)
 
 ```http request
 GET /search/customer/resources HTTP/1.1
@@ -197,7 +197,7 @@ Accept: application/json
 ### /Ticket
 
 Valid search parameters
-[/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search2/ticket/README.md)
+[/search/customer/tickets?parameters=...](search-commons/src/main/java/no/unit/nva/search/ticket/README.md)
 
 ```http request
 GET /search/customer/tickets HTTP/1.1
@@ -230,7 +230,7 @@ Accept: application/json
 ### /Import-candidate
 
 Valid search parameters
-[/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search2/importcandidate/README.md)
+[/search/import-candidates2?parameters=...](search-commons/src/main/java/no/unit/nva/search/importcandidate/README.md)
 
 ```http request
 GET /search/import-candidates2 HTTP/1.1
@@ -263,9 +263,9 @@ Accept: application/json
     - [NVA swagger (test)](https://swagger-ui.test.nva.aws.unit.no/#/NVA+Public+Search+API)
     - [NVA swagger (production)](https://swagger-ui.nva.unit.no/#/NVA+Public+Search+API)
     - READMES (Endpoint parameter documentation)
-        - [Resources](search-commons/src/main/java/no/unit/nva/search2/resource/README.md)
-        - [Tickets](search-commons/src/main/java/no/unit/nva/search2/ticket/README.md)
-        - [Import-candidates](search-commons/src/main/java/no/unit/nva/search2/importcandidate/README.md)
+        - [Resources](search-commons/src/main/java/no/unit/nva/search/resource/README.md)
+        - [Tickets](search-commons/src/main/java/no/unit/nva/search/ticket/README.md)
+        - [Import-candidates](search-commons/src/main/java/no/unit/nva/search/importcandidate/README.md)
 - API Endpoints
     - Test
         - https://api.test.nva.aws.unit.no/search/resources
