@@ -228,35 +228,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda
 
-  SearchTicketsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda for searching Tickets
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchTicketsHandler::handleRequest
-      Runtime: java17
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
-      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
-      Environment:
-        Variables:
-          ALLOWED_ORIGIN: '*'
-          COGNITO_HOST: !Ref CognitoUri
-          BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
-      Events:
-        GetTickets:
-          Type: Api
-          Properties:
-            Path: /tickets
-            Method: get
-            RestApiId: !Ref NvaSearchApi
-
-  SearchParamTicketsFunction:
+  SearchTicketsAuthorizedFunction:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Tickets
@@ -335,33 +307,7 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
-  SearchAwsResourcesFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda for searching Resources
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search2.SearchResourceHandler::handleRequest
-      Runtime: java17
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Enabled: true
-        Role: !GetAtt CustomCodeDeployServiceRole.Arn
-        Type: AllAtOnce
-      ProvisionedConcurrencyConfig:
-        ProvisionedConcurrentExecutions: 1
-      Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
-      Environment:
-        Variables:
-          ALLOWED_ORIGIN: '*'
-      Events:
-        GetResources:
-          Type: Api
-          Properties:
-            Path: /resources2
-            Method: get
-            RestApiId: !Ref NvaSearchApi
-
-  SearchAuthAwsResourcesFunction:
+  SearchResourcesAuthorizedFunction:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
@@ -387,7 +333,7 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
-  SearchAwsImportCandidatesFunction:
+  SearchImportCandidates2Function:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Import Candidates
@@ -413,11 +359,12 @@ Resources:
             Method: get
             RestApiId: !Ref NvaSearchApi
 
-  SearchImportCandidatesFunction:
+  SearchImportCandidatesAuthorizedFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Description: Lambda for searching Import Candidates
       CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchImportCandidatesApiHandler::handleRequest
+      Handler: no.unit.nva.search2.SearchImportCandidateAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -434,21 +381,20 @@ Resources:
         GetResources:
           Type: Api
           Properties:
-            Path: /import-candidates
+            Path: /customer/import-candidates
             Method: get
             RestApiId: !Ref NvaSearchApi
-
 
   SearchTicketsApiFunctionScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
       MaxCapacity: !Ref MaxConcurrency
       MinCapacity: !Ref MinConcurrency
-      ResourceId: !Sub function:${SearchTicketsFunction}:live
+      ResourceId: !Sub function:${SearchTicketsAuthorizedFunction}:live
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_LambdaConcurrency
       ScalableDimension: lambda:function:ProvisionedConcurrency
       ServiceNamespace: lambda
-    DependsOn: SearchTicketsFunctionAliaslive
+    DependsOn: SearchTicketsAuthorizedFunctionAliaslive
 
   SearchTicketsApiFunctionScalingPolicy:
     Type: AWS::ApplicationAutoScaling::ScalingPolicy
@@ -460,7 +406,6 @@ Resources:
         TargetValue: 0.70
         PredefinedMetricSpecification:
           PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
-
 
   NvaPublicationBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
@@ -655,9 +600,9 @@ Resources:
                 responsePayload:
                   topic: [ "ImportCandidates.ExpandedEntry.Deleted" ]
 
-
   ResourcesIndexerDLQ:
     Type: AWS::SQS::Queue
+
   RecoveryQueue:
     Type: AWS::SQS::Queue
     Properties:

@@ -1,4 +1,4 @@
-package no.unit.nva.search.models;
+package no.unit.nva.search2.common.records;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nva.commons.core.JacocoGenerated;

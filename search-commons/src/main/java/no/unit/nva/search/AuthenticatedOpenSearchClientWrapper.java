@@ -5,7 +5,8 @@ import static no.unit.nva.search.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTUR
 import static no.unit.nva.search.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI;
 import java.net.URI;
 import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.search.models.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.records.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.client.RequestOptions;
 

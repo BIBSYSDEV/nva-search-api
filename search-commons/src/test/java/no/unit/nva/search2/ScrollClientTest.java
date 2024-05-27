@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.http.HttpClient;
-
 import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.search2.scroll.ScrollParameters;
 import no.unit.nva.search2.scroll.ScrollQuery;

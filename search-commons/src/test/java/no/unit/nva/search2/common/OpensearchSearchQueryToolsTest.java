@@ -6,7 +6,6 @@ import no.unit.nva.search2.ticket.TicketParameter;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.resource.ResourceParameter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,13 +46,13 @@ class OpensearchSearchQueryToolsTest {
 
 
     @Test
-    @Disabled
+//    @Disabled
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
 
     @Test
-    @Disabled
+//    @Disabled
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
     }

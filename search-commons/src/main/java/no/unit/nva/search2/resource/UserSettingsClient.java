@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.search.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.records.UserSettings;
 import nva.commons.core.attempt.FunctionWithException;
 

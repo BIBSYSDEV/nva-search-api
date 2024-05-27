@@ -1,7 +1,6 @@
 package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -81,6 +80,7 @@ import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_YEAR;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.TOP_LEVEL_ORG_ID;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -88,8 +88,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
@@ -172,9 +170,9 @@ public enum ResourceParameter implements ParameterKey {
     PROJECT(KEYWORD, ONE_OR_MORE_ITEM, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, NOT_ONE_ITEM, PROJECTS_ID),
     PROJECT_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, PROJECTS_ID, PHI),
-    PUBLICATION_LANGUAGE(KEYWORD, ALL_ITEMS, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_LANGUAGE_NOT(KEYWORD, NO_ITEMS, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_LANGUAGE_SHOULD(KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_NOT(FUZZY_KEYWORD, NOT_ONE_ITEM, ENTITY_DESCRIPTION_LANGUAGE),
+    PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_YEAR(NUMBER, BETWEEN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_BEFORE(NUMBER, LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLICATION_YEAR_SHOULD(KEYWORD, ONE_OR_MORE_ITEM, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR,
@@ -189,7 +187,7 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(TEXT, ALL_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(TEXT, NO_ITEMS, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(TEXT, ONE_OR_MORE_ITEM, PUBLISHER_ID_KEYWORD),
-    REFERENCED_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, "entityDescription.reference.publicationContext.id.keyword|entityDescription.reference.publicationContext.entityDescription"),
+    REFERENCED_ID(FUZZY_KEYWORD, ONE_OR_MORE_ITEM, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
     SCIENTIFIC_VALUE(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ONE_OR_MORE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ONE_ITEM, SCIENTIFIC_INDEX_STATUS_KEYWORD),

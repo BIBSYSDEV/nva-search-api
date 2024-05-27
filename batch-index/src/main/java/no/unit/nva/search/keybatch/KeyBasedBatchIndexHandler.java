@@ -182,7 +182,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private boolean validateResource(IndexDocument document) {
-        var validator = new AggregationsValidator(document.getResource());
+        var validator = new AggregationsValidator(document.resource());
         if (!validator.isValid()) {
             logger.info(validator.getReport());
         }
