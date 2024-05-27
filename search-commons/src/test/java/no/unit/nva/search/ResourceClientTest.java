@@ -501,6 +501,7 @@ class ResourceClientTest {
                     .fromQueryParameters(
                         Map.of(UNIT.asCamelCase(), viewingScope,
                         EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
+                    .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
@@ -524,7 +525,7 @@ class ResourceClientTest {
             var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
-                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                    .withRequiredParameters(FROM, SIZE)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
