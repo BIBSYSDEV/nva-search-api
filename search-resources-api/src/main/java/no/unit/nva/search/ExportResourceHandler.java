@@ -7,7 +7,6 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADA
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 
 import com.amazonaws.services.lambda.runtime.Context;
