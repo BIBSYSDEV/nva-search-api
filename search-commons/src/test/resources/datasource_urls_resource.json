@@ -18,6 +18,8 @@
   "CONTRIBUTOR_NAME=Isar+Kristoffer+Buzza,Kjetil+Møkkelgjerd": 1,
   "CONTRIBUTOR_NAME=Kate+Robinson&CONTRIBUTOR_NAME=Henrik+Langeland": 1,
   "CONTRIBUTOR_NAME=Kate+Robinson,Henrik+Langeland": 1,
+  "CONTRIBUTOR_name=https://api.dev.nva.aws.unit.no/cristin/person/1136254": 3,
+  "CONTRIBUTOR_name=1136254": 3,
   "CONTRIBUTOR_NAME_SHOULD=Gauer,Møkkelgjerd": 8,
   "CONTRIBUTOR_NAME_SHOULD=Peter+Gauer,Kjetil+Møkkelgjerd": 8,
   "CONTRIBUTOR_NOT=https://api.dev.nva.aws.unit.no/cristin/person/1136254": 18,
