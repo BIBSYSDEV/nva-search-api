@@ -170,7 +170,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
+            case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
             case SEARCH_ALL ->
                 streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
