@@ -50,7 +50,8 @@ public final class Constants {
     public static final String CONTRIBUTORS_IDENTITY_ID =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
-        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
+        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD + PIPE +
+            CONTRIBUTORS_IDENTITY_ID;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
     public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD = multipleFields(
