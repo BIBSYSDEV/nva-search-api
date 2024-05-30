@@ -1,6 +1,7 @@
 package no.unit.nva.search2.resource;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
@@ -73,6 +74,7 @@ import static no.unit.nva.search2.resource.Constants.PUBLICATION_CONTEXT_TYPE_KE
 import static no.unit.nva.search2.resource.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.REFERENCE_DOI_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
@@ -88,6 +90,8 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.FieldOperator;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ParameterKind;
