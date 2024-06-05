@@ -225,7 +225,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
-        public static String currentHost;
+        private final String currentHost;
 
         ResourceParameterValidator() {
             super(new ResourceSearchQuery());
