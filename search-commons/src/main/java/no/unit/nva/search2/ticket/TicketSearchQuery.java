@@ -129,7 +129,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @Override
     public URI openSearchUri() {
-        return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
+        return fromUri(infrastructureApiUri).addChild(TICKETS, SEARCH).getUri();
     }
 
 

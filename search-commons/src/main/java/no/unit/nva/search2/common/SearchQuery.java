@@ -139,7 +139,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     }
 
     protected void setOpenSearchUri(URI openSearchUri) {
-        this.openSearchUri = openSearchUri;
+        this.infrastructureApiUri = openSearchUri;
     }
 
     /**

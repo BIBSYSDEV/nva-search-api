@@ -45,13 +45,13 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     @Override
     protected URI openSearchUri() {
         return
-            fromUri(openSearchUri)
+            fromUri(infrastructureApiUri)
                 .addChild(SEARCH_SCROLL)
                 .getUri();
     }
 
     private ScrollQuery withOpenSearchUri(final URI uri) {
-        openSearchUri = uri;
+        infrastructureApiUri = uri;
         return this;
     }
 
