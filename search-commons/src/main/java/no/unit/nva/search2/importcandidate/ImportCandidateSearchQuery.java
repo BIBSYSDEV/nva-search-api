@@ -96,32 +96,32 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     }
 
     @Override
-    protected AsType<ImportCandidateParameter> getFrom() {
+    protected AsType<ImportCandidateParameter> from() {
         return parameters().get(FROM);
     }
 
     @Override
-    protected AsType<ImportCandidateParameter> getSize() {
+    protected AsType<ImportCandidateParameter> size() {
         return parameters().get(SIZE);
     }
 
     @Override
-    public AsType<ImportCandidateParameter> getSort() {
+    public AsType<ImportCandidateParameter> sort() {
         return parameters().get(SORT);
     }
 
     @Override
-    protected String[] getExclude() {
+    protected String[] exclude() {
         return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
-    protected String[] getInclude() {
+    protected String[] include() {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
-    public URI getOpenSearchUri() {
+    public URI openSearchUri() {
         return
             fromUri(openSearchUri)
                 .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
@@ -141,7 +141,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
-    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> builderStreamCustomQuery(
+    protected Stream<Entry<ImportCandidateParameter, QueryBuilder>> builderCustomQueryStream(
         ImportCandidateParameter key) {
         return switch (key) {
             case CRISTIN_IDENTIFIER -> builderStreamAdditionalIdentifier(key, CRISTIN_AS_TYPE);

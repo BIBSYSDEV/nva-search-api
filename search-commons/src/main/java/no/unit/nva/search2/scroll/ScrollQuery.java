@@ -43,7 +43,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     @Override
-    protected URI getOpenSearchUri() {
+    protected URI openSearchUri() {
         return
             fromUri(openSearchUri)
                 .addChild(SEARCH_SCROLL)
@@ -58,7 +58,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     @Override
     public Stream<QueryContentWrapper> assemble() {
         var scrollRequest = new SearchScrollRequest(scrollId).scroll(ttl);
-        return Stream.of(new QueryContentWrapper(scrollRequestToString(scrollRequest), this.getOpenSearchUri()));
+        return Stream.of(new QueryContentWrapper(scrollRequestToString(scrollRequest), this.openSearchUri()));
     }
 
     @Override

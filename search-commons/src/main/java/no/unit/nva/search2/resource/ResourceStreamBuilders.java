@@ -100,7 +100,8 @@ public class ResourceStreamBuilders {
             : ResourceParameter.EXCLUDE_SUBUNITS;
 
         return
-            new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as());
+            new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as())
+                .map(query -> Map.entry(key, query.getValue()));
     }
 
 }

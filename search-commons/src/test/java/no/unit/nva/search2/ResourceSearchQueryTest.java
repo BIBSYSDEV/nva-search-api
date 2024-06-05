@@ -151,7 +151,7 @@ class ResourceSearchQueryTest {
             .withRequiredParameters(FROM, SIZE, DOI)
             .validate()
             .build()
-            .getOpenSearchUri());
+            .openSearchUri());
     }
 
     @ParameterizedTest
@@ -161,7 +161,7 @@ class ResourceSearchQueryTest {
             .fromQueryParameters(queryToMapEntries(uri))
             .withRequiredParameters(FROM, SIZE)
             .build()
-            .getOpenSearchUri());
+            .openSearchUri());
     }
 
     static Stream<URI> uriProvider() {
