@@ -123,7 +123,7 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     @Override
     public URI openSearchUri() {
         return
-            fromUri(openSearchUri)
+            fromUri(infrastructureApiUri)
                 .addChild(IMPORT_CANDIDATES_INDEX_NAME, SEARCH)
                 .getUri();
     }

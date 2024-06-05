@@ -137,7 +137,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     public URI openSearchUri() {
         return
-            fromUri(openSearchUri)
+            fromUri(infrastructureApiUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
                 .addQueryParameters(queryParameters())
                 .getUri();
