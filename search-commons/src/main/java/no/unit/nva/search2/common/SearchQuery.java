@@ -81,14 +81,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract SortKey toSortKey(String sortName);
 
-
     /**
      * Builds URI to query SWS based on post body.
      *
      * @return an URI to Sws search without parameters.
      */
-
     protected abstract String toCsvText(SwsResponse response);
+
     protected abstract void setFetchSource(SearchSourceBuilder builder);
 
 

@@ -18,9 +18,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
 
     }
+
     public QueryKeys<K> parameters() {
         return queryKeys;
     }
+
     public Instant getStartTime() {
         return startTime;
     }

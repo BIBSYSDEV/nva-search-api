@@ -29,7 +29,7 @@ public final class Patterns {
     public static final String PATTERN_IS_FUNDING_IDENTIFIER_NOT = "(?i)(funding_?identifier_?not|grant_?id_?not)$";
     public static final String PATTERN_IS_FUNDING_IDENTIFIER_SHOULD =
         "(?i)(funding_?identifier_?should|grant_?id_?should)$";
-    public static final String PATTERN_IS_LICENSE= "(?i)license|license_?should";
+    public static final String PATTERN_IS_LICENSE = "(?i)license|license_?should";
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
@@ -53,6 +53,4 @@ public final class Patterns {
     @JacocoGenerated
     public Patterns() {
     }
-
-
 }

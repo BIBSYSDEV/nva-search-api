@@ -114,7 +114,7 @@ public final class Functions {
         return value.replaceAll(PATTERN_IS_ASC_OR_DESC_GROUP, PATTERN_IS_SELECTED_GROUP);
     }
 
-    public static String expandYearToDate(String value) {
+    public static String yearToDate(String value) {
         return value.length() == 4 ? value + JANUARY_FIRST : value;
     }
 

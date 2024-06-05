@@ -6,7 +6,7 @@ import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
 import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search2.common.constant.Functions.expandYearToDate;
+import static no.unit.nva.search2.common.constant.Functions.yearToDate;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
@@ -358,7 +358,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                      PUBLICATION_LANGUAGE_SHOULD -> searchQuery.parameters().set(qpKey, expandLanguage(decodedValue));
                 case CREATED_BEFORE, CREATED_SINCE,
                      MODIFIED_BEFORE, MODIFIED_SINCE,
-                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> searchQuery.parameters().set(qpKey, expandYearToDate(decodedValue));
+                     PUBLISHED_BEFORE, PUBLISHED_SINCE -> searchQuery.parameters().set(qpKey, yearToDate(decodedValue));
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
