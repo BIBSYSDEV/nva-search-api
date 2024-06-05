@@ -376,7 +376,7 @@ class ResourceClientTest {
 
         @ParameterizedTest
         @MethodSource("uriProvider")
-        void  searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
+        void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
 
             var response =
                 ResourceSearchQuery.builder()
