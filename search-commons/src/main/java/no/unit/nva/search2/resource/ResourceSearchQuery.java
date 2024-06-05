@@ -107,40 +107,40 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected AsType<ResourceParameter> getFrom() {
+    protected AsType<ResourceParameter> from() {
         return parameters().get(FROM);
     }
 
     @Override
-    protected AsType<ResourceParameter> getSize() {
+    protected AsType<ResourceParameter> size() {
         return parameters().get(SIZE);
     }
 
     @Override
-    public AsType<ResourceParameter> getSort() {
+    public AsType<ResourceParameter> sort() {
         return parameters().get(SORT);
     }
 
     @Override
-    protected String[] getExclude() {
+    protected String[] exclude() {
         return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
-    protected String[] getInclude() {
+    protected String[] include() {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
-    public URI getOpenSearchUri() {
+    public URI openSearchUri() {
         return
             fromUri(openSearchUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
-                .addQueryParameters(getQueryParameters())
+                .addQueryParameters(queryParameters())
                 .getUri();
     }
 
-    private Map<String, String> getQueryParameters() {
+    private Map<String, String> queryParameters() {
         return additionalQueryParameters;
     }
 
@@ -165,7 +165,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
-    protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
+    protected Stream<Entry<ResourceParameter, QueryBuilder>> builderCustomQueryStream(ResourceParameter key) {
         return switch (key) {
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);

@@ -59,15 +59,15 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     public final transient QueryFilter filters;
 
-    protected abstract AsType<K> getFrom();
+    protected abstract AsType<K> from();
 
-    protected abstract AsType<K> getSize();
+    protected abstract AsType<K> size();
 
-    protected abstract AsType<K> getSort();
+    protected abstract AsType<K> sort();
 
-    protected abstract String[] getExclude();
+    protected abstract String[] exclude();
 
-    protected abstract String[] getInclude();
+    protected abstract String[] include();
 
     protected abstract K keyAggregation();
 
@@ -90,7 +90,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract List<AggregationBuilder> builderAggregations();
 
-    protected abstract Stream<Entry<K, QueryBuilder>> builderStreamCustomQuery(K key);
+    protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
 
     protected SearchQuery() {
         super();
@@ -106,8 +106,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             (SwsResponse) queryClient.doSearch((Q) this),
             getMediaType(),
             source,
-            getFrom().as(),
-            getSize().as(),
+            from().as(),
+            size().as(),
             facetPaths(),
             parameters());
     }
@@ -168,7 +168,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
             case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
-            case CUSTOM -> builderStreamCustomQuery(key);
+            case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException("handler NOT defined -> " + key.name());
         };
@@ -184,7 +184,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         var builder = builderDefaultSearchSource(queryBuilder);
 
         if (fetchSource()) {
-            builder.fetchSource(getInclude(), getExclude());
+            builder.fetchSource(include(), exclude());
         } else {
             builder.fetchSource(true);
         }
@@ -197,7 +197,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             builder.aggregation(builderAggregationsWithFilter());
         }
 
-        return Stream.of(new QueryContentWrapper(builder.toString(), this.getOpenSearchUri()));
+        return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
     }
 
     /**
@@ -220,7 +220,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     }
 
     protected Stream<SortBuilder<?>> builderStreamFieldSort() {
-        return getSort().asSplitStream(COMMA)
+        return sort().asSplitStream(COMMA)
             .flatMap(item -> {
                 final var parts = item.split(COLON_OR_SPACE);
                 final var order = SortOrder.fromString(
@@ -243,8 +243,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     protected SearchSourceBuilder builderDefaultSearchSource(QueryBuilder queryBuilder) {
         return new SearchSourceBuilder()
             .query(queryBuilder)
-            .size(getSize().as())
-            .from(getFrom().as())
+            .size(size().as())
+            .from(from().as())
             .postFilter(filters.get())
             .trackTotalHits(true);
     }
@@ -267,7 +267,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     }
 
     private boolean fetchSource() {
-        return nonNull(getExclude()) || nonNull(getInclude());
+        return nonNull(exclude()) || nonNull(include());
     }
 
     private boolean includeAggregation() {

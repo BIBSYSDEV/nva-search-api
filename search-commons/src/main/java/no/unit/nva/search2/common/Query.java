@@ -18,7 +18,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
 
-    protected abstract URI getOpenSearchUri();
+    protected abstract URI openSearchUri();
 
     protected Query() {
         startTime = Instant.now();
