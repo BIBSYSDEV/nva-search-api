@@ -504,7 +504,7 @@
           ],
           "correspondingAuthor": false,
           "identity": {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/113",
             "type": "Identity",
             "name": "Kjetil Møkkelgjerd",
             "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
@@ -3509,6 +3509,14 @@
       }
     ],
     "createdDate": "2023-09-20T16:31:48Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.00.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+      ],
     "entityDescription": {
       "type": "EntityDescription",
       "abstract": "Objective\nLow-level sensory disruption is hypothesized as a precursor to clinical and cognitive symptoms in severe mental disorders. We compared visual discrimination performance in patients with schizophrenia spectrum disorder or bipolar disorder with healthy controls, and investigated associations with clinical symptoms and IQ.Methods\nPatients with schizophrenia spectrum disorder (n = 32), bipolar disorder (n = 55) and healthy controls (n = 152) completed a computerized visual discrimination task. Participants responded whether the latter of two consecutive grids had higher or lower spatial frequency, and discrimination thresholds were estimated using an adaptive maximum likelihood procedure. Case-control differences in threshold were assessed using linear regression, F-test and post-hoc pair-wise comparisons. Linear models were used to test for associations between visual discrimination threshold and psychotic symptoms derived from the PANSS and IQ assessed using the Matrix Reasoning and Vocabulary subtests from the Wechsler Abbreviated Scale of Intelligence (WASI).Results\nRobust regression revealed a significant main effect of diagnosis on discrimination threshold (robust F = 6.76, p = .001). Post-hoc comparisons revealed that patients with a schizophrenia spectrum disorder (mean = 14%, SD = 0.08) had higher thresholds compared to healthy controls (mean = 10.8%, SD = 0.07, β = 0.35, t = 3.4, p = .002), as did patients with bipolar disorder (12.23%, SD = 0.07, β = 0.21, t = 2.42, p = .04). There was no significant difference between bipolar disorder and schizophrenia (β = −0.14, t = −1.2, p = .45). Linear models revealed negative associations between IQ and threshold across all participants when controlling for diagnostic group (β = −0.3, t = −3.43, p = .0007). This association was found within healthy controls (t = −3.72, p = .0003) and patients with bipolar disorder (t = −2.53, p = .015), and no significant group by IQ interaction on threshold (F = 0.044, p = .97). There were no significant associations between PANSS domain scores and discrimination threshold.Conclusion\nPatients with schizophrenia spectrum or bipolar disorders exhibited higher visual discrimination thresholds than healthy controls, supporting early visual deficits among patients with severe mental illness. Discrimination threshold was negatively associated with IQ among healthy controls and bipolar disorder patients. These findings elucidate perception-related disease mechanisms in severe mental illness, which warrants replication in independent samples.\n",
@@ -3716,7 +3724,14 @@
       }
     ],
     "createdDate": "2023-10-30T13:40:21.110219260Z",
-    "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0", "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"],
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},

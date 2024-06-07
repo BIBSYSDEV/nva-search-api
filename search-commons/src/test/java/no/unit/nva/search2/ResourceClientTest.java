@@ -184,7 +184,7 @@ class ResourceClientTest {
             assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
-            assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
+            assertThat(aggregations.get(CONTRIBUTOR).size(), is(13));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
                 is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
