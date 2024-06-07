@@ -41,12 +41,14 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
@@ -68,7 +70,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
-    private final Map<String,String> additionalQueryParameters = new HashMap<>();
+    private final Map<String, String> additionalQueryParameters = new HashMap<>();
 
     private ResourceSearchQuery() {
         super();
@@ -293,8 +295,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case  UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION
-                    -> mergeToKey(qpKey, identifierToCristinId(decodedValue));
+                case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION -> mergeToKey(qpKey, identifierToCristinId(decodedValue));
                 case CONTRIBUTOR, CONTRIBUTOR_NOT -> mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
@@ -306,16 +307,24 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         }
 
         private String identifierToCristinId(String decodedValue) {
-            return isUriId(decodedValue)
-                ? decodedValue
-                : format("%s%s%s", currentHost, CRISTIN_ORGANIZATION_PATH, decodedValue);
+            return Arrays.stream(decodedValue.split(COMMA))
+                .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
+                .collect(Collectors.joining(COMMA));
         }
 
         private String identifierToCristinPersonId(String decodedValue) {
+            return Arrays.stream(decodedValue.split(COMMA))
+                .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
+                .collect(Collectors.joining(COMMA));
+        }
+
+        private String identifierToUri(String decodedValue, String uriPath) {
             return isUriId(decodedValue)
                 ? decodedValue
-                : format("%s%s%s", currentHost, CRISTIN_PERSON_PATH, decodedValue);
+                : format("%s%s%s", currentHost, uriPath, decodedValue);
         }
+
+
         private boolean isUriId(String decodedValue) {
             return decodedValue.startsWith(currentHost);
         }
