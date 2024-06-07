@@ -172,6 +172,21 @@ Accept: application/json
 
 </details>
 
+## Available Sort Keys
+
+| key_name         | keyName         | keyRegEx              | paths                                                        |
+|------------------|-----------------|-----------------------|--------------------------------------------------------------|
+| relevance        | relevance       | (?i)relevance         | _score                                                       |
+| category         | category        | (?i)category          | entityDescription.reference.publicationInstance.type.keyword |
+| instance_type    | instanceType    | (?i)instance.?type    | entityDescription.reference.publicationInstance.type.keyword |
+| created_date     | createdDate     | (?i)created.?date     | createdDate                                                  |
+| modified_date    | modifiedDate    | (?i)modified.?date    | modifiedDate                                                 |
+| published_date   | publishedDate   | (?i)published.?date   | publishedDate                                                |
+| publication_date | publicationDate | (?i)publication.?date | entityDescription.publicationDate.year.keyword               |
+| title            | title           | (?i)title             | entityDescription.mainTitle.keyword                          |
+| unit_id          | unitId          | (?i)unit.?id          | entityDescription.contributors.affiliations.id.keyword       |
+| user             | user            | (?i)(user)(owner)     | resourceOwner.owner.keyword                                  |
+
 ## Available Keys (filters)
 
 ### QueryKind descriptions

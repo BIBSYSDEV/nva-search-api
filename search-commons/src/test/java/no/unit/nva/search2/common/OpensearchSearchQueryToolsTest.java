@@ -1,7 +1,9 @@
 package no.unit.nva.search2.common;
 
 import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.importcandidate.ImportCandidateParameter;
+import no.unit.nva.search2.resource.ResourceSort;
 import no.unit.nva.search2.ticket.TicketParameter;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
@@ -63,6 +65,12 @@ class OpensearchSearchQueryToolsTest {
     }
 
 
+    @Test
+    void printSortResourceParameter() {
+        printEnumSort(Arrays.stream(ResourceSort.values()));
+    }
+
+
     private void printEnum(Stream<ParameterKey> parameterKeyStream) {
         parameterKeyStream.forEach(key ->
             logger.info("|{}|{}|{}|{}|{}|",
@@ -74,4 +82,17 @@ class OpensearchSearchQueryToolsTest {
             )
         );
     }
+
+    private void printEnumSort(Stream<SortKey> parameterSortKeyStream) {
+        parameterSortKeyStream.forEach(key ->
+            logger.info("|{}|{}|{}|{}|",
+                key.asLowerCase(),
+                key.asCamelCase(),
+                key.keyPattern(),
+                key.jsonPaths().collect(Collectors.joining(", "))
+            )
+        );
+    }
+
+
 }

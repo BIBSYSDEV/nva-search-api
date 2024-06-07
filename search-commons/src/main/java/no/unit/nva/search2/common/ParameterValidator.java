@@ -121,7 +121,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            searchQuery.getSort().asSplitStream(COMMA)
+            searchQuery.sort().asSplitStream(COMMA)
                 .forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
