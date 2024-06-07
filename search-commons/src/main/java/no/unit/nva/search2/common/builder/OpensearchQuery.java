@@ -43,7 +43,7 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isRangeMissingComma(K key, String value) {
-        return key.searchOperator() == BETWEEN && !value.contains(COMMA);
+        return key.searchOperator().equals(BETWEEN) && !value.contains(COMMA);
     }
 
     private String[] splitAndFixMissingRangeValue(K key, String value) {

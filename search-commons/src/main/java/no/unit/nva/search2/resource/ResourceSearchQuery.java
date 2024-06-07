@@ -1,5 +1,6 @@
 package no.unit.nva.search2.resource;
 
+import static java.lang.String.format;
 import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -9,6 +10,7 @@ import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PI;
@@ -60,6 +62,7 @@ import org.opensearch.search.sort.SortOrder;
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
+    public static final String CRISTIN_PATH = "/cristin/organization/";
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
@@ -170,7 +173,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
+            case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
             case SEARCH_ALL ->
                 streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
@@ -222,8 +225,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
+        private final String currentHost;
+
         ResourceParameterValidator() {
             super(new ResourceSearchQuery());
+            currentHost = HTTPS + searchQuery.getNvaSearchApiUri().getHost();
         }
 
         @Override
@@ -285,6 +291,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
+                case UNIT, UNIT_NOT -> mergeToKey(qpKey, identifierToId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
@@ -292,6 +299,16 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
+        }
+
+        private String identifierToId(String decodedValue) {
+            return isUriId(decodedValue)
+                ? decodedValue
+                : format("%s%s%s", currentHost, CRISTIN_PATH, decodedValue);
+        }
+
+        private boolean isUriId(String decodedValue) {
+            return decodedValue.startsWith(currentHost);
         }
 
         @Override

@@ -55,7 +55,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
-    private transient URI gatewayUri = URI.create("https://unset/resource/search");
+    private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
     public final transient QueryFilter filters;
 
