@@ -14,6 +14,7 @@ import static no.unit.nva.search2.common.constant.Words.VALUE;
 import static no.unit.nva.search2.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search2.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search2.resource.ResourceParameter.ABSTRACT;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search2.resource.ResourceParameter.TITLE;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
@@ -95,13 +96,15 @@ public class ResourceStreamBuilders {
     }
 
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> subUnitIncludedQuery(ResourceParameter key) {
-        var searchKey = parameters.get(ResourceParameter.EXCLUDE_SUBUNITS).asBoolean()
-            ? key
-            : ResourceParameter.EXCLUDE_SUBUNITS;
+        var searchKey = shouldSearchSpecifiedInstitutionOnly() ? key : EXCLUDE_SUBUNITS;
 
         return
             new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as())
                 .map(query -> Map.entry(key, query.getValue()));
+    }
+
+    private Boolean shouldSearchSpecifiedInstitutionOnly() {
+        return parameters.get(EXCLUDE_SUBUNITS).asBoolean();
     }
 
 }

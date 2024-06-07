@@ -64,7 +64,7 @@ import org.opensearch.search.sort.SortOrder;
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
-
+    public static final String CRISTIN_PATH = "/cristin/organization/";
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
