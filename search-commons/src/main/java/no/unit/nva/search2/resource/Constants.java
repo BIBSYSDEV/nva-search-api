@@ -82,6 +82,8 @@ public final class Constants {
 
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
+    public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
+    public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;

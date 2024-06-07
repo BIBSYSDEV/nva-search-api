@@ -17,6 +17,8 @@ import static no.unit.nva.search2.common.constant.Words.PI;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.resource.Constants.CRISTIN_ORGANIZATION_PATH;
+import static no.unit.nva.search2.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
@@ -291,7 +293,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case UNIT, UNIT_NOT -> mergeToKey(qpKey, identifierToId(decodedValue));
+                case  UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION
+                    -> mergeToKey(qpKey, identifierToCristinId(decodedValue));
+                case CONTRIBUTOR, CONTRIBUTOR_NOT -> mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
@@ -301,12 +305,17 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             }
         }
 
-        private String identifierToId(String decodedValue) {
+        private String identifierToCristinId(String decodedValue) {
             return isUriId(decodedValue)
                 ? decodedValue
-                : format("%s%s%s", currentHost, CRISTIN_PATH, decodedValue);
+                : format("%s%s%s", currentHost, CRISTIN_ORGANIZATION_PATH, decodedValue);
         }
 
+        private String identifierToCristinPersonId(String decodedValue) {
+            return isUriId(decodedValue)
+                ? decodedValue
+                : format("%s%s%s", currentHost, CRISTIN_PERSON_PATH, decodedValue);
+        }
         private boolean isUriId(String decodedValue) {
             return decodedValue.startsWith(currentHost);
         }

@@ -105,7 +105,6 @@ import org.apache.commons.text.CaseUtils;
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
  *
  */
-
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
