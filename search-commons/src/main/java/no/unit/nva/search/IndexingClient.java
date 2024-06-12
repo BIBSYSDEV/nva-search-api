@@ -114,6 +114,14 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
         return null;
     }
 
+    public Void createIndex(String indexName, Map<String, ?> mappings, Map<String, ?> settings) throws IOException {
+        var createRequest = new CreateIndexRequest(indexName);
+        createRequest.mapping(mappings);
+        createRequest.settings(settings);
+        openSearchClient.indices().create(createRequest, getRequestOptions());
+        return null;
+    }
+
     public Stream<BulkResponse> batchInsert(Stream<IndexDocument> contents) {
         var batches = splitStreamToBatches(contents);
         return batches.map(attempt(this::insertBatch)).map(Try::orElseThrow);
