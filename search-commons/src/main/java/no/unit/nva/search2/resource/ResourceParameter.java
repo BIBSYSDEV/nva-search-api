@@ -103,7 +103,9 @@ import org.apache.commons.text.CaseUtils;
  * Enum for all the parameters that can be used to query the search index.
  * This enum needs to implement these parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
- *
+ * @author Stig Norland
+ * @author Kir Truhacev
+ * @author Joachim Jorgensen
  */
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),

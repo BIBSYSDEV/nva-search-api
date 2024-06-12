@@ -3,6 +3,9 @@ package no.unit.nva.search2.common.records;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Sondre Vestad
+ */
 public class UsernamePasswordWrapper {
     @JsonProperty("username")
     public String username;

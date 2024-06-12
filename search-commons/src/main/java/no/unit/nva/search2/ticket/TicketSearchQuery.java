@@ -57,6 +57,9 @@ import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+/**
+ * @author Stig Norland
+ */
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private final TicketFilter filterBuilder;

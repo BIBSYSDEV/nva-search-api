@@ -23,6 +23,10 @@ import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
+/**
+ * @author Sondre Vestad
+ * @author Stig Norland
+ */
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     public static final String MAX_HITS_PER_PAGE = "2500";

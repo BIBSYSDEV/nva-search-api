@@ -78,6 +78,9 @@ import org.opensearch.search.aggregations.bucket.nested.ReverseNestedAggregation
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
+/**
+ * @author Stig Norland
+ */
 public final class Constants {
 
     public static final String PERSON_PREFERENCES = "/person-preferences/";

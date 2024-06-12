@@ -21,6 +21,9 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGRE
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 
+/**
+ * @author Stig Norland
+ */
 public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ImportCandidateClient opensearchClient;

@@ -2,6 +2,9 @@ package no.unit.nva.search2.common.records;
 
 import no.unit.nva.commons.json.JsonSerializable;
 
+/**
+ * @author Stig Norland
+ */
 public record ResponseLogInfo(
     int totalHits,
     long queryDuration,

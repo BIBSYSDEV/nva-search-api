@@ -3,6 +3,9 @@ package no.unit.nva.search2.common.enums;
 import static no.unit.nva.search2.common.constant.Words.CHAR_UNDERSCORE;
 import org.apache.commons.text.CaseUtils;
 
+/**
+ * @author Stig Norland
+ */
 public enum ParameterKind {
     INVALID,
     /**

@@ -18,6 +18,9 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final TicketClient opensearchClient;

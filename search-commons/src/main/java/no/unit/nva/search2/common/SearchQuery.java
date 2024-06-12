@@ -51,6 +51,9 @@ import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Stig Norland
+ */
 @SuppressWarnings("PMD.GodClass")
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 

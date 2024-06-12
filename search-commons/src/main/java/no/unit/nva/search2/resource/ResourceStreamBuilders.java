@@ -36,6 +36,9 @@ import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
 
+/**
+ * @author Stig Norland
+ */
 public class ResourceStreamBuilders {
 
     private final QueryKeys<ResourceParameter> parameters;
