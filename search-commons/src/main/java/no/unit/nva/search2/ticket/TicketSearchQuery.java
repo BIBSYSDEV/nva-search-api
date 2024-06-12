@@ -59,6 +59,7 @@ import org.opensearch.search.sort.SortOrder;
 
 /**
  * @author Stig Norland
+ * @author Sondre Vestad
  */
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 

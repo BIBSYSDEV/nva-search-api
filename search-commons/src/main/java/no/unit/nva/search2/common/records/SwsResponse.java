@@ -10,6 +10,7 @@ import no.unit.nva.search2.common.records.SwsResponse.HitsInfo.Hit;
 import nva.commons.core.JacocoGenerated;
 
 /**
+ * Response from SWS, almost identical to Opensearch's response.
  * @author Stig Norland
  */
 public record SwsResponse(

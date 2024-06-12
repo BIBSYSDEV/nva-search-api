@@ -63,7 +63,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     }
 
     /**
-     * Validator of CristinQuery.Builder.
+     * Validator of QueryBuilder.
      * @throws BadRequestException if parameters are invalid or missing
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
