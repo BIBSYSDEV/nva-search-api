@@ -41,6 +41,7 @@ import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.script.Script;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -176,26 +177,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
-        var queryBuilder =
-            parameters().getSearchKeys().findAny().isEmpty()
-                ? QueryBuilders.matchAllQuery()
-                : builderMainQuery();
+        var builder = builderDefaultSearchSource();
 
-        var builder = builderDefaultSearchSource(queryBuilder);
-
-        if (fetchSource()) {
-            builder.fetchSource(include(), exclude());
-        } else {
-            builder.fetchSource(true);
-        }
-
+        handleFetchSource(builder);
         handleSearchAfter(builder);
-
-        builderStreamFieldSort().forEach(builder::sort);
-
-        if (includeAggregation()) {
-            builder.aggregation(builderAggregationsWithFilter());
-        }
+        handleSorting(builder);
+        handleAggregation(builder);
 
         return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
     }
@@ -240,7 +227,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return aggrFilter;
     }
 
-    protected SearchSourceBuilder builderDefaultSearchSource(QueryBuilder queryBuilder) {
+    protected SearchSourceBuilder builderDefaultSearchSource() {
+        var queryBuilder =
+            parameters().getSearchKeys().findAny().isEmpty()
+                ? QueryBuilders.matchAllQuery()
+                : builderMainQuery();
+
         return new SearchSourceBuilder()
             .query(queryBuilder)
             .size(size().as())
@@ -263,6 +255,28 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
+        }
+    }
+
+    private void handleFetchSource(SearchSourceBuilder builder) {
+        if (fetchSource()) {
+            builder.fetchSource(include(), exclude());
+        } else {
+            builder.fetchSource(true);
+        }
+    }
+
+    private void handleSorting(SearchSourceBuilder builder) {
+
+        var script = Script.parse("");
+        var test = QueryBuilders.scriptScoreQuery(builder.query(), script);
+        builder.query(test);
+        builderStreamFieldSort().forEach(builder::sort);
+    }
+
+    private void handleAggregation(SearchSourceBuilder builder) {
+        if (includeAggregation()) {
+            builder.aggregation(builderAggregationsWithFilter());
         }
     }
 
