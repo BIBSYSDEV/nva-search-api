@@ -5,6 +5,9 @@ import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public final class Patterns {
 
     public static final String COLON_OR_SPACE = COLON + PIPE + SPACE;

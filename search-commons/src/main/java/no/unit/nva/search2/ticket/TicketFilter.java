@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * @author Stig Norland
+ */
 public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
 
     private final TicketSearchQuery ticketSearchQuery;

@@ -23,8 +23,8 @@ import org.apache.commons.text.CaseUtils;
  * This enum needs to implement these parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
  *
+ * @author Sondre Vestad
  */
-
 public enum ScrollParameters implements ParameterKey {
     INVALID(ParameterKind.INVALID);
 

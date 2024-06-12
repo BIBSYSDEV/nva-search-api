@@ -68,8 +68,8 @@ import org.apache.commons.text.CaseUtils;
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
  * parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ * @author Stig Norland
  */
-
 public enum TicketParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering

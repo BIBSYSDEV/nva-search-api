@@ -8,6 +8,9 @@ import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.apigateway.MediaTypes;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public final class Defaults {
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;

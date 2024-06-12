@@ -9,6 +9,9 @@ import java.util.Optional;
 import no.unit.nva.search2.common.records.SwsResponse.HitsInfo.Hit;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public record SwsResponse(
     int took,
     boolean timed_out,

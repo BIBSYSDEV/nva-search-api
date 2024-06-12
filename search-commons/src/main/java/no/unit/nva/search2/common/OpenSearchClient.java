@@ -32,6 +32,9 @@ import nva.commons.secrets.SecretsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Stig Norland
+ */
 public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchClient.class);

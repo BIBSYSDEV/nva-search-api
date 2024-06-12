@@ -16,6 +16,9 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
+/**
+ * @author Stig Norland
+ */
 public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override

@@ -16,6 +16,10 @@ import org.opensearch.index.query.TermsQueryBuilder;
 import java.net.URI;
 import java.util.Arrays;
 
+/**
+ * @author Stig Norland
+ * @author Sondre Vestad
+ */
 public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     private final ResourceSearchQuery resourceSearchQuery;

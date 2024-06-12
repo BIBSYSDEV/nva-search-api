@@ -9,6 +9,9 @@ import no.unit.nva.search2.common.constant.Words;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
+/**
+ * @author Stig Norland
+ */
 public class PagedSearchBuilder {
 
     private URI id;

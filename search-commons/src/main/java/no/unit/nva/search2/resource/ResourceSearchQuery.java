@@ -63,6 +63,11 @@ import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+/**
+ * @author Stig Norland
+ * @author Kir Truhacev
+ * @author Sondre Vestad
+ */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 

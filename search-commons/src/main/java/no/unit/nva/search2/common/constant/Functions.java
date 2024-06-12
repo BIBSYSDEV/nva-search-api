@@ -36,6 +36,9 @@ import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
+/**
+ * @author Stig Norland
+ */
 public final class Functions {
 
     static final Environment ENVIRONMENT = new Environment();

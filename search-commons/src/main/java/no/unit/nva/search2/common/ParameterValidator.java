@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
  * Builder for OpenSearchQuery.
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
+
+ * @author Stig Norland
  */
 public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends SearchQuery<K>> {
 

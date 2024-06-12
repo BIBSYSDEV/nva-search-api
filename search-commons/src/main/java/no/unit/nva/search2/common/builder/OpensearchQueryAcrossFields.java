@@ -14,6 +14,9 @@ import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
+/**
+ * @author Stig Norland
+ */
 public class OpensearchQueryAcrossFields<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override

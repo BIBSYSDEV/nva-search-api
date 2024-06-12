@@ -14,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ * @author Rurik Greenall
+ */
 public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnNameMappingStrategy<T> {
     public HeaderColumnNameAndOrderMappingStrategy(Class<T> type) {
         super();

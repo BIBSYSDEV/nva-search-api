@@ -11,6 +11,10 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
+
+/**
+ * @author Sondre Vestad
+ */
 public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
 
 
