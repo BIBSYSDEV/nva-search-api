@@ -66,7 +66,6 @@ import org.opensearch.search.sort.SortOrder;
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
-    public static final String CRISTIN_PATH = "/cristin/organization/";
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
@@ -229,11 +228,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
-        private final String currentHost;
 
         ResourceParameterValidator() {
             super(new ResourceSearchQuery());
-            currentHost = HTTPS + searchQuery.getNvaSearchApiUri().getHost();
         }
 
         @Override
@@ -318,15 +315,19 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 .collect(Collectors.joining(COMMA));
         }
 
+        private String currentHost() {
+            return HTTPS + searchQuery.getNvaSearchApiUri().getHost();
+        }
+
         private String identifierToUri(String decodedValue, String uriPath) {
             return isUriId(decodedValue)
                 ? decodedValue
-                : format("%s%s%s", currentHost, uriPath, decodedValue);
+                : format("%s%s%s", currentHost(), uriPath, decodedValue);
         }
 
 
         private boolean isUriId(String decodedValue) {
-            return decodedValue.startsWith(currentHost);
+            return decodedValue.startsWith(HTTPS);
         }
 
         @Override
