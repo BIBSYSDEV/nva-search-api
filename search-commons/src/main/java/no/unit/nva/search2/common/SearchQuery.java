@@ -10,6 +10,7 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
@@ -254,10 +255,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
-    private void handleSearchAfter(SearchSourceBuilder builder) {
-        var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
-        if (nonNull(sortKeys)) {
-            builder.searchAfter(sortKeys);
+    private void handleAggregation(SearchSourceBuilder builder) {
+        if (includeAggregation()) {
+            builder.aggregation(builderAggregationsWithFilter());
         }
     }
 
@@ -269,18 +269,42 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         }
     }
 
-    private void handleSorting(SearchSourceBuilder builder) {
-
-        var script = Script.parse("");
-        var test = QueryBuilders.scriptScoreQuery(builder.query(), script);
-        builder.query(test);
-        builderStreamFieldSort().forEach(builder::sort);
+    private void handleSearchAfter(SearchSourceBuilder builder) {
+        var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
+        if (nonNull(sortKeys)) {
+            builder.searchAfter(sortKeys);
+        }
     }
 
-    private void handleAggregation(SearchSourceBuilder builder) {
-        if (includeAggregation()) {
-            builder.aggregation(builderAggregationsWithFilter());
+    private void handleSorting(SearchSourceBuilder builder) {
+        if (isSortByRelevance()) {
+            var script = sortKeyStream()
+                .map(SortKey::scriptValue)
+                .collect(Collectors.joining(PLUS));
+            var test =
+                QueryBuilders.scriptScoreQuery(builder.query(), Script.parse(script));
+            builder.query(test);
+            logger.info(script);
+        } else {
+            builderStreamFieldSort().forEach(builder::sort);
         }
+    }
+
+    private Stream<SortKey> sortKeyStream() {
+        return sort().asSplitStream(COMMA)
+            .map(item -> {
+                final var parts = item.split(COLON_OR_SPACE);
+                return toSortKey(parts[0]);
+            });
+    }
+
+    private boolean isSortByRelevance() {
+        return sort().isEmpty() || sort().as().toString().contains(RELEVANCE_KEY_NAME);
+    }
+
+    private boolean isMustNot(K key) {
+        return NO_ITEMS.equals(key.searchOperator())
+            || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
     private boolean fetchSource() {
@@ -289,10 +313,5 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     private boolean includeAggregation() {
         return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
-    }
-
-    private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-            || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 }

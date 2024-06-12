@@ -44,6 +44,12 @@ public enum TicketSort implements SortKey {
     }
 
     @Override
+    public String scriptValue() {
+        ///TODO implement
+        return "";
+    }
+
+    @Override
     public String keyPattern() {
         return keyValidationRegEx;
     }

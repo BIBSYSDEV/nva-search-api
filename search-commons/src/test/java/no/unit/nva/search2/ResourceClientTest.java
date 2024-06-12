@@ -9,14 +9,17 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COLON;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.DOT;
 import static no.unit.nva.search2.common.constant.Words.EQUAL;
 import static no.unit.nva.search2.common.constant.Words.FILES;
 import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
 import static no.unit.nva.search2.common.constant.Words.LICENSE;
 import static no.unit.nva.search2.common.constant.Words.NONE;
 import static no.unit.nva.search2.common.constant.Words.PIPE;
 import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search2.common.constant.Words.RESOURCES;
+import static no.unit.nva.search2.common.constant.Words.SLASH;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
 import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
@@ -55,6 +58,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -436,9 +441,16 @@ class ResourceClientTest {
             var pagedSearchResourceDto = response.toPagedResponse();
             assertNotNull(pagedSearchResourceDto.id());
             var searchName = response.parameters().get(SORT).split(COMMA)[0].split(COLON)[0];
-            var searchFieldName = ResourceSort.fromSortKey(searchName).jsonPaths().findFirst().get();
+            var searchFieldName = ResourceSort.fromSortKey(searchName)
+                .jsonPaths()
+                .findFirst()
+                .map(path -> path.contains(KEYWORD) ? path.substring(0, path.indexOf(KEYWORD) - 1) : path)
+                .map(path -> SLASH + path.replace(DOT, SLASH))
+                .orElseThrow();
+
+
             var logInfo = response.swsResponse().hits().hits().stream()
-                .map(item -> item._score() + " + " + item._source().get(searchFieldName))
+                .map(item -> item._score() + " + " + searchFieldName)
                 .collect(Collectors.joining(SPACE + PIPE + SPACE));
             logger.info(logInfo);
             assertNotNull(pagedSearchResourceDto.context());
@@ -564,6 +576,8 @@ class ResourceClientTest {
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
+                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
                 URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
                 URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
                 URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
