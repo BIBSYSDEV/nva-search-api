@@ -18,6 +18,9 @@ import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.SortKey;
 import org.apache.commons.text.CaseUtils;
 
+/**
+ * @author Stig Norland
+ */
 public enum ResourceSort implements SortKey {
     INVALID(EMPTY_STRING),
     RELEVANCE(Words.SCORE),

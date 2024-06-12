@@ -11,6 +11,9 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
+/**
+ * @author Stig Norland
+ */
 public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuery> {
 
     public TicketClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {

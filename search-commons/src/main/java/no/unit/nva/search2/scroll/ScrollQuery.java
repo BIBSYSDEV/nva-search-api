@@ -19,6 +19,9 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
 
+/**
+ * @author Sondre Vestad
+ */
 public final class ScrollQuery extends Query<ScrollParameters> {
 
     private static final int MAX_PAGES = 4;
@@ -88,8 +91,13 @@ public final class ScrollQuery extends Query<ScrollParameters> {
         var hits = results
             .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null))
             .toList();
-        var hitsInfo = new SwsResponse.HitsInfo(null, 0, hits);
-        return new SwsResponse(0, false, null, hitsInfo, null, "");
+        return new SwsResponse(
+            0,
+            false,
+            null,
+            new SwsResponse.HitsInfo(null, 0, hits),
+            null,
+            "");
     }
 
     private boolean shouldStopRecursion(Integer level, SwsResponse previousResponse) {

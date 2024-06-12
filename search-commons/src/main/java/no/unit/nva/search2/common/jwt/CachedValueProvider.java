@@ -1,5 +1,9 @@
 package no.unit.nva.search2.common.jwt;
 
+
+/**
+ * @author Sondre Vestad
+ */
 public abstract class CachedValueProvider<T>  {
 
     protected T cachedValue;

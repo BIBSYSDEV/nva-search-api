@@ -55,6 +55,9 @@ import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+/**
+ * @author Stig Norland
+ */
 public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidateParameter> {
 
     ImportCandidateSearchQuery() {

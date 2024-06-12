@@ -9,6 +9,9 @@ import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 
+/**
+ * @author Stig Norland
+ */
 public abstract class Query<K extends Enum<K> & ParameterKey> {
     protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;

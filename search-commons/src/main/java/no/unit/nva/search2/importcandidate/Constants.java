@@ -30,6 +30,9 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 
 
+/**
+ * @author Stig Norland
+ */
 public final class Constants {
 
     public static final String ADDITIONAL_IDENTIFIERS_KEYWORD = "additionalIdentifiers.value.keyword";

@@ -8,6 +8,9 @@ import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+/**
+ * @author Stig Norland
+ */
 public interface SortKey {
 
     String name();

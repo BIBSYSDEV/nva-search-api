@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public final class ErrorMessages {
 
     public static final String INVALID_VALUE = "Parameter [%s] has invalid value [%s]";
