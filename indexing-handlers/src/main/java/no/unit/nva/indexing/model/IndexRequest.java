@@ -21,20 +21,20 @@ public class IndexRequest {
 
     public IndexRequest(String name, String jsonMappings) {
         this.name = name;
-        var typeReference = new TypeReference<Map<String, Object>>() {
-        };
-        this.mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonMappings, typeReference))
-                .orElseThrow();
+        this.mappings = jsonToJavaMap(jsonMappings);
         this.settings = Collections.emptyMap();
     }
 
     public IndexRequest(String name, String jsonMappings, String jsonSettings) {
         this.name = name;
+        this.mappings = jsonToJavaMap(jsonMappings);
+        this.settings = jsonToJavaMap(jsonSettings);
+    }
+
+    private static Map<String, Object> jsonToJavaMap(String jsonMappings) {
         var typeReference = new TypeReference<Map<String, Object>>() {
         };
-        this.mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonMappings, typeReference))
-            .orElseThrow();
-        this.settings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonSettings, typeReference))
+        return attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonMappings, typeReference))
             .orElseThrow();
     }
 
