@@ -516,7 +516,8 @@
           "sequence": 1
         }
       ],
-      "mainTitle": "Kjetils ticket test",
+      "mainTitle": "Kjetils tickét têst",
+      "abstract": "ønsker deg av hjerte ære berømmelse. Har du en ide om hva du skal gjøre med Kjærringen og eller konå",
       "language": "http://lexvo.org/id/iso639-3/nor",
       "publicationDate": {
         "type": "Date",
