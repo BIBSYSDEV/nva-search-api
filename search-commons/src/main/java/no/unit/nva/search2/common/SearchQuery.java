@@ -13,6 +13,7 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.SCORE;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
@@ -59,6 +60,7 @@ import org.slf4j.LoggerFactory;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
+    public static final String HANDLER_NOT_DEFINED = "handler NOT defined -> ";
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
@@ -157,9 +159,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
             : fieldValue.asSplitStream(COMMA)
             .map(this::toKey)
-            .flatMap(key -> key.searchFields(KEYWORD_FALSE)
-                .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
-            )
+            .flatMap(key -> key.searchFields(KEYWORD_FALSE).map(jsonPath -> Map.entry(jsonPath, key.fieldBoost())))
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
@@ -175,7 +175,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
-            default -> throw new RuntimeException("handler NOT defined -> " + key.name());
+            default -> throw new RuntimeException(HANDLER_NOT_DEFINED + key.name());
         };
     }
 
@@ -185,8 +185,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
         handleFetchSource(builder);
         handleSearchAfter(builder);
-        handleSorting(builder);
         handleAggregation(builder);
+        handleSorting(builder);
 
         return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
     }
@@ -281,9 +281,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             var script = sortKeyStream()
                 .map(SortKey::scriptValue)
                 .collect(Collectors.joining(PLUS));
-            var test =
+            var replaceQuery =
                 QueryBuilders.scriptScoreQuery(builder.query(), Script.parse(script));
-            builder.query(test);
+            builder.query(replaceQuery);
+            builder.sort(SCORE);
             logger.info(script);
         } else {
             builderStreamFieldSort().forEach(builder::sort);
@@ -295,11 +296,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .map(item -> {
                 final var parts = item.split(COLON_OR_SPACE);
                 return toSortKey(parts[0]);
-            });
+            })
+            ;
     }
 
     private boolean isSortByRelevance() {
-        return sort().isEmpty() || sort().as().toString().contains(RELEVANCE_KEY_NAME);
+        var sorts = sort().toString();
+        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
     }
 
     private boolean isMustNot(K key) {

@@ -7,6 +7,8 @@ import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParame
 import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComma;
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.SEARCH_AFTER;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends SearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
+    public static final String RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE = "Sorted by relevance & searchAfter are mutual exclusive.";
 
     protected final transient Set<String> invalidKeys = new HashSet<>(0);
     protected final transient SearchQuery<K> searchQuery;
@@ -78,13 +81,18 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
         }
         if (!invalidKeys.isEmpty()) {
-            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys,validKeys()));
+            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
         }
         validatedSort();
+
+        if (hasSearchAfterAndSortByRelevance()) {
+            throw new BadRequestException(RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
+        }
         applyRulesAfterValidation();
         notValidated = false;
         return this;
     }
+
 
     /**
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
@@ -257,4 +265,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
             .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
     }
 
+    private boolean hasSearchAfterAndSortByRelevance() {
+        return searchQuery.parameters().isPresent(searchQuery.keySearchAfter()) && searchQuery.sort().toString().contains(RELEVANCE_KEY_NAME);
+    }
 }

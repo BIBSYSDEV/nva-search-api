@@ -47,10 +47,12 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.resource.ResourceParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -177,7 +179,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             : key;
 
         return
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
+            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as())
+                .map(query -> Map.entry(key, query.getValue()));
+
     }
 
     /**
@@ -218,9 +222,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             // convert page to offset if offset is not set
             if (searchQuery.parameters().isPresent(PAGE)) {
                 if (searchQuery.parameters().isPresent(FROM)) {
-                    var page = searchQuery.parameters().get(PAGE).<Number>as();
-                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
-                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    var page = searchQuery.parameters().get(PAGE).<Number>as().longValue();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as().longValue();
+                    searchQuery.parameters().set(FROM, String.valueOf(page * perPage));
                 }
                 searchQuery.parameters().remove(PAGE);
             }

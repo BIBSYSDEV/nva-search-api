@@ -105,7 +105,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
-        logger.debug(qbs.body());
+        logger.info(qbs.body());
         return HttpRequest
             .newBuilder(qbs.uri())
             .headers(

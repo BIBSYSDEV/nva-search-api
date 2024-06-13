@@ -28,9 +28,12 @@ public enum TicketSort implements SortKey {
 
     private final String keyValidationRegEx;
     private final String path;
+    private final String scriptValue;
+
     TicketSort(String jsonPath) {
         this.keyValidationRegEx = SortKey.getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.path = jsonPath;
+        this.scriptValue = String.format("doc['%s'].value", jsonPath);
     }
 
     @Override
@@ -45,8 +48,12 @@ public enum TicketSort implements SortKey {
 
     @Override
     public String scriptValue() {
-        ///TODO implement
-        return "";
+        return
+            switch (this) {
+                case RELEVANCE -> path;
+                case CREATED_DATE, MODIFIED_DATE -> scriptValue + ".getMillis()";
+                default -> scriptValue;
+            };
     }
 
     @Override

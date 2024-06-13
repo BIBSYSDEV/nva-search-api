@@ -418,8 +418,7 @@ class TicketClientTest {
                 URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
                 URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
                 URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc&SEARCH_AFTER=3.14,12312")
-
+                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc")
             );
         }
 
