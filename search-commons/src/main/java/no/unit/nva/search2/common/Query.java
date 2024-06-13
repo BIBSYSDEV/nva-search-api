@@ -23,8 +23,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * Method to mimic Domain driven design.
      *
      * @param queryClient simple service to do i/o (http)
-     * @param <R>         Response class
-     * @param <Q>         Query<ParameterKey>
      * @return ResponseFormatter<ParameterKey>
      */
     public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
