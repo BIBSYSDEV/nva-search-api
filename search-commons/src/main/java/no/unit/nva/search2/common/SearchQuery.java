@@ -28,6 +28,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.constant.ErrorMessages;
 import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.constant.Words;
@@ -57,7 +58,6 @@ import org.slf4j.LoggerFactory;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
-    public static final String HANDLER_NOT_DEFINED = "handler NOT defined -> ";
     private transient MediaType mediaType;
     private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
@@ -172,7 +172,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
-            default -> throw new RuntimeException(HANDLER_NOT_DEFINED + key.name());
+            default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }
 
@@ -275,7 +275,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     private void handleSorting(SearchSourceBuilder builder) {
         if (isSortByRelevance()) {
-            builder.trackScores(true);
+            builder.trackScores(true); // Not very well documented, but this allows sorting on relevance and other fields.
         }
         builderStreamFieldSort().forEach(builder::sort);
     }
