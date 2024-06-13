@@ -8,7 +8,6 @@ import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComm
 import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search2.common.constant.Words.SEARCH_AFTER;
 
 import java.net.URI;
 import java.util.Arrays;

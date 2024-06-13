@@ -10,10 +10,8 @@ import static no.unit.nva.search2.common.constant.Words.ALL;
 import static no.unit.nva.search2.common.constant.Words.ASTERISK;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
-import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search2.common.constant.Words.SCORE;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
@@ -43,7 +41,6 @@ import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.script.Script;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
 import org.opensearch.search.builder.SearchSourceBuilder;
@@ -278,26 +275,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     private void handleSorting(SearchSourceBuilder builder) {
         if (isSortByRelevance()) {
-            var script = sortKeyStream()
-                .map(SortKey::scriptValue)
-                .collect(Collectors.joining(PLUS));
-            var replaceQuery =
-                QueryBuilders.scriptScoreQuery(builder.query(), Script.parse(script));
-            builder.query(replaceQuery);
-            builder.sort(SCORE);
-            logger.info(script);
-        } else {
-            builderStreamFieldSort().forEach(builder::sort);
+            builder.trackScores(true);
         }
-    }
-
-    private Stream<SortKey> sortKeyStream() {
-        return sort().asSplitStream(COMMA)
-            .map(item -> {
-                final var parts = item.split(COLON_OR_SPACE);
-                return toSortKey(parts[0]);
-            })
-            ;
+        builderStreamFieldSort().forEach(builder::sort);
     }
 
     private boolean isSortByRelevance() {
