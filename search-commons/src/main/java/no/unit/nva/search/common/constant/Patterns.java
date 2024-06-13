@@ -5,6 +5,9 @@ import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.SPACE;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public final class Patterns {
 
     public static final String COLON_OR_SPACE = COLON + PIPE + SPACE;
@@ -48,7 +51,7 @@ public final class Patterns {
     /**
      * Pattern for matching a funding string. funding source and project_id together separated by ':'
      */
-    public static final String PATTERN_IS_FUNDING = "[\\w]+[:\\s]{1}\\d+";
+    public static final String PATTERN_IS_FUNDING = "[\\w]+[:\\s]{1}.+";
 
     @JacocoGenerated
     public Patterns() {

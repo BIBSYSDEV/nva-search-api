@@ -96,12 +96,15 @@ public class ResourceStreamBuilders {
     }
 
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> subUnitIncludedQuery(ResourceParameter key) {
-        var searchKey = parameters.get(ResourceParameter.EXCLUDE_SUBUNITS).asBoolean()
-            ? ResourceParameter.EXCLUDE_SUBUNITS
-            : key;
+        var searchKey = shouldSearchSpecifiedInstitutionOnly() ? key : EXCLUDE_SUBUNITS;
 
         return
-            new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as());
+            new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as())
+                .map(query -> Map.entry(key, query.getValue()));
+    }
+
+    private Boolean shouldSearchSpecifiedInstitutionOnly() {
+        return parameters.get(EXCLUDE_SUBUNITS).asBoolean();
     }
 
 }

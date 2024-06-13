@@ -13,6 +13,9 @@ import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.SortKey;
 import org.apache.commons.text.CaseUtils;
 
+/**
+ * @author Stig Norland
+ */
 public enum ImportCandidateSort implements SortKey {
     INVALID(EMPTY_STRING),
     RELEVANCE(Words.SCORE),

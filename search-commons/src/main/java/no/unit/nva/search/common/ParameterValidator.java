@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
  * Builder for OpenSearchQuery.
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
+
+ * @author Stig Norland
  */
 public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends SearchQuery<K>> {
 
@@ -122,7 +124,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            searchQuery.getSort().asSplitStream(COMMA)
+            searchQuery.sort().asSplitStream(COMMA)
                 .forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());

@@ -19,6 +19,9 @@ import no.unit.nva.search.common.records.SwsResponse;
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
 
+/**
+ * @author Sondre Vestad
+ */
 public final class ScrollQuery extends Query<ScrollParameters> {
 
     private static final int MAX_PAGES = 4;
@@ -43,22 +46,22 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     @Override
-    protected URI getOpenSearchUri() {
+    protected URI openSearchUri() {
         return
-            fromUri(openSearchUri)
+            fromUri(infrastructureApiUri)
                 .addChild(SEARCH_SCROLL)
                 .getUri();
     }
 
     private ScrollQuery withOpenSearchUri(final URI uri) {
-        openSearchUri = uri;
+        infrastructureApiUri = uri;
         return this;
     }
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
         var scrollRequest = new SearchScrollRequest(scrollId).scroll(ttl);
-        return Stream.of(new QueryContentWrapper(scrollRequestToString(scrollRequest), this.getOpenSearchUri()));
+        return Stream.of(new QueryContentWrapper(scrollRequestToString(scrollRequest), this.openSearchUri()));
     }
 
     @Override
@@ -88,8 +91,13 @@ public final class ScrollQuery extends Query<ScrollParameters> {
         var hits = results
             .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null))
             .toList();
-        var hitsInfo = new SwsResponse.HitsInfo(null, 0, hits);
-        return new SwsResponse(0, false, null, hitsInfo, null, "");
+        return new SwsResponse(
+            0,
+            false,
+            null,
+            new SwsResponse.HitsInfo(null, 0, hits),
+            null,
+            "");
     }
 
     private boolean shouldStopRecursion(Integer level, SwsResponse previousResponse) {

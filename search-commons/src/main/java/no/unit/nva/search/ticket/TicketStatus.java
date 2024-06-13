@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * @author Stig Norland
+ */
 public enum TicketStatus {
     NONE(EMPTY_STRING),
     NEW("New"),

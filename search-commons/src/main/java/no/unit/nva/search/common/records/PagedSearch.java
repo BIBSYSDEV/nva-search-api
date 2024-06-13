@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import no.unit.nva.commons.json.JsonSerializable;
 
+/**
+ * @author Stig Norland
+ */
 public record PagedSearch(
     URI id,
     Integer totalHits,

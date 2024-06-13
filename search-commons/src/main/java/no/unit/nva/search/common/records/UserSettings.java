@@ -5,7 +5,9 @@ import java.util.List;
 
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
-
+/**
+ * @author Stig Norland
+ */
 @JsonInclude
 public record UserSettings(
     List<String> promotedPublications

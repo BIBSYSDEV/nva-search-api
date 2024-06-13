@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Objects;
 import no.unit.nva.commons.json.JsonSerializable;
 
+/**
+ * @author Stig Norland
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Facet(
     URI id,

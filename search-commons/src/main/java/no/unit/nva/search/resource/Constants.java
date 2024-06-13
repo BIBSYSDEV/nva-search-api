@@ -6,7 +6,64 @@ import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.labels;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
 import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
-import static no.unit.nva.search.common.constant.Words.*;
+import static no.unit.nva.search.common.constant.Words.ABSTRACT;
+import static no.unit.nva.search.common.constant.Words.AFFILIATIONS;
+import static no.unit.nva.search.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search.common.constant.Words.BOKMAAL_CODE;
+import static no.unit.nva.search.common.constant.Words.CODE;
+import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search.common.constant.Words.CONTRIBUTORS;
+import static no.unit.nva.search.common.constant.Words.COURSE;
+import static no.unit.nva.search.common.constant.Words.DOI;
+import static no.unit.nva.search.common.constant.Words.DOT;
+import static no.unit.nva.search.common.constant.Words.ENGLISH_CODE;
+import static no.unit.nva.search.common.constant.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.search.common.constant.Words.FILES;
+import static no.unit.nva.search.common.constant.Words.FILES_STATUS;
+import static no.unit.nva.search.common.constant.Words.FUNDINGS;
+import static no.unit.nva.search.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search.common.constant.Words.HANDLE;
+import static no.unit.nva.search.common.constant.Words.ID;
+import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
+import static no.unit.nva.search.common.constant.Words.IDENTITY;
+import static no.unit.nva.search.common.constant.Words.ISBN_LIST;
+import static no.unit.nva.search.common.constant.Words.ISBN_PREFIX;
+import static no.unit.nva.search.common.constant.Words.JOURNAL;
+import static no.unit.nva.search.common.constant.Words.JOURNAL_AS_TYPE;
+import static no.unit.nva.search.common.constant.Words.KEYWORD;
+import static no.unit.nva.search.common.constant.Words.LABELS;
+import static no.unit.nva.search.common.constant.Words.LANGUAGE;
+import static no.unit.nva.search.common.constant.Words.LICENSE;
+import static no.unit.nva.search.common.constant.Words.MAIN_TITLE;
+import static no.unit.nva.search.common.constant.Words.NAME;
+import static no.unit.nva.search.common.constant.Words.NYNORSK_CODE;
+import static no.unit.nva.search.common.constant.Words.ONLINE_ISSN;
+import static no.unit.nva.search.common.constant.Words.ORC_ID;
+import static no.unit.nva.search.common.constant.Words.OWNER;
+import static no.unit.nva.search.common.constant.Words.OWNER_AFFILIATION;
+import static no.unit.nva.search.common.constant.Words.PIPE;
+import static no.unit.nva.search.common.constant.Words.PRINT_ISSN;
+import static no.unit.nva.search.common.constant.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.search.common.constant.Words.PUBLICATION_DATE;
+import static no.unit.nva.search.common.constant.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.search.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search.common.constant.Words.REFERENCE;
+import static no.unit.nva.search.common.constant.Words.RESOURCE_OWNER;
+import static no.unit.nva.search.common.constant.Words.ROOT;
+import static no.unit.nva.search.common.constant.Words.SAMI_CODE;
+import static no.unit.nva.search.common.constant.Words.SCIENTIFIC_INDEX;
+import static no.unit.nva.search.common.constant.Words.SCIENTIFIC_VALUE;
+import static no.unit.nva.search.common.constant.Words.SERIES;
+import static no.unit.nva.search.common.constant.Words.SERIES_AS_TYPE;
+import static no.unit.nva.search.common.constant.Words.SOURCE;
+import static no.unit.nva.search.common.constant.Words.STATUS;
+import static no.unit.nva.search.common.constant.Words.TAGS;
+import static no.unit.nva.search.common.constant.Words.TITLE;
+import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search.common.constant.Words.TYPE;
+import static no.unit.nva.search.common.constant.Words.VALUE;
+import static no.unit.nva.search.common.constant.Words.YEAR;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,10 +78,15 @@ import org.opensearch.search.aggregations.bucket.nested.ReverseNestedAggregation
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.search.aggregations.metrics.CardinalityAggregationBuilder;
 
+/**
+ * @author Stig Norland
+ */
 public final class Constants {
 
     public static final String PERSON_PREFERENCES = "/person-preferences/";
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
+    public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
+    public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
@@ -40,13 +102,13 @@ public final class Constants {
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
 
-
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS;
     public static final String CONTRIBUTORS_IDENTITY_ID =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
-        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD;
+        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD + PIPE +
+            CONTRIBUTORS_IDENTITY_ID;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
     public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD = multipleFields(
@@ -105,7 +167,10 @@ public final class Constants {
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
-    public static final String TOP_LEVEL_ORG_ID = TOP_LEVEL_ORGANIZATIONS + DOT + ID + DOT + KEYWORD;
+
+    //-----------------------------------
+    public static final String TOP_LEVEL_ORG_ID = jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD);
+
 
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;

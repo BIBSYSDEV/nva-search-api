@@ -15,6 +15,9 @@ import org.opensearch.index.query.QueryBuilders;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
+/**
+ * @author Stig Norland
+ */
 public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     @Override

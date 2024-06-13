@@ -15,6 +15,9 @@ import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
 
+/**
+ * @author Stig Norland
+ */
 public class QueryKeys<K extends Enum<K> & ParameterKey> {
 
     protected final transient Set<K> otherRequired;

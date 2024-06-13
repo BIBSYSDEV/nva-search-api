@@ -10,8 +10,11 @@ import no.unit.nva.search.common.records.ResponseFormatter;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 
+/**
+ * @author Stig Norland
+ */
 public abstract class Query<K extends Enum<K> & ParameterKey> {
-    protected transient URI openSearchUri = URI.create(readSearchInfrastructureApiUri());
+    protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;
     private final transient Instant startTime;
 
@@ -19,7 +22,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
 
-    protected abstract URI getOpenSearchUri();
+    protected abstract URI openSearchUri();
 
     protected Query() {
         startTime = Instant.now();

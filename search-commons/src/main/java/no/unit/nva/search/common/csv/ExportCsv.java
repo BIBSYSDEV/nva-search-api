@@ -7,6 +7,11 @@ import nva.commons.core.StringUtils;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author Rurik Greenall
+ * @author Aasarød
+ * @author Stig Norland
+ */
 @CsvBindByNameOrder({"url", "title", "publicationDate", "type", "contributors"})
 public class ExportCsv {
     public static final String DATE_SEPARATOR = "-";

@@ -12,6 +12,9 @@ import no.unit.nva.search.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
+/**
+ * @author Stig Norland
+ */
 public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportCandidateSearchQuery> {
 
     public ImportCandidateClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {

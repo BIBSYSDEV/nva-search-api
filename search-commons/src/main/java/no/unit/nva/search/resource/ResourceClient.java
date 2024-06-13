@@ -14,6 +14,9 @@ import no.unit.nva.search.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
+/**
+ * @author Stig Norland
+ */
 public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {
 
     private final UserSettingsClient userSettingsClient;

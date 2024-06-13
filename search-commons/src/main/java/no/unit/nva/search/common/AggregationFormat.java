@@ -21,6 +21,9 @@ import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public final class AggregationFormat {
 
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";

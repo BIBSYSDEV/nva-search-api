@@ -18,6 +18,9 @@ import static no.unit.nva.search.common.constant.Functions.hasContent;
 import static no.unit.nva.search.common.constant.Words.COMMA;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
+/**
+ * @author Stig Norland
+ */
 public final class ResponseFormatter<K extends Enum<K> & ParameterKey> {
     private final SwsResponse response;
     private final MediaType mediaType;

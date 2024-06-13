@@ -27,6 +27,9 @@ import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.UserSettings;
 import nva.commons.core.attempt.FunctionWithException;
 
+/**
+ * @author Stig Norland
+ */
 public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceSearchQuery> {
 
     private URI userSettingUri;

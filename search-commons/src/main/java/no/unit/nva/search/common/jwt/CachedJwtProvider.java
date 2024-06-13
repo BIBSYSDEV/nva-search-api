@@ -5,6 +5,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import java.time.Clock;
 import java.util.Date;
 
+/**
+ * @author Sondre Vestad
+ */
 public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
 
     private final CognitoAuthenticator cognitoAuthenticator;

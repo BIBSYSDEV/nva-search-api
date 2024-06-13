@@ -102,6 +102,7 @@ class ResourceClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String TEST_RESOURCES_MAPPINGS_JSON = "mapping_test_resources.json";
+    private static final String TEST_RESOURCES_SETTINGS_JSON = "setting_test_resources.json";
     private static final String RESOURCE_VALID_TEST_URL_JSON = "datasource_urls_resource.json";
     private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
@@ -184,7 +185,7 @@ class ResourceClientTest {
             assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
             assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
             assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
-            assertThat(aggregations.get(CONTRIBUTOR).size(), is(12));
+            assertThat(aggregations.get(CONTRIBUTOR).size(), is(13));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
             assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
                 is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
@@ -634,9 +635,11 @@ class ResourceClientTest {
 
     private static void createIndex() throws IOException {
         var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS_JSON));
+        var settingsJson = stringFromResources(Path.of(TEST_RESOURCES_SETTINGS_JSON));
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-        indexingClient.createIndex(RESOURCES, mappings);
+        var settings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(settingsJson, type)).orElseThrow();
+        indexingClient.createIndex(RESOURCES, mappings, settings);
     }
 }

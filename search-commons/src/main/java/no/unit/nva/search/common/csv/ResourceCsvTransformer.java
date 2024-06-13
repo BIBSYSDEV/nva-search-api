@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * @author Rurik Greenall
+ * @author Aasarød
+ * @author Eyob Teweldemedhin
+ * @author Sondre Vestad
+ */
 public final class ResourceCsvTransformer {
 
     private static final String IDENTITY_NAME_JSON_POINTER = "/identity/name";

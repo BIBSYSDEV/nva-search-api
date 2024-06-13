@@ -37,12 +37,14 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import no.unit.nva.search.common.AsType;
@@ -58,13 +60,18 @@ import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+/**
+ * @author Stig Norland
+ * @author Kir Truhacev
+ * @author Sondre Vestad
+ */
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
-    private final Map<String,String> additionalQueryParameters = new HashMap<>();
+    private final Map<String, String> additionalQueryParameters = new HashMap<>();
 
     private ResourceSearchQuery() {
         super();
@@ -108,40 +115,40 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected AsType<ResourceParameter> getFrom() {
+    protected AsType<ResourceParameter> from() {
         return parameters().get(FROM);
     }
 
     @Override
-    protected AsType<ResourceParameter> getSize() {
+    protected AsType<ResourceParameter> size() {
         return parameters().get(SIZE);
     }
 
     @Override
-    public AsType<ResourceParameter> getSort() {
+    public AsType<ResourceParameter> sort() {
         return parameters().get(SORT);
     }
 
     @Override
-    protected String[] getExclude() {
+    protected String[] exclude() {
         return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
-    protected String[] getInclude() {
+    protected String[] include() {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
-    public URI getOpenSearchUri() {
+    public URI openSearchUri() {
         return
-            fromUri(openSearchUri)
+            fromUri(infrastructureApiUri)
                 .addChild(Words.RESOURCES, Words.SEARCH)
-                .addQueryParameters(getQueryParameters())
+                .addQueryParameters(queryParameters())
                 .getUri();
     }
 
-    private Map<String, String> getQueryParameters() {
+    private Map<String, String> queryParameters() {
         return additionalQueryParameters;
     }
 
@@ -166,12 +173,12 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
-    protected Stream<Entry<ResourceParameter, QueryBuilder>> builderStreamCustomQuery(ResourceParameter key) {
+    protected Stream<Entry<ResourceParameter, QueryBuilder>> builderCustomQueryStream(ResourceParameter key) {
         return switch (key) {
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
+            case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
             case SEARCH_ALL ->
                 streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
@@ -286,6 +293,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
+                case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION -> mergeToKey(qpKey, identifierToCristinId(decodedValue));
+                case CONTRIBUTOR, CONTRIBUTOR_NOT -> mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
@@ -293,6 +302,33 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
+        }
+
+        private String identifierToCristinId(String decodedValue) {
+            return Arrays.stream(decodedValue.split(COMMA))
+                .map(value -> identifierToUri(value, CRISTIN_ORGANIZATION_PATH))
+                .collect(Collectors.joining(COMMA));
+        }
+
+        private String identifierToCristinPersonId(String decodedValue) {
+            return Arrays.stream(decodedValue.split(COMMA))
+                .map(value -> identifierToUri(value, CRISTIN_PERSON_PATH))
+                .collect(Collectors.joining(COMMA));
+        }
+
+        private String currentHost() {
+            return HTTPS + searchQuery.getNvaSearchApiUri().getHost();
+        }
+
+        private String identifierToUri(String decodedValue, String uriPath) {
+            return isUriId(decodedValue)
+                ? decodedValue
+                : format("%s%s%s", currentHost(), uriPath, decodedValue);
+        }
+
+
+        private boolean isUriId(String decodedValue) {
+            return decodedValue.startsWith(HTTPS);
         }
 
         @Override

@@ -24,6 +24,9 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ */
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;

@@ -20,6 +20,9 @@ import java.util.Map;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilder;
 
+/**
+ * @author Stig Norland
+ */
 public final class Constants {
 
     public static final String CUSTOMER_ID = "customerId";

@@ -58,6 +58,9 @@ import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
+/**
+ * @author Stig Norland
+ */
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private final TicketFilter filterBuilder;
@@ -104,33 +107,33 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     @Override
-    protected AsType<TicketParameter> getFrom() {
+    protected AsType<TicketParameter> from() {
         return parameters().get(FROM);
     }
 
     @Override
-    protected AsType<TicketParameter> getSize() {
+    protected AsType<TicketParameter> size() {
         return parameters().get(SIZE);
     }
 
     @Override
-    public AsType<TicketParameter> getSort() {
+    public AsType<TicketParameter> sort() {
         return parameters().get(SORT);
     }
 
     @Override
-    protected String[] getExclude() {
+    protected String[] exclude() {
         return parameters().get(NODES_EXCLUDED).split(COMMA);
     }
 
     @Override
-    protected String[] getInclude() {
+    protected String[] include() {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
     @Override
-    public URI getOpenSearchUri() {
-        return fromUri(openSearchUri).addChild(TICKETS, SEARCH).getUri();
+    public URI openSearchUri() {
+        return fromUri(infrastructureApiUri).addChild(TICKETS, SEARCH).getUri();
     }
 
 
@@ -146,7 +149,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
-    protected Stream<Entry<TicketParameter, QueryBuilder>> builderStreamCustomQuery(TicketParameter key) {
+    protected Stream<Entry<TicketParameter, QueryBuilder>> builderCustomQueryStream(TicketParameter key) {
         return switch (key) {
             case ASSIGNEE -> builderStreamByAssignee();
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);

@@ -2,6 +2,9 @@ package no.unit.nva.search.common.enums;
 
 import java.util.Locale;
 
+/**
+ * @author Stig Norland
+ */
 public enum FieldOperator {
     /**
      * ALL must match in document (Only sensible for collections).

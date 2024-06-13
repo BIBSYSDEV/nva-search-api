@@ -19,6 +19,9 @@ import java.util.stream.Stream;
 
 import no.unit.nva.search.common.constant.Words;
 
+/**
+ * @author Stig Norland
+ */
 public interface ParameterKey {
     String asCamelCase();
 

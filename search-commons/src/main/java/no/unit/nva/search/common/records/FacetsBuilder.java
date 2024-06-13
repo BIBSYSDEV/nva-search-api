@@ -10,6 +10,9 @@ import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.paths.UriWrapper;
 
+/**
+ * @author Stig Norland
+ */
 final class FacetsBuilder {
 
     @JacocoGenerated

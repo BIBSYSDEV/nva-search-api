@@ -17,6 +17,28 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "mainTitle": {
+          "type": "text",
+          "analyzer": "custom_asciifolding",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "custom_normalizer"
+            }
+          }
+        },
+        "abstract": {
+          "type": "text",
+          "analyzer": "custom_asciifolding",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256,
+              "normalizer": "custom_normalizer"
+            }
+          }
+        },
         "contributors": {
           "type": "nested",
           "include_in_parent": true,

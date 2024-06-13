@@ -65,8 +65,8 @@
           "sequence": 1
         }
       ],
-      "language": "http://lexvo.org/id/iso639-3/nor",
       "mainTitle": "Kjetils ticket test",
+      "language": "http://lexvo.org/id/iso639-3/nor",
       "publicationDate": {
         "type": "PublicationDate",
         "day": "6",
@@ -504,7 +504,7 @@
           ],
           "correspondingAuthor": false,
           "identity": {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/113",
             "type": "Identity",
             "name": "Kjetil Møkkelgjerd",
             "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
@@ -516,8 +516,9 @@
           "sequence": 1
         }
       ],
+      "mainTitle": "Kjetils tickét têst",
+      "abstract": "ønsker deg av hjerte ære berømmelse. Har du en ide om hva du skal gjøre med Kjærringen og eller konå",
       "language": "http://lexvo.org/id/iso639-3/nor",
-      "mainTitle": "Kjetils ticket test",
       "publicationDate": {
         "type": "Date",
         "day": "6",
@@ -1347,7 +1348,7 @@
           "sequence": 10
         }
       ],
-      "language": "http://lexvo.org/id/iso639-3/nor",
+      "language": "http://lexvo.org/id/iso639-3/eng",
       "mainTitle": "Annual Report 2020",
       "publicationDate": {
         "type": "PublicationDate",
@@ -1530,7 +1531,7 @@
           "sequence": 7
         }
       ],
-      "language": "http://lexvo.org/id/iso639-3/eng",
+      "language": "http://lexvo.org/id/iso639-3/nor",
       "mainTitle": "Annual Report 2021",
       "publicationDate": {
         "type": "PublicationDate",

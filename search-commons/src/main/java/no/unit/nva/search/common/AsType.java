@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 /**
  * AutoConvert value to Date, Number (or String).
  * <p>Also holds key and can return value as <samp>optional stream</samp></p>
+ * @author Stig Norland
  */
 @SuppressWarnings({"PMD.ShortMethodName"})
 public class AsType<K extends Enum<K> & ParameterKey> {

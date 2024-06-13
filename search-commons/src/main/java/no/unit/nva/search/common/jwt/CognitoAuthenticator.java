@@ -21,6 +21,9 @@ import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_UR
 import static nva.commons.core.attempt.Try.attempt;
 import static org.apache.http.protocol.HTTP.CONTENT_TYPE;
 
+/**
+ * @author Sondre Vestad
+ */
 public class CognitoAuthenticator {
 
     public static final String OAUTH2_PATH_SEGMENT = "oauth2";

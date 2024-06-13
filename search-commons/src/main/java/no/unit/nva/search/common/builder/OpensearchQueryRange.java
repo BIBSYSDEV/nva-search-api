@@ -13,6 +13,9 @@ import org.opensearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Stig Norland
+ */
 public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
     private static final Logger logger = LoggerFactory.getLogger(OpensearchQueryRange.class);

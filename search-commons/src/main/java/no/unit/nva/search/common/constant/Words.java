@@ -2,6 +2,10 @@ package no.unit.nva.search.common.constant;
 
 import nva.commons.core.JacocoGenerated;
 
+/**
+ * @author Stig Norland
+ * @author Kir Truhacev
+ */
 public final class Words {
 
     public static final float PI = 3.14F;        // π -> used for boosting.
