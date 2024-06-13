@@ -34,7 +34,6 @@ import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_
 import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search2.resource.ResourceParameter.SORT;
-import static no.unit.nva.search2.resource.ResourceParameter.SORT_ORDER;
 import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
@@ -100,11 +99,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     @Override
     protected ResourceParameter keySearchAfter() {
         return SEARCH_AFTER;
-    }
-
-    @Override
-    protected ResourceParameter keySortOrder() {
-        return SORT_ORDER;
     }
 
     @Override
@@ -303,7 +297,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }

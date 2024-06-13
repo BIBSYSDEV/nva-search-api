@@ -31,7 +31,6 @@ import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
 import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
-import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
@@ -84,11 +83,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     @Override
     protected TicketParameter keyFields() {
         return NODES_SEARCHED;
-    }
-
-    @Override
-    protected TicketParameter keySortOrder() {
-        return SORT_ORDER;
     }
 
     @Override

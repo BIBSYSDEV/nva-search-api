@@ -31,7 +31,6 @@ import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
 import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
-import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT_ORDER;
 import static no.unit.nva.search2.importcandidate.Constants.selectByLicense;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
@@ -81,11 +80,6 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     @Override
     protected ImportCandidateParameter keySearchAfter() {
         return SEARCH_AFTER;
-    }
-
-    @Override
-    protected ImportCandidateParameter keySortOrder() {
-        return SORT_ORDER;
     }
 
     @Override

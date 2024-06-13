@@ -77,8 +77,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract K keyFields();
 
-    protected abstract K keySortOrder();
-
     protected abstract K keySearchAfter();
 
     protected abstract K toKey(String keyName);
@@ -99,7 +97,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     protected SearchQuery() {
         super();
         filters = new QueryFilter();
-        queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
+        queryKeys = new QueryKeys<>(keyFields());
         setMediaType(JSON_UTF_8.toString());
     }
 

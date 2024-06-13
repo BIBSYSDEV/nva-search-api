@@ -184,7 +184,7 @@ class ResourceSearchQueryTest {
             URI.create(
                 "https://example.com/?PARENT_PUBLICATION=https://api.dev.nva.aws.unit"
                     + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
-            URI.create("https://example.com/?published_before=2020-01-01&lang=en&user=1%2023"),
+            URI.create("https://example.com/?published_before=2020-01-01&user=1%2023"),
             URI.create("https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
                 + "%20Eplekjekk"));
     }

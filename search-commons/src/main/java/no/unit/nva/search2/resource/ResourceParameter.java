@@ -236,8 +236,7 @@ public enum ResourceParameter implements ParameterKey {
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
     SEARCH_AFTER(IGNORED),
     SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(IGNORED, ALL_ITEMS, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
-    LANG(IGNORED);
+    SORT_ORDER(IGNORED, ALL_ITEMS, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
