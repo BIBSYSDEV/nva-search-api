@@ -1,5 +1,6 @@
 package no.unit.nva.search.resource;
 
+import static java.lang.String.format;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
@@ -9,12 +10,15 @@ import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.common.constant.Words.COMMA;
 import static no.unit.nva.search.common.constant.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.search.common.constant.Words.HTTPS;
 import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search.common.constant.Words.NONE;
 import static no.unit.nva.search.common.constant.Words.PI;
 import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search.common.constant.Words.STATUS;
+import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
+import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
@@ -139,7 +143,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
-    @Override
     public URI openSearchUri() {
         return
             fromUri(infrastructureApiUri)
@@ -151,6 +154,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private Map<String, String> queryParameters() {
         return additionalQueryParameters;
     }
+
 
     @Override
     protected Map<String, String> facetPaths() {

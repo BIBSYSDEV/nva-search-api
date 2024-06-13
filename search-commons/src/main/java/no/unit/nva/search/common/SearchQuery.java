@@ -16,6 +16,8 @@ import static no.unit.nva.search.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ONE_ITEM;
 import static no.unit.nva.search.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.paths.UriWrapper.fromUri;
+
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.util.List;
@@ -127,6 +129,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             this.mediaType = JSON_UTF_8;
         }
     }
+
 
     /**
      * Builds URI to query SWS based on post body.

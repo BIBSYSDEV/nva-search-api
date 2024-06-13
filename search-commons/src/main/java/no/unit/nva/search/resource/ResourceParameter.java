@@ -5,6 +5,7 @@ import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
+import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_SHOULD_KEYS;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING;
@@ -13,6 +14,7 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING_IDE
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;

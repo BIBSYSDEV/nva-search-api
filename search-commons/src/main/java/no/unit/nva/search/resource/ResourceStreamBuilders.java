@@ -16,6 +16,13 @@ import static no.unit.nva.search.common.constant.Words.VALUE;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
+import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
+import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
+import static no.unit.nva.search.resource.ResourceParameter.TITLE;
+import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
+import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.termQuery;
 
 import no.unit.nva.search.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search.common.constant.Functions;
@@ -24,13 +31,6 @@ import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
-
-import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
-import static no.unit.nva.search.resource.ResourceParameter.TITLE;
-import static org.opensearch.index.query.QueryBuilders.boolQuery;
-import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
-import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
-import static org.opensearch.index.query.QueryBuilders.termQuery;
 
 import java.util.Map;
 import java.util.stream.Collectors;

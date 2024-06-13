@@ -3,6 +3,7 @@ package no.unit.nva.search.common;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
@@ -37,16 +38,6 @@ class OpensearchSearchQueryToolsTest {
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
         );
     }
-
-//    @Test
-//    void invalidRangeQueryShould() {
-//        var queryRange = new OpensearchQueryRange<ResourceParameter>();
-//        assertThrows(
-//            IllegalArgumentException.class,
-//            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_SHOULD, "test")
-//        );
-//    }
-
 
     @Test
 //    @Disabled
