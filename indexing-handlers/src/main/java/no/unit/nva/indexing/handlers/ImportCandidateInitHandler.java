@@ -3,7 +3,7 @@ package no.unit.nva.indexing.handlers;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import no.unit.nva.indexing.model.IndexRequest;
-import no.unit.nva.search.IndexingClient;
+import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
 import nva.commons.core.ioutils.IoUtils;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static no.unit.nva.search.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static nva.commons.core.attempt.Try.attempt;
 
 public class ImportCandidateInitHandler implements RequestHandler<Object, String> {

@@ -12,8 +12,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.models.IndexDocument;
+
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.IndexDocument;
 import org.opensearch.action.DocWriteRequest.OpType;
 import org.opensearch.action.DocWriteResponse;
 import org.opensearch.action.bulk.BulkItemResponse;

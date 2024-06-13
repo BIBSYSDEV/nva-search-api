@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 import com.amazonaws.services.lambda.runtime.Context;
 import java.io.IOException;
 
-import no.unit.nva.search.IndexingClient;
+import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

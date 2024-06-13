@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.search.IndexingClient;
+import no.unit.nva.indexingclient.IndexingClient;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

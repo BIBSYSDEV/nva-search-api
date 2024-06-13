@@ -2,7 +2,7 @@ package no.unit.nva.indexing.testutils;
 
 import java.util.Objects;
 
-import no.unit.nva.search2.common.csv.ExportCsv;
+import no.unit.nva.search.common.csv.ExportCsv;
 import nva.commons.core.ioutils.IoUtils;
 
 import java.nio.file.Path;
