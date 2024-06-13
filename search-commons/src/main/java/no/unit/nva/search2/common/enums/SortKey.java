@@ -23,8 +23,6 @@ public interface SortKey {
 
     String asLowerCase();
 
-    String scriptValue();
-
     static Predicate<SortKey> equalTo(String name) {
         return key -> name.matches(key.keyPattern());
     }

@@ -28,12 +28,10 @@ public enum ImportCandidateSort implements SortKey {
 
     private final String keyValidationRegEx;
     private final String path;
-    private final String scriptValue;
 
     ImportCandidateSort(String jsonPath) {
         this.keyValidationRegEx = SortKey.getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.path = jsonPath;
-        this.scriptValue = String.format("doc['%s'].value", jsonPath);
     }
 
     @Override
@@ -44,16 +42,6 @@ public enum ImportCandidateSort implements SortKey {
     @Override
     public String asLowerCase() {
         return this.name().toLowerCase(Locale.getDefault());
-    }
-
-    @Override
-    public String scriptValue() {
-        return
-            switch (this) {
-                case RELEVANCE -> path;
-                case CREATED_DATE -> scriptValue + ".getMillis()";
-                default -> scriptValue;
-            };
     }
 
     @Override
