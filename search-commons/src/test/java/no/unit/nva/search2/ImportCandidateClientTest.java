@@ -229,9 +229,9 @@ class ImportCandidateClientTest {
                 URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
                 URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=10&from=0&sort=created_date"),
                 URI.create(REQUEST_BASE_URL + "orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
+                URI.create(REQUEST_BASE_URL + "orderBy=relevance,title:asc,CREATED_DATE:desc"),
                 URI.create(REQUEST_BASE_URL
-                    + "orderBy=relevance,title:asc,CREATED_DATE:desc&searchAfter=3.34,1241234,23412"),
-                URI.create(REQUEST_BASE_URL 
                     + "category=AcademicArticle&sort=relevance,TYPE+asc&sort=INSTANCE_TYPE+desc"));
         }
 

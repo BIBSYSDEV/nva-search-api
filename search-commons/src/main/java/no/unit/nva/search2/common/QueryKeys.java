@@ -23,11 +23,9 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
     private final transient Map<K, String> page;
     private final transient Map<K, String> search;
     private final  K fields;
-    private final  K sortOrder;
 
-    public QueryKeys(K fields, K sortOrder) {
+    public QueryKeys(K fields) {
         this.fields = fields;
-        this.sortOrder = sortOrder;
         search = new ConcurrentHashMap<>();
         page = new ConcurrentHashMap<>();
         otherRequired = new HashSet<>();
@@ -103,7 +101,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isPagingValue(K key) {
-        return key.ordinal() >= fields.ordinal() && key.ordinal() <= sortOrder.ordinal();
+        return key.ordinal() >= fields.ordinal();
     }
 
     public AsType<K> remove(K key) {

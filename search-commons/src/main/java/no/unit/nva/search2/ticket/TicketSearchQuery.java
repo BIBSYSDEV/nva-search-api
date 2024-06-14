@@ -31,7 +31,6 @@ import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
 import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
-import static no.unit.nva.search2.ticket.TicketParameter.SORT_ORDER;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
@@ -59,6 +58,7 @@ import org.opensearch.search.sort.SortOrder;
 
 /**
  * @author Stig Norland
+ * @author Sondre Vestad
  */
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
@@ -83,11 +83,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     @Override
     protected TicketParameter keyFields() {
         return NODES_SEARCHED;
-    }
-
-    @Override
-    protected TicketParameter keySortOrder() {
-        return SORT_ORDER;
     }
 
     @Override
@@ -176,7 +171,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             : key;
 
         return
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
+            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as())
+                .map(query -> Map.entry(key, query.getValue()));
+
     }
 
     /**
@@ -217,9 +214,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             // convert page to offset if offset is not set
             if (searchQuery.parameters().isPresent(PAGE)) {
                 if (searchQuery.parameters().isPresent(FROM)) {
-                    var page = searchQuery.parameters().get(PAGE).<Number>as();
-                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
-                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    var page = searchQuery.parameters().get(PAGE).<Number>as().longValue();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as().longValue();
+                    searchQuery.parameters().set(FROM, String.valueOf(page * perPage));
                 }
                 searchQuery.parameters().remove(PAGE);
             }

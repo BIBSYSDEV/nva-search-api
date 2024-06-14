@@ -19,6 +19,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public abstract Stream<QueryContentWrapper> assemble();
 
+    /**
+     * Method to mimic Domain driven design.
+     *
+     * @param queryClient simple service to do i/o (http)
+     * @return ResponseFormatter<ParameterKey>
+     */
     public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
 
     protected abstract URI openSearchUri();

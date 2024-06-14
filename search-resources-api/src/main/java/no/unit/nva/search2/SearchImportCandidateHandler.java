@@ -23,7 +23,7 @@ import nva.commons.core.JacocoGenerated;
 public class SearchImportCandidateHandler extends ApiGatewayHandler<Void, String> {
 
     private final ImportCandidateClient opensearchClient;
-    
+
     @JacocoGenerated
     public SearchImportCandidateHandler() {
         this(new Environment(), defaultClient());
@@ -33,7 +33,7 @@ public class SearchImportCandidateHandler extends ApiGatewayHandler<Void, String
         super(Void.class, environment);
         this.opensearchClient = candidateClient;
     }
-    
+
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
         return
@@ -44,12 +44,12 @@ public class SearchImportCandidateHandler extends ApiGatewayHandler<Void, String
                 .build()
                 .doSearch(opensearchClient).toString();
     }
-    
+
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpURLConnection.HTTP_OK;
     }
-    
+
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;

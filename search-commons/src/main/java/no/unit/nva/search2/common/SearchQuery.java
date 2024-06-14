@@ -28,6 +28,7 @@ import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.constant.ErrorMessages;
 import no.unit.nva.search2.common.constant.Functions;
 import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.constant.Words;
@@ -76,8 +77,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract K keyFields();
 
-    protected abstract K keySortOrder();
-
     protected abstract K keySearchAfter();
 
     protected abstract K toKey(String keyName);
@@ -98,7 +97,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     protected SearchQuery() {
         super();
         filters = new QueryFilter();
-        queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
+        queryKeys = new QueryKeys<>(keyFields());
         setMediaType(JSON_UTF_8.toString());
     }
 
@@ -155,9 +154,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
             : fieldValue.asSplitStream(COMMA)
             .map(this::toKey)
-            .flatMap(key -> key.searchFields(KEYWORD_FALSE)
-                .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
-            )
+            .flatMap(key -> key.searchFields(KEYWORD_FALSE).map(jsonPath -> Map.entry(jsonPath, key.fieldBoost())))
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
@@ -173,32 +170,18 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
-            default -> throw new RuntimeException("handler NOT defined -> " + key.name());
+            default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
-        var queryBuilder =
-            parameters().getSearchKeys().findAny().isEmpty()
-                ? QueryBuilders.matchAllQuery()
-                : builderMainQuery();
+        var builder = builderDefaultSearchSource();
 
-        var builder = builderDefaultSearchSource(queryBuilder);
-
-        if (fetchSource()) {
-            builder.fetchSource(include(), exclude());
-        } else {
-            builder.fetchSource(true);
-        }
-
+        handleFetchSource(builder);
         handleSearchAfter(builder);
-
-        builderStreamFieldSort().forEach(builder::sort);
-
-        if (includeAggregation()) {
-            builder.aggregation(builderAggregationsWithFilter());
-        }
+        handleAggregation(builder);
+        handleSorting(builder);
 
         return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
     }
@@ -243,7 +226,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return aggrFilter;
     }
 
-    protected SearchSourceBuilder builderDefaultSearchSource(QueryBuilder queryBuilder) {
+    protected SearchSourceBuilder builderDefaultSearchSource() {
+        var queryBuilder =
+            parameters().getSearchKeys().findAny().isEmpty()
+                ? QueryBuilders.matchAllQuery()
+                : builderMainQuery();
+
         return new SearchSourceBuilder()
             .query(queryBuilder)
             .size(size().as())
@@ -262,11 +250,42 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
+    private void handleAggregation(SearchSourceBuilder builder) {
+        if (includeAggregation()) {
+            builder.aggregation(builderAggregationsWithFilter());
+        }
+    }
+
+    private void handleFetchSource(SearchSourceBuilder builder) {
+        if (fetchSource()) {
+            builder.fetchSource(include(), exclude());
+        } else {
+            builder.fetchSource(true);
+        }
+    }
+
     private void handleSearchAfter(SearchSourceBuilder builder) {
         var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
         if (nonNull(sortKeys)) {
             builder.searchAfter(sortKeys);
         }
+    }
+
+    private void handleSorting(SearchSourceBuilder builder) {
+        if (isSortByRelevance()) {
+            builder.trackScores(true); // Not very well documented. This allows sorting on relevance and other fields.
+        }
+        builderStreamFieldSort().forEach(builder::sort);
+    }
+
+    private boolean isSortByRelevance() {
+        var sorts = sort().toString();
+        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
+    }
+
+    private boolean isMustNot(K key) {
+        return NO_ITEMS.equals(key.searchOperator())
+            || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 
     private boolean fetchSource() {
@@ -275,10 +294,5 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     private boolean includeAggregation() {
         return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
-    }
-
-    private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-            || NOT_ONE_ITEM.equals(key.searchOperator());
     }
 }
