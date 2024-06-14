@@ -59,6 +59,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
+
+    /**
+     * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo);
+     * This value only used in debug and tests.
+     */
     private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
     public final transient QueryFilter filters;
@@ -128,7 +133,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     /**
      * Builds URI to query SWS based on post body.
-     *
      * @return an URI to Sws search without parameters.
      */
     public URI getNvaSearchApiUri() {

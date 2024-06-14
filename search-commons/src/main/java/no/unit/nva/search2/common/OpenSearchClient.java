@@ -17,6 +17,7 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.commons.json.JsonSerializable;
@@ -90,29 +91,39 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected abstract R handleResponse(HttpResponse<String> response);
 
-    protected HttpResponse<String> fetch(HttpRequest httpRequest) {
-        var fetchStart = Instant.now();
-        return attempt(() -> httpClient.send(httpRequest, bodyHandler))
-            .map(response -> {
-                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-                return response;
-            })
-            .orElse(responseFailure -> {
-                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-                logger.error(new ErrorEntry(httpRequest.uri(), responseFailure.getException()).toJsonString());
-                return null;
-            });
+
+
+    protected Stream<AsyncHttpResponse> fetch(AsyncHttpReqest async) {
+//            var fetchStart = Instant.now();
+        return httpClient.sendAsync(async.request, bodyHandler).thenApply(response ->new AsyncHttpResponse(response.body(),async.requestLeft())
+//            .map(response -> {
+//                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+//                return response;
+//            })
+//            .orElse(responseFailure -> {
+//                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+//                logger.error(new ErrorEntry(async.uri(), responseFailure.getException()).toJsonString());
+//                return null;
+//            });
     }
 
-    protected HttpRequest createRequest(QueryContentWrapper qbs) {
+    protected Stream<AsyncHttpReqest> createRequest(QueryContentWrapper qbs) {
         logger.debug(qbs.body());
-        return HttpRequest
-            .newBuilder(qbs.uri())
-            .headers(
-                ACCEPT, MediaType.JSON_UTF_8.toString(),
-                CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
-                AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-            .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build();
+        var requests = hasAggregation(qbs) ? 2 : 1;
+        for(int i = requests; i > 0; i--) {
+            var request = HttpRequest
+                .newBuilder(qbs.uri())
+                .headers(
+                    ACCEPT, MediaType.JSON_UTF_8.toString(),
+                    CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
+                    AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+                .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build());
+            return Stream.of(new AsyncHttpReqest(request,i));
+        }
+    }
+
+    private boolean hasAggregation(QueryContentWrapper qbs) {
+        return false;
     }
 
 
@@ -138,5 +149,11 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {
 
+    }
+
+    record AsyncHttpReqest(HttpRequest request, Integer requestLeft){
+    }
+
+    record AsyncHttpResponse(CompletableFuture<String> body, Integer responseLeft){
     }
 }

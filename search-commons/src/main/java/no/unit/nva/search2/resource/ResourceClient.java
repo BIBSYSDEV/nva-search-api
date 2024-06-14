@@ -7,6 +7,9 @@ import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
@@ -20,6 +23,7 @@ import nva.commons.secrets.SecretsReader;
 public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {
 
     private final UserSettingsClient userSettingsClient;
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
 
     public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
@@ -36,7 +40,12 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
     @JacocoGenerated
     public static ResourceClient defaultClient() {
         var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
-        return new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider);
+        var httpClient =  HttpClient.newBuilder()
+            .executor(executorService)
+            .version(HttpClient.Version.HTTP_2)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+        return new ResourceClient(httpClient, cachedJwtProvider);
     }
 
     @Override
