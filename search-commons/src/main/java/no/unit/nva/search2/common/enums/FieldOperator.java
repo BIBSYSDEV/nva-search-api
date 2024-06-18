@@ -9,19 +9,19 @@ public enum FieldOperator {
     /**
      * ALL must match in document (Only sensible for collections).
      */
-    ALL_ITEMS,
+    ALL_OF,
     /**
      * None can match in document (Inverted of MUST).
      */
-    NO_ITEMS,
+    NOT_ALL_OF,
     /**
      * One or more must match (Only sensible for unique fields).
      */
-    ONE_OR_MORE_ITEM,
+    ANY_OF,
     /**
      * Any cannot match (These should be excluded).
      */
-    NOT_ONE_ITEM,
+    NOT_ANY_OF,
     /**
      * Greater than or equal to.
      */
