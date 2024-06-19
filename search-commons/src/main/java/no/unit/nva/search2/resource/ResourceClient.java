@@ -6,8 +6,8 @@ import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,18 +58,21 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
         return
             query.withUserSettings(userSettingsClient)
                 .assemble()
-                .map(this::createRequest)
+                .flatMap(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
                 .findFirst().orElseThrow();
     }
 
     @Override
-    protected SwsResponse handleResponse(HttpResponse<String> response) {
-        if (response.statusCode() != HTTP_OK) {
-            throw new RuntimeException(response.body());
-        }
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
+    protected SwsResponse handleResponse(CompletableFuture<AsyncHttpResponse> futureResponse) {
+        futureResponse.thenAcceptAsync( action -> {
+            if (action.response().statusCode() != HTTP_OK) {
+                throw new RuntimeException(action.response().body());
+            }
+
+        })
+        return attempt(() -> singleLineObjectMapper.readValue(action.response().body(), SwsResponse.class))
             .map(logAndReturnResult())
             .orElseThrow();
     }
