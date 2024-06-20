@@ -1,7 +1,6 @@
 package no.unit.nva.search2.common.jwt;
 
 import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.UsernamePasswordWrapper;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;

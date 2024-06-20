@@ -10,7 +10,6 @@ import java.util.function.BinaryOperator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
-import no.unit.nva.search2.common.jwt.Tools;
 import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
