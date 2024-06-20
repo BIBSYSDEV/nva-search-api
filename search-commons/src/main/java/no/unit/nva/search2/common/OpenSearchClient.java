@@ -67,7 +67,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected R handleResponse(CompletableFuture<HttpResponse<String>> futureResponse) {
         return futureResponse
-            .thenApply(response -> {
+            .thenApplyAsync(response -> {
                 if (response.statusCode() != HTTP_OK) {
                     throw new RuntimeException(response.body());
                 }
@@ -87,11 +87,11 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected CompletableFuture<HttpResponse<String>> fetch(HttpRequest request) {
         var fetchStart = Instant.now();
         return httpClient.sendAsync(request, bodyHandler)
-            .thenApply(response ->{
+            .thenApplyAsync(response -> {
                 fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
                 return response;
             })
-            .exceptionally(responseFailure -> {
+            .exceptionallyAsync(responseFailure -> {
                 fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
                 logger.error(new ErrorEntry(request.uri(), responseFailure.toString()).toJsonString());
                 return null;
