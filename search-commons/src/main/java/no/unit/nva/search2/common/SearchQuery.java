@@ -181,24 +181,15 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
+        var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
         var builder = builderDefaultSearchSource();
-        handleFetchSource(builder);
 
-        var requests = Integer.valueOf(includeAggregation() ? 2 : 1);
-        var contentWrappers = new ArrayList<QueryContentWrapper>(requests);
-        if (requests.equals(2)) {
-            builder.size(0);
-            handleAggregation(builder);
-            contentWrappers.add(
-                new QueryContentWrapper(builder.toString(), this.openSearchUri())
-            );
-            builder.size(size().as());
-        }
+        handleFetchSource(builder);
+        handleAggregation(builder, contentWrappers);
         handleSearchAfter(builder);
         handleSorting(builder);
-        contentWrappers.add(
-            new QueryContentWrapper(builder.toString(), this.openSearchUri())
-        );
+
+        contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
         return contentWrappers.stream();
     }
 
@@ -266,14 +257,17 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
-    private void handleAggregation(SearchSourceBuilder builder) {
-        if (includeAggregation()) {
+    private void handleAggregation(SearchSourceBuilder builder, ArrayList<QueryContentWrapper> contentWrappers) {
+        if (hasAggregation()) {
+            builder.size(0);
             builder.aggregation(builderAggregationsWithFilter());
+            contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+            builder.size(size().as());
         }
     }
 
     private void handleFetchSource(SearchSourceBuilder builder) {
-        if (fetchSource()) {
+        if (isFetchSource()) {
             builder.fetchSource(include(), exclude());
         } else {
             builder.fetchSource(true);
@@ -294,6 +288,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         builderStreamFieldSort().forEach(builder::sort);
     }
 
+    private int numberOfRequests() {
+        return hasAggregation() ? 2 : 1;
+    }
+
     private boolean isSortByRelevance() {
         var sorts = sort().toString();
         return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
@@ -304,11 +302,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             || NOT_ANY_OF.equals(key.searchOperator());
     }
 
-    private boolean fetchSource() {
+    private boolean isFetchSource() {
         return nonNull(exclude()) || nonNull(include());
     }
 
-    private boolean includeAggregation() {
+    private boolean hasAggregation() {
         return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
     }
 }
