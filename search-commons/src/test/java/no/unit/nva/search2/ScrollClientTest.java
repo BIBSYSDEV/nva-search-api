@@ -1,13 +1,12 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search2.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.IOException;
 import java.net.http.HttpClient;
 import no.unit.nva.search2.scroll.ScrollClient;
 import no.unit.nva.search2.scroll.ScrollParameters;
@@ -25,12 +24,12 @@ class ScrollClientTest {
 
 
     @BeforeEach
-    public void setUp() throws IOException, InterruptedException {
+    public void setUp() {
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         scrollClient = new ScrollClient(httpClient, cachedJwtProvider);
-        when(httpClient.send(any(), any()))
-            .thenReturn(mockedHttpResponse(SAMPLE_PUBLICATION_SEARCH));
+        when(httpClient.sendAsync(any(), any()))
+            .thenReturn(mockedFutureHttpResponse(SAMPLE_PUBLICATION_SEARCH));
     }
 
 

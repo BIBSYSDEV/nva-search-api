@@ -59,7 +59,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -169,7 +168,7 @@ class ResourceClientTest {
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
-            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL + "&query=EntityDescription");
 
             var response1 = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))

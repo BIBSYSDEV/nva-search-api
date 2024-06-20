@@ -7,7 +7,6 @@ import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureAuthUri;
 import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
-import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,8 +16,8 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import com.google.common.net.MediaType;
@@ -89,11 +88,13 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
-                .findFirst().orElseThrow();
+                .reduce(responseAccumulator())
+                .orElseThrow();
     }
 
     protected abstract R handleResponse(CompletableFuture<HttpResponse<String>> response);
 
+    protected abstract BinaryOperator<R> responseAccumulator();
 
     protected CompletableFuture<HttpResponse<String>> fetch(HttpRequest request) {
         var fetchStart = Instant.now();
@@ -101,16 +102,12 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .thenApply(response ->{
                 fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
                 return response;
+            })
+            .exceptionally(responseFailure -> {
+                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+                logger.error(new ErrorEntry(request.uri(), responseFailure.toString()).toJsonString());
+                return null;
             });
-//            .map(response -> {
-//                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-//                return response;
-//            })
-//            .orElse(responseFailure -> {
-//                fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-//                logger.error(new ErrorEntry(async.uri(), responseFailure.getException()).toJsonString());
-//                return null;
-//            });
     }
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
@@ -144,7 +141,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .toMillis();
     }
 
-    record ErrorEntry(URI requestUri, Exception exception) implements JsonSerializable {
+    record ErrorEntry(URI requestUri, String exception) implements JsonSerializable {
 
     }
 

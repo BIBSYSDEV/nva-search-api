@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BinaryOperator;
 
 import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
@@ -18,6 +19,7 @@ import no.unit.nva.search2.common.records.SwsResponse;
 import no.unit.nva.search2.common.records.SwsResponse.SwsResponseBuilder;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
+
 
 /**
  * @author Stig Norland
@@ -42,7 +44,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
     @JacocoGenerated
     public static ResourceClient defaultClient() {
         var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
-        var httpClient =  HttpClient.newBuilder()
+        var httpClient = HttpClient.newBuilder()
             .executor(executorService)
             .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(10))
@@ -63,19 +65,25 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
-                .collect(() -> SwsResponseBuilder::swsResponseBuilder,  SwsResponseBuilder::merge)
-                .build();
+                .reduce(responseAccumulator())
+                .orElseThrow();
+    }
+
+    @Override
+    protected BinaryOperator<SwsResponse> responseAccumulator() {
+        return (a, b) -> SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
     }
 
     @Override
     protected SwsResponse handleResponse(CompletableFuture<HttpResponse<String>> futureResponse) {
-        return futureResponse.thenApply(action -> {
+        return futureResponse
+            .thenApply(action -> {
                 if (action.statusCode() != HTTP_OK) {
                     throw new RuntimeException(action.body());
                 }
-            return attempt(() -> singleLineObjectMapper.readValue(action.body(), SwsResponse.class))
-                .map(logAndReturnResult())
-                .orElseThrow();
+                return attempt(() -> singleLineObjectMapper.readValue(action.body(), SwsResponse.class))
+                    .map(logAndReturnResult())
+                    .orElseThrow();
             })
             .join();
     }

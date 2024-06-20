@@ -19,6 +19,8 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
@@ -50,6 +52,24 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
                 .findFirst().orElseThrow();
     }
 
+    @Override
+    protected UserSettings handleResponse(CompletableFuture<HttpResponse<String>> future) {
+        return future.thenApply(response -> {
+                if (response.statusCode() != HTTP_OK) {
+                    throw new RuntimeException("Error fetching user settings: " + response.body());
+                }
+                return attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
+                    .map(logAndReturnUserSettings())
+                    .orElseThrow();
+            })
+            .join();
+    }
+
+    @Override
+    protected BinaryOperator<UserSettings> responseAccumulator() {
+        return (a, b) -> a;
+    }
+
     private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
         return query.parameters().get(CONTRIBUTOR).asStream();
     }
@@ -64,19 +84,6 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
                 CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
                 AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
             .GET().build();
-    }
-
-
-    @Override
-    protected UserSettings handleResponse(HttpResponse<String> response) {
-        if (response.statusCode() != HTTP_OK) {
-            throw new RuntimeException("Error fetching user settings: " + response.body());
-        }
-
-        return
-            attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
-                .map(logAndReturnUserSettings())
-                .orElseThrow();
     }
 
     protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnUserSettings() {

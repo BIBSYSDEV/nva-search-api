@@ -18,7 +18,6 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
-import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -200,7 +199,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         contentWrappers.add(
             new QueryContentWrapper(builder.toString(), this.openSearchUri())
         );
-
         return contentWrappers.stream();
     }
 

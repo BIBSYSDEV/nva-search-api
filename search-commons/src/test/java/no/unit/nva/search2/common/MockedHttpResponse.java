@@ -12,12 +12,16 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import javax.net.ssl.SSLSession;
-import org.jetbrains.annotations.NotNull;
 
 public class MockedHttpResponse {
 
-    @NotNull
+    public static CompletableFuture<HttpResponse<Object>> mockedFutureHttpResponse(String filename) {
+        return CompletableFuture.completedFuture(mockedHttpResponse(filename));
+    }
+
+
     public static HttpResponse<Object> mockedHttpResponse(String filename) {
         return new HttpResponse<>() {
             @Override
