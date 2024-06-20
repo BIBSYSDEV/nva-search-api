@@ -8,6 +8,7 @@ paths:
   /customer/import-candidates:
     get:
       description: "Search for import candidates by given criteria"
+      operationId: searchImportCandidatesAuthorized
       parameters:
         - $ref: '#/components/parameters/additionalIdentifiersParam'
         - $ref: '#/components/parameters/additionalIdentifiersNotParam'
@@ -90,6 +91,7 @@ paths:
   /customer/tickets:
     get:
       description: "Search for Tickets by customer"
+      operationId: searchTicketsByCustomer
       parameters:
         - $ref: '#/components/parameters/assigneeParam'
         - $ref: '#/components/parameters/assigneeNotParam'
@@ -171,6 +173,7 @@ paths:
   /customer/resources:
     get:
       description: "Search for publications by customer"
+      operationId: searchResourcesByCustomer
       parameters:
         - $ref: '#/components/parameters/abstractNotParam'
         - $ref: '#/components/parameters/abstractParam'
@@ -331,6 +334,7 @@ paths:
       They accept more than one value, each value must be separated by a <code>comma</code>. 
       If you use <code>space</code> between search phrases, it will usually be interpreted as words that should be found in the text.
       The more hits it gets, the closer to the top of search result an item will be.</p>'
+      operationId: searchResources
       parameters:
         - $ref: '#/components/parameters/aggregationParam'
         - $ref: '#/components/parameters/abstractNotParam'
@@ -488,6 +492,7 @@ paths:
       They accept more than one value, each value must be separated by a <code>comma</code>. 
       If you use <code>space</code> between search phrases, it will usually be interpreted as words that should be found in the text.
       The more hits it gets, the closer to the top of search result an item will be.</p>'
+      operationId: exportResources
       parameters:
         - $ref: '#/components/parameters/abstractNotParam'
         - $ref: '#/components/parameters/abstractParam'
@@ -632,6 +637,7 @@ paths:
   /import-candidates2:
     get:
       description: "Search for import candidates by given criteria"
+      operationId: searchImportCandidates
       parameters:
         - $ref: '#/components/parameters/additionalIdentifiersParam'
         - $ref: '#/components/parameters/additionalIdentifiersNotParam'
