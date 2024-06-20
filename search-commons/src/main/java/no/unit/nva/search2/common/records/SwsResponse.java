@@ -113,7 +113,7 @@ public record SwsResponse(
         }
 
         public SwsResponseBuilder withAggregations(JsonNode aggregations) {
-            if (!aggregations.isEmpty()) {
+            if (nonNull(aggregations) && !aggregations.isEmpty()) {
                 this.aggregations = aggregations;
             }
             return this;
