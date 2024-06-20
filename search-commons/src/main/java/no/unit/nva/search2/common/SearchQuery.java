@@ -13,8 +13,8 @@ import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ALL_OF;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
@@ -284,8 +284,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     }
 
     private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-            || NOT_ONE_ITEM.equals(key.searchOperator());
+        return NOT_ALL_OF.equals(key.searchOperator())
+            || NOT_ANY_OF.equals(key.searchOperator());
     }
 
     private boolean fetchSource() {
