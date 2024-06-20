@@ -1,9 +1,10 @@
 package no.unit.nva.search2.common.builder;
 
 import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search2.common.enums.FieldOperator.ONE_OR_MORE_ITEM;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -40,7 +41,7 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isSearchAny(K key) {
-        return key.searchOperator().equals(ONE_OR_MORE_ITEM) || key.searchOperator().equals(NOT_ONE_ITEM);
+        return key.searchOperator().equals(ANY_OF) || key.searchOperator().equals(NOT_ANY_OF);
     }
 
     private boolean isRangeMissingComma(K key, String value) {
