@@ -184,9 +184,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         var builder = builderDefaultSearchSource();
         handleFetchSource(builder);
 
-        var requests = includeAggregation() ? 2 : 1;
+        var requests = Integer.valueOf(includeAggregation() ? 2 : 1);
         var contentWrappers = new ArrayList<QueryContentWrapper>(requests);
-        if (requests == 2) {
+        if (requests.equals(2)) {
             builder.size(0);
             handleAggregation(builder);
             contentWrappers.add(

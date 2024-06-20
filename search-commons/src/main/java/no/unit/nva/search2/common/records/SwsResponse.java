@@ -1,7 +1,6 @@
 package no.unit.nva.search2.common.records;
 
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,10 +71,10 @@ public record SwsResponse(
     }
 
     public static final class SwsResponseBuilder {
-        private String _scroll_id;
+        private String scrollId;
         private int took;
         private boolean timed_out;
-        private ShardsInfo _shards;
+        private ShardsInfo shards;
         private HitsInfo hits;
         private JsonNode aggregations;
 
@@ -86,8 +85,8 @@ public record SwsResponse(
             return new SwsResponseBuilder();
         }
 
-        public SwsResponseBuilder withScrollId(String _scroll_id) {
-            this._scroll_id = _scroll_id;
+        public SwsResponseBuilder withScrollId(String scrollId) {
+            this.scrollId = scrollId;
             return this;
         }
 
@@ -96,13 +95,13 @@ public record SwsResponse(
             return this;
         }
 
-        public SwsResponseBuilder withTimedOut(boolean timed_out) {
-            this.timed_out = timed_out;
+        public SwsResponseBuilder withTimedOut(boolean timedOut) {
+            this.timed_out = timedOut;
             return this;
         }
 
-        public SwsResponseBuilder withShards(ShardsInfo _shards) {
-            this._shards = _shards;
+        public SwsResponseBuilder withShards(ShardsInfo shards) {
+            this.shards = shards;
             return this;
         }
 
@@ -129,14 +128,8 @@ public record SwsResponse(
                     .withTook(response.took());
         }
 
-        public SwsResponseBuilder returnBuilder() {
-            return this;
-        }
-
-
-
         public SwsResponse build() {
-            return new SwsResponse(took, timed_out, _shards, hits, aggregations, _scroll_id);
+            return new SwsResponse(took, timed_out, shards, hits, aggregations, scrollId);
         }
     }
 

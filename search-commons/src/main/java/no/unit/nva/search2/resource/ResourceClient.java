@@ -27,7 +27,8 @@ import nva.commons.secrets.SecretsReader;
 public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {
 
     private final UserSettingsClient userSettingsClient;
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    @SuppressWarnings("PMD.DoNotUseThreads")
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
 
     public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
