@@ -1,6 +1,9 @@
 package no.unit.nva.search2.resource;
 
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search2.common.jwt.Tools.getCachedJwtProvider;
+import static no.unit.nva.search2.common.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
+
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.time.Duration;
@@ -12,7 +15,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.common.records.SwsResponse.SwsResponseBuilder;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
@@ -62,7 +64,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
 
     @Override
     protected BinaryOperator<SwsResponse> responseAccumulator() {
-        return (a, b) -> SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
+        return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
     }
 
     @Override
