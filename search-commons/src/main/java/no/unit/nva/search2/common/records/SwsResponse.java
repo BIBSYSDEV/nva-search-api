@@ -1,6 +1,7 @@
 package no.unit.nva.search2.common.records;
 
 import static java.util.Objects.nonNull;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.beans.Transient;
@@ -68,4 +69,68 @@ public record SwsResponse(
                 .orElse(List.of())
                 : List.of();
     }
+
+    public static final class SwsResponseBuilder {
+        private String scrollId;
+        private int took;
+        private boolean timed_out;
+        private ShardsInfo shards;
+        private HitsInfo hits;
+        private JsonNode aggregations;
+
+        private SwsResponseBuilder() {
+        }
+
+        public static SwsResponseBuilder swsResponseBuilder() {
+            return new SwsResponseBuilder();
+        }
+
+        public SwsResponseBuilder withScrollId(String scrollId) {
+            this.scrollId = scrollId;
+            return this;
+        }
+
+        public SwsResponseBuilder withTook(int took) {
+            this.took = took;
+            return this;
+        }
+
+        public SwsResponseBuilder withTimedOut(boolean timedOut) {
+            this.timed_out = timedOut;
+            return this;
+        }
+
+        public SwsResponseBuilder withShards(ShardsInfo shards) {
+            this.shards = shards;
+            return this;
+        }
+
+        public SwsResponseBuilder withHits(HitsInfo hits) {
+            if (nonNull(hits) && hits.total().value() >= 0 ) {
+                this.hits = hits;
+            }
+            return this;
+        }
+
+        public SwsResponseBuilder withAggregations(JsonNode aggregations) {
+            if (!aggregations.isEmpty()) {
+                this.aggregations = aggregations;
+            }
+            return this;
+        }
+
+        public SwsResponseBuilder merge(SwsResponse response){
+            return withHits(response.hits())
+                    .withAggregations(response.aggregations())
+                    .withShards(response._shards())
+                    .withScrollId(response._scroll_id())
+                    .withTimedOut(response.timed_out())
+                    .withTook(response.took());
+        }
+
+        public SwsResponse build() {
+            return new SwsResponse(took, timed_out, shards, hits, aggregations, scrollId);
+        }
+    }
+
 }

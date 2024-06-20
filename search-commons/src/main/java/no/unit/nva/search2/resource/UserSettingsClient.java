@@ -1,6 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
@@ -9,7 +8,8 @@ import static no.unit.nva.search2.common.constant.Functions.readApiHost;
 import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static nva.commons.core.attempt.Try.attempt;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -19,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
@@ -50,6 +51,24 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
                 .findFirst().orElseThrow();
     }
 
+    @Override
+    protected UserSettings jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
+        return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
+    }
+
+    @Override
+    protected BinaryOperator<UserSettings> responseAccumulator() {
+        return (a, b) -> a;
+    }
+
+    @Override
+    protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnResult() {
+        return result -> {
+            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
+            return result;
+        };
+    }
+
     private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
         return query.parameters().get(CONTRIBUTOR).asStream();
     }
@@ -66,27 +85,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
             .GET().build();
     }
 
-
-    @Override
-    protected UserSettings handleResponse(HttpResponse<String> response) {
-        if (response.statusCode() != HTTP_OK) {
-            throw new RuntimeException("Error fetching user settings: " + response.body());
-        }
-
-        return
-            attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
-                .map(logAndReturnUserSettings())
-                .orElseThrow();
-    }
-
-    protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnUserSettings() {
-        return result -> {
-            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
-            return result;
-        };
-    }
-
-    record UserSettingLog(URI uri, List<String> promotedPublications) implements JsonSerializable {
+    private record UserSettingLog(URI uri, List<String> promotedPublications) implements JsonSerializable {
         public UserSettingLog(URI uri, UserSettings userSettings) {
             this(uri, userSettings.promotedPublications());
         }

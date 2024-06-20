@@ -4,6 +4,7 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search2.common.constant.Words.ALL;
@@ -18,6 +19,7 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,6 +61,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
+
+    /**
+     * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo);
+     * This value only used in debug and tests.
+     */
     private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
     public final transient QueryFilter filters;
@@ -128,7 +135,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     /**
      * Builds URI to query SWS based on post body.
-     *
      * @return an URI to Sws search without parameters.
      */
     public URI getNvaSearchApiUri() {
@@ -176,14 +182,16 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
+        var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
         var builder = builderDefaultSearchSource();
 
         handleFetchSource(builder);
+        handleAggregation(builder, contentWrappers);
         handleSearchAfter(builder);
-        handleAggregation(builder);
         handleSorting(builder);
 
-        return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+        contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+        return contentWrappers.stream();
     }
 
     /**
@@ -250,14 +258,17 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
-    private void handleAggregation(SearchSourceBuilder builder) {
-        if (includeAggregation()) {
+    private void handleAggregation(SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
+        if (hasAggregation()) {
+            builder.size(ZERO_RESULTS_AGGREGATION_ONLY);
             builder.aggregation(builderAggregationsWithFilter());
+            contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+            builder.size(size().as());
         }
     }
 
     private void handleFetchSource(SearchSourceBuilder builder) {
-        if (fetchSource()) {
+        if (isFetchSource()) {
             builder.fetchSource(include(), exclude());
         } else {
             builder.fetchSource(true);
@@ -278,6 +289,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         builderStreamFieldSort().forEach(builder::sort);
     }
 
+    private int numberOfRequests() {
+        return hasAggregation() ? 2 : 1;
+    }
+
     private boolean isSortByRelevance() {
         var sorts = sort().toString();
         return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
@@ -288,11 +303,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             || NOT_ANY_OF.equals(key.searchOperator());
     }
 
-    private boolean fetchSource() {
+    private boolean isFetchSource() {
         return nonNull(exclude()) || nonNull(include());
     }
 
-    private boolean includeAggregation() {
+    private boolean hasAggregation() {
         return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
     }
 }
