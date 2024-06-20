@@ -258,7 +258,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
-    private void handleAggregation(SearchSourceBuilder builder, ArrayList<QueryContentWrapper> contentWrappers) {
+    private void handleAggregation(SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
         if (hasAggregation()) {
             builder.size(ZERO_RESULTS_AGGREGATION_ONLY);
             builder.aggregation(builderAggregationsWithFilter());
