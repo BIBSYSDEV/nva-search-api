@@ -1,6 +1,5 @@
 package no.unit.nva.search2.resource;
 
-import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
@@ -9,7 +8,6 @@ import static no.unit.nva.search2.common.constant.Functions.readApiHost;
 import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
-import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
@@ -21,7 +19,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 

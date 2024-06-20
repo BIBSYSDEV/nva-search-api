@@ -1,9 +1,6 @@
 package no.unit.nva.search2.resource;
 
-import static java.util.stream.Collectors.joining;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
-import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.time.Duration;
