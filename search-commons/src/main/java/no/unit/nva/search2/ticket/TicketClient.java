@@ -1,6 +1,8 @@
 package no.unit.nva.search2.ticket;
 
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search2.common.jwt.Tools.getCachedJwtProvider;
+
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.function.BinaryOperator;

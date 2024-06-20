@@ -7,6 +7,7 @@ import no.unit.nva.commons.json.JsonSerializable;
  */
 public record ResponseLogInfo(
     int totalHits,
+    int hitsReturned,
     long queryDuration,
     long networkDuration,
     long prePostDuration,
@@ -22,6 +23,7 @@ public record ResponseLogInfo(
     public static final class Builder {
 
         private int totalHits;
+        private int hitsReturned;
         private long totalTime;
         private long fetchTime;
         private long searchTime;
@@ -50,6 +52,12 @@ public record ResponseLogInfo(
             return this;
         }
 
+        public Builder withHitsReturned(int hitsReturned) {
+            this.hitsReturned = hitsReturned;
+            return this;
+        }
+
+
         public Builder withSearchQuery(String searchQuery) {
             this.searchQuery = searchQuery;
             return this;
@@ -58,12 +66,14 @@ public record ResponseLogInfo(
         public Builder withSwsResponse(SwsResponse response) {
             return
                 this.withOpensearchResponseTime(response.took())
-                    .withTotalHits(response.getTotalSize());
+                    .withTotalHits(response.getTotalSize())
+                    .withHitsReturned(response.getSearchHits().size());
         }
 
         public String toJsonString() {
             return new ResponseLogInfo(
                 totalHits,
+                hitsReturned,
                 searchTime,
                 fetchTime - searchTime,
                 totalTime - fetchTime,

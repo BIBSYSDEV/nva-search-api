@@ -260,10 +260,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     private void handleAggregation(SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
         if (hasAggregation()) {
-            builder.size(ZERO_RESULTS_AGGREGATION_ONLY);
-            builder.aggregation(builderAggregationsWithFilter());
-            contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
-            builder.size(size().as());
+            var aggregationBuilder = builder.shallowCopy();
+            aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
+            aggregationBuilder.aggregation(builderAggregationsWithFilter());
+            contentWrappers.add(new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
         }
     }
 
