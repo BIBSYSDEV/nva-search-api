@@ -10,6 +10,8 @@ import static no.unit.nva.search2.common.constant.Words.HTTPS;
 import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;
 import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
 import static nva.commons.core.attempt.Try.attempt;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -53,21 +55,21 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     }
 
     @Override
-    protected UserSettings handleResponse(CompletableFuture<HttpResponse<String>> future) {
-        return future.thenApply(response -> {
-                if (response.statusCode() != HTTP_OK) {
-                    throw new RuntimeException("Error fetching user settings: " + response.body());
-                }
-                return attempt(() -> singleLineObjectMapper.readValue(response.body(), UserSettings.class))
-                    .map(logAndReturnUserSettings())
-                    .orElseThrow();
-            })
-            .join();
+    protected UserSettings jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
+        return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
     }
 
     @Override
     protected BinaryOperator<UserSettings> responseAccumulator() {
         return (a, b) -> a;
+    }
+
+    @Override
+    protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnResult() {
+        return result -> {
+            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
+            return result;
+        };
     }
 
     private Stream<String> createQueryBuilderStream(ResourceSearchQuery query) {
@@ -86,14 +88,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
             .GET().build();
     }
 
-    protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnUserSettings() {
-        return result -> {
-            logger.info(new UserSettingLog(userSettingUri, result).toJsonString());
-            return result;
-        };
-    }
-
-    record UserSettingLog(URI uri, List<String> promotedPublications) implements JsonSerializable {
+    private record UserSettingLog(URI uri, List<String> promotedPublications) implements JsonSerializable {
         public UserSettingLog(URI uri, UserSettings userSettings) {
             this(uri, userSettings.promotedPublications());
         }

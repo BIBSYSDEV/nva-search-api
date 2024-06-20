@@ -1,5 +1,6 @@
 package no.unit.nva.search2.common;
 
+import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.stream.Collectors.joining;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
@@ -7,6 +8,7 @@ import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureAuthUri;
 import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static no.unit.nva.search2.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -20,15 +22,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.jwt.CognitoAuthenticator;
-import no.unit.nva.search2.common.records.UsernamePasswordWrapper;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.ResponseLogInfo;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.common.records.UsernamePasswordWrapper;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
@@ -92,9 +95,24 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 .orElseThrow();
     }
 
-    protected abstract R handleResponse(CompletableFuture<HttpResponse<String>> response);
+    protected R handleResponse(CompletableFuture<HttpResponse<String>> futureResponse) {
+        return futureResponse
+            .thenApply(response -> {
+                if (response.statusCode() != HTTP_OK) {
+                    throw new RuntimeException(response.body());
+                }
+                return attempt(() -> jsonToResponse(response))
+                    .map(logAndReturnResult())
+                    .orElseThrow();
+            })
+            .join();
+    }
+
+    protected abstract R jsonToResponse(HttpResponse<String> response) throws JsonProcessingException;
 
     protected abstract BinaryOperator<R> responseAccumulator();
+
+    protected abstract FunctionWithException<R, R, RuntimeException> logAndReturnResult();
 
     protected CompletableFuture<HttpResponse<String>> fetch(HttpRequest request) {
         var fetchStart = Instant.now();
@@ -121,27 +139,22 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build();
     }
 
-    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
-        return result -> {
-            logger.info(ResponseLogInfo.builder()
-                .withTotalTime(totalDuration())
-                .withFetchTime(fetchDuration)
-                .withSwsResponse(result)
-                .withSearchQuery(queryParameters)
-                .toJsonString()
-            );
-            return result;
-        };
+    protected String buildLogInfo(SwsResponse result) {
+        return ResponseLogInfo.builder()
+            .withTotalTime(totalDuration())
+            .withFetchTime(fetchDuration)
+            .withSwsResponse(result)
+            .withSearchQuery(queryParameters)
+            .toJsonString();
     }
 
-
-    private long totalDuration() {
+    protected long totalDuration() {
         return Duration
             .between(queryBuilderStart, Instant.now())
             .toMillis();
     }
 
-    record ErrorEntry(URI requestUri, String exception) implements JsonSerializable {
+    protected record ErrorEntry(URI requestUri, String exception) implements JsonSerializable {
 
     }
 
