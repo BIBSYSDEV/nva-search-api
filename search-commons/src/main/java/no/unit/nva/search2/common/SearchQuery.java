@@ -18,6 +18,8 @@ import static no.unit.nva.search2.common.enums.FieldOperator.NO_ITEMS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
+import java.net.http.HttpRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -181,13 +183,25 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     @Override
     public Stream<QueryContentWrapper> assemble() {
         var builder = builderDefaultSearchSource();
-
         handleFetchSource(builder);
-        handleSearchAfter(builder);
-        handleAggregation(builder);
-        handleSorting(builder);
 
-        return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+        var requests = includeAggregation() ? 2 : 1;
+        var contentWrappers = new ArrayList<QueryContentWrapper>(requests);
+        if (requests == 2) {
+            builder.size(0);
+            handleAggregation(builder);
+            contentWrappers.add(
+                new QueryContentWrapper(builder.toString(), this.openSearchUri())
+            );
+            builder.size(size().as());
+        }
+        handleSearchAfter(builder);
+        handleSorting(builder);
+        contentWrappers.add(
+            new QueryContentWrapper(builder.toString(), this.openSearchUri())
+        );
+
+        return contentWrappers.stream();
     }
 
     /**

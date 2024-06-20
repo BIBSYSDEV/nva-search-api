@@ -6,6 +6,7 @@ import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
 import static nva.commons.core.attempt.Try.attempt;
 import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 import no.unit.nva.search2.common.jwt.CachedJwtProvider;
 import no.unit.nva.search2.common.OpenSearchClient;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.common.records.SwsResponse.SwsResponseBuilder;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
@@ -58,22 +60,23 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
         return
             query.withUserSettings(userSettingsClient)
                 .assemble()
-                .flatMap(this::createRequest)
+                .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
-                .findFirst().orElseThrow();
+                .collect(() -> SwsResponseBuilder::swsResponseBuilder,  SwsResponseBuilder::merge)
+                .build();
     }
 
     @Override
-    protected SwsResponse handleResponse(CompletableFuture<AsyncHttpResponse> futureResponse) {
-        futureResponse.thenAcceptAsync( action -> {
-            if (action.response().statusCode() != HTTP_OK) {
-                throw new RuntimeException(action.response().body());
-            }
-
-        })
-        return attempt(() -> singleLineObjectMapper.readValue(action.response().body(), SwsResponse.class))
-            .map(logAndReturnResult())
-            .orElseThrow();
+    protected SwsResponse handleResponse(CompletableFuture<HttpResponse<String>> futureResponse) {
+        return futureResponse.thenApply(action -> {
+                if (action.statusCode() != HTTP_OK) {
+                    throw new RuntimeException(action.body());
+                }
+            return attempt(() -> singleLineObjectMapper.readValue(action.body(), SwsResponse.class))
+                .map(logAndReturnResult())
+                .orElseThrow();
+            })
+            .join();
     }
 }

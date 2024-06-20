@@ -86,14 +86,13 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .collect(joining(AMPERSAND));
         return
             query.assemble()
-                .flatMap(this::createRequest)
+                .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
                 .findFirst().orElseThrow();
     }
 
-    protected abstract R handleResponse(CompletableFuture<AsyncHttpResponse> response);
-
+    protected abstract R handleResponse(CompletableFuture<HttpResponse<String>> response);
 
 
     protected CompletableFuture<HttpResponse<String>> fetch(HttpRequest request) {
@@ -114,21 +113,8 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 //            });
     }
 
-    protected Stream<HttpRequest> createRequest(QueryContentWrapper qbs) {
+    protected HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.debug(qbs.body());
-        var requests = hasAggregation(qbs) ? 2 : 1;
-        var list = new ArrayList<HttpRequest>(requests);
-        for(int i = requests; i > 0; i--) {
-            list.add(defaultRequest(qbs,jwtProvider));
-        }
-        return list.stream();
-    }
-
-    private boolean hasAggregation(QueryContentWrapper qbs) {
-        return false;
-    }
-
-    public static HttpRequest defaultRequest(QueryContentWrapper qbs, CachedJwtProvider jwtProvider ){
         return HttpRequest
             .newBuilder(qbs.uri())
             .headers(
@@ -162,6 +148,4 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     }
 
-    public record AsyncHttpResponse(HttpResponse<String> response, Integer responseLeft){
-    }
 }
