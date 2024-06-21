@@ -27,7 +27,7 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
 
     private final UserSettingsClient userSettingsClient;
     @SuppressWarnings("PMD.DoNotUseThreads")
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(5);
 
 
     public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {

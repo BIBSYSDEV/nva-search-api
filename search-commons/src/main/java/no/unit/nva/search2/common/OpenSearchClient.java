@@ -56,17 +56,18 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .entrySet().stream()
             .map(Object::toString)
             .collect(joining(AMPERSAND));
-        return
-            query.assemble()
-                .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
-                .reduce(responseAccumulator())
-                .orElseThrow();
+
+        var completableFutures = query.assemble()
+            .map(this::createRequest)
+            .map(this::fetch)
+            .map(this::handleResponse).toList();
+        return completableFutures.size() == 2
+            ? completableFutures.get(0).thenCombineAsync(completableFutures.get(1), responseAccumulator()).join()
+            : completableFutures.get(0).join();
     }
 
-    protected R handleResponse(CompletableFuture<HttpResponse<String>> futureResponse) {
-        return futureResponse
+    protected CompletableFuture<R> handleResponse(CompletableFuture<HttpResponse<String>> completableFuture) {
+        return completableFuture
             .thenApplyAsync(response -> {
                 if (response.statusCode() != HTTP_OK) {
                     throw new RuntimeException(response.body());
@@ -74,8 +75,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
                 return attempt(() -> jsonToResponse(response))
                     .map(logAndReturnResult())
                     .orElseThrow();
-            })
-            .join();
+            });
     }
 
     protected abstract R jsonToResponse(HttpResponse<String> response) throws JsonProcessingException;
