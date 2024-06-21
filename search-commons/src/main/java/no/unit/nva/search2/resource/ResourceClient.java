@@ -64,7 +64,6 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
 
     @Override
     protected BinaryOperator<SwsResponse> responseAccumulator() {
-        logger.info("responseAccumulator");
         return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
     }
 
