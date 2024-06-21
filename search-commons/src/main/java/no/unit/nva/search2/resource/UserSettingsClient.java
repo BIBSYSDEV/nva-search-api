@@ -48,7 +48,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow().join();
     }
 
     @Override

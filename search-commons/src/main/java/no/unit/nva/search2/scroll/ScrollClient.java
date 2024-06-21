@@ -40,7 +40,7 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
                 .map(this::createRequest)
                 .map(this::fetch)
                 .map(this::handleResponse)
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow().join();
     }
 
     @Override
