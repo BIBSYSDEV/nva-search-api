@@ -2552,8 +2552,6 @@ components:
         totalHits:
           type: integer
           description: Total number of results from query
-        hits:
-          type: object
         nextResults:
           type: string
           pattern: 'https:\/\/.*$'
@@ -2576,11 +2574,11 @@ components:
         '@context':
           $ref: '#/components/schemas/Context'
     PagedPublicationSearchResponse:
+      type: object
+      required:
+        - hits
       allOf: # Combines PagedSearchResponse with Publication hits
         - $ref: '#/components/schemas/PagedSearchResponse'
-        - type: object
-          required:
-            - hits
       properties:
         hits:
           type: array
@@ -2590,15 +2588,15 @@ components:
     PagedImportCandidateSearchResponse:
       allOf: # Combines PagedSearchResponse with ImportCandidate hits
         - $ref: '#/components/schemas/PagedSearchResponse'
-        - type: object
-          required:
-            - hits
-          properties:
-            hits:
-              type: array
-              description: ImportCandidate search results (numberOf = [size])
-              items:
-                $ref: '#/components/schemas/ImportCandidate'
+      type: object
+      required:
+        - hits
+      properties:
+        hits:
+          type: array
+          description: ImportCandidate search results (numberOf = [size])
+          items:
+            $ref: '#/components/schemas/ImportCandidate'
     PublicationSearchCsv:
       type: string
       description: Export publication search results
