@@ -882,6 +882,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     contributorNotParam:
       name: contributor_not
       in: query
@@ -892,6 +893,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     contributorShouldParam:
       name: contributor_should
       in: query
@@ -902,6 +904,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     createdBeforeParam:
       name: created_before
       in: query
@@ -1434,6 +1437,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     projectNotParam:
       name: project_not
       in: query
@@ -1444,6 +1448,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     projectShouldParam:
       name: project_should
       in: query
@@ -1454,6 +1459,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     publicationLanguageParam:
       name: publication_language
       in: query
@@ -1464,6 +1470,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     publicationLanguageNotParam:
       name: publication_language_not
       in: query
@@ -1474,6 +1481,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     publicationLanguageShouldParam:
       name: publication_language_should
       in: query
@@ -1484,6 +1492,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     publicationYearParam:
       name: publication_year
       in: query
@@ -1743,6 +1752,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     topLevelOrganizationNotParam:
       name: top_level_organization_not
       in: query
@@ -1752,6 +1762,7 @@ components:
       explode: true
       schema:
         type: string
+        format: uri
     unitParam:
       name: unit
       in: query
@@ -2261,6 +2272,7 @@ components:
             properties:
               id:
                 type: string
+                format: uri
               name:
                 type: string
         description:
@@ -2269,6 +2281,7 @@ components:
           type: string
         id:
           type: string
+          format: uri
         modifiedDate:
           type: string
           format: date
@@ -2369,6 +2382,7 @@ components:
       properties:
         id:
           type: string
+          format: uri
         additionalIdentifiers:
           type: array
           description: Additional identifiers as cristinId and scopusId
