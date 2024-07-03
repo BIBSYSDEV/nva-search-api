@@ -312,10 +312,7 @@ class ResourceClientTest {
             "fys596,1",
             "fys5961,0"})
         void shouldReturnCaseInsensitiveCourses(String searchValue, int expectedHits) throws BadRequestException {
-            var uri = URI.create("https://x.org/?aggregation=none&course="+searchValue+"&from=0&results=10&order"
-                                 + "=relevance&sort"
-                                                                         + "=desc");
-
+            var uri = URI.create("https://x.org/?course="+searchValue);
 
             var response =
                 ResourceSearchQuery.builder()
