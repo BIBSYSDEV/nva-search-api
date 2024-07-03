@@ -93,6 +93,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
@@ -304,8 +305,35 @@ class ResourceClientTest {
             assertTrue(pagedResult.contains("\"hits\":["));
         }
 
+        @ParameterizedTest
+        @CsvSource({
+            "FYS5960,1",
+            "fys5960,1",
+            "fys596,1",
+            "fys5961,0"})
+        void shouldReturnCaseInsensitiveCourses(String searchValue, int expectedHits) throws BadRequestException {
+            var uri = URI.create("https://x.org/?aggregation=none&course="+searchValue+"&from=0&results=10&order"
+                                 + "=relevance&sort"
+                                                                         + "=desc");
+
+
+            var response =
+                ResourceSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE)
+                    .build()
+                    .withFilter()
+                    .requiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
+                                    DRAFT_FOR_DELETION).apply()
+                    .doSearch(searchClient);
+
+            var pagedSearchResourceDto = response.toPagedResponse();
+            assertEquals(expectedHits, pagedSearchResourceDto.totalHits());
+        }
+
         @Test
-        void withOrganizationDoWork() throws BadRequestException {
+        void ParameterizedTest() throws BadRequestException {
             var uri = URI.create("https://x.org/");
             var response =
                 ResourceSearchQuery.builder()
