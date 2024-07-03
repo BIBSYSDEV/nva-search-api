@@ -333,7 +333,7 @@ class ResourceClientTest {
         }
 
         @Test
-        void ParameterizedTest() throws BadRequestException {
+        void withOrganizationDoWork() throws BadRequestException {
             var uri = URI.create("https://x.org/");
             var response =
                 ResourceSearchQuery.builder()
