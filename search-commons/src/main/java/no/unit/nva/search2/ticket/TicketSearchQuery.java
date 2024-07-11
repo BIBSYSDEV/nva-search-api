@@ -1,13 +1,13 @@
 package no.unit.nva.search2.ticket;
 
-import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
@@ -35,23 +35,25 @@ import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
-import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
@@ -74,6 +76,24 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return new TicketParameterValidator();
     }
 
+    @Override
+    protected BoolQueryBuilder builderMainQuery() {
+        var queryBuilder = super.builderMainQuery();
+        if (isLookingForTicketsWithStatusNew()) {
+            addAllNewTicket(queryBuilder);
+        }
+        return queryBuilder;
+    }
+
+    private void addAllNewTicket(BoolQueryBuilder queryBuilder) {
+        queryBuilder.should(QueryBuilders.termQuery("status.keyword", TicketStatus.NEW.toString()));
+    }
+
+    private boolean isLookingForTicketsWithStatusNew() {
+        return parameters().get(STATUS)
+                   .asSplitStream(COMMA)
+                   .anyMatch(value -> TicketStatus.NEW.toString().equals(value));
+    }
 
     @Override
     protected TicketParameter keyAggregation() {
@@ -147,8 +167,23 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return switch (key) {
             case ASSIGNEE -> builderStreamByAssignee();
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);
+            case STATUS -> doStatus(key);
             default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
         };
+    }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> doStatus(TicketParameter key) {
+    return Arrays.stream(parameters().get(key).split(","))
+                         .flatMap(k -> toQuery(k, key) );
+
+    }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> toQuery(String value, TicketParameter key) {
+        if (!value.equals(TicketStatus.NEW.toString())) {
+            return new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, value);
+        } else {
+            return new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, value);
+        }
     }
 
     public TicketFilter withFilter() {

@@ -11,6 +11,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
@@ -100,13 +101,14 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.debug(qbs.body());
-        return HttpRequest
-            .newBuilder(qbs.uri())
-            .headers(
-                ACCEPT, MediaType.JSON_UTF_8.toString(),
-                CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
-                AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-            .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build();
+        HttpRequest request = HttpRequest
+                                  .newBuilder(qbs.uri())
+                                  .headers(
+                                      ACCEPT, MediaType.JSON_UTF_8.toString(),
+                                      CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
+                                      AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+                                  .POST(BodyPublishers.ofString(qbs.body())).build();
+        return request;
     }
 
     protected String buildLogInfo(SwsResponse result) {
