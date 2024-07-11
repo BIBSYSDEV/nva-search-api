@@ -177,12 +177,11 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
+        var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
+            ? filterBuilder.getCurrentUser()
+            : parameters().get(ASSIGNEE).toString();
 
-            var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-                ? filterBuilder.getCurrentUser()
-                : parameters().get(ASSIGNEE).toString();
-
-            return new OpensearchQueryText<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
+        return new OpensearchQueryText<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
 
     }
 

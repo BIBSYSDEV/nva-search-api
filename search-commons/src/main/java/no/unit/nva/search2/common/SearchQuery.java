@@ -38,6 +38,7 @@ import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.ticket.TicketParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -228,10 +229,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected BoolQueryBuilder builderMainQueryWithoutParam(K withoutParameter) {
+    protected BoolQueryBuilder builderMainQueryWithoutParam(K parameterToIgnore) {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        parameters().remove(withoutParameter);
-        parameters().getSearchKeys()
+        var params = QueryKeys.from(parameters());
+        params.remove(parameterToIgnore);
+        params.getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
                 if (isMustNot(entry.getKey())) {
@@ -243,13 +245,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected BoolQueryBuilder builderMainQueryWithoutArrayParam(K withoutParameter, String arrayEntry) {
+    protected BoolQueryBuilder builderMainQueryWithoutArrayParam(K parameterToIgnore, String arrayEntry) {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        parameters().remove(withoutParameter);
         var substitute =
-            parameters().get(withoutParameter).asSplitStream(",").filter(c -> !c.equals(arrayEntry)).collect(Collectors.joining(","));
-        parameters().set(withoutParameter, substitute);
-        parameters().getSearchKeys()
+            parameters().get(parameterToIgnore).asSplitStream(",").filter(c -> !c.equals(arrayEntry)).collect(Collectors.joining(","));
+        var params = QueryKeys.from(parameters());
+        params.set(parameterToIgnore, substitute);
+        params.getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
                 if (isMustNot(entry.getKey())) {
