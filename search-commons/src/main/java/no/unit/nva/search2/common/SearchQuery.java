@@ -194,6 +194,21 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return contentWrappers.stream();
     }
 
+    protected Stream<SortBuilder<?>> builderStreamFieldSort() {
+        return sort().asSplitStream(COMMA)
+            .flatMap(item -> {
+                final var parts = item.split(COLON_OR_SPACE);
+                final var order = SortOrder.fromString(
+                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
+                final var sortKey = toSortKey(parts[0]);
+
+                return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+                    ? Stream.of(SortBuilders.scoreSort().order(order))
+                    : sortKey.jsonPaths()
+                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
+            });
+    }
+
     /**
      * Creates a boolean query, with all the search parameters.
      *
@@ -213,19 +228,37 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected Stream<SortBuilder<?>> builderStreamFieldSort() {
-        return sort().asSplitStream(COMMA)
-            .flatMap(item -> {
-                final var parts = item.split(COLON_OR_SPACE);
-                final var order = SortOrder.fromString(
-                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
-                final var sortKey = toSortKey(parts[0]);
-
-                return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
-                    ? Stream.of(SortBuilders.scoreSort().order(order))
-                    : sortKey.jsonPaths()
-                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
+    protected BoolQueryBuilder builderMainQueryWithoutParam(K withoutParameter) {
+        var boolQueryBuilder = QueryBuilders.boolQuery();
+        parameters().remove(withoutParameter);
+        parameters().getSearchKeys()
+            .flatMap(this::builderStreamDefaultQuery)
+            .forEach(entry -> {
+                if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
+                } else {
+                    boolQueryBuilder.must(entry.getValue());
+                }
             });
+        return boolQueryBuilder;
+    }
+
+    protected BoolQueryBuilder builderMainQueryWithoutArrayParam(K withoutParameter, String arrayEntry) {
+        var boolQueryBuilder = QueryBuilders.boolQuery();
+        parameters().remove(withoutParameter);
+        var substitute =
+            parameters().get(withoutParameter).asSplitStream(",").filter(c -> !c.equals(arrayEntry)).collect(Collectors.joining(","));
+        parameters().set(withoutParameter, substitute);
+        parameters().getSearchKeys()
+            .flatMap(this::builderStreamDefaultQuery)
+            .forEach(entry -> {
+                if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
+                } else {
+                    boolQueryBuilder.must(entry.getValue());
+                }
+            });
+        return boolQueryBuilder;
     }
 
     protected AggregationBuilder builderAggregationsWithFilter() {

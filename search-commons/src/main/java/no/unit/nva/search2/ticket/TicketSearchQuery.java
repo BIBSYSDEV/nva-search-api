@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
@@ -79,36 +78,16 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @Override
     protected BoolQueryBuilder builderMainQuery() {
-        var queryBuilder = super.builderMainQuery();
-        if (isLookingForMultipleStatusIncludingNew()) {
-            if (queryBuilder.hasClauses()) {
-                var query = QueryBuilders.boolQuery();
-                addAllNewTicket(query);
-                query.should(queryBuilder);
-                return query;
-            } else {
-                var query = QueryBuilders.boolQuery();
-                addAllNewTicket(query);
-                return query;
-            }
+        if (parameters().containsSingleSearchEntry(STATUS)){
+            return super.builderMainQuery();
         }
-        return queryBuilder;
-    }
-
-    private void addAllNewTicket(BoolQueryBuilder queryBuilder) {
-        queryBuilder.should(QueryBuilders.termQuery("status.keyword", TicketStatus.NEW.toString()));
-    }
-
-    private boolean isLookingForTicketsWithStatusNewOnly() {
-        return parameters().get(STATUS)
-                   .asSplitStream(COMMA)
-                   .allMatch(value -> TicketStatus.NEW.toString().equals(value));
-    }
-
-    private boolean isLookingForMultipleStatusIncludingNew() {
-        return parameters().get(STATUS)
-                   .asSplitStream(COMMA)
-                   .anyMatch(value -> TicketStatus.NEW.toString().equals(value));
+        if (parameters().containsAssigneeAndStatusNew()){
+            var queryWithoutAssignee = super.builderMainQueryWithoutParam(ASSIGNEE);
+            var queryWithoutStatusNew = super.builderMainQueryWithoutArrayParam(STATUS, TicketStatus.NEW.getValue());
+            return QueryBuilders.boolQuery().should(queryWithoutAssignee).should(queryWithoutStatusNew);
+        } else {
+            return super.builderMainQuery();
+        }
     }
 
     @Override
@@ -189,14 +168,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> buildStreamByStatus(TicketParameter key) {
-        var statusExcludingNew = parameters().get(key).asSplitStream(",")
-                                     .filter(value -> !TicketStatus.NEW.getValue().equals(value))
-                                     .collect(Collectors.joining(","));
-        if (TicketStatus.NEW.getValue().equals(parameters().get(key).toString())) {
-            return Stream.of();
-        } else {
-            return new OpensearchQueryKeyword<TicketParameter>().buildQuery(STATUS, statusExcludingNew);
-        }
+        return new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
     }
 
     public TicketFilter withFilter() {
@@ -205,30 +177,13 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
-        if (assigneeAndStatusNewTheOnlySearchParameters()) {
-            return Stream.of();
-        } else {
+
             var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
                 ? filterBuilder.getCurrentUser()
                 : parameters().get(ASSIGNEE).toString();
 
             return new OpensearchQueryText<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
-        }
 
-    }
-
-    private boolean assigneeAndStatusNewTheOnlySearchParameters() {
-        if (parameters().get(STATUS).isEmpty()) {
-            return false;
-        }
-        if (!isLookingForTicketsWithStatusNewOnly()) {
-            return false;
-        } else {
-            return parameters().getSearchKeys()
-                       .filter(ticketParameter -> !STATUS.equals(ticketParameter) && parameters().get(ticketParameter).toString().contains(TicketStatus.NEW.getValue()))
-                       .filter(ticketParameter -> !ASSIGNEE.equals(ticketParameter))
-                       .collect(Collectors.toSet()).isEmpty();
-        }
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(TicketParameter key) {

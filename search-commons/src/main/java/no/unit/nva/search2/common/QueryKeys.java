@@ -4,6 +4,8 @@ import static java.util.Objects.nonNull;
 import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Words.PLUS;
 import static no.unit.nva.search2.common.constant.Words.SPACE;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
+import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
+import no.unit.nva.search2.ticket.TicketParameter;
+import no.unit.nva.search2.ticket.TicketStatus;
 
 /**
  * @author Stig Norland
@@ -56,6 +60,17 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
             .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
             .forEach(entry -> results.put(toApiKey(entry), toApiValue(entry)));
         return results;
+    }
+
+    public boolean containsSingleSearchEntry(K ticketParameter) {
+        return this.getSearchEntries().stream()
+                   .allMatch(t -> TicketParameter.keyFromString(t.getValue()).equals(ticketParameter));
+    }
+
+    public boolean containsAssigneeAndStatusNew() {
+        return this.get((K) STATUS).isPresent()
+               && this.get((K) ASSIGNEE).isPresent()
+               && this.get((K) STATUS).toString().contains(TicketStatus.NEW.getValue());
     }
 
     private String toApiKey(Map.Entry<K, String> entry) {
