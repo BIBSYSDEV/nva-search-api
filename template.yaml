@@ -97,6 +97,10 @@ Parameters:
   LargeApiResponsesBucketName:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: '/NVA/LargeApiResponsesBucketName'
+  AllowedOrigins:
+    Type: String
+    Description: comma separated list of external clients that are allowed to contact the HTTP APIs, "*" indicates that all origins are allowed
+    Default: '*'
 
 Conditions:
   WithSuffix: !Not [ !Equals [ !Ref Suffix, '' ] ]
@@ -245,7 +249,7 @@ Resources:
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
           COGNITO_HOST: !Ref CognitoUri
           BACKEND_CLIENT_SECRET_NAME: 'BackendCognitoClientCredentials'
       Events:
@@ -273,7 +277,7 @@ Resources:
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
       Events:
         GetResources:
           Type: Api
@@ -298,7 +302,7 @@ Resources:
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
       Events:
         GetResources:
           Type: Api
@@ -324,7 +328,7 @@ Resources:
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
       Events:
         GetResources:
           Type: Api
@@ -350,7 +354,7 @@ Resources:
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
       Events:
         GetResources:
           Type: Api
@@ -376,7 +380,7 @@ Resources:
       Role: !GetAtt ReadOnlySearchInfrastructureRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
       Events:
         GetResources:
           Type: Api
@@ -627,7 +631,7 @@ Resources:
                 topic: [ "SearchService.Index.Batch" ]
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
 
   StartBatchIndexingButton:
@@ -641,7 +645,7 @@ Resources:
       Role: !GetAtt SearchHandlerRole.Arn
       Environment:
         Variables:
-          ALLOWED_ORIGIN: '*'
+          ALLOWED_ORIGIN: !Ref AllowedOrigins
           BATCH_INDEX_EVENT_BUS_NAME: !GetAtt BatchIndexEventBus.Name
           PERSISTED_RESOURCES_PATH: !Sub "s3://${ResourcesBucket}/resources"
 

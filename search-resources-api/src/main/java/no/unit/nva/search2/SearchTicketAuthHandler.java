@@ -13,14 +13,12 @@ import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-/**
- * @author Stig Norland
- */
 public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final TicketClient opensearchClient;
@@ -58,4 +56,8 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
 
+    @Override
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+        //Do nothing
+    }
 }
