@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.ResponseFormatter;
-import no.unit.nva.search2.ticket.TicketParameter;
 
 /**
  * @author Stig Norland

@@ -38,7 +38,6 @@ import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.ticket.TicketParameter;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
