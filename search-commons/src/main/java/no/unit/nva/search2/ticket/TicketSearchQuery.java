@@ -20,6 +20,7 @@ import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
 import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
@@ -36,12 +37,12 @@ import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
@@ -79,8 +80,17 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     @Override
     protected BoolQueryBuilder builderMainQuery() {
         var queryBuilder = super.builderMainQuery();
-        if (isLookingForTicketsWithStatusNew()) {
-            addAllNewTicket(queryBuilder);
+        if (isLookingForMultipleStatusIncludingNew()) {
+            if (queryBuilder.hasClauses()) {
+                var query = QueryBuilders.boolQuery();
+                addAllNewTicket(query);
+                query.should(queryBuilder);
+                return query;
+            } else {
+                var query = QueryBuilders.boolQuery();
+                addAllNewTicket(query);
+                return query;
+            }
         }
         return queryBuilder;
     }
@@ -89,7 +99,13 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         queryBuilder.should(QueryBuilders.termQuery("status.keyword", TicketStatus.NEW.toString()));
     }
 
-    private boolean isLookingForTicketsWithStatusNew() {
+    private boolean isLookingForTicketsWithStatusNewOnly() {
+        return parameters().get(STATUS)
+                   .asSplitStream(COMMA)
+                   .allMatch(value -> TicketStatus.NEW.toString().equals(value));
+    }
+
+    private boolean isLookingForMultipleStatusIncludingNew() {
         return parameters().get(STATUS)
                    .asSplitStream(COMMA)
                    .anyMatch(value -> TicketStatus.NEW.toString().equals(value));
@@ -166,23 +182,20 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     protected Stream<Entry<TicketParameter, QueryBuilder>> builderCustomQueryStream(TicketParameter key) {
         return switch (key) {
             case ASSIGNEE -> builderStreamByAssignee();
+            case STATUS -> buildStreamByStatus(key);
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);
-            case STATUS -> doStatus(key);
             default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
         };
     }
 
-    private Stream<Entry<TicketParameter, QueryBuilder>> doStatus(TicketParameter key) {
-    return Arrays.stream(parameters().get(key).split(","))
-                         .flatMap(k -> toQuery(k, key) );
-
-    }
-
-    private Stream<Entry<TicketParameter, QueryBuilder>> toQuery(String value, TicketParameter key) {
-        if (!value.equals(TicketStatus.NEW.toString())) {
-            return new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, value);
+    private Stream<Entry<TicketParameter, QueryBuilder>> buildStreamByStatus(TicketParameter key) {
+        var statusExcludingNew = parameters().get(key).asSplitStream(",")
+                                     .filter(value -> !TicketStatus.NEW.getValue().equals(value))
+                                     .collect(Collectors.joining(","));
+        if (TicketStatus.NEW.getValue().equals(parameters().get(key).toString())) {
+            return Stream.of();
         } else {
-            return new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, value);
+            return new OpensearchQueryKeyword<TicketParameter>().buildQuery(STATUS, statusExcludingNew);
         }
     }
 
@@ -192,12 +205,30 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
-        var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? filterBuilder.getCurrentUser()
-            : parameters().get(TicketParameter.ASSIGNEE).toString();
+        if (assigneeAndStatusNewTheOnlySearchParameters()) {
+            return Stream.of();
+        } else {
+            var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
+                ? filterBuilder.getCurrentUser()
+                : parameters().get(ASSIGNEE).toString();
 
-        return new OpensearchQueryText<TicketParameter>()
-            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+            return new OpensearchQueryText<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
+        }
+
+    }
+
+    private boolean assigneeAndStatusNewTheOnlySearchParameters() {
+        if (parameters().get(STATUS).isEmpty()) {
+            return false;
+        }
+        if (!isLookingForTicketsWithStatusNewOnly()) {
+            return false;
+        } else {
+            return parameters().getSearchKeys()
+                       .filter(ticketParameter -> !STATUS.equals(ticketParameter) && parameters().get(ticketParameter).toString().contains(TicketStatus.NEW.getValue()))
+                       .filter(ticketParameter -> !ASSIGNEE.equals(ticketParameter))
+                       .collect(Collectors.toSet()).isEmpty();
+        }
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(TicketParameter key) {

@@ -712,6 +712,7 @@
     "modifiedDate": "2024-02-27T16:39:44.664261563Z",
     "createdDate": "2022-02-26T10:46:19.972047753Z",
     "workflow": "RegistratorPublishesMetadataOnly",
+    "status": "Pending",
     "approvedFiles": [],
     "filesForApproval": [],
     "id": "https://api.dev.nva.aws.unit.no/publication/018de5050448-3f5ead68-8a74-4c24-826d-fe871277c0d1/ticket/018de505d044-37c91588-4e04-4f08-91ad-cb48a011332a",
@@ -806,8 +807,7 @@
       "identifier": "20754.0.0.0",
       "partOf": [
       ]
-    },
-    "status": "Pending"
+    }
   },
   {
     "type": "DoiRequest",

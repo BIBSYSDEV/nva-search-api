@@ -17,7 +17,6 @@ import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
 import static no.unit.nva.search2.ticket.TicketParameter.SORT;
-import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketType.DOI_REQUEST;
 import static no.unit.nva.search2.ticket.TicketType.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search2.ticket.TicketType.PUBLISHING_REQUEST;
@@ -60,7 +59,6 @@ import no.unit.nva.search.models.EventConsumptionAttributes;
 import no.unit.nva.search.models.IndexDocument;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.ticket.TicketClient;
-import no.unit.nva.search2.ticket.TicketParameter;
 import no.unit.nva.search2.ticket.TicketSearchQuery;
 import no.unit.nva.search2.ticket.TicketStatus;
 import no.unit.nva.search2.ticket.TicketType;
@@ -219,8 +217,8 @@ class TicketClientTest {
         }
 
         @Test
-        void some() throws BadRequestException {
-            var uri = URI.create("https://x.org/?status=New,Pending&type=doiRequest&assignee=1234&size=10&from=0");
+        void shouldReturnNewTicketsWhenSearchingForTicketsWithStatusNewAndAssignee() throws BadRequestException {
+            var uri = URI.create("https://x.org/?status=New&assignee=1412322@20754.0.0.0&size=500&from=0");
 
             var pagedResult =
                 TicketSearchQuery.builder()
@@ -230,9 +228,29 @@ class TicketClientTest {
                     .withFilter()
                     .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
                     .organization(testOrganizationId).apply()
-                    .doSearch(searchClient);
-            assertNotNull(pagedResult.swsResponse());
-            assertTrue(pagedResult.toString().contains("\"hits\":["));
+                    .doSearch(searchClient)
+                    .toPagedResponse();
+
+            assertEquals(7, pagedResult.hits().size());
+        }
+
+        @Test
+        void shouldReturnNewAndPendingTicketsWithAssigneeWhenSearchingForTicketsWithStatusNewAndPendingAndAssignee()
+            throws BadRequestException {
+            var uri = URI.create("https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=10&from=0");
+
+            var pagedResult =
+                TicketSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
+                    .doSearch(searchClient)
+                    .toPagedResponse();
+
+            assertEquals(9, pagedResult.hits().size());
         }
 
         @ParameterizedTest
