@@ -82,8 +82,8 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             return super.builderMainQuery();
         }
         if (parameters().containsAssigneeAndStatusNew()){
-            var queryWithoutAssignee = super.builderMainQueryWithoutParam(ASSIGNEE);
-            var queryWithoutStatusNew = super.builderMainQueryWithoutArrayParam(STATUS, TicketStatus.NEW.getValue());
+            var queryWithoutAssignee = super.builderMainQueryForStatusNew();
+            var queryWithoutStatusNew = super.builderMainQueryWithoutArrayParam();
             return QueryBuilders.boolQuery().should(queryWithoutAssignee).should(queryWithoutStatusNew);
         } else {
             return super.builderMainQuery();

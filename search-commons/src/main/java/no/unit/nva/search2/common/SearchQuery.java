@@ -16,6 +16,8 @@ import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
+import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
@@ -38,6 +40,7 @@ import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
 import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.ticket.TicketStatus;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -228,14 +231,21 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected BoolQueryBuilder builderMainQueryWithoutParam(K parameterToIgnore) {
+    @SuppressWarnings("PMD.EmptyControlStatement")
+    protected BoolQueryBuilder builderMainQueryForStatusNew() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        var params = QueryKeys.from(parameters());
-        params.remove(parameterToIgnore);
-        params.getSearchKeys()
+
+        parameters().getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
-                if (isMustNot(entry.getKey())) {
+                if (entry.getKey().equals(STATUS)) {
+                    boolQueryBuilder.must(QueryBuilders.termQuery("status.keyword",
+                                                               TicketStatus.NEW.getValue()));
+                }
+                else if (entry.getKey().equals(ASSIGNEE)){
+
+                }
+                else if (isMustNot(entry.getKey())) {
                     boolQueryBuilder.mustNot(entry.getValue());
                 } else {
                     boolQueryBuilder.must(entry.getValue());
@@ -244,22 +254,27 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected BoolQueryBuilder builderMainQueryWithoutArrayParam(K parameterToIgnore, String arrayEntry) {
+    protected BoolQueryBuilder builderMainQueryWithoutArrayParam() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        var substitute =
-            parameters().get(parameterToIgnore).asSplitStream(",").filter(c -> !c.equals(arrayEntry)).collect(Collectors.joining(","));
-        var params = QueryKeys.from(parameters());
-        params.set(parameterToIgnore, substitute);
-        params.getSearchKeys()
+        parameters().getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
-                if (isMustNot(entry.getKey())) {
+                if (entry.getKey().equals(STATUS)) {
+                    boolQueryBuilder.must(QueryBuilders.termQuery("status.keyword",
+                                                                  statusesBuNot()));
+                }
+                else if (isMustNot(entry.getKey())) {
                     boolQueryBuilder.mustNot(entry.getValue());
                 } else {
                     boolQueryBuilder.must(entry.getValue());
                 }
             });
         return boolQueryBuilder;
+    }
+
+    private String statusesBuNot() {
+        return parameters().get((K) STATUS).asSplitStream(",").filter(c -> !c.equals(
+            TicketStatus.NEW.getValue())).collect(Collectors.joining(","));
     }
 
     protected AggregationBuilder builderAggregationsWithFilter() {
