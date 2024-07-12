@@ -78,9 +78,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     @Override
     protected BoolQueryBuilder builderMainQuery() {
-        if (parameters().containsSingleSearchEntry(STATUS)){
-            return super.builderMainQuery();
-        }
         if (parameters().containsAssigneeAndStatusNew()){
             var queryWithoutAssignee = super.builderMainQueryForStatusNew();
             var queryWithoutStatusNew = super.builderMainQueryWithoutArrayParam();
@@ -161,14 +158,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     protected Stream<Entry<TicketParameter, QueryBuilder>> builderCustomQueryStream(TicketParameter key) {
         return switch (key) {
             case ASSIGNEE -> builderStreamByAssignee();
-            case STATUS -> buildStreamByStatus(key);
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);
             default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
         };
-    }
-
-    private Stream<Entry<TicketParameter, QueryBuilder>> buildStreamByStatus(TicketParameter key) {
-        return new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
     }
 
     public TicketFilter withFilter() {
