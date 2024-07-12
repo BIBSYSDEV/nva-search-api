@@ -16,6 +16,7 @@ import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
+import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
 import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static nva.commons.core.attempt.Try.attempt;
@@ -232,18 +233,18 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     }
 
     @SuppressWarnings("PMD.EmptyControlStatement")
-    protected BoolQueryBuilder builderMainQueryForStatusNew() {
+    protected BoolQueryBuilder builderMainQueryWithoutAssignee() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
 
         parameters().getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
                 if (entry.getKey().equals(STATUS)) {
-                    boolQueryBuilder.must(QueryBuilders.termQuery("status.keyword",
+                    boolQueryBuilder.must(QueryBuilders.termQuery(STATUS_KEYWORD,
                                                                TicketStatus.NEW.getValue()));
                 }
                 else if (entry.getKey().equals(ASSIGNEE)){
-
+                    // skipping assignee when searching for new tickets
                 }
                 else if (isMustNot(entry.getKey())) {
                     boolQueryBuilder.mustNot(entry.getValue());
@@ -254,14 +255,14 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected BoolQueryBuilder builderMainQueryWithoutArrayParam() {
+    protected BoolQueryBuilder builderMainQueryWithoutStatusNew() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
         parameters().getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
                 if (entry.getKey().equals(STATUS)) {
-                    boolQueryBuilder.must(QueryBuilders.termQuery("status.keyword",
-                                                                  statusesBuNot()));
+                    boolQueryBuilder.must(QueryBuilders.termQuery(STATUS_KEYWORD,
+                                                                  statusesBuNotNowNew()));
                 }
                 else if (isMustNot(entry.getKey())) {
                     boolQueryBuilder.mustNot(entry.getValue());
@@ -272,7 +273,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    private String statusesBuNot() {
+    private String statusesBuNotNowNew() {
         return parameters().get((K) STATUS).asSplitStream(",").filter(c -> !c.equals(
             TicketStatus.NEW.getValue())).collect(Collectors.joining(","));
     }
