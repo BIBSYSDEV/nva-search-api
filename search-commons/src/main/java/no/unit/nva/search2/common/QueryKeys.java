@@ -35,14 +35,6 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
         otherRequired = new HashSet<>();
     }
 
-    public static <K extends Enum<K> & ParameterKey> QueryKeys<K> from(QueryKeys<K> parameters) {
-        var copy = new QueryKeys<K>(parameters.fields);
-        copy.search.putAll(parameters.search);
-        copy.page.putAll(parameters.page);
-        copy.otherRequired.addAll(parameters.otherRequired);
-        return copy;
-    }
-
     public Stream<K> getSearchKeys() {
         return search.keySet().stream();
     }
