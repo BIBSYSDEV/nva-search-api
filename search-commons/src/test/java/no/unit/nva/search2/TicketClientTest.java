@@ -216,6 +216,79 @@ class TicketClientTest {
             assertTrue(pagedResult.toString().contains("\"hits\":["));
         }
 
+        @Test
+        void shouldReturnNewTicketsWhenSearchingForTicketsWithStatusNewAndAssignee() throws BadRequestException {
+            var uri = URI.create("https://x.org/?status=New&assignee=1412322@20754.0.0.0&size=500&from=0");
+
+            var pagedResult =
+                TicketSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
+                    .doSearch(searchClient)
+                    .toPagedResponse();
+
+            assertEquals(7, pagedResult.hits().size());
+        }
+
+        @Test
+        void shouldReturnNewTicketsWhenSearchingForNewTicketsOnlyAndTypes() throws BadRequestException {
+            var uri = URI.create("https://x.org/?status=New&size=500&type=doiRequest,generalSupportCase,publishingRequest&from=0");
+
+            var pagedResult =
+                TicketSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
+                    .doSearch(searchClient)
+                    .toPagedResponse();
+
+            assertEquals(7, pagedResult.hits().size());
+        }
+
+        @Test
+        void shouldReturnNewTicketsWhenSearchingForNewTicketsOnly() throws BadRequestException {
+            var uri = URI.create("https://x.org/?status=New&size=500&from=0");
+
+            var pagedResult =
+                TicketSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
+                    .doSearch(searchClient)
+                    .toPagedResponse();
+
+            assertEquals(7, pagedResult.hits().size());
+        }
+
+        @Test
+        void shouldReturnNewAndPendingTicketsWithAssigneeWhenSearchingForTicketsWithStatusNewAndPendingAndAssignee()
+            throws BadRequestException {
+            var uri = URI.create("https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=10&from=0");
+
+            var pagedResult =
+                TicketSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .build()
+                    .withFilter()
+                    .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
+                    .organization(testOrganizationId).apply()
+                    .doSearch(searchClient)
+                    .toPagedResponse();
+
+            assertEquals(9, pagedResult.hits().size());
+        }
+
         @ParameterizedTest
         @MethodSource("uriPagingProvider")
         void uriRequestPageableReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {

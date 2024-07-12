@@ -16,6 +16,9 @@ import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
+import static no.unit.nva.search2.ticket.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
+import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
@@ -32,12 +35,13 @@ import no.unit.nva.search2.common.builder.OpensearchQueryRange;
 import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.constant.ErrorMessages;
 import no.unit.nva.search2.common.constant.Functions;
-import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.constant.Words;
 import no.unit.nva.search2.common.enums.ParameterKey;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.records.QueryContentWrapper;
+import no.unit.nva.search2.common.records.ResponseFormatter;
 import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search2.ticket.TicketStatus;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -194,6 +198,21 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return contentWrappers.stream();
     }
 
+    protected Stream<SortBuilder<?>> builderStreamFieldSort() {
+        return sort().asSplitStream(COMMA)
+            .flatMap(item -> {
+                final var parts = item.split(COLON_OR_SPACE);
+                final var order = SortOrder.fromString(
+                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
+                final var sortKey = toSortKey(parts[0]);
+
+                return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+                    ? Stream.of(SortBuilders.scoreSort().order(order))
+                    : sortKey.jsonPaths()
+                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
+            });
+    }
+
     /**
      * Creates a boolean query, with all the search parameters.
      *
@@ -213,19 +232,50 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return boolQueryBuilder;
     }
 
-    protected Stream<SortBuilder<?>> builderStreamFieldSort() {
-        return sort().asSplitStream(COMMA)
-            .flatMap(item -> {
-                final var parts = item.split(COLON_OR_SPACE);
-                final var order = SortOrder.fromString(
-                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
-                final var sortKey = toSortKey(parts[0]);
+    @SuppressWarnings("PMD.EmptyControlStatement")
+    protected BoolQueryBuilder builderMainQueryWithoutAssignee() {
+        var boolQueryBuilder = QueryBuilders.boolQuery();
 
-                return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
-                    ? Stream.of(SortBuilders.scoreSort().order(order))
-                    : sortKey.jsonPaths()
-                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
+        parameters().getSearchKeys()
+            .flatMap(this::builderStreamDefaultQuery)
+            .forEach(entry -> {
+                if (entry.getKey().equals(STATUS)) {
+                    boolQueryBuilder.must(QueryBuilders.termQuery(STATUS_KEYWORD,
+                                                               TicketStatus.NEW.getValue()));
+                }
+                else if (entry.getKey().equals(ASSIGNEE)){
+                    // skipping assignee when searching for new tickets
+                }
+                else if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
+                } else {
+                    boolQueryBuilder.must(entry.getValue());
+                }
             });
+        return boolQueryBuilder;
+    }
+
+    protected BoolQueryBuilder builderMainQueryWithoutStatusNew() {
+        var boolQueryBuilder = QueryBuilders.boolQuery();
+        parameters().getSearchKeys()
+            .flatMap(this::builderStreamDefaultQuery)
+            .forEach(entry -> {
+                if (entry.getKey().equals(STATUS)) {
+                    boolQueryBuilder.must(QueryBuilders.termQuery(STATUS_KEYWORD,
+                                                                  statusesBuNotNowNew()));
+                }
+                else if (isMustNot(entry.getKey())) {
+                    boolQueryBuilder.mustNot(entry.getValue());
+                } else {
+                    boolQueryBuilder.must(entry.getValue());
+                }
+            });
+        return boolQueryBuilder;
+    }
+
+    private String statusesBuNotNowNew() {
+        return parameters().get((K) STATUS).asSplitStream(",").filter(c -> !c.equals(
+            TicketStatus.NEW.getValue())).collect(Collectors.joining(","));
     }
 
     protected AggregationBuilder builderAggregationsWithFilter() {

@@ -1,13 +1,13 @@
 package no.unit.nva.search2.ticket;
 
-import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
 import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
 import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
 import static no.unit.nva.search2.common.constant.Functions.trimSpace;
 import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
 import static no.unit.nva.search2.common.constant.Words.COMMA;
 import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search2.common.constant.Words.NONE;
@@ -20,6 +20,7 @@ import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
 import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
 import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
 import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
 import static no.unit.nva.search2.ticket.TicketParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
@@ -35,23 +36,24 @@ import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
 import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
 import no.unit.nva.search2.common.AsType;
 import no.unit.nva.search2.common.ParameterValidator;
 import no.unit.nva.search2.common.SearchQuery;
-import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryText;
 import no.unit.nva.search2.common.enums.SortKey;
 import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
@@ -74,6 +76,16 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return new TicketParameterValidator();
     }
 
+    @Override
+    protected BoolQueryBuilder builderMainQuery() {
+        if (parameters().containsAssigneeAndStatusNew()){
+            var queryWithoutAssignee = super.builderMainQueryWithoutAssignee();
+            var queryWithoutStatusNew = super.builderMainQueryWithoutStatusNew();
+            return QueryBuilders.boolQuery().should(queryWithoutAssignee).should(queryWithoutStatusNew);
+        } else {
+            return super.builderMainQuery();
+        }
+    }
 
     @Override
     protected TicketParameter keyAggregation() {
@@ -159,10 +171,10 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
         var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
             ? filterBuilder.getCurrentUser()
-            : parameters().get(TicketParameter.ASSIGNEE).toString();
+            : parameters().get(ASSIGNEE).toString();
 
-        return new OpensearchQueryText<TicketParameter>()
-            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+        return new OpensearchQueryText<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
+
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(TicketParameter key) {
