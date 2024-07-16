@@ -66,8 +66,17 @@ public class AsType<K extends Enum<K> & ParameterKey> {
         return isNull(value) || value.isEmpty();
     }
 
-    public boolean isPresent() {
-        return nonNull(value) && !value.isEmpty();
+    public boolean contains(Object o) {
+        return nonNull(value) && value.contains(o.toString());
+    }
+
+
+    /**
+     * @param o Object with toString()
+     * @return equalsIgnoreCase of objects toString()
+     */
+    public boolean equalsIgnoreCase(Object o) {
+        return nonNull(value) && value.equalsIgnoreCase(o.toString());
     }
 
     /**

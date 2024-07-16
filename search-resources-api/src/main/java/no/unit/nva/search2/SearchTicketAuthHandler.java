@@ -5,10 +5,12 @@ import static no.unit.nva.search2.ticket.TicketClient.defaultClient;
 import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search2.ticket.TicketParameter.FROM;
 import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
+import java.util.Objects;
 import no.unit.nva.search2.ticket.TicketClient;
 import no.unit.nva.search2.ticket.TicketSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -58,6 +60,8 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     @Override
     protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
-        //Do nothing
+        if (Objects.isNull(requestInfo.getUserName())) {
+            throw new UnauthorizedException();
+        }
     }
 }
