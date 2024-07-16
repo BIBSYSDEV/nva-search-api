@@ -21,13 +21,13 @@ public class FakeSearchResponse {
         var template = IoUtils.stringFromResources(SEARCH_RESPONSE_TEMPLATE);
 
         var hits = csv.stream()
-                .map(FakeSearchResponse::generateHit)
-                .collect(Collectors.joining(COMMA_DELIMITER));
+            .map(FakeSearchResponse::generateHit)
+            .collect(Collectors.joining(COMMA_DELIMITER));
 
-        var scrollData = Objects.isNull(scrollId) ? "" : ",\"_scroll_id\":\""+scrollId +"\"";
+        var scrollData = Objects.isNull(scrollId) ? "" : ",\"_scroll_id\":\"" + scrollId + "\"";
         var templateWithScroll = template.replace("__SCROLL__", scrollData);
         return templateWithScroll
-                   .replace("__HITS__", hits);
+            .replace("__HITS__", hits);
     }
 
     private static String generateHit(ExportCsv item) {
@@ -36,18 +36,18 @@ public class FakeSearchResponse {
         var date = new ParsedDate(item.getPublicationDate());
         var contributors = createContributorArray(item);
         return hitTemplate.replace("__ID__", item.getId())
-                .replace("__TYPE__", item.getPublicationInstance())
-                .replace("__TITLE__", item.getMainTitle())
-                .replace("__YEAR__", "\"" + date.getYear() + "\"")
-                .replace("__MONTH__", date.getMonth())
-                .replace("__DAY__", date.getDay())
-                .replace("__CONTRIBUTORS__", contributors);
+            .replace("__TYPE__", item.getPublicationInstance())
+            .replace("__TITLE__", item.getMainTitle())
+            .replace("__YEAR__", "\"" + date.getYear() + "\"")
+            .replace("__MONTH__", date.getMonth())
+            .replace("__DAY__", date.getDay())
+            .replace("__CONTRIBUTORS__", contributors);
     }
 
     private static String createContributorArray(ExportCsv item) {
         return Arrays.stream(item.getContributors().split(COMMA_DELIMITER))
-                .map(FakeSearchResponse::createContributor)
-                .collect(Collectors.joining(COMMA_DELIMITER));
+            .map(FakeSearchResponse::createContributor)
+            .collect(Collectors.joining(COMMA_DELIMITER));
     }
 
     private static String createContributor(String name) {

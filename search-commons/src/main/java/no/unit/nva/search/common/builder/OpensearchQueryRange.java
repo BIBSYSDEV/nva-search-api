@@ -18,6 +18,10 @@ import org.slf4j.LoggerFactory;
  */
 public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
+    public static final String GREATER_OR_EQUAL = "GreaterOrEqual-";
+    public static final String LESS_THAN = "LessThan-";
+    public static final String BETWEEN = "Between-";
+    public static final String DASH = " - ";
     private static final Logger logger = LoggerFactory.getLogger(OpensearchQueryRange.class);
     public static final int WORD_LENGTH_YEAR = 4;
     public static final int WORD_LENGTH_YEAR_MONTH = 7;
@@ -42,21 +46,21 @@ public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends Open
         var secondParam = getSecondParam(values, key);
 
 
-        logger.info(firstParam + " - " + secondParam);
+        logger.info(firstParam + DASH + secondParam);
         return Functions.queryToEntry(key, switch (key.searchOperator()) {
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
                 .rangeQuery(searchField)
                 .gte(firstParam)
-                .queryName("GreaterOrEqual-" + key.asCamelCase());
+                .queryName(GREATER_OR_EQUAL + key.asCamelCase());
             case LESS_THAN -> QueryBuilders
                 .rangeQuery(searchField)
                 .lt(firstParam)
-                .queryName("LessThan-" + key.asCamelCase());
+                .queryName(LESS_THAN + key.asCamelCase());
             case BETWEEN -> QueryBuilders
                 .rangeQuery(searchField)
                 .from(firstParam, true)
                 .to(secondParam, true)
-                .queryName("Between-" + key.asCamelCase());
+                .queryName(BETWEEN + key.asCamelCase());
             default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
         });
     }

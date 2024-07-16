@@ -1,41 +1,40 @@
-package no.unit.nva.search.resource;
+package no.unit.nva.search2.resource;
 
 import static java.lang.String.format;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search.common.constant.Functions.trimSpace;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.HTTPS;
-import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.PI;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.STATUS;
-import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
-import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
-import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
-import static no.unit.nva.search.resource.Constants.facetResourcePaths;
-import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
-import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.NODES_SEARCHED;
-import static no.unit.nva.search.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
-import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
-import static no.unit.nva.search.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.resource.ResourceParameter.SORT_ORDER;
-import static no.unit.nva.search.resource.ResourceSort.INVALID;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.HTTPS;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.PI;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.resource.Constants.CRISTIN_ORGANIZATION_PATH;
+import static no.unit.nva.search2.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search2.resource.Constants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.RESOURCES_AGGREGATIONS;
+import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.facetResourcePaths;
+import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_SEARCHED;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
+import static no.unit.nva.search2.resource.ResourceParameter.PAGE;
+import static no.unit.nva.search2.resource.ResourceParameter.RESOURCE_PARAMETER_SET;
+import static no.unit.nva.search2.resource.ResourceParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static no.unit.nva.search2.resource.ResourceSort.INVALID;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.matchQuery;
@@ -50,13 +49,12 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.AsType;
+import no.unit.nva.search2.common.ParameterValidator;
+import no.unit.nva.search2.common.SearchQuery;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.SortKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
@@ -104,11 +102,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected ResourceParameter keySortOrder() {
-        return SORT_ORDER;
-    }
-
-    @Override
     protected ResourceParameter toKey(String keyName) {
         return ResourceParameter.keyFromString(keyName);
     }
@@ -143,6 +136,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
+    @Override
     public URI openSearchUri() {
         return
             fromUri(infrastructureApiUri)
@@ -154,7 +148,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     private Map<String, String> queryParameters() {
         return additionalQueryParameters;
     }
-
 
     @Override
     protected Map<String, String> facetPaths() {
@@ -234,6 +227,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceSearchQuery> {
 
+
         ResourceParameterValidator() {
             super(new ResourceSearchQuery());
         }
@@ -303,7 +297,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
-                case LANG -> { /* ignore and continue */ }
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }

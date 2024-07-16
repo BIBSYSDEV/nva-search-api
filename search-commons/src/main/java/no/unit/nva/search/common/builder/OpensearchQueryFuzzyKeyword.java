@@ -21,19 +21,22 @@ import org.opensearch.index.query.TermsQueryBuilder;
  */
 public class OpensearchQueryFuzzyKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
+    public static final String KEYWORD_ANY = "FuzzyKeywordAny-";
+    public static final String KEYWORD_ALL = "FuzzyKeywordAll-";
+
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         var boolQuery = QueryBuilders.boolQuery()
             .should(buildMatchAnyKeyword(key, values))
             .must(buildMatchAnyFuzzy(key, values))
-            .queryName("FuzzyKeywordAny" + key.asCamelCase());
+            .queryName(KEYWORD_ANY + key.asCamelCase());
         return Functions.queryToEntry(key, boolQuery);
     }
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         var boolQuery = QueryBuilders.boolQuery()
-            .queryName("FuzzyKeywordAll-" + key.asCamelCase());
+            .queryName(KEYWORD_ALL + key.asCamelCase());
         buildMatchAllKeyword(key, values).forEach(boolQuery::should);
         buildMatchAllFuzzy(key, values).forEach(boolQuery::must);
 

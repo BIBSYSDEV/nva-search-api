@@ -1,58 +1,62 @@
-package no.unit.nva.search.ticket;
+package no.unit.nva.search2.ticket;
 
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.common.constant.Functions.toEnumStrings;
-import static no.unit.nva.search.common.constant.Functions.trimSpace;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.POST_FILTER;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SEARCH;
-import static no.unit.nva.search.common.constant.Words.TICKETS;
-import static no.unit.nva.search.ticket.Constants.ORGANIZATION_ID_KEYWORD;
-import static no.unit.nva.search.ticket.Constants.UNHANDLED_KEY;
-import static no.unit.nva.search.ticket.Constants.facetTicketsPaths;
-import static no.unit.nva.search.ticket.Constants.getTicketsAggregations;
-import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
-import static no.unit.nva.search.ticket.TicketParameter.BY_USER_PENDING;
-import static no.unit.nva.search.ticket.TicketParameter.EXCLUDE_SUBUNITS;
-import static no.unit.nva.search.ticket.TicketParameter.FROM;
-import static no.unit.nva.search.ticket.TicketParameter.NODES_EXCLUDED;
-import static no.unit.nva.search.ticket.TicketParameter.NODES_INCLUDED;
-import static no.unit.nva.search.ticket.TicketParameter.NODES_SEARCHED;
-import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
-import static no.unit.nva.search.ticket.TicketParameter.PAGE;
-import static no.unit.nva.search.ticket.TicketParameter.SEARCH_AFTER;
-import static no.unit.nva.search.ticket.TicketParameter.SIZE;
-import static no.unit.nva.search.ticket.TicketParameter.SORT;
-import static no.unit.nva.search.ticket.TicketParameter.SORT_ORDER;
-import static no.unit.nva.search.ticket.TicketParameter.STATUS;
-import static no.unit.nva.search.ticket.TicketParameter.TICKET_PARAMETER_SET;
-import static no.unit.nva.search.ticket.TicketStatus.PENDING;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
+import static no.unit.nva.search2.common.constant.Functions.toEnumStrings;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.SEARCH;
+import static no.unit.nva.search2.common.constant.Words.TICKETS;
+import static no.unit.nva.search2.ticket.Constants.ORGANIZATION_ID_KEYWORD;
+import static no.unit.nva.search2.ticket.Constants.UNHANDLED_KEY;
+import static no.unit.nva.search2.ticket.Constants.facetTicketsPaths;
+import static no.unit.nva.search2.ticket.Constants.getTicketsAggregations;
+import static no.unit.nva.search2.ticket.TicketParameter.AGGREGATION;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE;
+import static no.unit.nva.search2.ticket.TicketParameter.ASSIGNEE_NOT;
+import static no.unit.nva.search2.ticket.TicketParameter.BY_USER_PENDING;
+import static no.unit.nva.search2.ticket.TicketParameter.EXCLUDE_SUBUNITS;
+import static no.unit.nva.search2.ticket.TicketParameter.FROM;
+import static no.unit.nva.search2.ticket.TicketParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.ticket.TicketParameter.NODES_INCLUDED;
+import static no.unit.nva.search2.ticket.TicketParameter.NODES_SEARCHED;
+import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
+import static no.unit.nva.search2.ticket.TicketParameter.PAGE;
+import static no.unit.nva.search2.ticket.TicketParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.ticket.TicketParameter.SIZE;
+import static no.unit.nva.search2.ticket.TicketParameter.SORT;
+import static no.unit.nva.search2.ticket.TicketParameter.STATUS;
+import static no.unit.nva.search2.ticket.TicketParameter.STATUS_NOT;
+import static no.unit.nva.search2.ticket.TicketParameter.TICKET_PARAMETER_SET;
+import static no.unit.nva.search2.ticket.TicketStatus.NEW;
+import static no.unit.nva.search2.ticket.TicketStatus.PENDING;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.builder.OpensearchQueryText;
-import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.AsType;
+import no.unit.nva.search2.common.ParameterValidator;
+import no.unit.nva.search2.common.SearchQuery;
+import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.constant.Functions;
+import no.unit.nva.search2.common.enums.SortKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
@@ -60,6 +64,7 @@ import org.opensearch.search.sort.SortOrder;
 
 /**
  * @author Stig Norland
+ * @author Sondre Vestad
  */
 public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
@@ -75,7 +80,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return new TicketParameterValidator();
     }
 
-
     @Override
     protected TicketParameter keyAggregation() {
         return AGGREGATION;
@@ -84,11 +88,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     @Override
     protected TicketParameter keyFields() {
         return NODES_SEARCHED;
-    }
-
-    @Override
-    protected TicketParameter keySortOrder() {
-        return SORT_ORDER;
     }
 
     @Override
@@ -153,22 +152,36 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return switch (key) {
             case ASSIGNEE -> builderStreamByAssignee();
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);
+            case STATUS, STATUS_NOT -> builderStreamByStatus(key);
             default -> throw new IllegalArgumentException(UNHANDLED_KEY + key.name());
         };
     }
+
+    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(TicketParameter key) {
+        return hasAssigneeAndOnlyStatusNew()
+            ? Stream.empty()    // we cannot query status New here, it is done together with assignee.
+            : new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
+    }
+
 
     public TicketFilter withFilter() {
         return filterBuilder;
     }
 
-
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
         var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
             ? filterBuilder.getCurrentUser()
-            : parameters().get(TicketParameter.ASSIGNEE).toString();
+            : parameters().get(ASSIGNEE).toString();
 
-        return new OpensearchQueryText<TicketParameter>()
-            .buildQuery(TicketParameter.ASSIGNEE, searchByUserName);
+        var builtQuery = new OpensearchQueryAcrossFields<TicketParameter>()
+            .buildQuery(ASSIGNEE, searchByUserName);
+
+        if (hasStatusNew()) {       // we'll query assignee and status New here....
+            var queryBuilder = (BoolQueryBuilder) builtQuery.findFirst().orElseThrow().getValue();
+            queryBuilder.should(new TermQueryBuilder("status.keyword", NEW.toString()));
+            return Functions.queryToEntry(ASSIGNEE, queryBuilder);
+        }
+        return builtQuery;
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(TicketParameter key) {
@@ -177,8 +190,23 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             : key;
 
         return
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as());
+            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as())
+                .map(query -> Map.entry(key, query.getValue()));
+
     }
+
+    private boolean hasStatusNew() {
+        return parameters().get(STATUS).contains(NEW) || parameters().get(STATUS_NOT).contains(NEW);
+    }
+
+    private boolean hasAssigneeAndOnlyStatusNew() {
+        return (
+            parameters().get(STATUS).equalsIgnoreCase(NEW) || parameters().get(STATUS_NOT).equalsIgnoreCase(NEW)
+        ) && (
+            parameters().isPresent(ASSIGNEE) || parameters().isPresent(ASSIGNEE_NOT)
+        );
+    }
+
 
     /**
      * Add a (default) filter to the query that will never match any document.
@@ -218,9 +246,9 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             // convert page to offset if offset is not set
             if (searchQuery.parameters().isPresent(PAGE)) {
                 if (searchQuery.parameters().isPresent(FROM)) {
-                    var page = searchQuery.parameters().get(PAGE).<Number>as();
-                    var perPage = searchQuery.parameters().get(SIZE).<Number>as();
-                    searchQuery.parameters().set(FROM, String.valueOf(page.longValue() * perPage.longValue()));
+                    var page = searchQuery.parameters().get(PAGE).<Number>as().longValue();
+                    var perPage = searchQuery.parameters().get(SIZE).<Number>as().longValue();
+                    searchQuery.parameters().set(FROM, String.valueOf(page * perPage));
                 }
                 searchQuery.parameters().remove(PAGE);
             }

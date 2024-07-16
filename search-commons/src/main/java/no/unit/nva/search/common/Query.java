@@ -1,14 +1,12 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search2.common;
 
-import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
-
+import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
 import java.net.URI;
 import java.time.Instant;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.records.ResponseFormatter;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.records.QueryContentWrapper;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
+import no.unit.nva.search2.common.records.ResponseFormatter;
 
 /**
  * @author Stig Norland
@@ -20,6 +18,12 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
 
     public abstract Stream<QueryContentWrapper> assemble();
 
+    /**
+     * Method to mimic Domain driven design.
+     *
+     * @param queryClient simple service to do i/o (http)
+     * @return ResponseFormatter<ParameterKey>
+     */
     public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
 
     protected abstract URI openSearchUri();

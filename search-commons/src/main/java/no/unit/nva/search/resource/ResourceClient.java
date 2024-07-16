@@ -1,18 +1,24 @@
-package no.unit.nva.search.resource;
+package no.unit.nva.search2.resource;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.util.stream.Collectors.joining;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search.common.constant.Words.AMPERSAND;
-import static nva.commons.core.attempt.Try.attempt;
+import static no.unit.nva.search2.common.jwt.Tools.getCachedJwtProvider;
+import static no.unit.nva.search2.common.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
+
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.BinaryOperator;
 
-import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.OpenSearchClient;
-import no.unit.nva.search.common.records.SwsResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
+import no.unit.nva.search2.common.OpenSearchClient;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
+
 
 /**
  * @author Stig Norland
@@ -20,6 +26,8 @@ import nva.commons.secrets.SecretsReader;
 public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearchQuery> {
 
     private final UserSettingsClient userSettingsClient;
+    @SuppressWarnings("PMD.DoNotUseThreads")
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(3);
 
 
     public ResourceClient(HttpClient client, CachedJwtProvider cachedJwtProvider) {
@@ -36,32 +44,35 @@ public class ResourceClient extends OpenSearchClient<SwsResponse, ResourceSearch
     @JacocoGenerated
     public static ResourceClient defaultClient() {
         var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
-        return new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider);
+        var httpClient = HttpClient.newBuilder()
+            .executor(executorService)
+            .version(HttpClient.Version.HTTP_2)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+        return new ResourceClient(httpClient, cachedJwtProvider);
     }
 
     @Override
     public SwsResponse doSearch(ResourceSearchQuery query) {
-        queryBuilderStart = query.getStartTime();
-        queryParameters = query.parameters().asMap()
-            .entrySet().stream()
-            .map(Object::toString)
-            .collect(joining(AMPERSAND));
-        return
-            query.withUserSettings(userSettingsClient)
-                .assemble()
-                .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
-                .findFirst().orElseThrow();
+        return super.doSearch(query.withUserSettings(userSettingsClient));
     }
 
     @Override
-    protected SwsResponse handleResponse(HttpResponse<String> response) {
-        if (response.statusCode() != HTTP_OK) {
-            throw new RuntimeException(response.body());
-        }
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
-            .map(logAndReturnResult())
-            .orElseThrow();
+    protected SwsResponse jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
+        return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
     }
+
+    @Override
+    protected BinaryOperator<SwsResponse> responseAccumulator() {
+        return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
+    }
+
+    @Override
+    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+        return result -> {
+            logger.info(buildLogInfo(result));
+            return result;
+        };
+    }
+
 }

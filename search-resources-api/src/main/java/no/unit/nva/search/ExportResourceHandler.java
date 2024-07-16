@@ -18,15 +18,12 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-/**
- * @author Sondre Vestad
- * @author Stig Norland
- */
 public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
 
     public static final String MAX_HITS_PER_PAGE = "2500";
@@ -81,6 +78,11 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     @Override
     protected String getContentType() {
         return "text/csv";
+    }
+
+    @Override
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+        //Do nothing
     }
 
     @Override

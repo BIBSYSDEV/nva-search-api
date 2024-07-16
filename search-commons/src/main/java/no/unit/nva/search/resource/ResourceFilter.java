@@ -1,24 +1,21 @@
-package no.unit.nva.search.resource;
+package no.unit.nva.search2.resource;
 
-import static no.unit.nva.search.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.STATUS;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search2.resource.Constants.PUBLISHER_ID_KEYWORD;
+import static no.unit.nva.search2.resource.Constants.STATUS_KEYWORD;
 
-import no.unit.nva.search.common.enums.PublicationStatus;
+import java.net.URI;
+import java.util.Arrays;
 
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-
-import no.unit.nva.search.common.records.FilterBuilder;
-
-import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
+import no.unit.nva.search2.common.enums.PublicationStatus;
+import no.unit.nva.search2.common.records.FilterBuilder;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-
-import java.net.URI;
-import java.util.Arrays;
 
 /**
  * @author Stig Norland

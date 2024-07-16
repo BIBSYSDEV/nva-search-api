@@ -1,15 +1,18 @@
-package no.unit.nva.search.importcandidate;
+package no.unit.nva.search2.importcandidate;
 
-import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static nva.commons.core.attempt.Try.attempt;
+import static no.unit.nva.search2.common.jwt.Tools.getCachedJwtProvider;
+
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.function.BinaryOperator;
 
-import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.OpenSearchClient;
-import no.unit.nva.search.common.records.SwsResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import no.unit.nva.search2.common.jwt.CachedJwtProvider;
+import no.unit.nva.search2.common.OpenSearchClient;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
 
 /**
@@ -23,17 +26,25 @@ public class ImportCandidateClient extends OpenSearchClient<SwsResponse, ImportC
 
     @JacocoGenerated
     public static ImportCandidateClient defaultClient() {
-        var cachedJwtProvider = OpenSearchClient.getCachedJwtProvider(new SecretsReader());
+        var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
         return new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
     @Override
-    protected SwsResponse handleResponse(HttpResponse<String> response) {
-        if (response.statusCode() != HTTP_OK) {
-            throw new RuntimeException(response.body());
-        }
-        return attempt(() -> singleLineObjectMapper.readValue(response.body(), SwsResponse.class))
-            .map(logAndReturnResult())
-            .orElseThrow();
+    protected SwsResponse jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
+        return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
+    }
+
+    @Override
+    protected BinaryOperator<SwsResponse> responseAccumulator() {
+        return (a, b) -> SwsResponse.SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
+    }
+
+    @Override
+    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+        return result -> {
+            logger.info(buildLogInfo(result));
+            return result;
+        };
     }
 }

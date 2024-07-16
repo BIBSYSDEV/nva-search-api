@@ -1,38 +1,37 @@
-package no.unit.nva.search.importcandidate;
+package no.unit.nva.search2.importcandidate;
 
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
-import static no.unit.nva.search.common.constant.Functions.jsonPath;
-import static no.unit.nva.search.common.constant.Functions.trimSpace;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.SEARCH;
-import static no.unit.nva.search.common.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search.common.constant.Words.VALUE;
-import static no.unit.nva.search.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
-import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
-import static no.unit.nva.search.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.NODES_EXCLUDED;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.NODES_INCLUDED;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.NODES_SEARCHED;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.PAGE;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SORT;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SORT_ORDER;
-import static no.unit.nva.search.importcandidate.Constants.selectByLicense;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.search2.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.search2.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.search2.common.constant.Functions.jsonPath;
+import static no.unit.nva.search2.common.constant.Functions.trimSpace;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.search2.common.constant.Words.SEARCH;
+import static no.unit.nva.search2.common.constant.Words.SOURCE_NAME;
+import static no.unit.nva.search2.common.constant.Words.VALUE;
+import static no.unit.nva.search2.importcandidate.Constants.FACET_IMPORT_CANDIDATE_PATHS;
+import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_AGGREGATIONS;
+import static no.unit.nva.search2.importcandidate.Constants.IMPORT_CANDIDATES_INDEX_NAME;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.AGGREGATION;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.IMPORT_CANDIDATE_PARAMETER_SET;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.NODES_EXCLUDED;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.NODES_INCLUDED;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.NODES_SEARCHED;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.PAGE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SEARCH_AFTER;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SIZE;
+import static no.unit.nva.search2.importcandidate.ImportCandidateParameter.SORT;
+import static no.unit.nva.search2.importcandidate.Constants.selectByLicense;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
@@ -42,13 +41,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.AsType;
+import no.unit.nva.search2.common.ParameterValidator;
+import no.unit.nva.search2.common.SearchQuery;
+import no.unit.nva.search2.common.constant.Functions;
+import no.unit.nva.search2.common.enums.SortKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
@@ -82,11 +80,6 @@ public final class ImportCandidateSearchQuery extends SearchQuery<ImportCandidat
     @Override
     protected ImportCandidateParameter keySearchAfter() {
         return SEARCH_AFTER;
-    }
-
-    @Override
-    protected ImportCandidateParameter keySortOrder() {
-        return SORT_ORDER;
     }
 
     @Override

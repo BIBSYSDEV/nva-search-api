@@ -20,6 +20,9 @@ import static org.opensearch.index.query.QueryBuilders.matchQuery;
  */
 public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
+    public static final String TEXT_ALL = "TextAll-";
+    public static final String TEXT_ANY = "TextAny-";
+
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return buildAnyComboMustHitQuery(key, values)
@@ -36,11 +39,11 @@ public class OpensearchQueryText<K extends Enum<K> & ParameterKey> extends Opens
         return Arrays.stream(values)
             .map(singleValue -> phrasePrefixBuilder(singleValue, key)
                 .collect(DisMaxQueryBuilder::new, DisMaxQueryBuilder::add, DisMaxQueryBuilder::add)
-                .queryName("TextAll-" + key.asCamelCase()));
+                .queryName(TEXT_ALL + key.asCamelCase()));
     }
 
     private Stream<DisMaxQueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
-        var disMax = QueryBuilders.disMaxQuery().queryName("TextAny-" + key.asCamelCase());
+        var disMax = QueryBuilders.disMaxQuery().queryName(TEXT_ANY + key.asCamelCase());
         Arrays.stream(values)
             .flatMap(singleValue -> phrasePrefixBuilder(singleValue, key))
             .forEach(disMax::add);

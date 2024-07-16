@@ -19,14 +19,12 @@ import no.unit.nva.search.resource.ResourceSearchQuery;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-/**
- * @author Stig Norland
- */
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;
@@ -45,7 +43,7 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
         throws BadRequestException, UnauthorizedException {
 
-        validateAccessRight(requestInfo.getAccessRights());
+
 
         return
             ResourceSearchQuery.builder()
@@ -68,6 +66,11 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
+    }
+
+    @Override
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+        validateAccessRight(requestInfo.getAccessRights());
     }
 
     private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {

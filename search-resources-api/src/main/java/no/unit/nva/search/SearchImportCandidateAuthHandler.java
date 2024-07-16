@@ -6,6 +6,7 @@ import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
@@ -21,9 +22,6 @@ import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREG
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
 
-/**
- * @author Stig Norland
- */
 public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ImportCandidateClient opensearchClient;
@@ -41,7 +39,6 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException, UnauthorizedException {
 
-        validateAccessRight(requestInfo);
 
         return
             ImportCandidateSearchQuery.builder()
@@ -60,6 +57,11 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
     @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
+    }
+
+    @Override
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+        validateAccessRight(requestInfo);
     }
 
     private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {

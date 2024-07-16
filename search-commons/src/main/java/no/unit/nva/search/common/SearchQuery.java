@@ -1,43 +1,43 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search2.common;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.KEYWORD_FALSE;
-import static no.unit.nva.search.common.constant.Words.POST_FILTER;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SORT_LAST;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ONE_ITEM;
-import static no.unit.nva.search.common.enums.FieldOperator.NO_ITEMS;
+import static no.unit.nva.search2.common.constant.Defaults.DEFAULT_SORT_ORDER;
+import static no.unit.nva.search2.common.constant.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
+import static no.unit.nva.search2.common.constant.Patterns.COLON_OR_SPACE;
+import static no.unit.nva.search2.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.ASTERISK;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD_FALSE;
+import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
+import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search2.common.constant.Words.SORT_LAST;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ALL_OF;
+import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.paths.UriWrapper.fromUri;
-
 import com.google.common.net.MediaType;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.builder.OpensearchQueryAcrossFields;
-import no.unit.nva.search.common.builder.OpensearchQueryFuzzyKeyword;
-import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
-import no.unit.nva.search.common.builder.OpensearchQueryRange;
-import no.unit.nva.search.common.builder.OpensearchQueryText;
-import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.records.ResponseFormatter;
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.SortKey;
-import no.unit.nva.search.common.records.QueryContentWrapper;
-import no.unit.nva.search.common.records.SwsResponse;
+import no.unit.nva.search2.common.builder.OpensearchQueryAcrossFields;
+import no.unit.nva.search2.common.builder.OpensearchQueryFuzzyKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.builder.OpensearchQueryRange;
+import no.unit.nva.search2.common.builder.OpensearchQueryText;
+import no.unit.nva.search2.common.constant.ErrorMessages;
+import no.unit.nva.search2.common.constant.Functions;
+import no.unit.nva.search2.common.records.ResponseFormatter;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.SortKey;
+import no.unit.nva.search2.common.records.QueryContentWrapper;
+import no.unit.nva.search2.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
@@ -61,6 +61,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
+
+    /**
+     * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo);
+     * This value only used in debug and tests.
+     */
     private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
     public final transient QueryFilter filters;
@@ -78,8 +83,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     protected abstract K keyAggregation();
 
     protected abstract K keyFields();
-
-    protected abstract K keySortOrder();
 
     protected abstract K keySearchAfter();
 
@@ -101,7 +104,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     protected SearchQuery() {
         super();
         filters = new QueryFilter();
-        queryKeys = new QueryKeys<>(keyFields(), keySortOrder());
+        queryKeys = new QueryKeys<>(keyFields());
         setMediaType(JSON_UTF_8.toString());
     }
 
@@ -130,10 +133,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         }
     }
 
-
     /**
      * Builds URI to query SWS based on post body.
-     *
      * @return an URI to Sws search without parameters.
      */
     public URI getNvaSearchApiUri() {
@@ -159,9 +160,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
             : fieldValue.asSplitStream(COMMA)
             .map(this::toKey)
-            .flatMap(key -> key.searchFields(KEYWORD_FALSE)
-                .map(jsonPath -> Map.entry(jsonPath, key.fieldBoost()))
-            )
+            .flatMap(key -> key.searchFields(KEYWORD_FALSE).map(jsonPath -> Map.entry(jsonPath, key.fieldBoost())))
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
@@ -177,36 +176,23 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
-            default -> throw new RuntimeException("handler NOT defined -> " + key.name());
+            default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
-        var queryBuilder =
-            parameters().getSearchKeys().findAny().isEmpty()
-                ? QueryBuilders.matchAllQuery()
-                : builderMainQuery();
+        var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
+        var builder = builderDefaultSearchSource();
 
-        var builder = builderDefaultSearchSource(queryBuilder);
-
-        if (fetchSource()) {
-            builder.fetchSource(include(), exclude());
-        } else {
-            builder.fetchSource(true);
-        }
-
+        handleFetchSource(builder);
+        handleAggregation(builder, contentWrappers);
         handleSearchAfter(builder);
+        handleSorting(builder);
 
-        builderStreamFieldSort().forEach(builder::sort);
-
-        if (includeAggregation()) {
-            builder.aggregation(builderAggregationsWithFilter());
-        }
-
-        return Stream.of(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+        contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
+        return contentWrappers.stream();
     }
-
 
     /**
      * Creates a boolean query, with all the search parameters.
@@ -248,7 +234,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return aggrFilter;
     }
 
-    protected SearchSourceBuilder builderDefaultSearchSource(QueryBuilder queryBuilder) {
+    protected SearchSourceBuilder builderDefaultSearchSource() {
+        var queryBuilder =
+            parameters().getSearchKeys().findAny().isEmpty()
+                ? QueryBuilders.matchAllQuery()
+                : builderMainQuery();
+
         return new SearchSourceBuilder()
             .query(queryBuilder)
             .size(size().as())
@@ -267,6 +258,23 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             .operator(Operator.AND);
     }
 
+    private void handleAggregation(SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
+        if (hasAggregation()) {
+            var aggregationBuilder = builder.shallowCopy();
+            aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
+            aggregationBuilder.aggregation(builderAggregationsWithFilter());
+            contentWrappers.add(new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
+        }
+    }
+
+    private void handleFetchSource(SearchSourceBuilder builder) {
+        if (isFetchSource()) {
+            builder.fetchSource(include(), exclude());
+        } else {
+            builder.fetchSource(true);
+        }
+    }
+
     private void handleSearchAfter(SearchSourceBuilder builder) {
         var sortKeys = parameters().remove(keySearchAfter()).split(COMMA);
         if (nonNull(sortKeys)) {
@@ -274,16 +282,32 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         }
     }
 
-    private boolean fetchSource() {
-        return nonNull(exclude()) || nonNull(include());
+    private void handleSorting(SearchSourceBuilder builder) {
+        if (isSortByRelevance()) {
+            builder.trackScores(true); // Not very well documented. This allows sorting on relevance and other fields.
+        }
+        builderStreamFieldSort().forEach(builder::sort);
     }
 
-    private boolean includeAggregation() {
-        return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
+    private int numberOfRequests() {
+        return hasAggregation() ? 2 : 1;
+    }
+
+    private boolean isSortByRelevance() {
+        var sorts = sort().toString();
+        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
     }
 
     private boolean isMustNot(K key) {
-        return NO_ITEMS.equals(key.searchOperator())
-            || NOT_ONE_ITEM.equals(key.searchOperator());
+        return NOT_ALL_OF.equals(key.searchOperator())
+            || NOT_ANY_OF.equals(key.searchOperator());
+    }
+
+    private boolean isFetchSource() {
+        return nonNull(exclude()) || nonNull(include());
+    }
+
+    private boolean hasAggregation() {
+        return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
     }
 }

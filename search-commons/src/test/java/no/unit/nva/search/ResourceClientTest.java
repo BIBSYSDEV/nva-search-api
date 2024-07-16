@@ -1,43 +1,46 @@
-package no.unit.nva.search;
+package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
-import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
-import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search.common.constant.Words.EQUAL;
-import static no.unit.nva.search.common.constant.Words.FILES;
-import static no.unit.nva.search.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search.common.constant.Words.LICENSE;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search.common.constant.Words.RESOURCES;
-import static no.unit.nva.search.common.constant.Words.SPACE;
-import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search.common.constant.Words.TYPE;
-import static no.unit.nva.search.common.constant.Words.ZERO;
-import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
-import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT;
-import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
-import static no.unit.nva.search.common.enums.PublicationStatus.NEW;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
-import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
-import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
-import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
-import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
-import static no.unit.nva.search.resource.ResourceParameter.FROM;
-import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
-import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
-import static no.unit.nva.search.resource.ResourceParameter.SIZE;
-import static no.unit.nva.search.resource.ResourceParameter.SORT;
-import static no.unit.nva.search.resource.ResourceParameter.UNIT;
+import static no.unit.nva.search2.common.Constants.DELAY_AFTER_INDEXING;
+import static no.unit.nva.search2.common.Constants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.search2.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search2.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search2.common.constant.Words.ALL;
+import static no.unit.nva.search2.common.constant.Words.COLON;
+import static no.unit.nva.search2.common.constant.Words.COMMA;
+import static no.unit.nva.search2.common.constant.Words.CONTRIBUTOR;
+import static no.unit.nva.search2.common.constant.Words.DOT;
+import static no.unit.nva.search2.common.constant.Words.EQUAL;
+import static no.unit.nva.search2.common.constant.Words.FILES;
+import static no.unit.nva.search2.common.constant.Words.FUNDING_SOURCE;
+import static no.unit.nva.search2.common.constant.Words.KEYWORD;
+import static no.unit.nva.search2.common.constant.Words.LICENSE;
+import static no.unit.nva.search2.common.constant.Words.NONE;
+import static no.unit.nva.search2.common.constant.Words.PIPE;
+import static no.unit.nva.search2.common.constant.Words.PUBLISHER;
+import static no.unit.nva.search2.common.constant.Words.RESOURCES;
+import static no.unit.nva.search2.common.constant.Words.SLASH;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.search2.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.search2.common.constant.Words.TYPE;
+import static no.unit.nva.search2.common.constant.Words.ZERO;
+import static no.unit.nva.search2.common.enums.PublicationStatus.DELETED;
+import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT;
+import static no.unit.nva.search2.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
+import static no.unit.nva.search2.common.enums.PublicationStatus.NEW;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED;
+import static no.unit.nva.search2.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search2.common.enums.PublicationStatus.UNPUBLISHED;
+import static no.unit.nva.search2.resource.ResourceParameter.AGGREGATION;
+import static no.unit.nva.search2.resource.ResourceParameter.EXCLUDE_SUBUNITS;
+import static no.unit.nva.search2.resource.ResourceParameter.FROM;
+import static no.unit.nva.search2.resource.ResourceParameter.NODES_INCLUDED;
+import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
+import static no.unit.nva.search2.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
+import static no.unit.nva.search2.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search2.resource.ResourceParameter.SORT;
+import static no.unit.nva.search2.resource.ResourceParameter.UNIT;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -68,18 +72,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.csv.ResourceCsvTransformer;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.resource.ResourceSort;
-import no.unit.nva.search.resource.UserSettingsClient;
-import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollQuery;
+import no.unit.nva.search.IndexingClient;
+import no.unit.nva.search.RestHighLevelClientWrapper;
+import no.unit.nva.search.models.EventConsumptionAttributes;
+import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.search2.common.constant.Words;
+import no.unit.nva.search2.common.csv.ResourceCsvTransformer;
+import no.unit.nva.search2.resource.ResourceClient;
+import no.unit.nva.search2.resource.ResourceSearchQuery;
+import no.unit.nva.search2.resource.ResourceSort;
+import no.unit.nva.search2.resource.UserSettingsClient;
+import no.unit.nva.search2.scroll.ScrollClient;
+import no.unit.nva.search2.scroll.ScrollQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import org.apache.http.HttpHost;
@@ -89,6 +93,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
@@ -164,7 +169,7 @@ class ResourceClientTest {
         @Test
         void shouldCheckFacets() throws BadRequestException {
             var hostAddress = URI.create(container.getHttpHostAddress());
-            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL + "&query=EntityDescription");
 
             var response1 = ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri1))
@@ -298,6 +303,30 @@ class ResourceClientTest {
                     .doSearch(searchClient).toString();
             assertNotNull(pagedResult);
             assertTrue(pagedResult.contains("\"hits\":["));
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+            "FYS5960,1",
+            "fys5960,1",
+            "fys596,1",
+            "fys5961,0"})
+        void shouldReturnCaseInsensitiveCourses(String searchValue, int expectedHits) throws BadRequestException {
+            var uri = URI.create("https://x.org/?course="+searchValue);
+
+            var response =
+                ResourceSearchQuery.builder()
+                    .fromQueryParameters(queryToMapEntries(uri))
+                    .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                    .withRequiredParameters(FROM, SIZE)
+                    .build()
+                    .withFilter()
+                    .requiredStatus(NEW, DRAFT, PUBLISHED_METADATA, PUBLISHED, DELETED, UNPUBLISHED,
+                                    DRAFT_FOR_DELETION).apply()
+                    .doSearch(searchClient);
+
+            var pagedSearchResourceDto = response.toPagedResponse();
+            assertEquals(expectedHits, pagedSearchResourceDto.totalHits());
         }
 
         @Test
@@ -436,9 +465,16 @@ class ResourceClientTest {
             var pagedSearchResourceDto = response.toPagedResponse();
             assertNotNull(pagedSearchResourceDto.id());
             var searchName = response.parameters().get(SORT).split(COMMA)[0].split(COLON)[0];
-            var searchFieldName = ResourceSort.fromSortKey(searchName).jsonPaths().findFirst().get();
+            var searchFieldName = ResourceSort.fromSortKey(searchName)
+                .jsonPaths()
+                .findFirst()
+                .map(path -> path.contains(KEYWORD) ? path.substring(0, path.indexOf(KEYWORD) - 1) : path)
+                .map(path -> SLASH + path.replace(DOT, SLASH))
+                .orElseThrow();
+
+
             var logInfo = response.swsResponse().hits().hits().stream()
-                .map(item -> item._score() + " + " + item._source().get(searchFieldName))
+                .map(item -> item._score() + " + " + searchFieldName)
                 .collect(Collectors.joining(SPACE + PIPE + SPACE));
             logger.info(logInfo);
             assertNotNull(pagedSearchResourceDto.context());
@@ -499,21 +535,21 @@ class ResourceClientTest {
                 StandardCharsets.UTF_8);
             var response =
                 ResourceSearchQuery.builder()
-                    .fromQueryParameters(
-                        Map.of(UNIT.asCamelCase(), viewingScope,
+                    .fromQueryParameters(Map.of(UNIT.asCamelCase(), viewingScope,
                         EXCLUDE_SUBUNITS.asCamelCase(), Boolean.TRUE.toString()))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
                     .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
                     .doSearch(searchClient);
 
+            var pagedSearchResourceDto = response.toPagedResponse();
 
             var excludedSubunit = "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0";
 
-            assertThat(response.toString(), not(containsString(excludedSubunit)));
-            assertThat(response.toPagedResponse().hits(), hasSize(1));
+            assertThat(pagedSearchResourceDto.toJsonString(), not(containsString(excludedSubunit)));
+            assertThat(pagedSearchResourceDto.hits(), hasSize(1));
         }
 
 
@@ -526,7 +562,7 @@ class ResourceClientTest {
             var response =
                 ResourceSearchQuery.builder()
                     .fromQueryParameters(Map.of(UNIT.asCamelCase(), unit, TOP_LEVEL_ORGANIZATION, topLevelOrg))
-                    .withRequiredParameters(FROM, SIZE)
+                    .withRequiredParameters(FROM, SIZE, AGGREGATION)
                     .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                     .build()
                     .withFilter()
@@ -564,6 +600,8 @@ class ResourceClientTest {
         static Stream<URI> uriSortingProvider() {
 
             return Stream.of(
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
+                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
                 URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
                 URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
                 URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),

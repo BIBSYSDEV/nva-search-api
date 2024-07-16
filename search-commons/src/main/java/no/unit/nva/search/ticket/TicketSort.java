@@ -28,6 +28,7 @@ public enum TicketSort implements SortKey {
 
     private final String keyValidationRegEx;
     private final String path;
+
     TicketSort(String jsonPath) {
         this.keyValidationRegEx = SortKey.getIgnoreCaseAndUnderscoreKeyExpression(this.name());
         this.path = jsonPath;

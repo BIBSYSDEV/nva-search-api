@@ -1,9 +1,10 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search2.common;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.common.constant.Functions.decodeUTF;
-import static no.unit.nva.search.common.constant.Words.PLUS;
-import static no.unit.nva.search.common.constant.Words.SPACE;
+import static no.unit.nva.search2.common.constant.Functions.decodeUTF;
+import static no.unit.nva.search2.common.constant.Words.PLUS;
+import static no.unit.nva.search2.common.constant.Words.SPACE;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -11,9 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search2.common.enums.ValueEncoding;
 
 /**
  * @author Stig Norland
@@ -24,11 +24,9 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
     private final transient Map<K, String> page;
     private final transient Map<K, String> search;
     private final  K fields;
-    private final  K sortOrder;
 
-    public QueryKeys(K fields, K sortOrder) {
+    public QueryKeys(K fields) {
         this.fields = fields;
-        this.sortOrder = sortOrder;
         search = new ConcurrentHashMap<>();
         page = new ConcurrentHashMap<>();
         otherRequired = new HashSet<>();
@@ -104,7 +102,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
     }
 
     private boolean isPagingValue(K key) {
-        return key.ordinal() >= fields.ordinal() && key.ordinal() <= sortOrder.ordinal();
+        return key.ordinal() >= fields.ordinal();
     }
 
     public AsType<K> remove(K key) {
