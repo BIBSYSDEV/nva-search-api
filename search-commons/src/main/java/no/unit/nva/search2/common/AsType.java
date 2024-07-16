@@ -75,7 +75,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
      * @param o Object with toString()
      * @return equalsIgnoreCase of objects toString()
      */
-    public boolean equal(Object o) {
+    public boolean equalsIgnoreCase(Object o) {
         return nonNull(value) && value.equalsIgnoreCase(o.toString());
     }
 

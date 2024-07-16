@@ -201,7 +201,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private boolean hasAssigneeAndOnlyStatusNew() {
         return (
-            parameters().get(STATUS).equal(NEW) || parameters().get(STATUS_NOT).equal(NEW)
+            parameters().get(STATUS).equalsIgnoreCase(NEW) || parameters().get(STATUS_NOT).equalsIgnoreCase(NEW)
         ) && (
             parameters().isPresent(ASSIGNEE) || parameters().isPresent(ASSIGNEE_NOT)
         );
