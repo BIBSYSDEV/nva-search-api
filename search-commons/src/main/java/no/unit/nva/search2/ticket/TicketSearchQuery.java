@@ -159,7 +159,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(TicketParameter key) {
         return hasAssigneeAndOnlyStatusNew()
-            ? Stream.empty()
+            ? Stream.empty()    // we cannot query status New here, it is done together with assignee.
             : new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
     }
 
@@ -176,7 +176,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         var builtQuery = new OpensearchQueryAcrossFields<TicketParameter>()
             .buildQuery(ASSIGNEE, searchByUserName);
 
-        if (hasStatusNew()) {
+        if (hasStatusNew()) {       // we'll query assignee and status New here....
             var queryBuilder = (BoolQueryBuilder) builtQuery.findFirst().orElseThrow().getValue();
             queryBuilder.should(new TermQueryBuilder("status.keyword", NEW.toString()));
             return Functions.queryToEntry(ASSIGNEE, queryBuilder);
