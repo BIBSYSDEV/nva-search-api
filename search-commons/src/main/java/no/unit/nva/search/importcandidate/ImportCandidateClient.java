@@ -1,6 +1,7 @@
 package no.unit.nva.search.importcandidate;
 
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.search.common.jwt.Tools.getCachedJwtProvider;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
