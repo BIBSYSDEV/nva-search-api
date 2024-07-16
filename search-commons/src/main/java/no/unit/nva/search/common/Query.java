@@ -1,12 +1,13 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search.common;
 
-import static no.unit.nva.search2.common.constant.Functions.readSearchInfrastructureApiUri;
+import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
 import java.net.URI;
 import java.time.Instant;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.enums.ParameterKey;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
-import no.unit.nva.search2.common.records.ResponseFormatter;
+
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.records.QueryContentWrapper;
+import no.unit.nva.search.common.records.ResponseFormatter;
 
 /**
  * @author Stig Norland

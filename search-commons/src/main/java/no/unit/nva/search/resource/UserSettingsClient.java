@@ -1,13 +1,13 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.common.constant.Functions.readApiHost;
-import static no.unit.nva.search2.common.constant.Words.HTTPS;
-import static no.unit.nva.search2.resource.Constants.PERSON_PREFERENCES;
-import static no.unit.nva.search2.resource.ResourceParameter.CONTRIBUTOR;
+import static no.unit.nva.search.common.constant.Functions.readApiHost;
+import static no.unit.nva.search.common.constant.Words.HTTPS;
+import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
+import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
@@ -23,9 +23,9 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.search2.common.OpenSearchClient;
-import no.unit.nva.search2.common.jwt.CachedJwtProvider;
-import no.unit.nva.search2.common.records.UserSettings;
+import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.UserSettings;
 import nva.commons.core.attempt.FunctionWithException;
 
 /**

@@ -1,15 +1,15 @@
-package no.unit.nva.search2.common.builder;
+package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.enums.FieldOperator.ANY_OF;
-import static no.unit.nva.search2.common.enums.FieldOperator.BETWEEN;
-import static no.unit.nva.search2.common.enums.FieldOperator.NOT_ANY_OF;
+import static no.unit.nva.search.common.constant.Words.COMMA;
+import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
+import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
+import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
 
 /**

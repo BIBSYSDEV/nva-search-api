@@ -1,8 +1,8 @@
-package no.unit.nva.search2.resource;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
-import static no.unit.nva.search2.common.jwt.Tools.getCachedJwtProvider;
-import static no.unit.nva.search2.common.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
+import static no.unit.nva.search.common.jwt.Tools.getCachedJwtProvider;
+import static no.unit.nva.search.common.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
@@ -12,9 +12,9 @@ import java.util.concurrent.Executors;
 import java.util.function.BinaryOperator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import no.unit.nva.search2.common.jwt.CachedJwtProvider;
-import no.unit.nva.search2.common.OpenSearchClient;
-import no.unit.nva.search2.common.records.SwsResponse;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.OpenSearchClient;
+import no.unit.nva.search.common.records.SwsResponse;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;

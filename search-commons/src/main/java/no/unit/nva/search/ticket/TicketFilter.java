@@ -1,14 +1,14 @@
-package no.unit.nva.search2.ticket;
+package no.unit.nva.search.ticket;
 
-import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
-import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
-import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
-import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
+import static no.unit.nva.search.common.constant.Words.POST_FILTER;
+import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
+import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
+import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
-import no.unit.nva.search2.common.records.FilterBuilder;
+import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;

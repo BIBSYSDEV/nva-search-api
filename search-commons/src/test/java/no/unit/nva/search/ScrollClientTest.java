@@ -1,16 +1,17 @@
 package no.unit.nva.search2;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search2.common.MockedHttpResponse.mockedFutureHttpResponse;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.net.http.HttpClient;
-import no.unit.nva.search2.scroll.ScrollClient;
-import no.unit.nva.search2.scroll.ScrollParameters;
-import no.unit.nva.search2.scroll.ScrollQuery;
+
+import no.unit.nva.search.scroll.ScrollClient;
+import no.unit.nva.search.scroll.ScrollParameters;
+import no.unit.nva.search.scroll.ScrollQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

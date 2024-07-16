@@ -1,13 +1,13 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search.common;
 
 import static java.util.Objects.isNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.common.constant.ErrorMessages.requiredMissingMessage;
-import static no.unit.nva.search2.common.constant.ErrorMessages.validQueryParameterNamesMessage;
-import static no.unit.nva.search2.common.constant.Functions.mergeWithColonOrComma;
-import static no.unit.nva.search2.common.constant.Words.ALL;
-import static no.unit.nva.search2.common.constant.Words.COMMA;
-import static no.unit.nva.search2.common.constant.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.search.common.constant.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.search.common.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
+import static no.unit.nva.search.common.constant.Words.ALL;
+import static no.unit.nva.search.common.constant.Words.COMMA;
+import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import no.unit.nva.search2.common.constant.ErrorMessages;
-import no.unit.nva.search2.common.enums.ParameterKey;
+import no.unit.nva.search.common.constant.ErrorMessages;
+import no.unit.nva.search.common.enums.ParameterKey;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;

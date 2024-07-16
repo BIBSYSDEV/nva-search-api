@@ -1,11 +1,11 @@
-package no.unit.nva.search2.common;
+package no.unit.nva.search.common;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.stream.Collectors.joining;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search2.common.constant.Words.AMPERSAND;
+import static no.unit.nva.search.common.constant.Words.AMPERSAND;
 import static nva.commons.core.attempt.Try.attempt;
 
 import java.net.URI;
@@ -22,10 +22,10 @@ import java.util.function.BinaryOperator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
 import no.unit.nva.commons.json.JsonSerializable;
-import no.unit.nva.search2.common.jwt.CachedJwtProvider;
-import no.unit.nva.search2.common.records.ResponseLogInfo;
-import no.unit.nva.search2.common.records.SwsResponse;
-import no.unit.nva.search2.common.records.QueryContentWrapper;
+import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.ResponseLogInfo;
+import no.unit.nva.search.common.records.SwsResponse;
+import no.unit.nva.search.common.records.QueryContentWrapper;
 import nva.commons.core.attempt.FunctionWithException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

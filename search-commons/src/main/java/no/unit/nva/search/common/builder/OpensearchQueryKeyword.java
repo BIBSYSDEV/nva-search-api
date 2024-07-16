@@ -1,12 +1,13 @@
-package no.unit.nva.search2.common.builder;
+package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search2.common.constant.Words.KEYWORD_TRUE;
+import static no.unit.nva.search.common.constant.Words.KEYWORD_TRUE;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import no.unit.nva.search2.common.constant.Functions;
-import no.unit.nva.search2.common.enums.ParameterKey;
+
+import no.unit.nva.search.common.constant.Functions;
+import no.unit.nva.search.common.enums.ParameterKey;
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
