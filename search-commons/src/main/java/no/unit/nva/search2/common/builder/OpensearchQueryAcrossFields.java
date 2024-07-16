@@ -19,12 +19,15 @@ import org.opensearch.index.query.QueryBuilders;
  */
 public class OpensearchQueryAcrossFields<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
 
+    public static final String ANY_VALUE = "AcrossFieldsAnyValue";
+    public static final String ALL_VALUES = "AcrossFieldsAllValues";
+
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return Functions.queryToEntry(key,
             buildMultiMatchQueryStream(key, values)
                 .collect(BoolQueryBuilder::new, BoolQueryBuilder::should, BoolQueryBuilder::should)
-                .queryName("AcrossFieldsAnyValue" + key.asCamelCase()));
+                .queryName(ANY_VALUE + key.asCamelCase()));
     }
 
     @Override
@@ -32,7 +35,7 @@ public class OpensearchQueryAcrossFields<K extends Enum<K> & ParameterKey> exten
         return Functions.queryToEntry(key,
             buildMultiMatchQueryStream(key, values)
                 .collect(BoolQueryBuilder::new, BoolQueryBuilder::must, BoolQueryBuilder::must)
-                .queryName("AcrossFieldsAllValues" + key.asCamelCase()));
+                .queryName(ALL_VALUES + key.asCamelCase()));
     }
 
     private Stream<QueryBuilder> buildMultiMatchQueryStream(K key, String... values) {

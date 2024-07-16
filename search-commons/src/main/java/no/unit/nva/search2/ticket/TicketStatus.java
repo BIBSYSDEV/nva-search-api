@@ -39,10 +39,6 @@ public enum TicketStatus {
         return status -> name.matches(status.keyValidationRegEx);
     }
 
-    public String getValue() {
-        return code;
-    }
-
     @Override
     public String toString() {
         return this.code;

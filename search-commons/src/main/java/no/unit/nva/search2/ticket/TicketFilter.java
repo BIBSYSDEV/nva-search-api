@@ -1,14 +1,15 @@
 package no.unit.nva.search2.ticket;
 
-import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
 import static no.unit.nva.search2.common.constant.Words.POST_FILTER;
-import no.unit.nva.search2.common.records.FilterBuilder;
 import static no.unit.nva.search2.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search2.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search2.ticket.TicketParameter.ORGANIZATION_ID;
-import nva.commons.apigateway.AccessRight;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
+
+import no.unit.nva.search2.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search2.common.records.FilterBuilder;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.QueryBuilders;
@@ -19,7 +20,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -51,9 +51,6 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
      */
     @Override
     public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-        if (Objects.isNull(requestInfo.getUserName())) {
-            throw new UnauthorizedException();
-        }
 
         final var organization = requestInfo
             .getTopLevelOrgCristinId()
