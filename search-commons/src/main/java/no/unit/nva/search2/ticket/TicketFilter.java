@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -51,6 +52,9 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
      */
     @Override
     public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
+        if (Objects.isNull(requestInfo.getUserName())) {
+            throw new UnauthorizedException();
+        }
 
         final var organization = requestInfo
             .getTopLevelOrgCristinId()
