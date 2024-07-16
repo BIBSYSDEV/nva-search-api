@@ -119,8 +119,8 @@
   "PROJECT_SHOULD=14334813,14334631": 3,
   "PUBLICATION_LANGUAGE=eng": 17,
   "PUBLICATION_LANGUAGE=http://lexvo.org/id/iso639-3/eng": 17,
-  "PUBLICATION_LANGUAGE=nor": 3,
-  "PUBLICATION_LANGUAGE=nor,eng": 20,
+  "PUBLICATION_LANGUAGE=nor": 2,
+  "PUBLICATION_LANGUAGE=nor,eng": 19,
   "PUBLICATION_LANGUAGE_NOT=http://lexvo.org/id/iso639-3/eng": 4,
   "PUBLICATION_LANGUAGE_SHOULD=eng": 17,
   "PUBLICATION_YEAR_BEFORE=2022": 4,
@@ -173,7 +173,7 @@
   "TAGS=NAKSIN": 1,
   "TAGS=NAKSIN,Avalanche-RnD": 1,
   "TAGS_NOT=NAKSIN": 20,
-  "TAGS_SHOULD=NAKSIN,Avalanche-RnD&page=0": 1,
+  "TAGS_SHOULD=NAKSIN,Avalanche-RnD&page=0": 8,
   "TITLE=Kjetils+ticket+test": 1,
   "TITLE_NOT=Kjetils": 18,
   "TITLE_NOT=Kjetils+ticket+test": 20,
@@ -185,7 +185,6 @@
   "TOP_LEVEL_ORGANIZATION=194.31.0.0&EXCLUDE_SUBUNITS=true": 0,
   "TOP_LEVEL_ORGANIZATION=194.31.5.0": 0,
   "TOP_LEVEL_ORGANIZATION=194.99.9.9": 0,
-  "TYPE_should=ReportResearch,AcademicArticle": 18,
   "TYPE_should=ReportResearch,AcademicArticle": 17,
   "UNIT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0": 1,
   "UNIT=20754.2.0.0": 1,
@@ -199,5 +198,3 @@
   "USER_NOT=1136254@20754.0.0.0": 18,
   "USER_SHOULD=1136254@": 3
 }
-
-

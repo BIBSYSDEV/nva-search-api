@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
@@ -72,10 +72,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.RestHighLevelClientWrapper;
-import no.unit.nva.search.models.EventConsumptionAttributes;
-import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.resource.ResourceClient;

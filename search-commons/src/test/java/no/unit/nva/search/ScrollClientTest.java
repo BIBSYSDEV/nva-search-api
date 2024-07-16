@@ -1,4 +1,4 @@
-package no.unit.nva.search2;
+package no.unit.nva.search;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
