@@ -1,8 +1,8 @@
 package no.unit.nva.indexing.handlers;
 
 
-import no.unit.nva.search.IndexingClient;
-import no.unit.nva.search.constants.ApplicationConstants;
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.constants.ApplicationConstants;
 import no.unit.nva.stubs.FakeContext;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.Test;

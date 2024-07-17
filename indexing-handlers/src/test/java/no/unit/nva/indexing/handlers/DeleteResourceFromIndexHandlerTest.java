@@ -1,7 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.search.IndexingClient.objectMapper;
-import static no.unit.nva.search.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,8 +22,8 @@ import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
-import no.unit.nva.search.models.EventConsumptionAttributes;
-import no.unit.nva.search.models.IndexDocument;
+import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
+import no.unit.nva.indexingclient.models.IndexDocument;
 import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
