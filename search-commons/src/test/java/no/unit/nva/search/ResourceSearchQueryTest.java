@@ -3,6 +3,8 @@ package no.unit.nva.search;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailedHttpResponse;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -53,12 +55,9 @@ class ResourceSearchQueryTest {
 
 
     @Test
-    void openSearchFailedResponse() throws IOException, InterruptedException {
+    void openSearchFailedResponse() {
         HttpClient httpClient = mock(HttpClient.class);
-        var response = mock(HttpResponse.class);
-        when(httpClient.send(any(), any())).thenReturn(response);
-        when(response.statusCode()).thenReturn(500);
-        when(response.body()).thenReturn("EXPECTED ERROR");
+        when(httpClient.sendAsync(any(), any())).thenReturn(mockedFutureFailedHttpResponse("bad request ! "));
         var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
         var resourceClient = new ResourceClient(httpClient, setupMockedCachedJwtProvider());
         assertThrows(

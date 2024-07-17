@@ -38,6 +38,7 @@ import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
+import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
@@ -164,6 +165,19 @@ class ResourceClientTest {
                 .path(TYPE).textValue();
             assertThat(topLevelOrgType, is(equalTo("nested")));
             logger.info(mapping.toString());
+        }
+
+        @Test
+        void shouldRemoveSearchKey() throws BadRequestException {
+            var hostAddress = URI.create(container.getHttpHostAddress());
+            var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL + "&query=EntityDescription");
+            var response1 = ResourceSearchQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri1))
+                .withDockerHostUri(hostAddress)
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .build();
+            response1.parameters().set(SEARCH_ALL, null);
+            response1.parameters().remove(SEARCH_ALL);
         }
 
         @Test

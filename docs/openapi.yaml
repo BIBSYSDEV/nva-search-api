@@ -90,7 +90,7 @@ paths:
 
   /customer/tickets:
     get:
-      description: "Search for Tickets by customer"
+      description: "Search for Tickets by given criteria"
       operationId: searchTicketsByCustomer
       parameters:
         - $ref: '#/components/parameters/assigneeParam'
@@ -172,7 +172,7 @@ paths:
 
   /customer/resources:
     get:
-      description: "Search for publications by customer"
+      description: "Search for publications by given criteria and credentials"
       operationId: searchResourcesByCustomer
       parameters:
         - $ref: '#/components/parameters/abstractNotParam'
