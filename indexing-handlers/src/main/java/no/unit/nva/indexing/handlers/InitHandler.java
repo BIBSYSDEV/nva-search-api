@@ -37,10 +37,10 @@ public class InitHandler implements RequestHandler<Object, String> {
 
     private static final List<IndexRequest> INDEXES = List.of(
         new IndexRequest(RESOURCES_INDEX, RESOURCES_MAPPINGS, RESOURCES_SETTINGS),
-            new IndexRequest(DOIREQUESTS_INDEX),
-            new IndexRequest(MESSAGES_INDEX),
+        new IndexRequest(DOIREQUESTS_INDEX),
+        new IndexRequest(MESSAGES_INDEX),
         new IndexRequest(TICKETS_INDEX, TICKET_MAPPINGS),
-            new IndexRequest(PUBLISHING_REQUESTS_INDEX)
+        new IndexRequest(PUBLISHING_REQUESTS_INDEX)
     );
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
     private final IndexingClient indexingClient;
@@ -60,8 +60,8 @@ public class InitHandler implements RequestHandler<Object, String> {
         var failState = new AtomicBoolean(false);
 
         INDEXES.forEach(request -> {
-            attempt(() -> indexingClient.createIndex(request.getName(), request.getMappings(), request.getSettings()))
-                    .orElse(fail -> handleFailure(failState, fail));
+            attempt(() -> indexingClient.createIndex(request.name(), request.mappings(), request.settings()))
+                .orElse(fail -> handleFailure(failState, fail));
         });
 
         return failState.get() ? FAILED : SUCCESS;

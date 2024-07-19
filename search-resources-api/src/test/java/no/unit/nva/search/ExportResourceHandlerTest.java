@@ -41,6 +41,7 @@ class ExportResourceHandlerTest {
         mockedScrollClient = mock(ScrollClient.class);
         handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
     }
+
     @Test
     void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
         var expectedTitle1 = randomString();
@@ -63,14 +64,14 @@ class ExportResourceHandlerTest {
                                                       ExportCsv scroll2SearchResult) throws IOException {
 
         when(mockedResourceClient.doSearch(any()))
-            .thenReturn(CsvToSwsResponse(initialSearchResult, "scrollId1"));
+            .thenReturn(csvToSwsResponse(initialSearchResult, "scrollId1"));
 
         when(mockedScrollClient.doSearch(any()))
-            .thenReturn(CsvToSwsResponse(scroll1SearchResult, "scrollId2"))
-            .thenReturn(CsvToSwsResponse(scroll2SearchResult, null));
+            .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
+            .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
     }
 
-    private static SwsResponse CsvToSwsResponse(ExportCsv csv, String scrollId) throws JsonProcessingException {
+    private static SwsResponse csvToSwsResponse(ExportCsv csv, String scrollId) throws JsonProcessingException {
         var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
         return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
     }

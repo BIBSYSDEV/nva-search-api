@@ -227,7 +227,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      *
      * @param key   to assign value to
      * @param value assigned
-     * @return builder
+     * @return builder {@link ParameterValidator<>}
      */
     public ParameterValidator<K, Q> withParameter(K key, String value) {
         searchQuery.parameters().set(key, value);
@@ -267,6 +267,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     private boolean hasSearchAfterAndSortByRelevance() {
         return searchQuery.parameters().isPresent(searchQuery.keySearchAfter())
-            && searchQuery.sort().toString().contains(RELEVANCE_KEY_NAME);
+                && searchQuery.sort().contains(RELEVANCE_KEY_NAME);
     }
 }

@@ -58,8 +58,8 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
     protected SortableIdentifier[] processInput(ImportDataRequestEvent input,
                                                 AwsEventBridgeEvent<ImportDataRequestEvent> event,
                                                 Context context) {
-        logger.info("Indexing folder:" + input.getS3Location());
-        logger.info("Indexing lastEvaluatedKey:" + input.getStartMarker());
+        logger.info("Indexing folder:{}", input.getS3Location());
+        logger.info("Indexing lastEvaluatedKey:{}", input.getStartMarker());
         IndexingResult<SortableIdentifier> result = new BatchIndexer(input, s3Client,
                                                                      openSearchClient,
                                                                      numberOfFilesPerEvent

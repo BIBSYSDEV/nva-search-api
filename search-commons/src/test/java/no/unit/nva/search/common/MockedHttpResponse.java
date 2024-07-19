@@ -21,6 +21,13 @@ public class MockedHttpResponse {
         return CompletableFuture.completedFuture(mockedHttpResponse(filename));
     }
 
+    public static CompletableFuture<HttpResponse<Object>> mockedFutureHttpResponse(String filename, int statusCode) {
+        return CompletableFuture.completedFuture(mockedHttpResponse(filename, statusCode));
+    }
+
+    public static CompletableFuture<HttpResponse<Object>> mockedFutureFailedHttpResponse(String message) {
+        return CompletableFuture.failedFuture(new Throwable(message));
+    }
 
     public static HttpResponse<Object> mockedHttpResponse(String filename) {
         return new HttpResponse<>() {

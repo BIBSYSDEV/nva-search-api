@@ -31,14 +31,38 @@ public interface ParameterKey {
 
     ParameterKind fieldType();
 
+    /**
+     * RegEx to validate field/key name.
+     *
+     * @return Regex
+     */
     String fieldPattern();
 
+    /**
+     * RegEx to validate content of key.
+     *
+     * @return Regex
+     */
     String valuePattern();
 
+    /**
+     * Should content of key be DECODED?
+     *
+     * @return {@link ValueEncoding}
+     */
     ValueEncoding valueEncoding();
 
+    /**
+     * One or more paths to search, should include .path.keyword, unless field doesn't have one.
+     *
+     * @param isKeyWord false => .keyword is not returned.
+     * @return One or more paths to search
+     */
     Stream<String> searchFields(boolean... isKeyWord);
 
+    /**
+     * @return {@link FieldOperator}
+     */
     FieldOperator searchOperator();
 
     String errorMessage();
@@ -51,6 +75,11 @@ public interface ParameterKey {
         return key1.ordinal() - key2.ordinal();
     }
 
+    /**
+     *
+     * @param kind {@link ParameterKind}
+     * @return  {@link ValueEncoding}
+     */
     static ValueEncoding getEncoding(ParameterKind kind) {
         return switch (kind) {
             case INVALID, IGNORED, BOOLEAN, NUMBER -> ValueEncoding.NONE;

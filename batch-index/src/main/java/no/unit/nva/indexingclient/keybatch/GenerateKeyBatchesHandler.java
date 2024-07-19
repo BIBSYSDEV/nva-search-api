@@ -32,9 +32,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
-    public static final String RESOURCES_FOLDER = "resources/";
     public static final String DEFAULT_BATCH_SIZE = "1000";
-    public static final String PERSISTED_MESSAGE = "Batches have been persisted successfully";
     public static final String DELIMITER = "/";
     public static final String DEFAULT_START_MARKER = null;
     public static final String START_MARKER_MESSAGE = "Start marker: {}";

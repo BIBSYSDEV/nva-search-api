@@ -1,6 +1,5 @@
 package no.unit.nva.search;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.util.List;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -34,14 +33,14 @@ class UserSettingsClientTest {
     public static final String SAMPLE_USER_SETTINGS_RESPONSE = "user_settings.json";
 
     @BeforeAll
-    public static void setUp() throws IOException, InterruptedException {
+    public static void setUp() {
         var mochedHttpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-        when(mochedHttpClient.send(any(), any()))
-            .thenReturn(mockedHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE))
-            .thenReturn(mockedHttpResponse(""))
-            .thenReturn(mockedHttpResponse("", 500));
+        when(mochedHttpClient.sendAsync(any(), any()))
+            .thenReturn(mockedFutureHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE))
+            .thenReturn(mockedFutureHttpResponse(""))
+            .thenReturn(mockedFutureHttpResponse("", 500));
 
     }
 

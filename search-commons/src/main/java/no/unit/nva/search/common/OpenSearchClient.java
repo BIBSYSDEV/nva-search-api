@@ -26,6 +26,7 @@ import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.ResponseLogInfo;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.QueryContentWrapper;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,10 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected abstract R jsonToResponse(HttpResponse<String> response) throws JsonProcessingException;
 
-    protected abstract BinaryOperator<R> responseAccumulator();
+    @JacocoGenerated
+    protected BinaryOperator<R> responseAccumulator() {
+        return (a, b) -> a;
+    }
 
     protected abstract FunctionWithException<R, R, RuntimeException> logAndReturnResult();
 

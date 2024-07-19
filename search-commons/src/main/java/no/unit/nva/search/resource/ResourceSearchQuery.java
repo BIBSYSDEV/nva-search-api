@@ -197,6 +197,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return this;
     }
 
+    @JacocoGenerated
     private void addPromotedPublications(UserSettingsClient userSettingsClient, BoolQueryBuilder bq) {
 
         var result = attempt(() -> userSettingsClient.doSearch(this));

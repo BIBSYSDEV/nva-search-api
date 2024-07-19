@@ -37,7 +37,7 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
     }
 
     @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException, UnauthorizedException {
+    protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
 
 
         return

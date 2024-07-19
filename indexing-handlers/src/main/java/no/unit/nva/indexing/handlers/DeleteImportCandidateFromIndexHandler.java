@@ -33,7 +33,7 @@ public class DeleteImportCandidateFromIndexHandler
                                        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteImportCandidateEvent>> event,
                                        Context context) {
         try {
-            indexingClient.removeDocumentFromImportCandidateIndex(input.getIdentifier().toString());
+            indexingClient.removeDocumentFromImportCandidateIndex(input.identifier().toString());
             logger.info(REMOVED_FROM_INDEX_MESSAGE);
         } catch (Exception e) {
             logError(e);
