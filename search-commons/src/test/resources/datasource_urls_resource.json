@@ -175,6 +175,8 @@
   "TAGS_NOT=NAKSIN": 20,
   "TAGS_SHOULD=NAKSIN,Avalanche-RnD&page=0": 8,
   "TITLE=Kjetils+ticket+test": 1,
+  "TITLE=idé": 6,
+  "TITLE=ide": 6,
   "TITLE_NOT=Kjetils": 18,
   "TITLE_NOT=Kjetils+ticket+test": 20,
   "TITLE_SHOULD=Simple": 2,
