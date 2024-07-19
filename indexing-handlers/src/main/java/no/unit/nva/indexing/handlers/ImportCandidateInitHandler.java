@@ -40,7 +40,7 @@ public class ImportCandidateInitHandler implements RequestHandler<Object, String
     public String handleRequest(Object input, Context context) {
         var failState = new AtomicBoolean(false);
 
-        attempt(() -> indexingClient.createIndex(INDEX.getName(), INDEX.getMappings()))
+        attempt(() -> indexingClient.createIndex(INDEX.name(), INDEX.mappings()))
                 .orElse(fail -> handleFailure(failState, fail));
 
         return failState.get() ? FAILED : SUCCESS;

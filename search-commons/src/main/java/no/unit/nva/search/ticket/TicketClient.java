@@ -2,6 +2,7 @@ package no.unit.nva.search.ticket;
 
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.common.jwt.Tools.getCachedJwtProvider;
+import static no.unit.nva.search.common.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
@@ -38,7 +39,7 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuer
 
     @Override
     protected BinaryOperator<SwsResponse> responseAccumulator() {
-        return (a, b) -> SwsResponse.SwsResponseBuilder.swsResponseBuilder().merge(a).merge(b).build();
+        return (a, b) -> swsResponseBuilder().merge(a).merge(b).build();
     }
 
     @Override

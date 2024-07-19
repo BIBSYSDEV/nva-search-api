@@ -111,7 +111,7 @@ public class AsType<K extends Enum<K> & ParameterKey> {
 
     /**
      * asBoolean
-     * @return False if value is null or FALSE, otherwise True
+     * @return True if values is 'True', otherwise False.
      */
     public Boolean asBoolean() {
         return Boolean.parseBoolean(value);

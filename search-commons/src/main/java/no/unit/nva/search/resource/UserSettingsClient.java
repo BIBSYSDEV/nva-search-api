@@ -19,7 +19,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
-import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
@@ -54,11 +53,6 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     @Override
     protected UserSettings jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
         return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
-    }
-
-    @Override
-    protected BinaryOperator<UserSettings> responseAccumulator() {
-        return (a, b) -> a;
     }
 
     @Override
