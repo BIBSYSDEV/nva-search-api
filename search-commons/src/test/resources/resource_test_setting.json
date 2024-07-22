@@ -1,0 +1,36 @@
+{
+  "analysis": {
+    "filter": {
+      "standard_nva_filter": {
+        "type": "asciifolding",
+        "preserve_original": true
+      }
+    },
+    "analyzer": {
+      "nva_text_analyser": {
+        "tokenizer": "lowercase",
+        "filter": [
+          "standard_nva_filter",
+          "scandinavian_normalization"
+        ]
+      }
+    },
+    "normalizer": {
+      "standard_nva_normalizer": {
+        "type": "custom",
+        "filter": [
+          "lowercase",
+          "asciifolding",
+          "scandinavian_normalization"
+        ]
+      },
+      "nva_keyword_normalizer": {
+        "type": "custom",
+        "filter": [
+          "lowercase",
+          "asciifolding"
+        ]
+      }
+    }
+  }
+}

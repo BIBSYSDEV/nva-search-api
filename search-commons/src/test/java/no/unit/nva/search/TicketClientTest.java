@@ -5,6 +5,8 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.search.common.Containers.container;
+import static no.unit.nva.search.common.Containers.indexingClient;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.common.constant.Words.ALL;
 import static no.unit.nva.search.common.constant.Words.EQUAL;
@@ -86,10 +88,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class TicketClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
-    private static final String TEST_TICKETS_MAPPINGS_JSON = "ticket_mapping_test.json";
     private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
-    private static final String SAMPLE_TICKETS_SEARCH_JSON = "ticket_datasource.json";
-    private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
@@ -97,35 +96,17 @@ class TicketClientTest {
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
 
     private static TicketClient searchClient;
-    private static IndexingClient indexingClient;
 
     private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
 
     @BeforeAll
     static void setUp() throws IOException, InterruptedException, UnauthorizedException {
-        container.start();
-
-        var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
         searchClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
         when(mockedRequestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(testOrganizationId));
         when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
         when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
-        createIndex();
-        populateIndex();
-        logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
-        Thread.sleep(DELAY_AFTER_INDEXING);
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException, InterruptedException {
-        logger.info("Stopping container");
-        indexingClient.deleteIndex(TICKETS);
-        Thread.sleep(DELAY_AFTER_INDEXING);
-        container.stop();
     }
 
     @Nested
@@ -513,28 +494,7 @@ class TicketClientTest {
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
-    private static void populateIndex() {
-        var jsonFile = stringFromResources(Path.of(SAMPLE_TICKETS_SEARCH_JSON));
-        var jsonNodes =
-            attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
 
-        jsonNodes.forEach(TicketClientTest::addDocumentToIndex);
-    }
 
-    private static void addDocumentToIndex(JsonNode node) {
-        try {
-            var attributes = new EventConsumptionAttributes(TICKETS, SortableIdentifier.next());
-            indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    private static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of(TEST_TICKETS_MAPPINGS_JSON));
-        var type = new TypeReference<Map<String, Object>>() {
-        };
-        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-        indexingClient.createIndex(TICKETS, mappings);
-    }
 }

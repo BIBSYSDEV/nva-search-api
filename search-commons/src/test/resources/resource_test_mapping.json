@@ -19,23 +19,22 @@
       "properties": {
         "mainTitle": {
           "type": "text",
-          "analyzer": "custom_asciifolding",
+          "analyzer": "nva_text_analyser",
           "fields": {
             "keyword": {
-              "type": "keyword",
               "ignore_above": 256,
-              "normalizer": "custom_normalizer"
+              "type": "keyword",
+              "normalizer": "nva_keyword_normalizer"
             }
           }
         },
         "abstract": {
           "type": "text",
-          "analyzer": "custom_asciifolding",
+          "analyzer": "nva_text_analyser",
           "fields": {
             "keyword": {
-              "type": "keyword",
               "ignore_above": 256,
-              "normalizer": "custom_normalizer"
+              "type": "keyword"
             }
           }
         },

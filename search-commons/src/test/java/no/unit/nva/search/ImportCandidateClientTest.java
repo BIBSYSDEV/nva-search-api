@@ -4,6 +4,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.search.common.Containers.container;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.common.constant.Words.ALL;
 import static no.unit.nva.search.common.constant.Words.EQUAL;
@@ -58,42 +59,19 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.client.RestClient;
-import org.opensearch.testcontainers.OpensearchContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 class ImportCandidateClientTest {
 
-    protected static final Logger logger = LoggerFactory.getLogger(ImportCandidateClientTest.class);
-    public static final String SAMPLE_IMPORT_CANDIDATES = "import_candidate_datasource.json";
-    private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://example.com/?";
-    private static IndexingClient indexingClient;
     private static ImportCandidateClient importCandidateClient;
 
     @BeforeAll
-    public static void setUp() throws IOException, InterruptedException {
-        container.start();
+    public static void setUp() {
 
-        var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
         importCandidateClient = new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
-        createIndex();
-        populateIndex();
-        logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
-        Thread.sleep(DELAY_AFTER_INDEXING);
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException, InterruptedException {
-        logger.info("Stopping container");
-        indexingClient.deleteIndex(IMPORT_CANDIDATES_INDEX);
-        Thread.sleep(DELAY_AFTER_INDEXING);
-        container.stop();
     }
 
     @Nested
@@ -295,26 +273,4 @@ class ImportCandidateClientTest {
         }
     }
 
-    protected static void populateIndex() {
-        var jsonFile = stringFromResources(Path.of(SAMPLE_IMPORT_CANDIDATES));
-        var jsonNodes =
-            attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
-
-        jsonNodes.forEach(node -> {
-            try {
-                var attributes = new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, SortableIdentifier.next());
-                indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    protected static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of("import_candidate_mapping_test.json"));
-        var type = new TypeReference<Map<String, Object>>() {
-        };
-        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-        indexingClient.createIndex(IMPORT_CANDIDATES_INDEX, mappings);
-    }
 }

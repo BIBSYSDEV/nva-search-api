@@ -1,8 +1,8 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
-import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.search.common.Containers.container;
+import static no.unit.nva.search.common.Containers.indexingClient;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
 import static no.unit.nva.search.common.constant.Words.ALL;
@@ -60,7 +60,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -71,11 +71,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.resource.ResourceClient;
@@ -86,8 +81,6 @@ import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import org.apache.http.HttpHost;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -95,8 +88,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.opensearch.client.RestClient;
-import org.opensearch.testcontainers.OpensearchContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -106,26 +97,15 @@ class ResourceClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String TEST_RESOURCES_MAPPINGS_JSON = "resource_mapping_test.json";
-    private static final String TEST_RESOURCES_SETTINGS_JSON = "resource_setting_test.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_datasource_urls.json";
-    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "resource_datasource.json";
-    private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_test_urls.json";
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
-    private static IndexingClient indexingClient;
 
     @BeforeAll
     static void setUp() throws IOException, InterruptedException {
-        container.start();
-
-        var restClientBuilder = RestClient.builder(HttpHost.create(container.getHttpHostAddress()));
-        var restHighLevelClientWrapper = new RestHighLevelClientWrapper(restClientBuilder);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
-        indexingClient = new IndexingClient(restHighLevelClientWrapper, cachedJwtProvider);
-
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
         var response = mockedHttpResponse("user_settings.json");
@@ -136,19 +116,6 @@ class ResourceClientTest {
         searchClient = new ResourceClient(HttpClient.newHttpClient(), userSettingsClient, cachedJwtProvider);
 
         scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
-
-        createIndex();
-        populateIndex();
-        logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
-        Thread.sleep(DELAY_AFTER_INDEXING);
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException, InterruptedException {
-        logger.info("Stopping container");
-        indexingClient.deleteIndex(RESOURCES);
-        Thread.sleep(DELAY_AFTER_INDEXING);
-        container.stop();
     }
 
     @Nested
@@ -654,30 +621,4 @@ class ResourceClientTest {
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
-    private static void populateIndex() {
-        var jsonFile = stringFromResources(Path.of(SAMPLE_RESOURCES_SEARCH_JSON));
-        var jsonNodes =
-            attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
-
-        jsonNodes.forEach(ResourceClientTest::addDocumentToIndex);
-    }
-
-    private static void addDocumentToIndex(JsonNode node) {
-        try {
-            var attributes = new EventConsumptionAttributes(RESOURCES, SortableIdentifier.next());
-            indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS_JSON));
-        var settingsJson = stringFromResources(Path.of(TEST_RESOURCES_SETTINGS_JSON));
-        var type = new TypeReference<Map<String, Object>>() {
-        };
-        var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
-        var settings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(settingsJson, type)).orElseThrow();
-        indexingClient.createIndex(RESOURCES, mappings, settings);
-    }
 }
