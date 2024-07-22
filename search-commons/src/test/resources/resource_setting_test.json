@@ -1,7 +1,7 @@
 {
   "analysis": {
     "analyzer": {
-      "custom_asciifolding": {
+      "default": {
         "tokenizer": "lowercase",
         "filter": [
           "my_ascii_folding"
@@ -9,7 +9,7 @@
       }
     },
     "filter": {
-      "my_ascii_folding": {
+      "standard_nva_filter": {
         "type": "asciifolding",
         "preserve_original": true
       }
@@ -17,7 +17,11 @@
     "normalizer": {
       "custom_normalizer": {
         "type": "custom",
-        "filter": "asciifolding"
+        "filter": [
+          "my_ascii_folding",
+          "lowercase",
+          "scandinavian_normalization "
+        ]
       }
     }
   }

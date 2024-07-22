@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 class ImportCandidateClientTest {
 
     protected static final Logger logger = LoggerFactory.getLogger(ImportCandidateClientTest.class);
-    public static final String SAMPLE_IMPORT_CANDIDATES = "datasource_import_candidates.json";
+    public static final String SAMPLE_IMPORT_CANDIDATES = "import_candidate_datasource.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://example.com/?";
     private static IndexingClient indexingClient;
@@ -311,7 +311,7 @@ class ImportCandidateClientTest {
     }
 
     protected static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of("mapping_test_import_candidates.json"));
+        var mappingsJson = stringFromResources(Path.of("import_candidate_mapping_test.json"));
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();

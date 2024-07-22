@@ -106,10 +106,10 @@ class ResourceClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String TEST_RESOURCES_MAPPINGS_JSON = "mapping_test_resources.json";
-    private static final String TEST_RESOURCES_SETTINGS_JSON = "setting_test_resources.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "datasource_urls_resource.json";
-    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
+    private static final String TEST_RESOURCES_MAPPINGS_JSON = "resource_mapping_test.json";
+    private static final String TEST_RESOURCES_SETTINGS_JSON = "resource_setting_test.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_datasource_urls.json";
+    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "resource_datasource.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;

@@ -43,7 +43,11 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        beforeSuite {
+
+        }
+    }
     environment "ALLOWED_ORIGIN", "*"
     environment "API_HOST", "localhost"
     environment "BACKEND_CLIENT_SECRET_NAME", "secret"
