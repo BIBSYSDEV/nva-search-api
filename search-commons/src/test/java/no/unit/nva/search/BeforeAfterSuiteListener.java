@@ -17,7 +17,7 @@ public class BeforeAfterSuiteListener implements TestExecutionListener {
     public void testPlanExecutionStarted(TestPlan testPlan) {
         TestExecutionListener.super.testPlanExecutionStarted(testPlan);
         try {
-            logger.info("before all...");
+            logger.info("Setting up Opensearch server");
             Containers.setup();
         } catch (InterruptedException | IOException e) {
             logger.error(e.getMessage());
@@ -28,7 +28,7 @@ public class BeforeAfterSuiteListener implements TestExecutionListener {
     public void testPlanExecutionFinished(TestPlan testPlan) {
         TestExecutionListener.super.testPlanExecutionFinished(testPlan);
         try {
-            logger.info("after all...");
+            logger.info("Closing Opensearch server");
             Containers.afterAll();
         } catch (Exception e) {
             logger.error(e.getMessage());

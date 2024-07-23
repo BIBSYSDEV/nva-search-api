@@ -1,5 +1,5 @@
 [versions]
-awsApacheInterceptor = { strictly = 'deb7941e85' }
+awsApacheInterceptor = { strictly = 'f39dfaf107' }
 awsIon = { strictly = '1.5.1' }
 awsLambdaEvents = { strictly = '3.11.4' }
 awsLambdaJavaCore = { strictly = '1.2.3' }
@@ -13,9 +13,10 @@ junit = { strictly = '5.10.0' }
 log4j = { strictly = '2.23.0' }
 mockito = { strictly = '4.2.0' }
 nvaCommons = { prefer = '1.40.6' }
-open-csv = { strictly = '5.8' }
-openSearchRestClient = { strictly = '2.9.0' }
-opensearch = { strictly = '2.6.0' }
+open-csv = { strictly = '5.9' }
+openSearchRestClient = { strictly = '2.12.0' }
+opensearch = { strictly = '2.12.0' }
+opensearchJava = { strictly = '2.11.1' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
 slf4j = { strictly = '2.0.12' }
 testContainers = { strictly = '1.19.7' }
@@ -43,7 +44,6 @@ aws-sdk2-sqs = { group = 'software.amazon.awssdk', name = 'sqs', version.ref = '
 aws-sdk2-urlconnection = { group = 'software.amazon.awssdk', name = 'url-connection-client', version.ref = 'awsSdk2' }
 aws-sdk2-eventbridge = { group = 'software.amazon.awssdk', name = 'eventbridge', version.ref = 'awsSdk2' }
 aws-apache-client = { group = 'software.amazon.awssdk', name = 'apache-client', version.ref = 'awsSdk2' }
-#aws-java-sdk-core = { group = 'com.amazonaws', name = 'aws-java-sdk-core', version.ref = 'awsSdk2' }
 aws-lambda-java-core = { group = 'com.amazonaws', name = 'aws-lambda-java-core', version.ref = 'awsLambdaJavaCore' }
 aws-lambda-events = { group = 'com.amazonaws', name = 'aws-lambda-java-events', version.ref = 'awsLambdaEvents' }
 
@@ -69,9 +69,9 @@ log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.re
 opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch' }
 opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch' }
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
-opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'openSearchRestClient' }
-opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch' }
-opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch' }
+opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearchJava' }
+opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
+opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'openSearchRestClient' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }

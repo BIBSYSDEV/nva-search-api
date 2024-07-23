@@ -37,8 +37,8 @@ import org.opensearch.action.support.WriteRequest.RefreshPolicy;
 import org.opensearch.client.indices.CreateIndexRequest;
 import org.opensearch.client.indices.GetMappingsRequest;
 import org.opensearch.cluster.metadata.MappingMetadata;
-import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.compress.CompressedXContent;
+import org.opensearch.core.common.bytes.BytesReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

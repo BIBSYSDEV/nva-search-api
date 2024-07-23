@@ -19,7 +19,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
-import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
@@ -46,8 +45,8 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
         return
             createQueryBuilderStream(query)
                 .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
+                .map(super::fetch)
+                .map(super::handleResponse)
                 .findFirst().orElseThrow().join();
     }
 
@@ -56,10 +55,6 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
         return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
     }
 
-    @Override
-    protected BinaryOperator<UserSettings> responseAccumulator() {
-        return (a, b) -> a;
-    }
 
     @Override
     protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnResult() {

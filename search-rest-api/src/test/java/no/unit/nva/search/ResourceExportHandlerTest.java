@@ -28,19 +28,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ExportResourceHandlerTest {
+class ResourceExportHandlerTest {
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     private ResourceClient mockedResourceClient;
     private ScrollClient mockedScrollClient;
-    private ExportResourceHandler handler;
+    private ResourceExportHandler handler;
 
     @BeforeEach
     void setUp() {
         mockedResourceClient = mock(ResourceClient.class);
         mockedScrollClient = mock(ScrollClient.class);
-        handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
+        handler = new ResourceExportHandler(mockedResourceClient, mockedScrollClient, null, null);
     }
+
     @Test
     void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
         var expectedTitle1 = randomString();

@@ -31,23 +31,13 @@ dependencies {
     implementation libs.slf4j
     implementation libs.aws.apache.client
 
-    testImplementation libs.bundles.testing
 
-    // search2 test dependencies
+    testImplementation libs.bundles.testing
     testImplementation project(':search-testing')
-    testImplementation(group: 'com.amazonaws', name: 'DynamoDBLocal', version: '1.19.0') {
-        exclude group: 'com.amazonaws', module: 'aws-java-sdk-dynamodb'
-        exclude group: 'com.amazonaws', module: 'aws-java-sdk-core'
-    }
 
 }
 
 test {
-    useJUnitPlatform() {
-        beforeSuite {
-
-        }
-    }
     environment "ALLOWED_ORIGIN", "*"
     environment "API_HOST", "localhost"
     environment "BACKEND_CLIENT_SECRET_NAME", "secret"

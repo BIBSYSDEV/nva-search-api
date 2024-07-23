@@ -2,14 +2,19 @@ package no.unit.nva.search;
 
 import static java.util.Objects.nonNull;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.search.common.Containers.container;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;
+import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.FUNDING;
 import static no.unit.nva.search.resource.ResourceParameter.MODIFIED_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.PAGE;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLISHED_BEFORE;
+import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
+import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,10 +27,8 @@ import no.unit.nva.search.resource.ResourceSearchQuery;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,14 +54,26 @@ class ResourceSearchQueryTest {
         assertEquals(page.aggregations(), Map.of());
     }
 
+    @Test
+    void removeKeySuccessfully() throws BadRequestException {
+        var response =
+            ResourceSearchQuery.builder()
+                .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
+                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
+                .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build();
+
+        var key = response.parameters().remove(SCIENTIFIC_REPORT_PERIOD_SINCE);
+
+        assertEquals(SCIENTIFIC_REPORT_PERIOD_SINCE, key.getKey());
+    }
 
     @Test
-    void openSearchFailedResponse() throws IOException, InterruptedException {
+    void openSearchFailedResponse()  {
         HttpClient httpClient = mock(HttpClient.class);
-        var response = mock(HttpResponse.class);
-        when(httpClient.send(any(), any())).thenReturn(response);
-        when(response.statusCode()).thenReturn(500);
-        when(response.body()).thenReturn("EXPECTED ERROR");
+        when(httpClient.sendAsync(any(), any()))
+            .thenReturn(mockedFutureHttpResponse((String)null));
         var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
         var resourceClient = new ResourceClient(httpClient, setupMockedCachedJwtProvider());
         assertThrows(

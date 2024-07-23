@@ -22,16 +22,16 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
+public class TicketSearchAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final TicketClient opensearchClient;
 
     @JacocoGenerated
-    public SearchTicketAuthHandler() {
+    public TicketSearchAuthHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public SearchTicketAuthHandler(Environment environment, TicketClient ticketClient) {
+    public TicketSearchAuthHandler(Environment environment, TicketClient ticketClient) {
         super(Void.class, environment);
         this.opensearchClient = ticketClient;
     }

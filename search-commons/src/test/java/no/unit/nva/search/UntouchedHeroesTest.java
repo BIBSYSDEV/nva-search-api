@@ -1,10 +1,12 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.importcandidate.ImportCandidateParameter;
+import no.unit.nva.search.importcandidate.ImportCandidateSort;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
 import no.unit.nva.search.common.builder.OpensearchQueryRange;
@@ -18,8 +20,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class OpensearchSearchQueryToolsTest {
-    private static final Logger logger = LoggerFactory.getLogger(OpensearchSearchQueryToolsTest.class);
+class UntouchedHeroesTest {
+    private static final Logger logger = LoggerFactory.getLogger(UntouchedHeroesTest.class);
 
     @Test
     void invalidRangeQueryMust() {
@@ -38,6 +40,18 @@ class OpensearchSearchQueryToolsTest {
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
         );
     }
+
+    @Test
+    void invalidSortQueryMust() {
+        assertNotNull(ImportCandidateSort.RELEVANCE.asLowerCase());
+    }
+
+    @Test
+    void removeKeysSuccessfully() {
+
+
+    }
+
 
     @Test
 //    @Disabled

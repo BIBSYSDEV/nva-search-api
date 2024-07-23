@@ -35,12 +35,12 @@ import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SearchResourceAuthHandlerTest {
+class ResourceSearchAuthHandlerTest {
 
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
-    private SearchResourceAuthHandler handler;
+    private ResourceSearchAuthHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
@@ -49,7 +49,7 @@ class SearchResourceAuthHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceAuthHandler(new Environment(), mockedSearchClient);
+        handler = new ResourceSearchAuthHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
