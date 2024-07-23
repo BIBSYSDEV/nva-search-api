@@ -237,7 +237,7 @@ Resources:
     Properties:
       Description: Lambda for searching Tickets
       CodeUri: search-rest-api
-      Handler: no.unit.nva.search.SearchTicketAuthHandler::handleRequest
+      Handler: no.unit.nva.search.TicketSearchAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -265,7 +265,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-rest-api
-      Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
+      Handler: no.unit.nva.search.ResourceSearchHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -291,7 +291,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-rest-api
-      Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
+      Handler: no.unit.nva.search.ResourceExportHandler::handleRequest
       Runtime: java17
       Timeout: 180
       AutoPublishAlias: live
@@ -316,7 +316,7 @@ Resources:
     Properties:
       Description: Lambda for searching Resources
       CodeUri: search-rest-api
-      Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
+      Handler: no.unit.nva.search.ResourceSearchAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -342,7 +342,7 @@ Resources:
     Properties:
       Description: Lambda for searching Import Candidates
       CodeUri: search-rest-api
-      Handler: no.unit.nva.search.SearchImportCandidateHandler::handleRequest
+      Handler: no.unit.nva.search.ImportCandidateSearchHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -368,7 +368,7 @@ Resources:
     Properties:
       Description: Lambda for searching Import Candidates
       CodeUri: search-rest-api
-      Handler: no.unit.nva.search.SearchImportCandidateAuthHandler::handleRequest
+      Handler: no.unit.nva.search.ImportCandidateSearchAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -394,7 +394,7 @@ Resources:
     Properties:
       MaxCapacity: !Ref MaxConcurrency
       MinCapacity: !Ref MinConcurrency
-      ResourceId: !Sub function:${SearchTicketsAuthorizedFunction}:live
+      ResourceId: !Sub function:${TicketSearchAuthHandler}:live
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_LambdaConcurrency
       ScalableDimension: lambda:function:ProvisionedConcurrency
       ServiceNamespace: lambda
