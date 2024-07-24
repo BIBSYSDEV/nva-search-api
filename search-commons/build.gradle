@@ -31,13 +31,14 @@ dependencies {
     implementation libs.slf4j
     implementation libs.aws.apache.client
 
-
+    testImplementation libs.bundles.logging
     testImplementation libs.bundles.testing
     testImplementation project(':search-testing')
 
 }
 
 test {
+    useJUnitPlatform()
     environment "ALLOWED_ORIGIN", "*"
     environment "API_HOST", "localhost"
     environment "BACKEND_CLIENT_SECRET_NAME", "secret"
