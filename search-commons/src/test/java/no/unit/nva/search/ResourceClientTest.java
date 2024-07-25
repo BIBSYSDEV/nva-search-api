@@ -44,6 +44,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PE
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
+import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -66,7 +67,9 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Words;
@@ -77,8 +80,11 @@ import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.UserSettingsClient;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
+import no.unit.nva.search.ticket.TicketSearchQuery;
+import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -126,6 +132,23 @@ class ResourceClientTest {
             .path(TYPE).textValue();
         assertThat(topLevelOrgType, is(equalTo("nested")));
         logger.info(mapping.toString());
+    }
+
+    @Test
+    void testingFromRequestInfoSuccessful() throws UnauthorizedException, BadRequestException {
+        AtomicReference<URI> uri = new AtomicReference<>();
+        uriSortingProvider().findFirst().ifPresent(uri::set);
+        var mockedRequestInfoLocal = mock(RequestInfo.class);
+        when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
+        var result =ResourceSearchQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri.get()))
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .withRequiredParameters(FROM, SIZE)
+            .build()
+            .withFilter()
+            .fromRequestInfo(mockedRequestInfoLocal)
+            .doSearch(searchClient);
+        assertThat(result.toPagedResponse().hits().size(), is(0));
     }
 
     @Test
@@ -268,6 +291,20 @@ class ResourceClientTest {
         assertNotNull(pagedResult);
         assertTrue(pagedResult.contains("\"hits\":["));
     }
+
+    @Test
+    void searchAfterAndSortByRelevanceException() {
+        var uri =  URI.create("https://x.org/?id=018b857b77b7&from=10&searchAfter=12&sort=relevance");
+        assertThrows(
+            BadRequestException.class,
+            () -> ResourceSearchQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .doSearch(searchClient));
+    }
+
 
     @ParameterizedTest
     @CsvSource({

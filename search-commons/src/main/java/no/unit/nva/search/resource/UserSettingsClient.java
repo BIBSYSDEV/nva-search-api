@@ -19,12 +19,15 @@ import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
 
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.UserSettings;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 
 /**
@@ -55,6 +58,12 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
         return singleLineObjectMapper.readValue(response.body(), UserSettings.class);
     }
 
+    @Override
+    @JacocoGenerated
+    protected BinaryOperator<UserSettings> responseAccumulator() {
+        //not in use
+        return null;
+    }
 
     @Override
     protected FunctionWithException<UserSettings, UserSettings, RuntimeException> logAndReturnResult() {

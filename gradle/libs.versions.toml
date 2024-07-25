@@ -9,8 +9,8 @@ guava = { strictly = '33.0.0-jre' }
 hamcrest = { strictly = '2.2' }
 jackson = { strictly = '2.16.1' }
 javers = { strictly = '6.5.1' }
-jupiter = { strictly = '5.10.3' }
-junit = { strictly = '1.10.3' }
+jupiter = { strictly = '5.10.2' }
+junit = { strictly = '1.10.2' }
 log4j = { strictly = '2.23.0' }
 mockito = { strictly = '4.2.0' }
 nvaCommons = { prefer = '1.40.6' }

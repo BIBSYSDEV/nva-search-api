@@ -5,6 +5,7 @@ import static no.unit.nva.search.common.jwt.Tools.getCachedJwtProvider;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.function.BinaryOperator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import no.unit.nva.search.common.OpenSearchClient;
@@ -45,6 +46,13 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
     @Override
     protected SwsResponse jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
         return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
+    }
+
+    @Override
+    @JacocoGenerated
+    protected BinaryOperator<SwsResponse> responseAccumulator() {
+        //not in use
+        return null;
     }
 
     @Override
