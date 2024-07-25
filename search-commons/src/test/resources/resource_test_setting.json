@@ -1,5 +1,15 @@
 {
   "analysis": {
+    "char_filter": {
+      "quote": {
+        "type": "mapping",
+        "mappings": [
+          "« => \"",
+          "» => \"",
+          "\"\" => \""
+        ]
+      }
+    },
     "filter": {
       "standard_nva_filter": {
         "type": "asciifolding",
@@ -7,28 +17,17 @@
       }
     },
     "analyzer": {
-      "nva_text_analyser": {
-        "tokenizer": "lowercase",
+      "default": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "char_filter": [
+          "html_strip",
+          "quote"
+        ],
         "filter": [
+          "lowercase",
           "standard_nva_filter",
           "scandinavian_normalization"
-        ]
-      }
-    },
-    "normalizer": {
-      "standard_nva_normalizer": {
-        "type": "custom",
-        "filter": [
-          "lowercase",
-          "asciifolding",
-          "scandinavian_normalization"
-        ]
-      },
-      "nva_keyword_normalizer": {
-        "type": "custom",
-        "filter": [
-          "lowercase",
-          "asciifolding"
         ]
       }
     }

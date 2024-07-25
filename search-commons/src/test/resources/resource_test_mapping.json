@@ -19,24 +19,15 @@
       "properties": {
         "mainTitle": {
           "type": "text",
-          "analyzer": "nva_text_analyser",
-          "fields": {
-            "keyword": {
-              "ignore_above": 256,
-              "type": "keyword",
-              "normalizer": "nva_keyword_normalizer"
-            }
-          }
-        },
-        "abstract": {
-          "type": "text",
-          "analyzer": "nva_text_analyser",
           "fields": {
             "keyword": {
               "ignore_above": 256,
               "type": "keyword"
             }
           }
+        },
+        "abstract": {
+          "type": "text"
         },
         "contributors": {
           "type": "nested",

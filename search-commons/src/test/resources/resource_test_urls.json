@@ -1,7 +1,5 @@
 {
   "page=0&size=21": 21,
-  "query=æyne": 2,
-  "query=oeyne": 2,
   "ABSTRACT=NAKSIN&ABSTRACT=synthetic+weather+situations&page=0": 1,
   "ABSTRACT=NAKSIN&page=0": 3,
   "ABSTRACT_NOT=NAKSIN&page=0": 18,
@@ -140,6 +138,8 @@
   "PUBLISHER_NOT=NGI+–+Norges+Geotekniske+institutt": 14,
   "PUBLISHER_SHOULD=NGI+–+Norges+Geotekniske+institutt": 7,
   "QUERY=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642&ID_NOT=018b857b77b7-697ebc73-5195-4ce4-9ba1-1d5a7b540642": 0,
+  "query=HØGSKOLE": 3,
+  "query=hoegskole": 3,
   "QUERY=Forsvarets+høgskole": 4,
   "QUERY=Forsvarets+høgskole&fields=INSTITUTION": 3,
   "QUERY=ære+berømmelse": 1,
