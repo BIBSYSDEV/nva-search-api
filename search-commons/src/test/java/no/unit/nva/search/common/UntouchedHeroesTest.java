@@ -3,8 +3,6 @@ package no.unit.nva.search.common;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.opencsv.exceptions.CsvFieldAssignmentException;
-import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.importcandidate.ImportCandidateParameter;
@@ -17,10 +15,8 @@ import no.unit.nva.search.resource.ResourceParameter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.node.JsonNodeCreator;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,16 +45,16 @@ class UntouchedHeroesTest {
     void invalidSortQueryMust() {
         assertNotNull(ImportCandidateSort.RELEVANCE.asLowerCase());
     }
-
-    @Test
-    void removeKeysSuccessfully() {
-        var text = JsonNodeCreator::textNode("3wer");
-        var test2 = textNode("eawsrdf");
-        assertThrows(
-            CsvFieldAssignmentException.class,
-            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
-        );
-    }
+//
+//    @Test
+//    void removeKeysSuccessfully() {
+//        var text = JsonNodeCreator::textNode("3wer");
+//        var test2 = textNode("eawsrdf");
+//        assertThrows(
+//            CsvFieldAssignmentException.class,
+//            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
+//        );
+//    }
 
 
     @Test

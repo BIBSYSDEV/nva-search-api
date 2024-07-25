@@ -1,5 +1,7 @@
 {
   "page=0&size=21": 21,
+  "query=æyne": 2,
+  "query=oeyne": 2,
   "ABSTRACT=NAKSIN&ABSTRACT=synthetic+weather+situations&page=0": 1,
   "ABSTRACT=NAKSIN&page=0": 3,
   "ABSTRACT_NOT=NAKSIN&page=0": 18,
