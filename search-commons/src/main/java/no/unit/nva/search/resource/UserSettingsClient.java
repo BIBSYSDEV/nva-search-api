@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
-import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.common.records.UserSettings;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;

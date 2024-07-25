@@ -86,7 +86,7 @@ class TicketClientTest {
     private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
 
     @BeforeAll
-    static void setUp() throws UnauthorizedException {
+    public static void setUp() throws UnauthorizedException {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         searchClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
 

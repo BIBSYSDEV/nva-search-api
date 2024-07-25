@@ -83,11 +83,11 @@ class ResourceExportHandlerTest {
         var date = "2022-01-22";
 
         return new ExportCsv()
-            .setId(id)
-            .setMainTitle(title)
-            .setPublicationInstance(type)
-            .setPublicationDate(date)
-            .setContributors(String.join(COMMA, contributors));
+            .withId(id)
+            .withMainTitle(title)
+            .withPublicationInstance(type)
+            .withPublicationDate(date)
+            .withContributors(String.join(COMMA, contributors));
     }
 
     private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {

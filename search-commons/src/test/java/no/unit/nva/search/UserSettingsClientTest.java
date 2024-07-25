@@ -40,12 +40,12 @@ class UserSettingsClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
         final var path = Path.of(SAMPLE_USER_SETTINGS_RESPONSE);
+
         when(mochedHttpClient.sendAsync(any(), any()))
-            .thenReturn(mockedFutureHttpResponse(path))
             .thenReturn(mockedFutureHttpResponse(""))
             .thenReturn(mockedFutureFailed())
-            .thenReturn(mockedFutureHttpResponse(path),mockedFutureHttpResponse(path));
-
+            .thenReturn(mockedFutureHttpResponse(path))
+            .thenReturn(mockedFutureHttpResponse(path));
     }
 
 
