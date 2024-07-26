@@ -1,10 +1,9 @@
 package no.unit.nva.search.scroll;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
-import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.paths.UriWrapper.fromUri;
-import static org.opensearch.common.xcontent.XContentHelper.toXContent;
+import static org.opensearch.core.xcontent.XContentHelper.toXContent;
 
 import java.net.URI;
 import java.util.Objects;
@@ -18,6 +17,7 @@ import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.SwsResponse;
 import org.opensearch.action.search.SearchScrollRequest;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.core.xcontent.ToXContent;
 
 /**
  * @author Sondre Vestad
@@ -107,7 +107,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     private String scrollRequestToString(SearchScrollRequest request) {
-        return attempt(() -> toXContent(request, XContentType.JSON, true).utf8ToString())
+        return attempt(() -> toXContent(request, XContentType.JSON, ToXContent.EMPTY_PARAMS, true).utf8ToString())
             .orElseThrow();
     }
 
@@ -117,9 +117,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
         private String ttl;
 
         public ScrollQuery build() {
-            return nonNull(openSearchUri)
-                ? new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri)
-                : new ScrollQuery(ttl, firstResponse);
+              return new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri);
         }
 
         public ScrollBuilder withDockerHostUri(URI uri) {

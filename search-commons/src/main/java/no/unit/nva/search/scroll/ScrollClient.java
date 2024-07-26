@@ -49,8 +49,10 @@ public class ScrollClient extends OpenSearchClient<SwsResponse, ScrollQuery> {
     }
 
     @Override
+    @JacocoGenerated
     protected BinaryOperator<SwsResponse> responseAccumulator() {
-        return (a, b) -> a;
+        //not in use
+        return null;
     }
 
     @Override
