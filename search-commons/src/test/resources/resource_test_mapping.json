@@ -19,25 +19,15 @@
       "properties": {
         "mainTitle": {
           "type": "text",
-          "analyzer": "custom_asciifolding",
           "fields": {
             "keyword": {
-              "type": "keyword",
               "ignore_above": 256,
-              "normalizer": "custom_normalizer"
+              "type": "keyword"
             }
           }
         },
         "abstract": {
-          "type": "text",
-          "analyzer": "custom_asciifolding",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256,
-              "normalizer": "custom_normalizer"
-            }
-          }
+          "type": "text"
         },
         "contributors": {
           "type": "nested",

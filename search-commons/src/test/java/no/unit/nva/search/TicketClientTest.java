@@ -86,9 +86,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class TicketClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
-    private static final String TEST_TICKETS_MAPPINGS_JSON = "mapping_test_tickets.json";
-    private static final String TICKETS_VALID_TEST_URL_JSON = "datasource_urls_ticket.json";
-    private static final String SAMPLE_TICKETS_SEARCH_JSON = "datasource_tickets.json";
+    private static final String TEST_TICKETS_MAPPINGS_JSON = "ticket_mapping_test.json";
+    private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
+    private static final String SAMPLE_TICKETS_SEARCH_JSON = "ticket_datasource.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
