@@ -1,26 +1,33 @@
 {
   "analysis": {
-    "analyzer": {
-      "default": {
-        "tokenizer": "lowercase",
-        "filter": [
-          "my_ascii_folding"
+    "char_filter": {
+      "quote": {
+        "type": "mapping",
+        "mappings": [
+          "« => \"",
+          "» => \"",
+          "\"\" => \""
         ]
       }
     },
     "filter": {
-      "my_ascii_folding": {
+      "standard_nva_filter": {
         "type": "asciifolding",
         "preserve_original": true
       }
     },
-    "normalizer": {
-      "custom_normalizer": {
+    "analyzer": {
+      "default": {
         "type": "custom",
+        "tokenizer": "standard",
+        "char_filter": [
+          "html_strip",
+          "quote"
+        ],
         "filter": [
-          "asciifolding",
           "lowercase",
-          "scandinavian_folding"
+          "standard_nva_filter",
+          "scandinavian_normalization"
         ]
       }
     }

@@ -64,13 +64,13 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
                                 Context context) {
         var startMarker = getStartMarker(input);
         var location = getLocation(input);
-        logger.info(START_MARKER_MESSAGE, startMarker);
+        logger.debug(START_MARKER_MESSAGE, startMarker);
         var response = inputClient.listObjectsV2(createRequest(startMarker, location));
         var keys = getKeys(response);
         writeObject(toKeyString(keys));
         var lastEvaluatedKey = getLastEvaluatedKey(keys);
         var eventsResponse = sendEvent(constructRequestEntry(lastEvaluatedKey, context, location));
-        logger.info(eventsResponse.toString());
+        logger.debug(eventsResponse.toString());
         return null;
     }
 
