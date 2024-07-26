@@ -15,9 +15,7 @@ log4j = { strictly = '2.23.0' }
 mockito = { strictly = '4.2.0' }
 nvaCommons = { prefer = '1.40.6' }
 open-csv = { strictly = '5.9' }
-openSearchRestClient = { strictly = '2.12.0' }
 opensearch = { strictly = '2.12.0' }
-opensearchJava = { strictly = '2.11.1' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
 slf4j = { strictly = '2.0.12' }
 testContainers = { strictly = '1.19.7' }
@@ -70,9 +68,9 @@ log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.re
 opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch' }
 opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch' }
 opensearch-core = { group = 'org.opensearch', name = 'opensearch-core', version.ref = 'opensearch' }
-opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearchJava' }
+opensearch-java = { group = 'org.opensearch.client', name = 'opensearch-java', version.ref = 'opensearch' }
 opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-rest-client', version.ref = 'opensearch' }
-opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'openSearchRestClient' }
+opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
 aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
