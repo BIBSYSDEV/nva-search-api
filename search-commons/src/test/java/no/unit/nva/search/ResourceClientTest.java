@@ -106,10 +106,10 @@ class ResourceClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String TEST_RESOURCES_MAPPINGS_JSON = "mapping_test_resources.json";
-    private static final String TEST_RESOURCES_SETTINGS_JSON = "setting_test_resources.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "datasource_urls_resource.json";
-    private static final String SAMPLE_RESOURCES_SEARCH_JSON = "datasource_resources.json";
+    private static final String RESOURCE_MAPPINGS_JSON = "resource_test_mapping.json";
+    private static final String RESOURCE_SETTINGS_JSON = "resource_test_setting.json";
+    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_test_urls.json";
+    private static final String RESOURCE_DATASOURCE = "resource_datasource.json";
     private static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
@@ -655,7 +655,7 @@ class ResourceClientTest {
     }
 
     private static void populateIndex() {
-        var jsonFile = stringFromResources(Path.of(SAMPLE_RESOURCES_SEARCH_JSON));
+        var jsonFile = stringFromResources(Path.of(RESOURCE_DATASOURCE));
         var jsonNodes =
             attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
 
@@ -672,8 +672,8 @@ class ResourceClientTest {
     }
 
     private static void createIndex() throws IOException {
-        var mappingsJson = stringFromResources(Path.of(TEST_RESOURCES_MAPPINGS_JSON));
-        var settingsJson = stringFromResources(Path.of(TEST_RESOURCES_SETTINGS_JSON));
+        var mappingsJson = stringFromResources(Path.of(RESOURCE_MAPPINGS_JSON));
+        var settingsJson = stringFromResources(Path.of(RESOURCE_SETTINGS_JSON));
         var type = new TypeReference<Map<String, Object>>() {
         };
         var mappings = attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
