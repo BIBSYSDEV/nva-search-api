@@ -66,24 +66,29 @@ public class ExportCsv {
         return contributors;
     }
 
-    public void setId(String id) {
+    public ExportCsv withId(String id) {
         this.id = id;
+        return this;
     }
 
-    public void setMainTitle(String mainTitle) {
+    public ExportCsv withMainTitle(String mainTitle) {
         this.mainTitle = mainTitle;
+        return this;
     }
 
-    public void setPublicationDate(String publicationDate) {
+    public ExportCsv withPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
+        return this;
     }
 
-    public void setPublicationInstance(String publicationInstance) {
+    public ExportCsv withPublicationInstance(String publicationInstance) {
         this.publicationInstance = publicationInstance;
+        return this;
     }
 
-    public void setContributors(String contributors) {
+    public ExportCsv withContributors(String contributors) {
         this.contributors = contributors;
+        return this;
     }
 
     public final String createPublicationDate(String year, String month, String day) {

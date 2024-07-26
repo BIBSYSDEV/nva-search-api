@@ -4,7 +4,6 @@ import static java.util.UUID.randomUUID;
 import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandler.DEFAULT_INDEX;
-import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,19 +16,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.events.S3Event;
-import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3BucketEntity;
-import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3Entity;
-import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3EventNotificationRecord;
-import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3ObjectEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,15 +52,16 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 
 class KeyBasedBatchIndexHandlerTest {
 
+    public static final String LINE_BREAK = "\n";
     public static final String IDENTIFIER = "__IDENTIFIER__";
     private static final String VALID_PUBLICATION = IoUtils.stringFromResources(Path.of("publication.json"));
     private static final String INVALID_PUBLICATION = IoUtils.stringFromResources(Path.of("invalid_publication.json"));
     public static final String DEFAULT_LOCATION = "resources";
     private ByteArrayOutputStream outputStream;
     private S3Driver s3ResourcesDriver;
-    private FakeS3Client s3ResourcesClient;
+//    private FakeS3Client s3ResourcesClient;
     private S3Driver s3BatchesDriver;
-    private FakeS3Client s3BatchesClient;
+//    private FakeS3Client s3BatchesClient;
     private FakeOpenSearchClient openSearchClient;
     private EventBridgeClient eventBridgeClient;
     private KeyBasedBatchIndexHandler handler;
@@ -76,9 +69,9 @@ class KeyBasedBatchIndexHandlerTest {
     @BeforeEach
     public void init() {
         outputStream = new ByteArrayOutputStream();
-        s3ResourcesClient = new FakeS3Client();
+        var s3ResourcesClient = new FakeS3Client();
         s3ResourcesDriver = new S3Driver(s3ResourcesClient, "resources");
-        s3BatchesClient = new FakeS3Client();
+        var s3BatchesClient = new FakeS3Client();
         s3BatchesDriver = new S3Driver(s3BatchesClient, "batchesBucket");
         openSearchClient = new FakeOpenSearchClient();
         eventBridgeClient = new StubEventBridgeClient();
@@ -91,7 +84,7 @@ class KeyBasedBatchIndexHandlerTest {
         var expectedDocuments = createExpectedDocuments(10);
         var batch = expectedDocuments.stream()
                         .map(IndexDocument::getDocumentIdentifier)
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        .collect(Collectors.joining(LINE_BREAK));
         var batchKey = randomString();
         s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
@@ -119,7 +112,7 @@ class KeyBasedBatchIndexHandlerTest {
         var expectedDocuments = createExpectedDocuments(10);
         var batch = expectedDocuments.stream()
                         .map(IndexDocument::getDocumentIdentifier)
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        .collect(Collectors.joining(LINE_BREAK));
         var batchKey = randomString();
         s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
@@ -134,7 +127,7 @@ class KeyBasedBatchIndexHandlerTest {
         var expectedDocuments = createExpectedDocuments(10);
         var batch = expectedDocuments.stream()
                         .map(IndexDocument::getDocumentIdentifier)
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        .collect(Collectors.joining(LINE_BREAK));
         var batchKey = randomString();
         s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
         var expectedStarMarkerFromEmittedEvent = randomString();
@@ -149,8 +142,8 @@ class KeyBasedBatchIndexHandlerTest {
 
             var emittedEvent = ((StubEventBridgeClient) eventBridgeClient).getLatestEvent();
 
-            assertThat(emittedEvent.getStartMarker(), is(equalTo(batchKey)));
-            assertThat(emittedEvent.getLocation(), is(equalTo(DEFAULT_LOCATION)));
+            assertThat(emittedEvent.startMarker(), is(equalTo(batchKey)));
+            assertThat(emittedEvent.location(), is(equalTo(DEFAULT_LOCATION)));
         }
     }
 
@@ -158,10 +151,10 @@ class KeyBasedBatchIndexHandlerTest {
     void shouldRemoveDocumentsThatDoesNotHaveEntityDescription() throws IOException {
         var expectedDocuments = createExpectedDocuments(9);
         var notExpectedDocument = createInvalidDocument(INVALID_PUBLICATION.replace("entityDescription", "something"));
-        var documents = getDocuments(expectedDocuments, notExpectedDocument);
+        getDocuments(expectedDocuments, notExpectedDocument);
         var batch = expectedDocuments.stream()
                         .map(IndexDocument::getDocumentIdentifier)
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        .collect(Collectors.joining(LINE_BREAK));
         var batchKey = randomString();
         s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
@@ -176,10 +169,10 @@ class KeyBasedBatchIndexHandlerTest {
     void shouldRemoveDocumentsThatDoesNotHaveReference() throws IOException {
         var expectedDocuments = createExpectedDocuments(9);
         var notExpectedDocument = createInvalidDocument(INVALID_PUBLICATION.replace("reference", "something"));
-        var documents = getDocuments(expectedDocuments, notExpectedDocument);
+        getDocuments(expectedDocuments, notExpectedDocument);
         var batch = expectedDocuments.stream()
                         .map(IndexDocument::getDocumentIdentifier)
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        .collect(Collectors.joining(LINE_BREAK));
         var batchKey = randomString();
         s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
@@ -196,13 +189,13 @@ class KeyBasedBatchIndexHandlerTest {
         final var appender = LogUtils.getTestingAppenderForRootLogger();
         var expectedDocuments = createExpectedDocuments(9);
         var notExpectedDocument = createInvalidDocument(INVALID_PUBLICATION.replace(field, "something"));
-        var documents = getDocuments(expectedDocuments, notExpectedDocument);
+        getDocuments(expectedDocuments, notExpectedDocument);
         var batchContent = new ArrayList<IndexDocument>();
         batchContent.add(notExpectedDocument);
         batchContent.addAll(expectedDocuments);
         var batch = batchContent.stream()
                         .map(IndexDocument::getDocumentIdentifier)
-                        .collect(Collectors.joining(System.lineSeparator()));
+                        .collect(Collectors.joining(LINE_BREAK));
         var batchKey = randomString();
         s3BatchesDriver.insertFile(UnixPath.of(batchKey), batch);
 
@@ -227,21 +220,10 @@ class KeyBasedBatchIndexHandlerTest {
         return new EventConsumptionAttributes(DEFAULT_INDEX, SortableIdentifier.next());
     }
 
-    private static ObjectNode jsonNode() {
-        return attempt(() -> (ObjectNode) objectMapper.readTree(randomJson())).orElseThrow();
-    }
 
     private InputStream eventStream(String startMarker) throws JsonProcessingException {
         var event = new AwsEventBridgeEvent<KeyBatchRequestEvent>();
         event.setDetail(new KeyBatchRequestEvent(startMarker, randomString(), DEFAULT_LOCATION));
-        event.setId(randomString());
-        var jsonString = objectMapperWithEmpty.writeValueAsString(event);
-        return IoUtils.stringToStream(jsonString);
-    }
-
-    private InputStream eventStreamWithLocation(String startMarker, String location) throws JsonProcessingException {
-        var event = new AwsEventBridgeEvent<KeyBatchRequestEvent>();
-        event.setDetail(new KeyBatchRequestEvent(startMarker, randomString(), location));
         event.setId(randomString());
         var jsonString = objectMapperWithEmpty.writeValueAsString(event);
         return IoUtils.stringToStream(jsonString);
@@ -273,25 +255,6 @@ class KeyBasedBatchIndexHandlerTest {
         attempt(() -> s3ResourcesDriver.insertFile(UnixPath.of(document.getDocumentIdentifier()),
                                                    document.toJsonString())).orElseThrow();
         return document;
-    }
-
-    private S3Event createS3Event(List<IndexDocument> documents) throws IOException {
-        var objectKey = randomString();
-        var eventNotification = new S3EventNotificationRecord(randomString(), randomString(), randomString(),
-                                                              Instant.now().toString(), randomString(), null, null,
-                                                              createS3Entity(objectKey), null);
-        var fileContent = documents.stream()
-                              .map(IndexDocument::getDocumentIdentifier)
-                              .collect(Collectors.joining(System.lineSeparator()));
-        s3ResourcesDriver.insertFile(UnixPath.of(objectKey), fileContent);
-        return new S3Event(List.of(eventNotification));
-    }
-
-    private S3Entity createS3Entity(String expectedObjectKey) {
-        var bucket = new S3BucketEntity(randomString(), null, randomString());
-        var object = new S3ObjectEntity(expectedObjectKey, 100L, randomString(), randomString(), randomString());
-        var schemaVersion = randomString();
-        return new S3Entity(randomString(), bucket, object, schemaVersion);
     }
 
     private static class FakeOpenSearchClient extends IndexingClient {

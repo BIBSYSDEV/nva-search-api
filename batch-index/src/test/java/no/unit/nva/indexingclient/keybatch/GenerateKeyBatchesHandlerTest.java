@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,7 +39,6 @@ class GenerateKeyBatchesHandlerTest {
     private static final int MULTIPLE_BATCH_FILE_SIZE = 1001;
     private ByteArrayOutputStream outputStream;
     private FakeS3Client outputClient;
-    private FakeS3Client inputClient;
     private StubEventBridgeClient eventBridgeClient;
     private GenerateKeyBatchesHandler handler;
     private S3Driver s3DriverInputBucket;
@@ -49,7 +47,7 @@ class GenerateKeyBatchesHandlerTest {
     @BeforeEach
     void setUp() {
         this.outputStream = new ByteArrayOutputStream();
-        inputClient = new FakeS3Client();
+        var inputClient = new FakeS3Client();
         s3DriverInputBucket = new S3Driver(inputClient, "inputBucket");
         outputClient = new FakeS3Client();
         s3DriverOutputBucket = new S3Driver(outputClient, "outputBucket");
@@ -88,16 +86,11 @@ class GenerateKeyBatchesHandlerTest {
 
         handler.handleRequest(eventStream(DEFAULT_LOCATION), outputStream, mock(Context.class));
 
-        var emittedEvent = eventBridgeClient.getLatestEvent();
+        var startMarker = eventBridgeClient.getLatestEvent().startMarker();
 
         var startMarkerForNextIteration = s3Objects.get(s3Objects.size() - 2);
 
-        assertThat(emittedEvent.getStartMarker(), is(equalTo(startMarkerForNextIteration)));
-    }
-
-    private static String getBucketPath(UriWrapper uri) {
-        return Path.of(UnixPath.fromString(uri.toString()).getPathElementByIndexFromEnd(1), uri.getLastPathElement())
-                   .toString();
+        assertThat(startMarker, is(equalTo(startMarkerForNextIteration)));
     }
 
     private InputStream eventStream(String location) throws JsonProcessingException {
@@ -110,17 +103,20 @@ class GenerateKeyBatchesHandlerTest {
     private List<String> getPersistedFileFromOutputBucket() {
         var request = ListObjectsV2Request.builder().bucket(OUTPUT_BUCKET).maxKeys(10_000).build();
         var content = outputClient.listObjectsV2(request).contents();
-        return content.stream().map(object -> s3DriverOutputBucket.getFile(UnixPath.of(object.key()))).toList();
+        return content.stream()
+            .map(object -> s3DriverOutputBucket.getFile(UnixPath.of(object.key())))
+            .toList();
     }
 
     private List<String> putObjectsInInputBucket(int numberOfItems, String location) {
         return IntStream.range(0, numberOfItems)
-                   .mapToObj(item -> SortableIdentifier.next())
-                   .map(SortableIdentifier::toString)
-                   .map(key -> insertFileWithKey(key, location))
-                   .map(UriWrapper::fromUri)
-                   .map(GenerateKeyBatchesHandlerTest::getBucketPath)
-                   .toList();
+            .mapToObj(item -> SortableIdentifier.next())
+            .map(SortableIdentifier::toString)
+            .map(key -> insertFileWithKey(key, location))
+            .map(UriWrapper::fromUri)
+            .map(UriWrapper::toS3bucketPath)
+            .map(UnixPath::toString)
+            .toList();
     }
 
     private URI insertFileWithKey(String key, String location) {

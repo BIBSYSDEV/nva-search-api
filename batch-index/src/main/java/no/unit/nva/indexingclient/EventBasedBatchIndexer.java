@@ -64,16 +64,16 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
                                                                      openSearchClient,
                                                                      numberOfFilesPerEvent
                                                                      ).processRequest();
-        if (result.isTruncated() && BatchIndexingConstants.RECURSION_ENABLED) {
+        if (result.truncated() && BatchIndexingConstants.RECURSION_ENABLED) {
             emitEventToProcessNextBatch(input, context, result);
         }
-        return result.getFailedResults().toArray(SortableIdentifier[]::new);
+        return result.failedResults().toArray(SortableIdentifier[]::new);
     }
 
     private void emitEventToProcessNextBatch(ImportDataRequestEvent input, Context context,
                                              IndexingResult<SortableIdentifier> result) {
         ImportDataRequestEvent newImportDataRequest =
-            new ImportDataRequestEvent(input.getS3Location(), result.getNextStartMarker());
+            new ImportDataRequestEvent(input.getS3Location(), result.nextStartMarker());
         emitEvent(eventBridgeClient, newImportDataRequest, context);
     }
 }

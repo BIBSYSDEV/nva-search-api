@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,6 +66,15 @@ class IndexDocumentTest {
         var error = assertThrows(RuntimeException.class, indexDocument::getDocumentIdentifier);
         assertThat(error.getMessage(), containsString(IndexDocument.MISSING_IDENTIFIER_IN_RESOURCE));
     }
+
+    @Test
+    void shouldUseGetTypeAsWell(){
+        var consumptionAttributes = new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
+        var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
+        assertThrows(IllegalArgumentException.class, indexDocument::getType);
+        assertNotNull(indexDocument.validate());
+    }
+
 
     @ParameterizedTest(name = "should throw exception when validating and missing mandatory fields:{0}")
     @MethodSource("invalidConsumptionAttributes")

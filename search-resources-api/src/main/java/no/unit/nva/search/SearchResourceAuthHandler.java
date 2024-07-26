@@ -43,8 +43,6 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
         throws BadRequestException, UnauthorizedException {
 
-
-
         return
             ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)

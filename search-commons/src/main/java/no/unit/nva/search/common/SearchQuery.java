@@ -183,6 +183,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     @Override
     public Stream<QueryContentWrapper> assemble() {
+        // TODO extract builderDefaultSearchSource() and this content into a separate class?
         var contentWrappers = new ArrayList<QueryContentWrapper>(numberOfRequests());
         var builder = builderDefaultSearchSource();
 

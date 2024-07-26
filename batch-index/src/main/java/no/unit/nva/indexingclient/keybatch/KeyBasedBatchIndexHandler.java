@@ -95,7 +95,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private String getLocation(KeyBatchRequestEvent input) {
-        return nonNull(input) && nonNull(input.getLocation()) ? input.getLocation() : null;
+        return nonNull(input) && nonNull(input.location()) ? input.location() : null;
     }
 
     private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context,
@@ -112,7 +112,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
 
     private static String getStartMarker(KeyBatchRequestEvent input) {
 
-        return nonNull(input) && nonNull(input.getStartMarker()) ? input.getStartMarker() : null;
+        return nonNull(input) && nonNull(input.startMarker()) ? input.startMarker() : null;
     }
 
     private String extractContent(String key) {
