@@ -32,9 +32,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
-    public static final String RESOURCES_FOLDER = "resources/";
     public static final String DEFAULT_BATCH_SIZE = "1000";
-    public static final String PERSISTED_MESSAGE = "Batches have been persisted successfully";
     public static final String DELIMITER = "/";
     public static final String DEFAULT_START_MARKER = null;
     public static final String START_MARKER_MESSAGE = "Start marker: {}";
@@ -77,11 +75,11 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private String getLocation(KeyBatchRequestEvent event) {
-        return isNotEmptyEvent(event) ? event.getLocation() : DEFAULT_LOCATION;
+        return isNotEmptyEvent(event) ? event.location() : DEFAULT_LOCATION;
     }
 
     private static boolean isNotEmptyEvent(KeyBatchRequestEvent event) {
-        return nonNull(event) && nonNull(event.getLocation());
+        return nonNull(event) && nonNull(event.location());
     }
 
     private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context,
@@ -97,11 +95,11 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static String getStartMarker(KeyBatchRequestEvent input) {
-        return notEmptyEvent(input) ? input.getStartMarker() : DEFAULT_START_MARKER;
+        return notEmptyEvent(input) ? input.startMarker() : DEFAULT_START_MARKER;
     }
 
     private static boolean notEmptyEvent(KeyBatchRequestEvent event) {
-        return nonNull(event) && nonNull(event.getStartMarker());
+        return nonNull(event) && nonNull(event.startMarker());
     }
 
     private static ListObjectsV2Request createRequest(String startMarker, String location) {

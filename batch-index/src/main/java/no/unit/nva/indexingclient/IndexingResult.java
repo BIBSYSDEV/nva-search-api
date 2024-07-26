@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface IndexingResult<T> {
 
-    List<T> getFailedResults();
+    List<T> failedResults();
 
-    String getNextStartMarker();
+    String nextStartMarker();
 
-    boolean isTruncated();
+    boolean truncated();
 
 
 }

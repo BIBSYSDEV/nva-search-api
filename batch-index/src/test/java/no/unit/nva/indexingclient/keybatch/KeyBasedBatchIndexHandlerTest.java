@@ -149,8 +149,8 @@ class KeyBasedBatchIndexHandlerTest {
 
             var emittedEvent = ((StubEventBridgeClient) eventBridgeClient).getLatestEvent();
 
-            assertThat(emittedEvent.getStartMarker(), is(equalTo(batchKey)));
-            assertThat(emittedEvent.getLocation(), is(equalTo(DEFAULT_LOCATION)));
+            assertThat(emittedEvent.startMarker(), is(equalTo(batchKey)));
+            assertThat(emittedEvent.location(), is(equalTo(DEFAULT_LOCATION)));
         }
     }
 

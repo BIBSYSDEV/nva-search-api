@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.net.http.HttpClient;
+import java.nio.file.Path;
 
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollParameters;
@@ -30,7 +31,7 @@ class ScrollClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         scrollClient = new ScrollClient(httpClient, cachedJwtProvider);
         when(httpClient.sendAsync(any(), any()))
-            .thenReturn(mockedFutureHttpResponse(SAMPLE_PUBLICATION_SEARCH));
+            .thenReturn(mockedFutureHttpResponse(Path.of(SAMPLE_PUBLICATION_SEARCH)));
     }
 
 

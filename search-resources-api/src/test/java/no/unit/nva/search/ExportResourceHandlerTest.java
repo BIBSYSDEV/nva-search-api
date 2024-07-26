@@ -41,6 +41,7 @@ class ExportResourceHandlerTest {
         mockedScrollClient = mock(ScrollClient.class);
         handler = new ExportResourceHandler(mockedResourceClient, mockedScrollClient, null, null);
     }
+
     @Test
     void shouldReturnCsvWithTitleField() throws IOException, BadRequestException {
         var expectedTitle1 = randomString();
@@ -81,13 +82,12 @@ class ExportResourceHandlerTest {
         var contributors = List.of(randomString(), randomString(), randomString());
         var date = "2022-01-22";
 
-        var exportCsv = new ExportCsv();
-        exportCsv.setId(id);
-        exportCsv.setMainTitle(title);
-        exportCsv.setPublicationInstance(type);
-        exportCsv.setPublicationDate(date);
-        exportCsv.setContributors(String.join(COMMA, contributors));
-        return exportCsv;
+        return new ExportCsv()
+            .withId(id)
+            .withMainTitle(title)
+            .withPublicationInstance(type)
+            .withPublicationDate(date)
+            .withContributors(String.join(COMMA, contributors));
     }
 
     private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {

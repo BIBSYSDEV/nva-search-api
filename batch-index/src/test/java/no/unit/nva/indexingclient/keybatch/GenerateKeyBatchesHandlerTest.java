@@ -92,7 +92,7 @@ class GenerateKeyBatchesHandlerTest {
 
         var startMarkerForNextIteration = s3Objects.get(s3Objects.size() - 2);
 
-        assertThat(emittedEvent.getStartMarker(), is(equalTo(startMarkerForNextIteration)));
+        assertThat(emittedEvent.startMarker(), is(equalTo(startMarkerForNextIteration)));
     }
 
     private static String getBucketPath(UriWrapper uri) {

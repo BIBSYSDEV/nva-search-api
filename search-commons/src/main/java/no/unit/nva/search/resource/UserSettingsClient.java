@@ -26,6 +26,7 @@ import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.UserSettings;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 
 /**
@@ -46,8 +47,8 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
         return
             createQueryBuilderStream(query)
                 .map(this::createRequest)
-                .map(this::fetch)
-                .map(this::handleResponse)
+                .map(super::fetch)
+                .map(super::handleResponse)
                 .findFirst().orElseThrow().join();
     }
 
@@ -57,8 +58,10 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     }
 
     @Override
+    @JacocoGenerated
     protected BinaryOperator<UserSettings> responseAccumulator() {
-        return (a, b) -> a;
+        //not in use
+        return null;
     }
 
     @Override

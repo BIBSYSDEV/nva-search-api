@@ -68,7 +68,7 @@ public enum ImportCandidateSort implements SortKey {
             Arrays.stream(ImportCandidateSort.values())
                 .sorted(SortKey::compareAscending)
                 .skip(1)    // skip INVALID
-                .map(SortKey::asLowerCase)
+                .map(SortKey::asCamelCase)
             .toList();
     }
 }

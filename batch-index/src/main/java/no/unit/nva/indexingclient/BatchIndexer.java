@@ -55,18 +55,18 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     }
 
     @Override
-    public List<SortableIdentifier> getFailedResults() {
-        return this.processingResult.getFailedResults();
+    public List<SortableIdentifier> failedResults() {
+        return this.processingResult.failedResults();
     }
 
     @Override
-    public String getNextStartMarker() {
-        return processingResult.getNextStartMarker();
+    public String nextStartMarker() {
+        return processingResult.nextStartMarker();
     }
 
     @Override
-    public boolean isTruncated() {
-        return this.processingResult.isTruncated();
+    public boolean truncated() {
+        return this.processingResult.truncated();
     }
 
     private ListingResult fetchNextPageOfFilenames() {

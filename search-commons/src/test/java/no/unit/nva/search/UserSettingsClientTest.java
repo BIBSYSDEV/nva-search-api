@@ -1,8 +1,8 @@
 package no.unit.nva.search;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -18,7 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailed;
+import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static nva.commons.core.attempt.Try.attempt;
@@ -34,16 +35,21 @@ class UserSettingsClientTest {
     public static final String SAMPLE_USER_SETTINGS_RESPONSE = "user_settings.json";
 
     @BeforeAll
-    public static void setUp() throws IOException, InterruptedException {
+    public static void setUp() {
         var mochedHttpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-        when(mochedHttpClient.send(any(), any()))
-            .thenReturn(mockedHttpResponse(SAMPLE_USER_SETTINGS_RESPONSE))
-            .thenReturn(mockedHttpResponse(""))
-            .thenReturn(mockedHttpResponse("", 500));
+        final var path = Path.of(SAMPLE_USER_SETTINGS_RESPONSE);
 
+        when(mochedHttpClient.sendAsync(any(), any()))
+            .thenReturn(mockedFutureHttpResponse(""))
+            .thenReturn(mockedFutureFailed())
+            .thenReturn(mockedFutureHttpResponse(path))
+            .thenReturn(mockedFutureHttpResponse(path));
     }
+
+
+
 
     @ParameterizedTest
     @MethodSource("uriProvider")
@@ -57,7 +63,7 @@ class UserSettingsClientTest {
             .map(UserSettings::promotedPublications)
             .orElse((e) -> {
                     if (e.isFailure()) {
-                        logger.info(e.getException().getMessage());
+                        logger.error(e.getException().getMessage());
                     }
                     return List.<String>of();
                 }
@@ -72,6 +78,6 @@ class UserSettingsClientTest {
             URI.create(
                 "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
                 + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
-            URI.create("https://example.com/?query=hello+world&fields=all"));
+            URI.create("https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
     }
 }

@@ -8,24 +8,24 @@ import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search.common.constant.Words.AMPERSAND;
 import static nva.commons.core.attempt.Try.attempt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.net.MediaType;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.net.MediaType;
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.ResponseLogInfo;
 import no.unit.nva.search.common.records.SwsResponse;
-import no.unit.nva.search.common.records.QueryContentWrapper;
 import nva.commons.core.attempt.FunctionWithException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +61,10 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             .map(this::createRequest)
             .map(this::fetch)
             .map(this::handleResponse).toList();
-        return completableFutures.size() == 2
-            ? completableFutures.get(0).thenCombineAsync(completableFutures.get(1), responseAccumulator()).join()
-            : completableFutures.get(0).join();
+
+        return combineAndReturn(completableFutures);
     }
+
 
     protected CompletableFuture<R> handleResponse(CompletableFuture<HttpResponse<String>> completableFuture) {
         return completableFuture
@@ -84,6 +84,13 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
     protected abstract FunctionWithException<R, R, RuntimeException> logAndReturnResult();
 
+    protected R combineAndReturn(List<CompletableFuture<R>> completableFutures) {
+        return completableFutures.size() == 2
+            ? completableFutures.get(0).thenCombineAsync(completableFutures.get(1), responseAccumulator()).join()
+            : completableFutures.get(0).join();
+    }
+
+
     protected CompletableFuture<HttpResponse<String>> fetch(HttpRequest request) {
         var fetchStart = Instant.now();
         return httpClient.sendAsync(request, bodyHandler)
@@ -93,7 +100,8 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
             })
             .exceptionallyAsync(responseFailure -> {
                 fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-                logger.error(new ErrorEntry(request.uri(), responseFailure.toString()).toJsonString());
+                var error = new ErrorEntry(request.uri(), responseFailure.getCause().getMessage()).toJsonString();
+                logger.error(error);
                 return null;
             });
     }
