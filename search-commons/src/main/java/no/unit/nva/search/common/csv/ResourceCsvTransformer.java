@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 import java.io.StringWriter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,12 +49,12 @@ public final class ResourceCsvTransformer {
         stringWriter.append(UTF8_BOM);
         var lines = extractedJsonSearchResults(hits);
         var csvWriter = new StatefulBeanToCsvBuilder<ExportCsv>(stringWriter)
-                            .withApplyQuotesToAll(true)
-                            .withQuotechar(QUOTE_CHAR)
-                            .withSeparator(SEPARATOR)
-                            .withLineEnd(LINE_END)
-                            .withMappingStrategy(new HeaderColumnNameAndOrderMappingStrategy<>(ExportCsv.class))
-                            .build();
+            .withApplyQuotesToAll(true)
+            .withQuotechar(QUOTE_CHAR)
+            .withSeparator(SEPARATOR)
+            .withLineEnd(LINE_END)
+            .withMappingStrategy(new HeaderColumnNameAndOrderMappingStrategy<>(ExportCsv.class))
+            .build();
         try {
             csvWriter.write(lines);
         } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
@@ -117,8 +118,8 @@ public final class ResourceCsvTransformer {
     private static List<String> getContributorsName(JsonNode document) {
         var contributors = document.at(CONTRIBUTORS_JSON_POINTER);
         return StreamSupport.stream(contributors.spliterator(), false)
-                   .map(ResourceCsvTransformer::extractName)
-                   .collect(Collectors.toList());
+            .map(ResourceCsvTransformer::extractName)
+            .collect(Collectors.toList());
     }
 
     private static String extractName(JsonNode contributor) {

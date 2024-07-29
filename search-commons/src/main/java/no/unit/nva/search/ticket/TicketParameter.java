@@ -49,6 +49,7 @@ import static no.unit.nva.search.ticket.Constants.PUBLICATION_STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.VIEWED_BY_FIELDS;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -69,6 +70,7 @@ import org.apache.commons.text.CaseUtils;
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
  * parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ *
  * @author Stig Norland
  */
 public enum TicketParameter implements ParameterKey {
@@ -170,6 +172,24 @@ public enum TicketParameter implements ParameterKey {
         this.paramkind = kind;
     }
 
+    public static TicketParameter keyFromString(String paramName) {
+        var result = Arrays.stream(TicketParameter.values())
+            .filter(TicketParameter::ignoreInvalidKey)
+            .filter(ParameterKey.equalTo(paramName))
+            .collect(Collectors.toSet());
+        return result.size() == 1
+            ? result.stream().findFirst().get()
+            : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(TicketParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -211,7 +231,6 @@ public enum TicketParameter implements ParameterKey {
             .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
-
     @Override
     public FieldOperator searchOperator() {
         return fieldOperator;
@@ -230,23 +249,5 @@ public enum TicketParameter implements ParameterKey {
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static TicketParameter keyFromString(String paramName) {
-        var result = Arrays.stream(TicketParameter.values())
-            .filter(TicketParameter::ignoreInvalidKey)
-            .filter(ParameterKey.equalTo(paramName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 }

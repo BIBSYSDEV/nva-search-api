@@ -208,7 +208,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         );
     }
 
-
     /**
      * Add a (default) filter to the query that will never match any document.
      *

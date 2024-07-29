@@ -69,6 +69,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.AggregationBuilders;
@@ -104,6 +105,16 @@ public final class Constants {
 
     public static final String CONTRIBUTORS_AFFILIATION_LABELS =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + LABELS;
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD = multipleFields(
+        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD),
+        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, NYNORSK_CODE, KEYWORD),
+        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, BOKMAAL_CODE, KEYWORD),
+        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, SAMI_CODE, KEYWORD)
+    );
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION = multipleFields(
+        CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
+        ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD
+    );
     public static final String CONTRIBUTORS_IDENTITY_ID =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
@@ -149,14 +160,12 @@ public final class Constants {
         ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + TITLE + DOT + KEYWORD,
         ENTITY_PUBLICATION_CONTEXT_DOT + SERIES + DOT + ID + DOT + KEYWORD
     );
-
     public static final String ENTITY_DESCRIPTION_REFERENCE_JOURNAL = multipleFields(
         ENTITY_PUBLICATION_CONTEXT_DOT + NAME + DOT + KEYWORD,
         ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD,
         ENTITY_PUBLICATION_CONTEXT_DOT + PRINT_ISSN + DOT + KEYWORD,
         ENTITY_PUBLICATION_CONTEXT_DOT + ONLINE_ISSN + DOT + KEYWORD
     );
-
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE = ENTITY_DESCRIPTION + DOT + MAIN_TITLE;
     public static final String ENTITY_DESCRIPTION_MAIN_TITLE_KEYWORD = ENTITY_DESCRIPTION_MAIN_TITLE + DOT + KEYWORD;
     public static final String FUNDINGS_SOURCE_LABELS = FUNDINGS + DOT + SOURCE + DOT + LABELS + DOT;
@@ -167,28 +176,12 @@ public final class Constants {
         RESOURCE_OWNER + DOT + OWNER_AFFILIATION + DOT + KEYWORD;
     public static final String RESOURCE_OWNER_OWNER_KEYWORD = RESOURCE_OWNER + DOT + OWNER + DOT + KEYWORD;
     public static final String ENTITY_TAGS = ENTITY_DESCRIPTION + DOT + TAGS + DOT + KEYWORD;
-
     //-----------------------------------
     public static final String TOP_LEVEL_ORG_ID = jsonPath(TOP_LEVEL_ORGANIZATIONS, ID, KEYWORD);
-
-
     public static final String ENTITY_ABSTRACT = ENTITY_DESCRIPTION + DOT + ABSTRACT;
     public static final String ENTITY_DESCRIPTION_LANGUAGE = ENTITY_DESCRIPTION + DOT + LANGUAGE + DOT + KEYWORD;
     public static final String SCIENTIFIC_INDEX_YEAR = SCIENTIFIC_INDEX + DOT + YEAR;
     public static final String SCIENTIFIC_INDEX_STATUS_KEYWORD = SCIENTIFIC_INDEX + DOT + STATUS_KEYWORD;
-
-    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD = multipleFields(
-        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, ENGLISH_CODE, KEYWORD),
-        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, NYNORSK_CODE, KEYWORD),
-        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, BOKMAAL_CODE, KEYWORD),
-        jsonPath(CONTRIBUTORS_AFFILIATION_LABELS, SAMI_CODE, KEYWORD)
-    );
-
-    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION = multipleFields(
-        CONTRIBUTORS_AFFILIATION_ID_KEYWORD,
-        ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION_LABELS_KEYWORD
-    );
-
     public static final String PUBLICATION_CONTEXT_PATH = jsonPath(ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT);
     public static final String ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN = multipleFields(
         jsonPath(PUBLICATION_CONTEXT_PATH, ONLINE_ISSN, KEYWORD),
@@ -217,7 +210,15 @@ public final class Constants {
         ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD
     );
     public static final String PAINLESS = "painless";
-
+    public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
+        List.of(
+            filesHierarchy(),
+            associatedArtifactsHierarchy(),
+            entityDescriptionHierarchy(),
+            fundingSourceHierarchy(),
+            scientificIndexHierarchy(),
+            topLevelOrganisationsHierarchy()
+        );
     private static final Map<String, String> facetResourcePaths1 = Map.of(
         TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",
         SERIES, "/withAppliedFilter/entityDescription/reference/publicationContext/series/id",
@@ -232,17 +233,6 @@ public final class Constants {
         TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/topLevelOrganization/id",
         SCIENTIFIC_INDEX, "/withAppliedFilter/scientificIndex/year"
     );
-
-    public static final List<AggregationBuilder> RESOURCES_AGGREGATIONS =
-        List.of(
-            filesHierarchy(),
-            associatedArtifactsHierarchy(),
-            entityDescriptionHierarchy(),
-            fundingSourceHierarchy(),
-            scientificIndexHierarchy(),
-            topLevelOrganisationsHierarchy()
-        );
-
     public static final Map<String, String> facetResourcePaths = Stream.of(facetResourcePaths1, facetResourcePaths2)
         .flatMap(map -> map.entrySet().stream())
         .sorted(Map.Entry.comparingByValue())
@@ -251,6 +241,10 @@ public final class Constants {
             (map, entry) -> map.put(entry.getKey(), entry.getValue()),
             LinkedHashMap::putAll
         );
+
+    @JacocoGenerated
+    public Constants() {
+    }
 
     public static NestedAggregationBuilder topLevelOrganisationsHierarchy() {
         return
@@ -262,7 +256,6 @@ public final class Constants {
                         )
                 );
     }
-
 
     public static TermsAggregationBuilder filesHierarchy() {
         return branchBuilder(FILES, jsonPath(FILES_STATUS, KEYWORD));
@@ -373,7 +366,6 @@ public final class Constants {
             );
     }
 
-
     private static TermsAggregationBuilder publisher() {
         return
             branchBuilder(PUBLISHER, ENTITY_DESCRIPTION, REFERENCE, PUBLICATION_CONTEXT, PUBLISHER, IDENTIFIER_KEYWORD)
@@ -397,10 +389,5 @@ public final class Constants {
 
     private static CardinalityAggregationBuilder uniquePublications() {
         return AggregationBuilders.cardinality(UNIQUE_PUBLICATIONS).field(jsonPath(ID, KEYWORD));
-    }
-
-
-    @JacocoGenerated
-    public Constants() {
     }
 }

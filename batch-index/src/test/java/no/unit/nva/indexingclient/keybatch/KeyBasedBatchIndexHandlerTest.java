@@ -59,9 +59,7 @@ class KeyBasedBatchIndexHandlerTest {
     public static final String DEFAULT_LOCATION = "resources";
     private ByteArrayOutputStream outputStream;
     private S3Driver s3ResourcesDriver;
-//    private FakeS3Client s3ResourcesClient;
     private S3Driver s3BatchesDriver;
-//    private FakeS3Client s3BatchesClient;
     private FakeOpenSearchClient openSearchClient;
     private EventBridgeClient eventBridgeClient;
     private KeyBasedBatchIndexHandler handler;

@@ -5,11 +5,13 @@ import static no.unit.nva.search.common.constant.Words.AMPERSAND;
 import static no.unit.nva.search.common.constant.Words.EQUAL;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map.Entry;
+
 import nva.commons.core.JacocoGenerated;
 
 public final class EntrySetTools {

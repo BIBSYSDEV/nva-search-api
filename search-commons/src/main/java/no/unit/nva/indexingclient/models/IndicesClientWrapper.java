@@ -37,12 +37,12 @@ public class IndicesClientWrapper {
     }
 
     public CreateIndexResponse create(CreateIndexRequest createIndexRequest, RequestOptions requestOptions)
-            throws IOException {
+        throws IOException {
         return indicesClient.create(createIndexRequest, requestOptions);
     }
 
     public AcknowledgedResponse putSettings(UpdateSettingsRequest updateSettingsRequest, RequestOptions requestOptions)
-            throws IOException {
+        throws IOException {
         return indicesClient.putSettings(updateSettingsRequest, requestOptions);
     }
 
@@ -51,7 +51,7 @@ public class IndicesClientWrapper {
     }
 
     public AcknowledgedResponse delete(DeleteIndexRequest deleteIndexRequest, RequestOptions requestOptions)
-            throws IOException {
+        throws IOException {
         return indicesClient.delete(deleteIndexRequest, requestOptions);
     }
 }

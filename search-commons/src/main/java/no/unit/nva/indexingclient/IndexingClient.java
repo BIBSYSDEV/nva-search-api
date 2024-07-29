@@ -5,10 +5,12 @@ import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_C
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.indexingclient.models.AuthenticatedOpenSearchClientWrapper;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -88,7 +91,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
         DeleteResponse deleteResponse = openSearchClient
             .delete(new DeleteRequest(RESOURCES_INDEX, identifier),
-                                                    getRequestOptions());
+                getRequestOptions());
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
         }
@@ -96,8 +99,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
     public void removeDocumentFromImportCandidateIndex(String identifier) throws IOException {
         DeleteResponse deleteResponse = openSearchClient
-                                            .delete(new DeleteRequest(IMPORT_CANDIDATES_INDEX, identifier),
-                                                    getRequestOptions());
+            .delete(new DeleteRequest(IMPORT_CANDIDATES_INDEX, identifier),
+                getRequestOptions());
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
         }
@@ -136,11 +139,11 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
     public JsonNode getMapping(String indexName) {
         return attempt(() -> getMappingMetadata(indexName))
-                   .map(MappingMetadata::source)
-                   .map(CompressedXContent::uncompressed)
-                   .map(BytesReference::utf8ToString)
-                   .map(JsonUtils.dtoObjectMapper::readTree)
-                   .orElseThrow();
+            .map(MappingMetadata::source)
+            .map(CompressedXContent::uncompressed)
+            .map(BytesReference::utf8ToString)
+            .map(JsonUtils.dtoObjectMapper::readTree)
+            .orElseThrow();
     }
 
     private Stream<List<IndexDocument>> splitStreamToBatches(Stream<IndexDocument> indexDocuments) {
@@ -151,8 +154,8 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
     private BulkResponse insertBatch(List<IndexDocument> bulk) throws IOException {
         List<IndexRequest> indexRequests = bulk.stream()
-                                               .parallel()
-                                               .map(IndexDocument::toIndexRequest)
+            .parallel()
+            .map(IndexDocument::toIndexRequest)
             .toList();
 
         BulkRequest request = new BulkRequest();
@@ -165,10 +168,10 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     private MappingMetadata getMappingMetadata(String indexName) throws IOException {
         var request = new GetMappingsRequest().indices(indexName);
         return openSearchClient
-                   .indices()
-                   .getIndicesClient()
-                   .getMapping(request, getRequestOptions())
-                   .mappings()
-                   .get(indexName);
+            .indices()
+            .getIndicesClient()
+            .getMapping(request, getRequestOptions())
+            .mappings()
+            .get(indexName);
     }
 }

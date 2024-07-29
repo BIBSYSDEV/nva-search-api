@@ -35,6 +35,7 @@ import static no.unit.nva.search.importcandidate.Constants.selectByLicense;
 import static nva.commons.core.paths.UriWrapper.fromUri;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;

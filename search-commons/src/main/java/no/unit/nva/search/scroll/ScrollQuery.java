@@ -117,7 +117,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
         private String ttl;
 
         public ScrollQuery build() {
-              return new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri);
+            return new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri);
         }
 
         public ScrollBuilder withDockerHostUri(URI uri) {

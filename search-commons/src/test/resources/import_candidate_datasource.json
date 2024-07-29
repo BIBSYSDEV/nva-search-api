@@ -21,21 +21,24 @@
     "createdDate": "2023-11-20T19:38:32.361612653Z",
     "totalVerifiedContributors": 0,
     "mainTitle": "All-optical multi-wavelength regenerator based on four-wave mixing",
-    "organizations": [{
-      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/2012.0.0.0",
-      "type": "Organization",
-      "labels": {
-        "nb": "Oslo universitetssykehus HF",
-        "en": "Oslo University Hospital"
-      }
-      }, {
+    "organizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/2012.0.0.0",
+        "type": "Organization",
+        "labels": {
+          "nb": "Oslo universitetssykehus HF",
+          "en": "Oslo University Hospital"
+        }
+      },
+      {
         "id": "https://api.dev.nva.aws.unit.no/cristin/organization/7476.0.0.0",
         "type": "Organization",
         "labels": {
           "nb": "Statens arbeidsmiljøinstitutt",
           "en": "National Institute of Occupational Health"
         }
-      }, {
+      },
+      {
         "id": "https://api.dev.nva.aws.unit.no/cristin/organization/184.0.0.0",
         "type": "Organization",
         "labels": {

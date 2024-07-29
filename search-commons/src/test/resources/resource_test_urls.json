@@ -193,7 +193,7 @@
   "UNIT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0": 1,
   "UNIT=20754.2.0.0": 1,
   "UNIT=20754.0.0.0": 7,
-  "UNIT=20754.0.0.0&EXCLUDE_SUBUNITS=true":  2,
+  "UNIT=20754.0.0.0&EXCLUDE_SUBUNITS=true": 2,
   "UNIT=1627.0.0.0": 3,
   "UNIT=1627.0.0.0&EXCLUDE_SUBUNITS=true": 3,
   "UNIT_NOT=1627.0.0.0": 18,

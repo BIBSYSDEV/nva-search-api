@@ -1,11 +1,14 @@
 package no.unit.nva.indexingclient.models;
 
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.Objects;
 import java.util.Optional;
+
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
@@ -27,6 +30,9 @@ public record IndexDocument(
     private static final String TICKET = "Ticket";
     private static final String RESOURCE = "Resource";
 
+    public static IndexDocument fromJsonString(String json) {
+        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
+    }
 
     public IndexDocument validate() {
         Objects.requireNonNull(getIndexName());
@@ -48,10 +54,6 @@ public record IndexDocument(
         } else {
             throw new IllegalArgumentException("Unknown type!");
         }
-    }
-
-    public static IndexDocument fromJsonString(String json) {
-        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
     }
 
     @JsonIgnore

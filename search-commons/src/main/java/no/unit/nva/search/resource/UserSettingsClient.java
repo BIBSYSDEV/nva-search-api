@@ -11,6 +11,7 @@ import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;

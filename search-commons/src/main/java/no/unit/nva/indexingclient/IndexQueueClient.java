@@ -20,24 +20,19 @@ public final class IndexQueueClient implements QueueClient {
     private static final long TIMEOUT_TIME = 30;
     private final SqsClient sqsClient;
 
-    public static IndexQueueClient defaultQueueClient() {
-        return new IndexQueueClient(defaultClient());
-    }
-
     private IndexQueueClient(SqsClient sqsClient) {
         this.sqsClient = sqsClient;
     }
 
-    private static SqsClient defaultClient() {
-        return SqsClient.builder()
-                   .region(getRegion())
-                   .httpClient(httpClientForConcurrentQueries())
-                   .build();
+    public static IndexQueueClient defaultQueueClient() {
+        return new IndexQueueClient(defaultClient());
     }
 
-    @Override
-    public void sendMessage(SendMessageRequest sendMessageRequest) {
-        sqsClient.sendMessage(sendMessageRequest);
+    private static SqsClient defaultClient() {
+        return SqsClient.builder()
+            .region(getRegion())
+            .httpClient(httpClientForConcurrentQueries())
+            .build();
     }
 
     private static Region getRegion() {
@@ -46,10 +41,15 @@ public final class IndexQueueClient implements QueueClient {
 
     private static SdkHttpClient httpClientForConcurrentQueries() {
         return ApacheHttpClient.builder()
-                   .useIdleConnectionReaper(true)
-                   .maxConnections(MAX_CONNECTIONS)
-                   .connectionMaxIdleTime(Duration.ofSeconds(IDLE_TIME))
-                   .connectionTimeout(Duration.ofSeconds(TIMEOUT_TIME))
-                   .build();
+            .useIdleConnectionReaper(true)
+            .maxConnections(MAX_CONNECTIONS)
+            .connectionMaxIdleTime(Duration.ofSeconds(IDLE_TIME))
+            .connectionTimeout(Duration.ofSeconds(TIMEOUT_TIME))
+            .build();
+    }
+
+    @Override
+    public void sendMessage(SendMessageRequest sendMessageRequest) {
+        sqsClient.sendMessage(sendMessageRequest);
     }
 }

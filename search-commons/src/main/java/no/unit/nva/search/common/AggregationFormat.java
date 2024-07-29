@@ -12,12 +12,15 @@ import static no.unit.nva.search.common.constant.Words.SLASH;
 import static no.unit.nva.search.common.constant.Words.VALUE;
 import static no.unit.nva.search.common.constant.Words.ZERO;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
+
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.JacocoGenerated;
 

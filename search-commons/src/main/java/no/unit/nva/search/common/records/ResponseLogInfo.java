@@ -13,7 +13,7 @@ public record ResponseLogInfo(
     long prePostDuration,
     long totalDuration,
     String query
-)  implements JsonSerializable {
+) implements JsonSerializable {
 
     public static Builder builder() {
         return new Builder();

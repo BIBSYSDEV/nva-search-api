@@ -1,18 +1,18 @@
-plugins{
+plugins {
     id 'nva.search.service.java-conventions'
     id 'nva.search.service2.dynamodblocal'
 }
 
 dependencies {
     // search2 dependencies
-        implementation libs.aws.lambda.events
-        implementation libs.aws.lambda.java.core
-        implementation libs.aws.sdk2.sqs
-        implementation libs.bundles.logging
-        implementation libs.jackson.core
-        implementation libs.jackson.databind
-        implementation libs.nva.core
-        implementation libs.nva.json
+    implementation libs.aws.lambda.events
+    implementation libs.aws.lambda.java.core
+    implementation libs.aws.sdk2.sqs
+    implementation libs.bundles.logging
+    implementation libs.jackson.core
+    implementation libs.jackson.databind
+    implementation libs.nva.core
+    implementation libs.nva.json
     //  old dependencies
     implementation libs.aws.apache.interceptor
     implementation libs.bundles.aws.xray

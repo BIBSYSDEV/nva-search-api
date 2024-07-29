@@ -17,7 +17,9 @@ import static no.unit.nva.search.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.google.common.net.MediaType;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,15 +63,20 @@ import org.slf4j.LoggerFactory;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
+    public final transient QueryFilter filters;
     private transient MediaType mediaType;
-
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo);
      * This value only used in debug and tests.
      */
     private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
-    public final transient QueryFilter filters;
+    protected SearchQuery() {
+        super();
+        filters = new QueryFilter();
+        queryKeys = new QueryKeys<>(keyFields());
+        setMediaType(JSON_UTF_8.toString());
+    }
 
     protected abstract AsType<K> from();
 
@@ -102,13 +109,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
 
-    protected SearchQuery() {
-        super();
-        filters = new QueryFilter();
-        queryKeys = new QueryKeys<>(keyFields());
-        setMediaType(JSON_UTF_8.toString());
-    }
-
     @Override
     public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient) {
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
@@ -136,6 +136,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     /**
      * Builds URI to query SWS based on post body.
+     *
      * @return an URI to Sws search without parameters.
      */
     public URI getNvaSearchApiUri() {

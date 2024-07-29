@@ -13,6 +13,7 @@ import static no.unit.nva.search.common.constant.Words.DOT;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -23,26 +24,6 @@ import no.unit.nva.search.common.constant.Words;
  * @author Stig Norland
  */
 public interface ParameterKey {
-    String asCamelCase();
-
-    String asLowerCase();
-
-    Float fieldBoost();
-
-    ParameterKind fieldType();
-
-    String fieldPattern();
-
-    String valuePattern();
-
-    ValueEncoding valueEncoding();
-
-    Stream<String> searchFields(boolean... isKeyWord);
-
-    FieldOperator searchOperator();
-
-    String errorMessage();
-
     static Predicate<ParameterKey> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }
@@ -90,4 +71,24 @@ public interface ParameterKey {
             ? !isKeyWord[0]
             : result;
     }
+
+    String asCamelCase();
+
+    String asLowerCase();
+
+    Float fieldBoost();
+
+    ParameterKind fieldType();
+
+    String fieldPattern();
+
+    String valuePattern();
+
+    ValueEncoding valueEncoding();
+
+    Stream<String> searchFields(boolean... isKeyWord);
+
+    FieldOperator searchOperator();
+
+    String errorMessage();
 }

@@ -119,11 +119,11 @@ public class IndexResourceHandlerTest {
 
         RuntimeException exception;
         try (InputStream input = createEventBridgeEvent(resourceLocation)) {
-
-            exception = assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
+            exception =
+                assertThrows(RuntimeException.class, () -> indexResourceHandler.handleRequest(input, output, context));
+            assertThat(exception.getMessage(), stringContainsInOrder(MISSING_IDENTIFIER_IN_RESOURCE));
         }
 
-        assertThat(exception.getMessage(), stringContainsInOrder(MISSING_IDENTIFIER_IN_RESOURCE));
     }
 
     @Test

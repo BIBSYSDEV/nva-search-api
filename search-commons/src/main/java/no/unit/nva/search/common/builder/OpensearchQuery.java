@@ -21,6 +21,7 @@ import org.opensearch.index.query.QueryBuilder;
  * <li>SHOULD, MUST_NOT implement OR operator </li>
  * <li>MUST  implement AND operator </li>
  * </ul>
+ *
  * @author Stig Norland
  */
 public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
@@ -50,7 +51,7 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
 
     private String[] splitAndFixMissingRangeValue(K key, String value) {
         return isRangeMissingComma(key, value)
-            ? new String[] {value, value}
+            ? new String[]{value, value}
             : value.split(COMMA);
     }
 }

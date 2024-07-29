@@ -1,6 +1,7 @@
 package no.unit.nva.indexingclient.utils;
 
 import java.net.http.HttpRequest;
+
 import org.mockito.ArgumentMatcher;
 
 /**
@@ -18,7 +19,7 @@ public class HttpRequestMetadataMatcher implements ArgumentMatcher<HttpRequest> 
     @Override
     public boolean matches(HttpRequest request) {
         return request.method().equals(sourceRequest.method())
-                && request.uri().equals(sourceRequest.uri())
-                && request.headers().equals(sourceRequest.headers());
+            && request.uri().equals(sourceRequest.uri())
+            && request.headers().equals(sourceRequest.headers());
     }
 }

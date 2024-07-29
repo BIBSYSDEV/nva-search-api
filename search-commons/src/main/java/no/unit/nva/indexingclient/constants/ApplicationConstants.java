@@ -1,7 +1,9 @@
 package no.unit.nva.indexingclient.constants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.List;
+
 import no.unit.nva.commons.json.JsonUtils;
 import nva.commons.core.Environment;
 

@@ -13,6 +13,10 @@ import static no.unit.nva.search.common.constant.Words.SEARCH_INFRASTRUCTURE_CRE
 
 public final class Tools {
     @JacocoGenerated
+    public Tools() {
+    }
+
+    @JacocoGenerated
     public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
         return
             getUsernamePasswordStream(reader)
@@ -32,10 +36,5 @@ public final class Tools {
     public static CognitoCredentials getCognitoCredentials(UsernamePasswordWrapper wrapper) {
         var uri = URI.create(readSearchInfrastructureAuthUri());
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
-    }
-
-
-    @JacocoGenerated
-    public Tools() {
     }
 }

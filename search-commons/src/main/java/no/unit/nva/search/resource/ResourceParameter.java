@@ -101,6 +101,7 @@ import org.apache.commons.text.CaseUtils;
  * Enum for all the parameters that can be used to query the search index.
  * This enum needs to implement these parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ *
  * @author Stig Norland
  * @author Kir Truhacev
  * @author Joachim Jorgensen
@@ -136,9 +137,9 @@ public enum ResourceParameter implements ParameterKey {
     FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
     FUNDING_IDENTIFIER(KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
     FUNDING_IDENTIFIER_NOT(KEYWORD, NOT_ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
-                           null),
+        null),
     FUNDING_IDENTIFIER_SHOULD(FUZZY_KEYWORD, ANY_OF, FUNDING_IDENTIFIER_KEYWORD,
-                              PATTERN_IS_FUNDING_IDENTIFIER_SHOULD, null, null),
+        PATTERN_IS_FUNDING_IDENTIFIER_SHOULD, null, null),
     FUNDING_SOURCE(TEXT, ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
@@ -287,6 +288,24 @@ public enum ResourceParameter implements ParameterKey {
         this.paramkind = kind;
     }
 
+    public static ResourceParameter keyFromString(String paramName) {
+        var result = Arrays.stream(ResourceParameter.values())
+            .filter(ResourceParameter::ignoreInvalidKey)
+            .filter(ParameterKey.equalTo(paramName))
+            .collect(Collectors.toSet());
+        return result.size() == 1
+            ? result.stream().findFirst().get()
+            : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(ResourceParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -328,7 +347,6 @@ public enum ResourceParameter implements ParameterKey {
             .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
-
     @Override
     public FieldOperator searchOperator() {
         return fieldOperator;
@@ -347,23 +365,5 @@ public enum ResourceParameter implements ParameterKey {
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static ResourceParameter keyFromString(String paramName) {
-        var result = Arrays.stream(ResourceParameter.values())
-            .filter(ResourceParameter::ignoreInvalidKey)
-            .filter(ParameterKey.equalTo(paramName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(ResourceParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 }

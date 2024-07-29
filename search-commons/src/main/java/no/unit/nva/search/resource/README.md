@@ -3,6 +3,7 @@
 [back to NVA search api README](/README.md#nva-search-api)
 
 ## Data Model
+
 <details>
 <summary>JSON</summary>
 
@@ -139,6 +140,7 @@
   ]
 }
 ```
+
 </details>
 
 ## Examples
@@ -147,24 +149,28 @@
 <summary>Search examples</summary>
 
 ### By a specific contributor
+
 ```http request
 GET https://api.test.nva.aws.unit.no/search/resources?contributor=2F538786
 Accept: application/json
 ```
 
 ### By title
+
 ```http request
 GET https://api.test.nva.aws.unit.no/search/resources?title=My+very+specific+title
 Accept: application/json
 ```
 
 ### By category
+
 ```http request
 GET https://api.test.nva.aws.unit.no/search/resources?category=AcademicArticle&category=AcademicMonograph
 Accept: application/json
 ```
 
 ### Free text
+
 ```http request
 GET https://api.test.nva.aws.unit.no/search/resources?query=Some+specific+phrase
 Accept: application/json
@@ -190,6 +196,7 @@ Accept: application/json
 ## Available Keys (filters)
 
 ### QueryKind descriptions
+
 * number
   * Integer
 * date

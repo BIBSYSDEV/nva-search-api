@@ -3,6 +3,7 @@ package no.unit.nva.search.common;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
+
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.joda.time.DateTime;
 /**
  * AutoConvert value to Date, Number (or String).
  * <p>Also holds key and can return value as <samp>optional stream</samp></p>
+ *
  * @author Stig Norland
  */
 @SuppressWarnings({"PMD.ShortMethodName"})
@@ -73,6 +75,8 @@ public class AsType<K extends Enum<K> & ParameterKey> {
 
 
     /**
+     * EqualsIgnoreCase.
+     *
      * @param o Object with toString()
      * @return equalsIgnoreCase of objects toString()
      */
@@ -81,7 +85,8 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * Split
+     * Split.
+     *
      * @param delimiter regex to split on
      * @return The value split, or null.
      */
@@ -92,7 +97,8 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * asSplitStream
+     * AsSplitStream.
+     *
      * @param delimiter regex to split on
      * @return The value as an optional Stream, split by delimiter.
      */
@@ -102,7 +108,8 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * asStream
+     * AsStream.
+     *
      * @return The value as an optional Stream.
      */
     public Stream<String> asStream() {
@@ -110,7 +117,8 @@ public class AsType<K extends Enum<K> & ParameterKey> {
     }
 
     /**
-     * asBoolean
+     * AsBoolean.
+     *
      * @return False if value is null or FALSE, otherwise True
      */
     public Boolean asBoolean() {

@@ -12,6 +12,7 @@ import no.unit.nva.search.ticket.TicketParameter;
 import no.unit.nva.search.common.builder.OpensearchQueryRange;
 import no.unit.nva.search.resource.ResourceParameter;
 
+import no.unit.nva.search.ticket.TicketSort;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,27 +45,20 @@ class UntouchedHeroesTest {
     @Test
     void invalidSortQueryMust() {
         assertNotNull(ImportCandidateSort.RELEVANCE.asLowerCase());
+        assertNotNull(ImportCandidateSort.RELEVANCE.asCamelCase());
+        assertNotNull(TicketSort.RELEVANCE.asLowerCase());
+        assertNotNull(TicketSort.RELEVANCE.asCamelCase());
     }
-//
-//    @Test
-//    void removeKeysSuccessfully() {
-//        var text = JsonNodeCreator::textNode("3wer");
-//        var test2 = textNode("eawsrdf");
-//        assertThrows(
-//            CsvFieldAssignmentException.class,
-//            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
-//        );
-//    }
 
 
     @Test
-//    @Disabled
+        //    @Disabled
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
 
     @Test
-//    @Disabled
+        //    @Disabled
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
     }

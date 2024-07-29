@@ -4,9 +4,11 @@ import static no.unit.nva.search.common.constant.Words.PREFIX;
 import static no.unit.nva.search.common.constant.Words.QUOTE;
 import static no.unit.nva.search.common.constant.Words.SUFFIX;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import nva.commons.core.JacocoGenerated;
 
 /**
@@ -28,9 +30,13 @@ public final class ErrorMessages {
 
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
         "Invalid query parameter supplied %s. "
-        + " Valid parameters: %s"
-        + " Also pass through to OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
-        + "search_after]";
+            + " Valid parameters: %s"
+            + " Also pass through to OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
+            + "search_after]";
+
+    @JacocoGenerated
+    public ErrorMessages() {
+    }
 
     /**
      * Formats and emits a message with valid parameter names.
@@ -41,9 +47,8 @@ public final class ErrorMessages {
      */
     public static String validQueryParameterNamesMessage(Set<String> invalidKeys, Collection<String> queryParameters) {
         return TEMPLATE_INVALID_QUERY_PARAMETERS
-                   .formatted(invalidKeys,queryParameters);
+            .formatted(invalidKeys, queryParameters);
     }
-
 
     public static String requiredMissingMessage(Set<String> missingKeys) {
         return String.format(MISSING_PARAMETER, prettifyList(missingKeys));
@@ -51,15 +56,11 @@ public final class ErrorMessages {
 
     private static String prettifyList(Set<String> queryParameters) {
         return queryParameters.size() > 1
-                   ? queryParameters.stream()
-                         .map(parameterName -> QUOTE + parameterName + QUOTE)
-                         .collect(Collectors.joining(", ", PREFIX, SUFFIX))
-                   : queryParameters.stream()
-                         .collect(Collectors.joining(EMPTY_STRING, QUOTE, QUOTE));
-    }
-
-    @JacocoGenerated
-    public ErrorMessages() {
+            ? queryParameters.stream()
+            .map(parameterName -> QUOTE + parameterName + QUOTE)
+            .collect(Collectors.joining(", ", PREFIX, SUFFIX))
+            : queryParameters.stream()
+            .collect(Collectors.joining(EMPTY_STRING, QUOTE, QUOTE));
     }
 
 }

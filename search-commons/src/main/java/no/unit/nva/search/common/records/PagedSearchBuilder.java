@@ -1,7 +1,9 @@
 package no.unit.nva.search.common.records;
 
 import static java.util.Objects.isNull;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;

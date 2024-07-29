@@ -4,7 +4,7 @@ package no.unit.nva.search.common.jwt;
 /**
  * @author Sondre Vestad
  */
-public abstract class CachedValueProvider<T>  {
+public abstract class CachedValueProvider<T> {
 
     protected T cachedValue;
 

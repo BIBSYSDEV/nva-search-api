@@ -23,13 +23,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -116,7 +119,7 @@ class IndexingClientTest {
         indexingClient.createIndex(randomString());
         var expectedNumberOfCreateInvocationsToEs = 1;
         verify(indicesClient, times(expectedNumberOfCreateInvocationsToEs)).create(any(CreateIndexRequest.class),
-                                                                                   any(RequestOptions.class));
+            any(RequestOptions.class));
     }
 
     @Test
@@ -173,7 +176,7 @@ class IndexingClientTest {
         indexingClient.deleteIndex(randomString());
         var expectedNumberOfCreateInvocationsToEs = 1;
         verify(indicesClient, times(expectedNumberOfCreateInvocationsToEs)).delete(any(DeleteIndexRequest.class),
-                any(RequestOptions.class));
+            any(RequestOptions.class));
     }
 
     private IndicesClientWrapper createMockIndicesClientWrapper() {

@@ -71,10 +71,10 @@ import org.opensearch.search.sort.SortOrder;
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
-    private UserSettingsClient userSettingsClient;
     private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
+    private UserSettingsClient userSettingsClient;
 
     private ResourceSearchQuery() {
         super();

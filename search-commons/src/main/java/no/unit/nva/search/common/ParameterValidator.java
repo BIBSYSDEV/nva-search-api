@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builder for OpenSearchQuery.
+ *
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
-
  * @author Stig Norland
  */
 public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends SearchQuery<K>> {
@@ -55,6 +55,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     /**
      * Builder of Query.
+     *
      * @throws BadRequestException if parameters are invalid or missing
      */
     @SuppressWarnings("unchecked")
@@ -67,6 +68,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
 
     /**
      * Validator of QueryBuilder.
+     *
      * @throws BadRequestException if parameters are invalid or missing
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
@@ -98,11 +100,11 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
      * <p>Usage:</p>
      * <samp>requiredMissing().forEach(key -> { <br>
-     *     switch (key) {<br>
-     *         case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
-     *         default -> { // do nothing
-     *             }<br>
-     *     }});<br>
+     * switch (key) {<br>
+     * case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
+     * default -> { // do nothing
+     * }<br>
+     * }});<br>
      * </samp>
      */
     protected abstract void assignDefaultValues();
@@ -149,7 +151,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     protected Set<K> requiredMissing() {
         return
             required().stream()
-                    .filter(key -> !searchQuery.parameters().isPresent(key))
+                .filter(key -> !searchQuery.parameters().isPresent(key))
                 .collect(Collectors.toSet());
     }
 

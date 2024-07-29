@@ -3,6 +3,7 @@ package no.unit.nva.search.importcandidate;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -34,6 +35,24 @@ public enum ImportCandidateSort implements SortKey {
         this.path = jsonPath;
     }
 
+    public static ImportCandidateSort fromSortKey(String keyName) {
+        var result = Arrays.stream(ImportCandidateSort.values())
+            .filter(SortKey.equalTo(keyName))
+            .collect(Collectors.toSet());
+        return result.size() == 1
+            ? result.stream().findFirst().get()
+            : INVALID;
+    }
+
+    public static Collection<String> validSortKeys() {
+        return
+            Arrays.stream(ImportCandidateSort.values())
+                .sorted(SortKey::compareAscending)
+                .skip(1)    // skip INVALID
+                .map(SortKey::asCamelCase)
+                .toList();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -52,23 +71,5 @@ public enum ImportCandidateSort implements SortKey {
     @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
-    }
-
-    public static ImportCandidateSort fromSortKey(String keyName) {
-        var result = Arrays.stream(ImportCandidateSort.values())
-            .filter(SortKey.equalTo(keyName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
-    }
-
-    public static Collection<String> validSortKeys() {
-        return
-            Arrays.stream(ImportCandidateSort.values())
-                .sorted(SortKey::compareAscending)
-                .skip(1)    // skip INVALID
-                .map(SortKey::asCamelCase)
-            .toList();
     }
 }

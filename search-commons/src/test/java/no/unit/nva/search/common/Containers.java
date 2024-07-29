@@ -32,9 +32,8 @@ import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 @Testcontainers
 public class Containers {
 
-    public static IndexingClient indexingClient;
     public static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-
+    public static final String IMPORT_CANDIDATE_MAPPING_TEST_JSON = "import_candidate_mapping_test.json";
     private static final Logger logger = LoggerFactory.getLogger(Containers.class);
 
     private static final String RESOURCE_DATASOURCE_JSON = "resource_datasource.json";
@@ -45,8 +44,7 @@ public class Containers {
     private static final String TICKET_MAPPING_TEST_JSON = "ticket_mapping_test.json";
 
     private static final String IMPORT_CANDIDATE_DATASOURCE_JSON = "import_candidate_datasource.json";
-    public static final String IMPORT_CANDIDATE_MAPPING_TEST_JSON = "import_candidate_mapping_test.json";
-
+    public static IndexingClient indexingClient;
 
     public static void setup() throws IOException, InterruptedException {
         container.start();

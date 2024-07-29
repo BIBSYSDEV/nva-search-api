@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import nva.commons.core.JacocoGenerated;
 
 /**
  * Response from SWS, almost identical to Opensearch's response.
+ *
  * @author Stig Norland
  */
 public record SwsResponse(
@@ -22,6 +24,26 @@ public record SwsResponse(
     HitsInfo hits,
     JsonNode aggregations,
     String _scroll_id) {
+
+    @Transient
+    public Integer getTotalSize() {
+        return hits.total.value;
+    }
+
+    @Transient
+    public List<JsonNode> getSearchHits() {
+        return hits.hits().stream().map(Hit::_source).toList();
+    }
+
+    @JacocoGenerated
+    @Transient
+    public List<String> getSort() {
+        return
+            nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
+                ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort())
+                .orElse(List.of())
+                : List.of();
+    }
 
     public record ShardsInfo(
         Long total,
@@ -49,26 +71,6 @@ public record SwsResponse(
             JsonNode _source,
             List<String> sort) {
         }
-    }
-
-    @Transient
-    public Integer getTotalSize() {
-        return hits.total.value;
-    }
-
-    @Transient
-    public List<JsonNode> getSearchHits() {
-        return hits.hits().stream().map(Hit::_source).toList();
-    }
-
-    @JacocoGenerated
-    @Transient
-    public List<String> getSort() {
-        return
-            nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
-                ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort())
-                .orElse(List.of())
-                : List.of();
     }
 
     public static final class SwsResponseBuilder {
@@ -107,7 +109,7 @@ public record SwsResponse(
         }
 
         public SwsResponseBuilder withHits(HitsInfo hits) {
-            if (nonNull(hits) && hits.total().value() >= 0 ) {
+            if (nonNull(hits) && hits.total().value() >= 0) {
                 this.hits = hits;
             }
             return this;
@@ -120,13 +122,13 @@ public record SwsResponse(
             return this;
         }
 
-        public SwsResponseBuilder merge(SwsResponse response){
+        public SwsResponseBuilder merge(SwsResponse response) {
             return withHits(response.hits())
-                    .withAggregations(response.aggregations())
-                    .withShards(response._shards())
-                    .withScrollId(response._scroll_id())
-                    .withTimedOut(response.timed_out())
-                    .withTook(response.took());
+                .withAggregations(response.aggregations())
+                .withShards(response._shards())
+                .withScrollId(response._scroll_id())
+                .withTimedOut(response.timed_out())
+                .withTook(response.took());
         }
 
         public SwsResponse build() {

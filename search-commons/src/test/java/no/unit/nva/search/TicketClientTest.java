@@ -39,6 +39,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
@@ -49,6 +50,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.ticket.TicketClient;
@@ -73,17 +75,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class TicketClientTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
-    private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
     public static final String REQUEST_BASE_URL = "https://x.org/?size=21&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
         URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
-
-    private static TicketClient searchClient;
-
+    private static final Logger logger = LoggerFactory.getLogger(TicketClientTest.class);
+    private static final String TICKETS_VALID_TEST_URL_JSON = "ticket_datasource_urls.json";
     private static final RequestInfo mockedRequestInfo = mock(RequestInfo.class);
+    private static TicketClient searchClient;
 
     @BeforeAll
     public static void setUp() throws UnauthorizedException {
@@ -93,6 +93,88 @@ class TicketClientTest {
         when(mockedRequestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(testOrganizationId));
         when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
         when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
+    }
+
+    static Stream<Arguments> uriPagingProvider() {
+        return Stream.of(
+            createArgument("page=0&aggregation=all,the,best,", 20),
+            createArgument("page=1&aggregation=all&size=1", 1),
+            createArgument("page=2&aggregation=all&size=1", 1),
+            createArgument("page=3&aggregation=all&size=1", 1),
+            createArgument("page=0&aggregation=all&size=0", 0),
+            createArgument("offset=15&aggregation=all&size=2", 2),
+            createArgument("offset=15&aggregation=all&limit=2", 2),
+            createArgument("offset=15&aggregation=all&results=2", 2),
+            createArgument("offset=15&aggregation=all&per_page=2", 2),
+            createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
+            createArgument("offset=15&perPage=2", 2)
+        );
+    }
+
+    static Stream<Arguments> uriAccessRights() {
+        return Stream.of(
+            createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
+            createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
+            createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
+            createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
+            createAccessRightArgument("", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+            createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
+            createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
+            createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
+            createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+            createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
+            createAccessRightArgument("", 20, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
+                MANAGE_PUBLISHING_REQUESTS),
+            createAccessRightArgument("", 20, "1412322@20754.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
+                MANAGE_PUBLISHING_REQUESTS)
+        );
+    }
+
+    static Stream<URI> uriSortingProvider() {
+
+        return Stream.of(
+            URI.create(REQUEST_BASE_URL + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+            URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
+            URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
+            URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
+            URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
+            URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc")
+        );
+    }
+
+    static Stream<URI> uriInvalidProvider() {
+        return Stream.of(
+            URI.create(REQUEST_BASE_URL + "feilName=epler"),
+            URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
+            URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
+            URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+            URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
+            URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
+            URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
+            URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
+            URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
+            URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+    }
+
+    static Stream<Arguments> uriProviderAsAdmin() {
+        return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
+            .map(entry -> createArgument(entry.getKey(), entry.getValue()));
+    }
+
+    private static Arguments createAccessRightArgument(String searchUri, int expectedCount, String userName,
+                                                       AccessRight... accessRights) {
+        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
+    }
+
+    private static Arguments createArgument(String searchUri, int expectedCount) {
+        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+    }
+
+    private static Map<String, Integer> loadMapFromResource(String resource) {
+        var mappingsJson = stringFromResources(Path.of(resource));
+        var type = new TypeReference<Map<String, Integer>>() {
+        };
+        return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
     @Test
@@ -318,7 +400,6 @@ class TicketClientTest {
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
     }
 
-
     @ParameterizedTest
     @MethodSource("uriProviderAsAdmin")
     @Disabled("Does not work. When test was written it returned an empty string even if there were supposed to be"
@@ -391,90 +472,5 @@ class TicketClientTest {
                 .withFilter()
                 .fromRequestInfo(mockedRequestInfoLocal)
                 .doSearch(searchClient));
-    }
-
-
-    static Stream<Arguments> uriPagingProvider() {
-        return Stream.of(
-            createArgument("page=0&aggregation=all,the,best,", 20),
-            createArgument("page=1&aggregation=all&size=1", 1),
-            createArgument("page=2&aggregation=all&size=1", 1),
-            createArgument("page=3&aggregation=all&size=1", 1),
-            createArgument("page=0&aggregation=all&size=0", 0),
-            createArgument("offset=15&aggregation=all&size=2", 2),
-            createArgument("offset=15&aggregation=all&limit=2", 2),
-            createArgument("offset=15&aggregation=all&results=2", 2),
-            createArgument("offset=15&aggregation=all&per_page=2", 2),
-            createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
-            createArgument("offset=15&perPage=2", 2)
-        );
-    }
-
-    static Stream<Arguments> uriAccessRights() {
-        return Stream.of(
-            createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
-            createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
-            createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
-            createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
-            createAccessRightArgument("", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-            createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
-            createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
-            createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
-            createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-            createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
-            createAccessRightArgument("", 20, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
-                MANAGE_PUBLISHING_REQUESTS),
-            createAccessRightArgument("", 20, "1412322@20754.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
-                MANAGE_PUBLISHING_REQUESTS)
-        );
-    }
-
-
-    static Stream<URI> uriSortingProvider() {
-
-        return Stream.of(
-            URI.create(REQUEST_BASE_URL + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
-            URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
-            URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
-            URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-            URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-            URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc")
-        );
-    }
-
-    static Stream<URI> uriInvalidProvider() {
-        return Stream.of(
-            URI.create(REQUEST_BASE_URL + "feilName=epler"),
-            URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
-            URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
-            URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
-            URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
-            URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
-    }
-
-    static Stream<Arguments> uriProviderAsAdmin() {
-        return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
-            .map(entry -> createArgument(entry.getKey(), entry.getValue()));
-    }
-
-    private static Arguments createAccessRightArgument(String searchUri, int expectedCount, String userName,
-                                                       AccessRight... accessRights) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
-    }
-
-
-    private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
-    }
-
-    private static Map<String, Integer> loadMapFromResource(String resource) {
-        var mappingsJson = stringFromResources(Path.of(resource));
-        var type = new TypeReference<Map<String, Integer>>() {
-        };
-        return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 }

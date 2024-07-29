@@ -63,13 +63,13 @@ public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnName
     protected void loadFieldMap() {
         if (writeOrder == null && type.isAnnotationPresent(CsvBindByNameOrder.class)) {
             var predefinedList = Arrays.stream(type.getAnnotation(CsvBindByNameOrder.class).value())
-                    .map(String::toUpperCase).collect(Collectors.toList());
+                .map(String::toUpperCase).collect(Collectors.toList());
             var fixedComparator = new FixedOrderComparator<>(predefinedList);
             fixedComparator.setUnknownObjectBehavior(FixedOrderComparator.UnknownObjectBehavior.AFTER);
             var comparator = new ComparatorChain<>(Arrays.asList(
-                    fixedComparator,
-                    new NullComparator<>(false),
-                    new ComparableComparator<>()));
+                fixedComparator,
+                new NullComparator<>(false),
+                new ComparableComparator<>()));
             setColumnOrderOnWrite(comparator);
         }
         super.loadFieldMap();
@@ -77,7 +77,7 @@ public class HeaderColumnNameAndOrderMappingStrategy<T> extends HeaderColumnName
 
     private String extractHeaderName(final BeanField<T, String> beanField) {
         if (beanField == null || beanField.getField() == null
-                || beanField.getField().getDeclaredAnnotationsByType(CsvBindByName.class).length == 0) {
+            || beanField.getField().getDeclaredAnnotationsByType(CsvBindByName.class).length == 0) {
             return StringUtils.EMPTY;
         }
 

@@ -10,6 +10,7 @@ import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -21,6 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BinaryOperator;
+
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.QueryContentWrapper;
@@ -109,12 +111,12 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
     protected HttpRequest createRequest(QueryContentWrapper qbs) {
         logger.debug(qbs.body());
         return HttpRequest
-                   .newBuilder(qbs.uri())
-                   .headers(
-                       ACCEPT, MediaType.JSON_UTF_8.toString(),
-                       CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
-                       AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
-                   .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build();
+            .newBuilder(qbs.uri())
+            .headers(
+                ACCEPT, MediaType.JSON_UTF_8.toString(),
+                CONTENT_TYPE, MediaType.JSON_UTF_8.toString(),
+                AUTHORIZATION_HEADER, jwtProvider.getValue().getToken())
+            .POST(HttpRequest.BodyPublishers.ofString(qbs.body())).build();
     }
 
     protected String buildLogInfo(SwsResponse result) {

@@ -7,6 +7,7 @@ import static no.unit.nva.search.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search.common.constant.Words.KEYWORD;
 import static no.unit.nva.search.common.constant.Words.YEAR;
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -47,6 +48,24 @@ public enum ResourceSort implements SortKey {
         this.path = jsonPath;
     }
 
+    public static ResourceSort fromSortKey(String keyName) {
+        var result =
+            Arrays.stream(ResourceSort.values())
+                .filter(SortKey.equalTo(keyName))
+                .collect(Collectors.toSet());
+        return result.size() == 1
+            ? result.stream().findFirst().get()
+            : INVALID;
+    }
+
+    public static Collection<String> validSortKeys() {
+        return Arrays.stream(ResourceSort.values())
+            .sorted(SortKey::compareAscending)
+            .skip(1)
+            .map(SortKey::asLowerCase)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -65,23 +84,5 @@ public enum ResourceSort implements SortKey {
     @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
-    }
-
-    public static ResourceSort fromSortKey(String keyName) {
-        var result =
-            Arrays.stream(ResourceSort.values())
-            .filter(SortKey.equalTo(keyName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
-    }
-
-    public static Collection<String> validSortKeys() {
-        return Arrays.stream(ResourceSort.values())
-            .sorted(SortKey::compareAscending)
-            .skip(1)
-            .map(SortKey::asLowerCase)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

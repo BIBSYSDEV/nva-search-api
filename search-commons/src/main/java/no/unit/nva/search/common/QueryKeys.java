@@ -24,7 +24,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
     protected final transient Set<K> otherRequired;
     private final transient Map<K, String> page;
     private final transient Map<K, String> search;
-    private final  K fields;
+    private final K fields;
 
     public QueryKeys(K fields) {
         this.fields = fields;

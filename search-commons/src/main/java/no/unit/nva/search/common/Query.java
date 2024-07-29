@@ -1,6 +1,7 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
+
 import java.net.URI;
 import java.time.Instant;
 import java.util.stream.Stream;
@@ -13,9 +14,13 @@ import no.unit.nva.search.common.records.ResponseFormatter;
  * @author Stig Norland
  */
 public abstract class Query<K extends Enum<K> & ParameterKey> {
+    private final transient Instant startTime;
     protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;
-    private final transient Instant startTime;
+
+    protected Query() {
+        startTime = Instant.now();
+    }
 
     public abstract Stream<QueryContentWrapper> assemble();
 
@@ -23,15 +28,11 @@ public abstract class Query<K extends Enum<K> & ParameterKey> {
      * Method to mimic Domain driven design.
      *
      * @param queryClient simple service to do i/o (http)
-     * @return ResponseFormatter<ParameterKey>
+     * @return ResponseFormatter<>
      */
     public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
 
     protected abstract URI openSearchUri();
-
-    protected Query() {
-        startTime = Instant.now();
-    }
 
     public QueryKeys<K> parameters() {
         return queryKeys;

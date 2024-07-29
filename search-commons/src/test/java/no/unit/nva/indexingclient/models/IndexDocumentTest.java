@@ -10,9 +10,12 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.stream.Stream;
+
 import no.unit.nva.identifiers.SortableIdentifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,6 +29,11 @@ class IndexDocumentTest {
             new EventConsumptionAttributes(randomString(), null);
         return Stream.of(consumptionAttributesMissingIndexName, consumptionAttributesMissingDocumentIdentifier)
             .map(consumptionAttributes -> new IndexDocument(consumptionAttributes, randomJsonObject()));
+    }
+
+    private static ObjectNode randomJsonObject() {
+        String json = randomJson();
+        return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
     }
 
     @Test
@@ -68,23 +76,17 @@ class IndexDocumentTest {
     }
 
     @Test
-    void shouldUseGetTypeAsWell(){
+    void shouldUseGetTypeAsWell() {
         var consumptionAttributes = new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         assertThrows(IllegalArgumentException.class, indexDocument::getType);
         assertNotNull(indexDocument.validate());
     }
 
-
     @ParameterizedTest(name = "should throw exception when validating and missing mandatory fields:{0}")
     @MethodSource("invalidConsumptionAttributes")
     void shouldThrowExceptionWhenValidatingAndMissingMandatoryFields(IndexDocument invalidIndexDocument) {
         assertThrows(Exception.class, invalidIndexDocument::validate);
-    }
-
-    private static ObjectNode randomJsonObject() {
-        String json = randomJson();
-        return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
     }
 
     private EventConsumptionAttributes randomConsumptionAttributes() {

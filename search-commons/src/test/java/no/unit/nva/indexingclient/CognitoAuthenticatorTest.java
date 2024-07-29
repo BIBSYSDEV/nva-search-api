@@ -4,6 +4,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.indexingclient.utils.HttpRequestMetadataMatcher;
 import no.unit.nva.search.common.jwt.CognitoAuthenticator;
@@ -38,13 +39,11 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({"unchecked"})
 class CognitoAuthenticatorTest {
 
-    private CognitoAuthenticator cognitoAuthenticator;
-
     final HttpClient httpClient = mock(HttpClient.class);
-
     final HttpResponse<String> okResponse = mock(HttpResponse.class);
     final HttpResponse<String> invalidResponse = mock(HttpResponse.class);
     final HttpResponse<String> errorResponse = mock(HttpResponse.class);
+    private CognitoAuthenticator cognitoAuthenticator;
     private CognitoCredentials credentials;
 
     @BeforeEach
@@ -67,7 +66,7 @@ class CognitoAuthenticatorTest {
 
     @Test
     void shouldReturnJwtTokenFromHttpRequestToCognito() throws IOException, InterruptedException {
-        when(httpClient.<String>send(any(),any())).thenReturn(okResponse);
+        when(httpClient.<String>send(any(), any())).thenReturn(okResponse);
 
         var jwt = cognitoAuthenticator.fetchBearerToken();
         assertThat(jwt.getToken(), is(TEST_TOKEN));
@@ -75,7 +74,7 @@ class CognitoAuthenticatorTest {
 
     @Test
     void shouldReturnDecodedJwtWithClaims() throws IOException, InterruptedException {
-        when(httpClient.<String>send(any(),any())).thenReturn(okResponse);
+        when(httpClient.<String>send(any(), any())).thenReturn(okResponse);
 
         var jwt = cognitoAuthenticator.fetchBearerToken();
         assertThat(jwt.getClaim("scope").asString(), is(TEST_SCOPE));
@@ -88,11 +87,11 @@ class CognitoAuthenticatorTest {
         var encodedAuth = Base64.getEncoder().encodeToString(usernamePassword.getBytes(StandardCharsets.UTF_8));
 
         var expectedRequest = HttpRequest.newBuilder()
-                                  .uri(uri)
-                                  .setHeader(AUTHORIZATION, "Basic " + encodedAuth)
-                                  .setHeader(CONTENT_TYPE, APPLICATION_X_WWW_FORM_URLENCODED)
-                                  .POST(BodyPublishers.noBody())
-                                  .build();
+            .uri(uri)
+            .setHeader(AUTHORIZATION, "Basic " + encodedAuth)
+            .setHeader(CONTENT_TYPE, APPLICATION_X_WWW_FORM_URLENCODED)
+            .POST(BodyPublishers.noBody())
+            .build();
 
         when(httpClient.<String>send(argThat(new HttpRequestMetadataMatcher(expectedRequest)), any()))
             .thenReturn(okResponse);
@@ -103,13 +102,13 @@ class CognitoAuthenticatorTest {
 
     @Test
     void shouldThrowWhenResponseIsNotStructuedLikeAToken() throws IOException, InterruptedException {
-        when(httpClient.<String>send(any(),any())).thenReturn(invalidResponse);
+        when(httpClient.<String>send(any(), any())).thenReturn(invalidResponse);
         assertThrows(NoSuchElementException.class, () -> cognitoAuthenticator.fetchBearerToken());
     }
 
     @Test
     void shouldThrowWhenResponseIsNot200Ok() throws IOException, InterruptedException {
-        when(httpClient.<String>send(any(),any())).thenReturn(errorResponse);
+        when(httpClient.<String>send(any(), any())).thenReturn(errorResponse);
         var exception = assertThrows(RuntimeException.class, () -> cognitoAuthenticator.fetchBearerToken());
         assertEquals(AUTHORIZATION_ERROR_MESSAGE, exception.getMessage());
     }

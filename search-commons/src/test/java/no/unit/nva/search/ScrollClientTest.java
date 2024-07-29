@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.net.http.HttpClient;
 import java.nio.file.Path;
 
@@ -20,10 +21,9 @@ import org.slf4j.LoggerFactory;
 
 class ScrollClientTest {
 
-    private ScrollClient scrollClient;
-    private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
     public static final String SAMPLE_PUBLICATION_SEARCH = "publication_response.json";
-
+    private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
+    private ScrollClient scrollClient;
 
     @BeforeEach
     public void setUp() {

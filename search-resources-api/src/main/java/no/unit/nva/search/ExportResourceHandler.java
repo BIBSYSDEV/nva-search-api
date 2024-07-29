@@ -75,16 +75,19 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     }
 
 
+    @JacocoGenerated
     @Override
     protected String getContentType() {
         return "text/csv";
     }
 
+    @JacocoGenerated
     @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
         //Do nothing
     }
 
+    @JacocoGenerated
     @Override
     protected Integer getSuccessStatusCode(Void input, Void output) {
         return super.getSuccessStatusCode(input, output);

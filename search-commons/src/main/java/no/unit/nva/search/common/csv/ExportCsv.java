@@ -122,10 +122,10 @@ public class ExportCsv {
             return false;
         }
         return Objects.equals(getId(), exportCsv.getId())
-                && Objects.equals(getMainTitle(), exportCsv.getMainTitle())
-                && Objects.equals(getPublicationDate(), exportCsv.getPublicationDate())
-                && Objects.equals(getPublicationInstance(), exportCsv.getPublicationInstance())
-                && Objects.equals(getContributors(), exportCsv.getContributors());
+            && Objects.equals(getMainTitle(), exportCsv.getMainTitle())
+            && Objects.equals(getPublicationDate(), exportCsv.getPublicationDate())
+            && Objects.equals(getPublicationInstance(), exportCsv.getPublicationInstance())
+            && Objects.equals(getContributors(), exportCsv.getContributors());
     }
 
     @Override
@@ -138,6 +138,6 @@ public class ExportCsv {
     @JacocoGenerated
     public String toString() {
         return "ExportCsv{id='%s', mainTitle='%s', publicationDate='%s', publicationInstance='%s', contributors='%s'}"
-                   .formatted(id, mainTitle, publicationDate, publicationInstance, contributors);
+            .formatted(id, mainTitle, publicationDate, publicationInstance, contributors);
     }
 }

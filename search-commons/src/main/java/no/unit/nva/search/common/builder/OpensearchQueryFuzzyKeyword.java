@@ -2,6 +2,7 @@ package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.search.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search.common.constant.Words.KEYWORD_TRUE;
+
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.stream.Stream;

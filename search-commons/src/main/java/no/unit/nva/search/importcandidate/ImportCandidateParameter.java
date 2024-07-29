@@ -61,6 +61,7 @@ import org.apache.commons.text.CaseUtils;
  * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
  * parameters
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ *
  * @author Stig Norland
  */
 public enum ImportCandidateParameter implements ParameterKey {
@@ -155,6 +156,24 @@ public enum ImportCandidateParameter implements ParameterKey {
         this.paramkind = kind;
     }
 
+    public static ImportCandidateParameter keyFromString(String paramName) {
+        var result = Arrays.stream(ImportCandidateParameter.values())
+            .filter(ImportCandidateParameter::ignoreInvalidKey)
+            .filter(ParameterKey.equalTo(paramName))
+            .collect(Collectors.toSet());
+        return result.size() == 1
+            ? result.stream().findFirst().get()
+            : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(ImportCandidateParameter f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -214,23 +233,5 @@ public enum ImportCandidateParameter implements ParameterKey {
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static ImportCandidateParameter keyFromString(String paramName) {
-        var result = Arrays.stream(ImportCandidateParameter.values())
-            .filter(ImportCandidateParameter::ignoreInvalidKey)
-            .filter(ParameterKey.equalTo(paramName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 }

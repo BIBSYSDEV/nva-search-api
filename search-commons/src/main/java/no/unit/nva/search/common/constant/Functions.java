@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import no.unit.nva.search.common.enums.ParameterKey;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+
 import static nva.commons.core.StringUtils.SPACE;
 
 import org.opensearch.index.query.QueryBuilder;
