@@ -100,11 +100,11 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
      * <p>Usage:</p>
      * <samp>requiredMissing().forEach(key -> { <br>
-     * switch (key) {<br>
-     * case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
-     * default -> { // do nothing
-     * }<br>
-     * }});<br>
+     *     switch (key) {<br>
+     *         case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
+     *         default -> { // do nothing
+     *             }<br>
+     *     }});<br>
      * </samp>
      */
     protected abstract void assignDefaultValues();
@@ -120,8 +120,13 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * Sample code for setValue.
      * <p>Usage:</p>
-     * <samp>var qpKey = keyFromString(key,value);<br>
-     * if(qpKey.equals(INVALID)) {<br> invalidKeys.add(key);<br> } else {<br> query.setValue(qpKey, value);<br> }<br>
+     * <samp>
+     *     var qpKey = keyFromString(key,value);<br>
+     *     if(qpKey.equals(INVALID)) {<br>
+     *          invalidKeys.add(key);<br>
+     *     } else {<br>
+     *          query.setValue(qpKey, value);<br>
+     *     }<br>
      * </samp>
      */
     protected abstract void setValue(String key, String value);

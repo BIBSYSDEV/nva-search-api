@@ -13,6 +13,7 @@ import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
+import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.common.xcontent.XContentType;
@@ -40,6 +41,7 @@ public record IndexDocument(
         return this;
     }
 
+    @JacocoGenerated
     @JsonIgnore
     public String getType() {
         var indexName = consumptionAttributes.index();

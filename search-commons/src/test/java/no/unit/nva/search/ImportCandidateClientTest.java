@@ -59,7 +59,7 @@ class ImportCandidateClientTest {
 
     }
 
-    static Stream<URI> uriSortingProvider() {
+    private static Stream<URI> uriSortingProvider() {
         return Stream.of(
             URI.create(REQUEST_BASE_URL + "sort=title&sortOrder=asc&sort=created_date&order=desc"),
             URI.create(REQUEST_BASE_URL + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
@@ -72,7 +72,7 @@ class ImportCandidateClientTest {
                 + "category=AcademicArticle&sort=relevance,TYPE+asc&sort=INSTANCE_TYPE+desc"));
     }
 
-    static Stream<URI> uriProvider() {
+    private static Stream<URI> uriProvider() {
         return Stream.of(
             URI.create(REQUEST_BASE_URL + "size=8"),
             URI.create(REQUEST_BASE_URL + "aggregation=ALL&size=8"),
@@ -108,7 +108,7 @@ class ImportCandidateClientTest {
             URI.create(REQUEST_BASE_URL + "SCOPUS_IDENTIFIER=3212342&size=1"));
     }
 
-    static Stream<URI> uriInvalidProvider() {
+    private static Stream<URI> uriInvalidProvider() {
         return Stream.of(
             URI.create(REQUEST_BASE_URL + "size=7&sort="),
             URI.create(REQUEST_BASE_URL + "query=European&fields"),
