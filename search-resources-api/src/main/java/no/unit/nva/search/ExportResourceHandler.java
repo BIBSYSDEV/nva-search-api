@@ -18,7 +18,6 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.s3.S3Client;
