@@ -4,6 +4,7 @@ import static no.unit.nva.search.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
+import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import java.net.URI;
@@ -72,9 +73,9 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
                 .apply();
     }
 
-    private static boolean isSearchingForAllTickets(RequestInfo requestInfo) {
+    private boolean isSearchingForAllTickets(RequestInfo requestInfo) {
         return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-               && requestInfo.getQueryParameterOpt("statistics").isPresent();
+               && !ticketSearchQuery.parameters().get(STATISTICS).isEmpty();
     }
 
     /**
