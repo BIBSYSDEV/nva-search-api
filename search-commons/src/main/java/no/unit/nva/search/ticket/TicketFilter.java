@@ -6,7 +6,12 @@ import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
-
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
@@ -15,13 +20,6 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Stig Norland
@@ -54,6 +52,11 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     public TicketSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
         if (Objects.isNull(requestInfo.getUserName())) {
             throw new UnauthorizedException();
+        }
+
+
+        if (requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)) {
+            return ticketSearchQuery;
         }
 
         final var organization = requestInfo
