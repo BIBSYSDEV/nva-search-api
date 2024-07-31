@@ -55,7 +55,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
         }
 
 
-        if (requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)) {
+        if (isSearchingForAllTickets(requestInfo)) {
             return ticketSearchQuery;
         }
 
@@ -72,6 +72,10 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
                 .apply();
     }
 
+    private static boolean isSearchingForAllTickets(RequestInfo requestInfo) {
+        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS) && requestInfo.getQueryParameterOpt(
+            "statistics").isPresent();
+    }
 
     /**
      * Filter on owner (user).
