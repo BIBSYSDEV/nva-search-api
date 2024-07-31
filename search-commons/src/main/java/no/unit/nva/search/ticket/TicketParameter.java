@@ -73,6 +73,7 @@ import org.apache.commons.text.CaseUtils;
  */
 public enum TicketParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
+    STATISTICS(IGNORED),
     // Parameters used for filtering
     ASSIGNEE(CUSTOM, ANY_OF, ASSIGNEE_FIELDS),
     ASSIGNEE_NOT(ACROSS_FIELDS, NOT_ANY_OF, ASSIGNEE_FIELDS),
