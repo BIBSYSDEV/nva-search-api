@@ -781,7 +781,7 @@ Resources:
   RecoveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: Search-api Recovery Queue Threshold Exceeded
+      AlarmName: Search-api recovery queue threshold exceeded
       MetricName: If this alarm is triggered, then check sqs messages on search-api recovery queue.
       Namespace: AWS/SQS
       Statistic: Sum
