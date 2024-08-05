@@ -4,9 +4,15 @@ import static no.unit.nva.search.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
+import static no.unit.nva.search.ticket.TicketParameter.STATISTICS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
-
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
@@ -15,13 +21,6 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Stig Norland
@@ -56,6 +55,11 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
             throw new UnauthorizedException();
         }
 
+
+        if (isSearchingForAllTickets(requestInfo)) {
+            return ticketSearchQuery;
+        }
+
         final var organization = requestInfo
             .getTopLevelOrgCristinId()
             .orElse(requestInfo.getPersonAffiliation());
@@ -69,6 +73,10 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
                 .apply();
     }
 
+    private boolean isSearchingForAllTickets(RequestInfo requestInfo) {
+        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
+               && !ticketSearchQuery.parameters().get(STATISTICS).isEmpty();
+    }
 
     /**
      * Filter on owner (user).

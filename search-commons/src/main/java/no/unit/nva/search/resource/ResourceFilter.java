@@ -6,12 +6,11 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
-
 import java.net.URI;
 import java.util.Arrays;
-
 import no.unit.nva.search.common.enums.PublicationStatus;
 import no.unit.nva.search.common.records.FilterBuilder;
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import org.opensearch.index.query.TermQueryBuilder;
@@ -71,14 +70,29 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * Filter on organization.
      * <P>Only documents belonging to organization specified are searchable (for the user)
      * </p>
-     *
-     * @param organization uri of publisher
+     * @param requestInfo
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceFilter organization(URI organization) {
+    public ResourceFilter organization(RequestInfo requestInfo) throws UnauthorizedException {
+        if (isSearchingForAllPublications(requestInfo)) {
+            return this;
+        } else {
+            final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, requestInfo.getCurrentCustomer().toString())
+                .queryName(PUBLISHER);
+            this.resourceSearchQuery.filters.add(filter);
+            return this;
+        }
+    }
+
+    public ResourceFilter organization(URI organization) throws UnauthorizedException {
         final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-            .queryName(PUBLISHER);
+                               .queryName(PUBLISHER);
         this.resourceSearchQuery.filters.add(filter);
         return this;
+    }
+
+    private boolean isSearchingForAllPublications(RequestInfo requestInfo) {
+        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
+               && !resourceSearchQuery.parameters().get(ResourceParameter.STATISTICS).isEmpty();
     }
 }

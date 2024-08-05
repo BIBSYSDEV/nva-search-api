@@ -62,7 +62,8 @@
   "QUERY=Kir+Truhacev&FIELDS=status": 0,
   "QUERY=Kir+Truhacev&FIELDS=STATUS,VIEWED_BY": 11,
   "BY_USER_PENDING=DoiRequest&ASSIGNEE=Anette+Olli": 1,
-  "byUserPending=DoiRequest": 1
+  "byUserPending=DoiRequest": 1,
+  "STATISTICS=TRUE": 20
 }
 
 
