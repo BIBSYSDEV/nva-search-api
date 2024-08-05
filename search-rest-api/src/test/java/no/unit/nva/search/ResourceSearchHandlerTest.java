@@ -43,14 +43,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class SearchResourceHandlerTest {
+class ResourceSearchHandlerTest {
 
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
     public static final String SAMPLE_SEARCH_TERM = "searchTerm";
     public static final String SAMPLE_OPENSEARCH_RESPONSE_WITH_AGGREGATION_JSON = "sample_opensearch_response.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private SearchResourceHandler handler;
+    private ResourceSearchHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
@@ -59,7 +59,7 @@ class SearchResourceHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ResourceClient.class);
-        handler = new SearchResourceHandler(new Environment(), mockedSearchClient);
+        handler = new ResourceSearchHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }

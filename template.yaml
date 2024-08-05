@@ -236,8 +236,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Tickets
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchTicketAuthHandler::handleRequest
+      CodeUri: search-rest-api
+      Handler: no.unit.nva.search.TicketSearchAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -264,8 +264,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchResourceHandler::handleRequest
+      CodeUri: search-rest-api
+      Handler: no.unit.nva.search.ResourceSearchHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -290,8 +290,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.ExportResourceHandler::handleRequest
+      CodeUri: search-rest-api
+      Handler: no.unit.nva.search.ResourceExportHandler::handleRequest
       Runtime: java17
       Timeout: 180
       AutoPublishAlias: live
@@ -315,8 +315,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Resources
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchResourceAuthHandler::handleRequest
+      CodeUri: search-rest-api
+      Handler: no.unit.nva.search.ResourceSearchAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -341,8 +341,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Import Candidates
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchImportCandidateHandler::handleRequest
+      CodeUri: search-rest-api
+      Handler: no.unit.nva.search.ImportCandidateSearchHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -367,8 +367,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Description: Lambda for searching Import Candidates
-      CodeUri: search-resources-api
-      Handler: no.unit.nva.search.SearchImportCandidateAuthHandler::handleRequest
+      CodeUri: search-rest-api
+      Handler: no.unit.nva.search.ImportCandidateSearchAuthHandler::handleRequest
       Runtime: java17
       AutoPublishAlias: live
       DeploymentPreference:
@@ -394,7 +394,7 @@ Resources:
     Properties:
       MaxCapacity: !Ref MaxConcurrency
       MinCapacity: !Ref MinConcurrency
-      ResourceId: !Sub function:${SearchTicketsAuthorizedFunction}:live
+      ResourceId: !Sub function:${TicketSearchAuthHandler}:live
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_LambdaConcurrency
       ScalableDimension: lambda:function:ProvisionedConcurrency
       ServiceNamespace: lambda

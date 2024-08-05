@@ -18,13 +18,12 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import nva.commons.apigateway.ApiS3GatewayHandler;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.JacocoGenerated;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
+public class ResourceExportHandler extends ApiS3GatewayHandler<Void> {
 
     public static final String MAX_HITS_PER_PAGE = "2500";
     public static final String SCROLL_TTL = "1m";
@@ -33,14 +32,14 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     private final ScrollClient scrollClient;
 
     @JacocoGenerated
-    public ExportResourceHandler() {
+    public ResourceExportHandler() {
         this(ResourceClient.defaultClient(),
             ScrollClient.defaultClient(),
             defaultS3Client(),
             defaultS3Presigner());
     }
 
-    public ExportResourceHandler(ResourceClient resourceClient,
+    public ResourceExportHandler(ResourceClient resourceClient,
                                  ScrollClient scrollClient,
                                  S3Client s3Client,
                                  S3Presigner s3Presigner
@@ -81,7 +80,7 @@ public class ExportResourceHandler extends ApiS3GatewayHandler<Void> {
     }
 
     @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
         //Do nothing
     }
 

@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class SearchImportCandidateHandlerTest {
+class ImportCandidateSearchHandlerTest {
     
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -54,7 +54,7 @@ class SearchImportCandidateHandlerTest {
         "sample_opensearch_importCandidate_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundTripImportCandidateResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private SearchImportCandidateHandler handler;
+    private ImportCandidateSearchHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ImportCandidateClient mockedSearchClient;
@@ -63,7 +63,7 @@ class SearchImportCandidateHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ImportCandidateClient.class);
-        handler = new SearchImportCandidateHandler(new Environment(), mockedSearchClient);
+        handler = new ImportCandidateSearchHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }

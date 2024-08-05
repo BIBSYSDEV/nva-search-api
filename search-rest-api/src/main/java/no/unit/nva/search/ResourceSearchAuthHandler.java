@@ -25,16 +25,16 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
+public class ResourceSearchAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
-    public SearchResourceAuthHandler() {
+    public ResourceSearchAuthHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public SearchResourceAuthHandler(Environment environment, ResourceClient resourceClient) {
+    public ResourceSearchAuthHandler(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
         this.opensearchClient = resourceClient;
     }

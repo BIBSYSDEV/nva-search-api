@@ -16,21 +16,20 @@ import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
+public class ResourceSearchHandler extends ApiGatewayHandler<Void, String> {
 
     private final ResourceClient opensearchClient;
 
     @JacocoGenerated
-    public SearchResourceHandler() {
+    public ResourceSearchHandler() {
         this(new Environment(), defaultClient());
     }
 
-    public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
+    public ResourceSearchHandler(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
         this.opensearchClient = resourceClient;
     }
@@ -59,7 +58,7 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     }
 
     @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)  {
         //Do nothing
     }
 }
