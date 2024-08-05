@@ -107,6 +107,7 @@ import org.apache.commons.text.CaseUtils;
  */
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
+    STATISTICS(IGNORED),
     // Parameters used for filtering
     ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
     ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
