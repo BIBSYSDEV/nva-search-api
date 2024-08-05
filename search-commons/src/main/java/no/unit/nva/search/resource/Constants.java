@@ -212,6 +212,8 @@ public final class Constants {
     );
 
     public static final String PARENT_PUBLICATION_ID = multipleFields(
+        ENTITY_PUBLICATION_INSTANCE_DOT + "compliesWith" + DOT + KEYWORD,
+        ENTITY_PUBLICATION_INSTANCE_DOT + "referencedBy" + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + "corrigendumFor" + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD
