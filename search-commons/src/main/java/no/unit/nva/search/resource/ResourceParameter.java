@@ -37,6 +37,7 @@ import static no.unit.nva.search.common.enums.FieldOperator.NA;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
+import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
@@ -72,7 +73,7 @@ import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEY
 import static no.unit.nva.search.resource.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.REFERENCE_DOI_KEYWORD;
-import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION;
 import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
@@ -189,7 +190,7 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(FUZZY_KEYWORD, ANY_OF, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(TEXT, ANY_OF, PUBLISHER_ID_KEYWORD),
-    REFERENCED_ID(FUZZY_KEYWORD, ANY_OF, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
+    REFERENCED_ID(ACROSS_FIELDS, ANY_OF, REFERENCE_PUBLICATION),
     SCIENTIFIC_VALUE(KEYWORD, ANY_OF, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
