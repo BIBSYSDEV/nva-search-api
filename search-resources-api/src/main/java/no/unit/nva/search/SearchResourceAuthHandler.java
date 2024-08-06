@@ -9,6 +9,9 @@ import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static nva.commons.apigateway.AccessRight.MANAGE_OWN_AFFILIATION;
+import static nva.commons.apigateway.AccessRight.MANAGE_RESOURCES_STANDARD;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
@@ -72,11 +75,9 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
-        if (accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
-            || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
+        if (accessRights.contains(MANAGE_OWN_AFFILIATION) || accessRights.contains(MANAGE_RESOURCES_STANDARD)) {
             return;
         }
-
         throw new UnauthorizedException();
     }
 }

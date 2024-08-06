@@ -9,6 +9,7 @@ import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
 import static no.unit.nva.search.common.constant.Words.ABSTRACT;
 import static no.unit.nva.search.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search.common.constant.Words.ASTERISK;
 import static no.unit.nva.search.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search.common.constant.Words.CODE;
 import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
@@ -94,8 +95,10 @@ public final class Constants {
     public static final String ENTITY_PUBLICATION_CONTEXT_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + DOT;
 
-    public static final String REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD =
+    public static final String REFERENCE_PUBLICATION_CONTEXT_PUBLICATION_INSTANCE =
         ENTITY_PUBLICATION_CONTEXT_DOT + ID + DOT + KEYWORD;
+//    + PIPE
+//            + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT + ASTERISK;
 
     public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;

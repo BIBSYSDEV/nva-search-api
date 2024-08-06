@@ -21,6 +21,7 @@ import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultCl
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
+import static nva.commons.core.attempt.Try.attempt;
 
 public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, String> {
 
@@ -38,8 +39,6 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-
-
         return
             ImportCandidateSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
@@ -65,8 +64,6 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
     }
 
     private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        if (Objects.isNull(requestInfo.getUserName())) {
-            throw new UnauthorizedException();
-        }
+        requestInfo.getUserName();
     }
 }

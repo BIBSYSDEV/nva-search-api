@@ -61,8 +61,6 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     @Override
     protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
-        if (Objects.isNull(requestInfo.getUserName())) {
-            throw new UnauthorizedException();
-        }
+        requestInfo.getUserName();
     }
 }

@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search.common.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -52,6 +53,22 @@ class SearchTicketAuthHandlerTest {
         handler = new SearchTicketAuthHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenUserIsMissingAccessRight() throws IOException {
+        prepareRestHighLevelClientOkResponse();
+
+        var input = new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
+            .withHeaders(Map.of(ACCEPT, "application/json"))
+            .withRequestContext(getRequestContext())
+            .build();
+        handler.handleRequest(input, outputStream, contextMock);
+
+        var gatewayResponse = FakeGatewayResponse.of(outputStream);
+
+        assertNotNull(gatewayResponse.headers());
+        assertEquals(HTTP_UNAUTHORIZED, gatewayResponse.statusCode());
     }
 
     @Test
