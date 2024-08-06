@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import no.unit.nva.search.common.builder.OpensearchQueryAcrossFields;
+import no.unit.nva.search.common.builder.OpensearchQueryExists;
 import no.unit.nva.search.common.builder.OpensearchQueryFuzzyKeyword;
 import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
 import no.unit.nva.search.common.builder.OpensearchQueryRange;
@@ -175,6 +176,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
             case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
             case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
+            case EXISTS -> new OpensearchQueryExists<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());

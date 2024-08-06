@@ -112,6 +112,8 @@
   "ORCID_NOT=https://sandbox.orcid.org/0000-0003-4147-3499": 18,
   "ORCID_SHOULD=4147-3499": 3,
   "PARENT_PUBLICATION=test": 0,
+  "PARENT_PUBLICATION_EXIST=true": 0,
+  "PARENT_PUBLICATION_EXIST=false": 20,
   "PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813": 2,
   "PROJECT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,https://api.dev.nva.aws.unit.no/cristin/project/14334631": 3,
   "PROJECT_NOT=https://api.dev.nva.aws.unit.no/cristin/project/14334813,https://api.dev.nva.aws.unit.no/cristin/project/14334631": 18,

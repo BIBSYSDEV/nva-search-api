@@ -40,6 +40,7 @@ import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search.common.enums.ParameterKind.EXISTS;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
@@ -172,6 +173,7 @@ public enum ResourceParameter implements ParameterKey {
     ORCID_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     PARENT_PUBLICATION(KEYWORD, ANY_OF, PARENT_PUBLICATION_ID),
+    PARENT_PUBLICATION_EXIST(EXISTS, ANY_OF, PARENT_PUBLICATION_ID),
     PROJECT(KEYWORD, ANY_OF, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, NOT_ANY_OF, PROJECTS_ID),
     PROJECT_SHOULD(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID, PHI),

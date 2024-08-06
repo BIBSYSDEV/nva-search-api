@@ -16,6 +16,7 @@ public enum ParameterKind {
     BOOLEAN,
     NUMBER,
     DATE,
+    EXISTS,
     KEYWORD,
     FUZZY_KEYWORD,
     TEXT,
