@@ -122,6 +122,14 @@ public final class Constants {
     );
     public static final String COURSE_CODE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
+
+    public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES =
+        ENTITY_PUBLICATION_INSTANCE_DOT + "pages.pages" + PIPE
+            + ENTITY_PUBLICATION_INSTANCE_DOT + "pages.begin" + PIPE
+            + ENTITY_PUBLICATION_INSTANCE_DOT + "pages.end";
+
+    public static final String SUBJECTS = "subjects";
+
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
