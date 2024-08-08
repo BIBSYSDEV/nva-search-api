@@ -3,10 +3,14 @@ package no.unit.nva.search.resource;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
+import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
+import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING;
+import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
+import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
@@ -119,24 +123,21 @@ public enum ResourceParameter implements ParameterKey {
      */
     EXCLUDE_SUBUNITS(IGNORED, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
     FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
-    FUNDING_IDENTIFIER(FUZZY_KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD),
-    GRANT_ID(FUZZY_KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD),
+    FUNDING_IDENTIFIER(FUZZY_KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
     FUNDING_SOURCE(TEXT, ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
     FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
-    CATEGORY(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
-    TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
-    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
+    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null),
     INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     ISBN(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_ISBN_LIST),
     ISSN(KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
     JOURNAL(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
     LICENSE(FUZZY_KEYWORD, ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
     MODIFIED(DATE, BETWEEN, MODIFIED_DATE),
-    ORCID(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
+    ORCID(FUZZY_KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     PARENT_PUBLICATION(KEYWORD, ANY_OF, PARENT_PUBLICATION_ID),
-    PROJECT(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID),
+    PROJECT(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID, PHI),
     PUBLICATION_LANGUAGE(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_YEAR(NUMBER, BETWEEN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
     PUBLISHED(DATE, BETWEEN, PUBLISHED_DATE),
@@ -153,13 +154,11 @@ public enum ResourceParameter implements ParameterKey {
     TITLE(TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TOP_LEVEL_ORGANIZATION(CUSTOM, ANY_OF, TOP_LEVEL_ORG_ID),
     UNIT(CUSTOM, ALL_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
-    USER(KEYWORD, ANY_OF, RESOURCE_OWNER_OWNER_KEYWORD),
+    USER(FUZZY_KEYWORD, ANY_OF, RESOURCE_OWNER_OWNER_KEYWORD),
     USER_AFFILIATION(KEYWORD, ANY_OF, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    QUERY(CUSTOM, ANY_OF, Q),
-    SEARCH_ALL(CUSTOM, ANY_OF, Q),
-    NODES_SEARCHED(IGNORED),
-    FIELDS(IGNORED),
+    SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
     NODES_INCLUDED(IGNORED),
     NODES_EXCLUDED(IGNORED),
     // Pagination parameters
@@ -322,8 +321,7 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     private static ResourceParameter assignSubKind(String paramName, ResourceParameter key) {
-        var camelCase = CaseUtils.toCamelCase(paramName, false, CHAR_UNDERSCORE);
-        return key.withSubKind(ParameterSubKind.keyFromString(camelCase.substring(key.asCamelCase().length())));
+        return key.withSubKind(ParameterSubKind.keyFromString(paramName));
     }
 
     private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {

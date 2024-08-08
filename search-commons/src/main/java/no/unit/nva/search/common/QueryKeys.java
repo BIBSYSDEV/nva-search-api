@@ -24,7 +24,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
 
     protected final transient Set<K> otherRequired;
     private final transient Map<K, String> page;
-    private final transient Map<K, String> search;
+    private final transient Map<String, String> search;
     private final  K fields;
 
     public QueryKeys(K fields) {
@@ -34,11 +34,11 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
         otherRequired = new HashSet<>();
     }
 
-    public Stream<K> getSearchKeys() {
+    public Stream<String> getSearchKeys() {
         return search.keySet().stream();
     }
 
-    public Set<Map.Entry<K, String>> getSearchEntries() {
+    public Set<Map.Entry<String, String>> getSearchEntries() {
         return search.entrySet();
     }
 
@@ -98,7 +98,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
             if (isPagingValue(key)) {
                 page.put(key, decodedValue);
             } else {
-                search.put(key, decodedValue);
+                search.put(key.name() + key.fieldSubKind().name(), decodedValue);
             }
         }
     }
@@ -111,7 +111,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey> {
         return new AsType<>(
             search.containsKey(key)
                 ? search.remove(key)
-                : page.remove(key),
+                : page.remove(key.name() + key.fieldSubKind().name()),
             key
         );
     }

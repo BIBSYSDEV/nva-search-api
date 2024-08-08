@@ -16,8 +16,8 @@ public enum ParameterSubKind {
     MUST_NOT(".?NOT"),
     SHOULD(),
     BETWEEN(),
-    BEFORE(),
-    SINCE(),
+    BEFORE(".?BEFORE|.?LESS.?THAN"),
+    SINCE(".?SINCE|.?LARGER.?THAN"),
     EXIST();
 
     private final String pattern;
@@ -34,22 +34,26 @@ public enum ParameterSubKind {
         return pattern;
     }
 
-    public static ParameterSubKind keyFromString(String postFix){
+    public static ParameterSubKind keyFromString(String parameterName) {
         var result = Arrays.stream(ParameterSubKind.values())
-            .filter(equalTo(postFix))
+            .skip(2)       //Don't include INVALID
+            .filter(equalTo(parameterName))
             .collect(Collectors.toSet());
-        return result.size() == 1
+        return result.isEmpty()
+            ? MUST
+            : result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
     }
 
 
     static Predicate<ParameterSubKind> equalTo(String name) {
-        return key -> name.matches(PATTERN_IS_IGNORE_CASE + key.fieldPattern() + "$");
+        return key -> name.matches(PATTERN_IS_IGNORE_CASE + "\\w*(" + key.fieldPattern() + ")$");
     }
 
     public static final String SUB_KIND_PATTERNS =
         Arrays.stream(ParameterSubKind.values())
+            .skip(1)        //Don't include INVALID
             .map(ParameterSubKind::fieldPattern)
             .collect(Collectors.joining(PIPE, PREFIX, SUFFIX));
 

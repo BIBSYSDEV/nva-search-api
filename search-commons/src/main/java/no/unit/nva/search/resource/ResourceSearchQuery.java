@@ -177,7 +177,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
-            case SEARCH_ALL, QUERY ->
+            case SEARCH_ALL ->
                 streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
@@ -296,7 +296,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 case CONTRIBUTOR -> mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
                 case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
                     searchQuery.parameters().set(qpKey, decodedValue);
-                case NODES_SEARCHED, FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 default -> mergeToKey(qpKey, decodedValue);
