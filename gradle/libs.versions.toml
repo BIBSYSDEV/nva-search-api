@@ -13,7 +13,7 @@ jupiter = { strictly = '5.10.2' }
 junit = { strictly = '1.10.2' }
 log4j = { strictly = '2.23.0' }
 mockito = { strictly = '4.2.0' }
-nvaCommons = { prefer = '1.40.6' }
+nvaCommons = { prefer = '1.40.8' }
 open-csv = { strictly = '5.9' }
 opensearch = { strictly = '2.12.0' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
