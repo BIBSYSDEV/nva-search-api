@@ -18,10 +18,12 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URI;
+import static no.unit.nva.search.common.constant.Words.ASTERISK;
 import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.common.constant.Words.COLON;
 import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search.common.constant.Words.CREATED_DATE;
+import static no.unit.nva.search.common.constant.Words.IDENTITY;
 import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search.common.constant.Words.PHI;
 import static no.unit.nva.search.common.constant.Words.PI;
@@ -37,8 +39,10 @@ import static no.unit.nva.search.common.enums.FieldOperator.NA;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
+import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search.common.enums.ParameterKind.EXISTS;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
@@ -51,6 +55,7 @@ import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_K
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
+import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS_DOT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -115,6 +120,7 @@ public enum ResourceParameter implements ParameterKey {
     CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
+    CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, ENTITY_CONTRIBUTORS_DOT + IDENTITY + ASTERISK),
     CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
     CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
     CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
@@ -170,8 +176,8 @@ public enum ResourceParameter implements ParameterKey {
     ORCID(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     ORCID_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
-    PARENT_PUBLICATION(KEYWORD, ALL_OF, PARENT_PUBLICATION_ID),
-    PARENT_PUBLICATION_SHOULD(TEXT, ANY_OF, PARENT_PUBLICATION_ID),
+    PARENT_PUBLICATION(KEYWORD, ANY_OF, PARENT_PUBLICATION_ID),
+    PARENT_PUBLICATION_EXIST(EXISTS, ANY_OF, PARENT_PUBLICATION_ID),
     PROJECT(KEYWORD, ANY_OF, PROJECTS_ID),
     PROJECT_NOT(KEYWORD, NOT_ANY_OF, PROJECTS_ID),
     PROJECT_SHOULD(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID, PHI),
@@ -190,6 +196,8 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID(FUZZY_KEYWORD, ANY_OF, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLISHER_ID_KEYWORD),
     PUBLISHER_ID_SHOULD(TEXT, ANY_OF, PUBLISHER_ID_KEYWORD),
+    //    TODO commented away, need to deploy soon due to bug
+    //    REFERENCED(ACROSS_FIELDS, ANY_OF, REFERENCE_PUBLICATION),
     REFERENCED_ID(FUZZY_KEYWORD, ANY_OF, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
     SCIENTIFIC_VALUE(KEYWORD, ANY_OF, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),

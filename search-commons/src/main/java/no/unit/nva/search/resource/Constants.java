@@ -9,6 +9,7 @@ import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
 import static no.unit.nva.search.common.constant.Words.ABSTRACT;
 import static no.unit.nva.search.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search.common.constant.Words.ASSOCIATED_ARTIFACTS;
+import static no.unit.nva.search.common.constant.Words.ASTERISK;
 import static no.unit.nva.search.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search.common.constant.Words.CODE;
 import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
@@ -98,6 +99,10 @@ public final class Constants {
 
     public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
+
+    public static final String REFERENCE_PUBLICATION =
+        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + ASTERISK + PIPE
+            + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + ASTERISK;
 
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
@@ -212,6 +217,8 @@ public final class Constants {
     );
 
     public static final String PARENT_PUBLICATION_ID = multipleFields(
+        ENTITY_PUBLICATION_INSTANCE_DOT + "compliesWith" + DOT + KEYWORD,
+        ENTITY_PUBLICATION_INSTANCE_DOT + "referencedBy" + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + "corrigendumFor" + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + "manifestations" + DOT + ID + DOT + KEYWORD,
         ENTITY_PUBLICATION_INSTANCE_DOT + ID + DOT + KEYWORD
