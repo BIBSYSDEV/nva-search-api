@@ -29,6 +29,9 @@ public interface ParameterKey {
 
     Float fieldBoost();
 
+    /**
+     * @return {@link ParameterKind}
+     */
     ParameterKind fieldType();
 
     String fieldPattern();

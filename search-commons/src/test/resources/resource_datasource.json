@@ -2447,7 +2447,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Regula Frauenfelder"
+            "name": "Regula Frauenfelder",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2459,7 +2460,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Kjersti Gisnås"
+            "name": "Kjersti Gisnås",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2471,7 +2473,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Peter Gauer"
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2483,7 +2486,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Dieter Issler"
+            "name": "Dieter Issler",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2495,7 +2499,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Christian Jaedicke"
+            "name": "Christian Jaedicke",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2608,7 +2613,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Peter Gauer"
+            "name": "Peter Gauer",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2620,7 +2626,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Henrik Langeland"
+            "name": "Henrik Langeland",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2734,7 +2741,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Sondre Gjengedal"
+            "name": "Sondre Gjengedal",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2746,7 +2754,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Pål Drevland Jakobsen"
+            "name": "Pål Drevland Jakobsen",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -2758,7 +2767,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Amund Bruland"
+            "name": "Amund Bruland",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -3137,7 +3147,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Mats Johan Kahlström"
+            "name": "Mats Johan Kahlström",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -3149,7 +3160,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Eivind Stein"
+            "name": "Eivind Stein",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
@@ -3161,7 +3173,8 @@
           "correspondingAuthor": false,
           "identity": {
             "type": "Identity",
-            "name": "Jenny Langford"
+            "name": "Jenny Langford",
+            "verificationStatus": "NotVerified"
           },
           "role": {
             "type": "Creator"
