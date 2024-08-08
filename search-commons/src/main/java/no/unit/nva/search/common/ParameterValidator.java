@@ -180,10 +180,10 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q ext
     /**
      * Adds testParameters from query.
      *
-     * @apiNote This is intended to be used when setting up tests.
+     * @apiNote This is intended to be used when setting up tests, or from {@link #fromRequestInfo}
      */
-    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> testParameters) {
-        testParameters.forEach(this::setValue);
+    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> parameters) {
+        parameters.forEach(this::setValue);
         return this;
     }
 

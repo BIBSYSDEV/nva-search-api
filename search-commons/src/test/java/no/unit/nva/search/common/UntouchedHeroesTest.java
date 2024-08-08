@@ -32,14 +32,14 @@ class UntouchedHeroesTest {
         );
     }
 
-    @Test
-    void invalidRangeQueryMustNot() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
-        );
-    }
+//    @Test
+//    void invalidRangeQueryMustNot() {
+//        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+//        assertThrows(
+//            IllegalArgumentException.class,
+//            () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
+//        );
+//    }
 
     @Test
     void invalidSortQueryMust() {

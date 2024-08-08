@@ -176,8 +176,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case FUNDING -> streamBuilders.fundingQuery(key);
             case CRISTIN_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, CRISTIN_AS_TYPE);
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
-            case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
-            case SEARCH_ALL ->
+            case TOP_LEVEL_ORGANIZATION, UNIT -> streamBuilders.subUnitIncludedQuery(key);
+            case SEARCH_ALL, QUERY ->
                 streamBuilders.searchAllWithBoostsQuery(fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
@@ -292,10 +292,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case UNIT, UNIT_NOT, TOP_LEVEL_ORGANIZATION -> mergeToKey(qpKey, identifierToCristinId(decodedValue));
-                case CONTRIBUTOR, CONTRIBUTOR_NOT -> mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
-                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case UNIT, TOP_LEVEL_ORGANIZATION -> mergeToKey(qpKey, identifierToCristinId(decodedValue));
+                case CONTRIBUTOR -> mergeToKey(qpKey, identifierToCristinPersonId(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
+                    searchQuery.parameters().set(qpKey, decodedValue);
+                case NODES_SEARCHED, FIELDS -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 default -> mergeToKey(qpKey, decodedValue);

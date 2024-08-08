@@ -17,6 +17,7 @@ import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
 
 /**
+ * This class operates on the queryKeys that a request provides.
  * @author Stig Norland
  */
 public class QueryKeys<K extends Enum<K> & ParameterKey> {

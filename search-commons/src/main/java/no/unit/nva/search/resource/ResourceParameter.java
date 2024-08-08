@@ -3,17 +3,10 @@ package no.unit.nva.search.resource;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_NOT_KEYS;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FROM_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_NOT;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FUNDING_IDENTIFIER_SHOULD;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SEARCH_ALL_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
@@ -34,18 +27,20 @@ import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search.common.enums.FieldOperator.GREATER_THAN_OR_EQUAL_TO;
 import static no.unit.nva.search.common.enums.FieldOperator.LESS_THAN;
 import static no.unit.nva.search.common.enums.FieldOperator.NA;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
-import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
+import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
+import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
-import static no.unit.nva.search.common.enums.ParameterKind.EXISTS;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
+import static no.unit.nva.search.common.enums.ParameterSubKind.EXIST;
+import static no.unit.nva.search.common.enums.ParameterSubKind.MUST_NOT;
+import static no.unit.nva.search.common.enums.ParameterSubKind.SHOULD;
+import static no.unit.nva.search.common.enums.ParameterSubKind.SUB_KIND_PATTERNS;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
@@ -74,7 +69,6 @@ import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEY
 import static no.unit.nva.search.resource.Constants.PUBLICATION_INSTANCE_TYPE;
 import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.REFERENCE_DOI_KEYWORD;
-import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION;
 import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
@@ -95,6 +89,7 @@ import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
+import no.unit.nva.search.common.enums.ParameterSubKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
@@ -109,121 +104,62 @@ import org.apache.commons.text.CaseUtils;
  */
 public enum ResourceParameter implements ParameterKey {
     INVALID(ParameterKind.INVALID),
-    STATISTICS(IGNORED),
     // Parameters used for filtering
     ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
-    ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
-    ABSTRACT_SHOULD(TEXT, ANY_OF, ENTITY_ABSTRACT),
     CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
     CONTRIBUTOR_NAME(FUZZY_KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-    CONTRIBUTOR_NAME_NOT(FUZZY_KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
-    CONTRIBUTOR_NAME_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     COURSE(TEXT, ALL_OF, COURSE_CODE_KEYWORD),
-    COURSE_NOT(TEXT, NOT_ALL_OF, COURSE_CODE_KEYWORD),
-    COURSE_SHOULD(TEXT, ANY_OF, COURSE_CODE_KEYWORD),
-    CREATED_BEFORE(DATE, LESS_THAN, CREATED_DATE),
+    CREATED(DATE, LESS_THAN, CREATED_DATE),
     CREATED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, CREATED_DATE),
     CRISTIN_IDENTIFIER(CUSTOM),
     DOI(FUZZY_KEYWORD, REFERENCE_DOI_KEYWORD),
-    DOI_NOT(FUZZY_KEYWORD, NOT_ALL_OF, REFERENCE_DOI_KEYWORD),
-    DOI_SHOULD(TEXT, ANY_OF, REFERENCE_DOI_KEYWORD),
     /**
      * excludeSubUnits holds path to hierarchical search, used by several keys.
      */
     EXCLUDE_SUBUNITS(IGNORED, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
     FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
-    FUNDING_IDENTIFIER(KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
-    FUNDING_IDENTIFIER_NOT(KEYWORD, NOT_ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
-                           null),
-    FUNDING_IDENTIFIER_SHOULD(FUZZY_KEYWORD, ANY_OF, FUNDING_IDENTIFIER_KEYWORD,
-                              PATTERN_IS_FUNDING_IDENTIFIER_SHOULD, null, null),
+    FUNDING_IDENTIFIER(FUZZY_KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD),
+    GRANT_ID(FUZZY_KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD),
     FUNDING_SOURCE(TEXT, ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
-    FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
-    HANDLE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, HANDLE_KEYWORD, PHI),
     FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
-    ID_NOT(KEYWORD, NOT_ANY_OF, IDENTIFIER_KEYWORD),
-    ID_SHOULD(TEXT, ANY_OF, IDENTIFIER_KEYWORD),
-    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null),
-    INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null),
+    CATEGORY(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
+    TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
+    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
     INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
-    INSTITUTION_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     ISBN(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_CONTEXT_ISBN_LIST),
-    ISBN_SHOULD(FUZZY_KEYWORD, ANY_OF, PUBLICATION_CONTEXT_ISBN_LIST),
     ISSN(KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    ISSN_NOT(KEYWORD, NOT_ANY_OF, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    ISSN_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN),
-    JOURNAL(FUZZY_KEYWORD, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
-    JOURNAL_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
-    JOURNAL_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
+    JOURNAL(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_JOURNAL),
     LICENSE(FUZZY_KEYWORD, ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
-    LICENSE_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
-    MODIFIED_BEFORE(DATE, LESS_THAN, MODIFIED_DATE),
-    MODIFIED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, MODIFIED_DATE),
+    MODIFIED(DATE, BETWEEN, MODIFIED_DATE),
     ORCID(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
-    ORCID_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
-    ORCID_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD),
     PARENT_PUBLICATION(KEYWORD, ANY_OF, PARENT_PUBLICATION_ID),
-    PARENT_PUBLICATION_EXIST(EXISTS, ANY_OF, PARENT_PUBLICATION_ID),
-    PROJECT(KEYWORD, ANY_OF, PROJECTS_ID),
-    PROJECT_NOT(KEYWORD, NOT_ANY_OF, PROJECTS_ID),
-    PROJECT_SHOULD(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID, PHI),
+    PROJECT(FUZZY_KEYWORD, ANY_OF, PROJECTS_ID),
     PUBLICATION_LANGUAGE(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_LANGUAGE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
-    PUBLICATION_LANGUAGE_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_LANGUAGE),
     PUBLICATION_YEAR(NUMBER, BETWEEN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
-    PUBLICATION_YEAR_BEFORE(NUMBER, LESS_THAN, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
-    PUBLICATION_YEAR_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR),
-    PUBLISHED_BEFORE(DATE, LESS_THAN, PUBLISHED_DATE),
-    PUBLISHED_BETWEEN(DATE, BETWEEN, PUBLISHED_DATE),
-    PUBLISHED_SINCE(DATE, GREATER_THAN_OR_EQUAL_TO, PUBLISHED_DATE),
+    PUBLISHED(DATE, BETWEEN, PUBLISHED_DATE),
     PUBLISHER(FUZZY_KEYWORD, ALL_OF, PUBLICATION_CONTEXT_PUBLISHER),
-    PUBLISHER_NOT(FUZZY_KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_PUBLISHER),
-    PUBLISHER_SHOULD(FUZZY_KEYWORD, ANY_OF, PUBLICATION_CONTEXT_PUBLISHER),
     PUBLISHER_ID(FUZZY_KEYWORD, ANY_OF, PUBLISHER_ID_KEYWORD),
-    PUBLISHER_ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, PUBLISHER_ID_KEYWORD),
-    PUBLISHER_ID_SHOULD(TEXT, ANY_OF, PUBLISHER_ID_KEYWORD),
-    REFERENCED_ID(ACROSS_FIELDS, ANY_OF, REFERENCE_PUBLICATION),
     SCIENTIFIC_VALUE(KEYWORD, ANY_OF, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
-    SCIENTIFIC_INDEX_STATUS_NOT(KEYWORD, NOT_ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
     SCIENTIFIC_REPORT_PERIOD(NUMBER, BETWEEN, SCIENTIFIC_INDEX_YEAR),
-    SCIENTIFIC_REPORT_PERIOD_SINCE(NUMBER, GREATER_THAN_OR_EQUAL_TO, SCIENTIFIC_INDEX_YEAR),
-    SCIENTIFIC_REPORT_PERIOD_BEFORE(NUMBER, LESS_THAN, SCIENTIFIC_INDEX_YEAR),
     SCOPUS_IDENTIFIER(CUSTOM),
     SERIES(FUZZY_KEYWORD, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
-    SERIES_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
-    SERIES_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    STATISTICS(IGNORED),
     STATUS(KEYWORD, ANY_OF, STATUS_KEYWORD),
-    STATUS_NOT(KEYWORD, NOT_ANY_OF, STATUS_KEYWORD),
     TAGS(TEXT, ALL_OF, ENTITY_TAGS),
-    TAGS_NOT(TEXT, NOT_ALL_OF, ENTITY_TAGS),
-    TAGS_SHOULD(TEXT, ANY_OF, ENTITY_TAGS),
     TITLE(TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
-    TITLE_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_MAIN_TITLE),
-    TITLE_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_MAIN_TITLE),
     TOP_LEVEL_ORGANIZATION(CUSTOM, ANY_OF, TOP_LEVEL_ORG_ID),
     UNIT(CUSTOM, ALL_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
-    UNIT_NOT(CUSTOM, NOT_ALL_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
-    UNIT_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_AFFILIATION_ID_KEYWORD),
     USER(KEYWORD, ANY_OF, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_NOT(KEYWORD, NOT_ANY_OF, RESOURCE_OWNER_OWNER_KEYWORD),
-    USER_SHOULD(TEXT, ANY_OF, RESOURCE_OWNER_OWNER_KEYWORD),
     USER_AFFILIATION(KEYWORD, ANY_OF, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    USER_AFFILIATION_NOT(KEYWORD, NOT_ANY_OF, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
-    USER_AFFILIATION_SHOULD(TEXT, ANY_OF, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    QUERY(CUSTOM, ANY_OF, Q),
+    SEARCH_ALL(CUSTOM, ANY_OF, Q),
+    NODES_SEARCHED(IGNORED),
+    FIELDS(IGNORED),
     NODES_INCLUDED(IGNORED),
     NODES_EXCLUDED(IGNORED),
     // Pagination parameters
@@ -250,6 +186,7 @@ public enum ResourceParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
+    private ParameterSubKind paramSubkind;
 
     ResourceParameter(ParameterKind kind) {
         this(kind, ALL_OF, null, null, null, null);
@@ -284,9 +221,10 @@ public enum ResourceParameter implements ParameterKey {
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
+
         this.keyPattern = nonNull(keyPattern)
             ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE) + SUB_KIND_PATTERNS;
         this.paramkind = kind;
     }
 
@@ -308,6 +246,17 @@ public enum ResourceParameter implements ParameterKey {
     @Override
     public ParameterKind fieldType() {
         return paramkind;
+    }
+
+    @Override
+    public ParameterSubKind fieldSubKind() {
+        return paramSubkind;
+    }
+
+    @Override
+    public ResourceParameter withSubKind(ParameterSubKind subKind) {
+        this.paramSubkind = subKind;
+        return this;
     }
 
     @Override
@@ -334,6 +283,15 @@ public enum ResourceParameter implements ParameterKey {
 
     @Override
     public FieldOperator searchOperator() {
+        if (SHOULD.equals(fieldSubKind())) {
+            return ANY_OF;
+        } else if (EXIST.equals(fieldSubKind())) {
+            return ANY_OF;
+        } else if (MUST_NOT.equals(fieldSubKind())) {
+            return fieldOperator== ALL_OF
+                ? NOT_ALL_OF
+                : NOT_ANY_OF;
+        }
         return fieldOperator;
     }
 
@@ -356,10 +314,16 @@ public enum ResourceParameter implements ParameterKey {
         var result = Arrays.stream(ResourceParameter.values())
             .filter(ResourceParameter::ignoreInvalidKey)
             .filter(ParameterKey.equalTo(paramName))
+            .map(key -> assignSubKind(paramName, key))
             .collect(Collectors.toSet());
         return result.size() == 1
             ? result.stream().findFirst().get()
             : INVALID;
+    }
+
+    private static ResourceParameter assignSubKind(String paramName, ResourceParameter key) {
+        var camelCase = CaseUtils.toCamelCase(paramName, false, CHAR_UNDERSCORE);
+        return key.withSubKind(ParameterSubKind.keyFromString(camelCase.substring(key.asCamelCase().length())));
     }
 
     private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {

@@ -61,6 +61,7 @@ import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
+import no.unit.nva.search.common.enums.ParameterSubKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
 import org.apache.commons.text.CaseUtils;
@@ -189,6 +190,16 @@ public enum TicketParameter implements ParameterKey {
     @Override
     public ParameterKind fieldType() {
         return paramkind;
+    }
+
+    @Override
+    public ParameterSubKind fieldSubKind() {
+        return null;
+    }
+
+    @Override
+    public ParameterKey withSubKind(ParameterSubKind subKind) {
+        return null;
     }
 
     @Override

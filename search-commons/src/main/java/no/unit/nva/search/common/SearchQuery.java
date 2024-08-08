@@ -14,8 +14,6 @@ import static no.unit.nva.search.common.constant.Words.KEYWORD_FALSE;
 import static no.unit.nva.search.common.constant.Words.POST_FILTER;
 import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.constant.Words.SORT_LAST;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 import static nva.commons.core.attempt.Try.attempt;
 import com.google.common.net.MediaType;
 import java.net.URI;
@@ -208,10 +206,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         parameters().getSearchKeys()
             .flatMap(this::builderStreamDefaultQuery)
             .forEach(entry -> {
-                if (isMustNot(entry.getKey())) {
-                    boolQueryBuilder.mustNot(entry.getValue());
-                } else {
-                    boolQueryBuilder.must(entry.getValue());
+                switch (entry.getKey().fieldSubKind()) {
+                    case MUST_NOT -> boolQueryBuilder.mustNot(entry.getValue());
+                    case SHOULD -> boolQueryBuilder.should(entry.getValue());
+                    default -> boolQueryBuilder.must(entry.getValue());
                 }
             });
         return boolQueryBuilder;
@@ -302,10 +300,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
     }
 
-    private boolean isMustNot(K key) {
-        return NOT_ALL_OF.equals(key.searchOperator())
-            || NOT_ANY_OF.equals(key.searchOperator());
-    }
 
     private boolean isFetchSource() {
         return nonNull(exclude()) || nonNull(include());

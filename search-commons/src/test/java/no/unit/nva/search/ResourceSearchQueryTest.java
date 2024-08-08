@@ -10,11 +10,10 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.DOI;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.FUNDING;
-import static no.unit.nva.search.resource.ResourceParameter.MODIFIED_BEFORE;
+import static no.unit.nva.search.resource.ResourceParameter.MODIFIED;
 import static no.unit.nva.search.resource.ResourceParameter.PAGE;
-import static no.unit.nva.search.resource.ResourceParameter.PUBLISHED_BEFORE;
-import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
-import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
+import static no.unit.nva.search.resource.ResourceParameter.PUBLISHED;
+import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,15 +57,15 @@ class ResourceSearchQueryTest {
     void removeKeySuccessfully() throws BadRequestException {
         var response =
             ResourceSearchQuery.builder()
-                .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
-                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
+                .fromQueryParameters(Map.of("SCIENTIFIC_REPORT_PERIOD_SINCE", "2019",
+                    "SCIENTIFIC_REPORT_PERIOD_BEFORE", "2020"))
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .build();
 
-        var key = response.parameters().remove(SCIENTIFIC_REPORT_PERIOD_SINCE);
+        var key = response.parameters().remove(SCIENTIFIC_REPORT_PERIOD);
 
-        assertEquals(SCIENTIFIC_REPORT_PERIOD_SINCE, key.getKey());
+        assertEquals(SCIENTIFIC_REPORT_PERIOD, key.getKey());
     }
 
     @Test
@@ -135,12 +134,12 @@ class ResourceSearchQueryTest {
         query.parameters().getSearchKeys()
             .forEach(key -> logger.info("{} : {}", key.asCamelCase(), query.parameters().get(key).as()));
 
-        var modified = query.parameters().get(MODIFIED_BEFORE);
+        var modified = query.parameters().get(MODIFIED);
         if (!modified.isEmpty()) {
             logger.info("modified0: {}", modified.asDateTime());
         }
 
-        var publishedBefore = query.parameters().ifPresent(PUBLISHED_BEFORE);
+        var publishedBefore = query.parameters().ifPresent(PUBLISHED);
         if (nonNull(publishedBefore)) {
             logger.info("published1: {}", publishedBefore.<DateTime>as());
         }

@@ -39,8 +39,6 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
-import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
@@ -499,8 +497,8 @@ class ResourceClientTest {
     void shouldReturnResourcesForScientificPeriods() throws BadRequestException {
         var response =
             ResourceSearchQuery.builder()
-                .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
-                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2022"))
+                .fromQueryParameters(Map.of("SCIENTIFIC_REPORT_PERIOD_SINCE", "2019",
+                    "SCIENTIFIC_REPORT_PERIOD_BEFORE", "2022"))
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .build()
@@ -516,8 +514,8 @@ class ResourceClientTest {
     void shouldReturnResourcesForSinglePeriods() throws BadRequestException {
         var response =
             ResourceSearchQuery.builder()
-                .fromQueryParameters(Map.of(SCIENTIFIC_REPORT_PERIOD_SINCE.asCamelCase(), "2019",
-                    SCIENTIFIC_REPORT_PERIOD_BEFORE.asCamelCase(), "2020"))
+                .fromQueryParameters(Map.of("SCIENTIFIC_REPORT_PERIOD_SINCE", "2019",
+                    "SCIENTIFIC_REPORT_PERIOD_BEFORE", "2020"))
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                 .build()

@@ -29,7 +29,23 @@ public interface ParameterKey {
 
     Float fieldBoost();
 
+    /**
+     *
+     * @return {@link ParameterKind}
+     */
     ParameterKind fieldType();
+
+    /**
+     *
+     *  @return {@link ParameterSubKind}
+     */
+    ParameterSubKind fieldSubKind();
+
+    /**
+     * "Setter" for {@link #fieldSubKind()} }
+     *  @return {@link ParameterKey}
+     */
+    ParameterKey withSubKind(ParameterSubKind subKind);
 
     String fieldPattern();
 
