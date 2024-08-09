@@ -34,10 +34,9 @@ final class FacetsBuilder {
     }
 
     private static Map.Entry<String, List<Facet>> addIdToFacets(Map.Entry<String, List<Facet>> entry, URI id) {
-        final var uriWrap = UriWrapper.fromUri(id);
         var facets = entry.getValue().stream()
             .map(facet -> new Facet(
-                uriWrap.addQueryParameter(entry.getKey(), facet.key()).getUri(),
+                UriWrapper.fromUri(id).addQueryParameter(entry.getKey(), facet.key()).getUri(),
                 facet.key(),
                 facet.count(),
                 facet.labels())
