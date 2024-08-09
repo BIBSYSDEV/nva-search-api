@@ -9,7 +9,6 @@ import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
 import static no.unit.nva.search.common.constant.Words.ABSTRACT;
 import static no.unit.nva.search.common.constant.Words.AFFILIATIONS;
 import static no.unit.nva.search.common.constant.Words.ASSOCIATED_ARTIFACTS;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
 import static no.unit.nva.search.common.constant.Words.BOKMAAL_CODE;
 import static no.unit.nva.search.common.constant.Words.CODE;
 import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
@@ -100,9 +99,9 @@ public final class Constants {
     public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
 
-    public static final String REFERENCE_PUBLICATION =
-        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + ASTERISK + PIPE
-            + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + ASTERISK;
+    //    public static final String REFERENCE_PUBLICATION =
+    //        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + ASTERISK + PIPE
+    //            + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + ASTERISK;
 
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
@@ -122,6 +121,10 @@ public final class Constants {
     );
     public static final String COURSE_CODE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
+
+    public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES = ENTITY_PUBLICATION_INSTANCE_DOT + "pages.pages";
+    public static final String SUBJECTS = "subjects";
+
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
         ENTITY_DESCRIPTION + DOT + PUBLICATION_DATE + DOT + YEAR;
     public static final String REFERENCE_DOI_KEYWORD =
