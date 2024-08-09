@@ -152,7 +152,7 @@ class ResourceClientTest {
     @Test
     void shouldCheckFacets() throws BadRequestException {
         var hostAddress = URI.create(container.getHttpHostAddress());
-        var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL + "&query=EntityDescription");
+        var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL );
 
         var response1 = ResourceSearchQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri1))
@@ -332,8 +332,8 @@ class ResourceClientTest {
     void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
         var uri = URI.create("https://x.org/");
         var requestInfo = mock(RequestInfo.class);
-        when(requestInfo.getCurrentCustomer()).thenReturn(URI.create("https://api.dev.nva.aws.unit"
-                                                                     + ".no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.getCurrentCustomer())
+            .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
         var response =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
