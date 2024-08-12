@@ -122,7 +122,7 @@ public final class Constants {
     public static final String COURSE_CODE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
 
-    public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES = ENTITY_PUBLICATION_INSTANCE_DOT + "pages.pages.number";
+    public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES = ENTITY_PUBLICATION_INSTANCE_DOT + "pages.pages";
     public static final String SUBJECTS = "subjects";
 
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =
