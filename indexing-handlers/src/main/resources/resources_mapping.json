@@ -33,7 +33,25 @@
           "properties": {
             "publicationInstance": {
               "type": "nested",
-              "include_in_parent": true
+              "include_in_parent": true,
+              "properties": {
+                "pages": {
+                  "properties": {
+                    "pages": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "ignore_above": 256
+                        },
+                        "number": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
             "publicationContext": {
               "type": "nested",
