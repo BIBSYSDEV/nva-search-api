@@ -61,6 +61,7 @@ import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_PAGES;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_JOURNAL;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_SERIES;
@@ -202,6 +203,7 @@ public enum ResourceParameter implements ParameterKey {
     PUBLISHER_ID_SHOULD(TEXT, ANY_OF, PUBLISHER_ID_KEYWORD),
     //    TODO commented away, need to deploy soon due to bug
     //    REFERENCED(ACROSS_FIELDS, ANY_OF, REFERENCE_PUBLICATION),
+    REFERENCE_CONTEXT_REFERENCE_EXISTS(EXISTS, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE),
     REFERENCED_ID(FUZZY_KEYWORD, ANY_OF, REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD),
     SCIENTIFIC_VALUE(KEYWORD, ANY_OF, SCIENTIFIC_LEVEL_SEARCH_FIELD),
     SCIENTIFIC_INDEX_STATUS(KEYWORD, ANY_OF, SCIENTIFIC_INDEX_STATUS_KEYWORD),
