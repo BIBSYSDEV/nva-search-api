@@ -36,18 +36,10 @@
               "include_in_parent": true,
               "properties": {
                 "pages": {
+                  "type": "object",
                   "properties": {
                     "pages": {
-                      "type": "text",
-                      "fields": {
-                        "keyword": {
-                          "type": "keyword",
-                          "ignore_above": 256
-                        },
-                        "number": {
-                          "type": "integer"
-                        }
-                      }
+                      "type": "integer"
                     }
                   }
                 }
