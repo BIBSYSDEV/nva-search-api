@@ -1,16 +1,12 @@
 package no.unit.nva.search;
 
-import static java.net.HttpURLConnection.HTTP_OK;
 import static no.unit.nva.search.common.constant.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.search.common.constant.Words.COMMA;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,7 +17,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.common.FakeGatewayResponse;
 import no.unit.nva.search.common.csv.ExportCsv;
 import no.unit.nva.search.common.records.SwsResponse;
 import no.unit.nva.search.scroll.ScrollClient;
