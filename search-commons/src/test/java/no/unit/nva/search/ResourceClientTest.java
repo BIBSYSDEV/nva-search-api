@@ -107,7 +107,7 @@ class ResourceClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_test_urls.json";
+    private static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
@@ -690,7 +690,7 @@ class ResourceClientTest {
     }
 
     static Stream<Arguments> uriProvider() {
-        return loadMapFromResource(RESOURCE_VALID_TEST_URL_JSON).entrySet().stream()
+        return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
             .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
     }
 
