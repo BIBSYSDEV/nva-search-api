@@ -50,13 +50,6 @@
                 "pages": {
                   "type": "object",
                   "properties": {
-                    "type": {
-                      "type": "keyword",
-                      "ignore_above": 256
-                    },
-                    "illustrated": {
-                      "type": "boolean"
-                    },
                     "pages": {
                       "type": "integer"
                     }
