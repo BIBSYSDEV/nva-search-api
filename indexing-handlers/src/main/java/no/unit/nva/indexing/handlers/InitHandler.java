@@ -27,16 +27,16 @@ public class InitHandler implements RequestHandler<Object, String> {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED. See logs";
 
-    private static final String RESOURCES_MAPPINGS =
-        IoUtils.stringFromResources(Path.of("resources_mapping.json"));
-    private static final String RESOURCES_SETTINGS =
-        IoUtils.stringFromResources(Path.of("resources_setting.json"));
+    private static final String RESOURCE_MAPPINGS =
+        IoUtils.stringFromResources(Path.of("resource_mappings.json"));
+    private static final String RESOURCE_SETTINGS =
+        IoUtils.stringFromResources(Path.of("resource_settings.json"));
 
     public static final String TICKET_MAPPINGS =
-        IoUtils.stringFromResources(Path.of("tickets_mapping.json"));
+        IoUtils.stringFromResources(Path.of("ticket_mappings.json"));
 
     private static final List<IndexRequest> INDEXES = List.of(
-        new IndexRequest(RESOURCES_INDEX, RESOURCES_MAPPINGS, RESOURCES_SETTINGS),
+        new IndexRequest(RESOURCES_INDEX, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),
             new IndexRequest(DOIREQUESTS_INDEX),
             new IndexRequest(MESSAGES_INDEX),
         new IndexRequest(TICKETS_INDEX, TICKET_MAPPINGS),

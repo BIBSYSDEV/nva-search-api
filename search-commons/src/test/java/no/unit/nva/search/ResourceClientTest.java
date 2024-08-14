@@ -13,15 +13,19 @@ import static no.unit.nva.search.common.constant.Words.COLON;
 import static no.unit.nva.search.common.constant.Words.COMMA;
 import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
 import static no.unit.nva.search.common.constant.Words.DOT;
+import static no.unit.nva.search.common.constant.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.search.common.constant.Words.EQUAL;
 import static no.unit.nva.search.common.constant.Words.FILES;
 import static no.unit.nva.search.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search.common.constant.Words.KEYWORD;
 import static no.unit.nva.search.common.constant.Words.LICENSE;
 import static no.unit.nva.search.common.constant.Words.NONE;
+import static no.unit.nva.search.common.constant.Words.PAGES;
 import static no.unit.nva.search.common.constant.Words.PIPE;
+import static no.unit.nva.search.common.constant.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.search.common.constant.Words.PUBLISHER;
 import static no.unit.nva.search.common.constant.Words.RESOURCES;
+import static no.unit.nva.search.common.constant.Words.REFERENCE;
 import static no.unit.nva.search.common.constant.Words.SLASH;
 import static no.unit.nva.search.common.constant.Words.SPACE;
 import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -39,6 +43,7 @@ import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
+import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_BOOK_PAGES;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
@@ -48,6 +53,10 @@ import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -98,7 +107,7 @@ class ResourceClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String RESOURCE_VALID_TEST_URL_JSON = "resource_test_urls.json";
+    private static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
     public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
@@ -580,6 +589,31 @@ class ResourceClientTest {
         assertThat(pagedSearchResourceDto.hits(), hasSize(3));
     }
 
+
+    @ParameterizedTest
+    @MethodSource("provideValidPageRanges")
+    void shouldFilterByPageCount(int min, int max, int expectedResultCount) throws BadRequestException {
+        var pageRange = String.format("%d,%d", min, max);
+        var response = ResourceSearchQuery.builder()
+                .fromQueryParameters(Map.of(PUBLICATION_BOOK_PAGES.asCamelCase(), pageRange))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        var pageCounts = pagedSearchResourceDto.hits().stream()
+                .map(hit -> hit.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(PAGES).get(PAGES).asInt())
+                .collect(Collectors.toList());
+
+        assertThat("Number of hits", pagedSearchResourceDto.hits(), hasSize(expectedResultCount));
+        assertThat("All page counts are within the specified range",
+                pageCounts, everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
+    }
+
     static Stream<Arguments> uriPagingProvider() {
         return Stream.of(
             createArgument("page=0&aggregation=all", 20),
@@ -640,8 +674,23 @@ class ResourceClientTest {
             URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
     }
 
+    /**
+     * Provides a stream of valid page ranges for parameterized tests.
+     * Each argument consists of a minimum and maximum page count, and the expected number of results.
+     *
+     * @return a stream of arguments where each argument is a tuple of (min, max, expectedResultCount)
+     */
+    private static Stream<Arguments> provideValidPageRanges() {
+        return Stream.of(
+                Arguments.of(1, 100, 8),
+                Arguments.of(37, 39, 1),
+                Arguments.of(38, 38, 1),
+                Arguments.of(17, 20, 3)
+        );
+    }
+
     static Stream<Arguments> uriProvider() {
-        return loadMapFromResource(RESOURCE_VALID_TEST_URL_JSON).entrySet().stream()
+        return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
             .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
     }
 
