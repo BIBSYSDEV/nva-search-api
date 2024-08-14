@@ -59,7 +59,8 @@ public class OpensearchQueryExists<K extends Enum<K> & ParameterKey> extends Ope
 
     private void mustOrNot(Boolean exists, BoolQueryBuilder boolQueryBuilder, QueryBuilder queryBuilder) {
         if (exists) {
-            boolQueryBuilder.must(queryBuilder);
+            boolQueryBuilder.should(queryBuilder);
+            boolQueryBuilder.minimumShouldMatch(1);
         } else {
             boolQueryBuilder.mustNot(queryBuilder);
         }
