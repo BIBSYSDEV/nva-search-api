@@ -10,7 +10,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
 import java.net.HttpURLConnection;
 import java.util.List;
-import java.util.Objects;
 
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
@@ -61,8 +60,6 @@ public class SearchTicketAuthHandler extends ApiGatewayHandler<Void, String> {
 
     @Override
     protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
-        if (Objects.isNull(requestInfo.getUserName())) {
-            throw new UnauthorizedException();
-        }
+        requestInfo.getUserName();
     }
 }

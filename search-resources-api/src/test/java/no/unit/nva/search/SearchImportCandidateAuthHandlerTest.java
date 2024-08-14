@@ -206,8 +206,9 @@ class SearchImportCandidateAuthHandlerTest {
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withQueryParameters(Map.of(SEARCH_ALL.asCamelCase(), SAMPLE_SEARCH_TERM))
+            .withRequestContext(getRequestContext())
             .withUserName(randomString())
-            .withRequestContext(getRequestContext()).build();
+            .build();
     }
     
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
@@ -224,10 +225,8 @@ class SearchImportCandidateAuthHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_ALL.name(),
-                           "((entityDescription.contributors.identity.id:12345)"
-                           + "+OR+"
-                           + "(entityDescription.contributors.identity.id:54321))"))
+                    Map.of(SEARCH_ALL.name(),"((entityDescription.contributors.identity.id:12345)"
+                           + "+OR+(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
                 .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withUserName(randomString())
@@ -239,6 +238,7 @@ class SearchImportCandidateAuthHandlerTest {
                 Map.of(SEARCH_ALL.name(), SAMPLE_SEARCH_TERM))
             .withHeaders(Map.of(ACCEPT, contentType))
             .withRequestContext(getRequestContext())
+            .withUserName(randomString())
             .build();
     }
     
@@ -253,8 +253,6 @@ class SearchImportCandidateAuthHandlerTest {
         
         when(mockedSearchClient.doSearch(any()))
             .thenReturn(body);
-        //        var searchResponse = createSearchResponseWithHits(json);
-        //        when(restHighLevelClientMock.search(any(), any())).thenReturn(searchResponse);
     }
     
     private void prepareRestHighLevelClientOkResponse() throws IOException {
