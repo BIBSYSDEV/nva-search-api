@@ -20,6 +20,7 @@ import static no.unit.nva.search.common.constant.Words.FUNDING_SOURCE;
 import static no.unit.nva.search.common.constant.Words.KEYWORD;
 import static no.unit.nva.search.common.constant.Words.LICENSE;
 import static no.unit.nva.search.common.constant.Words.NONE;
+import static no.unit.nva.search.common.constant.Words.PAGES;
 import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.search.common.constant.Words.PUBLISHER;
@@ -605,7 +606,7 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         var pageCounts = pagedSearchResourceDto.hits().stream()
-                .map(hit -> hit.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get("pages").get("pages").asInt())
+                .map(hit -> hit.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(PAGES).get(PAGES).asInt())
                 .collect(Collectors.toList());
 
         assertThat("Number of hits", pagedSearchResourceDto.hits(), hasSize(expectedResultCount));
