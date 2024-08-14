@@ -71,6 +71,7 @@ public final class Words {
     public static final String OWNER = "owner";
     public static final String OWNER_AFFILIATION = "ownerAffiliation";
     public static final String PAGE = "page";
+    public static final String PAGES = "pages";
     public static final String PIPE = "|";
     public static final String PLUS = "+";
     public static final String PREFIX = "(";

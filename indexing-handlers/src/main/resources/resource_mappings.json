@@ -17,6 +17,9 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "abstract": {
+          "type": "text"
+        },
         "contributors": {
           "type": "nested",
           "include_in_parent": true,
@@ -36,18 +39,10 @@
               "include_in_parent": true,
               "properties": {
                 "pages": {
+                  "type": "object",
                   "properties": {
                     "pages": {
-                      "type": "text",
-                      "fields": {
-                        "keyword": {
-                          "type": "keyword",
-                          "ignore_above": 256
-                        },
-                        "number": {
-                          "type": "integer"
-                        }
-                      }
+                      "type": "integer"
                     }
                   }
                 }
@@ -60,6 +55,9 @@
                 "publisher": {
                   "type": "nested",
                   "include_in_parent": true
+                },
+                "entityDescription": {
+                  "type": "flat_object"
                 }
               }
             }

@@ -38,14 +38,14 @@ public class Containers {
     private static final Logger logger = LoggerFactory.getLogger(Containers.class);
 
     private static final String RESOURCE_DATASOURCE_JSON = "resource_datasource.json";
-    private static final String RESOURCE_MAPPING_TEST_JSON = "resource_test_mapping.json";
-    private static final String RESOURCE_SETTING_TEST_JSON = "resource_test_setting.json";
+    private static final String RESOURCE_MAPPING_DEV_JSON = "resource_mappings_dev.json";
+    private static final String RESOURCE_SETTING_DEV_JSON = "resource_settings_dev.json";
 
     private static final String TICKET_DATASOURCE_JSON = "ticket_datasource.json";
-    private static final String TICKET_MAPPING_TEST_JSON = "ticket_mapping_test.json";
+    private static final String TICKET_MAPPING_DEV_JSON = "ticket_mappings_dev.json";
 
     private static final String IMPORT_CANDIDATE_DATASOURCE_JSON = "import_candidate_datasource.json";
-    public static final String IMPORT_CANDIDATE_MAPPING_TEST_JSON = "import_candidate_mapping_test.json";
+    public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON = "import_candidate_mappings_dev.json";
 
 
     public static void setup() throws IOException, InterruptedException {
@@ -58,9 +58,9 @@ public class Containers {
 
         logger.info("creating indexes");
 
-        createIndex(RESOURCES, RESOURCE_MAPPING_TEST_JSON, RESOURCE_SETTING_TEST_JSON);
-        createIndex(TICKETS, TICKET_MAPPING_TEST_JSON, null);
-        createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPING_TEST_JSON, null);
+        createIndex(RESOURCES, RESOURCE_MAPPING_DEV_JSON, RESOURCE_SETTING_DEV_JSON);
+        createIndex(TICKETS, TICKET_MAPPING_DEV_JSON, null);
+        createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPING_DEV_JSON, null);
 
         logger.info("populating indexes");
 
