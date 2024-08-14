@@ -17,6 +17,9 @@
       "type": "nested",
       "include_in_parent": true,
       "properties": {
+        "abstract": {
+          "type": "text"
+        },
         "contributors": {
           "type": "nested",
           "include_in_parent": true,
@@ -52,6 +55,9 @@
                 "publisher": {
                   "type": "nested",
                   "include_in_parent": true
+                },
+                "entityDescription": {
+                  "type": "flat_object"
                 }
               }
             }
