@@ -9,7 +9,7 @@ import no.unit.nva.search.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search.importcandidate.ImportCandidateSort;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
-import no.unit.nva.search.common.builder.OpensearchQueryRange;
+import no.unit.nva.search.common.builder.BuilderRange;
 import no.unit.nva.search.resource.ResourceParameter;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class UntouchedHeroesTest {
 
     @Test
     void invalidRangeQueryMust() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new BuilderRange<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, "test")
@@ -34,7 +34,7 @@ class UntouchedHeroesTest {
 
     @Test
     void invalidRangeQueryMustNot() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new BuilderRange<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")
@@ -45,26 +45,24 @@ class UntouchedHeroesTest {
     void invalidSortQueryMust() {
         assertNotNull(ImportCandidateSort.RELEVANCE.asLowerCase());
     }
-//
-//    @Test
-//    void removeKeysSuccessfully() {
-//        var text = JsonNodeCreator::textNode("3wer");
-//        var test2 = textNode("eawsrdf");
-//        assertThrows(
-//            CsvFieldAssignmentException.class,
-//            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
-//        );
-//    }
+
+    //    @Test
+    //    void removeKeysSuccessfully() {
+    //        var text = JsonNodeCreator::textNode("3wer");
+    //        var test2 = textNode("eawsrdf");
+    //        assertThrows(
+    //            CsvFieldAssignmentException.class,
+    //            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
+    //        );
+    //    }
 
 
     @Test
-//    @Disabled
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
 
     @Test
-//    @Disabled
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
     }

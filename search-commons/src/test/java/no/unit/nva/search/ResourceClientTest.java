@@ -147,7 +147,7 @@ class ResourceClientTest {
         uriSortingProvider().findFirst().ifPresent(uri::set);
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
-        var result =ResourceSearchQuery.builder()
+        var result = ResourceSearchQuery.builder()
             .fromQueryParameters(queryToMapEntries(uri.get()))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
@@ -301,7 +301,7 @@ class ResourceClientTest {
 
     @Test
     void searchAfterAndSortByRelevanceException() {
-        var uri =  URI.create("https://x.org/?id=018b857b77b7&from=10&searchAfter=12&sort=relevance");
+        var uri = URI.create("https://x.org/?id=018b857b77b7&from=10&searchAfter=12&sort=relevance");
         assertThrows(
             BadRequestException.class,
             () -> ResourceSearchQuery.builder()
@@ -341,8 +341,8 @@ class ResourceClientTest {
     void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
         var uri = URI.create("https://x.org/");
         var requestInfo = mock(RequestInfo.class);
-        when(requestInfo.getCurrentCustomer()).thenReturn(URI.create("https://api.dev.nva.aws.unit"
-                                                                     + ".no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.getCurrentCustomer())
+            .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
         var response =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
@@ -363,13 +363,13 @@ class ResourceClientTest {
 
     @Test
     void scrollClientExceuteOK() throws BadRequestException {
-        var INCLUDED_NODES = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
+        var includedNodes = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
         var firstResponse = ResourceSearchQuery.builder()
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withParameter(FROM, ZERO)
             .withParameter(SIZE, "5")
             .withParameter(AGGREGATION, NONE)
-            .withParameter(NODES_INCLUDED, INCLUDED_NODES)
+            .withParameter(NODES_INCLUDED, includedNodes)
             .build()
             .withFilter()
             .requiredStatus(PUBLISHED_METADATA, PUBLISHED).apply()
@@ -640,8 +640,8 @@ class ResourceClientTest {
             URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
             URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
             URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
-            URI.create(REQUEST_BASE_URL +
-                "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+            URI.create(REQUEST_BASE_URL
+                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
             URI.create(REQUEST_BASE_URL + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
             URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
             URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
@@ -656,8 +656,7 @@ class ResourceClientTest {
             URI.create(REQUEST_BASE_URL
                 + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
             URI.create(REQUEST_BASE_URL
-                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912," +
-                "1241234,23412"),
+                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
             URI.create(REQUEST_BASE_URL + "query=year+project&sort=published_date+asc&sort=category+desc"));
     }
 

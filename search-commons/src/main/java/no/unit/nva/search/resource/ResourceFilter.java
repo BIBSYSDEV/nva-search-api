@@ -70,7 +70,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * Filter on organization.
      * <P>Only documents belonging to organization specified are searchable (for the user)
      * </p>
-     * @param requestInfo
+     * @param requestInfo fetches getCurrentCustomer
      * @return ResourceQuery (builder pattern)
      */
     public ResourceFilter organization(RequestInfo requestInfo) throws UnauthorizedException {

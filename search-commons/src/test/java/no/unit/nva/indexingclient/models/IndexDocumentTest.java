@@ -68,7 +68,7 @@ class IndexDocumentTest {
     }
 
     @Test
-    void shouldUseGetTypeAsWell(){
+    void shouldUseGetTypeAsWell() {
         var consumptionAttributes = new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         assertThrows(IllegalArgumentException.class, indexDocument::getType);

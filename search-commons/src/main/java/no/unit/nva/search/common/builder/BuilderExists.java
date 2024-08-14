@@ -18,7 +18,7 @@ import static org.opensearch.index.query.QueryBuilders.existsQuery;
 /**
  * @author Stig Norland
  */
-public class OpensearchQueryExists<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class BuilderExists<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
 
     public static final String EXISTS_ANY = "ExistsAny-";
 

@@ -36,7 +36,7 @@ public class MockedHttpResponse {
 
 
     public static HttpResponse<Object> mockedHttpResponse(String body) {
-        return mockedHttpResponse(body, nonNull(body)? 200 : 400 );
+        return mockedHttpResponse(body, nonNull(body) ? 200 : 400);
     }
 
     public static HttpResponse<Object> mockedHttpResponse(String body, int statusCode) {

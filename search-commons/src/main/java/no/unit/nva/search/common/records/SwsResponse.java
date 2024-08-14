@@ -107,7 +107,7 @@ public record SwsResponse(
         }
 
         public SwsResponseBuilder withHits(HitsInfo hits) {
-            if (nonNull(hits) && hits.total().value() >= 0 ) {
+            if (nonNull(hits) && hits.total().value() >= 0) {
                 this.hits = hits;
             }
             return this;
@@ -120,18 +120,17 @@ public record SwsResponse(
             return this;
         }
 
-        public SwsResponseBuilder merge(SwsResponse response){
+        public SwsResponseBuilder merge(SwsResponse response) {
             return withHits(response.hits())
-                    .withAggregations(response.aggregations())
-                    .withShards(response._shards())
-                    .withScrollId(response._scroll_id())
-                    .withTimedOut(response.timed_out())
-                    .withTook(response.took());
+                .withAggregations(response.aggregations())
+                .withShards(response._shards())
+                .withScrollId(response._scroll_id())
+                .withTimedOut(response.timed_out())
+                .withTook(response.took());
         }
 
         public SwsResponse build() {
             return new SwsResponse(took, timed_out, shards, hits, aggregations, scrollId);
         }
     }
-
 }

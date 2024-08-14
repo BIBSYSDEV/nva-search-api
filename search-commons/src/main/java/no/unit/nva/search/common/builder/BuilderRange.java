@@ -16,13 +16,13 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Stig Norland
  */
-public class OpensearchQueryRange<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class BuilderRange<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
 
     public static final String GREATER_OR_EQUAL = "GreaterOrEqual-";
     public static final String LESS_THAN = "LessThan-";
     public static final String BETWEEN = "Between-";
     public static final String DASH = " - ";
-    private static final Logger logger = LoggerFactory.getLogger(OpensearchQueryRange.class);
+    private static final Logger logger = LoggerFactory.getLogger(BuilderRange.class);
     public static final int WORD_LENGTH_YEAR = 4;
     public static final int WORD_LENGTH_YEAR_MONTH = 7;
     public static final String STR_01 = "-01";

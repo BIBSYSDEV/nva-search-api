@@ -24,7 +24,7 @@ import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
-import no.unit.nva.search.common.builder.OpensearchQueryFuzzyKeyword;
+import no.unit.nva.search.common.builder.BuilderFuzzyKeyword;
 import no.unit.nva.search.common.constant.Functions;
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
@@ -99,7 +99,7 @@ public class ResourceStreamBuilders {
         var searchKey = shouldSearchSpecifiedInstitutionOnly() ? key : EXCLUDE_SUBUNITS;
 
         return
-            new OpensearchQueryFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as())
+            new BuilderFuzzyKeyword<ResourceParameter>().buildQuery(searchKey, parameters.get(key).as())
                 .map(query -> Map.entry(key, query.getValue()));
     }
 

@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search.common.builder.BuilderKeyword;
 import no.unit.nva.search.common.records.FilterBuilder;
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
@@ -113,7 +113,7 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
      */
     public TicketFilter organization(URI organization) {
         final var organisationId =
-            new OpensearchQueryKeyword<TicketParameter>()
+            new BuilderKeyword<TicketParameter>()
                 .buildQuery(ORGANIZATION_ID, organization.toString())
                 .findFirst().orElseThrow().getValue()
                 .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
