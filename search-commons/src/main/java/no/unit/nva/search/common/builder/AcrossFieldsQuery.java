@@ -17,7 +17,7 @@ import org.opensearch.index.query.QueryBuilders;
 /**
  * @author Stig Norland
  */
-public class BuilderAcrossFields<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
+public class AcrossFieldsQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
 
     public static final String ANY_VALUE = "AcrossFieldsAnyValue";
     public static final String ALL_VALUES = "AcrossFieldsAllValues";
