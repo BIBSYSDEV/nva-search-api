@@ -1,0 +1,35 @@
+{
+  "analysis": {
+    "char_filter": {
+      "quote": {
+        "type": "mapping",
+        "mappings": [
+          "« => \"",
+          "» => \"",
+          "\"\" => \""
+        ]
+      }
+    },
+    "filter": {
+      "standard_nva_filter": {
+        "type": "asciifolding",
+        "preserve_original": true
+      }
+    },
+    "analyzer": {
+      "default": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "char_filter": [
+          "html_strip",
+          "quote"
+        ],
+        "filter": [
+          "lowercase",
+          "standard_nva_filter",
+          "scandinavian_normalization"
+        ]
+      }
+    }
+  }
+}

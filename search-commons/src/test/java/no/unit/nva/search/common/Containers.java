@@ -25,6 +25,7 @@ import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_C
 import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
 import static no.unit.nva.search.common.constant.Words.RESOURCES;
+import static no.unit.nva.search.common.constant.Words.RESOURCES_PC;
 import static no.unit.nva.search.common.constant.Words.TICKETS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -47,6 +48,10 @@ public class Containers {
     private static final String IMPORT_CANDIDATE_DATASOURCE_JSON = "import_candidate_datasource.json";
     public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON = "import_candidate_mappings_dev.json";
 
+    private static final String RESOURCE_DATASOURCE_P_C_JSON = "resource_parent_child_datasource.json";
+    private static final String RESOURCE_MAPPING_P_C_DEV_JSON = "resource_parent_child_mappings_dev.json";
+    private static final String RESOURCE_SETTING_P_C_DEV_JSON = "resource_parent_child_settings_dev.json";
+
 
     public static void setup() throws IOException, InterruptedException {
         container.start();
@@ -61,10 +66,12 @@ public class Containers {
         createIndex(RESOURCES, RESOURCE_MAPPING_DEV_JSON, RESOURCE_SETTING_DEV_JSON);
         createIndex(TICKETS, TICKET_MAPPING_DEV_JSON, null);
         createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPING_DEV_JSON, null);
+        createIndex(RESOURCES_PC, RESOURCE_MAPPING_P_C_DEV_JSON, RESOURCE_SETTING_P_C_DEV_JSON);
 
         logger.info("populating indexes");
 
         populateIndex(RESOURCE_DATASOURCE_JSON, RESOURCES);
+        populateIndex(RESOURCE_DATASOURCE_P_C_JSON, RESOURCES_PC);
         populateIndex(TICKET_DATASOURCE_JSON, TICKETS);
         populateIndex(IMPORT_CANDIDATE_DATASOURCE_JSON, IMPORT_CANDIDATES_INDEX);
 

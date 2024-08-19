@@ -1,0 +1,109 @@
+{
+  "properties": {
+    "topLevelOrganizations": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "labels": {
+          "type": "nested",
+          "include_in_parent": true
+        },
+        "hasPart": {
+          "type": "flat_object"
+        }
+      }
+    },
+    "entityDescription": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "abstract": {
+          "type": "text"
+        },
+        "contributors": {
+          "type": "nested",
+          "include_in_parent": true,
+          "properties": {
+            "identity": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        },
+        "reference": {
+          "type": "nested",
+          "include_in_parent": true,
+          "properties": {
+            "publicationInstance": {
+              "type": "nested",
+              "include_in_parent": true,
+              "properties": {
+                "pages": {
+                  "type": "object",
+                  "properties": {
+                    "pages": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "publicationContext": {
+              "type": "nested",
+              "include_in_parent": true,
+              "properties": {
+                "publisher": {
+                  "type": "nested",
+                  "include_in_parent": true
+                },
+                "entityDescription": {
+                  "type": "flat_object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fundings": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "source": {
+          "properties": {
+            "labels": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        }
+      }
+    },
+    "projects": {
+      "type": "nested",
+      "include_in_parent": true
+    },
+    "associatedArtifacts": {
+      "type": "nested",
+      "include_in_parent": true,
+      "properties": {
+        "license": {
+          "properties": {
+            "labels": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        }
+      }
+    },
+    "additionalIdentifiers": {
+      "type": "nested",
+      "include_in_parent": true
+    },
+    "scientificIndex": {
+      "type": "nested",
+      "include_in_parent": true
+    }
+  }
+}

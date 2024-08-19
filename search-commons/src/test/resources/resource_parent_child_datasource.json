@@ -1,0 +1,961 @@
+[
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01905545c4f0-97d6df84-b4cf-4108-99d8-d9a0bf5b933e",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "1990676"
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+    ],
+    "createdDate": "2022-01-26T00:00:00Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Handelshøyskolen",
+                "en": "Oslo Business School"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1403650",
+            "type": "Identity",
+            "name": "Michelle Ingvaldsen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Handelshøyskolen",
+                "en": "Oslo Business School"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1403675",
+            "type": "Identity",
+            "name": "Harnit Kaur",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Handelshøyskolen",
+                "en": "Oslo Business School"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/325003",
+            "type": "Identity",
+            "name": "Karl Joachim Breunig",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Individual-level impediments to digital transformation: A bibliometric literature review",
+      "npiSubjectHeading": "1035",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2021"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/01905545c522-9624a601-8e2c-46b4-9b9d-ad2543a7ebed",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "M Paoloni"
+                }
+              },
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "G Schiuma"
+                }
+              },
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "P Paoloni"
+                }
+              }
+            ],
+            "mainTitle": "Proceedings IFKAD: Managing Knowledge in Uncertain Times",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "isbnList": [
+                  "9788896687147"
+                ],
+                "publisher": {
+                  "type": "UnconfirmedPublisher",
+                  "name": "International Forum on Knowledge and Dynamics",
+                  "valid": true
+                },
+                "revision": "Unrevised",
+                "series": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/28B7F15D-FFD6-4B03-B0C9-3470DE57923E/2021",
+                  "type": [
+                    "Series",
+                    "Journal"
+                  ],
+                  "identifier": "28B7F15D-FFD6-4B03-B0C9-3470DE57923E",
+                  "name": "Proceedings IFKAD...",
+                  "printIssn": "2280-787X",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=28B7F15D-FFD6-4B03-B0C9-3470DE57923E",
+                  "scientificValue": "LevelZero"
+                },
+                "seriesNumber": "Volume:16;Issue:1"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "AcademicChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "1137",
+            "end": "1160"
+          }
+        }
+      }
+    },
+    "identifier": "01905545c4f0-97d6df84-b4cf-4108-99d8-d9a0bf5b933e",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T15:59:14.160034304Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T14:35:38.919579450Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.1",
+    "modifiedDate": "2024-07-09T14:35:38.928750962Z",
+    "publishedDate": "2022-01-26T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "hio@215.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "hasPart": [
+              {
+                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+                "type": "Organization",
+                "countryCode": "NO",
+                "labels": {
+                  "nb": "Handelshøyskolen",
+                  "en": "Oslo Business School"
+                },
+                "partOf": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.0.0"
+                }
+              }
+            ],
+            "labels": {
+              "nb": "Fakultet for samfunnsvitenskap",
+              "en": "Faculty of Social Sciences"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "OsloMet - storbyuniversitetet",
+          "en": "OsloMet - Oslo Metropolitan University"
+        }
+      }
+    ],
+    "filesStatus": "noFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01905549c655-fe7eedf7-68b9-41c5-be1d-8c0c071d36a9",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2206490"
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    ],
+    "createdDate": "2023-11-30T00:00:00Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Krigsskolen (KS)",
+                "en": "Norwegian Military Academy"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/919231",
+            "type": "Identity",
+            "name": "Haakon Hjortmo",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nob",
+      "mainTitle": "Militær lederskapsutvikling for økt operativ evne",
+      "npiSubjectHeading": "1023",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.18261/9788215064710-23-04",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/0190552761ff-99819a62-5db4-474b-9bdd-6195f77911d7",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "identity": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/59528",
+                  "type": "Identity",
+                  "name": "Rino Bandlitz Johansen"
+                }
+              },
+              {
+                "type": "Contributor",
+                "identity": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/14503",
+                  "type": "Identity",
+                  "name": "Jan Ketil Arnulf"
+                }
+              }
+            ],
+            "mainTitle": "Militær leder- og ledelsesutvikling i teori og praksis",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "isbnList": [
+                  "9788215064703"
+                ],
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/DA831BBC-DD1C-4E06-ACA0-48DE8046FB26/2023",
+                  "type": "Publisher",
+                  "identifier": "DA831BBC-DD1C-4E06-ACA0-48DE8046FB26",
+                  "isbnPrefix": "978-82-15",
+                  "name": "Universitetsforlaget",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=DA831BBC-DD1C-4E06-ACA0-48DE8046FB26",
+                  "scientificValue": "LevelOne",
+                  "valid": true
+                },
+                "revision": "Unrevised"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "NonFictionChapter",
+          "pages": {
+            "type": "Range"
+          }
+        }
+      }
+    },
+    "identifier": "01905549c655-fe7eedf7-68b9-41c5-be1d-8c0c071d36a9",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T16:03:36.661142175Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T14:50:58.443902702Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.1",
+    "modifiedDate": "2024-07-09T14:50:58.451195797Z",
+    "publishedDate": "2023-11-30T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "fhs@1627.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": [
+          {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nb": "Krigsskolen (KS)",
+              "en": "Norwegian Military Academy"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+            }
+          }
+        ],
+        "labels": {
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
+        }
+      }
+    ],
+    "filesStatus": "noFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01907aa0ba21-1798a41f-3dea-4048-b88e-a8f43b64385a",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2174084"
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    ],
+    "createdDate": "2024-07-03T22:04:32.161628361Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Krigsskolen (KS)",
+                "en": "Norwegian Military Academy"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/919231",
+            "type": "Identity",
+            "name": "Haakon Hjortmo",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nor",
+      "mainTitle": "Militær lederskapsutvikling for økt operativ evne",
+      "npiSubjectHeading": "1027",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.18261/9788215064710-23-04",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/01907a85a00a-5eb4c525-4842-49e2-94f1-a098e8f4e6ff",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "identity": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/59528",
+                  "type": "Identity",
+                  "name": "Rino Bandlitz Johansen"
+                }
+              },
+              {
+                "type": "Contributor",
+                "identity": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/14503",
+                  "type": "Identity",
+                  "name": "Jan Ketil Arnulf"
+                }
+              }
+            ],
+            "mainTitle": "Militær leder- og ledelsesutvikling i teori og praksis",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "isbnList": [
+                  "9788215064703"
+                ],
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/DA831BBC-DD1C-4E06-ACA0-48DE8046FB26/2023",
+                  "type": "Publisher",
+                  "identifier": "DA831BBC-DD1C-4E06-ACA0-48DE8046FB26",
+                  "isbnPrefix": "978-82-15",
+                  "name": "Universitetsforlaget",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=DA831BBC-DD1C-4E06-ACA0-48DE8046FB26",
+                  "scientificValue": "LevelOne",
+                  "valid": true
+                },
+                "revision": "Unrevised"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "NonFictionChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "101",
+            "end": "131"
+          }
+        }
+      }
+    },
+    "identifier": "01907aa0ba21-1798a41f-3dea-4048-b88e-a8f43b64385a",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-04T09:27:13.468383145Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-03T22:04:32.161628361Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.1",
+    "modifiedDate": "2024-07-04T09:27:13.477095883Z",
+    "publishedDate": "2024-07-03T22:04:32.161628361Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/0baf8fcb-b18d-4c09-88bb-956b4f659103",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "fhs@1627.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "labels": {
+            "nb": "Krigsskolen (KS)",
+            "en": "Norwegian Military Academy"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+          }
+        },
+        "labels": {
+          "nb": "Forsvarets høgskole",
+          "en": "Norwegian Defence University College"
+        }
+      }
+    ],
+    "filesStatus": "noFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/28B7F15D-FFD6-4B03-B0C9-3470DE57923E/2021"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01907a7b41f6-8c367ec7-9d8a-4be7-aef4-08dfb096b43d",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "1990664"
+      }
+    ],
+    "createdDate": "2024-07-03T21:23:36.566321513Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "G Schiuma",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Editor"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "P Paoloni",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Editor"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "M Paoloni",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Editor"
+          },
+          "sequence": 3
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Proceedings IFKAD: Managing Knowledge in Uncertain Times",
+      "npiSubjectHeading": "1035",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2021"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Book",
+          "isbnList": [
+            "9788896687147"
+          ],
+          "publisher": {
+            "type": "UnconfirmedPublisher",
+            "name": "International Forum on Knowledge and Dynamics",
+            "valid": true
+          },
+          "revision": "Unrevised",
+          "series": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/28B7F15D-FFD6-4B03-B0C9-3470DE57923E/2021",
+            "type": [
+              "Journal",
+              "Series"
+            ],
+            "identifier": "28B7F15D-FFD6-4B03-B0C9-3470DE57923E",
+            "name": "Proceedings IFKAD...",
+            "printIssn": "2280-787X",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=28B7F15D-FFD6-4B03-B0C9-3470DE57923E",
+            "scientificValue": "LevelZero"
+          },
+          "seriesNumber": "Volume:16;Issue:1"
+        },
+        "publicationInstance": {
+          "type": "BookAnthology",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "2053"
+          }
+        }
+      }
+    },
+    "identifier": "01907a7b41f6-8c367ec7-9d8a-4be7-aef4-08dfb096b43d",
+    "importDetail": {
+      "type": "ImportDetail",
+      "importDate": "2024-07-03T21:23:36.566321513Z",
+      "importSource": {
+        "type": "ImportSource"
+      }
+    },
+    "modelVersion": "0.23.1",
+    "modifiedDate": "2024-07-04T06:31:42.217729150Z",
+    "publishedDate": "2024-07-03T21:23:36.566321513Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/0baf8fcb-b18d-4c09-88bb-956b4f659103",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "hio@215.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "filesStatus": "noFiles"
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01907a83c85c-97df6be8-a1ef-4d62-974b-d8beb1bc39a8",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "1990676"
+      }
+    ],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.0.0"
+    ],
+    "createdDate": "2024-07-03T21:32:55.260378088Z",
+    "curatingInstitutions": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "alternativeAbstracts": {},
+      "contributors": [
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Handelshøyskolen",
+                "en": "Oslo Business School"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1403650",
+            "type": "Identity",
+            "name": "Michelle Ingvaldsen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Handelshøyskolen",
+                "en": "Oslo Business School"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1403675",
+            "type": "Identity",
+            "name": "Harnit Kaur",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nb": "Handelshøyskolen",
+                "en": "Oslo Business School"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/325003",
+            "type": "Identity",
+            "name": "Karl Joachim Breunig",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Individual-level impediments to digital transformation: A bibliometric literature review",
+      "npiSubjectHeading": "1035",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2021"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/01907a7b41f6-8c367ec7-9d8a-4be7-aef4-08dfb096b43d",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "M Paoloni"
+                }
+              },
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "P Paoloni"
+                }
+              },
+              {
+                "type": "Contributor",
+                "identity": {
+                  "type": "Identity",
+                  "name": "G Schiuma"
+                }
+              }
+            ],
+            "mainTitle": "Proceedings IFKAD: Managing Knowledge in Uncertain Times",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "isbnList": [
+                  "9788896687147"
+                ],
+                "publisher": {
+                  "type": "UnconfirmedPublisher",
+                  "name": "International Forum on Knowledge and Dynamics",
+                  "valid": true
+                },
+                "revision": "Unrevised",
+                "series": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/journal/28B7F15D-FFD6-4B03-B0C9-3470DE57923E/2021",
+                  "type": [
+                    "Series",
+                    "Journal"
+                  ],
+                  "identifier": "28B7F15D-FFD6-4B03-B0C9-3470DE57923E",
+                  "name": "Proceedings IFKAD...",
+                  "printIssn": "2280-787X",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalTidsskriftInfo?pid=28B7F15D-FFD6-4B03-B0C9-3470DE57923E",
+                  "scientificValue": "LevelZero"
+                },
+                "seriesNumber": "Volume:16;Issue:1"
+              }
+            }
+          }
+        },
+        "publicationInstance": {
+          "type": "AcademicChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "1137",
+            "end": "1160"
+          }
+        }
+      }
+    },
+    "identifier": "01907a83c85c-97df6be8-a1ef-4d62-974b-d8beb1bc39a8",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-03T21:32:55.260378088Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-04T09:43:38.238298182Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.1",
+    "modifiedDate": "2024-07-04T09:43:38.245600475Z",
+    "publishedDate": "2024-07-03T21:32:55.260378088Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/0baf8fcb-b18d-4c09-88bb-956b4f659103",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "hio@215.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "topLevelOrganizations": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0",
+        "type": "Organization",
+        "countryCode": "NO",
+        "hasPart": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.0.0",
+          "type": "Organization",
+          "countryCode": "NO",
+          "hasPart": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.6.0",
+            "type": "Organization",
+            "countryCode": "NO",
+            "labels": {
+              "nb": "Handelshøyskolen",
+              "en": "Oslo Business School"
+            },
+            "partOf": {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.5.0.0"
+            }
+          },
+          "labels": {
+            "nb": "Fakultet for samfunnsvitenskap",
+            "en": "Faculty of Social Sciences"
+          },
+          "partOf": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/215.0.0.0"
+          }
+        },
+        "labels": {
+          "nb": "OsloMet - storbyuniversitetet",
+          "en": "OsloMet - Oslo Metropolitan University"
+        }
+      }
+    ],
+    "filesStatus": "noFiles"
+  }
+]

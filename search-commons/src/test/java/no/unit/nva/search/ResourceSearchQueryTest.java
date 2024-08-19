@@ -135,14 +135,15 @@ class ResourceSearchQueryTest {
         query.parameters().getSearchKeys()
             .forEach(key -> logger.info("{} : {}", key.asCamelCase(), query.parameters().get(key).as()));
 
+        // two ways to access keys
+
         var modified = query.parameters().get(MODIFIED_BEFORE);
         if (!modified.isEmpty()) {
-            logger.info("modified0: {}", modified.asDateTime());
+            logger.info("Modified-1: {}", modified.asDateTime());
         }
-
-        var publishedBefore = query.parameters().ifPresent(PUBLISHED_BEFORE);
-        if (nonNull(publishedBefore)) {
-            logger.info("published1: {}", publishedBefore.<DateTime>as());
+        var published = query.parameters().ifPresent(PUBLISHED_BEFORE);
+        if (nonNull(published)) {
+            logger.info("Published-1: {}", published.<DateTime>as());
         }
 
     }

@@ -19,6 +19,7 @@ public final class Patterns {
     public static final String PATTERN_IS_CATEGORY_NOT_KEYS =
         "(?i)(type_?not|instance_?type_?not|category_?not)$";
 
+    public static final String PATTERN_IS_BOOLEAN = "(?i)(true|false)";
     /**
      * Pattern for matching a date string. yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ
      */
