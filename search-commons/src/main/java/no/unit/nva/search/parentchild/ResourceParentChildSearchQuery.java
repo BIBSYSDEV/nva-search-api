@@ -11,7 +11,6 @@ import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.ResourceStreamBuilders;
 import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.TermsQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
 
@@ -22,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,11 +39,9 @@ import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
 import static no.unit.nva.search.common.constant.Words.NONE;
 import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.STATUS;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
-import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.Constants.facetResourcePaths;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -73,7 +69,6 @@ public final class ResourceParentChildSearchQuery extends SearchQuery<ResourcePa
 
     private ResourceParentChildSearchQuery() {
         super();
-        assignStatusImpossibleWhiteList();
         streamBuilders = new ResourceStreamBuilders(parameters());
     }
 
@@ -169,16 +164,6 @@ public final class ResourceParentChildSearchQuery extends SearchQuery<ResourcePa
         };
     }
 
-
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the ResourceQuery from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withRequiredStatus must be set </p>
-     */
-    private void assignStatusImpossibleWhiteList() {
-        filters.set(new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString()).queryName(STATUS));
-    }
 
     public static class ResourceParameterValidator extends ParameterValidator<ResourceParameter, ResourceParentChildSearchQuery> {
 
