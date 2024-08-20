@@ -34,6 +34,12 @@
           "type": "nested",
           "include_in_parent": true,
           "properties": {
+            "parentChild": {
+              "type": "join",
+              "relations": {
+                "parent": "child"
+              }
+            },
             "publicationInstance": {
               "type": "nested",
               "include_in_parent": true,

@@ -82,9 +82,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
-import no.unit.nva.search.parentchild.ResourceParentChildClient;
 import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.parentchild.ResourceParentChildSearchQuery;
 import no.unit.nva.search.resource.ResourceSearchQuery;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.resource.UserSettingsClient;
@@ -114,7 +112,6 @@ class ResourceClientTest {
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
-    private static ResourceParentChildClient searchParentChildClient;
 
     @BeforeAll
     static void setUp() {
@@ -127,8 +124,6 @@ class ResourceClientTest {
             .thenReturn(mockedFutureHttpResponse(""))
             .thenReturn(mockedFutureFailed());
         searchClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
-        searchParentChildClient = new ResourceParentChildClient(HttpClient.newHttpClient(), cachedJwtProvider);
-
         scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
@@ -191,22 +186,6 @@ class ResourceClientTest {
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
             is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
-    }
-
-    @Test
-    void shouldCheckFacetsPArentChild() throws BadRequestException {
-        var hostAddress = URI.create(container.getHttpHostAddress());
-        var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.asCamelCase() + EQUAL + ALL);
-
-        var response1 = ResourceParentChildSearchQuery.builder()
-            .fromQueryParameters(queryToMapEntries(uri1))
-            .withDockerHostUri(hostAddress)
-            .withRequiredParameters(FROM, SIZE, AGGREGATION)
-            .build()
-            .doSearch(searchParentChildClient);
-
-        assertNotNull(response1);
-
     }
 
 
