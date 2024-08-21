@@ -29,7 +29,9 @@ import java.util.stream.Stream;
 import no.unit.nva.search.common.builder.AcrossFieldsQuery;
 import no.unit.nva.search.common.builder.ExistsQuery;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
+import no.unit.nva.search.common.builder.HasPartsQuery;
 import no.unit.nva.search.common.builder.KeywordQuery;
+import no.unit.nva.search.common.builder.PartOfQuery;
 import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.builder.TextQuery;
 import no.unit.nva.search.common.constant.ErrorMessages;
@@ -177,6 +179,8 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
             case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
             case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
+            case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
+            case PART_OF ->  new PartOfQuery<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());

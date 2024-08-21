@@ -44,9 +44,11 @@ import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search.common.enums.ParameterKind.EXISTS;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
+import static no.unit.nva.search.common.enums.ParameterKind.HAS_PARTS;
 import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
+import static no.unit.nva.search.common.enums.ParameterKind.PART_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
@@ -124,9 +126,9 @@ public enum ResourceParameter implements ParameterKey {
     CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, ENTITY_CONTRIBUTORS_DOT + IDENTITY + ASTERISK),
-    CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
-    CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null),
+    CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null,null),
+    CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null,null),
+    CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null,null),
     CONTRIBUTOR_NAME(FUZZY_KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_NOT(FUZZY_KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
@@ -143,12 +145,12 @@ public enum ResourceParameter implements ParameterKey {
      * excludeSubUnits holds path to hierarchical search, used by several keys.
      */
     EXCLUDE_SUBUNITS(IGNORED, jsonPath(CONTRIBUTOR_ORGANIZATIONS, Words.KEYWORD)),
-    FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null),
-    FUNDING_IDENTIFIER(KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null),
+    FUNDING(CUSTOM, ALL_OF, FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER, null, PATTERN_IS_FUNDING, null,null),
+    FUNDING_IDENTIFIER(KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER, null, null,null),
     FUNDING_IDENTIFIER_NOT(KEYWORD, NOT_ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT, null,
-                           null),
+                           null,null),
     FUNDING_IDENTIFIER_SHOULD(FUZZY_KEYWORD, ANY_OF, FUNDING_IDENTIFIER_KEYWORD,
-                              PATTERN_IS_FUNDING_IDENTIFIER_SHOULD, null, null),
+                              PATTERN_IS_FUNDING_IDENTIFIER_SHOULD, null, null,null),
     FUNDING_SOURCE(TEXT, ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
@@ -158,8 +160,10 @@ public enum ResourceParameter implements ParameterKey {
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, NOT_ANY_OF, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, ANY_OF, IDENTIFIER_KEYWORD),
-    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null),
-    INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null),
+    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null,null),
+    INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null,null),
+    INSTANCE_TYPE_HAS_PARTS(HAS_PARTS, ALL_OF, INSTANCE_TYPE),
+    INSTANCE_TYPE_PART_OF(PART_OF, ALL_OF, INSTANCE_TYPE),
     INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
@@ -238,18 +242,18 @@ public enum ResourceParameter implements ParameterKey {
     VOCABULARY(FUZZY_KEYWORD, ALL_OF, SUBJECTS),
     VOCABULARY_EXISTS(EXISTS, ANY_OF, SUBJECTS),
     // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null,null),
+    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null,null),
     NODES_INCLUDED(IGNORED),
     NODES_EXCLUDED(IGNORED),
     // Pagination parameters
     AGGREGATION(IGNORED),
     PAGE(NUMBER),
-    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
-    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
+    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null,null),
+    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null,null),
     SEARCH_AFTER(IGNORED),
-    SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null);
+    SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null,null),
+    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null,null);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -266,31 +270,37 @@ public enum ResourceParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
+    private final ParameterKey subquery;
 
     ResourceParameter(ParameterKind kind) {
-        this(kind, ALL_OF, null, null, null, null);
+        this(kind, ALL_OF, null, null, null, null,null);
     }
 
     ResourceParameter(ParameterKind kind, String fieldsToSearch) {
-        this(kind, ALL_OF, fieldsToSearch, null, null, null);
+        this(kind, ALL_OF, fieldsToSearch, null, null, null,null);
     }
 
     ResourceParameter(ParameterKind kind, String fieldsToSearch, Float boost) {
-        this(kind, ALL_OF, fieldsToSearch, null, null, boost);
+        this(kind, ALL_OF, fieldsToSearch, null, null, boost,null);
     }
 
     ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
-        this(kind, operator, fieldsToSearch, null, null, null);
+        this(kind, operator, fieldsToSearch, null, null, null,null);
     }
 
+    ResourceParameter(ParameterKind kind, FieldOperator operator, ParameterKey keys) {
+        this(kind, operator, null, null, null, null, keys);
+    }
+
+
     ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
-        this(kind, operator, fieldsToSearch, null, null, boost);
+        this(kind, operator, fieldsToSearch, null, null, boost,null);
     }
 
 
     ResourceParameter(
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+        Float boost, ParameterKey subquery) {
 
         this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
@@ -304,6 +314,7 @@ public enum ResourceParameter implements ParameterKey {
             ? keyPattern
             : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
+        this.subquery = subquery;
     }
 
     @Override
@@ -356,6 +367,11 @@ public enum ResourceParameter implements ParameterKey {
     @Override
     public String errorMessage() {
         return errorMsg;
+    }
+
+    @Override
+    public ParameterKey subquery() {
+        return subquery;
     }
 
     @Override

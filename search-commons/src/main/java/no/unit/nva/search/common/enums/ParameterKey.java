@@ -48,6 +48,8 @@ public interface ParameterKey {
 
     String errorMessage();
 
+    ParameterKey subquery();
+
     static Predicate<ParameterKey> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }

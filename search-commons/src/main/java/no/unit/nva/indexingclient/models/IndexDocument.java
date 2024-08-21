@@ -23,9 +23,9 @@ public record IndexDocument(
     public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
     public static final String MISSING_IDENTIFIER_IN_RESOURCE = "Missing identifier in resource";
     public static final String MISSING_INDEX_NAME_IN_RESOURCE = "Missing index name in resource";
-    private static final String IMPORT_CANDIDATE = "ImportCandidate";
-    private static final String TICKET = "Ticket";
-    private static final String RESOURCE = "Resource";
+    static final String IMPORT_CANDIDATE = "ImportCandidate";
+    static final String TICKET = "Ticket";
+    static final String RESOURCE = "Resource";
 
 
     public IndexDocument validate() {

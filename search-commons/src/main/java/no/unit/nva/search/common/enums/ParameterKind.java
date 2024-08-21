@@ -17,6 +17,8 @@ public enum ParameterKind {
     NUMBER,
     DATE,
     EXISTS,
+    HAS_PARTS,
+    PART_OF,
     KEYWORD,
     FUZZY_KEYWORD,
     TEXT,

@@ -1,5 +1,5 @@
-[
-  {
+{ "index" : { "_index" : "resources", "_id" : "1" } }
+{
     "type": "Publication",
     "publicationContextUris": [
       "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
@@ -321,9 +321,10 @@
         }
       }
     ],
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "2" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -418,9 +419,10 @@
       "status": "Reported",
       "year": "2019"
     },
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "3" } }
+{
     "type": "Publication",
     "publicationContextUris": [
       "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2023"
@@ -775,9 +777,10 @@
         }
       }
     ],
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "4" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -950,9 +953,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "5" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -1076,9 +1080,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED_METADATA",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "6" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -1177,9 +1182,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "7" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -1405,9 +1411,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "8" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -1589,9 +1596,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "9" } }
+{
     "type": "Publication",
     "publicationContextUris": [
       "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/F20577B8-0947-481B-96D4-F5DE9ECF7C5F/2023"
@@ -2251,9 +2259,10 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "10" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -2378,9 +2387,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "11" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -2583,9 +2593,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "12" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -2698,9 +2709,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "13" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -2835,9 +2847,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "14" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -2918,9 +2931,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "15" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -2996,9 +3010,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "16" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -3074,9 +3089,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "17" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -3234,9 +3250,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "18" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -3316,9 +3333,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "19" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -3401,9 +3419,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "20" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -3485,9 +3504,10 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
-  },
-  {
+    "parentChild" : "parent"
+  }
+{ "index" : { "_index" : "resources", "_id" : "21" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -3728,12 +3748,13 @@
       }
     ],
     "status": "PUBLISHED",
-    "hasRelation" : {
+    "parentChild" : {
       "name": "child",
-      "parent": "018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4"
+      "parent": "https://api.dev.nva.aws.unit.no/publication/018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2"
     }
-  },
-  {
+  }
+{ "index" : { "_index" : "resources", "_id" : "22", "parent" : "21" } }
+{
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
@@ -5181,6 +5202,6 @@
         }
       }
     ],
-    "hasRelation" : "parent"
+    "parentChild" : "parent"
   }
-]
+

@@ -85,7 +85,6 @@ public class Containers {
         container.stop();
     }
 
-
     public static Map<String, Object> loadMapFromResource(String resource) {
         var mappingsJson = stringFromResources(Path.of(resource));
         var type = new TypeReference<Map<String, Object>>() {
