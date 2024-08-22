@@ -13,7 +13,10 @@
       }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
-    "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
@@ -321,7 +324,9 @@
         }
       }
     ],
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -337,7 +342,9 @@
       }
     ],
     "createdDate": "2023-12-18T08:21:11.463306145Z",
-    "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "abstract": "In this paper, the authors report on collaboration between two universities from 2003 and beyond. The collaborations have been carried out in four main spheres: in the area of Staff training programmes, in the area of Development and research in information literacy, in the area of Developing Models of Digital Repositories and also in the domain of Research in Library Leadership. This cooperation started in 2003 when the authors worked on developing the first Leonardo da Vinci program in the field of continued education, and is still ongoing. The collaborations have been funded by different national and international funding agencies, as well as from the institutions of the authors.",
@@ -418,7 +425,9 @@
       "status": "Reported",
       "year": "2019"
     },
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -466,7 +475,11 @@
       }
     ],
     "createdDate": "2023-11-06T08:46:26.204053625Z",
-    "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0", "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0", "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0"],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.6.1.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
@@ -775,7 +788,9 @@
         }
       }
     ],
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -950,7 +965,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -1065,7 +1082,6 @@
         "name": "Utvikling av osteloffen"
       }
     ],
-
     "publishedDate": "2023-09-29T12:11:12Z",
     "publisher": {
       "id": "https://api.dev.nva.aws.unit.no/customer/f415cb81-ac56-4244-b31b-25e43dc3027e",
@@ -1076,7 +1092,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED_METADATA",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -1177,7 +1195,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -1405,7 +1425,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -1589,7 +1611,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2251,7 +2275,9 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2378,7 +2404,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2409,7 +2437,9 @@
       }
     ],
     "createdDate": "2023-09-29T11:49:09Z",
-    "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "abstract": "Snow avalanches are a significant natural hazard and common phenomenon in Norway. Each year, avalanches result in fatalities, evacuations, and interruptions or damage to infrastructure networks such as roads, railways, and electrical transmission lines. Persistent avalanche hazard in steep terrain is a major factor considered during land-use planning and development. During the snow season, daily or weekly variations in the avalanche danger identified in regional and applied bulletins influence the operation of transportation networks. Applied research on avalanches and their societal impacts has been conducted at the Norwegian Geotechnical Institute (NGI) since 1973. This research has been funded in part by an annual grant from the Norwegian parliament, administered by the Norwegian Water Resources and Energy Directorate (NVE – Norges vassdrags- og energi-direktorat). Recent research activities have improved our understanding of avalanche formation, movement, and impacts. Enhanced knowledge of the individual processes leading to avalanche initiation, avalanche dynamics, and avalanche impacts has been applied to developing tools to help predict avalanche occurrence, runout distance, and impact pressures. While much has been accomplished within the avalanche research community in recent years, many key questions remain. This project plan: (1) presents the research goals for the 2020-2022 period, (2) outlines the projects organization – including potential for external collaboration, and (3) presents the work-package structure and specific research tasks to be undertaken by the applied avalanche research group at NGI over the next three years.",
@@ -2583,7 +2613,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2698,7 +2730,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2835,7 +2869,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2918,7 +2954,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -2996,7 +3034,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -3074,7 +3114,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -3112,7 +3154,9 @@
       }
     ],
     "createdDate": "2023-09-26T05:51:17Z",
-    "contributorOrganizations": ["https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"],
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "abstract": "Time series modelling: applications for groundwater control in urban tunnelling\nWater ingress to tunnels may result in pore pressure drawdown and consolidation settlements in areas above tunnels founded on soft soil deposits, potentially causing damage to buildings and infrastructure. To limit pore pressure drawdown, requirements are set on water ingress to bedrock tunnels. To meet these requirements, pre-excavation grouting is often performed to reduce the hydraulic conductivity of the rock mass surrounding the tunnel. Real-time pore pressure monitoring may be used to document pore pressure drawdown during construction. However, the effect of tunnel water ingress can be difficult to distinguish from natural pore pressure fluctuations. This paper presents a tunnel case in Oslo, Norway, where time series modelling was applied to local pore pressure data using the transfer function model framework. The input to the models was daily meteorological data considering precipitation and evapotranspiration, and the output was simulated pore pressure levels with impulse response functions. The models were optimised with data from before tunnel excavation, and simulations were run during the tunnel excavation period. Simulated pore pressure levels were compared with observed pore pressure levels to assess tunnelling-induced drawdown. Model uncertainty ranges were used to produce upper, lower, and best estimates of the drawdown. The findings show that time series modelling with transfer function models may be used in tunnel projects to continuously assess the impact on the local groundwater environment, for better evaluation of the pre-grouting performance, and for quantifying both the temporary and long-term drawdown with increased accuracy.\n",
@@ -3234,7 +3278,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -3316,7 +3362,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -3401,7 +3449,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -3485,7 +3535,9 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   },
   {
     "type": "Publication",
@@ -3728,8 +3780,8 @@
       }
     ],
     "status": "PUBLISHED",
-    "hasRelation" : {
-      "name": "child",
+    "hasRelation": {
+      "name": "partOf",
       "parent": "018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4"
     }
   },
@@ -3769,7 +3821,8 @@
       "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
       "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
       "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"],
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    ],
     "entityDescription": {
       "type": "EntityDescription",
       "alternativeAbstracts": {},
@@ -5181,6 +5234,8 @@
         }
       }
     ],
-    "hasRelation" : "parent"
+    "hasRelation": {
+      "name": "hasParts"
+    }
   }
 ]

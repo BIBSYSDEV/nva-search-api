@@ -104,12 +104,6 @@
     "scientificIndex": {
       "type": "nested",
       "include_in_parent": true
-    },
-    "hasRelation": {
-      "type": "join",
-      "relations": {
-        "hasParts": "partOf"
-      }
     }
   }
 }

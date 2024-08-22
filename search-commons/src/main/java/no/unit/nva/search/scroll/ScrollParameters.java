@@ -86,6 +86,11 @@ public enum ScrollParameters implements ParameterKey {
     }
 
     @Override
+    public ParameterKey subquery() {
+        return null;
+    }
+
+    @Override
     @JacocoGenerated
     public String toString() {
         return

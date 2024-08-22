@@ -224,6 +224,11 @@ public enum TicketParameter implements ParameterKey {
     }
 
     @Override
+    public ParameterKey subquery() {
+        return null;
+    }
+
+    @Override
     @JacocoGenerated
     public String toString() {
         return

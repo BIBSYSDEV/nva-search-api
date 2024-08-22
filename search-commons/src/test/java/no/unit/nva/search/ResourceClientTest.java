@@ -42,6 +42,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_BOOK_PAGES;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
@@ -348,6 +349,7 @@ class ResourceClientTest {
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .withParameter(NODES_EXCLUDED, "metaInfo")
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withFilter()
