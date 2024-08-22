@@ -79,7 +79,6 @@
   "instanceType=AcademicArticle": 8,
   "INSTANCE_TYPE_NOT=AcademicArticle": 13,
   "INSTANCE_TYPE_SHOULD=AcademicArticle": 8,
-  "INSTANCE_TYPE_HAS_PARTS=Anthology": 1,
   "INSTANCE_TYPE_PART_OF=AcademicChapter": 1,
   "INSTITUTION=1627.0.0.0": 3,
   "INSTITUTION=Forsvarets+høgskole": 3,
