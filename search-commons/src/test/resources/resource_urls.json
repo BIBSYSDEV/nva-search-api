@@ -79,6 +79,8 @@
   "instanceType=AcademicArticle": 8,
   "INSTANCE_TYPE_NOT=AcademicArticle": 13,
   "INSTANCE_TYPE_SHOULD=AcademicArticle": 8,
+  "INSTANCE_TYPE_HAS_PARTS=Anthology": 1,
+  "INSTANCE_TYPE_PART_OF=AcademicChapter": 1,
   "INSTITUTION=1627.0.0.0": 3,
   "INSTITUTION=Forsvarets+høgskole": 3,
   "INSTITUTION=https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0": 3,
@@ -212,7 +214,7 @@
   "USER=1136254@20754.0.0.0": 3,
   "USER_NOT=1136254@20754.0.0.0": 18,
   "USER_SHOULD=1136254@": 3,
-  "VOCABULARY=test": 0,
-  "VOCABULARY_EXISTS=true": 0,
+  "VOCABULARY=https://nva.unit.no/hrcs/activity/hrcs_ra_4_2": 1,
+  "VOCABULARY_EXISTS=true": 1,
   "STATISTICS=TRUE&page=0&size=21": 21
 }

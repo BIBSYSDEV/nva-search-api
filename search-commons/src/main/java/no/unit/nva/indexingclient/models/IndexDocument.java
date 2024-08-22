@@ -71,6 +71,7 @@ public record IndexDocument(
     public IndexRequest toIndexRequest() {
         return new IndexRequest(getIndexName())
             .source(serializeResource(), XContentType.JSON)
+            .routing("1")
             .id(getDocumentIdentifier());
     }
 

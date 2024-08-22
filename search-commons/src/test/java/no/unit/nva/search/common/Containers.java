@@ -24,6 +24,7 @@ import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCached
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
 import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
 import static no.unit.nva.search.common.constant.Words.RESOURCES;
 import static no.unit.nva.search.common.constant.Words.TICKETS;
 import static nva.commons.core.attempt.Try.attempt;
@@ -59,15 +60,15 @@ public class Containers {
 
         logger.info("creating indexes");
 
-        createIndex(RESOURCES, RESOURCE_MAPPING_DEV_JSON, RESOURCE_SETTING_DEV_JSON);
         createIndex(TICKETS, TICKET_MAPPING_DEV_JSON, null);
         createIndex(IMPORT_CANDIDATES_INDEX, IMPORT_CANDIDATE_MAPPING_DEV_JSON, null);
+        createIndex(RESOURCES, RESOURCE_MAPPING_DEV_JSON, RESOURCE_SETTING_DEV_JSON);
 
         logger.info("populating indexes");
 
-        populateIndex(RESOURCE_DATASOURCE_JSON, RESOURCES);
         populateIndex(TICKET_DATASOURCE_JSON, TICKETS);
         populateIndex(IMPORT_CANDIDATE_DATASOURCE_JSON, IMPORT_CANDIDATES_INDEX);
+        populateIndex(RESOURCE_DATASOURCE_JSON, RESOURCES);
 
         logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
         Thread.sleep(DELAY_AFTER_INDEXING);
@@ -102,10 +103,13 @@ public class Containers {
 
     private static void addDocumentToIndex(String indexName, JsonNode node) {
         try {
-            var attributes = new EventConsumptionAttributes(indexName, SortableIdentifier.next());
+            var identifier = node.has(IDENTIFIER)
+                ? new SortableIdentifier(node.get(IDENTIFIER).asText())
+                : SortableIdentifier.next();
+            var attributes = new EventConsumptionAttributes(indexName, identifier);
             indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e.getCause());
         }
     }
 

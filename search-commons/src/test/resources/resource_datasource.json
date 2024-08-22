@@ -324,7 +324,7 @@
         }
       }
     ],
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -425,7 +425,7 @@
       "status": "Reported",
       "year": "2019"
     },
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -788,7 +788,7 @@
         }
       }
     ],
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -965,7 +965,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -1092,7 +1092,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED_METADATA",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -1195,7 +1195,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -1425,9 +1425,13 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
-    }
+    },
+    "subjects": [
+      "https://nva.unit.no/hrcs/activity/hrcs_ra_4_2",
+      "https://nva.unit.no/hrcs/category/hrcs_hc_01blo"
+    ]
   },
   {
     "type": "Publication",
@@ -1611,7 +1615,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -2275,7 +2279,7 @@
       }
     ],
     "filesStatus": "hasPublicFiles",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -2404,7 +2408,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -2613,7 +2617,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -2730,7 +2734,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -2869,7 +2873,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -2954,7 +2958,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -3034,7 +3038,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -3114,7 +3118,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -3278,7 +3282,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/7452.0.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -3362,7 +3366,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -3449,7 +3453,7 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
     }
   },
@@ -3535,254 +3539,8 @@
       "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
     },
     "status": "PUBLISHED",
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
-    }
-  },
-  {
-    "type": "Publication",
-    "publicationContextUris": [],
-    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
-    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2",
-    "additionalIdentifiers": [
-      {
-        "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
-        "value": "2129196"
-      }
-    ],
-    "filesStatus": "hasPublicFiles",
-    "associatedArtifacts": [
-      {
-        "type": "UnPublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
-        "license": {
-          "type": "License",
-          "value": "https://creativecommons.org/licenses/by/4.0",
-          "name": "CC-BY",
-          "labels": {
-            "en": "Creative Commons - Attribution",
-            "nb": "Creative Commons - Navngivelse"
-          }
-        },
-        "mimeType": "application/pdf",
-        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
-        "publishedDate": "2023-11-06T07:47:54.580766901Z",
-        "publisherAuthority": false,
-        "size": 1578503,
-        "visibleForNonOwner": false
-      },
-      {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "5a8a8e75-4a13-483eec-8014-werd75eb468",
-        "license": {
-          "type": "License",
-          "value": "https://creativecommons.org/licenses/by/4.0",
-          "name": "CC-BY",
-          "labels": {
-            "en": "Creative Commons - Attribution",
-            "nb": "Creative Commons - Navngivelse"
-          }
-        },
-        "mimeType": "application/pdf",
-        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
-        "publishedDate": "2023-11-06T07:47:54.580766901Z",
-        "publisherAuthority": false,
-        "size": 1578503,
-        "visibleForNonOwner": true
-      }
-    ],
-    "createdDate": "2023-09-20T16:31:48Z",
-    "contributorOrganizations": [
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.00.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-    ],
-    "entityDescription": {
-      "type": "EntityDescription",
-      "abstract": "Objective\nLow-level sensory disruption is hypothesized as a precursor to clinical and cognitive symptoms in severe mental disorders. We compared visual discrimination performance in patients with schizophrenia spectrum disorder or bipolar disorder with healthy controls, and investigated associations with clinical symptoms and IQ.Methods\nPatients with schizophrenia spectrum disorder (n = 32), bipolar disorder (n = 55) and healthy controls (n = 152) completed a computerized visual discrimination task. Participants responded whether the latter of two consecutive grids had higher or lower spatial frequency, and discrimination thresholds were estimated using an adaptive maximum likelihood procedure. Case-control differences in threshold were assessed using linear regression, F-test and post-hoc pair-wise comparisons. Linear models were used to test for associations between visual discrimination threshold and psychotic symptoms derived from the PANSS and IQ assessed using the Matrix Reasoning and Vocabulary subtests from the Wechsler Abbreviated Scale of Intelligence (WASI).Results\nRobust regression revealed a significant main effect of diagnosis on discrimination threshold (robust F = 6.76, p = .001). Post-hoc comparisons revealed that patients with a schizophrenia spectrum disorder (mean = 14%, SD = 0.08) had higher thresholds compared to healthy controls (mean = 10.8%, SD = 0.07, β = 0.35, t = 3.4, p = .002), as did patients with bipolar disorder (12.23%, SD = 0.07, β = 0.21, t = 2.42, p = .04). There was no significant difference between bipolar disorder and schizophrenia (β = −0.14, t = −1.2, p = .45). Linear models revealed negative associations between IQ and threshold across all participants when controlling for diagnostic group (β = −0.3, t = −3.43, p = .0007). This association was found within healthy controls (t = −3.72, p = .0003) and patients with bipolar disorder (t = −2.53, p = .015), and no significant group by IQ interaction on threshold (F = 0.044, p = .97). There were no significant associations between PANSS domain scores and discrimination threshold.Conclusion\nPatients with schizophrenia spectrum or bipolar disorders exhibited higher visual discrimination thresholds than healthy controls, supporting early visual deficits among patients with severe mental illness. Discrimination threshold was negatively associated with IQ among healthy controls and bipolar disorder patients. These findings elucidate perception-related disease mechanisms in severe mental illness, which warrants replication in independent samples.\n",
-      "alternativeAbstracts": {},
-      "alternativeTitles": {
-        "en": "ENEngelskEnglishVisual processing deficits in patients with schizophrenia spectrum and bipolar disorders and associations with psychotic symptoms, and intellectual abilities"
-      },
-      "language": "http://lexvo.org/id/iso639-3/eng",
-      "mainTitle": "Visual processing deficits in patients with schizophrenia spectrum and bipolar disorders and associations with psychotic symptoms, and intellectual abilities",
-      "publicationDate": {
-        "type": "PublicationDate",
-        "year": "2023"
-      },
-      "reference": {
-        "type": "Reference",
-        "doi": "https://doi.org/10.3233/978-1-61499-862-4-441",
-        "publicationContext": {
-          "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
-          "type": "Anthology",
-          "entityDescription": {
-            "type": "EntityDescription",
-            "contributors": [
-              {
-                "type": "Contributor",
-                "affiliations": [
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-                    "type": "Organization",
-                    "countryCode": "NO",
-                    "labels": {
-                      "nb": "Institutt for IKT og realfag",
-                      "en": "Department of ICT and Natural Sciences"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-                    "type": "Organization",
-                    "countryCode": "IQ",
-                    "labels": {
-                      "nn": "Al-Iraqia University",
-                      "nb": "Al-Iraqia University",
-                      "en": "Al-Iraqia University"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-                    "type": "Organization",
-                    "countryCode": "NO",
-                    "labels": {
-                      "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
-                      "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
-                    "type": "Organization",
-                    "countryCode": "NO",
-                    "labels": {
-                      "en": "Norwegian Defence University College",
-                      "nb": "Forsvarets høgskole"
-                    }
-                  }
-                ],
-                "correspondingAuthor": false,
-                "identity": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
-                  "type": "Identity",
-                  "name": "Kjetil Møkkelgjerd",
-                  "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
-                  "verificationStatus": "Verified"
-                },
-                "role": {
-                  "type": "Creator"
-                },
-                "sequence": 1
-              }
-            ],
-            "description": "Min beskrivelse",
-            "mainTitle": "Kjetils kapittel",
-            "reference": {
-              "type": "Reference",
-              "publicationContext": {
-                "type": "Book",
-                "publisher": {
-                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
-                  "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
-                  "type": "Publisher",
-                  "valid": true
-                },
-                "series": {
-                  "type": "Series",
-                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
-                  "identifier": "B24919B5-5DC4-4787-8D84-7922852E1073",
-                  "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
-                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
-                  "printIssn": "0809-6058",
-                  "scientificValue": "Unassigned"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "handle": "https://hdl.handle.net/10852/105159",
-    "identifier": "018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2",
-    "modelVersion": "0.20.54",
-    "nviType": "NonNviCandidate",
-    "publishedDate": "2023-09-20T16:31:48Z",
-    "publisher": {
-      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
-      "type": "Organization"
-    },
-    "resourceOwner": {
-      "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
-    },
-    "fundings": [
-      {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/1234",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "1234",
-        "labels": {
-          "nb": "Tap av natur som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
-          "type": "FundingSource",
-          "identifier": "NFR",
-          "labels": {
-            "nb": "Norges forskningsråd",
-            "en": "Research Council of Norway (RCN)"
-          }
-        }
-      },
-      {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/3333",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "3333",
-        "labels": {
-          "nb": "Tap av Kaptial som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/CAPS",
-          "type": "FundingSource",
-          "identifier": "CAPS",
-          "labels": {
-            "nb": "All Kaptial",
-            "en": "All Caps"
-          }
-        }
-      },
-      {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/12343",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "12345",
-        "labels": {
-          "nb": "Tap av natur som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
-          "type": "FundingSource",
-          "identifier": "NFR",
-          "labels": {
-            "nb": "Norges forskningsråd",
-            "en": "Research Council of Norway (RCN)"
-          }
-        }
-      }
-    ],
-    "status": "PUBLISHED",
-    "hasRelation": {
-      "name": "partOf",
-      "parent": "018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4"
     }
   },
   {
@@ -5234,8 +4992,254 @@
         }
       }
     ],
-    "hasRelation": {
+    "joinField": {
       "name": "hasParts"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "2129196"
+      }
+    ],
+    "filesStatus": "hasPublicFiles",
+    "associatedArtifacts": [
+      {
+        "type": "UnPublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
+        "publishedDate": "2023-11-06T07:47:54.580766901Z",
+        "publisherAuthority": false,
+        "size": 1578503,
+        "visibleForNonOwner": false
+      },
+      {
+        "type": "PublishedFile",
+        "administrativeAgreement": false,
+        "identifier": "5a8a8e75-4a13-483eec-8014-werd75eb468",
+        "license": {
+          "type": "License",
+          "value": "https://creativecommons.org/licenses/by/4.0",
+          "name": "CC-BY",
+          "labels": {
+            "en": "Creative Commons - Attribution",
+            "nb": "Creative Commons - Navngivelse"
+          }
+        },
+        "mimeType": "application/pdf",
+        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
+        "publishedDate": "2023-11-06T07:47:54.580766901Z",
+        "publisherAuthority": false,
+        "size": 1578503,
+        "visibleForNonOwner": true
+      }
+    ],
+    "createdDate": "2023-09-20T16:31:48Z",
+    "contributorOrganizations": [
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.00.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
+    ],
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "Objective\nLow-level sensory disruption is hypothesized as a precursor to clinical and cognitive symptoms in severe mental disorders. We compared visual discrimination performance in patients with schizophrenia spectrum disorder or bipolar disorder with healthy controls, and investigated associations with clinical symptoms and IQ.Methods\nPatients with schizophrenia spectrum disorder (n = 32), bipolar disorder (n = 55) and healthy controls (n = 152) completed a computerized visual discrimination task. Participants responded whether the latter of two consecutive grids had higher or lower spatial frequency, and discrimination thresholds were estimated using an adaptive maximum likelihood procedure. Case-control differences in threshold were assessed using linear regression, F-test and post-hoc pair-wise comparisons. Linear models were used to test for associations between visual discrimination threshold and psychotic symptoms derived from the PANSS and IQ assessed using the Matrix Reasoning and Vocabulary subtests from the Wechsler Abbreviated Scale of Intelligence (WASI).Results\nRobust regression revealed a significant main effect of diagnosis on discrimination threshold (robust F = 6.76, p = .001). Post-hoc comparisons revealed that patients with a schizophrenia spectrum disorder (mean = 14%, SD = 0.08) had higher thresholds compared to healthy controls (mean = 10.8%, SD = 0.07, β = 0.35, t = 3.4, p = .002), as did patients with bipolar disorder (12.23%, SD = 0.07, β = 0.21, t = 2.42, p = .04). There was no significant difference between bipolar disorder and schizophrenia (β = −0.14, t = −1.2, p = .45). Linear models revealed negative associations between IQ and threshold across all participants when controlling for diagnostic group (β = −0.3, t = −3.43, p = .0007). This association was found within healthy controls (t = −3.72, p = .0003) and patients with bipolar disorder (t = −2.53, p = .015), and no significant group by IQ interaction on threshold (F = 0.044, p = .97). There were no significant associations between PANSS domain scores and discrimination threshold.Conclusion\nPatients with schizophrenia spectrum or bipolar disorders exhibited higher visual discrimination thresholds than healthy controls, supporting early visual deficits among patients with severe mental illness. Discrimination threshold was negatively associated with IQ among healthy controls and bipolar disorder patients. These findings elucidate perception-related disease mechanisms in severe mental illness, which warrants replication in independent samples.\n",
+      "alternativeAbstracts": {},
+      "alternativeTitles": {
+        "en": "ENEngelskEnglishVisual processing deficits in patients with schizophrenia spectrum and bipolar disorders and associations with psychotic symptoms, and intellectual abilities"
+      },
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Visual processing deficits in patients with schizophrenia spectrum and bipolar disorders and associations with psychotic symptoms, and intellectual abilities",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2023"
+      },
+      "reference": {
+        "type": "Reference",
+        "doi": "https://doi.org/10.3233/978-1-61499-862-4-441",
+        "publicationContext": {
+          "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "contributors": [
+              {
+                "type": "Contributor",
+                "affiliations": [
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
+                    "type": "Organization",
+                    "countryCode": "NO",
+                    "labels": {
+                      "nb": "Institutt for IKT og realfag",
+                      "en": "Department of ICT and Natural Sciences"
+                    }
+                  },
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
+                    "type": "Organization",
+                    "countryCode": "IQ",
+                    "labels": {
+                      "nn": "Al-Iraqia University",
+                      "nb": "Al-Iraqia University",
+                      "en": "Al-Iraqia University"
+                    }
+                  },
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
+                    "type": "Organization",
+                    "countryCode": "NO",
+                    "labels": {
+                      "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
+                      "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
+                    }
+                  },
+                  {
+                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
+                    "type": "Organization",
+                    "countryCode": "NO",
+                    "labels": {
+                      "en": "Norwegian Defence University College",
+                      "nb": "Forsvarets høgskole"
+                    }
+                  }
+                ],
+                "correspondingAuthor": false,
+                "identity": {
+                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+                  "type": "Identity",
+                  "name": "Kjetil Møkkelgjerd",
+                  "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+                  "verificationStatus": "Verified"
+                },
+                "role": {
+                  "type": "Creator"
+                },
+                "sequence": 1
+              }
+            ],
+            "description": "Min beskrivelse",
+            "mainTitle": "Kjetils kapittel",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
+                  "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+                  "type": "Publisher",
+                  "valid": true
+                },
+                "series": {
+                  "type": "Series",
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
+                  "identifier": "B24919B5-5DC4-4787-8D84-7922852E1073",
+                  "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
+                  "printIssn": "0809-6058",
+                  "scientificValue": "Unassigned"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "handle": "https://hdl.handle.net/10852/105159",
+    "identifier": "018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2",
+    "modelVersion": "0.20.54",
+    "nviType": "NonNviCandidate",
+    "publishedDate": "2023-09-20T16:31:48Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "uio@185.90.0.0",
+      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
+    },
+    "fundings": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/1234",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-12-31T23:00:00Z",
+        "activeTo": "2019-12-31T23:00:00Z",
+        "identifier": "1234",
+        "labels": {
+          "nb": "Tap av natur som finansiell risiko"
+        },
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/3333",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-12-31T23:00:00Z",
+        "activeTo": "2019-12-31T23:00:00Z",
+        "identifier": "3333",
+        "labels": {
+          "nb": "Tap av Kaptial som finansiell risiko"
+        },
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/CAPS",
+          "type": "FundingSource",
+          "identifier": "CAPS",
+          "labels": {
+            "nb": "All Kaptial",
+            "en": "All Caps"
+          }
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/12343",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-12-31T23:00:00Z",
+        "activeTo": "2019-12-31T23:00:00Z",
+        "identifier": "12345",
+        "labels": {
+          "nb": "Tap av natur som finansiell risiko"
+        },
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      }
+    ],
+    "status": "PUBLISHED",
+    "joinField": {
+      "name": "partOf",
+      "parent": "018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4"
     }
   }
 ]
