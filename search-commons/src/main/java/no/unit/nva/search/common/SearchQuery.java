@@ -26,12 +26,12 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import no.unit.nva.search.common.builder.OpensearchQueryAcrossFields;
-import no.unit.nva.search.common.builder.OpensearchQueryExists;
-import no.unit.nva.search.common.builder.OpensearchQueryFuzzyKeyword;
-import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
-import no.unit.nva.search.common.builder.OpensearchQueryRange;
-import no.unit.nva.search.common.builder.OpensearchQueryText;
+import no.unit.nva.search.common.builder.AcrossFieldsQuery;
+import no.unit.nva.search.common.builder.ExistsQuery;
+import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
+import no.unit.nva.search.common.builder.KeywordQuery;
+import no.unit.nva.search.common.builder.RangeQuery;
+import no.unit.nva.search.common.builder.TextQuery;
 import no.unit.nva.search.common.constant.ErrorMessages;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.records.ResponseFormatter;
@@ -170,13 +170,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
-            case DATE, NUMBER -> new OpensearchQueryRange<K>().buildQuery(key, value);
-            case KEYWORD -> new OpensearchQueryKeyword<K>().buildQuery(key, value);
-            case FUZZY_KEYWORD -> new OpensearchQueryFuzzyKeyword<K>().buildQuery(key, value);
-            case TEXT -> new OpensearchQueryText<K>().buildQuery(key, value);
+            case DATE, NUMBER -> new RangeQuery<K>().buildQuery(key, value);
+            case KEYWORD -> new KeywordQuery<K>().buildQuery(key, value);
+            case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, value);
+            case TEXT -> new TextQuery<K>().buildQuery(key, value);
             case FREE_TEXT -> Functions.queryToEntry(key, builderSearchAllQuery(key));
-            case ACROSS_FIELDS -> new OpensearchQueryAcrossFields<K>().buildQuery(key, value);
-            case EXISTS -> new OpensearchQueryExists<K>().buildQuery(key, value);
+            case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
+            case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());

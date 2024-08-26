@@ -3,13 +3,13 @@ package no.unit.nva.search.common;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search.importcandidate.ImportCandidateSort;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
-import no.unit.nva.search.common.builder.OpensearchQueryRange;
 import no.unit.nva.search.resource.ResourceParameter;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class UntouchedHeroesTest {
 
     @Test
     void invalidRangeQueryMust() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new RangeQuery<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, "test")
@@ -34,7 +34,7 @@ class UntouchedHeroesTest {
 
     @Test
     void invalidRangeQueryMustNot() {
-        var queryRange = new OpensearchQueryRange<ResourceParameter>();
+        var queryRange = new RangeQuery<ResourceParameter>();
         assertThrows(
             IllegalArgumentException.class,
             () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test")

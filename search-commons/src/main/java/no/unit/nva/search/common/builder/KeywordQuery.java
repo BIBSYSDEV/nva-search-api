@@ -17,7 +17,7 @@ import org.opensearch.index.query.TermsQueryBuilder;
 /**
  * @author Stig Norland
  */
-public class OpensearchQueryKeyword<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class KeywordQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
 
     public static final String KEYWORD_ALL = "KeywordAll-";
     public static final String KEYWORD_ANY = "KeywordAny-";

@@ -51,8 +51,8 @@ import java.util.stream.Stream;
 import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
 import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.builder.OpensearchQueryAcrossFields;
-import no.unit.nva.search.common.builder.OpensearchQueryKeyword;
+import no.unit.nva.search.common.builder.AcrossFieldsQuery;
+import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
@@ -161,7 +161,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(TicketParameter key) {
         return hasAssigneeAndOnlyStatusNew()
             ? Stream.empty()    // we cannot query status New here, it is done together with assignee.
-            : new OpensearchQueryKeyword<TicketParameter>().buildQuery(key, parameters().get(key).as());
+            : new KeywordQuery<TicketParameter>().buildQuery(key, (String) parameters().get(key).as());
     }
 
 
@@ -174,7 +174,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             ? filterBuilder.getCurrentUser()
             : parameters().get(ASSIGNEE).toString();
 
-        var builtQuery = new OpensearchQueryAcrossFields<TicketParameter>()
+        var builtQuery = new AcrossFieldsQuery<TicketParameter>()
             .buildQuery(ASSIGNEE, searchByUserName);
 
         if (hasStatusNew()) {       // we'll query assignee and status New here....
@@ -191,7 +191,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             : key;
 
         return
-            new OpensearchQueryKeyword<TicketParameter>().buildQuery(searchKey, parameters().get(key).as())
+            new KeywordQuery<TicketParameter>().buildQuery(searchKey, (String) parameters().get(key).as())
                 .map(query -> Map.entry(key, query.getValue()));
 
     }
