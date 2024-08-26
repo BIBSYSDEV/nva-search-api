@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Stig Norland
  */
-
+@SuppressWarnings("PMD.GodClass")
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);

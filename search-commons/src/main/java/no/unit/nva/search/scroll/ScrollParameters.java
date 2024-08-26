@@ -86,7 +86,7 @@ public enum ScrollParameters implements ParameterKey {
     }
 
     @Override
-    public ParameterKey subquery() {
+    public ParameterKey subQuery() {
         return null;
     }
 

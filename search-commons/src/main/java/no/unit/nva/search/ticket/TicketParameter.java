@@ -224,7 +224,7 @@ public enum TicketParameter implements ParameterKey {
     }
 
     @Override
-    public ParameterKey subquery() {
+    public ParameterKey subQuery() {
         return null;
     }
 

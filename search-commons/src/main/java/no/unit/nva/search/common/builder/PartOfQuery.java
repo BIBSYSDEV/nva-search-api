@@ -25,13 +25,13 @@ public class PartOfQuery <K extends Enum<K> & ParameterKey> extends AbstractBuil
 
     private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
     var builder =
-        new HasParentQueryBuilder("hasParts", getSubQuery((K) key.subquery(), values), true);
+        new HasParentQueryBuilder("hasParts", getSubQuery((K) key.subQuery(), values), true);
         return Stream.of(builder);
     }
 
     private Stream<QueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
     var builder =
-        new HasParentQueryBuilder("hasParts", getSubQuery((K) key.subquery(), values), true);
+        new HasParentQueryBuilder("hasParts", getSubQuery((K) key.subQuery(), values), true);
         return Stream.of(builder);
 
     }

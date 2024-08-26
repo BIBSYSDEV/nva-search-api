@@ -274,7 +274,7 @@ public enum ResourceParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
-    private final ParameterKey subquery;
+    private final ParameterKey subQueryReference;
 
     ResourceParameter(ParameterKind kind) {
         this(kind, ALL_OF, null, null, null, null,null);
@@ -318,7 +318,7 @@ public enum ResourceParameter implements ParameterKey {
             ? keyPattern
             : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
-        this.subquery = subquery;
+        this.subQueryReference = subquery;
     }
 
     @Override
@@ -374,8 +374,8 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     @Override
-    public ParameterKey subquery() {
-        return subquery;
+    public ParameterKey subQuery() {
+        return subQueryReference;
     }
 
     @Override

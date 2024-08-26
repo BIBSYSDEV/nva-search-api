@@ -207,7 +207,7 @@ public enum ImportCandidateParameter implements ParameterKey {
     }
 
     @Override
-    public ParameterKey subquery() {
+    public ParameterKey subQuery() {
         return null;
     }
 
