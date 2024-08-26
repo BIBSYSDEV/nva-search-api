@@ -24,8 +24,8 @@ import static no.unit.nva.search.common.constant.Words.PAGES;
 import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.search.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search.common.constant.Words.RESOURCES;
 import static no.unit.nva.search.common.constant.Words.REFERENCE;
+import static no.unit.nva.search.common.constant.Words.RESOURCES;
 import static no.unit.nva.search.common.constant.Words.SLASH;
 import static no.unit.nva.search.common.constant.Words.SPACE;
 import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -52,14 +52,14 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,6 +93,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+import nva.commons.core.paths.UriWrapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -396,17 +397,17 @@ class ResourceClientTest {
     @ParameterizedTest
     @MethodSource("uriPagingProvider")
     void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
-
-        var response =
-            ResourceSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
-                .doSearch(searchClient);
+    var response =
+        ResourceSearchQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .validate()
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -417,9 +418,11 @@ class ResourceClientTest {
         logger.debug(pagedSearchResourceDto.id().toString());
     }
 
-    @ParameterizedTest
-    @MethodSource("uriProvider")
-    void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
+  // TODO: Remove duplicate test?
+  @ParameterizedTest
+  @MethodSource("uriProvider")
+  void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount)
+      throws ApiGatewayException {
 
         var response =
             ResourceSearchQuery.builder()
@@ -444,6 +447,168 @@ class ResourceClientTest {
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
     }
+
+  @Test
+  void shouldFindAnthologyWithChapters() throws ApiGatewayException {
+    // Given that a parent document exists of type BookAnthology,
+    // and the parent document has two children of type AcademicChapter,
+    // when a query filters by hasParts of type AcademicChapter,
+    // then one document should be returned,
+    // and the returned document should be of type BookAnthology,
+    // and the returned document should have the ID of the parent document.
+
+    var uri =
+        UriWrapper.fromUri("https://x.org/?instanceTypeHasParts=AcademicChapter&from=0&size=20")
+            .getUri();
+    var expectedHits = 1;
+    var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedSearchResourceDto = response.toPagedResponse();
+    var document = pagedSearchResourceDto.hits().get(0);
+    var actualId = document.get("identifier").asText();
+
+    assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+    assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+    assertThat(actualId, is(equalTo(expectedParentIdSuffix)));
+  }
+
+  @Test
+  void shouldFindDocumentsWithParent() throws ApiGatewayException {
+    // Given that a parent document exists,
+    // and the parent document has two children,
+    // when a query filters by HAS_PARENT=true,
+    // then two child documents should be returned,
+    // and the parent ID should be found in each child document.
+
+    var uri = UriWrapper.fromUri("https://x.org/?HAS_PARENT=true&from=0&size=20").getUri();
+    var expectedHits = 2;
+    var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedSearchResourceDto = response.toPagedResponse();
+    var document = pagedSearchResourceDto.hits().get(0);
+    var actualId = document.get("identifier").asText();
+
+    assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+    assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+    assertThat(actualId, is(equalTo(expectedParentIdSuffix)));
+  }
+
+  @Test
+  void shouldFindDocumentsWithChildren() throws ApiGatewayException {
+    // Given that a parent document with two children exists,
+    // and the parent document has two children,
+    // when a query filters by HAS_CHILDREN=true,
+    // then one document should be returned,
+    // and the returned document should have the ID of the parent document.
+
+    var uri = UriWrapper.fromUri("https://x.org/?HAS_PARENT=true&from=0&size=20").getUri();
+    var expectedHits = 2;
+    var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedSearchResourceDto = response.toPagedResponse();
+    var documents = pagedSearchResourceDto.hits();
+
+    for (var document : documents) {
+      var actualParentId =
+          document
+              .get("entityDescription")
+              .get("reference")
+              .get("publicationContext")
+              .get("id")
+              .asText();
+
+      assertThat(actualParentId, containsString(expectedParentIdSuffix));
+    }
+
+    assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+    assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+  }
+
+  @Test
+  void shouldFindChaptersOfBookAnthology() throws ApiGatewayException {
+    // Given that a parent document exists of type BookAnthology,
+    // and the parent document has two children of type AcademicChapter,
+    // when a query filters by partOf type BookAnthology,
+    // then two child documents should be returned,
+    // and the parent ID should be found in each child document.
+
+    var uri =
+        UriWrapper.fromUri("https://x.org/?instanceTypePartOf=BookAnthology&from=0&size=20")
+            .getUri();
+    var expectedHits = 2;
+    var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+    var response =
+        ResourceSearchQuery.builder()
+            .fromQueryParameters(queryToMapEntries(uri))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(searchClient);
+
+    var pagedSearchResourceDto = response.toPagedResponse();
+    var documents = pagedSearchResourceDto.hits();
+
+    for (var document : documents) {
+      var actualParentId =
+          document
+              .get("entityDescription")
+              .get("reference")
+              .get("publicationContext")
+              .get("id")
+              .asText();
+
+      var actualInstanceType =
+          document
+              .get("entityDescription")
+              .get("reference")
+              .get("publicationInstance")
+              .get("type")
+              .asText();
+
+      assertThat(actualParentId, containsString(expectedParentIdSuffix));
+      assertThat(actualInstanceType, is(equalTo("AcademicChapter")));
+    }
+
+    assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+    assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+  }
 
     @ParameterizedTest
     @MethodSource("uriProvider")

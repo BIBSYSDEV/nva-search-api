@@ -1,16 +1,13 @@
 package no.unit.nva.search.common.builder;
 
+import java.util.Map;
+import java.util.stream.Stream;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
 import org.apache.lucene.search.join.ScoreMode;
-import org.opensearch.index.query.InnerHitBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.join.query.HasChildQueryBuilder;
-
-
-import java.util.Map;
-import java.util.stream.Stream;
 
 public class HasPartsQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
 
@@ -28,14 +25,14 @@ public class HasPartsQuery<K extends Enum<K> & ParameterKey> extends AbstractBui
 
 
     private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
-        var builder = new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None)
-            .innerHit(new InnerHitBuilder());
+    var builder =
+        new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None);
         return Stream.of(builder);
     }
 
     private Stream<QueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
-        var builder = new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None)
-            .innerHit(new InnerHitBuilder());
+    var builder =
+        new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None);
         return Stream.of(builder);
 
     }

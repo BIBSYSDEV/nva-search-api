@@ -3547,1699 +3547,373 @@
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
-    "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
-    "filesStatus": "hasPublicFiles",
-    "associatedArtifacts": [
+    "id": "https://api.dev.nva.aws.unit.no/publication/0190554a46d9-41780102-675d-43ba-81df-17168d78fa22",
+    "additionalIdentifiers": [
       {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "79e7070e-1ae9-4ecb-affa-0d825c5f07f1",
-        "license": {
-          "type": "License",
-          "value": "https://creativecommons.org/licenses/by-nc-nd/4.0",
-          "name": "CC-NC-ND",
-          "labels": {
-            "en": "Creative Commons - Attribution-NonCommercial-NoDerivs",
-            "nb": "Creative Commons - Navngivelse-IkkeKommersiell-IngenBearbeidelser"
-          }
-        },
-        "mimeType": "image/jpeg",
-        "name": "osteloff.jpg",
-        "publishedDate": "2023-10-30T14:08:09.021575617Z",
-        "publisherAuthority": false,
-        "size": 4656,
-        "visibleForNonOwner": true
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "853343"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "FORSKDOK",
+        "value": "r07008912"
       }
     ],
-    "createdDate": "2023-10-30T13:40:21.110219260Z",
-    "contributorOrganizations": [
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-    ],
+    "createdDate": "2007-02-12T00:00:00Z",
     "entityDescription": {
       "type": "EntityDescription",
+      "abstract": "(Abstract): This chapter's point of departure is that business problems too often are approached in a very narrow manner, due to what we call the inclination of techno-centrism. It involves that we may ignore solutions that are better and more sustainable in the long run. Three additional dimensions for formulation and resolution of complex business-related decision problems are explore, and we argue that these are necessary as complements to the technical dimension - (1) the systemic dimension, (2) the social dimension and (3) the existential dimension. We argue that ethical reflection may create more awareness around these problems and as a consequence be part of the solution. Finally, we present the outline of a new course in business ethics that aims to counterbalance the techno-centricity in contemporary business education, and hopefully this may be seen as a new direction for business ethics along the lines of student-centricity and positive psychology, which may improve the education of business students.",
       "alternativeAbstracts": {},
       "contributors": [
         {
           "type": "Contributor",
-          "affiliations": [
-            {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-              "type": "Organization",
-              "countryCode": "NO",
-              "labels": {
-                "nb": "Institutt for IKT og realfag",
-                "en": "Department of ICT and Natural Sciences"
-              }
-            },
-            {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-              "type": "Organization",
-              "countryCode": "IQ",
-              "labels": {
-                "nn": "Al-Iraqia University",
-                "nb": "Al-Iraqia University",
-                "en": "Al-Iraqia University"
-              }
-            },
-            {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-              "type": "Organization",
-              "countryCode": "NO",
-              "labels": {
-                "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
-                "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
-              }
-            },
-            {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
-              "type": "Organization",
-              "countryCode": "NO",
-              "labels": {
-                "en": "Norwegian Defence University College",
-                "nb": "Forsvarets høgskole"
-              }
-            }
-          ],
           "correspondingAuthor": false,
           "identity": {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326210",
             "type": "Identity",
-            "name": "Kjetil Møkkelgjerd",
-            "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
+            "name": "Knut Johannessen Ims",
             "verificationStatus": "Verified"
           },
           "role": {
             "type": "Creator"
           },
           "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326249",
+            "type": "Identity",
+            "name": "Lars Jacob Tynes Pedersen",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Søren Wenstøp",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
         }
       ],
-      "description": "Min beskrivelse",
-      "mainTitle": "Kjetils kapittel",
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "The Solution: Business Ethics! But what was the problem?",
       "publicationDate": {
         "type": "PublicationDate",
-        "day": "3",
-        "month": "10",
-        "year": "2023"
+        "year": "2006"
       },
       "reference": {
         "type": "Reference",
         "publicationContext": {
-          "type": "Book",
-          "publisher": {
-            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
-            "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
-            "type": "Publisher",
-            "valid": true
-          },
-          "series": {
-            "type": "Series",
-            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
-            "identifier": "B24919B5-5DC4-4787-8D84-7922852E1073",
-            "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
-            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
-            "printIssn": "0809-6058",
-            "scientificValue": "Unassigned"
+          "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+          "type": "Anthology",
+          "entityDescription": {
+            "type": "EntityDescription",
+            "mainTitle": "Information technology, decision making and learning in a business management context: A Festschrift in honour of Anna Mette Fuglseth",
+            "reference": {
+              "type": "Reference",
+              "publicationContext": {
+                "type": "Book",
+                "publisher": {
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006",
+                  "type": "Publisher",
+                  "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "isbnPrefix": "978-82-450",
+                  "name": "Fagbokforlaget",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "scientificValue": "LevelOne",
+                  "valid": true,
+                  "year": "2006"
+                },
+                "revision": "Revised"
+              }
+            }
           }
         },
         "publicationInstance": {
           "type": "AcademicChapter",
           "pages": {
-            "type": "Range"
+            "type": "Range",
+            "begin": "248",
+            "end": "248"
           }
         }
-      }
+      },
+      "tags": [
+        "Formulation",
+        "Ethics",
+        "Etikk",
+        "Formulering",
+        "Education"
+      ]
     },
-    "fundings": [
+    "identifier": "0190554a46d9-41780102-675d-43ba-81df-17168d78fa22",
+    "importDetail": [
       {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/296896",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "296896",
-        "labels": {
-          "nb": "Tap av natur som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
-          "type": "FundingSource",
-          "identifier": "NFR",
-          "labels": {
-            "nb": "Norges forskningsråd",
-            "en": "Research Council of Norway (RCN)"
-          }
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T16:04:09.561875833Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T15:08:45.424688625Z",
+        "importSource": {
+          "type": "ImportSource"
         }
       }
     ],
-    "identifier": "018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
-    "modelVersion": "0.20.54",
-    "modifiedDate": "2023-11-01T14:03:13.959722824Z",
-    "nviType": "NonNviCandidate",
-    "projects": [
-      {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/project/14334813",
-        "type": "ResearchProject",
-        "name": "Utvikling av osteloffen"
-      }
-    ],
-    "publishedDate": "2023-10-30T14:08:09.167891227Z",
+    "modelVersion": "0.23.2",
+    "modifiedDate": "2024-07-09T15:08:45.432451513Z",
+    "publishedDate": "2007-02-12T00:00:00Z",
     "publisher": {
       "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
       "type": "Organization"
     },
     "resourceOwner": {
-      "owner": "1136254@20754.0.0.0",
-      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0"
+      "owner": "nhh@191.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
     },
     "status": "PUBLISHED",
-    "topLevelOrganizations": [
-      {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0",
-        "type": "Organization",
-        "countryCode": "NO",
-        "labels": {
-          "en": "Norwegian University of Science and Technology",
-          "nb": "Norges teknisk-naturvitenskapelige universitet",
-          "nn": "Noregs teknisk-naturvitskaplege universitet"
-        },
-        "hasPart": [
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.35.0.0",
-            "type": "Organization",
-            "acronym": "KD-ENHETER",
-            "labels": {
-              "nb": "Enheter under Kunnskapdepartementet og Utdanningdirektoratet"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.0.0",
-            "type": "Organization",
-            "acronym": "AD",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.45.0",
-                "type": "Organization",
-                "acronym": "AD-ID",
-                "labels": {
-                  "nb": "Institutt for design",
-                  "en": "Department of Design"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.50.0",
-                "type": "Organization",
-                "acronym": "AD-IAP",
-                "labels": {
-                  "nb": "Institutt for arkitektur og planlegging",
-                  "en": "Department of Architecture and Planning"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.30.0",
-                "type": "Organization",
-                "acronym": "AD-KIT",
-                "labels": {
-                  "nb": "Kunstakademiet i Trondheim",
-                  "en": "Trondheim Academy of Fine Art"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.1.0",
-                "type": "Organization",
-                "acronym": "AD-ADM",
-                "labels": {
-                  "nb": "AD fakultetsadministrasjon",
-                  "en": "AD Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.55.0",
-                "type": "Organization",
-                "acronym": "AD-IAT",
-                "labels": {
-                  "nb": "Institutt for arkitektur og teknologi",
-                  "en": "Department of Architecture and Technology"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.61.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "nb": "Fakultet for arkitektur og design",
-              "en": "Faculty of Architecture and Design"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.0.0",
-            "type": "Organization",
-            "acronym": "VM",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.1.0",
-                "type": "Organization",
-                "acronym": "VM-ADM",
-                "labels": {
-                  "nb": "Vitenskapsmuseet administrasjon",
-                  "en": "Museum administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.15.15",
-                "type": "Organization",
-                "acronym": "VM-ND",
-                "labels": {
-                  "nb": "Nasjonallaboratoriene for datering",
-                  "en": "National Laboratory for Age Determination"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.10.0",
-                "type": "Organization",
-                "acronym": "VM-INH",
-                "labels": {
-                  "nb": "Institutt for naturhistorie",
-                  "en": "Department of Natural History"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.15.0",
-                "type": "Organization",
-                "acronym": "VM-SF",
-                "labels": {
-                  "nb": "Seksjon for formidling",
-                  "en": "Department of Public Outreach and Exhibitions"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.5.0",
-                "type": "Organization",
-                "acronym": "VM-IAK",
-                "labels": {
-                  "nb": "Institutt for arkeologi og kulturhistorie",
-                  "en": "Department of Archaeology and Cultural History"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.31.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "en": "NTNU University Museum",
-              "nb": "NTNU Vitenskapsmuseet"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0",
-            "type": "Organization",
-            "acronym": "MH",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.35.0",
-                "type": "Organization",
-                "acronym": "MH-IPH",
-                "hasPart": [
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.35.5",
-                    "type": "Organization",
-                    "acronym": "MH-IPH-RKB",
-                    "labels": {
-                      "nb": "RKBU Midt-Norge - Regionalt kunnskapssenter for barn og unge - psykisk helse og barnevern",
-                      "en": "Regional Centre for Child and Youth Mental Health and Child Welfare"
-                    },
-                    "partOf": {
-                      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.35.0"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.35.20",
-                    "type": "Organization",
-                    "acronym": "MH-IPH-NAK",
-                    "labels": {
-                      "nb": "Nasjonalt kompetansemiljø om utviklingshemming (NAKU)",
-                      "en": "The National Institute on Intellectual Disability and Community"
-                    },
-                    "partOf": {
-                      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.35.0"
-                    }
-                  }
-                ],
-                "labels": {
-                  "nb": "Institutt for psykisk helse",
-                  "en": "Department of Mental Health"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.80.0",
-                "type": "Organization",
-                "acronym": "MH-IHA",
-                "labels": {
-                  "nb": "Institutt for helsevitenskap Ålesund",
-                  "en": "Department of Health Sciences Ålesund"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.1.0",
-                "type": "Organization",
-                "acronym": "MH-ADM",
-                "labels": {
-                  "nb": "MH fakultetsadministrasjon",
-                  "en": "MH Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.15.0",
-                "type": "Organization",
-                "acronym": "MH-IKOM",
-                "labels": {
-                  "nb": "Institutt for klinisk og molekylær medisin",
-                  "en": "Department of Clinical and Molecular Medicine"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.30.0",
-                "type": "Organization",
-                "acronym": "MH-INB",
-                "labels": {
-                  "nb": "Institutt for nevromedisin og bevegelsesvitenskap",
-                  "en": "Department of Neuromedicine and Movement Science"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.60.0",
-                "type": "Organization",
-                "acronym": "MH-KIN",
-                "labels": {
-                  "nb": "Kavliinstitutt for nevrovitenskap",
-                  "en": "Kavli Institute for Systems Neuroscience"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.70.0",
-                "type": "Organization",
-                "acronym": "MH-IHG",
-                "hasPart": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.70.20",
-                  "type": "Organization",
-                  "acronym": "MH-IHG-OMS",
-                  "labels": {
-                    "nb": "Senter for omsorgsforskning",
-                    "en": "Center for Care Research"
-                  },
-                  "partOf": {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.70.0"
-                  }
-                },
-                "labels": {
-                  "nb": "Institutt for helsevitenskap Gjøvik",
-                  "en": "Department of Health Sciences Gjøvik"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.20.0",
-                "type": "Organization",
-                "acronym": "MH-ISM",
-                "hasPart": [
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.20.15",
-                    "type": "Organization",
-                    "acronym": "MH-ISM-HUN",
-                    "labels": {
-                      "nb": "Helseundersøkelsen i Nord-Trøndelag",
-                      "en": "The Nord-Trøndelag Health Study"
-                    },
-                    "partOf": {
-                      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.20.0"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.20.10",
-                    "type": "Organization",
-                    "acronym": "AFE",
-                    "labels": {
-                      "nb": "Allmennmedisinsk forskningsenhet i Trondheim"
-                    },
-                    "partOf": {
-                      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.20.0"
-                    }
-                  }
-                ],
-                "labels": {
-                  "nb": "Institutt for samfunnsmedisin og sykepleie",
-                  "en": "Department of Public Health and Nursing"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.25.0",
-                "type": "Organization",
-                "acronym": "MH-ISB",
-                "labels": {
-                  "nb": "Institutt for sirkulasjon og bildediagnostikk",
-                  "en": "Department of Circulation and Medical Imaging"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.65.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "nb": "Fakultet for medisin og helsevitenskap",
-              "en": "Faculty of Medicine and Health Sciences"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0",
-            "type": "Organization",
-            "acronym": "IV",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.94.0",
-                "type": "Organization",
-                "acronym": "IV-IVB",
-                "labels": {
-                  "nb": "Institutt for vareproduksjon og byggteknikk",
-                  "en": "Department of Manufacturing and Civil Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.45.0",
-                "type": "Organization",
-                "acronym": "IV-KT",
-                "labels": {
-                  "nb": "Institutt for konstruksjonsteknikk",
-                  "en": "Department of Structural Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.90.0",
-                "type": "Organization",
-                "acronym": "IV-IGP",
-                "labels": {
-                  "nb": "Institutt for geovitenskap og petroleum",
-                  "en": "Department of Geoscience and Petroleum"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.25.0",
-                "type": "Organization",
-                "acronym": "IV-EPT",
-                "labels": {
-                  "nb": "Institutt for energi- og prosessteknikk",
-                  "en": "Department of Energy and Process Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.80.0",
-                "type": "Organization",
-                "acronym": "AMOS",
-                "labels": {
-                  "nb": "Senter for autonome marine operasjoner og systemer",
-                  "en": "Centre for autonomous marine operations and systems"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.1.0",
-                "type": "Organization",
-                "acronym": "IV-ADM",
-                "labels": {
-                  "nb": "IV fakultetsadministrasjon",
-                  "en": "IV Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.92.0",
-                "type": "Organization",
-                "acronym": "IV-MTP",
-                "labels": {
-                  "nb": "Institutt for maskinteknikk og produksjon",
-                  "en": "Department of Mechanical and Industrial Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.20.0",
-                "type": "Organization",
-                "acronym": "IV-IMT",
-                "labels": {
-                  "nb": "Institutt for marin teknikk",
-                  "en": "Department of Marine Technology"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.91.0",
-                "type": "Organization",
-                "acronym": "IV-IBM",
-                "labels": {
-                  "nb": "Institutt for bygg- og miljøteknikk",
-                  "en": "Department of Civil and Environmental Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.93.0",
-                "type": "Organization",
-                "acronym": "IV-IHB",
-                "labels": {
-                  "nb": "Institutt for havromsoperasjoner og byggteknikk",
-                  "en": "Department of Ocean Operations and Civil Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.64.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "en": "Faculty of Engineering",
-              "nb": "Fakultet for ingeniørvitenskap"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.16.0.0",
-            "type": "Organization",
-            "acronym": "OD",
-            "hasPart": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.16.90.0",
-              "type": "Organization",
-              "acronym": "OD-KOMM",
-              "labels": {
-                "nb": "Kommunikasjonsavdelingen",
-                "en": "Communication Division"
-              },
-              "partOf": {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.16.0.0"
-              }
-            },
-            "labels": {
-              "nb": "Organisasjonsdirektør",
-              "en": "Director, Organization"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0",
-            "type": "Organization",
-            "acronym": "HF",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.65.0",
-                "type": "Organization",
-                "acronym": "HF-IHS",
-                "labels": {
-                  "nb": "Institutt for historiske studier",
-                  "en": "Department of Historical Studies"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.70.0",
-                "type": "Organization",
-                "acronym": "HF-IFR",
-                "labels": {
-                  "nb": "Institutt for filosofi og religionsvitenskap",
-                  "en": "Department of Philosophy and Religious Studies"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.40.0",
-                "type": "Organization",
-                "acronym": "HF-KULT",
-                "labels": {
-                  "nb": "Institutt for tverrfaglige kulturstudier",
-                  "en": "Department of Interdisciplinary Studies of Culture"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.45.0",
-                "type": "Organization",
-                "acronym": "HF-IMU",
-                "labels": {
-                  "nb": "Institutt for musikk",
-                  "en": "Department of Music"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.1.0",
-                "type": "Organization",
-                "acronym": "HF-ADM",
-                "labels": {
-                  "nb": "HF fakultetsadministrasjon",
-                  "en": "HF faculty administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.35.0",
-                "type": "Organization",
-                "acronym": "HF-IKM",
-                "labels": {
-                  "nb": "Institutt for kunst- og medievitenskap",
-                  "en": "Department of Art and Media Studies"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.60.0",
-                "type": "Organization",
-                "acronym": "HF-ISL",
-                "labels": {
-                  "nb": "Institutt for språk og litteratur",
-                  "en": "Department of Language and Literature"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.62.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "en": "Faculty of Humanities",
-              "nb": "Det humanistiske fakultet"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
-            "type": "Organization",
-            "acronym": "IE",
-            "countryCode": "NO",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.15.0",
-                "type": "Organization",
-                "acronym": "IE-IMF",
-                "labels": {
-                  "nb": "Institutt for matematiske fag",
-                  "en": "Department of Mathematical Sciences"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.1.0",
-                "type": "Organization",
-                "acronym": "IE-ADM",
-                "hasPart": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.1.20",
-                  "type": "Organization",
-                  "acronym": "IE-ADM-NSR",
-                  "labels": {
-                    "nb": "Nasjonalt senter for realfagsrekruttering",
-                    "en": "The National Centre for Science Recruitment"
-                  },
-                  "partOf": {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.1.0"
-                  }
-                },
-                "labels": {
-                  "nb": "IE fakultetsadministrasjon",
-                  "en": "IE Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.30.0",
-                "type": "Organization",
-                "acronym": "IE-IIK",
-                "labels": {
-                  "nb": "Institutt for informasjonssikkerhet og kommunikasjonsteknologi",
-                  "en": "Department of Information Security and Communication Technology"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.20.0",
-                "type": "Organization",
-                "acronym": "IE-IEL",
-                "labels": {
-                  "nb": "Institutt for elkraftteknikk",
-                  "en": "Department of Electric Power Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.25.0",
-                "type": "Organization",
-                "acronym": "IE-ITK",
-                "labels": {
-                  "nb": "Institutt for teknisk kybernetikk",
-                  "en": "Department of Engineering Cybernetics"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.35.0",
-                "type": "Organization",
-                "acronym": "IE-IES",
-                "labels": {
-                  "nb": "Institutt for elektroniske systemer",
-                  "en": "Department of Electronic Systems"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.10.0",
-                "type": "Organization",
-                "acronym": "IE-IDI",
-                "labels": {
-                  "nb": "Institutt for datateknologi og informatikk",
-                  "en": "Department of Computer Science"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-                "type": "Organization",
-                "acronym": "IE-IIR",
-                "countryCode": "NO",
-                "labels": {
-                  "nb": "Institutt for IKT og realfag",
-                  "en": "Department of ICT and Natural Sciences"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "en": "Faculty of Information Technology and Electrical Engineering",
-              "nb": "Fakultet for informasjonsteknologi og elektroteknikk"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.17.0.0",
-            "type": "Organization",
-            "acronym": "NY",
-            "labels": {
-              "nb": "Prorektor for nyskaping",
-              "en": "Pro-Rector for Innovation"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.14.0.0",
-            "type": "Organization",
-            "acronym": "UTD",
-            "hasPart": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.14.30.0",
-              "type": "Organization",
-              "acronym": "UTD-UB",
-              "labels": {
-                "nb": "NTNU Universitetsbiblioteket",
-                "en": "NTNU University Library"
-              },
-              "partOf": {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.14.0.0"
-              }
-            },
-            "labels": {
-              "nb": "Prorektor for utdanning",
-              "en": "Pro-Rector for Education"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0",
-            "type": "Organization",
-            "acronym": "NV",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.25.0",
-                "type": "Organization",
-                "acronym": "NV-IKJ",
-                "labels": {
-                  "nb": "Institutt for kjemi",
-                  "en": "Department of Chemistry"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.50.0",
-                "type": "Organization",
-                "acronym": "NV-FELLES",
-                "labels": {
-                  "nb": "Felles forskningsinfrastruktur",
-                  "en": "Research Infrastructure"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.45.0",
-                "type": "Organization",
-                "acronym": "NV-IBA",
-                "labels": {
-                  "nb": "Institutt for biologiske fag Ålesund",
-                  "en": "Department of Biological Sciences Ålesund"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.30.0",
-                "type": "Organization",
-                "acronym": "NV-IKP",
-                "labels": {
-                  "nb": "Institutt for kjemisk prosessteknologi",
-                  "en": "Department of Chemical Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.10.0",
-                "type": "Organization",
-                "acronym": "NV-IBI",
-                "labels": {
-                  "nb": "Institutt for biologi",
-                  "en": "Department of Biology"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.40.0",
-                "type": "Organization",
-                "acronym": "NV-IBF",
-                "labels": {
-                  "nb": "Institutt for bioingeniørfag",
-                  "en": "Department of Biomedical Laboratory Science"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.20.0",
-                "type": "Organization",
-                "acronym": "NV-IFY",
-                "labels": {
-                  "nb": "Institutt for fysikk",
-                  "en": "Department of Physics"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.1.0",
-                "type": "Organization",
-                "acronym": "NV-ADM",
-                "labels": {
-                  "nb": "NV fakultetsadministrasjon",
-                  "en": "NV Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.35.0",
-                "type": "Organization",
-                "acronym": "NV-IMA",
-                "labels": {
-                  "nb": "Institutt for materialteknologi",
-                  "en": "Department of Materials Science and Engineering"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.15.0",
-                "type": "Organization",
-                "acronym": "NV-IBT",
-                "labels": {
-                  "nb": "Institutt for bioteknologi og matvitenskap",
-                  "en": "Department of Biotechnology and Food Science"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.66.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "nb": "Fakultet for naturvitenskap",
-              "en": "Faculty of Natural Sciences"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.0.0",
-            "type": "Organization",
-            "acronym": "OK",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.1.0",
-                "type": "Organization",
-                "acronym": "OK-ADM",
-                "labels": {
-                  "nb": "ØK fakultetsadministrasjon",
-                  "en": "Economics and Management Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.10.0",
-                "type": "Organization",
-                "acronym": "OK-HHS",
-                "labels": {
-                  "nb": "NTNU Handelshøyskolen",
-                  "en": "NTNU Business School"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.20.0",
-                "type": "Organization",
-                "acronym": "OK-ISO",
-                "labels": {
-                  "nb": "Institutt for samfunnsøkonomi",
-                  "en": "Department of Economics"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.25.0",
-                "type": "Organization",
-                "acronym": "OK-IOT",
-                "labels": {
-                  "nb": "Institutt for industriell økonomi og teknologiledelse",
-                  "en": "Department of Industrial Economics and Technology Management"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.15.0",
-                "type": "Organization",
-                "acronym": "OK-IIF",
-                "labels": {
-                  "nb": "Institutt for internasjonal forretningsdrift",
-                  "en": "Department of International Business"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.60.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "en": "Faculty of Economics and Management",
-              "nb": "Fakultet for økonomi"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.12.0.0",
-            "type": "Organization",
-            "acronym": "RE",
-            "hasPart": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.12.1.0",
-              "type": "Organization",
-              "acronym": "RE-REK",
-              "labels": {
-                "nb": "Rektor og styre",
-                "en": "Rector and Board"
-              },
-              "partOf": {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.12.0.0"
-              }
-            },
-            "labels": {
-              "nb": "Rektor",
-              "en": "Rector"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.13.0.0",
-            "type": "Organization",
-            "acronym": "FO",
-            "labels": {
-              "nb": "Prorektor for forskning",
-              "en": "Pro-Rector for Research"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.15.0.0",
-            "type": "Organization",
-            "acronym": "OE",
-            "labels": {
-              "nb": "Økonomi- og eiendomsdirektør",
-              "en": "Director of Finance and Property"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0",
-            "type": "Organization",
-            "acronym": "SU",
-            "hasPart": [
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.80.0",
-                "type": "Organization",
-                "acronym": "SU-ILU",
-                "hasPart": [
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.80.40",
-                    "type": "Organization",
-                    "acronym": "SU-ILU-NSS",
-                    "labels": {
-                      "nb": "Nasjonalt senter for skriveopplæring og skriveforsking",
-                      "en": "The Norwegian Centre for Writing Education and Research (The Writing Centre)"
-                    },
-                    "partOf": {
-                      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.80.0"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.80.30",
-                    "type": "Organization",
-                    "acronym": "SU-ILU-NSM",
-                    "labels": {
-                      "nb": "Nasjonalt senter for matematikk i opplæringen",
-                      "en": "Norwegian Centre for Mathematics Education"
-                    },
-                    "partOf": {
-                      "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.80.0"
-                    }
-                  }
-                ],
-                "labels": {
-                  "nb": "Institutt for lærerutdanning",
-                  "en": "Department of Teacher Education"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.45.0",
-                "type": "Organization",
-                "acronym": "SU-SA",
-                "labels": {
-                  "nb": "Institutt for sosialantropologi",
-                  "en": "Department of Social Anthropology"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.40.0",
-                "type": "Organization",
-                "acronym": "SU-IPS",
-                "labels": {
-                  "nb": "Institutt for psykologi",
-                  "en": "Department of Psychology"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.1.0",
-                "type": "Organization",
-                "acronym": "SU-ADM",
-                "labels": {
-                  "nb": "SU fakultetsadministrasjon",
-                  "en": "SU Faculty Administration"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.90.0",
-                "type": "Organization",
-                "acronym": "SU-ISA",
-                "labels": {
-                  "nb": "Institutt for sosialt arbeid",
-                  "en": "Department of Social Work"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.25.0",
-                "type": "Organization",
-                "acronym": "SU-ISS",
-                "labels": {
-                  "nb": "Institutt for sosiologi og statsvitenskap",
-                  "en": "Department of Sociology and Political Science"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.70.0",
-                "type": "Organization",
-                "acronym": "SU-IPL",
-                "labels": {
-                  "nb": "Institutt for pedagogikk og livslang læring",
-                  "en": "Department of Education and Lifelong Learning"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              },
-              {
-                "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.10.0",
-                "type": "Organization",
-                "acronym": "SU-IGE",
-                "labels": {
-                  "nb": "Institutt for geografi",
-                  "en": "Department of Geography"
-                },
-                "partOf": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.67.0.0"
-                }
-              }
-            ],
-            "labels": {
-              "nb": "Fakultet for samfunns- og utdanningsvitenskap",
-              "en": "Faculty of Social and Educational Sciences"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.0.0.0"
-            }
-          }
-        ]
-      },
-      {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-        "type": "Organization",
-        "countryCode": "IQ",
-        "labels": {
-          "nn": "Al-Iraqia University1",
-          "nb": "Al-Iraqia University2",
-          "en": "Al-Iraqia University3"
-        }
-      },
-      {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
-        "type": "Organization",
-        "countryCode": "NO",
-        "labels": {
-          "en": "Norwegian Defence University College",
-          "nb": "Forsvarets høgskole"
-        },
-        "hasPart": [
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.4.0.0",
-            "type": "Organization",
-            "acronym": "KS",
-            "labels": {
-              "nb": "Krigsskolen (KS)"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.7.0.0",
-            "type": "Organization",
-            "acronym": "IFF",
-            "labels": {
-              "nb": "Institutt for forsvarsstudier"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.5.0.0",
-            "type": "Organization",
-            "acronym": "FIH",
-            "labels": {
-              "nb": "Cyberingeniørskolen"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.2.0.0",
-            "type": "Organization",
-            "acronym": "LKSK",
-            "labels": {
-              "nb": "Luftkrigsskolen (LKSK)"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.8.0.0",
-            "type": "Organization",
-            "acronym": "FSK",
-            "labels": {
-              "nb": "Institutt for militær ledelse og operasjoner"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.9.0.0",
-            "type": "Organization",
-            "acronym": "BEFAL",
-            "labels": {
-              "nb": "Befalsskolen",
-              "en": "Officer Candidate School"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          },
-          {
-            "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.3.0.0",
-            "type": "Organization",
-            "acronym": "SKSK",
-            "labels": {
-              "nb": "Sjøkrigsskolen (SKSK)"
-            },
-            "partOf": {
-              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-            }
-          }
-        ]
-      },
-      {
-        "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-        "type": "Organization",
-        "countryCode": "NO",
-        "labels": {
-          "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
-          "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
-        }
-      }
-    ],
+    "filesStatus": "noFiles",
     "joinField": {
-      "name": "hasParts"
+      "name": "partOf",
+      "parent": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8"
     }
   },
   {
     "type": "Publication",
     "publicationContextUris": [],
     "@context": "https://api.dev.nva.aws.unit.no/publication/context",
-    "id": "https://api.dev.nva.aws.unit.no/publication/018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2",
+    "id": "https://api.dev.nva.aws.unit.no/publication/0190554a2562-a0d9dff1-8c80-48cd-95ab-add9c3c5f0fb",
     "additionalIdentifiers": [
       {
         "type": "AdditionalIdentifier",
-        "sourceName": "Cristin",
-        "value": "2129196"
-      }
-    ],
-    "filesStatus": "hasPublicFiles",
-    "associatedArtifacts": [
-      {
-        "type": "UnPublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "5a8a8e75-4a13-483c-8014-8f6ed75eb468",
-        "license": {
-          "type": "License",
-          "value": "https://creativecommons.org/licenses/by/4.0",
-          "name": "CC-BY",
-          "labels": {
-            "en": "Creative Commons - Attribution",
-            "nb": "Creative Commons - Navngivelse"
-          }
-        },
-        "mimeType": "application/pdf",
-        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
-        "publishedDate": "2023-11-06T07:47:54.580766901Z",
-        "publisherAuthority": false,
-        "size": 1578503,
-        "visibleForNonOwner": false
+        "sourceName": "FORSKDOK",
+        "value": "r07009756"
       },
       {
-        "type": "PublishedFile",
-        "administrativeAgreement": false,
-        "identifier": "5a8a8e75-4a13-483eec-8014-werd75eb468",
-        "license": {
-          "type": "License",
-          "value": "https://creativecommons.org/licenses/by/4.0",
-          "name": "CC-BY",
-          "labels": {
-            "en": "Creative Commons - Attribution",
-            "nb": "Creative Commons - Navngivelse"
-          }
-        },
-        "mimeType": "application/pdf",
-        "name": "Visual+processing+deficits+in+patients+with+schizophrenia+spectrum+and+bipolar+disorders+and+associations+with+psychotic+symptoms%2C+and+intellectual+abilities.pdf",
-        "publishedDate": "2023-11-06T07:47:54.580766901Z",
-        "publisherAuthority": false,
-        "size": 1578503,
-        "visibleForNonOwner": true
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "853486"
       }
     ],
-    "createdDate": "2023-09-20T16:31:48Z",
-    "contributorOrganizations": [
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.00.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-      "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0"
-    ],
+    "createdDate": "2007-02-16T00:00:00Z",
     "entityDescription": {
       "type": "EntityDescription",
-      "abstract": "Objective\nLow-level sensory disruption is hypothesized as a precursor to clinical and cognitive symptoms in severe mental disorders. We compared visual discrimination performance in patients with schizophrenia spectrum disorder or bipolar disorder with healthy controls, and investigated associations with clinical symptoms and IQ.Methods\nPatients with schizophrenia spectrum disorder (n = 32), bipolar disorder (n = 55) and healthy controls (n = 152) completed a computerized visual discrimination task. Participants responded whether the latter of two consecutive grids had higher or lower spatial frequency, and discrimination thresholds were estimated using an adaptive maximum likelihood procedure. Case-control differences in threshold were assessed using linear regression, F-test and post-hoc pair-wise comparisons. Linear models were used to test for associations between visual discrimination threshold and psychotic symptoms derived from the PANSS and IQ assessed using the Matrix Reasoning and Vocabulary subtests from the Wechsler Abbreviated Scale of Intelligence (WASI).Results\nRobust regression revealed a significant main effect of diagnosis on discrimination threshold (robust F = 6.76, p = .001). Post-hoc comparisons revealed that patients with a schizophrenia spectrum disorder (mean = 14%, SD = 0.08) had higher thresholds compared to healthy controls (mean = 10.8%, SD = 0.07, β = 0.35, t = 3.4, p = .002), as did patients with bipolar disorder (12.23%, SD = 0.07, β = 0.21, t = 2.42, p = .04). There was no significant difference between bipolar disorder and schizophrenia (β = −0.14, t = −1.2, p = .45). Linear models revealed negative associations between IQ and threshold across all participants when controlling for diagnostic group (β = −0.3, t = −3.43, p = .0007). This association was found within healthy controls (t = −3.72, p = .0003) and patients with bipolar disorder (t = −2.53, p = .015), and no significant group by IQ interaction on threshold (F = 0.044, p = .97). There were no significant associations between PANSS domain scores and discrimination threshold.Conclusion\nPatients with schizophrenia spectrum or bipolar disorders exhibited higher visual discrimination thresholds than healthy controls, supporting early visual deficits among patients with severe mental illness. Discrimination threshold was negatively associated with IQ among healthy controls and bipolar disorder patients. These findings elucidate perception-related disease mechanisms in severe mental illness, which warrants replication in independent samples.\n",
       "alternativeAbstracts": {},
-      "alternativeTitles": {
-        "en": "ENEngelskEnglishVisual processing deficits in patients with schizophrenia spectrum and bipolar disorders and associations with psychotic symptoms, and intellectual abilities"
-      },
-      "language": "http://lexvo.org/id/iso639-3/eng",
-      "mainTitle": "Visual processing deficits in patients with schizophrenia spectrum and bipolar disorders and associations with psychotic symptoms, and intellectual abilities",
+      "contributors": [
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/326320",
+            "type": "Identity",
+            "name": "Mette Bjørndal",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 1
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 2
+        }
+      ],
+      "language": "http://lexvo.org/id/iso639-3/nob",
+      "mainTitle": "An electricity market bidding game How do students construct bids in a stylized electricity market?",
       "publicationDate": {
         "type": "PublicationDate",
-        "year": "2023"
+        "year": "2006"
       },
       "reference": {
         "type": "Reference",
-        "doi": "https://doi.org/10.3233/978-1-61499-862-4-441",
         "publicationContext": {
-          "id": "https://api.dev.nva.aws.unit.no/publication/018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4",
+          "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
           "type": "Anthology",
           "entityDescription": {
             "type": "EntityDescription",
-            "contributors": [
-              {
-                "type": "Contributor",
-                "affiliations": [
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/194.63.55.0",
-                    "type": "Organization",
-                    "countryCode": "NO",
-                    "labels": {
-                      "nb": "Institutt for IKT og realfag",
-                      "en": "Department of ICT and Natural Sciences"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/45220004.0.0.0",
-                    "type": "Organization",
-                    "countryCode": "IQ",
-                    "labels": {
-                      "nn": "Al-Iraqia University",
-                      "nb": "Al-Iraqia University",
-                      "en": "Al-Iraqia University"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0",
-                    "type": "Organization",
-                    "countryCode": "NO",
-                    "labels": {
-                      "nb": "Sikt – Kunnskapssektorens tjenesteleverandør",
-                      "en": "Sikt - Norwegian Agency for Shared Services in Education and Research"
-                    }
-                  },
-                  {
-                    "id": "https://api.dev.nva.aws.unit.no/cristin/organization/1627.0.0.0",
-                    "type": "Organization",
-                    "countryCode": "NO",
-                    "labels": {
-                      "en": "Norwegian Defence University College",
-                      "nb": "Forsvarets høgskole"
-                    }
-                  }
-                ],
-                "correspondingAuthor": false,
-                "identity": {
-                  "id": "https://api.dev.nva.aws.unit.no/cristin/person/1136254",
-                  "type": "Identity",
-                  "name": "Kjetil Møkkelgjerd",
-                  "orcId": "https://sandbox.orcid.org/0000-0003-4147-3499",
-                  "verificationStatus": "Verified"
-                },
-                "role": {
-                  "type": "Creator"
-                },
-                "sequence": 1
-              }
-            ],
-            "description": "Min beskrivelse",
-            "mainTitle": "Kjetils kapittel",
+            "mainTitle": "Information technology, decision making and learning in a business management context: A Festschrift in honour of Anna Mette Fuglseth",
             "reference": {
               "type": "Reference",
               "publicationContext": {
                 "type": "Book",
                 "publisher": {
-                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/944351B3-DC14-4F62-9939-7A2793D6F0B1/2024",
-                  "identifier": "944351B3-DC14-4F62-9939-7A2793D6F0B1",
+                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006",
                   "type": "Publisher",
-                  "valid": true
+                  "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "isbnPrefix": "978-82-450",
+                  "name": "Fagbokforlaget",
+                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+                  "scientificValue": "LevelOne",
+                  "valid": true,
+                  "year": "2006"
                 },
-                "series": {
-                  "type": "Series",
-                  "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/series/B24919B5-5DC4-4787-8D84-7922852E1073/2024",
-                  "identifier": "B24919B5-5DC4-4787-8D84-7922852E1073",
-                  "name": "Esophageal cancer, evaluation of some new strategies. Thesis",
-                  "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/nvakanal?pid=B24919B5-5DC4-4787-8D84-7922852E1073",
-                  "printIssn": "0809-6058",
-                  "scientificValue": "Unassigned"
-                }
+                "revision": "Revised"
               }
             }
           }
+        },
+        "publicationInstance": {
+          "type": "AcademicChapter",
+          "pages": {
+            "type": "Range",
+            "begin": "159",
+            "end": "174"
+          }
         }
       }
     },
-    "handle": "https://hdl.handle.net/10852/105159",
-    "identifier": "018ba39a3659-1b6c3851-55fb-4c9a-8dfe-4a005e54e2c2",
-    "modelVersion": "0.20.54",
-    "nviType": "NonNviCandidate",
-    "publishedDate": "2023-09-20T16:31:48Z",
-    "publisher": {
-      "id": "https://api.dev.nva.aws.unit.no/customer/8db4a8bd-3db5-420b-a2e4-fc17a489aa6d",
-      "type": "Organization"
-    },
-    "resourceOwner": {
-      "owner": "uio@185.90.0.0",
-      "ownerAffiliation": "https://api.sandbox.nva.aws.unit.no/cristin/organization/185.90.0.0"
-    },
-    "fundings": [
+    "identifier": "0190554a2562-a0d9dff1-8c80-48cd-95ab-add9c3c5f0fb",
+    "importDetail": [
       {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/1234",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "1234",
-        "labels": {
-          "nb": "Tap av natur som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
-          "type": "FundingSource",
-          "identifier": "NFR",
-          "labels": {
-            "nb": "Norges forskningsråd",
-            "en": "Research Council of Norway (RCN)"
-          }
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T16:04:00.994429274Z",
+        "importSource": {
+          "type": "ImportSource"
         }
       },
       {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/3333",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "3333",
-        "labels": {
-          "nb": "Tap av Kaptial som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/CAPS",
-          "type": "FundingSource",
-          "identifier": "CAPS",
-          "labels": {
-            "nb": "All Kaptial",
-            "en": "All Caps"
-          }
-        }
-      },
-      {
-        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/12343",
-        "type": "ConfirmedFunding",
-        "activeFrom": "2018-12-31T23:00:00Z",
-        "activeTo": "2019-12-31T23:00:00Z",
-        "identifier": "12345",
-        "labels": {
-          "nb": "Tap av natur som finansiell risiko"
-        },
-        "source": {
-          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
-          "type": "FundingSource",
-          "identifier": "NFR",
-          "labels": {
-            "nb": "Norges forskningsråd",
-            "en": "Research Council of Norway (RCN)"
-          }
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T14:57:22.757725669Z",
+        "importSource": {
+          "type": "ImportSource"
         }
       }
     ],
+    "modelVersion": "0.23.2",
+    "modifiedDate": "2024-07-09T14:57:22.765008163Z",
+    "publishedDate": "2007-02-16T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "nhh@191.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
+    },
     "status": "PUBLISHED",
+    "filesStatus": "noFiles",
     "joinField": {
       "name": "partOf",
-      "parent": "018b80d05df6-7ea5527d-6bf6-47fc-ae66-fc9515b568d4"
+      "parent": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8"
+    }
+  },
+  {
+    "type": "Publication",
+    "publicationContextUris": [
+      "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006"
+    ],
+    "@context": "https://api.dev.nva.aws.unit.no/publication/context",
+    "id": "https://api.dev.nva.aws.unit.no/publication/01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+    "additionalIdentifiers": [
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "Cristin",
+        "value": "856324"
+      },
+      {
+        "type": "AdditionalIdentifier",
+        "sourceName": "FORSKDOK",
+        "value": "r07008912"
+      }
+    ],
+    "createdDate": "2007-02-12T00:00:00Z",
+    "entityDescription": {
+      "type": "EntityDescription",
+      "abstract": "(Abstract): This chapter's point of departure is that business problems too often are approached in a very narrow manner, due to what we call the inclination of techno-centrism. It involves that we may ignore solutions that are better and more sustainable in the long run. Three additional dimensions for formulation and resolution of complex business-related decision problems are explore, and we argue that these are necessary as complements to the technical dimension - (1) the systemic dimension, (2) the social dimension and (3) the existential dimension. We argue that ethical reflection may create more awareness around these problems and as a consequence be part of the solution. Finally, we present the outline of a new course in business ethics that aims to counterbalance the techno-centricity in contemporary business education, and hopefully this may be seen as a new direction for business ethics along the lines of student-centricity and positive psychology, which may improve the education of business students.",
+      "alternativeAbstracts": {},
+      "language": "http://lexvo.org/id/iso639-3/eng",
+      "mainTitle": "Information technology, decision making and learning in a business management context: A Festschrift in honour of Anna Mette Fuglseth",
+      "publicationDate": {
+        "type": "PublicationDate",
+        "year": "2006"
+      },
+      "reference": {
+        "type": "Reference",
+        "publicationContext": {
+          "type": "Book",
+          "publisher": {
+            "id": "https://api.dev.nva.aws.unit.no/publication-channels-v2/publisher/D0CC505A-1A53-4AA1-B6C9-D886FE2E6351/2006",
+            "type": "Publisher",
+            "identifier": "D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+            "isbnPrefix": "978-82-450",
+            "name": "Fagbokforlaget",
+            "sameAs": "https://kanalregister.hkdir.no/publiseringskanaler/KanalForlagInfo?pid=D0CC505A-1A53-4AA1-B6C9-D886FE2E6351",
+            "scientificValue": "LevelOne",
+            "valid": true,
+            "year": "2006"
+          },
+          "revision": "Revised"
+        },
+        "publicationInstance": {
+          "type": "BookAnthology",
+          "pages": {
+            "type": "MonographPages",
+            "illustrated": false,
+            "pages": "248"
+          }
+        }
+      }
+    },
+    "identifier": "01905518408c-dba987f7-0d84-4519-a625-89605672afc8",
+    "importDetail": [
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-06-26T15:09:31.148029832Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      },
+      {
+        "type": "ImportDetail",
+        "importDate": "2024-07-09T15:24:25.113593379Z",
+        "importSource": {
+          "type": "ImportSource"
+        }
+      }
+    ],
+    "modelVersion": "0.23.2",
+    "modifiedDate": "2024-07-09T15:24:25.121670819Z",
+    "publishedDate": "2007-02-12T00:00:00Z",
+    "publisher": {
+      "id": "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478",
+      "type": "Organization"
+    },
+    "resourceOwner": {
+      "owner": "nhh@191.0.0.0",
+      "ownerAffiliation": "https://api.dev.nva.aws.unit.no/cristin/organization/191.0.0.0"
+    },
+    "status": "PUBLISHED",
+    "filesStatus": "noFiles",
+    "joinField": {
+      "name": "hasParts",
+      "parent": null
     }
   }
 ]
