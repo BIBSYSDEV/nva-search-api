@@ -35,15 +35,13 @@ public final class Patterns {
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
-    public static final String PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS =
-        "(?i)year_?reported_?should|publication_?year_?should";
-    public static final String PATTERN_IS_SHOULD = "(_?should)?";
+
     public static final String PATTERN_IS_SEARCH_ALL_KEY = "(?i)search_?all|query";
     public static final String PATTERN_IS_SELECTED_GROUP = ":$1";
     public static final String PATTERN_IS_SIZE_KEY = "(?i)per_?page|results|limit|size";
     public static final String PATTERN_IS_SORT_KEY = "(?i)order_?by|sort";
     public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort_?order|order";
-    public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*";
+    public static final String PATTERN_IS_URI = "https?://[^\\s/$.?#].[^\\s]*"; // Pattern for matching a URI
     public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
     public static final String PATTERN_IS_PIPE = "\\|";
 

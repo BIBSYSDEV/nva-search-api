@@ -93,7 +93,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
 
     private SwsResponse buildSwsResponse(Stream<JsonNode> results) {
         var hits = results
-            .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null))
+            .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null, null))
             .toList();
         return new SwsResponse(
             0,

@@ -43,6 +43,7 @@ import static no.unit.nva.search.common.enums.ParameterKind.ACROSS_FIELDS;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search.common.enums.ParameterKind.EXISTS;
+import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.HAS_PARTS;
 import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
@@ -162,7 +163,6 @@ public enum ResourceParameter implements ParameterKey {
     ID_SHOULD(TEXT, ANY_OF, IDENTIFIER_KEYWORD),
     INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null,null),
     INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS, null, null,null),
-    INSTANCE_TYPE_HAS_PARTS(HAS_PARTS, ALL_OF, INSTANCE_TYPE),
     INSTANCE_TYPE_PART_OF(PART_OF, ALL_OF, INSTANCE_TYPE),
     INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
@@ -241,13 +241,16 @@ public enum ResourceParameter implements ParameterKey {
     USER_AFFILIATION_SHOULD(TEXT, ANY_OF, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     VOCABULARY(FUZZY_KEYWORD, ALL_OF, SUBJECTS),
     VOCABULARY_EXISTS(EXISTS, ANY_OF, SUBJECTS),
-    // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null,null),
+    GET_ALL(FREE_TEXT),
+    HAS_CHILDREN(HAS_PARTS, ALL_OF, GET_ALL),
+    HAS_PARENT(PART_OF, ALL_OF, GET_ALL),
+    // Query parameters passed to SWS/Opensearch
+    AGGREGATION(IGNORED),
     NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null,null),
     NODES_INCLUDED(IGNORED),
     NODES_EXCLUDED(IGNORED),
     // Pagination parameters
-    AGGREGATION(IGNORED),
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null,null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null,null),
@@ -399,6 +402,6 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     private static boolean isSearchField(ResourceParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < AGGREGATION.ordinal();
     }
 }

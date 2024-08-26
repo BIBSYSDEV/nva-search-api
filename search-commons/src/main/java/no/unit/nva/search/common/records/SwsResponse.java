@@ -47,8 +47,11 @@ public record SwsResponse(
             String _id,
             double _score,
             JsonNode _source,
+            JsonNode inner_hits,
             List<String> sort) {
         }
+
+
     }
 
     @Transient

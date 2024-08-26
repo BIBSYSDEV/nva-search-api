@@ -3,7 +3,9 @@ package no.unit.nva.search.common.builder;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
 import org.apache.lucene.search.join.ScoreMode;
+import org.opensearch.index.query.InnerHitBuilder;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.join.query.HasChildQueryBuilder;
 
 
@@ -26,12 +28,14 @@ public class HasPartsQuery<K extends Enum<K> & ParameterKey> extends AbstractBui
 
 
     private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
-        var builder = new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None);
+        var builder = new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None)
+            .innerHit(new InnerHitBuilder());
         return Stream.of(builder);
     }
 
     private Stream<QueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
-        var builder = new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None);
+        var builder = new HasChildQueryBuilder("partOf", getSubQuery((K) key.subquery(), values), ScoreMode.None)
+            .innerHit(new InnerHitBuilder());
         return Stream.of(builder);
 
     }
@@ -44,6 +48,7 @@ public class HasPartsQuery<K extends Enum<K> & ParameterKey> extends AbstractBui
             case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key,values).findFirst().orElseThrow().getValue();
             case TEXT -> new TextQuery<K>().buildQuery(key,values).findFirst().orElseThrow().getValue();
             case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key,values).findFirst().orElseThrow().getValue();
+                case FREE_TEXT -> QueryBuilders.matchAllQuery();
             default -> throw new IllegalStateException("Unexpected value: " + key.fieldType());
         };
     }

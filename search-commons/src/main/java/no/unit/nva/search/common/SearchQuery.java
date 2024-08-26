@@ -197,7 +197,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         handleAggregation(builder, contentWrappers);
         handleSearchAfter(builder);
         handleSorting(builder);
-
+        logger.info(builder.toString());
         contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
         return contentWrappers.stream();
     }
