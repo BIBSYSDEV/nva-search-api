@@ -23,7 +23,7 @@ import org.opensearch.index.query.QueryBuilder;
  * </ul>
  * @author Stig Norland
  */
-public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
+public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey> {
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values);
 
@@ -31,14 +31,15 @@ public abstract class OpensearchQuery<K extends Enum<K> & ParameterKey> {
 
     public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String value) {
         final var values = splitAndFixMissingRangeValue(key, value);
-        return queryAsEntryStream(key, values);
+        return buildQuery(key, values);
     }
 
-    private Stream<Map.Entry<K, QueryBuilder>> queryAsEntryStream(K key, String... values) {
+    public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String... values) {
         return isSearchAny(key)
             ? buildMatchAnyKeyValuesQuery(key, values)
             : buildMatchAllValuesQuery(key, values);
     }
+
 
     private boolean isSearchAny(K key) {
         return key.searchOperator().equals(ANY_OF) || key.searchOperator().equals(NOT_ANY_OF);

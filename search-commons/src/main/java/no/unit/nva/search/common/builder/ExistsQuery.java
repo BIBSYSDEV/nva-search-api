@@ -1,6 +1,7 @@
 package no.unit.nva.search.common.builder;
 
 import no.unit.nva.search.common.enums.ParameterKey;
+import nva.commons.core.JacocoGenerated;
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.ExistsQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
@@ -18,7 +19,7 @@ import static org.opensearch.index.query.QueryBuilders.existsQuery;
 /**
  * @author Stig Norland
  */
-public class OpensearchQueryExists<K extends Enum<K> & ParameterKey> extends OpensearchQuery<K> {
+public class ExistsQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
 
     public static final String EXISTS_ANY = "ExistsAny-";
 
@@ -27,6 +28,7 @@ public class OpensearchQueryExists<K extends Enum<K> & ParameterKey> extends Ope
         return buildAnyComboMustHitQuery(key, Boolean.valueOf(values[0]));
     }
 
+    @JacocoGenerated        // not in use
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         return buildAnyComboMustHitQuery(key, Boolean.valueOf(values[0]));
