@@ -3659,6 +3659,41 @@
         "Education"
       ]
     },
+    "fundings": [
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/296896",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2018-01-01T00:00:00Z",
+        "activeTo": "2019-01-01T00:00:00Z",
+        "identifier": "296896",
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      },
+      {
+        "id": "https://api.dev.nva.aws.unit.no/verified-funding/nfr/318142",
+        "type": "ConfirmedFunding",
+        "activeFrom": "2020-01-01T00:00:00Z",
+        "activeTo": "2022-01-01T00:00:00Z",
+        "identifier": "318142",
+        "source": {
+          "id": "https://api.dev.nva.aws.unit.no/cristin/funding-sources/NFR",
+          "type": "FundingSource",
+          "identifier": "NFR",
+          "labels": {
+            "nb": "Norges forskningsråd",
+            "en": "Research Council of Norway (RCN)"
+          }
+        }
+      }
+    ],
+
     "identifier": "0190554a46d9-41780102-675d-43ba-81df-17168d78fa22",
     "importDetail": [
       {
