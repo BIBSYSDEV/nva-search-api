@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @author Stig Norland
  */
 @SuppressWarnings("PMD.GodClass")
-public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Query<K> {
+public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     private transient MediaType mediaType;
@@ -113,10 +113,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
     }
 
     @Override
-    public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient) {
+    public ResponseFormatter<K> doSearch(OpenSearchClient<?, Query<K>> queryClient) {
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
         return new ResponseFormatter<>(
-            (SwsResponse) queryClient.doSearch((Q) this),
+            (SwsResponse) queryClient.doSearch(this),
             getMediaType(),
             source,
             from().as(),
@@ -124,6 +124,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             facetPaths(),
             parameters());
     }
+
 
     public MediaType getMediaType() {
         return mediaType;
@@ -139,6 +140,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
 
     /**
      * Builds URI to query SWS based on post body.
+     *
      * @return an URI to Sws search without parameters.
      */
     public URI getNvaSearchApiUri() {
@@ -180,7 +182,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
             case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, value);
             case EXISTS -> new ExistsQuery<K>().buildQuery(key, value);
             case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
-            case PART_OF ->  new PartOfQuery<K>().buildQuery(key, value);
+            case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
             case IGNORED -> Stream.empty();
             default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
@@ -197,7 +199,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey> extends Quer
         handleAggregation(builder, contentWrappers);
         handleSearchAfter(builder);
         handleSorting(builder);
-        logger.info(builder.toString());
         contentWrappers.add(new QueryContentWrapper(builder.toString(), this.openSearchUri()));
         return contentWrappers.stream();
     }

@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import no.unit.nva.search.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 
 /**
  * Abstract class for building OpenSearch queries.
@@ -23,7 +24,7 @@ import org.opensearch.index.query.QueryBuilder;
  * </ul>
  * @author Stig Norland
  */
-public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey> {
+public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values);
 
@@ -41,6 +42,20 @@ public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey> {
     }
 
 
+    protected QueryBuilder getSubQuery(K key, String... values) {
+        return
+            switch (key.fieldType()) {
+                case KEYWORD -> new KeywordQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                case FUZZY_KEYWORD ->
+                    new FuzzyKeywordQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                case TEXT -> new TextQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                case ACROSS_FIELDS ->
+                    new AcrossFieldsQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                case FREE_TEXT -> QueryBuilders.matchAllQuery();
+                default -> throw new IllegalStateException("Unexpected value: " + key.fieldType());
+            };
+    }
+
     private boolean isSearchAny(K key) {
         return key.searchOperator().equals(ANY_OF) || key.searchOperator().equals(NOT_ANY_OF);
     }
@@ -51,7 +66,7 @@ public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey> {
 
     private String[] splitAndFixMissingRangeValue(K key, String value) {
         return isRangeMissingComma(key, value)
-            ? new String[] {value, value}
+            ? new String[]{value, value}
             : value.split(COMMA);
     }
 }

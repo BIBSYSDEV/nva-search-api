@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
  * @author Stig Norland
  */
 @SuppressWarnings({"PMD.ShortMethodName"})
-public class AsType<K extends Enum<K> & ParameterKey> {
+public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
     private final String value;
     private final K key;

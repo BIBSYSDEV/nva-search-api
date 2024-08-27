@@ -1,5 +1,6 @@
 package no.unit.nva.indexingclient.models;
 
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.SHARD_ID;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -71,7 +72,7 @@ public record IndexDocument(
     public IndexRequest toIndexRequest() {
         return new IndexRequest(getIndexName())
             .source(serializeResource(), XContentType.JSON)
-            .routing("0") // Target shard ID
+            .routing(SHARD_ID) 
             .id(getDocumentIdentifier());
     }
 

@@ -116,7 +116,7 @@ import org.apache.commons.text.CaseUtils;
  * @author Kir Truhacev
  * @author Joachim Jorgensen
  */
-public enum ResourceParameter implements ParameterKey {
+public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
     STATISTICS(IGNORED),
     // Parameters used for filtering
@@ -274,7 +274,7 @@ public enum ResourceParameter implements ParameterKey {
     private final String errorMsg;
     private final ParameterKind paramkind;
     private final Float boost;
-    private final ParameterKey subQueryReference;
+    private final ResourceParameter subQueryReference;
 
     ResourceParameter(ParameterKind kind) {
         this(kind, ALL_OF, null, null, null, null,null);
@@ -292,7 +292,7 @@ public enum ResourceParameter implements ParameterKey {
         this(kind, operator, fieldsToSearch, null, null, null,null);
     }
 
-    ResourceParameter(ParameterKind kind, FieldOperator operator, ParameterKey keys) {
+    ResourceParameter(ParameterKind kind, FieldOperator operator, ResourceParameter keys) {
         this(kind, operator, null, null, null, null, keys);
     }
 
@@ -304,7 +304,7 @@ public enum ResourceParameter implements ParameterKey {
 
     ResourceParameter(
         ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost, ParameterKey subquery) {
+        Float boost, ResourceParameter subquery) {
 
         this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
@@ -374,9 +374,10 @@ public enum ResourceParameter implements ParameterKey {
     }
 
     @Override
-    public ParameterKey subQuery() {
+    public ResourceParameter subQuery() {
         return subQueryReference;
     }
+
 
     @Override
     @JacocoGenerated

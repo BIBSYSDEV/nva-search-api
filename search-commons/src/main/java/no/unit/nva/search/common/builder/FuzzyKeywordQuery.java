@@ -19,7 +19,7 @@ import org.opensearch.index.query.TermsQueryBuilder;
 /**
  * @author Stig Norland
  */
-public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
+public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     public static final String KEYWORD_ANY = "FuzzyKeywordAny-";
     public static final String KEYWORD_ALL = "FuzzyKeywordAll-";

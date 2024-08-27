@@ -142,6 +142,7 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
 
+
     @Override
     public URI openSearchUri() {
         return

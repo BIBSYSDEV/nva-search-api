@@ -22,6 +22,8 @@ public final class ErrorMessages {
     public static final String INVALID_DATE = "Parameter '%s' has invalid value. Must be a date.";
     public static final String INVALID_BOOLEAN = "Parameter '%s' has invalid value. Must be a boolean.";
     public static final String MISSING_PARAMETER = "Parameter(s) -> [%s] -> is/are required.";
+    public static final String NOT_IMPLEMENTED_FOR = "Not implemented for ";
+
     public static final String OPERATOR_NOT_SUPPORTED = "Operator not supported";
     public static final String RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE =
         "Sorted by relevance & searchAfter are mutual exclusive.";

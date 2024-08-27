@@ -46,9 +46,9 @@ aws-apache-client = { group = 'software.amazon.awssdk', name = 'apache-client', 
 aws-lambda-java-core = { group = 'com.amazonaws', name = 'aws-lambda-java-core', version.ref = 'awsLambdaJavaCore' }
 aws-lambda-events = { group = 'com.amazonaws', name = 'aws-lambda-java-events', version.ref = 'awsLambdaEvents' }
 
-#aws-xray-recorder-sdk-core = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-core', version.ref = 'xraySdk' }
-#aws-xray-recorder-sdk-aws-sdk = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk', version.ref = 'xraySdk' }
-#aws-xray-recorder-sdk-aws-sdk-instrumentor = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk-instrumentor', version.ref = 'xraySdk' }
+aws-xray-recorder-sdk-core = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-core', version.ref = 'xraySdk' }
+aws-xray-recorder-sdk-aws-sdk = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk', version.ref = 'xraySdk' }
+aws-xray-recorder-sdk-aws-sdk-instrumentor = { group = 'com.amazonaws', name = 'aws-xray-recorder-sdk-aws-sdk-instrumentor', version.ref = 'xraySdk' }
 
 aws-apache-interceptor = { group = 'com.github.awslabs', name = 'aws-request-signing-apache-interceptor', version.ref = 'awsApacheInterceptor' }
 
@@ -104,5 +104,5 @@ logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-launcher', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javers',
     'nva-testutils', 'nva-logutils']
 opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content' ]
-#aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']
+aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']
 jena = ['jena-core', 'jena-arq']

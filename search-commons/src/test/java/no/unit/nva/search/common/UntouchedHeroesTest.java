@@ -79,7 +79,7 @@ class UntouchedHeroesTest {
     }
 
 
-    private void printEnum(Stream<ParameterKey> parameterKeyStream) {
+    private void printEnum(Stream<ParameterKey<?>> parameterKeyStream) {
         parameterKeyStream.forEach(key ->
             logger.info("|{}|{}|{}|{}|{}|",
                 key.asLowerCase(),

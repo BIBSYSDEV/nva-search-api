@@ -23,7 +23,7 @@ import org.opensearch.core.xcontent.ToXContent;
 /**
  * @author Sondre Vestad
  */
-public final class ScrollQuery extends Query<ScrollParameters> {
+public final class ScrollQuery extends Query<ScrollParameter> {
 
     private static final int MAX_PAGES = 4;
     private static final String SEARCH_SCROLL = "_search/scroll";
@@ -68,16 +68,18 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     @Override
-    public <R, Q extends Query<ScrollParameters>> ResponseFormatter<ScrollParameters> doSearch(
-        OpenSearchClient<R, Q> queryClient) {
+//    public ResponseFormatter<ScrollParameter> doSearch(OpenSearchClient<?, Query<ScrollParameter>> queryClient) {
+//        return null;
+//    }
+
+    public ResponseFormatter<ScrollParameter> doSearch(OpenSearchClient<?, Query<ScrollParameter>> queryClient) {
         var response =
-            buildSwsResponse(
-                scrollFetch(firstResponse, 0, (ScrollClient) queryClient)
-            );
+            buildSwsResponse(scrollFetch(firstResponse, 0, (OpenSearchClient<SwsResponse, Query<ScrollParameter>>) queryClient));
         return new ResponseFormatter<>(response, CSV_UTF_8);
     }
 
-    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, int level, ScrollClient scrollClient) {
+
+    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, int level, OpenSearchClient<SwsResponse, Query<ScrollParameter>> scrollClient) {
 
         if (shouldStopRecursion(level + 1, previousResponse)) {
             return previousResponse.getSearchHits().stream();

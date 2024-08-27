@@ -1,5 +1,6 @@
 package no.unit.nva.search.scroll;
 
+import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
@@ -17,6 +18,7 @@ import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.CaseUtils;
 
 /**
@@ -26,12 +28,12 @@ import org.apache.commons.text.CaseUtils;
  *
  * @author Sondre Vestad
  */
-public enum ScrollParameters implements ParameterKey {
+public enum ScrollParameter implements ParameterKey<ScrollParameter> {
     INVALID(ParameterKind.INVALID);
 
     private final ParameterKind paramkind;
 
-    ScrollParameters(ParameterKind kind) {
+    ScrollParameter(ParameterKind kind) {
         this.paramkind = kind;
     }
 
@@ -86,9 +88,10 @@ public enum ScrollParameters implements ParameterKey {
     }
 
     @Override
-    public ParameterKey subQuery() {
-        return null;
+    public ScrollParameter subQuery() {
+        throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
+
 
     @Override
     @JacocoGenerated

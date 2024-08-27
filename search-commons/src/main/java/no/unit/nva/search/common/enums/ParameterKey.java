@@ -24,7 +24,7 @@ import no.unit.nva.search.common.constant.Words;
 /**
  * @author Stig Norland
  */
-public interface ParameterKey {
+public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
     String asCamelCase();
 
     String asLowerCase();
@@ -48,9 +48,9 @@ public interface ParameterKey {
 
     String errorMessage();
 
-    ParameterKey subQuery();
+    K subQuery();
 
-    static Predicate<ParameterKey> equalTo(String name) {
+    static Predicate<ParameterKey<?>> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }
 
@@ -98,4 +98,5 @@ public interface ParameterKey {
             ? !isKeyWord[0]
             : result;
     }
+
 }
