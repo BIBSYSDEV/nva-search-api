@@ -19,6 +19,7 @@ public final class Patterns {
     public static final String PATTERN_IS_CATEGORY_NOT_KEYS =
         "(?i)(type_?not|instance_?type_?not|category_?not)$";
 
+    public static final String PATTERN_IS_BOOLEAN = "(?i)(true|false)";
     /**
      * Pattern for matching a date string. yyyy | yyyy-MM-dd | yyyy-MM-ddTHH:mm:ssZ | yyyy-MM-ddTHH:mm:ss.SSSZ
      */
@@ -34,9 +35,7 @@ public final class Patterns {
     public static final String PATTERN_IS_NONE_OR_ONE = ".?";
     public static final String PATTERN_IS_NON_EMPTY = ".+";
     public static final String PATTERN_IS_NUMBER = "[0-9]\\d*";
-    public static final String PATTERN_IS_PUBLICATION_YEAR_SHOULD_KEYS =
-        "(?i)year_?reported_?should|publication_?year_?should";
-    public static final String PATTERN_IS_SHOULD = "(_?should)?";
+
     public static final String PATTERN_IS_SEARCH_ALL_KEY = "(?i)search_?all|query";
     public static final String PATTERN_IS_SELECTED_GROUP = ":$1";
     public static final String PATTERN_IS_SIZE_KEY = "(?i)per_?page|results|limit|size";

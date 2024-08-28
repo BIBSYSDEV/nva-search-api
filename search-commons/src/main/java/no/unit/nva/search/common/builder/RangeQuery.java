@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Stig Norland
  */
-public class RangeQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
+public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     public static final String GREATER_OR_EQUAL = "GreaterOrEqual-";
     public static final String LESS_THAN = "LessThan-";

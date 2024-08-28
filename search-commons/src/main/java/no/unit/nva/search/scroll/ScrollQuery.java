@@ -23,7 +23,7 @@ import org.opensearch.core.xcontent.ToXContent;
 /**
  * @author Sondre Vestad
  */
-public final class ScrollQuery extends Query<ScrollParameters> {
+public final class ScrollQuery extends Query<ScrollParameter> {
 
     private static final int MAX_PAGES = 4;
     private static final String SEARCH_SCROLL = "_search/scroll";
@@ -68,7 +68,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
     }
 
     @Override
-    public <R, Q extends Query<ScrollParameters>> ResponseFormatter<ScrollParameters> doSearch(OpenSearchClient<R, Q> queryClient) {
+    public <R, Q extends Query<ScrollParameter>> ResponseFormatter<ScrollParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
         var response =
             buildSwsResponse(
                 scrollFetch(firstResponse, 0, (ScrollClient) queryClient)
@@ -120,7 +120,7 @@ public final class ScrollQuery extends Query<ScrollParameters> {
         private String ttl;
 
         public ScrollQuery build() {
-              return new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri);
+            return new ScrollQuery(ttl, firstResponse).withOpenSearchUri(openSearchUri);
         }
 
         public ScrollBuilder withDockerHostUri(URI uri) {

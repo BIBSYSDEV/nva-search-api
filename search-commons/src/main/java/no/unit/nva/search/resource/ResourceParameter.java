@@ -1,6 +1,7 @@
 package no.unit.nva.search.resource;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -103,6 +104,7 @@ import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.CaseUtils;
 
 /**
@@ -113,7 +115,7 @@ import org.apache.commons.text.CaseUtils;
  * @author Kir Truhacev
  * @author Joachim Jorgensen
  */
-public enum ResourceParameter implements ParameterKey {
+public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
     STATISTICS(IGNORED),
     // Parameters used for filtering
@@ -355,6 +357,11 @@ public enum ResourceParameter implements ParameterKey {
     @Override
     public String errorMessage() {
         return errorMsg;
+    }
+
+    @Override
+    public ResourceParameter subQuery() {
+        throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
 
     @Override

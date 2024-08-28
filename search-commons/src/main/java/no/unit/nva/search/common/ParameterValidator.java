@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
  * @author Stig Norland
  */
-public abstract class ParameterValidator<K extends Enum<K> & ParameterKey, Q extends SearchQuery<K>> {
+public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 

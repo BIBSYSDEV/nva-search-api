@@ -11,7 +11,7 @@ import java.net.http.HttpClient;
 import java.nio.file.Path;
 
 import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollParameters;
+import no.unit.nva.search.scroll.ScrollParameter;
 import no.unit.nva.search.scroll.ScrollQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,17 +42,17 @@ class ScrollClientTest {
         var result = scrollClient.doSearch(resourceAwsQuery);
         logger.debug(result.toString());
         assertNotNull(result);
-        assertNotNull(ScrollParameters.INVALID.asCamelCase());
-        assertNotNull(ScrollParameters.INVALID.asLowerCase());
-        assertNotNull(ScrollParameters.INVALID.errorMessage());
-        assertNotNull(ScrollParameters.INVALID.fieldBoost());
-        assertNotNull(ScrollParameters.INVALID.fieldPattern());
-        assertNotNull(ScrollParameters.INVALID.fieldPattern());
-        assertNotNull(ScrollParameters.INVALID.fieldType());
-        assertNotNull(ScrollParameters.INVALID.searchOperator());
-        assertNotNull(ScrollParameters.INVALID.searchFields(true));
-        assertNotNull(ScrollParameters.INVALID.valueEncoding());
-        assertNotNull(ScrollParameters.INVALID.valuePattern());
+        assertNotNull(ScrollParameter.INVALID.asCamelCase());
+        assertNotNull(ScrollParameter.INVALID.asLowerCase());
+        assertNotNull(ScrollParameter.INVALID.errorMessage());
+        assertNotNull(ScrollParameter.INVALID.fieldBoost());
+        assertNotNull(ScrollParameter.INVALID.fieldPattern());
+        assertNotNull(ScrollParameter.INVALID.fieldPattern());
+        assertNotNull(ScrollParameter.INVALID.fieldType());
+        assertNotNull(ScrollParameter.INVALID.searchOperator());
+        assertNotNull(ScrollParameter.INVALID.searchFields(true));
+        assertNotNull(ScrollParameter.INVALID.valueEncoding());
+        assertNotNull(ScrollParameter.INVALID.valuePattern());
     }
 
 }
