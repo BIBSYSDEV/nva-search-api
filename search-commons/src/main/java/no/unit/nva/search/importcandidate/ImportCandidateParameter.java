@@ -213,7 +213,6 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
         throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
 
-
     @Override
     @JacocoGenerated
     public String toString() {
