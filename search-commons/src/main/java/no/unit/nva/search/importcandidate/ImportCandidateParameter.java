@@ -63,7 +63,7 @@ import org.apache.commons.text.CaseUtils;
  * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
  * @author Stig Norland
  */
-public enum ImportCandidateParameter implements ParameterKey {
+public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
     INVALID(ParameterKind.INVALID),
     ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
     ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NOT_ALL_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
@@ -204,6 +204,11 @@ public enum ImportCandidateParameter implements ParameterKey {
     @Override
     public String errorMessage() {
         return errorMsg;
+    }
+
+    @Override
+    public ImportCandidateParameter subQuery() {
+        return null;
     }
 
     @Override

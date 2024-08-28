@@ -18,7 +18,7 @@ import static org.opensearch.index.query.QueryBuilders.matchQuery;
 /**
  * @author Stig Norland
  */
-public class TextQuery<K extends Enum<K> & ParameterKey> extends AbstractBuilder<K> {
+public class TextQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     public static final String TEXT_ALL = "TextAll-";
     public static final String TEXT_ANY = "TextAny-";

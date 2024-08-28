@@ -113,7 +113,7 @@ import org.apache.commons.text.CaseUtils;
  * @author Kir Truhacev
  * @author Joachim Jorgensen
  */
-public enum ResourceParameter implements ParameterKey {
+public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
     STATISTICS(IGNORED),
     // Parameters used for filtering
@@ -355,6 +355,11 @@ public enum ResourceParameter implements ParameterKey {
     @Override
     public String errorMessage() {
         return errorMsg;
+    }
+
+    @Override
+    public ResourceParameter subQuery() {
+        return null;
     }
 
     @Override

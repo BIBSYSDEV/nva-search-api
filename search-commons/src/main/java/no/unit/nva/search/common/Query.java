@@ -12,7 +12,7 @@ import no.unit.nva.search.common.records.ResponseFormatter;
 /**
  * @author Stig Norland
  */
-public abstract class Query<K extends Enum<K> & ParameterKey> {
+public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;
     private final transient Instant startTime;

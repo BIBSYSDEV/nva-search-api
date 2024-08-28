@@ -26,12 +26,12 @@ import org.apache.commons.text.CaseUtils;
  *
  * @author Sondre Vestad
  */
-public enum ScrollParameters implements ParameterKey {
+public enum ScrollParameter implements ParameterKey<ScrollParameter> {
     INVALID(ParameterKind.INVALID);
 
     private final ParameterKind paramkind;
 
-    ScrollParameters(ParameterKind kind) {
+    ScrollParameter(ParameterKind kind) {
         this.paramkind = kind;
     }
 
@@ -83,6 +83,11 @@ public enum ScrollParameters implements ParameterKey {
     @Override
     public String errorMessage() {
         return ParameterKey.getErrorMessage(paramkind);
+    }
+
+    @Override
+    public ScrollParameter subQuery() {
+        return null;
     }
 
     @Override

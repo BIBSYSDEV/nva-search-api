@@ -23,7 +23,7 @@ import org.opensearch.index.query.QueryBuilder;
  * </ul>
  * @author Stig Norland
  */
-public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey> {
+public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values);
 
