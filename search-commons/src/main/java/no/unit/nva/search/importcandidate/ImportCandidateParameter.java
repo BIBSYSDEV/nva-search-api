@@ -1,6 +1,7 @@
 package no.unit.nva.search.importcandidate;
 
 import static java.util.Objects.nonNull;
+import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FROM_KEY;
@@ -55,6 +56,7 @@ import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.CaseUtils;
 
 /**
@@ -208,7 +210,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
 
     @Override
     public ImportCandidateParameter subQuery() {
-        return null;
+        throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
 
     @Override
