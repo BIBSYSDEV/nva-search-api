@@ -68,18 +68,16 @@ public final class ScrollQuery extends Query<ScrollParameter> {
     }
 
     @Override
-//    public ResponseFormatter<ScrollParameter> doSearch(OpenSearchClient<?, Query<ScrollParameter>> queryClient) {
-//        return null;
-//    }
-
-    public ResponseFormatter<ScrollParameter> doSearch(OpenSearchClient<?, Query<ScrollParameter>> queryClient) {
+    public <R, Q extends Query<ScrollParameter>> ResponseFormatter<ScrollParameter> doSearch(
+        OpenSearchClient<R, Q> queryClient) {
         var response =
-            buildSwsResponse(scrollFetch(firstResponse, 0, (OpenSearchClient<SwsResponse, Query<ScrollParameter>>) queryClient));
+            buildSwsResponse(
+                scrollFetch(firstResponse, 0, (ScrollClient) queryClient)
+            );
         return new ResponseFormatter<>(response, CSV_UTF_8);
     }
 
-
-    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, int level, OpenSearchClient<SwsResponse, Query<ScrollParameter>> scrollClient) {
+    private Stream<JsonNode> scrollFetch(SwsResponse previousResponse, int level, ScrollClient scrollClient) {
 
         if (shouldStopRecursion(level + 1, previousResponse)) {
             return previousResponse.getSearchHits().stream();

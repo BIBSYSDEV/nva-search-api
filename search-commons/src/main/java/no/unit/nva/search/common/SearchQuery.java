@@ -113,10 +113,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     @Override
-    public ResponseFormatter<K> doSearch(OpenSearchClient<?, Query<K>> queryClient) {
+    public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient) {
         final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
         return new ResponseFormatter<>(
-            (SwsResponse) queryClient.doSearch(this),
+            (SwsResponse) queryClient.doSearch((Q) this),
             getMediaType(),
             source,
             from().as(),
