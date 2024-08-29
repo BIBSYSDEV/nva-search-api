@@ -209,6 +209,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     }
 
     @Override
+    @JacocoGenerated
     public ImportCandidateParameter subQuery() {
         throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }

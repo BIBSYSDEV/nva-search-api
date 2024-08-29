@@ -46,11 +46,9 @@ public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
         return
             switch (key.fieldType()) {
                 case KEYWORD -> new KeywordQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
-                case FUZZY_KEYWORD ->
-                    new FuzzyKeywordQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
-                case TEXT -> new TextQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
-                case ACROSS_FIELDS ->
-                    new AcrossFieldsQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                //  case FUZZY_KEYWORD -> new FuzzyKeywordQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                //  case TEXT -> new TextQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
+                //  case ACROSS_FIELDS -> new AcrossFieldsQuery<K>().buildQuery(key, values).findFirst().orElseThrow().getValue();
                 case FREE_TEXT -> QueryBuilders.matchAllQuery();
                 default -> throw new IllegalStateException("Unexpected value: " + key.fieldType());
             };

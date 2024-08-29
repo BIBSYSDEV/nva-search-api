@@ -88,6 +88,7 @@ public enum ScrollParameter implements ParameterKey<ScrollParameter> {
     }
 
     @Override
+    @JacocoGenerated
     public ScrollParameter subQuery() {
         throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
