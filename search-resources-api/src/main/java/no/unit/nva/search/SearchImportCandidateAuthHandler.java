@@ -8,13 +8,11 @@ import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
 import java.util.List;
-import java.util.Objects;
 
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultClient;
@@ -38,15 +36,14 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-
-
         return
             ImportCandidateSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
                 .build()
-                .doSearch(opensearchClient).toString();
+                .doSearch(opensearchClient)
+                .toString();
     }
 
     @Override
@@ -61,12 +58,6 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
 
     @Override
     protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
-        validateAccessRight(requestInfo);
-    }
-
-    private void validateAccessRight(RequestInfo requestInfo) throws UnauthorizedException {
-        if (Objects.isNull(requestInfo.getUserName())) {
-            throw new UnauthorizedException();
-        }
+        requestInfo.getUserName();
     }
 }

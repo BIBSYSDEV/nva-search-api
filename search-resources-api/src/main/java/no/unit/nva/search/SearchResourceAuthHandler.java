@@ -76,7 +76,6 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
             || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
             return;
         }
-
         throw new UnauthorizedException();
     }
 }

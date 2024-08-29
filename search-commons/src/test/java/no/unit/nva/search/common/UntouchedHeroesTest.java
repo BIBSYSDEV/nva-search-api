@@ -3,13 +3,13 @@ package no.unit.nva.search.common;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.importcandidate.ImportCandidateParameter;
 import no.unit.nva.search.importcandidate.ImportCandidateSort;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
+import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.resource.ResourceParameter;
 
 import org.junit.jupiter.api.Test;
@@ -45,26 +45,13 @@ class UntouchedHeroesTest {
     void invalidSortQueryMust() {
         assertNotNull(ImportCandidateSort.RELEVANCE.asLowerCase());
     }
-//
-//    @Test
-//    void removeKeysSuccessfully() {
-//        var text = JsonNodeCreator::textNode("3wer");
-//        var test2 = textNode("eawsrdf");
-//        assertThrows(
-//            CsvFieldAssignmentException.class,
-//            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
-//        );
-//    }
-
 
     @Test
-//    @Disabled
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
 
     @Test
-//    @Disabled
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
     }
@@ -74,14 +61,12 @@ class UntouchedHeroesTest {
         printEnum(Arrays.stream(ImportCandidateParameter.values()));
     }
 
-
     @Test
     void printSortResourceParameter() {
         printEnumSort(Arrays.stream(ResourceSort.values()));
     }
 
-
-    private void printEnum(Stream<ParameterKey> parameterKeyStream) {
+    private void printEnum(Stream<ParameterKey<?>> parameterKeyStream) {
         parameterKeyStream.forEach(key ->
             logger.info("|{}|{}|{}|{}|{}|",
                 key.asLowerCase(),
@@ -103,6 +88,5 @@ class UntouchedHeroesTest {
             )
         );
     }
-
 
 }

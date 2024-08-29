@@ -7,5 +7,4 @@ import java.net.URI;
  * @author Sondre Vestad
  */
 public record QueryContentWrapper(String body, URI uri) {
-
 }

@@ -54,6 +54,7 @@ class ExportResourceHandlerTest {
         );
 
         var s3data = handler.processS3Input(null, RequestInfo.fromRequest(getRequestInputStreamAccepting()), null);
+
         assertThat(StringUtils.countMatches(s3data, expectedTitle1), is(1));
         assertThat(StringUtils.countMatches(s3data, expectedTitle2), is(1));
         assertThat(StringUtils.countMatches(s3data, expectedTitle3), is(1));

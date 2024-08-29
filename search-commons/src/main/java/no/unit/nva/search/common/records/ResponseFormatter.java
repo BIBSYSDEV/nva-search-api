@@ -21,7 +21,7 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 /**
  * @author Stig Norland
  */
-public final class ResponseFormatter<K extends Enum<K> & ParameterKey> {
+public final class ResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     private final SwsResponse response;
     private final MediaType mediaType;
     private final URI source;

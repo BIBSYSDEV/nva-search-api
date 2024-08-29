@@ -1,6 +1,9 @@
 package no.unit.nva.indexingclient.models;
 
 import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
+import static no.unit.nva.indexingclient.models.IndexDocument.IMPORT_CANDIDATE;
+import static no.unit.nva.indexingclient.models.IndexDocument.RESOURCE;
+import static no.unit.nva.indexingclient.models.IndexDocument.TICKET;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static nva.commons.core.attempt.Try.attempt;
@@ -12,10 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexingclient.constants.ApplicationConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class IndexDocumentTest {
@@ -68,10 +74,20 @@ class IndexDocumentTest {
     }
 
     @Test
-    void shouldUseGetTypeAsWell(){
+    void shouldFailWithInvalidType() {
         var consumptionAttributes = new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         assertThrows(IllegalArgumentException.class, indexDocument::getType);
+        assertNotNull(indexDocument.validate());
+    }
+
+
+    @ParameterizedTest(name = "Checking type:{0}")
+    @MethodSource("nameProvider")
+    void shouldUseGetTypeAsWell(String name, String indexName) {
+        var consumptionAttributes = new EventConsumptionAttributes(indexName, SortableIdentifier.next());
+        var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
+        assertThat(indexDocument.getType(), is(name));
         assertNotNull(indexDocument.validate());
     }
 
@@ -89,5 +105,13 @@ class IndexDocumentTest {
 
     private EventConsumptionAttributes randomConsumptionAttributes() {
         return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
+    }
+
+    static Stream<Arguments> nameProvider() {
+        return Stream.of(
+            Arguments.of(IMPORT_CANDIDATE, ApplicationConstants.IMPORT_CANDIDATES_INDEX),
+            Arguments.of(TICKET, ApplicationConstants.TICKETS_INDEX),
+            Arguments.of(RESOURCE, ApplicationConstants.RESOURCES_INDEX)
+        );
     }
 }

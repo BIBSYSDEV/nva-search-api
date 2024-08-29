@@ -1,5 +1,6 @@
 package no.unit.nva.indexingclient.models;
 
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.SHARD_ID;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,9 +24,9 @@ public record IndexDocument(
     public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
     public static final String MISSING_IDENTIFIER_IN_RESOURCE = "Missing identifier in resource";
     public static final String MISSING_INDEX_NAME_IN_RESOURCE = "Missing index name in resource";
-    private static final String IMPORT_CANDIDATE = "ImportCandidate";
-    private static final String TICKET = "Ticket";
-    private static final String RESOURCE = "Resource";
+    static final String IMPORT_CANDIDATE = "ImportCandidate";
+    static final String TICKET = "Ticket";
+    static final String RESOURCE = "Resource";
 
 
     public IndexDocument validate() {
@@ -71,6 +72,7 @@ public record IndexDocument(
     public IndexRequest toIndexRequest() {
         return new IndexRequest(getIndexName())
             .source(serializeResource(), XContentType.JSON)
+            .routing(SHARD_ID) 
             .id(getDocumentIdentifier());
     }
 

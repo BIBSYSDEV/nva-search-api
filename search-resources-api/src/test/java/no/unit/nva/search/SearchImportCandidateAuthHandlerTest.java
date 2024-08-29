@@ -1,5 +1,32 @@
 package no.unit.nva.search;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import no.unit.nva.indexing.testutils.FakeSearchResponse;
+import no.unit.nva.search.common.FakeGatewayResponse;
+import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.search.common.csv.ExportCsv;
+import no.unit.nva.search.common.records.PagedSearch;
+import no.unit.nva.search.common.records.SwsResponse;
+import no.unit.nva.search.importcandidate.ImportCandidateClient;
+import no.unit.nva.testutils.HandlerRequestBuilder;
+import nva.commons.apigateway.GatewayResponse;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
@@ -19,33 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-import no.unit.nva.indexing.testutils.FakeSearchResponse;
-import no.unit.nva.search.common.csv.ExportCsv;
-import no.unit.nva.search.common.FakeGatewayResponse;
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.records.PagedSearch;
-import no.unit.nva.search.common.records.SwsResponse;
-import no.unit.nva.search.importcandidate.ImportCandidateClient;
-import no.unit.nva.testutils.HandlerRequestBuilder;
-import nva.commons.apigateway.GatewayResponse;
-import nva.commons.core.Environment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
-class SearchImportCandidateHandlerTest {
+class SearchImportCandidateAuthHandlerTest {
     
     public static final String SAMPLE_PATH = "search";
     public static final String SAMPLE_DOMAIN_NAME = "localhost";
@@ -54,7 +56,7 @@ class SearchImportCandidateHandlerTest {
         "sample_opensearch_importCandidate_response.json";
     public static final String ROUNDTRIP_RESPONSE_JSON = "roundTripImportCandidateResponse.json";
     public static final String EMPTY_OPENSEARCH_RESPONSE_JSON = "empty_opensearch_response.json";
-    private SearchImportCandidateHandler handler;
+    private SearchImportCandidateAuthHandler handler;
     private Context contextMock;
     private ByteArrayOutputStream outputStream;
     private ImportCandidateClient mockedSearchClient;
@@ -63,7 +65,7 @@ class SearchImportCandidateHandlerTest {
     void setUp() {
 
         mockedSearchClient = mock(ImportCandidateClient.class);
-        handler = new SearchImportCandidateHandler(new Environment(), mockedSearchClient);
+        handler = new SearchImportCandidateAuthHandler(new Environment(), mockedSearchClient);
         contextMock = mock(Context.class);
         outputStream = new ByteArrayOutputStream();
     }
@@ -204,7 +206,9 @@ class SearchImportCandidateHandlerTest {
     private InputStream getInputStream() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
             .withQueryParameters(Map.of(SEARCH_ALL.asCamelCase(), SAMPLE_SEARCH_TERM))
-            .withRequestContext(getRequestContext()).build();
+            .withRequestContext(getRequestContext())
+            .withUserName(randomString())
+            .build();
     }
     
     private InputStream getInputStreamWithContributorId() throws JsonProcessingException {
@@ -221,10 +225,8 @@ class SearchImportCandidateHandlerTest {
         return
             new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
                 .withQueryParameters(
-                    Map.of(SEARCH_ALL.name(),
-                           "((entityDescription.contributors.identity.id:12345)"
-                           + "+OR+"
-                           + "(entityDescription.contributors.identity.id:54321))"))
+                    Map.of(SEARCH_ALL.name(),"((entityDescription.contributors.identity.id:12345)"
+                           + "+OR+(entityDescription.contributors.identity.id:54321))"))
                 .withRequestContext(getRequestContext())
                 .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withUserName(randomString())
@@ -236,6 +238,7 @@ class SearchImportCandidateHandlerTest {
                 Map.of(SEARCH_ALL.name(), SAMPLE_SEARCH_TERM))
             .withHeaders(Map.of(ACCEPT, contentType))
             .withRequestContext(getRequestContext())
+            .withUserName(randomString())
             .build();
     }
     

@@ -136,7 +136,7 @@ public final class Functions {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    public static <K extends Enum<K> & ParameterKey> Stream<Map.Entry<K, QueryBuilder>> queryToEntry(
+    public static <K extends Enum<K> & ParameterKey<K>> Stream<Map.Entry<K, QueryBuilder>> queryToEntry(
         K key, QueryBuilder qb) {
         final var entry = new Map.Entry<K, QueryBuilder>() {
             @Override

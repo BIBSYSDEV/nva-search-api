@@ -41,6 +41,7 @@ import static no.unit.nva.search.common.constant.Words.ONLINE_ISSN;
 import static no.unit.nva.search.common.constant.Words.ORC_ID;
 import static no.unit.nva.search.common.constant.Words.OWNER;
 import static no.unit.nva.search.common.constant.Words.OWNER_AFFILIATION;
+import static no.unit.nva.search.common.constant.Words.PAGES;
 import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.PRINT_ISSN;
 import static no.unit.nva.search.common.constant.Words.PUBLICATION_CONTEXT;
@@ -87,6 +88,7 @@ public final class Constants {
     public static final String UNIQUE_PUBLICATIONS = "unique_publications";
     public static final String CRISTIN_ORGANIZATION_PATH = "/cristin/organization/";
     public static final String CRISTIN_PERSON_PATH = "/cristin/person/";
+    public static final String EXCLUDED_FIELDS = "joinField";
     public static final String IDENTIFIER_KEYWORD = IDENTIFIER + DOT + KEYWORD;
     public static final String FILES_STATUS_KEYWORD = FILES_STATUS + DOT + KEYWORD;
     public static final String ENTITY_CONTRIBUTORS_DOT = ENTITY_DESCRIPTION + DOT + CONTRIBUTORS + DOT;
@@ -99,10 +101,6 @@ public final class Constants {
     public static final String ENTITY_PUBLICATION_INSTANCE_DOT =
         ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + DOT;
 
-    //    public static final String REFERENCE_PUBLICATION =
-    //        ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_CONTEXT + ASTERISK + PIPE
-    //            + ENTITY_DESCRIPTION + DOT + REFERENCE + DOT + PUBLICATION_INSTANCE + ASTERISK;
-
     public static final String CONTRIBUTORS_AFFILIATION_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + AFFILIATIONS + DOT + ID + DOT + KEYWORD;
 
@@ -111,8 +109,7 @@ public final class Constants {
     public static final String CONTRIBUTORS_IDENTITY_ID =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ID + DOT + KEYWORD;
     public static final String CONTRIBUTORS_IDENTITY_NAME_KEYWORD =
-        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD + PIPE +
-            CONTRIBUTORS_IDENTITY_ID;
+        ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + NAME + DOT + KEYWORD + PIPE + CONTRIBUTORS_IDENTITY_ID;
     public static final String CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD =
         ENTITY_CONTRIBUTORS_DOT + IDENTITY + DOT + ORC_ID + DOT + KEYWORD;
     public static final String SCIENTIFIC_LEVEL_SEARCH_FIELD = multipleFields(
@@ -122,7 +119,8 @@ public final class Constants {
     public static final String COURSE_CODE_KEYWORD =
         ENTITY_PUBLICATION_CONTEXT_DOT + COURSE + DOT + CODE + DOT + KEYWORD;
 
-    public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES = ENTITY_PUBLICATION_INSTANCE_DOT + "pages.pages";
+    public static final String ENTITY_DESCRIPTION_PUBLICATION_PAGES =
+        ENTITY_PUBLICATION_INSTANCE_DOT + PAGES + DOT + PAGES + DOT + KEYWORD;
     public static final String SUBJECTS = "subjects";
 
     public static final String ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR =

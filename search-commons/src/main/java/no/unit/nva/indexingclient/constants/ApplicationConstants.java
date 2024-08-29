@@ -17,6 +17,7 @@ public final class ApplicationConstants {
     public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
     public static final String RESOURCES_INDEX = "resources";
     public static final String TICKETS_INDEX = "tickets";
+    public static final String SHARD_ID = "0";
 
     public static final List<String> ALL_INDICES =
         List.of(RESOURCES_INDEX, DOIREQUESTS_INDEX, MESSAGES_INDEX, TICKETS_INDEX, PUBLISHING_REQUESTS_INDEX);
