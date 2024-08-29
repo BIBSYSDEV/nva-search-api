@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
@@ -24,7 +26,8 @@ import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
-import nva.commons.logutils.LogUtils;
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -41,6 +44,13 @@ public class DeleteResourceFromIndexHandlerTest {
 
     private DeleteResourceFromIndexHandler handler;
 
+    private static ListAppender appender;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(DeleteResourceFromIndexHandler.class);
+    }
+
     @BeforeEach
     void init() {
         indexingClient = new FakeIndexingClient();
@@ -50,14 +60,14 @@ public class DeleteResourceFromIndexHandlerTest {
 
     @Test
     void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException() throws IOException {
-        final var appender = LogUtils.getTestingAppenderForRootLogger();
+//        final var appender = LogUtils.getTestingAppenderForRootLogger();
         indexingClient = new FakeIndexingClientThrowingException();
         handler = new DeleteResourceFromIndexHandler(indexingClient);
         try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
             assertThrows(RuntimeException.class,
                 () -> handler.handleRequest(eventReference, output, CONTEXT));
         }
-        assertThat(appender.getMessages(), containsString(SOMETHING_BAD_HAPPENED));
+        assertThat(logToString(appender), containsString(SOMETHING_BAD_HAPPENED));
     }
 
     @Test

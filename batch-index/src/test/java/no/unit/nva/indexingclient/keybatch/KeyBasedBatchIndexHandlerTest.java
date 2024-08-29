@@ -1,6 +1,8 @@
 package no.unit.nva.indexingclient.keybatch;
 
 import static java.util.UUID.randomUUID;
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandler.DEFAULT_INDEX;
@@ -15,6 +17,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,13 +41,14 @@ import nva.commons.core.SingletonCollector;
 import nva.commons.core.StringUtils;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
-import nva.commons.logutils.LogUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.opensearch.action.bulk.BulkResponse;
+import org.apache.logging.log4j.core.test.appender.ListAppender;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
@@ -54,9 +58,10 @@ class KeyBasedBatchIndexHandlerTest {
 
     public static final String LINE_BREAK = "\n";
     public static final String IDENTIFIER = "__IDENTIFIER__";
+    public static final String DEFAULT_LOCATION = "resources";
     private static final String VALID_PUBLICATION = IoUtils.stringFromResources(Path.of("publication.json"));
     private static final String INVALID_PUBLICATION = IoUtils.stringFromResources(Path.of("invalid_publication.json"));
-    public static final String DEFAULT_LOCATION = "resources";
+    private static ListAppender appender;
     private ByteArrayOutputStream outputStream;
     private S3Driver s3ResourcesDriver;
 //    private FakeS3Client s3ResourcesClient;
@@ -65,6 +70,11 @@ class KeyBasedBatchIndexHandlerTest {
     private FakeOpenSearchClient openSearchClient;
     private EventBridgeClient eventBridgeClient;
     private KeyBasedBatchIndexHandler handler;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(KeyBasedBatchIndexHandler.class);
+    }
 
     @BeforeEach
     public void init() {
@@ -186,7 +196,7 @@ class KeyBasedBatchIndexHandlerTest {
     @ParameterizedTest(name = "Should remove documents that do not have expected field {0}")
     @ValueSource(strings = {"entityDescription", "reference", "publicationContext", "publicationInstance"})
     void shouldRemoveDocumentsThatDoesNotHaveExpectedField(String field) throws IOException {
-        final var appender = LogUtils.getTestingAppenderForRootLogger();
+
         var expectedDocuments = createExpectedDocuments(9);
         var notExpectedDocument = createInvalidDocument(INVALID_PUBLICATION.replace(field, "something"));
         getDocuments(expectedDocuments, notExpectedDocument);
@@ -203,11 +213,12 @@ class KeyBasedBatchIndexHandlerTest {
 
         var documentsFromIndex = openSearchClient.getIndexedDocuments();
 
-        assertThat(appender.getMessages(), containsString("has missing fields"));
-        assertThat(appender.getMessages(), containsString(field));
+        assertThat(logToString(appender), containsString("has missing fields"));
+        assertThat(logToString(appender), containsString(field));
         assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
         assertThat(documentsFromIndex, not(hasItem(notExpectedDocument)));
     }
+
 
     private static ArrayList<IndexDocument> getDocuments(List<IndexDocument> expectedDocuments,
                                                          IndexDocument notExpectedDocument) {
@@ -309,4 +320,6 @@ class KeyBasedBatchIndexHandlerTest {
                 jsonString -> objectMapperWithEmpty.readValue(jsonString, KeyBatchRequestEvent.class)).orElseThrow();
         }
     }
+
+
 }

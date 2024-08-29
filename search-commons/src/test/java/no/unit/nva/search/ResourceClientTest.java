@@ -386,8 +386,6 @@ class ResourceClientTest {
                 .doSearch(scrollClient)
                 .toCsvText();
         assertNotNull(response);
-        logger.info(response);
-
     }
 
     @ParameterizedTest
@@ -433,7 +431,7 @@ class ResourceClientTest {
 
         assertNotNull(pagedSearchResourceDto);
         if (expectedCount == 0) {
-            logger.info(pagedSearchResourceDto.toJsonString());
+            logger.debug(pagedSearchResourceDto.toJsonString());
         } else {
             logger.debug(pagedSearchResourceDto.toString());
         }
@@ -486,7 +484,7 @@ class ResourceClientTest {
         var logInfo = response.swsResponse().hits().hits().stream()
             .map(item -> item._score() + " + " + searchFieldName)
             .collect(Collectors.joining(SPACE + PIPE + SPACE));
-        logger.info(logInfo);
+        logger.debug(logInfo);
         assertNotNull(pagedSearchResourceDto.context());
         assertTrue(pagedSearchResourceDto.totalHits() >= 0);
     }

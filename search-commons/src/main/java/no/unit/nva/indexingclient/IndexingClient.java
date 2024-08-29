@@ -3,7 +3,6 @@ package no.unit.nva.indexingclient;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI;
 import static nva.commons.core.attempt.Try.attempt;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
     public static final ObjectMapper objectMapper = JsonUtils.dtoObjectMapper;
-    public static final String INITIAL_LOG_MESSAGE = "using search infrastructure endpoint {} and index {}";
+    public static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
     public static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE
         = "Document with id={} was not found in search infrastructure";
     public static final int BULK_SIZE = 100;
@@ -75,7 +74,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        logger.info(INITIAL_LOG_MESSAGE, SEARCH_INFRASTRUCTURE_API_URI, indexDocument.getDocumentIdentifier());
+        logger.debug(INITIAL_LOG_MESSAGE, indexDocument.getDocumentIdentifier(), indexDocument.getIndexName());
         openSearchClient.index(indexDocument.toIndexRequest(), getRequestOptions());
         return null;
     }

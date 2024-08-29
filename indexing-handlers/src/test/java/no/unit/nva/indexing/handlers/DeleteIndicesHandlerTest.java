@@ -4,18 +4,29 @@ package no.unit.nva.indexing.handlers;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
 import no.unit.nva.stubs.FakeContext;
-import nva.commons.logutils.LogUtils;
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.core.StringContains.containsString;
 
 class DeleteIndicesHandlerTest {
+
+
+    private static ListAppender appender;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(DeleteIndicesHandler.class);
+    }
 
     @Test
     void shouldDeleteIndicesWhenFunctionIsInvoked() {
@@ -34,7 +45,6 @@ class DeleteIndicesHandlerTest {
 
     @Test
     void shouldLogWarningWhenIndexDeletionFails() {
-        var logger = LogUtils.getTestingAppenderForRootLogger();
         var expectedMessage = randomString();
         var indexingClient = new IndexingClient(null, null) {
             @Override
@@ -44,6 +54,6 @@ class DeleteIndicesHandlerTest {
         };
         var handler = new DeleteIndicesHandler(indexingClient);
         handler.handleRequest(null, new FakeContext());
-        assertThat(logger.getMessages(), containsString(expectedMessage));
+        assertThat(logToString(appender), containsString(expectedMessage));
     }
 }

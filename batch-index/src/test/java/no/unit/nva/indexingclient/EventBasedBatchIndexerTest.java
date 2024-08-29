@@ -1,5 +1,7 @@
 package no.unit.nva.indexingclient;
 
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexingclient.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
 import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
@@ -35,7 +37,9 @@ import nva.commons.core.attempt.Try;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
-import nva.commons.logutils.LogUtils;
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,12 +48,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 @SuppressWarnings({"PMD.VariableDeclarationUsageDistance"})
 public class EventBasedBatchIndexerTest extends BatchIndexTest {
 
+    private static ListAppender appender;
     private EventBasedBatchIndexer indexer;
     private ByteArrayOutputStream outputStream;
     private FakeIndexingClient openSearchClient;
     private StubEventBridgeClient eventBridgeClient;
     private FakeS3Client s3Client;
     private S3Driver s3Driver;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(BatchIndexer.class);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        appender.stop();
+    }
+
 
     @BeforeEach
     public void init() {
@@ -69,7 +85,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     @ValueSource(ints = {1, 2, 5, 10, 100})
     public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(int numberOfFilesPerEvent)
         throws JsonProcessingException {
-        final var logger = LogUtils.getTestingAppenderForRootLogger();
+
         indexer = new EventBasedBatchIndexer(s3Client, failingOpenSearchClient(), eventBridgeClient,
                                              numberOfFilesPerEvent);
         var filesFailingToBeIndexed = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
@@ -85,7 +101,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         assertEquals(actualIdentifiersOfNonIndexedEntries, expectedIdentifiesOfNonIndexedEntries);
 
         expectedIdentifiesOfNonIndexedEntries
-            .forEach(expectedIdentifier -> assertThat(logger.getMessages(), containsString(expectedIdentifier)));
+            .forEach(expectedIdentifier -> assertThat(logToString(appender), containsString(expectedIdentifier)));
 
     }
 

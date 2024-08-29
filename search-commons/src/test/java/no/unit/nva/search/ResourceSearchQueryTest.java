@@ -114,12 +114,12 @@ class ResourceSearchQueryTest {
             UriWrapper.fromUri(resource.getNvaSearchApiUri())
                 .addQueryParameters(resource.parameters().asMap()).getUri();
 
-        logger.info(
+        logger.debug(
             resource.parameters().asMap()
                 .entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&")));
-        logger.info(uri2.toString());
+        logger.debug(uri2.toString());
         assertNotEquals(uri, resource.getNvaSearchApiUri());
     }
 
@@ -133,18 +133,19 @@ class ResourceSearchQueryTest {
                 .build();
 
         query.parameters().getSearchKeys()
-            .forEach(key -> logger.info("{} : {}", key.asCamelCase(), query.parameters().get(key).as()));
+            .forEach(key -> logger.debug("{} : {}", key.asCamelCase(), query.parameters().get(key).as()));
+
+        // two ways to access keys
 
         var modified = query.parameters().get(MODIFIED_BEFORE);
         if (!modified.isEmpty()) {
-            logger.info("modified0: {}", modified.asDateTime());
+            logger.debug("Modified-1: {}", modified.asDateTime());
         }
-
-        var publishedBefore = query.parameters().ifPresent(PUBLISHED_BEFORE);
-        if (nonNull(publishedBefore)) {
-            logger.info("published1: {}", publishedBefore.<DateTime>as());
+        var published = query.parameters().ifPresent(PUBLISHED_BEFORE);
+        if (nonNull(published)) {
+            logger.debug("Published-1: {}", published.<DateTime>as());
         }
-
+        assertNotNull(query.parameters());
     }
 
     @ParameterizedTest

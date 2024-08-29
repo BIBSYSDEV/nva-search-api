@@ -29,7 +29,7 @@ public class BatchIndexTest {
                     .map(IndexDocument::getDocumentIdentifier)
                     .map(id -> createFailure(id))
                     .map(fail -> new BulkItemResponse(randomNumber(), OpType.UPDATE, fail))
-                    .collect(Collectors.toList());
+                    .toList();
                 BulkResponse response =
                     new BulkResponse(itemResponses.toArray(BulkItemResponse[]::new), ARBITRARY_QUERY_TIME);
                 return Stream.of(response);

@@ -10,6 +10,7 @@ import static no.unit.nva.search.common.constant.Words.MAIN_TITLE;
 import static no.unit.nva.search.common.constant.Words.MESSAGES;
 import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search.common.constant.Words.OWNER;
+import static no.unit.nva.search.common.constant.Words.PART_OF;
 import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.STATUS;
 import static no.unit.nva.search.common.constant.Words.TYPE;
@@ -35,7 +36,6 @@ public final class Constants {
     public static final String USERNAME = "username";
     public static final String UNHANDLED_KEY = "unhandled key -> ";
 
-    public static final String PART_OF = "partOf";
 
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;

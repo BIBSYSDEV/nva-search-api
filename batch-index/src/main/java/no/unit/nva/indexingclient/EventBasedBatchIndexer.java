@@ -50,7 +50,7 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
     @Override
     public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) {
         String inputString = IoUtils.streamToString(inputStream);
-        logger.info(inputString);
+        logger.debug(inputString);
         super.handleRequest(IoUtils.stringToStream(inputString), outputStream, context);
     }
 
@@ -58,8 +58,8 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
     protected SortableIdentifier[] processInput(ImportDataRequestEvent input,
                                                 AwsEventBridgeEvent<ImportDataRequestEvent> event,
                                                 Context context) {
-        logger.info("Indexing folder:" + input.getS3Location());
-        logger.info("Indexing lastEvaluatedKey:" + input.getStartMarker());
+        logger.debug("Indexing folder:" + input.getS3Location());
+        logger.debug("Indexing lastEvaluatedKey:" + input.getStartMarker());
         IndexingResult<SortableIdentifier> result = new BatchIndexer(input, s3Client,
                                                                      openSearchClient,
                                                                      numberOfFilesPerEvent

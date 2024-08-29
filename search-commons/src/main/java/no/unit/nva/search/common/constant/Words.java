@@ -121,6 +121,8 @@ public final class Words {
 
     public static final boolean KEYWORD_TRUE = true;
     public static final boolean KEYWORD_FALSE = false;
+    public static final String HAS_PARTS = "hasParts";
+    public static final String PART_OF = "partOf";
 
 
     @JacocoGenerated

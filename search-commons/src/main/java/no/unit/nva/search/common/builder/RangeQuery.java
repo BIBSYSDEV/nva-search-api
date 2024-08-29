@@ -46,7 +46,7 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
         var secondParam = getSecondParam(values, key);
 
 
-        logger.info(firstParam + DASH + secondParam);
+        logger.debug(firstParam + DASH + secondParam);
         return Functions.queryToEntry(key, switch (key.searchOperator()) {
             case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
                 .rangeQuery(searchField)

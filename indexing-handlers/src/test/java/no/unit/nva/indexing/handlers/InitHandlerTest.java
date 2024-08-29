@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexing.handlers.InitHandler.FAILED;
 import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -14,7 +16,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import java.io.IOException;
 
 import no.unit.nva.indexingclient.IndexingClient;
-import nva.commons.logutils.LogUtils;
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +27,14 @@ class InitHandlerTest {
     private InitHandler initHandler;
     private IndexingClient indexingClient;
     private Context context;
+
+
+    private static ListAppender appender;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(InitHandler.class);
+    }
 
     @BeforeEach
     void init() {
@@ -41,13 +52,13 @@ class InitHandlerTest {
 
     @Test
     void shouldLogWarningAndReturnFailedWhenIndexingClientFailedToCreateIndex() throws IOException {
-        var logger = LogUtils.getTestingAppenderForRootLogger();
+//        var logger = LogUtils.getTestingAppenderForRootLogger();
         String expectedMessage = randomString();
         when(indexingClient.createIndex(Mockito.anyString(), Mockito.anyMap(), Mockito.anyMap())).thenThrow(
             new IOException(expectedMessage));
         var response = initHandler.handleRequest(null, context);
         assertEquals(FAILED, response);
 
-        assertThat(logger.getMessages(), containsString(expectedMessage));
+        assertThat(logToString(appender), containsString(expectedMessage));
     }
 }

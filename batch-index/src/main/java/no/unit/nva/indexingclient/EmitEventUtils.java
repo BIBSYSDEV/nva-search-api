@@ -23,11 +23,11 @@ public final class EmitEventUtils {
                                  ImportDataRequestEvent importDataRequest,
                                  Context context) {
         PutEventsRequestEntry putEventRequestEntry = eventEntry(importDataRequest, context);
-        logger.info("BusName:" + BATCH_INDEX_EVENT_BUS_NAME);
-        logger.info("Event:" + putEventRequestEntry.toString());
+        logger.debug("BusName:" + BATCH_INDEX_EVENT_BUS_NAME);
+        logger.debug("Event:" + putEventRequestEntry.toString());
         PutEventsRequest putEventRequest = PutEventsRequest.builder().entries(putEventRequestEntry).build();
         PutEventsResponse response = eventBridgeClient.putEvents(putEventRequest);
-        logger.info(response.toString());
+        logger.debug(response.toString());
     }
 
     private static PutEventsRequestEntry eventEntry(ImportDataRequestEvent importDataRequest, Context context) {
