@@ -38,7 +38,6 @@ import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
 import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,12 +59,6 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     public static void initClass() {
         appender = getAppender(BatchIndexer.class);
     }
-
-    @AfterAll
-    public static void tearDown() {
-        appender.stop();
-    }
-
 
     @BeforeEach
     public void init() {
