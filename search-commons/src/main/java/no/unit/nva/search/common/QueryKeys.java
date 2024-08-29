@@ -20,7 +20,7 @@ import no.unit.nva.search.common.enums.ValueEncoding;
  * This class operates on the queryKeys that a request provides.
  * @author Stig Norland
  */
-public class QueryKeys<K extends Enum<K> & ParameterKey> {
+public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
 
     protected final transient Set<K> otherRequired;
     private final transient Map<K, String> page;

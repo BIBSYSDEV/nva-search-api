@@ -24,8 +24,8 @@ import static no.unit.nva.search.common.constant.Words.PAGES;
 import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.PUBLICATION_INSTANCE;
 import static no.unit.nva.search.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search.common.constant.Words.RESOURCES;
 import static no.unit.nva.search.common.constant.Words.REFERENCE;
+import static no.unit.nva.search.common.constant.Words.RESOURCES;
 import static no.unit.nva.search.common.constant.Words.SLASH;
 import static no.unit.nva.search.common.constant.Words.SPACE;
 import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
@@ -42,6 +42,7 @@ import static no.unit.nva.search.common.enums.PublicationStatus.UNPUBLISHED;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
+import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_BOOK_PAGES;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
@@ -51,14 +52,14 @@ import static no.unit.nva.search.resource.ResourceParameter.SORT;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,6 +93,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+import nva.commons.core.paths.UriWrapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -108,7 +110,7 @@ class ResourceClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=20&";
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
@@ -124,7 +126,6 @@ class ResourceClientTest {
             .thenReturn(mockedFutureHttpResponse(""))
             .thenReturn(mockedFutureFailed());
         searchClient = new ResourceClient(HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
-
         scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
@@ -147,7 +148,8 @@ class ResourceClientTest {
         uriSortingProvider().findFirst().ifPresent(uri::set);
         var mockedRequestInfoLocal = mock(RequestInfo.class);
         when(mockedRequestInfoLocal.getPersonAffiliation()).thenReturn(randomUri());
-        var result =ResourceSearchQuery.builder()
+        var result = ResourceSearchQuery
+            .builder()
             .fromQueryParameters(queryToMapEntries(uri.get()))
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withRequiredParameters(FROM, SIZE)
@@ -177,16 +179,17 @@ class ResourceClientTest {
         var aggregations = response1.toPagedResponse().aggregations();
 
         assertFalse(aggregations.isEmpty());
-        assertThat(aggregations.get(TYPE).size(), is(5));
-        assertThat(aggregations.get(FILES).get(0).count(), is(19));
-        assertThat(aggregations.get(LICENSE).get(0).count(), is(11));
-        assertThat(aggregations.get(FUNDING_SOURCE).size(), is(2));
-        assertThat(aggregations.get(PUBLISHER).get(0).count(), is(3));
-        assertThat(aggregations.get(CONTRIBUTOR).size(), is(13));
+        assertThat(aggregations.get(TYPE).size(), is(6));
+        assertThat(aggregations.get(FILES).get(0).count(), is(17));
+        assertThat(aggregations.get(LICENSE).get(0).count(), is(10));
+        assertThat(aggregations.get(FUNDING_SOURCE).size(), is(1));
+        assertThat(aggregations.get(PUBLISHER).get(0).count(), is(2));
+        assertThat(aggregations.get(CONTRIBUTOR).size(), is(17));
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).size(), is(11));
         assertThat(aggregations.get(TOP_LEVEL_ORGANIZATION).get(1).labels().get("nb"),
             is(equalTo("Sikt – Kunnskapssektorens tjenesteleverandør")));
     }
+
 
     @Test
     void userSettingsNotFoundReturn200() throws IOException, InterruptedException, BadRequestException {
@@ -301,7 +304,7 @@ class ResourceClientTest {
 
     @Test
     void searchAfterAndSortByRelevanceException() {
-        var uri =  URI.create("https://x.org/?id=018b857b77b7&from=10&searchAfter=12&sort=relevance");
+        var uri = URI.create("https://x.org/?id=018b857b77b7&from=10&searchAfter=12&sort=relevance");
         assertThrows(
             BadRequestException.class,
             () -> ResourceSearchQuery.builder()
@@ -341,12 +344,13 @@ class ResourceClientTest {
     void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
         var uri = URI.create("https://x.org/");
         var requestInfo = mock(RequestInfo.class);
-        when(requestInfo.getCurrentCustomer()).thenReturn(URI.create("https://api.dev.nva.aws.unit"
-                                                                     + ".no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.getCurrentCustomer())
+            .thenReturn(URI.create("https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
         var response =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .withParameter(NODES_EXCLUDED, "metaInfo")
                 .withRequiredParameters(FROM, SIZE)
                 .build()
                 .withFilter()
@@ -358,18 +362,18 @@ class ResourceClientTest {
         assertNotNull(response);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        assertEquals(3, pagedSearchResourceDto.totalHits());
+        assertEquals(5, pagedSearchResourceDto.totalHits());
     }
 
     @Test
     void scrollClientExceuteOK() throws BadRequestException {
-        var INCLUDED_NODES = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
+        var includedNodes = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
         var firstResponse = ResourceSearchQuery.builder()
             .withDockerHostUri(URI.create(container.getHttpHostAddress()))
             .withParameter(FROM, ZERO)
             .withParameter(SIZE, "5")
             .withParameter(AGGREGATION, NONE)
-            .withParameter(NODES_INCLUDED, INCLUDED_NODES)
+            .withParameter(NODES_INCLUDED, includedNodes)
             .build()
             .withFilter()
             .requiredStatus(PUBLISHED_METADATA, PUBLISHED).apply()
@@ -393,7 +397,6 @@ class ResourceClientTest {
     @ParameterizedTest
     @MethodSource("uriPagingProvider")
     void searchWithUriPageableReturnsOpenSearchResponse(URI uri, int expectedCount) throws ApiGatewayException {
-
         var response =
             ResourceSearchQuery.builder()
                 .fromQueryParameters(queryToMapEntries(uri))
@@ -402,7 +405,8 @@ class ResourceClientTest {
                 .validate()
                 .build()
                 .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
                 .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
@@ -414,9 +418,11 @@ class ResourceClientTest {
         logger.debug(pagedSearchResourceDto.id().toString());
     }
 
+    // TODO: Remove duplicate test?
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount) throws ApiGatewayException {
+    void searchWithUriReturnsOpenSearchAwsResponse(URI uri, int expectedCount)
+        throws ApiGatewayException {
 
         var response =
             ResourceSearchQuery.builder()
@@ -440,6 +446,168 @@ class ResourceClientTest {
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedCount)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
+    }
+
+    @Test
+    void shouldFindAnthologyWithChapters() throws ApiGatewayException {
+        // Given that a parent document exists of type BookAnthology,
+        // and the parent document has two children of type AcademicChapter,
+        // when a query filters by hasParts of type AcademicChapter,
+        // then one document should be returned,
+        // and the returned document should be of type BookAnthology,
+        // and the returned document should have the ID of the parent document.
+
+        var uri =
+            UriWrapper.fromUri("https://x.org/?instanceTypeHasParts=AcademicChapter&from=0&size=20")
+                .getUri();
+        var expectedHits = 1;
+        var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+        var response =
+            ResourceSearchQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        var document = pagedSearchResourceDto.hits().get(0);
+        var actualId = document.get("identifier").asText();
+
+        assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+        assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+        assertThat(actualId, is(equalTo(expectedParentIdSuffix)));
+    }
+
+    @Test
+    void shouldFindDocumentsWithParent() throws ApiGatewayException {
+        // Given that a parent document exists,
+        // and the parent document has two children,
+        // when a query filters by HAS_PARENT=true,
+        // then two child documents should be returned,
+        // and the parent ID should be found in each child document.
+
+        var uri = UriWrapper.fromUri("https://x.org/?HAS_PARENT=true&from=0&size=20").getUri();
+        var expectedHits = 2;
+        var expectedParentIdSuffix = "0190554a46d9-41780102-675d-43ba-81df-17168d78fa22";
+
+        var response =
+            ResourceSearchQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        var document = pagedSearchResourceDto.hits().get(0);
+        var actualId = document.get("identifier").asText();
+
+        assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+        assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+        assertThat(actualId, is(equalTo(expectedParentIdSuffix)));
+    }
+
+    @Test
+    void shouldFindDocumentsWithChildren() throws ApiGatewayException {
+        // Given that a parent document with two children exists,
+        // and the parent document has two children,
+        // when a query filters by HAS_CHILDREN=true,
+        // then one document should be returned,
+        // and the returned document should have the ID of the parent document.
+
+        var uri = UriWrapper.fromUri("https://x.org/?HAS_PARENT=true&from=0&size=20").getUri();
+        var expectedHits = 2;
+        var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+        var response =
+            ResourceSearchQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        var documents = pagedSearchResourceDto.hits();
+
+        for (var document : documents) {
+            var actualParentId =
+                document
+                    .get("entityDescription")
+                    .get("reference")
+                    .get("publicationContext")
+                    .get("id")
+                    .asText();
+
+            assertThat(actualParentId, containsString(expectedParentIdSuffix));
+        }
+
+        assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+        assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
+    }
+
+    @Test
+    void shouldFindChaptersOfBookAnthology() throws ApiGatewayException {
+        // Given that a parent document exists of type BookAnthology,
+        // and the parent document has two children of type AcademicChapter,
+        // when a query filters by partOf type BookAnthology,
+        // then two child documents should be returned,
+        // and the parent ID should be found in each child document.
+
+        var uri =
+            UriWrapper.fromUri("https://x.org/?instanceTypePartOf=BookAnthology&from=0&size=20")
+                .getUri();
+        var expectedHits = 2;
+        var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
+
+        var response =
+            ResourceSearchQuery.builder()
+                .fromQueryParameters(queryToMapEntries(uri))
+                .withRequiredParameters(FROM, SIZE)
+                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                .build()
+                .withFilter()
+                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                .apply()
+                .doSearch(searchClient);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        var documents = pagedSearchResourceDto.hits();
+
+        for (var document : documents) {
+            var actualParentId =
+                document
+                    .get("entityDescription")
+                    .get("reference")
+                    .get("publicationContext")
+                    .get("id")
+                    .asText();
+
+            var actualInstanceType =
+                document
+                    .get("entityDescription")
+                    .get("reference")
+                    .get("publicationInstance")
+                    .get("type")
+                    .asText();
+
+            assertThat(actualParentId, containsString(expectedParentIdSuffix));
+            assertThat(actualInstanceType, is(equalTo("AcademicChapter")));
+        }
+
+        assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
+        assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
     }
 
     @ParameterizedTest
@@ -586,7 +754,7 @@ class ResourceClientTest {
 
         assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitI));
         assertThat(pagedSearchResourceDto.toJsonString(), containsString(includedSubunitII));
-        assertThat(pagedSearchResourceDto.hits(), hasSize(3));
+        assertThat(pagedSearchResourceDto.hits(), hasSize(2));
     }
 
 
@@ -595,28 +763,28 @@ class ResourceClientTest {
     void shouldFilterByPageCount(int min, int max, int expectedResultCount) throws BadRequestException {
         var pageRange = String.format("%d,%d", min, max);
         var response = ResourceSearchQuery.builder()
-                .fromQueryParameters(Map.of(PUBLICATION_BOOK_PAGES.asCamelCase(), pageRange))
-                .withRequiredParameters(FROM, SIZE)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(searchClient);
+            .fromQueryParameters(Map.of(PUBLICATION_BOOK_PAGES.asCamelCase(), pageRange))
+            .withRequiredParameters(FROM, SIZE)
+            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+            .build()
+            .withFilter()
+            .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+            .apply()
+            .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
         var pageCounts = pagedSearchResourceDto.hits().stream()
-                .map(hit -> hit.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(PAGES).get(PAGES).asInt())
-                .collect(Collectors.toList());
+            .map(hit -> hit.get(ENTITY_DESCRIPTION).get(REFERENCE).get(PUBLICATION_INSTANCE).get(PAGES).get(PAGES).asInt())
+            .collect(Collectors.toList());
 
         assertThat("Number of hits", pagedSearchResourceDto.hits(), hasSize(expectedResultCount));
         assertThat("All page counts are within the specified range",
-                pageCounts, everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
+            pageCounts, everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
     }
 
     static Stream<Arguments> uriPagingProvider() {
         return Stream.of(
-            createArgument("page=0&aggregation=all", 20),
+            createArgument("page=0&aggregation=all", 22),
             createArgument("page=1&size=10&aggregation=all&sort=modifiedDate:asc", 10),
             createArgument("page=3&aggregation=all&sort=modifiedDate:asc", 0),
             createArgument("page=1&aggregation=all&size=1", 1),
@@ -640,8 +808,8 @@ class ResourceClientTest {
             URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
             URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
             URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
-            URI.create(REQUEST_BASE_URL +
-                "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+            URI.create(REQUEST_BASE_URL
+                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
             URI.create(REQUEST_BASE_URL + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
             URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
             URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
@@ -656,8 +824,7 @@ class ResourceClientTest {
             URI.create(REQUEST_BASE_URL
                 + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
             URI.create(REQUEST_BASE_URL
-                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912," +
-                "1241234,23412"),
+                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
             URI.create(REQUEST_BASE_URL + "query=year+project&sort=published_date+asc&sort=category+desc"));
     }
 
@@ -682,10 +849,10 @@ class ResourceClientTest {
      */
     private static Stream<Arguments> provideValidPageRanges() {
         return Stream.of(
-                Arguments.of(1, 100, 8),
-                Arguments.of(37, 39, 1),
-                Arguments.of(38, 38, 1),
-                Arguments.of(17, 20, 3)
+            Arguments.of(1, 100, 8),
+            Arguments.of(37, 39, 1),
+            Arguments.of(38, 38, 1),
+            Arguments.of(17, 20, 3)
         );
     }
 
@@ -698,5 +865,4 @@ class ResourceClientTest {
     private static Arguments createArgument(String searchUri, int expectedCount) {
         return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
     }
-
 }

@@ -92,6 +92,7 @@ public enum ScrollParameter implements ParameterKey<ScrollParameter> {
         throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
 
+
     @Override
     @JacocoGenerated
     public String toString() {

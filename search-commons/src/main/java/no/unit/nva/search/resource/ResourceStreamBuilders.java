@@ -99,9 +99,10 @@ public class ResourceStreamBuilders {
         var searchKey = shouldSearchSpecifiedInstitutionOnly() ? key : EXCLUDE_SUBUNITS;
 
         return
-            new FuzzyKeywordQuery<ResourceParameter>().buildQuery(searchKey, (String) parameters.get(key).as())
+            new FuzzyKeywordQuery<ResourceParameter>().buildQuery(searchKey, parameters.get(key).toString())
                 .map(query -> Map.entry(key, query.getValue()));
     }
+
 
     private Boolean shouldSearchSpecifiedInstitutionOnly() {
         return parameters.get(EXCLUDE_SUBUNITS).asBoolean();

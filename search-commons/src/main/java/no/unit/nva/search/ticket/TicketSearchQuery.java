@@ -161,7 +161,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(TicketParameter key) {
         return hasAssigneeAndOnlyStatusNew()
             ? Stream.empty()    // we cannot query status New here, it is done together with assignee.
-            : new KeywordQuery<TicketParameter>().buildQuery(key, (String) parameters().get(key).as());
+            : new KeywordQuery<TicketParameter>().buildQuery(key, parameters().get(key).toString());
     }
 
 
@@ -191,7 +191,7 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             : key;
 
         return
-            new KeywordQuery<TicketParameter>().buildQuery(searchKey, (String) parameters().get(key).as())
+            new KeywordQuery<TicketParameter>().buildQuery(searchKey, parameters().get(key).toString())
                 .map(query -> Map.entry(key, query.getValue()));
 
     }

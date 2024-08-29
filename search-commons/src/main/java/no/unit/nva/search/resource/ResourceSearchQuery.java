@@ -19,6 +19,7 @@ import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
 import static no.unit.nva.search.common.constant.Words.STATUS;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
+import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
 import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
@@ -129,13 +130,18 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
     @Override
     protected String[] exclude() {
-        return parameters().get(NODES_EXCLUDED).split(COMMA);
+        return Stream.concat(
+            parameters().get(NODES_EXCLUDED).asSplitStream(COMMA),
+            Arrays.stream(EXCLUDED_FIELDS.split(COMMA))
+        ).toArray(String[]::new);
+
     }
 
     @Override
     protected String[] include() {
         return parameters().get(NODES_INCLUDED).split(COMMA);
     }
+
 
     @Override
     public URI openSearchUri() {

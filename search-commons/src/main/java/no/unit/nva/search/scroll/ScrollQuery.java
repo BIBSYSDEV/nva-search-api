@@ -68,7 +68,8 @@ public final class ScrollQuery extends Query<ScrollParameter> {
     }
 
     @Override
-    public <R, Q extends Query<ScrollParameter>> ResponseFormatter<ScrollParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
+    public <R, Q extends Query<ScrollParameter>> ResponseFormatter<ScrollParameter> doSearch(
+        OpenSearchClient<R, Q> queryClient) {
         var response =
             buildSwsResponse(
                 scrollFetch(firstResponse, 0, (ScrollClient) queryClient)
@@ -92,7 +93,7 @@ public final class ScrollQuery extends Query<ScrollParameter> {
 
     private SwsResponse buildSwsResponse(Stream<JsonNode> results) {
         var hits = results
-            .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null))
+            .map(hit -> new SwsResponse.HitsInfo.Hit(null, null, null, 0, hit, null, null))
             .toList();
         return new SwsResponse(
             0,

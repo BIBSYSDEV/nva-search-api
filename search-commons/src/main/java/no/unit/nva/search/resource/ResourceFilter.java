@@ -6,6 +6,8 @@ import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
+
 import java.net.URI;
 import java.util.Arrays;
 import no.unit.nva.search.common.enums.PublicationStatus;
@@ -70,7 +72,7 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * Filter on organization.
      * <P>Only documents belonging to organization specified are searchable (for the user)
      * </p>
-     * @param requestInfo
+     * @param requestInfo fetches getCurrentCustomer
      * @return ResourceQuery (builder pattern)
      */
     public ResourceFilter organization(RequestInfo requestInfo) throws UnauthorizedException {
@@ -93,6 +95,6 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
     private boolean isSearchingForAllPublications(RequestInfo requestInfo) {
         return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-               && !resourceSearchQuery.parameters().get(ResourceParameter.STATISTICS).isEmpty();
+               && resourceSearchQuery.parameters().isPresent(STATISTICS);
     }
 }
