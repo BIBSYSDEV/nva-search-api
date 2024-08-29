@@ -103,13 +103,6 @@ public class ResourceStreamBuilders {
                 .map(query -> Map.entry(key, query.getValue()));
     }
 
-//    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> hasReferenceQuery(ResourceParameter key) {
-//        var query = QueryBuilders.nestedQuery(
-//
-//        );
-//        return Functions.queryToEntry(key, query);
-//    }
-
 
     private Boolean shouldSearchSpecifiedInstitutionOnly() {
         return parameters.get(EXCLUDE_SUBUNITS).asBoolean();

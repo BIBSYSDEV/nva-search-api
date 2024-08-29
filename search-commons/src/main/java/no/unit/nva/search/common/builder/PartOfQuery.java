@@ -7,6 +7,8 @@ import no.unit.nva.search.common.enums.ParameterKey;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasParentQueryBuilder;
 
+import static no.unit.nva.search.common.constant.Words.HAS_PARTS;
+
 public class PartOfQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
 
@@ -24,13 +26,13 @@ public class PartOfQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBu
 
     private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
         var builder =
-            new HasParentQueryBuilder("hasParts", getSubQuery(key.subQuery(), values), true);
+            new HasParentQueryBuilder(HAS_PARTS, getSubQuery(key.subQuery(), values), true);
         return Stream.of(builder);
     }
 
     private Stream<QueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
         var builder =
-            new HasParentQueryBuilder("hasParts", getSubQuery(key.subQuery(), values), true);
+            new HasParentQueryBuilder(HAS_PARTS, getSubQuery(key.subQuery(), values), true);
         return Stream.of(builder);
 
     }

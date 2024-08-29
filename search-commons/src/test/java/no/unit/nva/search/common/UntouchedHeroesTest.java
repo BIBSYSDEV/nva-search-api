@@ -46,17 +46,6 @@ class UntouchedHeroesTest {
         assertNotNull(ImportCandidateSort.RELEVANCE.asLowerCase());
     }
 
-    //    @Test
-    //    void removeKeysSuccessfully() {
-    //        var text = JsonNodeCreator::textNode("3wer");
-    //        var test2 = textNode("eawsrdf");
-    //        assertThrows(
-    //            CsvFieldAssignmentException.class,
-    //            () -> ResourceCsvTransformer.transform(List.of(.textNode("asrdgtfh)"),"wearsdftg"))
-    //        );
-    //    }
-
-
     @Test
     void printResourceParameter() {
         printEnum(Arrays.stream(ResourceParameter.values()));
@@ -72,12 +61,10 @@ class UntouchedHeroesTest {
         printEnum(Arrays.stream(ImportCandidateParameter.values()));
     }
 
-
     @Test
     void printSortResourceParameter() {
         printEnumSort(Arrays.stream(ResourceSort.values()));
     }
-
 
     private void printEnum(Stream<ParameterKey<?>> parameterKeyStream) {
         parameterKeyStream.forEach(key ->
@@ -101,6 +88,5 @@ class UntouchedHeroesTest {
             )
         );
     }
-
 
 }

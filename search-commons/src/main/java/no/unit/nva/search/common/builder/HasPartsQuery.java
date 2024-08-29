@@ -8,6 +8,8 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasChildQueryBuilder;
 
+import static no.unit.nva.search.common.constant.Words.PART_OF;
+
 public class HasPartsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     @Override
@@ -24,13 +26,13 @@ public class HasPartsQuery<K extends Enum<K> & ParameterKey<K>> extends Abstract
 
     private Stream<QueryBuilder> buildAllMustHitQuery(K key, String... values) {
         var builder =
-            new HasChildQueryBuilder("partOf", getSubQuery(key.subQuery(), values), ScoreMode.None);
+            new HasChildQueryBuilder(PART_OF, getSubQuery(key.subQuery(), values), ScoreMode.None);
         return Stream.of(builder);
     }
 
     private Stream<QueryBuilder> buildAnyComboMustHitQuery(K key, String... values) {
         var builder =
-            new HasChildQueryBuilder("partOf", getSubQuery(key.subQuery(), values), ScoreMode.None);
+            new HasChildQueryBuilder(PART_OF, getSubQuery(key.subQuery(), values), ScoreMode.None);
         return Stream.of(builder);
     }
 }
