@@ -1,7 +1,7 @@
 package no.unit.nva.search.common.records;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.common.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import static no.unit.nva.search.common.constant.Defaults.DEFAULT_PAGINATED_SEARCH_RESULT_CONTEXT;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,7 +25,7 @@ public record PagedSearch(
 
     @JsonProperty("@context")
     public URI context() {
-        return PAGINATED_SEARCH_RESULT_CONTEXT;
+        return DEFAULT_PAGINATED_SEARCH_RESULT_CONTEXT;
     }
 
     @Override

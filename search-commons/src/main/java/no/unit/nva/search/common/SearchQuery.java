@@ -4,7 +4,7 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search.common.constant.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
+import static no.unit.nva.search.common.constant.Defaults.DEFAULT_ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search.common.constant.Words.ALL;
@@ -270,7 +270,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     private void handleAggregation(SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
         if (hasAggregation()) {
             var aggregationBuilder = builder.shallowCopy();
-            aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
+            aggregationBuilder.size(DEFAULT_ZERO_RESULTS_AGGREGATION_ONLY);
             aggregationBuilder.aggregation(builderAggregationsWithFilter());
             contentWrappers.add(new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
         }

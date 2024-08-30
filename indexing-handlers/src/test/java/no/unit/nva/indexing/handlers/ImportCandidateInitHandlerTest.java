@@ -53,7 +53,6 @@ public class ImportCandidateInitHandlerTest {
 
     @Test
     void shouldLogWarningAndReturnFailedWhenIndexingClientFailedToCreateIndex() throws IOException {
-//        var logger = LogUtils.getTestingAppenderForRootLogger();
         String expectedMessage = randomString();
         when(indexingClient.createIndex(Mockito.anyString(), Mockito.anyMap())).thenThrow(
                 new IOException(expectedMessage));

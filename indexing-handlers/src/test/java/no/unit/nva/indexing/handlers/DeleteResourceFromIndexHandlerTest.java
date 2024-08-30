@@ -60,7 +60,6 @@ public class DeleteResourceFromIndexHandlerTest {
 
     @Test
     void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException() throws IOException {
-//        final var appender = LogUtils.getTestingAppenderForRootLogger();
         indexingClient = new FakeIndexingClientThrowingException();
         handler = new DeleteResourceFromIndexHandler(indexingClient);
         try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
