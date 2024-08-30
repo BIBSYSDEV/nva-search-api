@@ -1,5 +1,6 @@
 package no.unit.nva.indexingclient.models;
 
+import java.io.IOException;
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
 import nva.commons.core.JacocoGenerated;
 import org.apache.http.HttpHost;
@@ -20,8 +21,6 @@ import org.opensearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 /**
  * Class for avoiding mocking/spying the ES final classes.
  */
@@ -29,9 +28,8 @@ public class RestHighLevelClientWrapper {
 
 
     public static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
-    private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
-    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
-
+  public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+  private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
     private final RestHighLevelClient client;
 
     public RestHighLevelClientWrapper(RestHighLevelClient client) {
@@ -42,6 +40,15 @@ public class RestHighLevelClientWrapper {
         this(new RestHighLevelClient(clientBuilder));
         logger.debug(INITIAL_LOG_MESSAGE, clientBuilder);
     }
+
+  public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
+    return prepareRestHighLevelClientWrapperForUri(
+        ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
+  }
+
+  public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(String address) {
+    return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
+  }
 
     /**
      * Use this method only to experiment and to extend the functionality of the wrapper.
@@ -82,15 +89,5 @@ public class RestHighLevelClientWrapper {
     @JacocoGenerated
     public BulkResponse bulk(BulkRequest request, RequestOptions requestOption) throws IOException {
         return client.bulk(request, requestOption);
-    }
-
-    public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
-        return prepareRestHighLevelClientWrapperForUri(ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
-    }
-
-    public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(String address) {
-        return new RestHighLevelClientWrapper(
-            RestClient.builder(HttpHost.create(address))
-        );
     }
 }

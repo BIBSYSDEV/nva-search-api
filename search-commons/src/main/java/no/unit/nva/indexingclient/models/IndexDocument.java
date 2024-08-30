@@ -2,6 +2,7 @@ package no.unit.nva.indexingclient.models;
 
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.SHARD_ID;
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,6 +29,10 @@ public record IndexDocument(
     static final String TICKET = "Ticket";
     static final String RESOURCE = "Resource";
 
+  public static IndexDocument fromJsonString(String json) {
+    return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class))
+        .orElseThrow();
+  }
 
     public IndexDocument validate() {
         Objects.requireNonNull(getIndexName());
@@ -49,10 +54,6 @@ public record IndexDocument(
         } else {
             throw new IllegalArgumentException("Unknown type!");
         }
-    }
-
-    public static IndexDocument fromJsonString(String json) {
-        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
     }
 
     @JsonIgnore

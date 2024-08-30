@@ -1,21 +1,20 @@
 package no.unit.nva.search.common.jwt;
 
-
 /**
  * @author Sondre Vestad
  */
-public abstract class CachedValueProvider<T>  {
+public abstract class CachedValueProvider<T> {
 
-    protected T cachedValue;
+  protected T cachedValue;
 
-    public T getValue() {
-        if (cachedValue == null || isExpired()) {
-            cachedValue = getNewValue();
-        }
-        return cachedValue;
+  public T getValue() {
+    if (cachedValue == null || isExpired()) {
+      cachedValue = getNewValue();
     }
+    return cachedValue;
+  }
 
-    protected abstract boolean isExpired();
+  protected abstract boolean isExpired();
 
-    protected abstract T getNewValue();
+  protected abstract T getNewValue();
 }

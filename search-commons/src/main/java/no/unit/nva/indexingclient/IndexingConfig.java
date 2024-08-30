@@ -6,8 +6,7 @@ import nva.commons.core.JacocoGenerated;
 @JacocoGenerated
 public final class IndexingConfig {
 
-    public static final Environment ENVIRONMENT = new Environment();
+  public static final Environment ENVIRONMENT = new Environment();
 
-    public IndexingConfig() {
-    }
+  public IndexingConfig() {}
 }

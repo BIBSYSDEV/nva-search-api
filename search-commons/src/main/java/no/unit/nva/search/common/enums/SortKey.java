@@ -13,28 +13,27 @@ import java.util.stream.Stream;
  */
 public interface SortKey {
 
-    String name();
+  static Predicate<SortKey> equalTo(String name) {
+    return key -> name.matches(key.keyPattern());
+  }
 
-    String keyPattern();
+  static int compareAscending(Enum<?> key1, Enum<?> key2) {
+    return key1.ordinal() - key2.ordinal();
+  }
 
-    Stream<String> jsonPaths();
+  static String getIgnoreCaseAndUnderscoreKeyExpression(String keyName) {
+    var keyNameIgnoreUnderscoreExpression =
+        keyName.toLowerCase(Locale.getDefault()).replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+    return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
+  }
 
-    String asCamelCase();
+  String name();
 
-    String asLowerCase();
+  String keyPattern();
 
-    static Predicate<SortKey> equalTo(String name) {
-        return key -> name.matches(key.keyPattern());
-    }
+  Stream<String> jsonPaths();
 
-    static int compareAscending(Enum<?> key1, Enum<?> key2) {
-        return key1.ordinal() - key2.ordinal();
-    }
+  String asCamelCase();
 
-    static String getIgnoreCaseAndUnderscoreKeyExpression(String keyName) {
-        var keyNameIgnoreUnderscoreExpression =
-            keyName.toLowerCase(Locale.getDefault())
-                .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
-        return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
-    }
+  String asLowerCase();
 }

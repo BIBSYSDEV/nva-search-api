@@ -1,36 +1,35 @@
-plugins{
+plugins {
     id 'nva.search.service.java-conventions'
     id 'nva.search.service2.dynamodblocal'
 }
 
 dependencies {
+
+    implementation libs.aws.apache.client
+    implementation libs.aws.apache.interceptor
     implementation libs.aws.lambda.events
     implementation libs.aws.lambda.java.core
     implementation libs.aws.sdk2.sqs
-    implementation libs.bundles.logging
-    implementation libs.jackson.core
-    implementation libs.jackson.databind
-    implementation libs.nva.core
-    implementation libs.nva.json
-    implementation libs.nva.s3
-    implementation libs.aws.apache.interceptor
-//    implementation libs.bundles.aws.xray
     implementation libs.bundles.jackson
     implementation libs.bundles.jacksonjr
+    implementation libs.bundles.logging
     implementation libs.bundles.testcontainers
     implementation libs.com.auth0.jwt
     implementation libs.csv
     implementation libs.guava
+    implementation libs.jackson.core
+    implementation libs.jackson.databind
     implementation libs.nva.apigateway
     implementation libs.nva.auth
+    implementation libs.nva.core
     implementation libs.nva.identifiers
+    implementation libs.nva.json
+    implementation libs.nva.s3
     implementation libs.nva.secrets
     implementation libs.opensearch.java
     implementation libs.opensearch.rest.highlevel.client
     implementation libs.slf4j
-    implementation libs.aws.apache.client
 
-    testImplementation libs.bundles.logging
     testImplementation libs.bundles.testing
     testImplementation project(':search-testing')
 

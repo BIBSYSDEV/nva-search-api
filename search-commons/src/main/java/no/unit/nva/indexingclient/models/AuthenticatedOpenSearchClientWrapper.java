@@ -6,8 +6,8 @@ import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.SEARC
 import java.net.URI;
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
-import no.unit.nva.search.common.records.UsernamePasswordWrapper;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
+import no.unit.nva.search.common.records.UsernamePasswordWrapper;
 import nva.commons.secrets.SecretsReader;
 import org.opensearch.client.RequestOptions;
 
@@ -27,6 +27,14 @@ public class AuthenticatedOpenSearchClientWrapper {
         this.cachedJwtProvider = cachedJwtProvider;
     }
 
+  protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
+    var credentials =
+        secretsReader.fetchClassSecret(
+            SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class);
+    var uri = URI.create(ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI);
+
+    return new CognitoCredentials(credentials::getUsername, credentials::getPassword, uri);
+  }
 
     protected RequestOptions getRequestOptions() {
         var token = "Bearer " + cachedJwtProvider.getValue().getToken();
@@ -34,13 +42,5 @@ public class AuthenticatedOpenSearchClientWrapper {
                    .toBuilder()
                    .addHeader(AUTHORIZATION, token)
                    .build();
-    }
-
-    protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
-        var credentials
-            = secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class);
-        var uri = URI.create(ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI);
-
-        return new CognitoCredentials(credentials::getUsername, credentials::getPassword, uri);
     }
 }

@@ -19,82 +19,90 @@ import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
 /**
+ * Filter for ResourceQuery.
+ *
  * @author Stig Norland
  * @author Sondre Vestad
  */
 public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
-    private final ResourceSearchQuery resourceSearchQuery;
+  private final ResourceSearchQuery resourceSearchQuery;
 
-    public ResourceFilter(ResourceSearchQuery query) {
-        this.resourceSearchQuery = query;
-        this.resourceSearchQuery.filters.set();
+  public ResourceFilter(ResourceSearchQuery query) {
+    this.resourceSearchQuery = query;
+    this.resourceSearchQuery.filters.set();
+  }
+
+  @Override
+  public ResourceSearchQuery apply() {
+    return resourceSearchQuery;
+  }
+
+  @Override
+  public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
+    final var organization =
+        requestInfo.getTopLevelOrgCristinId().orElse(requestInfo.getPersonAffiliation());
+
+    return organization(organization).requiredStatus(PUBLISHED, PUBLISHED_METADATA).apply();
+  }
+
+  /**
+   * Filter on Required Status.
+   *
+   * <p>Only STATUES specified here will be available for the Query.
+   *
+   * <p>This is to avoid the Query to return documents that are not available for the user.
+   *
+   * <p>See {@link PublicationStatus} for available values.
+   *
+   * @param publicationStatus the required statues
+   * @return ResourceQuery (builder pattern)
+   */
+  public ResourceFilter requiredStatus(PublicationStatus... publicationStatus) {
+    final var values =
+        Arrays.stream(publicationStatus).map(PublicationStatus::toString).toArray(String[]::new);
+    final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values).queryName(STATUS);
+    this.resourceSearchQuery.filters.add(filter);
+    return this;
+  }
+
+  /**
+   * Filter on organization.
+   *
+   * <p>Only documents belonging to organization specified are searchable (for the user)
+   *
+   * @param requestInfo fetches getCurrentCustomer
+   * @return ResourceQuery (builder pattern)
+   */
+  public ResourceFilter organization(RequestInfo requestInfo) throws UnauthorizedException {
+    if (isSearchingForAllPublications(requestInfo)) {
+      return this;
+    } else {
+      final var filter =
+          new TermQueryBuilder(PUBLISHER_ID_KEYWORD, requestInfo.getCurrentCustomer().toString())
+              .queryName(PUBLISHER);
+      this.resourceSearchQuery.filters.add(filter);
+      return this;
     }
+  }
 
-    @Override
-    public ResourceSearchQuery apply() {
-        return resourceSearchQuery;
-    }
+  /**
+   * Filter on organization.
+   *
+   * <p>Only documents belonging to organization specified are searchable (for the user)
+   *
+   * @param organization the organization
+   * @return ResourceQuery (builder pattern)
+   */
+  public ResourceFilter organization(URI organization) throws UnauthorizedException {
+    final var filter =
+        new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString()).queryName(PUBLISHER);
+    this.resourceSearchQuery.filters.add(filter);
+    return this;
+  }
 
-    @Override
-    public ResourceSearchQuery fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException {
-        final var organization = requestInfo
-            .getTopLevelOrgCristinId()
-            .orElse(requestInfo.getPersonAffiliation());
-
-        return
-            organization(organization)
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply();
-    }
-
-    /**
-     * Filter on Required Status.
-     *
-     * <p>Only STATUES specified here will be available for the Query.</p>
-     * <p>This is to avoid the Query to return documents that are not available for the user.</p>
-     * <p>See {@link PublicationStatus} for available values.</p>
-     *
-     * @param publicationStatus the required statues
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceFilter requiredStatus(PublicationStatus... publicationStatus) {
-        final var values = Arrays.stream(publicationStatus)
-            .map(PublicationStatus::toString)
-            .toArray(String[]::new);
-        final var filter = new TermsQueryBuilder(STATUS_KEYWORD, values)
-            .queryName(STATUS);
-        this.resourceSearchQuery.filters.add(filter);
-        return this;
-    }
-
-    /**
-     * Filter on organization.
-     * <P>Only documents belonging to organization specified are searchable (for the user)
-     * </p>
-     * @param requestInfo fetches getCurrentCustomer
-     * @return ResourceQuery (builder pattern)
-     */
-    public ResourceFilter organization(RequestInfo requestInfo) throws UnauthorizedException {
-        if (isSearchingForAllPublications(requestInfo)) {
-            return this;
-        } else {
-            final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, requestInfo.getCurrentCustomer().toString())
-                .queryName(PUBLISHER);
-            this.resourceSearchQuery.filters.add(filter);
-            return this;
-        }
-    }
-
-    public ResourceFilter organization(URI organization) throws UnauthorizedException {
-        final var filter = new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-                               .queryName(PUBLISHER);
-        this.resourceSearchQuery.filters.add(filter);
-        return this;
-    }
-
-    private boolean isSearchingForAllPublications(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-               && resourceSearchQuery.parameters().isPresent(STATISTICS);
-    }
+  private boolean isSearchingForAllPublications(RequestInfo requestInfo) {
+    return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
+        && resourceSearchQuery.parameters().isPresent(STATISTICS);
+  }
 }

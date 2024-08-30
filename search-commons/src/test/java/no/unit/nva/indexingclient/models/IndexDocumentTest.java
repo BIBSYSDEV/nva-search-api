@@ -13,9 +13,9 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import java.util.stream.Stream;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
@@ -33,6 +33,18 @@ class IndexDocumentTest {
         return Stream.of(consumptionAttributesMissingIndexName, consumptionAttributesMissingDocumentIdentifier)
             .map(consumptionAttributes -> new IndexDocument(consumptionAttributes, randomJsonObject()));
     }
+
+  private static ObjectNode randomJsonObject() {
+    String json = randomJson();
+    return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
+  }
+
+  static Stream<Arguments> nameProvider() {
+    return Stream.of(
+        Arguments.of(IMPORT_CANDIDATE, ApplicationConstants.IMPORT_CANDIDATES_INDEX),
+        Arguments.of(TICKET, ApplicationConstants.TICKETS_INDEX),
+        Arguments.of(RESOURCE, ApplicationConstants.RESOURCES_INDEX));
+  }
 
     @Test
     void shouldReturnOpenSearchIndexRequestWithIndexNameSpecifiedByConsumptionAttributes() {
@@ -81,7 +93,6 @@ class IndexDocumentTest {
         assertNotNull(indexDocument.validate());
     }
 
-
     @ParameterizedTest(name = "Checking type:{0}")
     @MethodSource("nameProvider")
     void shouldUseGetTypeAsWell(String name, String indexName) {
@@ -91,27 +102,13 @@ class IndexDocumentTest {
         assertNotNull(indexDocument.validate());
     }
 
-
     @ParameterizedTest(name = "should throw exception when validating and missing mandatory fields:{0}")
     @MethodSource("invalidConsumptionAttributes")
     void shouldThrowExceptionWhenValidatingAndMissingMandatoryFields(IndexDocument invalidIndexDocument) {
         assertThrows(Exception.class, invalidIndexDocument::validate);
     }
 
-    private static ObjectNode randomJsonObject() {
-        String json = randomJson();
-        return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
-    }
-
     private EventConsumptionAttributes randomConsumptionAttributes() {
         return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
-    }
-
-    static Stream<Arguments> nameProvider() {
-        return Stream.of(
-            Arguments.of(IMPORT_CANDIDATE, ApplicationConstants.IMPORT_CANDIDATES_INDEX),
-            Arguments.of(TICKET, ApplicationConstants.TICKETS_INDEX),
-            Arguments.of(RESOURCE, ApplicationConstants.RESOURCES_INDEX)
-        );
     }
 }

@@ -1,21 +1,5 @@
 package no.unit.nva.indexingclient;
 
-import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.indexingclient.utils.HttpRequestMetadataMatcher;
-import no.unit.nva.search.common.jwt.CognitoAuthenticator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
-import java.util.NoSuchElementException;
-
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -35,16 +19,29 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.NoSuchElementException;
+import no.unit.nva.auth.CognitoCredentials;
+import no.unit.nva.indexingclient.utils.HttpRequestMetadataMatcher;
+import no.unit.nva.search.common.jwt.CognitoAuthenticator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 @SuppressWarnings({"unchecked"})
 class CognitoAuthenticatorTest {
 
-    private CognitoAuthenticator cognitoAuthenticator;
-
     final HttpClient httpClient = mock(HttpClient.class);
-
     final HttpResponse<String> okResponse = mock(HttpResponse.class);
     final HttpResponse<String> invalidResponse = mock(HttpResponse.class);
     final HttpResponse<String> errorResponse = mock(HttpResponse.class);
+  private CognitoAuthenticator cognitoAuthenticator;
     private CognitoCredentials credentials;
 
     @BeforeEach

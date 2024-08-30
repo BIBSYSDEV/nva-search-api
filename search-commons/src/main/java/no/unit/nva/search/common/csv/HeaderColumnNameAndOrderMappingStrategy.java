@@ -5,14 +5,13 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.comparators.ComparableComparator;
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import org.apache.commons.collections4.comparators.FixedOrderComparator;
 import org.apache.commons.collections4.comparators.NullComparator;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @author Rurik Greenall

@@ -17,10 +17,10 @@ import static no.unit.nva.search.common.constant.Words.COLON;
 import static no.unit.nva.search.common.constant.Words.Q;
 import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.ALL_OF;
+import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search.common.enums.FieldOperator.NA;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
@@ -49,7 +49,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -60,184 +59,194 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.CaseUtils;
 
 /**
- * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
- * parameters
- * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ * Enum for all the parameters that can be used to query the search index. This enum needs to
+ * implement these parameters <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin
+ * API</a>
+ *
  * @author Stig Norland
  */
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
-    INVALID(ParameterKind.INVALID),
-    ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NOT_ALL_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
-    CATEGORY(FUZZY_KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
-    CATEGORY_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_INSTANCE_TYPE),
-    CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
-    CONTRIBUTOR(FUZZY_KEYWORD, ALL_OF, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    CONTRIBUTOR_NOT(FUZZY_KEYWORD, NOT_ALL_OF, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
-    COLLABORATION_TYPE(FUZZY_KEYWORD, ANY_OF, COLLABORATION_TYPE_KEYWORD),
-    COLLABORATION_TYPE_NOT(KEYWORD, NOT_ALL_OF, COLLABORATION_TYPE_KEYWORD),
-    CRISTIN_IDENTIFIER(CUSTOM),
-    DOI(FUZZY_KEYWORD, ANY_OF, Constants.DOI_KEYWORD),
-    DOI_NOT(TEXT, NOT_ALL_OF, Constants.DOI_KEYWORD),
-    FILES(KEYWORD, ALL_OF, FILES_STATUS_PATH),
-    ID(FUZZY_KEYWORD, ANY_OF, ID_KEYWORD),
-    ID_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ID_KEYWORD),
-    IMPORT_STATUS(FUZZY_KEYWORD, ANY_OF, IMPORT_STATUS_PATH),
-    IMPORT_STATUS_NOT(FUZZY_KEYWORD, NOT_ALL_OF, IMPORT_STATUS_PATH),
-    LICENSE(CUSTOM, ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
-    MODIFIED_DATE(DATE, BETWEEN, MODIFIED_DATE_PATH),
-    LICENSE_NOT(CUSTOM, NOT_ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
-    PUBLICATION_YEAR(NUMBER, BETWEEN, PUBLICATION_YEAR_KEYWORD),
-    PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
-    PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
-    PUBLISHER(KEYWORD, ALL_OF, PUBLISHER_ID_KEYWORD),
-    PUBLISHER_NOT(KEYWORD, NOT_ALL_OF, PUBLISHER_ID_KEYWORD),
-    SCOPUS_IDENTIFIER(CUSTOM),
-    TOP_LEVEL_ORGANIZATION(KEYWORD, ANY_OF, ORGANIZATIONS_PATH),
-    TOP_LEVEL_ORGANIZATION_NOT(KEYWORD, NOT_ALL_OF, ORGANIZATIONS_PATH),
-    TITLE(TEXT, ANY_OF, Constants.MAIN_TITLE_KEYWORD, null, null, 2F),
-    TITLE_NOT(TEXT, NOT_ALL_OF, Constants.MAIN_TITLE_KEYWORD),
-    TYPE(FUZZY_KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
-    TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_INSTANCE_TYPE),
-    // Query parameters passed to SWS/Opensearch
-    SEARCH_ALL(FREE_TEXT, ALL_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
-    // Pagination parameters
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
-    NODES_INCLUDED(IGNORED),
-    NODES_EXCLUDED(IGNORED),
-    AGGREGATION(IGNORED),
-    PAGE(NUMBER),
-    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
-    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
-    SEARCH_AFTER(IGNORED),
-    SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
-    ;
+  INVALID(ParameterKind.INVALID),
+  ADDITIONAL_IDENTIFIERS(FUZZY_KEYWORD, ANY_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
+  ADDITIONAL_IDENTIFIERS_NOT(KEYWORD, NOT_ALL_OF, ADDITIONAL_IDENTIFIERS_KEYWORD),
+  CATEGORY(FUZZY_KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
+  CATEGORY_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_INSTANCE_TYPE),
+  CREATED_DATE(DATE, BETWEEN, Words.CREATED_DATE),
+  CONTRIBUTOR(FUZZY_KEYWORD, ALL_OF, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+  CONTRIBUTOR_NOT(FUZZY_KEYWORD, NOT_ALL_OF, Constants.CONTRIBUTOR_IDENTITY_KEYWORDS),
+  COLLABORATION_TYPE(FUZZY_KEYWORD, ANY_OF, COLLABORATION_TYPE_KEYWORD),
+  COLLABORATION_TYPE_NOT(KEYWORD, NOT_ALL_OF, COLLABORATION_TYPE_KEYWORD),
+  CRISTIN_IDENTIFIER(CUSTOM),
+  DOI(FUZZY_KEYWORD, ANY_OF, Constants.DOI_KEYWORD),
+  DOI_NOT(TEXT, NOT_ALL_OF, Constants.DOI_KEYWORD),
+  FILES(KEYWORD, ALL_OF, FILES_STATUS_PATH),
+  ID(FUZZY_KEYWORD, ANY_OF, ID_KEYWORD),
+  ID_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ID_KEYWORD),
+  IMPORT_STATUS(FUZZY_KEYWORD, ANY_OF, IMPORT_STATUS_PATH),
+  IMPORT_STATUS_NOT(FUZZY_KEYWORD, NOT_ALL_OF, IMPORT_STATUS_PATH),
+  LICENSE(CUSTOM, ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
+  MODIFIED_DATE(DATE, BETWEEN, MODIFIED_DATE_PATH),
+  LICENSE_NOT(CUSTOM, NOT_ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
+  PUBLICATION_YEAR(NUMBER, BETWEEN, PUBLICATION_YEAR_KEYWORD),
+  PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
+  PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
+  PUBLISHER(KEYWORD, ALL_OF, PUBLISHER_ID_KEYWORD),
+  PUBLISHER_NOT(KEYWORD, NOT_ALL_OF, PUBLISHER_ID_KEYWORD),
+  SCOPUS_IDENTIFIER(CUSTOM),
+  TOP_LEVEL_ORGANIZATION(KEYWORD, ANY_OF, ORGANIZATIONS_PATH),
+  TOP_LEVEL_ORGANIZATION_NOT(KEYWORD, NOT_ALL_OF, ORGANIZATIONS_PATH),
+  TITLE(TEXT, ANY_OF, Constants.MAIN_TITLE_KEYWORD, null, null, 2F),
+  TITLE_NOT(TEXT, NOT_ALL_OF, Constants.MAIN_TITLE_KEYWORD),
+  TYPE(FUZZY_KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE),
+  TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_INSTANCE_TYPE),
+  // Query parameters passed to SWS/Opensearch
+  SEARCH_ALL(FREE_TEXT, ALL_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
+  // Pagination parameters
+  NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+  NODES_INCLUDED(IGNORED),
+  NODES_EXCLUDED(IGNORED),
+  AGGREGATION(IGNORED),
+  PAGE(NUMBER),
+  FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
+  SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
+  SEARCH_AFTER(IGNORED),
+  SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
+  SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+  ;
 
-    public static final int IGNORE_PARAMETER_INDEX = 0;
+  public static final int IGNORE_PARAMETER_INDEX = 0;
 
-    public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
-        Arrays.stream(ImportCandidateParameter.values())
-            .filter(ImportCandidateParameter::isSearchField)
-            .sorted(ParameterKey::compareAscending)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+  public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
+      Arrays.stream(ImportCandidateParameter.values())
+          .filter(ImportCandidateParameter::isSearchField)
+          .sorted(ParameterKey::compareAscending)
+          .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    private final ValueEncoding encoding;
-    private final String keyPattern;
-    private final String validValuePattern;
-    private final String[] fieldsToSearch;
-    private final FieldOperator fieldOperator;
-    private final String errorMsg;
-    private final ParameterKind paramkind;
-    private final Float boost;
+  private final ValueEncoding encoding;
+  private final String keyPattern;
+  private final String validValuePattern;
+  private final String[] fieldsToSearch;
+  private final FieldOperator fieldOperator;
+  private final String errorMsg;
+  private final ParameterKind paramkind;
+  private final Float boost;
 
-    ImportCandidateParameter(ParameterKind kind) {
-        this(kind, ALL_OF, null, null, null, null);
-    }
+  ImportCandidateParameter(ParameterKind kind) {
+    this(kind, ALL_OF, null, null, null, null);
+  }
 
-    ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
-        this(kind, operator, fieldsToSearch, null, null, null);
-    }
+  ImportCandidateParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
+    this(kind, operator, fieldsToSearch, null, null, null);
+  }
 
-    ImportCandidateParameter(
-        ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+  ImportCandidateParameter(
+      ParameterKind kind,
+      FieldOperator operator,
+      String fieldsToSearch,
+      String keyPattern,
+      String valuePattern,
+      Float boost) {
 
-        this.fieldOperator = nonNull(operator) ? operator : NA;
-        this.boost = nonNull(boost) ? boost : 1F;
-        this.fieldsToSearch = nonNull(fieldsToSearch)
-            ? fieldsToSearch.split(PATTERN_IS_PIPE)
-            : new String[]{name()};
-        this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
-        this.errorMsg = ParameterKey.getErrorMessage(kind);
-        this.encoding = ParameterKey.getEncoding(kind);
-        this.keyPattern = nonNull(keyPattern)
+    this.fieldOperator = nonNull(operator) ? operator : NA;
+    this.boost = nonNull(boost) ? boost : 1F;
+    this.fieldsToSearch =
+        nonNull(fieldsToSearch) ? fieldsToSearch.split(PATTERN_IS_PIPE) : new String[] {name()};
+    this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
+    this.errorMsg = ParameterKey.getErrorMessage(kind);
+    this.encoding = ParameterKey.getEncoding(kind);
+    this.keyPattern =
+        nonNull(keyPattern)
             ? keyPattern
             : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
-        this.paramkind = kind;
-    }
+    this.paramkind = kind;
+  }
 
-    @Override
-    public String asCamelCase() {
-        return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
-    }
-
-    @Override
-    public String asLowerCase() {
-        return this.name().toLowerCase(Locale.getDefault());
-    }
-
-    @Override
-    public Float fieldBoost() {
-        return boost;
-    }
-
-    @Override
-    public ParameterKind fieldType() {
-        return paramkind;
-    }
-
-    @Override
-    public String fieldPattern() {
-        return keyPattern;
-    }
-
-    @Override
-    public String valuePattern() {
-        return validValuePattern;
-    }
-
-    @Override
-    public ValueEncoding valueEncoding() {
-        return encoding;
-    }
-
-    @Override
-    public Stream<String> searchFields(boolean... isKeyWord) {
-        return Arrays.stream(fieldsToSearch)
-            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
-    }
-
-    @Override
-    public FieldOperator searchOperator() {
-        return fieldOperator;
-    }
-
-    @Override
-    public String errorMessage() {
-        return errorMsg;
-    }
-
-    @Override
-    public ImportCandidateParameter subQuery() {
-        throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
-    }
-
-    @Override
-    @JacocoGenerated
-    public String toString() {
-        return
-            new StringJoiner(COLON, "Key[", "]")
-                .add(String.valueOf(ordinal()))
-                .add(asCamelCase())
-                .toString();
-    }
-
-    public static ImportCandidateParameter keyFromString(String paramName) {
-        var result = Arrays.stream(ImportCandidateParameter.values())
+  /**
+   * Returns the enum constant of this type with the specified name. The string must match exactly
+   * an identifier used to declare an enum constant in this type. (Extraneous whitespace characters
+   * are not permitted.)
+   *
+   * @param paramName the name of the enum constant to be returned.
+   * @return the enum constant with the specified name
+   */
+  public static ImportCandidateParameter keyFromString(String paramName) {
+    var result =
+        Arrays.stream(ImportCandidateParameter.values())
             .filter(ImportCandidateParameter::ignoreInvalidKey)
             .filter(ParameterKey.equalTo(paramName))
             .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
-    }
+    return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+  }
 
-    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
+  private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
+    return f.ordinal() > IGNORE_PARAMETER_INDEX;
+  }
 
-    private static boolean isSearchField(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
-    }
+  private static boolean isSearchField(ImportCandidateParameter f) {
+    return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
+  }
+
+  @Override
+  public String asCamelCase() {
+    return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
+  }
+
+  @Override
+  public String asLowerCase() {
+    return this.name().toLowerCase(Locale.getDefault());
+  }
+
+  @Override
+  public Float fieldBoost() {
+    return boost;
+  }
+
+  @Override
+  public ParameterKind fieldType() {
+    return paramkind;
+  }
+
+  @Override
+  public String fieldPattern() {
+    return keyPattern;
+  }
+
+  @Override
+  public String valuePattern() {
+    return validValuePattern;
+  }
+
+  @Override
+  public ValueEncoding valueEncoding() {
+    return encoding;
+  }
+
+  @Override
+  public Stream<String> searchFields(boolean... isKeyWord) {
+    return Arrays.stream(fieldsToSearch).map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
+  }
+
+  @Override
+  public FieldOperator searchOperator() {
+    return fieldOperator;
+  }
+
+  @Override
+  public String errorMessage() {
+    return errorMsg;
+  }
+
+  @Override
+  public ImportCandidateParameter subQuery() {
+    throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
+  }
+
+  @Override
+  @JacocoGenerated
+  public String toString() {
+    return new StringJoiner(COLON, "Key[", "]")
+        .add(String.valueOf(ordinal()))
+        .add(asCamelCase())
+        .toString();
+  }
 }

@@ -11,8 +11,7 @@ import nva.commons.apigateway.exceptions.UnauthorizedException;
  * @author Stig Norland
  */
 public interface FilterBuilder<Q extends Query<?>> {
-    Q apply();
+  Q apply();
 
-    Q fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException;
-
+  Q fromRequestInfo(RequestInfo requestInfo) throws UnauthorizedException;
 }

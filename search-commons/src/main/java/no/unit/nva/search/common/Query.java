@@ -1,44 +1,46 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
+
 import java.net.URI;
 import java.time.Instant;
 import java.util.stream.Stream;
-
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.ResponseFormatter;
 
 /**
+ * This class operates on the query that a request provides.
+ *
  * @author Stig Norland
  */
 public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
-    protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
-    protected transient QueryKeys<K> queryKeys;
-    private final transient Instant startTime;
+  private final transient Instant startTime;
+  protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
+  protected transient QueryKeys<K> queryKeys;
 
-    public abstract Stream<QueryContentWrapper> assemble();
+  protected Query() {
+    startTime = Instant.now();
+  }
 
-    /**
-     * Method to mimic Domain driven design.
-     *
-     * @param queryClient simple service to do i/o (http)
-     * @return ResponseFormatter<ParameterKey>
-     */
-    public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
+  public abstract Stream<QueryContentWrapper> assemble();
 
-    protected abstract URI openSearchUri();
+  /**
+   * Method to mimic Domain driven design.
+   *
+   * @param queryClient simple service to do i/o (http)
+   * @return ResponseFormatter<>()
+   */
+  public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(
+      OpenSearchClient<R, Q> queryClient);
 
-    protected Query() {
-        startTime = Instant.now();
-    }
+  protected abstract URI openSearchUri();
 
-    public QueryKeys<K> parameters() {
-        return queryKeys;
-    }
+  public QueryKeys<K> parameters() {
+    return queryKeys;
+  }
 
-    public Instant getStartTime() {
-        return startTime;
-    }
-
+  public Instant getStartTime() {
+    return startTime;
+  }
 }
