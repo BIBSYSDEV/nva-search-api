@@ -9,13 +9,13 @@ import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
-import java.net.HttpURLConnection;
-import java.util.List;
 
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
+
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -24,6 +24,9 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+
+import java.net.HttpURLConnection;
+import java.util.List;
 
 public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
@@ -41,10 +44,9 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
 
     @Override
     protected String processInput(Void input, RequestInfo requestInfo, Context context)
-        throws BadRequestException, UnauthorizedException {
+            throws BadRequestException, UnauthorizedException {
 
-        return
-            ResourceSearchQuery.builder()
+        return ResourceSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
@@ -53,7 +55,8 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA, DELETED, UNPUBLISHED)
                 .organization(requestInfo)
                 .apply()
-                .doSearch(opensearchClient).toString();
+                .doSearch(opensearchClient)
+                .toString();
     }
 
     @Override
@@ -67,13 +70,14 @@ public class SearchResourceAuthHandler extends ApiGatewayHandler<Void, String> {
     }
 
     @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+            throws ApiGatewayException {
         validateAccessRight(requestInfo.getAccessRights());
     }
 
     private void validateAccessRight(List<AccessRight> accessRights) throws UnauthorizedException {
         if (accessRights.contains(AccessRight.MANAGE_OWN_AFFILIATION)
-            || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
+                || accessRights.contains(AccessRight.MANAGE_RESOURCES_STANDARD)) {
             return;
         }
         throw new UnauthorizedException();

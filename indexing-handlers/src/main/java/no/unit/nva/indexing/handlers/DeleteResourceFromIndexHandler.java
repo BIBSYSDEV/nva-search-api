@@ -1,17 +1,22 @@
 package no.unit.nva.indexing.handlers;
 
 import com.amazonaws.services.lambda.runtime.Context;
+
 import no.unit.nva.events.handlers.DestinationsEventBridgeEventHandler;
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.indexingclient.IndexingClient;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteResourceFromIndexHandler extends DestinationsEventBridgeEventHandler<DeleteResourceEvent, Void> {
+public class DeleteResourceFromIndexHandler
+        extends DestinationsEventBridgeEventHandler<DeleteResourceEvent, Void> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeleteResourceFromIndexHandler.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(DeleteResourceFromIndexHandler.class);
 
     private final IndexingClient indexingClient;
 
@@ -26,9 +31,10 @@ public class DeleteResourceFromIndexHandler extends DestinationsEventBridgeEvent
     }
 
     @Override
-    protected Void processInputPayload(DeleteResourceEvent input,
-                                       AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event,
-                                       Context context) {
+    protected Void processInputPayload(
+            DeleteResourceEvent input,
+            AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event,
+            Context context) {
         try {
             indexingClient.removeDocumentFromResourcesIndex(input.getIdentifier().toString());
         } catch (Exception e) {

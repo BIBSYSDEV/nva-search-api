@@ -1,13 +1,14 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
-import java.net.URI;
-import java.time.Instant;
-import java.util.stream.Stream;
 
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.records.QueryContentWrapper;
 import no.unit.nva.search.common.records.ResponseFormatter;
+
+import java.net.URI;
+import java.time.Instant;
+import java.util.stream.Stream;
 
 /**
  * @author Stig Norland
@@ -25,7 +26,8 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
      * @param queryClient simple service to do i/o (http)
      * @return ResponseFormatter<ParameterKey>
      */
-    public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient);
+    public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(
+            OpenSearchClient<R, Q> queryClient);
 
     protected abstract URI openSearchUri();
 
@@ -40,5 +42,4 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
     public Instant getStartTime() {
         return startTime;
     }
-
 }

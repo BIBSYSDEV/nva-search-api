@@ -1,24 +1,30 @@
 package no.unit.nva.indexingclient.models;
 
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.SHARD_ID;
+
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Objects;
-import java.util.Optional;
+
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
+
 import nva.commons.core.StringUtils;
+
 import org.opensearch.action.index.IndexRequest;
 import org.opensearch.common.xcontent.XContentType;
 
+import java.util.Objects;
+import java.util.Optional;
+
 public record IndexDocument(
-    @JsonProperty(CONSUMPTION_ATTRIBUTES) EventConsumptionAttributes consumptionAttributes,
-    @JsonProperty(BODY) JsonNode resource
-) implements JsonSerializable {
+        @JsonProperty(CONSUMPTION_ATTRIBUTES) EventConsumptionAttributes consumptionAttributes,
+        @JsonProperty(BODY) JsonNode resource)
+        implements JsonSerializable {
 
     public static final String BODY = "body";
     public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
@@ -27,7 +33,6 @@ public record IndexDocument(
     static final String IMPORT_CANDIDATE = "ImportCandidate";
     static final String TICKET = "Ticket";
     static final String RESOURCE = "Resource";
-
 
     public IndexDocument validate() {
         Objects.requireNonNull(getIndexName());
@@ -52,32 +57,33 @@ public record IndexDocument(
     }
 
     public static IndexDocument fromJsonString(String json) {
-        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class)).orElseThrow();
+        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class))
+                .orElseThrow();
     }
 
     @JsonIgnore
     public String getIndexName() {
         return Optional.ofNullable(consumptionAttributes.index())
-            .filter(StringUtils::isNotBlank)
-            .orElseThrow(() -> new RuntimeException(MISSING_INDEX_NAME_IN_RESOURCE));
+                .filter(StringUtils::isNotBlank)
+                .orElseThrow(() -> new RuntimeException(MISSING_INDEX_NAME_IN_RESOURCE));
     }
 
     @JsonIgnore
     public String getDocumentIdentifier() {
         return Optional.ofNullable(consumptionAttributes.documentIdentifier())
-            .map(SortableIdentifier::toString)
-            .orElseThrow(() -> new RuntimeException(MISSING_IDENTIFIER_IN_RESOURCE));
+                .map(SortableIdentifier::toString)
+                .orElseThrow(() -> new RuntimeException(MISSING_IDENTIFIER_IN_RESOURCE));
     }
 
     public IndexRequest toIndexRequest() {
         return new IndexRequest(getIndexName())
-            .source(serializeResource(), XContentType.JSON)
-            .routing(SHARD_ID) 
-            .id(getDocumentIdentifier());
+                .source(serializeResource(), XContentType.JSON)
+                .routing(SHARD_ID)
+                .id(getDocumentIdentifier());
     }
 
-
     private String serializeResource() {
-        return attempt(() -> IndexingClient.objectMapper.writeValueAsString(resource)).orElseThrow();
+        return attempt(() -> IndexingClient.objectMapper.writeValueAsString(resource))
+                .orElseThrow();
     }
 }

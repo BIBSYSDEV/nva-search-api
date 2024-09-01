@@ -1,6 +1,5 @@
 package no.unit.nva.search.common.enums;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_BOOLEAN;
 import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_DATE;
 import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_NUMBER;
@@ -14,12 +13,16 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NUMBER;
 import static no.unit.nva.search.common.constant.Words.DOT;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.common.constant.Words;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.constant.Words;
 
 /**
  * @author Stig Norland
@@ -77,26 +80,26 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
     }
 
     static String getValuePattern(ParameterKind kind, String pattern) {
-        return nonNull(pattern) ? pattern : switch (kind) {
-            case EXISTS -> PATTERN_IS_BOOLEAN;
-            case DATE -> PATTERN_IS_DATE;
-            case NUMBER -> PATTERN_IS_NUMBER;
-            case INVALID -> PATTERN_IS_NONE_OR_ONE;
-            default -> PATTERN_IS_NON_EMPTY;
-        };
+        return nonNull(pattern)
+                ? pattern
+                : switch (kind) {
+                    case EXISTS -> PATTERN_IS_BOOLEAN;
+                    case DATE -> PATTERN_IS_DATE;
+                    case NUMBER -> PATTERN_IS_NUMBER;
+                    case INVALID -> PATTERN_IS_NONE_OR_ONE;
+                    default -> PATTERN_IS_NON_EMPTY;
+                };
     }
 
     static Function<String, String> trimKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
-        return field -> isNotKeyword(parameterKind, isKeyWord)
-            ? field.trim().replace(DOT + Words.KEYWORD, EMPTY_STRING)
-            : field.trim();
+        return field ->
+                isNotKeyword(parameterKind, isKeyWord)
+                        ? field.trim().replace(DOT + Words.KEYWORD, EMPTY_STRING)
+                        : field.trim();
     }
 
     static boolean isNotKeyword(ParameterKind parameterKind, boolean... isKeyWord) {
         var result = !(parameterKind.equals(KEYWORD) || parameterKind.equals(CUSTOM));
-        return isKeyWord.length == 1
-            ? !isKeyWord[0]
-            : result;
+        return isKeyWord.length == 1 ? !isKeyWord[0] : result;
     }
-
 }

@@ -1,14 +1,17 @@
 package no.unit.nva.search.common.records;
 
 import static java.util.Objects.isNull;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.search.common.constant.Words;
+
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.paths.UriWrapper;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
-import no.unit.nva.search.common.constant.Words;
-import nva.commons.core.JacocoGenerated;
-import nva.commons.core.paths.UriWrapper;
 
 /**
  * @author Stig Norland
@@ -26,27 +29,26 @@ public class PagedSearchBuilder {
     @SuppressWarnings("PMD.NullAssignment")
     public PagedSearch build() {
         if (hasNoNextNorSort()) {
-            this.nextSearchAfterResults = null;       // null values are not serialized
+            this.nextSearchAfterResults = null; // null values are not serialized
         }
         return new PagedSearch(
-            id,
-            totalHits,
-            hits,
-            nextResults,
-            nextSearchAfterResults,
-            previousResults,
-            aggregations
-        );
+                id,
+                totalHits,
+                hits,
+                nextResults,
+                nextSearchAfterResults,
+                previousResults,
+                aggregations);
     }
 
     public PagedSearchBuilder withIds(
-        URI gatewayUri, Map<String, String> requestParameter, Integer offset, Integer size
-    ) {
+            URI gatewayUri, Map<String, String> requestParameter, Integer offset, Integer size) {
         requestParameter.remove(Words.PAGE);
         requestParameter.remove(Words.FROM);
         this.id = createUriOffsetRef(requestParameter, offset, gatewayUri);
         this.previousResults = createUriOffsetRef(requestParameter, offset - size, gatewayUri);
-        this.nextResults = createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
+        this.nextResults =
+                createNextResults(requestParameter, offset + size, totalHits, gatewayUri);
         return this;
     }
 
@@ -70,11 +72,12 @@ public class PagedSearchBuilder {
         return this;
     }
 
-    private URI createNextResults(Map<String, String> requestParameter, Integer offset, Integer totalSize,
-                                  URI gatewayUri) {
-        return offset < totalSize
-            ? createUriOffsetRef(requestParameter, offset, gatewayUri)
-            : null;
+    private URI createNextResults(
+            Map<String, String> requestParameter,
+            Integer offset,
+            Integer totalSize,
+            URI gatewayUri) {
+        return offset < totalSize ? createUriOffsetRef(requestParameter, offset, gatewayUri) : null;
     }
 
     private URI createUriOffsetRef(Map<String, String> params, Integer offset, URI gatewayUri) {
@@ -82,9 +85,7 @@ public class PagedSearchBuilder {
             return null;
         }
         params.put(Words.FROM, String.valueOf(offset));
-        return UriWrapper.fromUri(gatewayUri)
-            .addQueryParameters(params)
-            .getUri();
+        return UriWrapper.fromUri(gatewayUri).addQueryParameters(params).getUri();
     }
 
     @JacocoGenerated

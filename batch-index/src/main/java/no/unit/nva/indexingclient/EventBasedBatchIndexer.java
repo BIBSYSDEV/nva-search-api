@@ -5,20 +5,27 @@ import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultEsClient;
 import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultEventBridgeClient;
 import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultS3Client;
 import static no.unit.nva.indexingclient.EmitEventUtils.emitEvent;
+
 import com.amazonaws.services.lambda.runtime.Context;
-import java.io.InputStream;
-import java.io.OutputStream;
+
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.ioutils.IoUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.s3.S3Client;
 
-public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent, SortableIdentifier[]> {
+import java.io.InputStream;
+import java.io.OutputStream;
+
+public class EventBasedBatchIndexer
+        extends EventHandler<ImportDataRequestEvent, SortableIdentifier[]> {
 
     private static final Logger logger = LoggerFactory.getLogger(EventBasedBatchIndexer.class);
     private final S3Client s3Client;
@@ -29,17 +36,17 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
     @JacocoGenerated
     public EventBasedBatchIndexer() {
         this(
-            defaultS3Client(),
-            defaultEsClient(),
-            defaultEventBridgeClient(),
-            NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+                defaultS3Client(),
+                defaultEsClient(),
+                defaultEventBridgeClient(),
+                NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
     }
 
-    protected EventBasedBatchIndexer(S3Client s3Client,
-                                     IndexingClient openSearchClient,
-                                     EventBridgeClient eventBridgeClient,
-                                     int numberOfFilesPerEvent
-    ) {
+    protected EventBasedBatchIndexer(
+            S3Client s3Client,
+            IndexingClient openSearchClient,
+            EventBridgeClient eventBridgeClient,
+            int numberOfFilesPerEvent) {
         super(ImportDataRequestEvent.class);
         this.s3Client = s3Client;
         this.openSearchClient = openSearchClient;
@@ -55,25 +62,27 @@ public class EventBasedBatchIndexer extends EventHandler<ImportDataRequestEvent,
     }
 
     @Override
-    protected SortableIdentifier[] processInput(ImportDataRequestEvent input,
-                                                AwsEventBridgeEvent<ImportDataRequestEvent> event,
-                                                Context context) {
+    protected SortableIdentifier[] processInput(
+            ImportDataRequestEvent input,
+            AwsEventBridgeEvent<ImportDataRequestEvent> event,
+            Context context) {
         logger.info("Indexing folder:" + input.getS3Location());
         logger.info("Indexing lastEvaluatedKey:" + input.getStartMarker());
-        IndexingResult<SortableIdentifier> result = new BatchIndexer(input, s3Client,
-                                                                     openSearchClient,
-                                                                     numberOfFilesPerEvent
-                                                                     ).processRequest();
+        IndexingResult<SortableIdentifier> result =
+                new BatchIndexer(input, s3Client, openSearchClient, numberOfFilesPerEvent)
+                        .processRequest();
         if (result.truncated() && BatchIndexingConstants.RECURSION_ENABLED) {
             emitEventToProcessNextBatch(input, context, result);
         }
         return result.failedResults().toArray(SortableIdentifier[]::new);
     }
 
-    private void emitEventToProcessNextBatch(ImportDataRequestEvent input, Context context,
-                                             IndexingResult<SortableIdentifier> result) {
+    private void emitEventToProcessNextBatch(
+            ImportDataRequestEvent input,
+            Context context,
+            IndexingResult<SortableIdentifier> result) {
         ImportDataRequestEvent newImportDataRequest =
-            new ImportDataRequestEvent(input.getS3Location(), result.nextStartMarker());
+                new ImportDataRequestEvent(input.getS3Location(), result.nextStartMarker());
         emitEvent(eventBridgeClient, newImportDataRequest, context);
     }
 }

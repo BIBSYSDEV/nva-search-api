@@ -1,9 +1,13 @@
 package no.unit.nva.search.common;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Words.PLUS;
 import static no.unit.nva.search.common.constant.Words.SPACE;
+
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ValueEncoding;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,11 +17,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ValueEncoding;
-
 /**
  * This class operates on the queryKeys that a request provides.
+ *
  * @author Stig Norland
  */
 public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
@@ -25,7 +27,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
     protected final transient Set<K> otherRequired;
     private final transient Map<K, String> page;
     private final transient Map<K, String> search;
-    private final  K fields;
+    private final K fields;
 
     public QueryKeys(K fields) {
         this.fields = fields;
@@ -46,7 +48,6 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
         return page.entrySet();
     }
 
-
     /**
      * Query Parameters with string Keys.
      *
@@ -55,9 +56,9 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
     public Map<String, String> asMap() {
         var results = new LinkedHashMap<String, String>();
         Stream.of(search.entrySet(), page.entrySet())
-            .flatMap(Set::stream)
-            .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
-            .forEach(entry -> results.put(toApiKey(entry), toApiValue(entry)));
+                .flatMap(Set::stream)
+                .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
+                .forEach(entry -> results.put(toApiKey(entry), toApiValue(entry)));
         return results;
     }
 
@@ -76,25 +77,18 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
      * @return String content raw
      */
     public AsType<K> get(K key) {
-        return new AsType<>(
-            search.containsKey(key)
-                ? search.get(key)
-                : page.get(key),
-            key
-        );
+        return new AsType<>(search.containsKey(key) ? search.get(key) : page.get(key), key);
     }
 
     /**
      * Add a key value pair to Parameters.
      *
-     * @param key   to add to.
+     * @param key to add to.
      * @param value to assign
      */
     public void set(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != ValueEncoding.NONE
-                ? decodeUTF(value)
-                : value;
+            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
             if (isPagingValue(key)) {
                 page.put(key, decodedValue);
             } else {
@@ -108,12 +102,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
     }
 
     public AsType<K> remove(K key) {
-        return new AsType<>(
-            search.containsKey(key)
-                ? search.remove(key)
-                : page.remove(key),
-            key
-        );
+        return new AsType<>(search.containsKey(key) ? search.remove(key) : page.remove(key), key);
     }
 
     public boolean isPresent(K key) {
@@ -121,8 +110,6 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
     }
 
     public AsType<K> ifPresent(K key) {
-        return isPresent(key)
-            ? get(key)
-            : null;
+        return isPresent(key) ? get(key) : null;
     }
 }

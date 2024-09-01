@@ -1,6 +1,5 @@
 package no.unit.nva.search.ticket;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
@@ -50,6 +49,20 @@ import static no.unit.nva.search.ticket.Constants.PUBLICATION_STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.VIEWED_BY_FIELDS;
+
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.search.common.enums.FieldOperator;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ParameterKind;
+import no.unit.nva.search.common.enums.ValueEncoding;
+
+import nva.commons.core.JacocoGenerated;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.text.CaseUtils;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -58,19 +71,11 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.enums.FieldOperator;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ParameterKind;
-import no.unit.nva.search.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.text.CaseUtils;
-
 /**
- * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
- * parameters
- * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ * Enum for all the parameters that can be used to query the search index. This enum needs to
+ * implement these parameters <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin
+ * API</a>
+ *
  * @author Stig Norland
  */
 public enum TicketParameter implements ParameterKey<TicketParameter> {
@@ -85,7 +90,8 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     CUSTOMER_ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, CUSTOMER_ID_KEYWORD),
     ID(FUZZY_KEYWORD, ANY_OF, ID_KEYWORD),
     ID_NOT(FUZZY_KEYWORD, NOT_ANY_OF, ID_KEYWORD),
-    EXCLUDE_SUBUNITS(IGNORED, ANY_OF, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
+    EXCLUDE_SUBUNITS(
+            IGNORED, ANY_OF, ORGANIZATION_ID_KEYWORD + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD),
     FINALIZED_BY(ACROSS_FIELDS, ALL_OF, FINALIZED_BY_FIELDS),
     FINALIZED_BY_NOT(ACROSS_FIELDS, NOT_ALL_OF, FINALIZED_BY_FIELDS),
     MESSAGES(TEXT, ALL_OF, MESSAGE_FIELDS),
@@ -130,10 +136,10 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<TicketParameter> TICKET_PARAMETER_SET =
-        Arrays.stream(TicketParameter.values())
-            .filter(TicketParameter::isSearchField)
-            .sorted(ParameterKey::compareAscending)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            Arrays.stream(TicketParameter.values())
+                    .filter(TicketParameter::isSearchField)
+                    .sorted(ParameterKey::compareAscending)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
     private final ValueEncoding encoding;
     private final String keyPattern;
     private final String validValuePattern;
@@ -151,25 +157,31 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
         this(kind, operator, fieldsToSearch, null, null, null);
     }
 
-    TicketParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
+    TicketParameter(
+            ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
         this(kind, operator, fieldsToSearch, null, null, boost);
     }
 
     TicketParameter(
-        ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+            ParameterKind kind,
+            FieldOperator operator,
+            String fieldsToSearch,
+            String keyPattern,
+            String valuePattern,
+            Float boost) {
 
         this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
-        this.fieldsToSearch = nonNull(fieldsToSearch)
-            ? fieldsToSearch.split("\\|")
-            : new String[]{name()};
+        this.fieldsToSearch =
+                nonNull(fieldsToSearch) ? fieldsToSearch.split("\\|") : new String[] {name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
-        this.keyPattern = nonNull(keyPattern)
-            ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+        this.keyPattern =
+                nonNull(keyPattern)
+                        ? keyPattern
+                        : PATTERN_IS_IGNORE_CASE
+                                + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
@@ -210,8 +222,7 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
 
     @Override
     public Stream<String> searchFields(boolean... isKeyWord) {
-        return Arrays.stream(fieldsToSearch)
-            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
+        return Arrays.stream(fieldsToSearch).map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
     @Override
@@ -232,21 +243,19 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     @Override
     @JacocoGenerated
     public String toString() {
-        return
-            new StringJoiner(COLON, "Key[", "]")
+        return new StringJoiner(COLON, "Key[", "]")
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
     }
 
     public static TicketParameter keyFromString(String paramName) {
-        var result = Arrays.stream(TicketParameter.values())
-            .filter(TicketParameter::ignoreInvalidKey)
-            .filter(ParameterKey.equalTo(paramName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
+        var result =
+                Arrays.stream(TicketParameter.values())
+                        .filter(TicketParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
@@ -254,6 +263,7 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     }
 
     private static boolean isSearchField(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX && enumParameter.ordinal() < SEARCH_ALL.ordinal();
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
+                && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 }

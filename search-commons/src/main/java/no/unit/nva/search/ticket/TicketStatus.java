@@ -1,6 +1,7 @@
 package no.unit.nva.search.ticket;
 
 import static no.unit.nva.search.common.enums.SortKey.getIgnoreCaseAndUnderscoreKeyExpression;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import java.util.Arrays;
@@ -27,12 +28,11 @@ public enum TicketStatus {
     }
 
     public static TicketStatus fromString(String name) {
-        var result = Arrays.stream(TicketStatus.values())
-            .filter(equalTo(name))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : NONE;
+        var result =
+                Arrays.stream(TicketStatus.values())
+                        .filter(equalTo(name))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : NONE;
     }
 
     private static Predicate<TicketStatus> equalTo(String name) {

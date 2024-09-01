@@ -1,14 +1,16 @@
 package no.unit.nva.indexing.utils;
 
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.indexingclient.models.QueueClient;
+
+import nva.commons.core.Environment;
+
+import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.indexingclient.models.QueueClient;
-import nva.commons.core.Environment;
-import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
-import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 public final class RecoveryEntry {
 
@@ -45,18 +47,20 @@ public final class RecoveryEntry {
 
     private SendMessageRequest createSendMessageRequest() {
         return SendMessageRequest.builder()
-                   .messageAttributes(Map.of(ID, convertToMessageAttribute(identifier),
-                                             TYPE, convertToMessageAttribute(type)))
-                   .messageBody(exception)
-                   .queueUrl(new Environment().readEnv(RECOVERY_QUEUE))
-                   .build();
+                .messageAttributes(
+                        Map.of(
+                                ID, convertToMessageAttribute(identifier),
+                                TYPE, convertToMessageAttribute(type)))
+                .messageBody(exception)
+                .queueUrl(new Environment().readEnv(RECOVERY_QUEUE))
+                .build();
     }
 
     private MessageAttributeValue convertToMessageAttribute(String value) {
         return MessageAttributeValue.builder()
-                   .stringValue(value)
-                   .dataType(DATA_TYPE_STRING)
-                   .build();
+                .stringValue(value)
+                .dataType(DATA_TYPE_STRING)
+                .build();
     }
 
     public RecoveryEntry withException(Exception exception) {
@@ -78,7 +82,10 @@ public final class RecoveryEntry {
     }
 
     private Builder copy() {
-        return new Builder().withIdentifier(this.identifier).withType(this.type).withException(this.exception);
+        return new Builder()
+                .withIdentifier(this.identifier)
+                .withType(this.type)
+                .withException(this.exception);
     }
 
     private static final class Builder {
@@ -87,8 +94,7 @@ public final class RecoveryEntry {
         private String type;
         private String failure;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder withIdentifier(String identifier) {
             this.identifier = identifier;
@@ -106,7 +112,7 @@ public final class RecoveryEntry {
         }
 
         public RecoveryEntry build() {
-            return new RecoveryEntry(identifier, type,failure);
+            return new RecoveryEntry(identifier, type, failure);
         }
     }
 }
