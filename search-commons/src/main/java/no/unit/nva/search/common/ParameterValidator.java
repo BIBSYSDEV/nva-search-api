@@ -1,6 +1,5 @@
 package no.unit.nva.search.common;
 
-import static java.util.Objects.isNull;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.search.common.constant.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.search.common.constant.ErrorMessages.validQueryParameterNamesMessage;
@@ -8,6 +7,18 @@ import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma
 import static no.unit.nva.search.common.constant.Words.ALL;
 import static no.unit.nva.search.common.constant.Words.COMMA;
 import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
+
+import static java.util.Objects.isNull;
+
+import no.unit.nva.search.common.constant.ErrorMessages;
+import no.unit.nva.search.common.enums.ParameterKey;
+
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.JacocoGenerated;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -17,22 +28,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import no.unit.nva.search.common.constant.ErrorMessages;
-import no.unit.nva.search.common.enums.ParameterKey;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Builder for OpenSearchQuery.
+ *
  * @param <K> Enum of ParameterKeys
  * @param <Q> Instance of OpenSearchQuery
-
  * @author Stig Norland
  */
-public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
+public abstract class ParameterValidator<
+        K extends Enum<K> & ParameterKey<K>, Q extends SearchQuery<K>> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ParameterValidator.class);
 
@@ -42,12 +46,11 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
 
     /**
      * Constructor of QueryBuilder.
-     * <p>Usage:</p>
-     * <samp>Query.builder()<br>
+     *
+     * <p>Usage: <samp>Query.builder()<br>
      * .fromRequestInfo(requestInfo)<br>
      * .withRequiredParameters(FROM, SIZE)<br>
-     * .build()
-     * </samp>
+     * .build() </samp>
      */
     public ParameterValidator(SearchQuery<K> searchQuery) {
         this.searchQuery = searchQuery;
@@ -55,6 +58,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
 
     /**
      * Builder of Query.
+     *
      * @throws BadRequestException if parameters are invalid or missing
      */
     @SuppressWarnings("unchecked")
@@ -67,6 +71,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
 
     /**
      * Validator of QueryBuilder.
+     *
      * @throws BadRequestException if parameters are invalid or missing
      */
     public ParameterValidator<K, Q> validate() throws BadRequestException {
@@ -81,28 +86,28 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
             throw new BadRequestException(requiredMissingMessage(getMissingKeys()));
         }
         if (!invalidKeys.isEmpty()) {
-            throw new BadRequestException(validQueryParameterNamesMessage(invalidKeys, validKeys()));
+            throw new BadRequestException(
+                    validQueryParameterNamesMessage(invalidKeys, validKeys()));
         }
         validatedSort();
 
         if (hasSearchAfterAndSortByRelevance()) {
-            throw new BadRequestException(ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
+            throw new BadRequestException(
+                    ErrorMessages.RELEVANCE_SEARCH_AFTER_ARE_MUTUAL_EXCLUSIVE);
         }
         applyRulesAfterValidation();
         notValidated = false;
         return this;
     }
 
-
     /**
      * DefaultValues are only assigned if they are set as required, otherwise ignored.
-     * <p>Usage:</p>
-     * <samp>requiredMissing().forEach(key -> { <br>
-     *     switch (key) {<br>
-     *         case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
-     *         default -> { // do nothing
-     *             }<br>
-     *     }});<br>
+     *
+     * <p>Usage: <samp>requiredMissing().forEach(key -> { <br>
+     * switch (key) {<br>
+     * case LANGUAGE -> query.setValue(key, DEFAULT_LANGUAGE_CODE);<br>
+     * default -> { // do nothing }<br>
+     * }});<br>
      * </samp>
      */
     protected abstract void assignDefaultValues();
@@ -117,9 +122,13 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
 
     /**
      * Sample code for setValue.
-     * <p>Usage:</p>
-     * <samp>var qpKey = keyFromString(key,value);<br>
-     * if(qpKey.equals(INVALID)) {<br> invalidKeys.add(key);<br> } else {<br> query.setValue(qpKey, value);<br> }<br>
+     *
+     * <p>Usage: <samp>var qpKey = keyFromString(key,value);<br>
+     * if(qpKey.equals(INVALID)) {<br>
+     * invalidKeys.add(key);<br>
+     * } else {<br>
+     * query.setValue(qpKey, value);<br>
+     * }<br>
      * </samp>
      */
     protected abstract void setValue(String key, String value);
@@ -131,25 +140,21 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
      */
     protected void validatedSort() throws BadRequestException {
         try {
-            searchQuery.sort().asSplitStream(COMMA)
-                .forEach(this::validateSortKeyName);
+            searchQuery.sort().asSplitStream(COMMA).forEach(this::validateSortKeyName);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
     }
 
     protected Set<String> getMissingKeys() {
-        return
-            requiredMissing()
-                .stream()
+        return requiredMissing().stream()
                 .map(ParameterKey::asCamelCase)
                 .collect(Collectors.toSet());
     }
 
     protected Set<K> requiredMissing() {
-        return
-            required().stream()
-                    .filter(key -> !searchQuery.parameters().isPresent(key))
+        return required().stream()
+                .filter(key -> !searchQuery.parameters().isPresent(key))
                 .collect(Collectors.toSet());
     }
 
@@ -167,9 +172,7 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
         }
     }
 
-    /**
-     * Adds query and path parameters from requestInfo.
-     */
+    /** Adds query and path parameters from requestInfo. */
     @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
@@ -192,7 +195,8 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
      *
      * @apiNote This is intended to be used when setting up tests.
      */
-    public ParameterValidator<K, Q> fromQueryParameters(Collection<Map.Entry<String, String>> testParameters) {
+    public ParameterValidator<K, Q> fromQueryParameters(
+            Collection<Map.Entry<String, String>> testParameters) {
         testParameters.forEach(this::setEntryValue);
         return this;
     }
@@ -203,9 +207,10 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
 
     /**
      * Defines which parameters are required.
-     * <p>In order to improve ease of use, you can add a default value to
-     * each required parameter, and it will be used, if it is not proved by the requester. Implement default values in
-     * {@link #assignDefaultValues()}</p>
+     *
+     * <p>In order to improve ease of use, you can add a default value to each required parameter,
+     * and it will be used, if it is not proved by the requester. Implement default values in {@link
+     * #assignDefaultValues()}
      *
      * @param requiredParameters comma seperated QueryParameterKeys
      */
@@ -221,11 +226,10 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
         return this;
     }
 
-
     /**
      * Overrides/set a key value pair
      *
-     * @param key   to assign value to
+     * @param key to assign value to
      * @param value assigned
      * @return builder
      */
@@ -233,7 +237,6 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
         searchQuery.parameters().set(key, value);
         return this;
     }
-
 
     /**
      * When running docker tests, the current host needs to be specified.
@@ -247,26 +250,29 @@ public abstract class ParameterValidator<K extends Enum<K> & ParameterKey<K>, Q 
     }
 
     protected void mergeToKey(K key, String value) {
-        searchQuery.parameters().set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
+        searchQuery
+                .parameters()
+                .set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
     }
 
     @JacocoGenerated
     protected String ignoreInvalidFields(String value) {
         return ALL.equalsIgnoreCase(value) || isNull(value)
-            ? ALL
-            : Arrays.stream(value.split(COMMA))
-            .filter(this::isKeyValid)           // ignoring invalid keys
-            .collect(Collectors.joining(COMMA));
+                ? ALL
+                : Arrays.stream(value.split(COMMA))
+                        .filter(this::isKeyValid) // ignoring invalid keys
+                        .collect(Collectors.joining(COMMA));
     }
 
     @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {
-        return isNull(value) || Arrays.stream(value.split(COMMA))
-            .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
+        return isNull(value)
+                || Arrays.stream(value.split(COMMA))
+                        .noneMatch(singleValue -> singleValue.matches(key.valuePattern()));
     }
 
     private boolean hasSearchAfterAndSortByRelevance() {
         return searchQuery.parameters().isPresent(searchQuery.keySearchAfter())
-            && searchQuery.sort().toString().contains(RELEVANCE_KEY_NAME);
+                && searchQuery.sort().toString().contains(RELEVANCE_KEY_NAME);
     }
 }

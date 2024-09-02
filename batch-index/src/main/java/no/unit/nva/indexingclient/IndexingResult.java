@@ -9,6 +9,4 @@ public interface IndexingResult<T> {
     String nextStartMarker();
 
     boolean truncated();
-
-
 }

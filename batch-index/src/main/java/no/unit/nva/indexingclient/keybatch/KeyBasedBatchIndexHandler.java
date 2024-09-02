@@ -1,30 +1,30 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultS3Client;
 import static no.unit.nva.indexingclient.EmitEventUtils.MANDATORY_UNUSED_SUBTOPIC;
+
 import static nva.commons.core.attempt.Try.attempt;
+
+import static java.util.Objects.nonNull;
+
 import com.amazonaws.services.lambda.runtime.Context;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
+
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.s3.S3Driver;
 import no.unit.nva.indexingclient.AggregationsValidator;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.s3.S3Driver;
+
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
 import nva.commons.core.paths.UnixPath;
+
 import org.opensearch.action.bulk.BulkResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
@@ -32,6 +32,14 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
@@ -41,8 +49,9 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     public static final Environment ENVIRONMENT = new Environment();
     public static final String DEFAULT_PAYLOAD = "3291456";
     public static final int MAX_PAYLOAD =
-        Integer.parseInt(new Environment().readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
-    private static final String RESOURCES_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
+            Integer.parseInt(new Environment().readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
+    private static final String RESOURCES_BUCKET =
+            ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
     private static final String KEY_BATCHES_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
     public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
     public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
@@ -56,11 +65,18 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
 
     @JacocoGenerated
     public KeyBasedBatchIndexHandler() {
-        this(IndexingClient.defaultIndexingClient(), defaultS3Client(), defaultS3Client(), defaultEventBridgeClient());
+        this(
+                IndexingClient.defaultIndexingClient(),
+                defaultS3Client(),
+                defaultS3Client(),
+                defaultEventBridgeClient());
     }
 
-    public KeyBasedBatchIndexHandler(IndexingClient indexingClient, S3Client s3ResourcesClient,
-                                     S3Client s3BatchesClient, EventBridgeClient eventBridgeClient) {
+    public KeyBasedBatchIndexHandler(
+            IndexingClient indexingClient,
+            S3Client s3ResourcesClient,
+            S3Client s3BatchesClient,
+            EventBridgeClient eventBridgeClient) {
         super(KeyBatchRequestEvent.class);
         this.indexingClient = indexingClient;
         this.s3ResourcesClient = s3ResourcesClient;
@@ -74,14 +90,18 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     @Override
-    protected Void processInput(KeyBatchRequestEvent input, AwsEventBridgeEvent<KeyBatchRequestEvent> event,
-                                Context context) {
+    protected Void processInput(
+            KeyBatchRequestEvent input,
+            AwsEventBridgeEvent<KeyBatchRequestEvent> event,
+            Context context) {
         var startMarker = getStartMarker(input);
         var location = getLocation(input);
         var batchResponse = fetchSingleBatch(startMarker);
 
         if (batchResponse.isTruncated()) {
-            sendEvent(constructRequestEntry(batchResponse.contents().get(0).key(), context, location));
+            sendEvent(
+                    constructRequestEntry(
+                            batchResponse.contents().get(0).key(), context, location));
         }
 
         var batchKey = batchResponse.contents().get(0).key();
@@ -98,16 +118,16 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return nonNull(input) && nonNull(input.location()) ? input.location() : null;
     }
 
-    private static PutEventsRequestEntry constructRequestEntry(String lastEvaluatedKey, Context context,
-                                                               String location) {
+    private static PutEventsRequestEntry constructRequestEntry(
+            String lastEvaluatedKey, Context context, String location) {
         return PutEventsRequestEntry.builder()
-                   .eventBusName(EVENT_BUS)
-                   .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC, location).toJsonString())
-                   .detailType(MANDATORY_UNUSED_SUBTOPIC)
-                   .source(KeyBasedBatchIndexHandler.class.getName())
-                   .resources(context.getInvokedFunctionArn())
-                   .time(Instant.now())
-                   .build();
+                .eventBusName(EVENT_BUS)
+                .detail(new KeyBatchRequestEvent(lastEvaluatedKey, TOPIC, location).toJsonString())
+                .detailType(MANDATORY_UNUSED_SUBTOPIC)
+                .source(KeyBasedBatchIndexHandler.class.getName())
+                .resources(context.getInvokedFunctionArn())
+                .time(Instant.now())
+                .build();
     }
 
     private static String getStartMarker(KeyBatchRequestEvent input) {
@@ -127,23 +147,28 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
 
     private ListObjectsV2Response fetchSingleBatch(String startMarker) {
         return s3BatchesClient.listObjectsV2(
-            ListObjectsV2Request.builder().bucket(KEY_BATCHES_BUCKET).startAfter(startMarker).maxKeys(1).build());
+                ListObjectsV2Request.builder()
+                        .bucket(KEY_BATCHES_BUCKET)
+                        .startAfter(startMarker)
+                        .maxKeys(1)
+                        .build());
     }
 
     private List<IndexDocument> mapToIndexDocuments(String content) {
         return extractIdentifiers(content)
-                   .filter(Objects::nonNull)
-                   .map(this::fetchS3Content)
-                   .map(IndexDocument::fromJsonString)
-                   .filter(this::isValid)
-                   .toList();
+                .filter(Objects::nonNull)
+                .map(this::fetchS3Content)
+                .map(IndexDocument::fromJsonString)
+                .filter(this::isValid)
+                .toList();
     }
 
     private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
         for (IndexDocument indexDocument : indexDocuments) {
-            var currentFileSize = indexDocument.toJsonString().getBytes(StandardCharsets.UTF_8).length;
+            var currentFileSize =
+                    indexDocument.toJsonString().getBytes(StandardCharsets.UTF_8).length;
             if (totalSize + currentFileSize < MAX_PAYLOAD) {
                 documents.add(indexDocument);
                 totalSize += currentFileSize;
@@ -173,12 +198,11 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     /**
-     * Resources/Publications only should be validated when indexing. ImportCandidates are not validated.
+     * Resources/Publications only should be validated when indexing. ImportCandidates are not
+     * validated.
      */
-
     private boolean isValid(IndexDocument document) {
         return !isResource(document) || validateResource(document);
-
     }
 
     private boolean validateResource(IndexDocument document) {
@@ -194,7 +218,9 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private Stream<String> extractIdentifiers(String value) {
-        return nonNull(value) && !value.isBlank() ? Arrays.stream(value.split(LINE_BREAK)) : Stream.empty();
+        return nonNull(value) && !value.isBlank()
+                ? Arrays.stream(value.split(LINE_BREAK))
+                : Stream.empty();
     }
 
     private String fetchS3Content(String key) {

@@ -1,12 +1,13 @@
 package no.unit.nva.indexing.model;
 
+import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import no.unit.nva.commons.json.JsonUtils;
 
 import java.util.Collections;
 import java.util.Map;
-
-import static nva.commons.core.attempt.Try.attempt;
 
 public class IndexRequest {
     private final String name;
@@ -32,12 +33,10 @@ public class IndexRequest {
     }
 
     private static Map<String, Object> jsonToJavaMap(String jsonMappings) {
-        var typeReference = new TypeReference<Map<String, Object>>() {
-        };
+        var typeReference = new TypeReference<Map<String, Object>>() {};
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(jsonMappings, typeReference))
-            .orElseThrow();
+                .orElseThrow();
     }
-
 
     public String getName() {
         return name;
@@ -51,4 +50,3 @@ public class IndexRequest {
         return settings;
     }
 }
-

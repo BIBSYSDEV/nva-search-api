@@ -1,9 +1,17 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.search.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultClient;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
+import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
+
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
+
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -14,12 +22,6 @@ import nva.commons.core.JacocoGenerated;
 import java.net.HttpURLConnection;
 import java.util.List;
 
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
-import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultClient;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;
-import static no.unit.nva.search.importcandidate.ImportCandidateParameter.SIZE;
-
 public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, String> {
 
     private final ImportCandidateClient opensearchClient;
@@ -29,15 +31,16 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
         this(new Environment(), defaultClient());
     }
 
-    public SearchImportCandidateAuthHandler(Environment environment, ImportCandidateClient candidateClient) {
+    public SearchImportCandidateAuthHandler(
+            Environment environment, ImportCandidateClient candidateClient) {
         super(Void.class, environment);
         this.opensearchClient = candidateClient;
     }
 
     @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context) throws BadRequestException {
-        return
-            ImportCandidateSearchQuery.builder()
+    protected String processInput(Void input, RequestInfo requestInfo, Context context)
+            throws BadRequestException {
+        return ImportCandidateSearchQuery.builder()
                 .fromRequestInfo(requestInfo)
                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                 .validate()
@@ -57,7 +60,8 @@ public class SearchImportCandidateAuthHandler extends ApiGatewayHandler<Void, St
     }
 
     @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) throws ApiGatewayException {
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
+            throws ApiGatewayException {
         requestInfo.getUserName();
     }
 }

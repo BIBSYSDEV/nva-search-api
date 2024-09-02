@@ -3,20 +3,23 @@ package no.unit.nva.search;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import java.net.http.HttpClient;
-import java.nio.file.Path;
 
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollParameter;
 import no.unit.nva.search.scroll.ScrollQuery;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.http.HttpClient;
+import java.nio.file.Path;
 
 class ScrollClientTest {
 
@@ -24,16 +27,14 @@ class ScrollClientTest {
     private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
     public static final String SAMPLE_PUBLICATION_SEARCH = "publication_response.json";
 
-
     @BeforeEach
     public void setUp() {
         var httpClient = mock(HttpClient.class);
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         scrollClient = new ScrollClient(httpClient, cachedJwtProvider);
         when(httpClient.sendAsync(any(), any()))
-            .thenReturn(mockedFutureHttpResponse(Path.of(SAMPLE_PUBLICATION_SEARCH)));
+                .thenReturn(mockedFutureHttpResponse(Path.of(SAMPLE_PUBLICATION_SEARCH)));
     }
-
 
     @Test
     void searchWithUriReturnsOpenSearchAwsResponse() {
@@ -54,5 +55,4 @@ class ScrollClientTest {
         assertNotNull(ScrollParameter.INVALID.valueEncoding());
         assertNotNull(ScrollParameter.INVALID.valuePattern());
     }
-
 }

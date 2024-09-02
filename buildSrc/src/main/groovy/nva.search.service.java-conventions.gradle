@@ -3,6 +3,7 @@ plugins {
     id 'pmd'
     id 'checkstyle'
     id 'jacoco-report-aggregation'
+    id 'com.diffplug.spotless'
 }
 
 repositories {
@@ -33,7 +34,7 @@ tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
     violationRules {
         rule {
             excludes = [
-                    'search-commons',
+                'search-commons',
             ]
             limit {
                 counter = 'METHOD'
@@ -43,7 +44,7 @@ tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
         }
         rule {
             includes = [
-                    'search-commons',
+                'search-commons',
             ]
             limit {
                 counter = 'METHOD'
@@ -68,9 +69,33 @@ tasks.named('test', Test) {
     testLogging {
         events 'skipped', 'passed', 'failed'
     }
-//    environment "ALLOWED_ORIGIN", "*"
+    //    environment "ALLOWED_ORIGIN", "*"
     finalizedBy jacocoTestReport
 }
+
+spotless {
+    java {
+        toggleOffOn() // Ignores sections between `spotless:off` / `spotless:on`
+        googleJavaFormat().aosp().reflowLongStrings().formatJavadoc(true).reorderImports(true)
+    }
+
+    format 'misc', {
+        target '.gitignore', '.gitattributes', '.editorconfig', '**/*.gradle'
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+// Reformat project before build and test if needed
+tasks.named('build').configure {
+    dependsOn 'spotlessApply'
+}
+
+tasks.named('test').configure {
+    dependsOn 'spotlessApply'
+}
+
 
 pmd {
     toolVersion = '6.55.0'

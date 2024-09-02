@@ -1,27 +1,31 @@
 package no.unit.nva.search.common.records;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+
+import static java.util.Objects.nonNull;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.commons.json.JsonSerializable;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import no.unit.nva.commons.json.JsonSerializable;
 
 /**
  * @author Stig Norland
  */
 public record PagedSearch(
-    URI id,
-    Integer totalHits,
-    @JsonInclude()
-    List<JsonNode> hits,
-    URI nextResults,
-    URI nextSearchAfterResults,
-    URI previousResults,
-    Map<String, List<Facet>> aggregations) implements JsonSerializable {
+        URI id,
+        Integer totalHits,
+        @JsonInclude() List<JsonNode> hits,
+        URI nextResults,
+        URI nextSearchAfterResults,
+        URI previousResults,
+        Map<String, List<Facet>> aggregations)
+        implements JsonSerializable {
 
     @JsonProperty("@context")
     public URI context() {
@@ -30,8 +34,6 @@ public record PagedSearch(
 
     @Override
     public Map<String, List<Facet>> aggregations() {
-        return nonNull(aggregations)
-            ? aggregations
-            : Map.of();
+        return nonNull(aggregations) ? aggregations : Map.of();
     }
 }

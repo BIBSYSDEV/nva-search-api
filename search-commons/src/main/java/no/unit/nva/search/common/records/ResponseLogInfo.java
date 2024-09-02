@@ -6,19 +6,18 @@ import no.unit.nva.commons.json.JsonSerializable;
  * @author Stig Norland
  */
 public record ResponseLogInfo(
-    int totalHits,
-    int hitsReturned,
-    long queryDuration,
-    long networkDuration,
-    long prePostDuration,
-    long totalDuration,
-    String query
-)  implements JsonSerializable {
+        int totalHits,
+        int hitsReturned,
+        long queryDuration,
+        long networkDuration,
+        long prePostDuration,
+        long totalDuration,
+        String query)
+        implements JsonSerializable {
 
     public static Builder builder() {
         return new Builder();
     }
-
 
     public static final class Builder {
 
@@ -29,8 +28,7 @@ public record ResponseLogInfo(
         private long searchTime;
         private String searchQuery;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder withFetchTime(long fetchDuration) {
             this.fetchTime = fetchDuration;
@@ -57,29 +55,27 @@ public record ResponseLogInfo(
             return this;
         }
 
-
         public Builder withSearchQuery(String searchQuery) {
             this.searchQuery = searchQuery;
             return this;
         }
 
         public Builder withSwsResponse(SwsResponse response) {
-            return
-                this.withOpensearchResponseTime(response.took())
+            return this.withOpensearchResponseTime(response.took())
                     .withTotalHits(response.getTotalSize())
                     .withHitsReturned(response.getSearchHits().size());
         }
 
         public String toJsonString() {
             return new ResponseLogInfo(
-                totalHits,
-                hitsReturned,
-                searchTime,
-                fetchTime - searchTime,
-                totalTime - fetchTime,
-                totalTime,
-                searchQuery
-            ).toJsonString();
+                            totalHits,
+                            hitsReturned,
+                            searchTime,
+                            fetchTime - searchTime,
+                            totalTime - fetchTime,
+                            totalTime,
+                            searchQuery)
+                    .toJsonString();
         }
     }
 }

@@ -1,12 +1,11 @@
 package no.unit.nva.indexingclient;
 
-import static java.util.Objects.nonNull;
 import static nva.commons.core.attempt.Try.attempt;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
+
 import nva.commons.core.ioutils.IoUtils;
+
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
@@ -17,6 +16,11 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
+
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class StubS3Client implements S3Client {
 
@@ -30,27 +34,33 @@ public class StubS3Client implements S3Client {
     }
 
     @Override
-    public <ReturnT> ReturnT getObject(GetObjectRequest getObjectRequest,
-                                       ResponseTransformer<GetObjectResponse, ReturnT> responseTransformer) {
+    public <ReturnT> ReturnT getObject(
+            GetObjectRequest getObjectRequest,
+            ResponseTransformer<GetObjectResponse, ReturnT> responseTransformer) {
         String filename = getObjectRequest.key();
         InputStream inputStream = IoUtils.inputStreamFromResources(filename);
-        byte[] contentBytes = attempt(() -> IoUtils.inputStreamFromResources(filename).readAllBytes()).orElseThrow();
-        GetObjectResponse response = GetObjectResponse.builder().contentLength((long) contentBytes.length).build();
-        return attempt(() -> responseTransformer.transform(response, AbortableInputStream.create(inputStream)))
-            .orElseThrow();
+        byte[] contentBytes =
+                attempt(() -> IoUtils.inputStreamFromResources(filename).readAllBytes())
+                        .orElseThrow();
+        GetObjectResponse response =
+                GetObjectResponse.builder().contentLength((long) contentBytes.length).build();
+        return attempt(
+                        () ->
+                                responseTransformer.transform(
+                                        response, AbortableInputStream.create(inputStream)))
+                .orElseThrow();
     }
 
     @Override
     public ListObjectsResponse listObjects(ListObjectsRequest listObjectsRequest)
-        throws AwsServiceException, SdkClientException {
+            throws AwsServiceException, SdkClientException {
         int startIndex = calculateListingStartingPoint(listObjectsRequest);
         int endIndex = calculateEndIndex(listObjectsRequest, startIndex);
 
-        List<S3Object> files = suppliedFilenames
-            .subList(startIndex, endIndex)
-            .stream()
-            .map(filename -> S3Object.builder().key(filename).build())
-            .collect(Collectors.toList());
+        List<S3Object> files =
+                suppliedFilenames.subList(startIndex, endIndex).stream()
+                        .map(filename -> S3Object.builder().key(filename).build())
+                        .collect(Collectors.toList());
 
         boolean isTruncated = endIndex < suppliedFilenames.size();
         return ListObjectsResponse.builder().contents(files).isTruncated(isTruncated).build();
@@ -62,9 +72,7 @@ public class StubS3Client implements S3Client {
     }
 
     @Override
-    public void close() {
-
-    }
+    public void close() {}
 
     private int calculateEndIndex(ListObjectsRequest listObjectsRequest, int startIndex) {
         return Math.min(startIndex + listObjectsRequest.maxKeys(), suppliedFilenames.size());

@@ -6,37 +6,21 @@ import java.util.Locale;
  * @author Stig Norland
  */
 public enum FieldOperator {
-    /**
-     * ALL must match in document (Only sensible for collections).
-     */
+    /** ALL must match in document (Only sensible for collections). */
     ALL_OF,
-    /**
-     * None can match in document (Inverted of MUST).
-     */
+    /** None can match in document (Inverted of MUST). */
     NOT_ALL_OF,
-    /**
-     * One or more must match (Only sensible for unique fields).
-     */
+    /** One or more must match (Only sensible for unique fields). */
     ANY_OF,
-    /**
-     * Any cannot match (These should be excluded).
-     */
+    /** Any cannot match (These should be excluded). */
     NOT_ANY_OF,
-    /**
-     * Greater than or equal to.
-     */
+    /** Greater than or equal to. */
     GREATER_THAN_OR_EQUAL_TO,
-    /**
-     * Less than.
-     */
+    /** Less than. */
     LESS_THAN,
-    /**
-     * Between.
-     */
+    /** Between. */
     BETWEEN,
-    /**
-     * Not Applicable
-     */
+    /** Not Applicable */
     NA;
 
     public String asLowerCase() {

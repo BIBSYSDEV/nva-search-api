@@ -24,12 +24,11 @@ public enum TicketType {
     }
 
     public static TicketType fromString(String name) {
-        var result = Arrays.stream(TicketType.values())
-            .filter(equalTo(name))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : NONE;
+        var result =
+                Arrays.stream(TicketType.values())
+                        .filter(equalTo(name))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : NONE;
     }
 
     private static Predicate<TicketType> equalTo(String name) {

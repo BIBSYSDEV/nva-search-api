@@ -4,17 +4,19 @@ import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
 import static no.unit.nva.search.common.jwt.Tools.getCachedJwtProvider;
 import static no.unit.nva.search.common.records.SwsResponse.SwsResponseBuilder.swsResponseBuilder;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
-import java.util.function.BinaryOperator;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.SwsResponse;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.FunctionWithException;
 import nva.commons.secrets.SecretsReader;
+
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+import java.util.function.BinaryOperator;
 
 /**
  * @author Stig Norland
@@ -25,7 +27,6 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuer
         super(client, cachedJwtProvider);
     }
 
-
     @JacocoGenerated
     public static TicketClient defaultClient() {
         var cachedJwtProvider = getCachedJwtProvider(new SecretsReader());
@@ -33,7 +34,8 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuer
     }
 
     @Override
-    protected SwsResponse jsonToResponse(HttpResponse<String> response) throws JsonProcessingException {
+    protected SwsResponse jsonToResponse(HttpResponse<String> response)
+            throws JsonProcessingException {
         return singleLineObjectMapper.readValue(response.body(), SwsResponse.class);
     }
 
@@ -43,11 +45,11 @@ public class TicketClient extends OpenSearchClient<SwsResponse, TicketSearchQuer
     }
 
     @Override
-    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException> logAndReturnResult() {
+    protected FunctionWithException<SwsResponse, SwsResponse, RuntimeException>
+            logAndReturnResult() {
         return result -> {
             logger.info(buildLogInfo(result));
             return result;
         };
     }
-
 }

@@ -4,16 +4,19 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.ticket.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
+import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.search.common.enums.SortKey;
+
+import org.apache.commons.text.CaseUtils;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.enums.SortKey;
-import org.apache.commons.text.CaseUtils;
 
 /**
  * @author Stig Norland
@@ -55,19 +58,18 @@ public enum TicketSort implements SortKey {
     }
 
     public static TicketSort fromSortKey(String keyName) {
-        var result = Arrays.stream(TicketSort.values())
-            .filter(SortKey.equalTo(keyName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
+        var result =
+                Arrays.stream(TicketSort.values())
+                        .filter(SortKey.equalTo(keyName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     public static Collection<String> validSortKeys() {
         return Arrays.stream(TicketSort.values())
-            .sorted(SortKey::compareAscending)
-            .skip(1)    // skip INVALID
-            .map(TicketSort::asLowerCase)
-            .toList();
+                .sorted(SortKey::compareAscending)
+                .skip(1) // skip INVALID
+                .map(TicketSort::asLowerCase)
+                .toList();
     }
 }

@@ -1,22 +1,25 @@
 package no.unit.nva.search.common;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Words.AMPERSAND;
 import static no.unit.nva.search.common.constant.Words.EQUAL;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
+
+import static java.util.Objects.nonNull;
+
+import nva.commons.core.JacocoGenerated;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map.Entry;
-import nva.commons.core.JacocoGenerated;
 
 public final class EntrySetTools {
 
     @JacocoGenerated
-    public EntrySetTools() {
-    }
+    public EntrySetTools() {}
 
     public static Collection<Entry<String, String>> queryToMapEntries(URI uri) {
         return queryToMapEntries(uri.getQuery());
@@ -24,11 +27,11 @@ public final class EntrySetTools {
 
     public static Collection<Entry<String, String>> queryToMapEntries(String query) {
         return nonNull(query)
-            ? Arrays.stream(query.split(AMPERSAND))
-            .map(keyValue -> keyValue.split(EQUAL))
-            .map(EntrySetTools::stringsToEntry)
-            .toList()
-            : Collections.emptyList();
+                ? Arrays.stream(query.split(AMPERSAND))
+                        .map(keyValue -> keyValue.split(EQUAL))
+                        .map(EntrySetTools::stringsToEntry)
+                        .toList()
+                : Collections.emptyList();
     }
 
     public static Entry<String, String> stringsToEntry(String... strings) {

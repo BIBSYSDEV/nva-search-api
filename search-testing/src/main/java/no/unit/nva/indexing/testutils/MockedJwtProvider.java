@@ -1,15 +1,18 @@
 package no.unit.nva.indexing.testutils;
 
 import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import com.auth0.jwt.interfaces.DecodedJWT;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
 
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.jwt.CognitoAuthenticator;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 
 public class MockedJwtProvider {
 

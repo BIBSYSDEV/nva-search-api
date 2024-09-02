@@ -1,11 +1,12 @@
 package no.unit.nva.indexingclient.utils;
 
-import java.net.http.HttpRequest;
 import org.mockito.ArgumentMatcher;
 
+import java.net.http.HttpRequest;
+
 /**
- * A ArgumentMatcher that will match whenever 2 HttpRequests have the same URI, Headers and Method. Does not compare
- * the body
+ * A ArgumentMatcher that will match whenever 2 HttpRequests have the same URI, Headers and Method.
+ * Does not compare the body
  */
 public class HttpRequestMetadataMatcher implements ArgumentMatcher<HttpRequest> {
 

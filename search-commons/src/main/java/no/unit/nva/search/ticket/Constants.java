@@ -14,11 +14,13 @@ import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.STATUS;
 import static no.unit.nva.search.common.constant.Words.TYPE;
 import static no.unit.nva.search.common.constant.Words.VIEWED_BY;
-import java.util.List;
-import java.util.Map;
 
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.search.aggregations.AggregationBuilder;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Stig Norland
@@ -43,79 +45,147 @@ public final class Constants {
     public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.asCamelCase();
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
-    public static final String ORGANIZATION_IDENTIFIER_KEYWORD = ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
+    public static final String ORGANIZATION_IDENTIFIER_KEYWORD =
+            ORGANIZATION + DOT + IDENTIFIER + DOT + KEYWORD;
     public static final String ORGANIZATION_PART_OF =
-        ORGANIZATION + DOT + PART_OF + DOT + ID
-            + PIPE + ORGANIZATION + DOT + PART_OF + DOT + IDENTIFIER;
+            ORGANIZATION
+                    + DOT
+                    + PART_OF
+                    + DOT
+                    + ID
+                    + PIPE
+                    + ORGANIZATION
+                    + DOT
+                    + PART_OF
+                    + DOT
+                    + IDENTIFIER;
 
     public static final String ORGANIZATION_PATHS =
-        ORGANIZATION_ID_KEYWORD
-            + PIPE + ORGANIZATION_IDENTIFIER_KEYWORD
-            + PIPE + ORGANIZATION_PART_OF;
+            ORGANIZATION_ID_KEYWORD
+                    + PIPE
+                    + ORGANIZATION_IDENTIFIER_KEYWORD
+                    + PIPE
+                    + ORGANIZATION_PART_OF;
     public static final String OWNER_KEYWORD = OWNER + DOT + KEYWORD;
     public static final String PUBLICATION_ID_OR_IDENTIFIER_KEYWORD =
-        PUBLICATION + DOT + ID + DOT + KEYWORD + PIPE
-            + PUBLICATION + DOT + IDENTIFIER + DOT + KEYWORD;
+            PUBLICATION
+                    + DOT
+                    + ID
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + PUBLICATION
+                    + DOT
+                    + IDENTIFIER
+                    + DOT
+                    + KEYWORD;
 
     public static final String PUBLICATION_INSTANCE_KEYWORD =
-        PUBLICATION + DOT + PUBLICATION_INSTANCE + DOT + TYPE_KEYWORD;
+            PUBLICATION + DOT + PUBLICATION_INSTANCE + DOT + TYPE_KEYWORD;
 
-    public static final String PUBLICATION_MAIN_TITLE_KEYWORD = PUBLICATION + DOT + MAIN_TITLE + DOT + KEYWORD;
+    public static final String PUBLICATION_MAIN_TITLE_KEYWORD =
+            PUBLICATION + DOT + MAIN_TITLE + DOT + KEYWORD;
     public static final String PUBLICATION_MODIFIED_DATE = PUBLICATION + DOT + MODIFIED_DATE;
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
     public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
     public static final String MESSAGE_FIELDS =
-        MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE
-            + MESSAGES + DOT + STATUS + DOT + KEYWORD;
+            MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE + MESSAGES + DOT + STATUS + DOT
+                    + KEYWORD;
     public static final String OWNER_FIELDS =
-        OWNER + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-            + OWNER + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-            + OWNER_USERNAME;
+            OWNER
+                    + DOT
+                    + FIRST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + OWNER
+                    + DOT
+                    + LAST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + OWNER_USERNAME;
     public static final String VIEWED_BY_FIELDS =
-        VIEWED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-            + VIEWED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-            + VIEWED_BY + DOT + USERNAME + DOT + KEYWORD;
+            VIEWED_BY
+                    + DOT
+                    + FIRST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + VIEWED_BY
+                    + DOT
+                    + LAST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + VIEWED_BY
+                    + DOT
+                    + USERNAME
+                    + DOT
+                    + KEYWORD;
     public static final String ASSIGNEE = "assignee";
     public static final String ASSIGNEE_FIELDS =
-        ASSIGNEE + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-            + ASSIGNEE + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-            + ASSIGNEE + DOT + USERNAME + DOT + KEYWORD;
+            ASSIGNEE
+                    + DOT
+                    + FIRST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + ASSIGNEE
+                    + DOT
+                    + LAST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + ASSIGNEE
+                    + DOT
+                    + USERNAME
+                    + DOT
+                    + KEYWORD;
     private static final String FINALIZED_BY = "finalizedBy";
     public static final String FINALIZED_BY_FIELDS =
-        FINALIZED_BY + DOT + FIRST_NAME + DOT + KEYWORD + PIPE
-            + FINALIZED_BY + DOT + LAST_NAME + DOT + KEYWORD + PIPE
-            + FINALIZED_BY + DOT + USERNAME + DOT + KEYWORD;
+            FINALIZED_BY
+                    + DOT
+                    + FIRST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + FINALIZED_BY
+                    + DOT
+                    + LAST_NAME
+                    + DOT
+                    + KEYWORD
+                    + PIPE
+                    + FINALIZED_BY
+                    + DOT
+                    + USERNAME
+                    + DOT
+                    + KEYWORD;
 
     public static final String BY_USER_PENDING = "byUserPending";
-    public static final Map<String, String> facetTicketsPaths = Map.of(
-        BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
-        STATUS, "/withAppliedFilter/status",
-        TYPE, "/withAppliedFilter/type",
-        PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
+    public static final Map<String, String> facetTicketsPaths =
+            Map.of(
+                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
+                    STATUS, "/withAppliedFilter/status",
+                    TYPE, "/withAppliedFilter/type",
+                    PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
 
     @JacocoGenerated
-    public Constants() {
-    }
+    public Constants() {}
 
     public static List<AggregationBuilder> getTicketsAggregations(String username) {
         return List.of(
-            branchBuilder(STATUS, STATUS_KEYWORD),
-            branchBuilder(TYPE, TYPE_KEYWORD),
-            branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD),
-            notificationsByUser(username)
-        );
+                branchBuilder(STATUS, STATUS_KEYWORD),
+                branchBuilder(TYPE, TYPE_KEYWORD),
+                branchBuilder(PUBLICATION_STATUS, PUBLICATION_STATUS_KEYWORD),
+                notificationsByUser(username));
     }
 
     private static AggregationBuilder notificationsByUser(String username) {
-        return
-            filterBranchBuilder(BY_USER_PENDING, username, ASSIGNEE, USERNAME, KEYWORD)
+        return filterBranchBuilder(BY_USER_PENDING, username, ASSIGNEE, USERNAME, KEYWORD)
                 .subAggregation(
-                    filterBranchBuilder(STATUS, TicketStatus.PENDING.toString(), STATUS_KEYWORD)
-                        .subAggregation(
-                            branchBuilder(TYPE, TYPE_KEYWORD)
-                        )
-                );
+                        filterBranchBuilder(STATUS, TicketStatus.PENDING.toString(), STATUS_KEYWORD)
+                                .subAggregation(branchBuilder(TYPE, TYPE_KEYWORD)));
     }
-
 }

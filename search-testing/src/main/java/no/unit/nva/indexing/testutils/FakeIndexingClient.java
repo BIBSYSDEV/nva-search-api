@@ -1,7 +1,17 @@
 package no.unit.nva.indexing.testutils;
 
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.indexingclient.IndexingClient;
+import no.unit.nva.indexingclient.models.IndexDocument;
+
+import org.opensearch.action.DocWriteRequest.OpType;
+import org.opensearch.action.DocWriteResponse;
+import org.opensearch.action.bulk.BulkItemResponse;
+import org.opensearch.action.bulk.BulkResponse;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,15 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import org.opensearch.action.DocWriteRequest.OpType;
-import org.opensearch.action.DocWriteResponse;
-import org.opensearch.action.bulk.BulkItemResponse;
-import org.opensearch.action.bulk.BulkResponse;
-
 /**
- * Faking the Indexing Client instead of the OpenSearch client because faking the OpenSearch client is difficult.
+ * Faking the Indexing Client instead of the OpenSearch client because faking the OpenSearch client
+ * is difficult.
  */
 public class FakeIndexingClient extends IndexingClient {
 
@@ -39,8 +43,9 @@ public class FakeIndexingClient extends IndexingClient {
             indexContents.put(indexDocument.getIndexName(), new HashMap<>());
         }
 
-        indexContents.get(indexDocument.getIndexName())
-            .put(indexDocument.getDocumentIdentifier(), indexDocument.resource());
+        indexContents
+                .get(indexDocument.getIndexName())
+                .put(indexDocument.getDocumentIdentifier(), indexDocument.resource());
         return null;
     }
 
@@ -76,13 +81,13 @@ public class FakeIndexingClient extends IndexingClient {
         jsonNodes.remove(identifier);
     }
 
-    private List<BulkResponse> constructSampleBulkResponse(Collection<IndexDocument> indexDocuments) {
+    private List<BulkResponse> constructSampleBulkResponse(
+            Collection<IndexDocument> indexDocuments) {
         DocWriteResponse response = null;
-        List<BulkItemResponse> responses = indexDocuments
-                                               .stream()
-                                               .map(
-                                                   doc -> new BulkItemResponse(doc.hashCode(), OpType.UPDATE, response))
-            .toList();
+        List<BulkItemResponse> responses =
+                indexDocuments.stream()
+                        .map(doc -> new BulkItemResponse(doc.hashCode(), OpType.UPDATE, response))
+                        .toList();
         BulkItemResponse[] responsesArray = responses.toArray(BulkItemResponse[]::new);
         return List.of(new BulkResponse(responsesArray, IGNORED_PROCESSING_TIME));
     }

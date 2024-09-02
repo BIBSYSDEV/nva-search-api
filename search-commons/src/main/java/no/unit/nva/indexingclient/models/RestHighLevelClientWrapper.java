@@ -1,7 +1,9 @@
 package no.unit.nva.indexingclient.models;
 
 import no.unit.nva.indexingclient.constants.ApplicationConstants;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.apache.http.HttpHost;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
@@ -22,15 +24,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * Class for avoiding mocking/spying the ES final classes.
- */
+/** Class for avoiding mocking/spying the ES final classes. */
 public class RestHighLevelClientWrapper {
-
 
     public static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
     private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
-    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS =
+            "SearchInfrastructureCredentials";
 
     private final RestHighLevelClient client;
 
@@ -55,22 +55,26 @@ public class RestHighLevelClientWrapper {
     }
 
     @JacocoGenerated
-    public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions) throws IOException {
+    public SearchResponse search(SearchRequest searchRequest, RequestOptions requestOptions)
+            throws IOException {
         return client.search(searchRequest, requestOptions);
     }
 
     @JacocoGenerated
-    public IndexResponse index(IndexRequest updateRequest, RequestOptions requestOptions) throws IOException {
+    public IndexResponse index(IndexRequest updateRequest, RequestOptions requestOptions)
+            throws IOException {
         return client.index(updateRequest, requestOptions);
     }
 
     @JacocoGenerated
-    public DeleteResponse delete(DeleteRequest deleteRequest, RequestOptions requestOptions) throws IOException {
+    public DeleteResponse delete(DeleteRequest deleteRequest, RequestOptions requestOptions)
+            throws IOException {
         return client.delete(deleteRequest, requestOptions);
     }
 
     @JacocoGenerated
-    public UpdateResponse update(UpdateRequest updateRequest, RequestOptions requestOptions) throws IOException {
+    public UpdateResponse update(UpdateRequest updateRequest, RequestOptions requestOptions)
+            throws IOException {
         return client.update(updateRequest, requestOptions);
     }
 
@@ -85,12 +89,12 @@ public class RestHighLevelClientWrapper {
     }
 
     public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
-        return prepareRestHighLevelClientWrapperForUri(ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
+        return prepareRestHighLevelClientWrapperForUri(
+                ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
     }
 
-    public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(String address) {
-        return new RestHighLevelClientWrapper(
-            RestClient.builder(HttpHost.create(address))
-        );
+    public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(
+            String address) {
+        return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
     }
 }

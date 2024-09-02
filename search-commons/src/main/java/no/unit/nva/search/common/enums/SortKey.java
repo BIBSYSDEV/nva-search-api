@@ -33,8 +33,8 @@ public interface SortKey {
 
     static String getIgnoreCaseAndUnderscoreKeyExpression(String keyName) {
         var keyNameIgnoreUnderscoreExpression =
-            keyName.toLowerCase(Locale.getDefault())
-                .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+                keyName.toLowerCase(Locale.getDefault())
+                        .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
     }
 }

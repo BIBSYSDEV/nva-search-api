@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
-
 import no.unit.nva.search.common.Containers;
+
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
 import org.slf4j.Logger;
@@ -34,6 +34,4 @@ public class BeforeAfterSuiteListener implements TestExecutionListener {
             logger.error(e.getMessage());
         }
     }
-
-
 }
