@@ -1,9 +1,12 @@
 package no.unit.nva.search.common;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
+
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
+import static java.util.Objects.nonNull;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -14,6 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
 import javax.net.ssl.SSLSession;
 
 public class MockedHttpResponse {
@@ -33,7 +37,6 @@ public class MockedHttpResponse {
     public static HttpResponse<Object> mockedHttpResponse(Path path) {
         return mockedHttpResponse(stringFromResources(path));
     }
-
 
     public static HttpResponse<Object> mockedHttpResponse(String body) {
         return mockedHttpResponse(body, nonNull(body) ? 200 : 400);
@@ -59,8 +62,8 @@ public class MockedHttpResponse {
             @Override
             public HttpHeaders headers() {
                 return HttpHeaders.of(
-                    Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
-                    (s, s2) -> true);
+                        Map.of(CONTENT_TYPE, Collections.singletonList(APPLICATION_JSON)),
+                        (s, s2) -> true);
             }
 
             @Override

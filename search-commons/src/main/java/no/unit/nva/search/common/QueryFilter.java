@@ -8,15 +8,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * @author Stig Norland
  */
 public class QueryFilter {
     private final transient Map<String, QueryBuilder> filters = new HashMap<>();
 
-    public QueryFilter() {
-    }
+    public QueryFilter() {}
 
     public BoolQueryBuilder get() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
@@ -26,8 +24,7 @@ public class QueryFilter {
 
     public void set(QueryBuilder... filters) {
         this.filters.clear();
-        Arrays.stream(filters)
-            .forEach(this::add);
+        Arrays.stream(filters).forEach(this::add);
     }
 
     public void add(QueryBuilder builder) {

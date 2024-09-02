@@ -5,11 +5,16 @@ import static no.unit.nva.indexingclient.constants.ApplicationConstants.MESSAGES
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.PUBLISHING_REQUESTS_INDEX;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.TICKETS_INDEX;
+
 import static nva.commons.core.attempt.Try.attempt;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+
 import no.unit.nva.indexingclient.IndexingClient;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +36,16 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
     @Override
     public String handleRequest(Object input, Context context) {
 
-        attempt(() -> indexingClient.deleteIndex(RESOURCES_INDEX)).orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.deleteIndex(DOIREQUESTS_INDEX)).orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.deleteIndex(MESSAGES_INDEX)).orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.deleteIndex(PUBLISHING_REQUESTS_INDEX)).orElse(
-                fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.deleteIndex(TICKETS_INDEX)).orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.deleteIndex(RESOURCES_INDEX))
+                .orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.deleteIndex(DOIREQUESTS_INDEX))
+                .orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.deleteIndex(MESSAGES_INDEX))
+                .orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.deleteIndex(PUBLISHING_REQUESTS_INDEX))
+                .orElse(fail -> logError(fail.getException()));
+        attempt(() -> indexingClient.deleteIndex(TICKETS_INDEX))
+                .orElse(fail -> logError(fail.getException()));
 
         return FINISHED;
     }

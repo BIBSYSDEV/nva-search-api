@@ -1,17 +1,20 @@
 package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.search.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 /**
  * @author Stig Norland
@@ -29,7 +32,7 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
     public static final String STR_12 = "-12";
     public static final String STR_31 = "-31";
 
-    @JacocoGenerated    // never used
+    @JacocoGenerated // never used
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
@@ -45,37 +48,38 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
         var firstParam = getFirstParam(values, key);
         var secondParam = getSecondParam(values, key);
 
-
-        logger.debug(firstParam + DASH + secondParam);
-        return Functions.queryToEntry(key, switch (key.searchOperator()) {
-            case GREATER_THAN_OR_EQUAL_TO -> QueryBuilders
-                .rangeQuery(searchField)
-                .gte(firstParam)
-                .queryName(GREATER_OR_EQUAL + key.asCamelCase());
-            case LESS_THAN -> QueryBuilders
-                .rangeQuery(searchField)
-                .lt(firstParam)
-                .queryName(LESS_THAN + key.asCamelCase());
-            case BETWEEN -> QueryBuilders
-                .rangeQuery(searchField)
-                .from(firstParam, true)
-                .to(secondParam, true)
-                .queryName(BETWEEN + key.asCamelCase());
-            default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
-        });
+        logger.info(firstParam + DASH + secondParam);
+        return Functions.queryToEntry(
+                key,
+                switch (key.searchOperator()) {
+                    case GREATER_THAN_OR_EQUAL_TO ->
+                            QueryBuilders.rangeQuery(searchField)
+                                    .gte(firstParam)
+                                    .queryName(GREATER_OR_EQUAL + key.asCamelCase());
+                    case LESS_THAN ->
+                            QueryBuilders.rangeQuery(searchField)
+                                    .lt(firstParam)
+                                    .queryName(LESS_THAN + key.asCamelCase());
+                    case BETWEEN ->
+                            QueryBuilders.rangeQuery(searchField)
+                                    .from(firstParam, true)
+                                    .to(secondParam, true)
+                                    .queryName(BETWEEN + key.asCamelCase());
+                    default -> throw new IllegalArgumentException(OPERATOR_NOT_SUPPORTED);
+                });
     }
 
     private String getSecondParam(String[] values, K key) {
-        return values.length == 1 ? null :
-            valueOrNull(values[1])
-                .map(date -> expandDateLast(date, key))
-                .findFirst()
-                .orElse(null);
+        return values.length == 1
+                ? null
+                : valueOrNull(values[1])
+                        .map(date -> expandDateLast(date, key))
+                        .findFirst()
+                        .orElse(null);
     }
 
     private String getFirstParam(String[] values, K key) {
-        return
-            valueOrNull(values[0])
+        return valueOrNull(values[0])
                 .map(date -> expandDateFirst(date, key))
                 .findFirst()
                 .orElse(null);

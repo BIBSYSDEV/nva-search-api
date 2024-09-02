@@ -34,7 +34,8 @@ public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
         return cognitoAuthenticator.fetchBearerToken();
     }
 
-    public static CachedJwtProvider prepareWithAuthenticator(CognitoAuthenticator cognitoAuthenticator) {
+    public static CachedJwtProvider prepareWithAuthenticator(
+            CognitoAuthenticator cognitoAuthenticator) {
         return new CachedJwtProvider(cognitoAuthenticator, Clock.systemDefaultZone());
     }
 }

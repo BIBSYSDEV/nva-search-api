@@ -2,7 +2,7 @@ package no.unit.nva.search.common;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
-import static java.util.Objects.nonNull;
+
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_SORT_ORDER;
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
@@ -16,15 +16,12 @@ import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.constant.Words.SORT_LAST;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
+
 import static nva.commons.core.attempt.Try.attempt;
+
+import static java.util.Objects.nonNull;
+
 import com.google.common.net.MediaType;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import no.unit.nva.search.common.builder.AcrossFieldsQuery;
 import no.unit.nva.search.common.builder.ExistsQuery;
@@ -36,13 +33,15 @@ import no.unit.nva.search.common.builder.RangeQuery;
 import no.unit.nva.search.common.builder.TextQuery;
 import no.unit.nva.search.common.constant.ErrorMessages;
 import no.unit.nva.search.common.constant.Functions;
-import no.unit.nva.search.common.records.ResponseFormatter;
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.records.QueryContentWrapper;
+import no.unit.nva.search.common.records.ResponseFormatter;
 import no.unit.nva.search.common.records.SwsResponse;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.MultiMatchQueryBuilder.Type;
 import org.opensearch.index.query.Operator;
@@ -57,6 +56,14 @@ import org.opensearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * @author Stig Norland
  */
@@ -67,10 +74,11 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     private transient MediaType mediaType;
 
     /**
-     * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo);
-     * This value only used in debug and tests.
+     * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
+     * value only used in debug and tests.
      */
-    private transient URI gatewayUri = URI.create("https://api.dev.nva.aws.unit.no/resource/search");
+    private transient URI gatewayUri =
+            URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
     public final transient QueryFilter filters;
 
@@ -95,7 +103,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected abstract SortKey toSortKey(String sortName);
 
     /**
-     * Path to each and every facet defined in  builderAggregations().
+     * Path to each and every facet defined in builderAggregations().
      *
      * @return MapOf(Name, Path)
      */
@@ -113,18 +121,20 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     @Override
-    public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(OpenSearchClient<R, Q> queryClient) {
-        final var source = URI.create(getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
+    public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(
+            OpenSearchClient<R, Q> queryClient) {
+        final var source =
+                URI.create(
+                        getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
         return new ResponseFormatter<>(
-            (SwsResponse) queryClient.doSearch((Q) this),
-            getMediaType(),
-            source,
-            from().as(),
-            size().as(),
-            facetPaths(),
-            parameters());
+                (SwsResponse) queryClient.doSearch((Q) this),
+                getMediaType(),
+                source,
+                from().as(),
+                size().as(),
+                facetPaths(),
+                parameters());
     }
-
 
     public MediaType getMediaType() {
         return mediaType;
@@ -163,14 +173,22 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
      */
     protected Map<String, Float> fieldsToKeyNames(AsType<K> fieldValue) {
         return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
-            ? Map.of(ASTERISK, 1F)       // NONE or ALL -> <'*',1.0>
-            : fieldValue.asSplitStream(COMMA)
-            .map(this::toKey)
-            .flatMap(key -> key.searchFields(KEYWORD_FALSE).map(jsonPath -> Map.entry(jsonPath, key.fieldBoost())))
-            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
+                : fieldValue
+                        .asSplitStream(COMMA)
+                        .map(this::toKey)
+                        .flatMap(
+                                key ->
+                                        key.searchFields(KEYWORD_FALSE)
+                                                .map(
+                                                        jsonPath ->
+                                                                Map.entry(
+                                                                        jsonPath,
+                                                                        key.fieldBoost())))
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
-    @JacocoGenerated        // default can only be tested if we add a new fieldtype not in use....
+    @JacocoGenerated // default can only be tested if we add a new fieldtype not in use....
     protected Stream<Entry<K, QueryBuilder>> builderStreamDefaultQuery(K key) {
         final var value = parameters().get(key).toString();
         return switch (key.fieldType()) {
@@ -210,31 +228,40 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
      */
     protected BoolQueryBuilder builderMainQuery() {
         var boolQueryBuilder = QueryBuilders.boolQuery();
-        parameters().getSearchKeys()
-            .flatMap(this::builderStreamDefaultQuery)
-            .forEach(entry -> {
-                if (isMustNot(entry.getKey())) {
-                    boolQueryBuilder.mustNot(entry.getValue());
-                } else {
-                    boolQueryBuilder.must(entry.getValue());
-                }
-            });
+        parameters()
+                .getSearchKeys()
+                .flatMap(this::builderStreamDefaultQuery)
+                .forEach(
+                        entry -> {
+                            if (isMustNot(entry.getKey())) {
+                                boolQueryBuilder.mustNot(entry.getValue());
+                            } else {
+                                boolQueryBuilder.must(entry.getValue());
+                            }
+                        });
         return boolQueryBuilder;
     }
 
     protected Stream<SortBuilder<?>> builderStreamFieldSort() {
         return sort().asSplitStream(COMMA)
-            .flatMap(item -> {
-                final var parts = item.split(COLON_OR_SPACE);
-                final var order = SortOrder.fromString(
-                    attempt(() -> parts[1]).orElse((f) -> DEFAULT_SORT_ORDER));
-                final var sortKey = toSortKey(parts[0]);
+                .flatMap(
+                        item -> {
+                            final var parts = item.split(COLON_OR_SPACE);
+                            final var order =
+                                    SortOrder.fromString(
+                                            attempt(() -> parts[1])
+                                                    .orElse((f) -> DEFAULT_SORT_ORDER));
+                            final var sortKey = toSortKey(parts[0]);
 
-                return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
-                    ? Stream.of(SortBuilders.scoreSort().order(order))
-                    : sortKey.jsonPaths()
-                    .map(path -> SortBuilders.fieldSort(path).order(order).missing(SORT_LAST));
-            });
+                            return RELEVANCE_KEY_NAME.equalsIgnoreCase(sortKey.name())
+                                    ? Stream.of(SortBuilders.scoreSort().order(order))
+                                    : sortKey.jsonPaths()
+                                            .map(
+                                                    path ->
+                                                            SortBuilders.fieldSort(path)
+                                                                    .order(order)
+                                                                    .missing(SORT_LAST));
+                        });
     }
 
     protected AggregationBuilder builderAggregationsWithFilter() {
@@ -245,34 +272,35 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     protected SearchSourceBuilder builderDefaultSearchSource() {
         var queryBuilder =
-            parameters().getSearchKeys().findAny().isEmpty()
-                ? QueryBuilders.matchAllQuery()
-                : builderMainQuery();
+                parameters().getSearchKeys().findAny().isEmpty()
+                        ? QueryBuilders.matchAllQuery()
+                        : builderMainQuery();
 
         return new SearchSourceBuilder()
-            .query(queryBuilder)
-            .size(size().as())
-            .from(from().as())
-            .postFilter(filters.get())
-            .trackTotalHits(true);
+                .query(queryBuilder)
+                .size(size().as())
+                .from(from().as())
+                .postFilter(filters.get())
+                .trackTotalHits(true);
     }
 
     protected QueryBuilder builderSearchAllQuery(K searchAllKey) {
         var fields = fieldsToKeyNames(parameters().get(keyFields()));
         var value = parameters().get(searchAllKey).toString();
-        return QueryBuilders
-            .multiMatchQuery(value)
-            .fields(fields)
-            .type(Type.CROSS_FIELDS)
-            .operator(Operator.AND);
+        return QueryBuilders.multiMatchQuery(value)
+                .fields(fields)
+                .type(Type.CROSS_FIELDS)
+                .operator(Operator.AND);
     }
 
-    private void handleAggregation(SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
+    private void handleAggregation(
+            SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
         if (hasAggregation()) {
             var aggregationBuilder = builder.shallowCopy();
             aggregationBuilder.size(DEFAULT_ZERO_RESULTS_AGGREGATION_ONLY);
             aggregationBuilder.aggregation(builderAggregationsWithFilter());
-            contentWrappers.add(new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
+            contentWrappers.add(
+                    new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));
         }
     }
 
@@ -293,7 +321,9 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     private void handleSorting(SearchSourceBuilder builder) {
         if (isSortByRelevance()) {
-            builder.trackScores(true); // Not very well documented. This allows sorting on relevance and other fields.
+            builder.trackScores(
+                    true); // Not very well documented. This allows sorting on relevance and other
+            // fields.
         }
         builderStreamFieldSort().forEach(builder::sort);
     }
@@ -304,12 +334,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
 
     private boolean isSortByRelevance() {
         var sorts = sort().toString();
-        return nonNull(sorts) && sorts.split(COMMA).length > 1 && sorts.contains(RELEVANCE_KEY_NAME);
+        return nonNull(sorts)
+                && sorts.split(COMMA).length > 1
+                && sorts.contains(RELEVANCE_KEY_NAME);
     }
 
     private boolean isMustNot(K key) {
-        return NOT_ALL_OF.equals(key.searchOperator())
-            || NOT_ANY_OF.equals(key.searchOperator());
+        return NOT_ALL_OF.equals(key.searchOperator()) || NOT_ANY_OF.equals(key.searchOperator());
     }
 
     private boolean isFetchSource() {
@@ -317,6 +348,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     private boolean hasAggregation() {
-        return getMediaType().is(JSON_UTF_8) && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
+        return getMediaType().is(JSON_UTF_8)
+                && ALL.equalsIgnoreCase(parameters().get(keyAggregation()).as());
     }
 }

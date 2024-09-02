@@ -1,13 +1,28 @@
 package no.unit.nva.search.common;
 
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
+import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
+import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
+import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
+import static no.unit.nva.search.common.constant.Words.RESOURCES;
+import static no.unit.nva.search.common.constant.Words.TICKETS;
+
+import static nva.commons.core.attempt.Try.attempt;
+import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
+import static java.util.Objects.nonNull;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.RestHighLevelClientWrapper;
+
 import org.apache.http.HttpHost;
 import org.opensearch.client.RestClient;
 import org.opensearch.testcontainers.OpensearchContainer;
@@ -18,17 +33,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.search.common.Constants.DELAY_AFTER_INDEXING;
-import static no.unit.nva.search.common.Constants.OPEN_SEARCH_IMAGE;
-import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search.common.constant.Words.RESOURCES;
-import static no.unit.nva.search.common.constant.Words.TICKETS;
-import static nva.commons.core.attempt.Try.attempt;
-import static nva.commons.core.ioutils.IoUtils.stringFromResources;
 
 @Testcontainers
 public class Containers {
@@ -45,10 +49,10 @@ public class Containers {
     private static final String TICKET_DATASOURCE_JSON = "ticket_datasource.json";
     private static final String TICKET_MAPPING_DEV_JSON = "ticket_mappings_dev.json";
 
-    private static final String IMPORT_CANDIDATE_DATASOURCE_JSON = "import_candidate_datasource.json";
-    public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON = "import_candidate_mappings_dev.json";
-
-
+    private static final String IMPORT_CANDIDATE_DATASOURCE_JSON =
+            "import_candidate_datasource.json";
+    public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON =
+            "import_candidate_mappings_dev.json";
 
     public static void setup() throws IOException, InterruptedException {
         container.start();
@@ -72,9 +76,7 @@ public class Containers {
 
         logger.info("Waiting {} ms for indexing to complete", DELAY_AFTER_INDEXING);
         Thread.sleep(DELAY_AFTER_INDEXING);
-
     }
-
 
     public static void afterAll() throws Exception {
 
@@ -88,24 +90,23 @@ public class Containers {
 
     public static Map<String, Object> loadMapFromResource(String resource) {
         var mappingsJson = stringFromResources(Path.of(resource));
-        var type = new TypeReference<Map<String, Object>>() {
-        };
+        var type = new TypeReference<Map<String, Object>>() {};
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 
     private static void populateIndex(String resourcePath, String indexName) {
         var jsonFile = stringFromResources(Path.of(resourcePath));
-        var jsonNodes =
-            attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
+        var jsonNodes = attempt(() -> JsonUtils.dtoObjectMapper.readTree(jsonFile)).orElseThrow();
 
         jsonNodes.forEach(jsonNode -> addDocumentToIndex(indexName, jsonNode));
     }
 
     private static void addDocumentToIndex(String indexName, JsonNode node) {
         try {
-            var identifier = node.has(IDENTIFIER)
-                ? new SortableIdentifier(node.get(IDENTIFIER).asText())
-                : SortableIdentifier.next();
+            var identifier =
+                    node.has(IDENTIFIER)
+                            ? new SortableIdentifier(node.get(IDENTIFIER).asText())
+                            : SortableIdentifier.next();
             var attributes = new EventConsumptionAttributes(indexName, identifier);
             indexingClient.addDocumentToIndex(new IndexDocument(attributes, node));
         } catch (Exception e) {
@@ -113,7 +114,8 @@ public class Containers {
         }
     }
 
-    private static void createIndex(String indexName, String mappingsPath, String settingsPath) throws IOException {
+    private static void createIndex(String indexName, String mappingsPath, String settingsPath)
+            throws IOException {
         var mappings = nonNull(mappingsPath) ? loadMapFromResource(mappingsPath) : null;
         var settings = nonNull(settingsPath) ? loadMapFromResource(settingsPath) : null;
 
@@ -124,9 +126,5 @@ public class Containers {
         } else {
             indexingClient.createIndex(indexName);
         }
-
-
     }
-
-
 }

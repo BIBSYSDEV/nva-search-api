@@ -1,6 +1,7 @@
 package no.unit.nva.search.common.csv;
 
 import com.opencsv.bean.CsvBindByName;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
 
@@ -16,14 +17,19 @@ import java.util.Objects;
 public class ExportCsv {
     public static final String DATE_SEPARATOR = "-";
     public static final String DELIMITER = ",";
+
     @CsvBindByName(column = "url")
     private String id;
+
     @CsvBindByName(column = "title")
     private String mainTitle;
+
     @CsvBindByName(column = "publicationDate")
     private String publicationDate;
+
     @CsvBindByName(column = "type")
     private String publicationInstance;
+
     @CsvBindByName(column = "contributors")
     private String contributors;
 
@@ -32,13 +38,14 @@ public class ExportCsv {
         // Bean constructor.
     }
 
-    public ExportCsv(String id,
-                     String mainTitle,
-                     String year,
-                     String month,
-                     String day,
-                     String publicationInstance,
-                     List<String> contributors) {
+    public ExportCsv(
+            String id,
+            String mainTitle,
+            String year,
+            String month,
+            String day,
+            String publicationInstance,
+            List<String> contributors) {
         this.id = id;
         this.mainTitle = mainTitle;
         this.publicationDate = createPublicationDate(year, month, day);
@@ -102,7 +109,9 @@ public class ExportCsv {
             stringBuilder.append(DATE_SEPARATOR).append(month);
         }
 
-        if (StringUtils.isNotBlank(day) && StringUtils.isNotBlank(month) && StringUtils.isNotBlank(year)) {
+        if (StringUtils.isNotBlank(day)
+                && StringUtils.isNotBlank(month)
+                && StringUtils.isNotBlank(year)) {
             stringBuilder.append(DATE_SEPARATOR).append(day);
         }
         return stringBuilder.toString();
@@ -131,13 +140,18 @@ public class ExportCsv {
     @Override
     @JacocoGenerated
     public int hashCode() {
-        return Objects.hash(getId(), getMainTitle(), getPublicationDate(), getPublicationInstance(), getContributors());
+        return Objects.hash(
+                getId(),
+                getMainTitle(),
+                getPublicationDate(),
+                getPublicationInstance(),
+                getContributors());
     }
 
     @Override
     @JacocoGenerated
     public String toString() {
         return "ExportCsv{id='%s', mainTitle='%s', publicationDate='%s', publicationInstance='%s', contributors='%s'}"
-                   .formatted(id, mainTitle, publicationDate, publicationInstance, contributors);
+                .formatted(id, mainTitle, publicationDate, publicationInstance, contributors);
     }
 }

@@ -2,10 +2,13 @@ package no.unit.nva.indexing.handlers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
+
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
+
 import nva.commons.core.JacocoGenerated;
+
+import java.util.Objects;
 
 public class DeleteResourceEvent implements JsonSerializable {
 
@@ -16,8 +19,8 @@ public class DeleteResourceEvent implements JsonSerializable {
 
     @JsonCreator
     public DeleteResourceEvent(
-        @JsonProperty("topic") String topic,
-        @JsonProperty("identifier") SortableIdentifier identifier) {
+            @JsonProperty("topic") String topic,
+            @JsonProperty("identifier") SortableIdentifier identifier) {
         this.topic = topic;
         this.identifier = identifier;
     }
@@ -47,7 +50,6 @@ public class DeleteResourceEvent implements JsonSerializable {
             return false;
         }
         DeleteResourceEvent that = (DeleteResourceEvent) o;
-        return topic.equals(that.topic)
-               && identifier.equals(that.identifier);
+        return topic.equals(that.topic) && identifier.equals(that.identifier);
     }
 }

@@ -1,8 +1,7 @@
 package no.unit.nva.search;
 
-import static java.util.Objects.nonNull;
-import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
+import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
 import static no.unit.nva.search.common.Containers.indexingClient;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
@@ -21,10 +20,12 @@ import static no.unit.nva.search.ticket.TicketParameter.SORT;
 import static no.unit.nva.search.ticket.TicketType.DOI_REQUEST;
 import static no.unit.nva.search.ticket.TicketType.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.ticket.TicketType.PUBLISHING_REQUEST;
+
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.attempt.Try.attempt;
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -38,28 +39,23 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static java.util.Objects.nonNull;
+
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
 import no.unit.nva.search.ticket.TicketStatus;
 import no.unit.nva.search.ticket.TicketType;
+
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -70,6 +66,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Testcontainers
 class TicketClientTest {
 
@@ -79,7 +86,7 @@ class TicketClientTest {
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 4;
     public static final String CURRENT_USERNAME = "1412322@20754.0.0.0";
     public static final URI testOrganizationId =
-        URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
+            URI.create("https://api.dev.nva.aws.unit.no/cristin/organization/20754.0.0.0");
 
     private static TicketClient searchClient;
 
@@ -90,7 +97,8 @@ class TicketClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         searchClient = new TicketClient(HttpClient.newHttpClient(), cachedJwtProvider);
 
-        when(mockedRequestInfo.getTopLevelOrgCristinId()).thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfo.getTopLevelOrgCristinId())
+                .thenReturn(Optional.of(testOrganizationId));
         when(mockedRequestInfo.getUserName()).thenReturn(CURRENT_USERNAME);
         when(mockedRequestInfo.getHeaders()).thenReturn(Map.of(ACCEPT, Words.TEXT_CSV));
     }
@@ -112,34 +120,41 @@ class TicketClientTest {
     @Test
     void openSearchFailedResponse() {
         HttpClient httpClient = mock(HttpClient.class);
-        when(httpClient.sendAsync(any(), any())).thenReturn(mockedFutureHttpResponse((String) null));
+        when(httpClient.sendAsync(any(), any()))
+                .thenReturn(mockedFutureHttpResponse((String) null));
         var toMapEntries = queryToMapEntries(URI.create("https://example.com/?size=2"));
         var resourceClient2 = new TicketClient(httpClient, setupMockedCachedJwtProvider());
         assertThrows(
-            RuntimeException.class,
-            () -> TicketSearchQuery.builder()
-                .withRequiredParameters(SIZE, FROM)
-                .fromQueryParameters(toMapEntries)
-                .build()
-                .withFilter()
-                .organization(testOrganizationId).apply()
-                .doSearch(resourceClient2)
-        );
+                RuntimeException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .withRequiredParameters(SIZE, FROM)
+                                .fromQueryParameters(toMapEntries)
+                                .build()
+                                .withFilter()
+                                .organization(testOrganizationId)
+                                .apply()
+                                .doSearch(resourceClient2));
     }
 
     @Test
     void shouldCheckFacets() throws BadRequestException {
         var hostAddress = URI.create(container.getHttpHostAddress());
         var uri1 = URI.create(REQUEST_BASE_URL + AGGREGATION.name() + EQUAL + ALL);
-        var response1 = TicketSearchQuery.builder()
-            .fromQueryParameters(queryToMapEntries(uri1))
-            .withDockerHostUri(hostAddress)
-            .withRequiredParameters(FROM, SIZE)
-            .build()
-            .withFilter()
-            .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-            .apply()
-            .doSearch(searchClient);
+        var response1 =
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri1))
+                        .withDockerHostUri(hostAddress)
+                        .withRequiredParameters(FROM, SIZE)
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .apply()
+                        .doSearch(searchClient);
 
         assertNotNull(response1);
 
@@ -156,7 +171,6 @@ class TicketClientTest {
         assertNotNull(FROM.asLowerCase());
         assertEquals(TicketStatus.fromString("ewrdfg"), TicketStatus.NONE);
         assertEquals(TicketType.fromString("wre"), TicketType.NONE);
-
     }
 
     @Test
@@ -164,34 +178,45 @@ class TicketClientTest {
         var uri = URI.create("https://x.org/?id=018b857b77b7");
 
         var pagedResult =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .withRequiredParameters(FROM, SIZE, SORT)
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply()
-                .doSearch(searchClient);
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withRequiredParameters(FROM, SIZE, SORT)
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient);
         assertNotNull(pagedResult.swsResponse());
         assertTrue(pagedResult.toString().contains("\"hits\":["));
     }
 
     @Test
     void shouldReturnNewTicketsWhenSearchingForNewTicketsOnlyAndTypes() throws BadRequestException {
-        var uri = URI.create(
-            "https://x.org/?status=New&size=500&type=doiRequest,generalSupportCase,publishingRequest&from=0");
+        var uri =
+                URI.create(
+                        "https://x.org/?status=New&size=500&type=doiRequest,generalSupportCase,publishingRequest&from=0");
 
         var pagedResult =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply()
-                .doSearch(searchClient)
-                .toPagedResponse();
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient)
+                        .toPagedResponse();
 
         assertEquals(7, pagedResult.hits().size());
     }
@@ -201,52 +226,71 @@ class TicketClientTest {
         var uri = URI.create("https://x.org/?status=New&size=500&from=0");
 
         var pagedResult =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply()
-                .doSearch(searchClient)
-                .toPagedResponse();
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient)
+                        .toPagedResponse();
 
         assertEquals(7, pagedResult.hits().size());
     }
 
     @Test
-    void shouldReturnNewAndPendingTicketsWithAssigneeWhenSearchingForTicketsWithStatusNewAndPendingAndAssignee()
-        throws BadRequestException {
-        var uri = URI.create("https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=10&from=0");
+    void
+            shouldReturnNewAndPendingTicketsWithAssigneeWhenSearchingForTicketsWithStatusNewAndPendingAndAssignee()
+                    throws BadRequestException {
+        var uri =
+                URI.create(
+                        "https://x.org/?status=New,Pending&assignee=1412322@20754.0.0.0&size=10&from=0");
 
         var pagedResult =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply()
-                .doSearch(searchClient)
-                .toPagedResponse();
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient)
+                        .toPagedResponse();
 
         assertEquals(9, pagedResult.hits().size());
     }
 
     @ParameterizedTest
     @MethodSource("uriPagingProvider")
-    void uriRequestPageableReturnsSuccessfulResponse(URI uri, int expectedCount) throws ApiGatewayException {
+    void uriRequestPageableReturnsSuccessfulResponse(URI uri, int expectedCount)
+            throws ApiGatewayException {
 
         var response =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply()
-                .doSearch(searchClient);
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withRequiredParameters(FROM, SIZE)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -257,17 +301,24 @@ class TicketClientTest {
 
     @ParameterizedTest
     @MethodSource("uriProviderAsAdmin")
-    void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount) throws ApiGatewayException {
+    void uriRequestReturnsSuccessfulResponseAsAdmin(URI uri, int expectedCount)
+            throws ApiGatewayException {
 
         var response =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId).apply().doSearch(searchClient);
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withRequiredParameters(FROM, SIZE)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -284,32 +335,29 @@ class TicketClientTest {
 
     @ParameterizedTest
     @MethodSource("uriAccessRights")
-    void uriRequestReturnsSuccessfulResponseAsUser(URI uri, Integer expectedCount, String userName,
-                                                   AccessRight... accessRights) throws ApiGatewayException {
+    void uriRequestReturnsSuccessfulResponseAsUser(
+            URI uri, Integer expectedCount, String userName, AccessRight... accessRights)
+            throws ApiGatewayException {
 
-        final var accessRightList = nonNull(accessRights)
-            ? Arrays.asList(accessRights)
-            : List.<AccessRight>of();
+        final var accessRightList =
+                nonNull(accessRights) ? Arrays.asList(accessRights) : List.<AccessRight>of();
 
         var mockedRequestInfoLocal = mock(RequestInfo.class);
-        when(mockedRequestInfoLocal.getUserName())
-            .thenReturn(userName);
+        when(mockedRequestInfoLocal.getUserName()).thenReturn(userName);
         when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
-            .thenReturn(Optional.of(testOrganizationId));
+                .thenReturn(Optional.of(testOrganizationId));
 
-        when(mockedRequestInfoLocal.getAccessRights())
-            .thenReturn(accessRightList);
-
+        when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRightList);
 
         var response =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient);
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withRequiredParameters(FROM, SIZE)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .fromRequestInfo(mockedRequestInfoLocal)
+                        .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
 
@@ -318,27 +366,28 @@ class TicketClientTest {
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedCount)));
     }
 
-
     @ParameterizedTest
     @MethodSource("uriProviderAsAdmin")
-    @Disabled("Does not work. When test was written it returned an empty string even if there were supposed to be"
-        + " hits. Now we throw an exception instead as the method is not implemented.")
+    @Disabled(
+            "Does not work. When test was written it returned an empty string even if there were"
+                    + " supposed to be hits. Now we throw an exception instead as the method is not"
+                    + " implemented.")
     void uriRequestReturnsCsvResponse(URI uri) throws ApiGatewayException {
         var query =
-            queryToMapEntries(uri).stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                queryToMapEntries(uri).stream()
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        when(mockedRequestInfo.getQueryParameters())
-            .thenReturn(query);
+        when(mockedRequestInfo.getQueryParameters()).thenReturn(query);
 
         var csvResult =
-            TicketSearchQuery.builder()
-                .fromRequestInfo(mockedRequestInfo)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .withRequiredParameters(FROM, SIZE)
-                .build()
-                .withFilter().fromRequestInfo(mockedRequestInfo)
-                .doSearch(searchClient);
+                TicketSearchQuery.builder()
+                        .fromRequestInfo(mockedRequestInfo)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withRequiredParameters(FROM, SIZE)
+                        .build()
+                        .withFilter()
+                        .fromRequestInfo(mockedRequestInfo)
+                        .doSearch(searchClient);
         assertNotNull(csvResult);
     }
 
@@ -346,15 +395,20 @@ class TicketClientTest {
     @MethodSource("uriSortingProvider")
     void uriRequestWithSortingReturnsSuccessfulResponse(URI uri) throws ApiGatewayException {
         var response =
-            TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .userAndTicketTypes(CURRENT_USERNAME, DOI_REQUEST, PUBLISHING_REQUEST, GENERAL_SUPPORT_CASE)
-                .organization(testOrganizationId)
-                .apply().doSearch(searchClient);
+                TicketSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withRequiredParameters(FROM, SIZE, SORT, AGGREGATION)
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .build()
+                        .withFilter()
+                        .userAndTicketTypes(
+                                CURRENT_USERNAME,
+                                DOI_REQUEST,
+                                PUBLISHING_REQUEST,
+                                GENERAL_SUPPORT_CASE)
+                        .organization(testOrganizationId)
+                        .apply()
+                        .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
         assertNotNull(pagedSearchResourceDto.id());
@@ -366,13 +420,14 @@ class TicketClientTest {
     @MethodSource("uriInvalidProvider")
     void uriRequestReturnsBadRequest(URI uri) {
         assertThrows(
-            BadRequestException.class,
-            () -> TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri))
-                .withRequiredParameters(FROM, SIZE)
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .doSearch(searchClient));
+                BadRequestException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .fromQueryParameters(queryToMapEntries(uri))
+                                .withRequiredParameters(FROM, SIZE)
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .build()
+                                .doSearch(searchClient));
     }
 
     @Test
@@ -383,89 +438,101 @@ class TicketClientTest {
         when(mockedRequestInfoLocal.getAccessRights()).thenReturn(List.of());
         when(mockedRequestInfoLocal.getCurrentCustomer()).thenReturn(null);
         assertThrows(
-            UnauthorizedException.class,
-            () -> TicketSearchQuery.builder()
-                .fromQueryParameters(queryToMapEntries(uri.get()))
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .build()
-                .withFilter()
-                .fromRequestInfo(mockedRequestInfoLocal)
-                .doSearch(searchClient));
+                UnauthorizedException.class,
+                () ->
+                        TicketSearchQuery.builder()
+                                .fromQueryParameters(queryToMapEntries(uri.get()))
+                                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                                .build()
+                                .withFilter()
+                                .fromRequestInfo(mockedRequestInfoLocal)
+                                .doSearch(searchClient));
     }
-
 
     static Stream<Arguments> uriPagingProvider() {
         return Stream.of(
-            createArgument("page=0&aggregation=all,the,best,", 20),
-            createArgument("page=1&aggregation=all&size=1", 1),
-            createArgument("page=2&aggregation=all&size=1", 1),
-            createArgument("page=3&aggregation=all&size=1", 1),
-            createArgument("page=0&aggregation=all&size=0", 0),
-            createArgument("offset=15&aggregation=all&size=2", 2),
-            createArgument("offset=15&aggregation=all&limit=2", 2),
-            createArgument("offset=15&aggregation=all&results=2", 2),
-            createArgument("offset=15&aggregation=all&per_page=2", 2),
-            createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
-            createArgument("offset=15&perPage=2", 2)
-        );
+                createArgument("page=0&aggregation=all,the,best,", 20),
+                createArgument("page=1&aggregation=all&size=1", 1),
+                createArgument("page=2&aggregation=all&size=1", 1),
+                createArgument("page=3&aggregation=all&size=1", 1),
+                createArgument("page=0&aggregation=all&size=0", 0),
+                createArgument("offset=15&aggregation=all&size=2", 2),
+                createArgument("offset=15&aggregation=all&limit=2", 2),
+                createArgument("offset=15&aggregation=all&results=2", 2),
+                createArgument("offset=15&aggregation=all&per_page=2", 2),
+                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
+                createArgument("offset=15&perPage=2", 2));
     }
 
     static Stream<Arguments> uriAccessRights() {
         return Stream.of(
-            createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
-            createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
-            createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
-            createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
-            createAccessRightArgument("", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-            createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
-            createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
-            createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
-            createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
-            createAccessRightArgument("", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
-            createAccessRightArgument("", 20, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
-                MANAGE_PUBLISHING_REQUESTS),
-            createAccessRightArgument("", 20, "1412322@20754.0.0.0", MANAGE_DOI, AccessRight.SUPPORT,
-                MANAGE_PUBLISHING_REQUESTS)
-        );
+                createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
+                createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
+                createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
+                createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
+                createAccessRightArgument(
+                        "", 14, "1492596@20754.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument("", 0, "1485369@5923.0.0.0"),
+                createAccessRightArgument("", 1, "1485369@5923.0.0.0", MANAGE_DOI),
+                createAccessRightArgument("", 6, "1485369@5923.0.0.0", AccessRight.SUPPORT),
+                createAccessRightArgument("", 13, "1485369@5923.0.0.0", MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument(
+                        "", 7, "1485369@5923.0.0.0", MANAGE_DOI, AccessRight.SUPPORT),
+                createAccessRightArgument(
+                        "",
+                        20,
+                        "1485369@5923.0.0.0",
+                        MANAGE_DOI,
+                        AccessRight.SUPPORT,
+                        MANAGE_PUBLISHING_REQUESTS),
+                createAccessRightArgument(
+                        "",
+                        20,
+                        "1412322@20754.0.0.0",
+                        MANAGE_DOI,
+                        AccessRight.SUPPORT,
+                        MANAGE_PUBLISHING_REQUESTS));
     }
-
 
     static Stream<URI> uriSortingProvider() {
 
         return Stream.of(
-            URI.create(REQUEST_BASE_URL + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
-            URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
-            URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
-            URI.create(REQUEST_BASE_URL + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
-            URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
-            URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc")
-        );
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "sort=status&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(REQUEST_BASE_URL + "orderBy=status:asc,created_date:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=status+asc&sort=created_date+desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "sort=created_date&sortOrder=asc&sort=status&order=desc"),
+                URI.create(REQUEST_BASE_URL + "sort=modified_date+asc&sort=type+desc"),
+                URI.create(REQUEST_BASE_URL + "sort=relevance,modified_date+asc"));
     }
 
     static Stream<URI> uriInvalidProvider() {
         return Stream.of(
-            URI.create(REQUEST_BASE_URL + "feilName=epler"),
-            URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
-            URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
-            URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
-            URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
-            URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
-            URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+                URI.create(REQUEST_BASE_URL + "feilName=epler"),
+                URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
+                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
+                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
+                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
+                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
     }
 
     static Stream<Arguments> uriProviderAsAdmin() {
         return loadMapFromResource(TICKETS_VALID_TEST_URL_JSON).entrySet().stream()
-            .map(entry -> createArgument(entry.getKey(), entry.getValue()));
+                .map(entry -> createArgument(entry.getKey(), entry.getValue()));
     }
 
-    private static Arguments createAccessRightArgument(String searchUri, int expectedCount, String userName,
-                                                       AccessRight... accessRights) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
+    private static Arguments createAccessRightArgument(
+            String searchUri, int expectedCount, String userName, AccessRight... accessRights) {
+        return Arguments.of(
+                URI.create(REQUEST_BASE_URL + searchUri), expectedCount, userName, accessRights);
     }
-
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
         return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
@@ -473,8 +540,7 @@ class TicketClientTest {
 
     private static Map<String, Integer> loadMapFromResource(String resource) {
         var mappingsJson = stringFromResources(Path.of(resource));
-        var type = new TypeReference<Map<String, Integer>>() {
-        };
+        var type = new TypeReference<Map<String, Integer>>() {};
         return attempt(() -> JsonUtils.dtoObjectMapper.readValue(mappingsJson, type)).orElseThrow();
     }
 }

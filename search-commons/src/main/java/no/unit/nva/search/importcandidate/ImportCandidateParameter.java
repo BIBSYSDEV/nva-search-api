@@ -1,6 +1,5 @@
 package no.unit.nva.search.importcandidate;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_FIELDS_SEARCHED;
@@ -17,10 +16,10 @@ import static no.unit.nva.search.common.constant.Words.COLON;
 import static no.unit.nva.search.common.constant.Words.Q;
 import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.ALL_OF;
+import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search.common.enums.FieldOperator.NA;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
-import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
 import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
@@ -42,6 +41,19 @@ import static no.unit.nva.search.importcandidate.Constants.PUBLICATION_YEAR_KEYW
 import static no.unit.nva.search.importcandidate.Constants.PUBLISHER_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.search.common.enums.FieldOperator;
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ParameterKind;
+import no.unit.nva.search.common.enums.ValueEncoding;
+
+import nva.commons.core.JacocoGenerated;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.text.CaseUtils;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -50,19 +62,11 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.enums.FieldOperator;
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ParameterKind;
-import no.unit.nva.search.common.enums.ValueEncoding;
-import nva.commons.core.JacocoGenerated;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.text.CaseUtils;
-
 /**
- * Enum for all the parameters that can be used to query the search index. This enum needs to implement these
- * parameters
- * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ * Enum for all the parameters that can be used to query the search index. This enum needs to
+ * implement these parameters <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin
+ * API</a>
+ *
  * @author Stig Norland
  */
 public enum ImportCandidateParameter implements ParameterKey<ImportCandidateParameter> {
@@ -89,7 +93,8 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     LICENSE_NOT(CUSTOM, NOT_ALL_OF, ASSOCIATED_ARTIFACTS_LICENSE),
     PUBLICATION_YEAR(NUMBER, BETWEEN, PUBLICATION_YEAR_KEYWORD),
     PUBLICATION_YEAR_BEFORE(NUMBER, FieldOperator.LESS_THAN, PUBLICATION_YEAR_KEYWORD),
-    PUBLICATION_YEAR_SINCE(NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
+    PUBLICATION_YEAR_SINCE(
+            NUMBER, FieldOperator.GREATER_THAN_OR_EQUAL_TO, PUBLICATION_YEAR_KEYWORD),
     PUBLISHER(KEYWORD, ALL_OF, PUBLISHER_ID_KEYWORD),
     PUBLISHER_NOT(KEYWORD, NOT_ALL_OF, PUBLISHER_ID_KEYWORD),
     SCOPUS_IDENTIFIER(CUSTOM),
@@ -117,10 +122,10 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<ImportCandidateParameter> IMPORT_CANDIDATE_PARAMETER_SET =
-        Arrays.stream(ImportCandidateParameter.values())
-            .filter(ImportCandidateParameter::isSearchField)
-            .sorted(ParameterKey::compareAscending)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            Arrays.stream(ImportCandidateParameter.values())
+                    .filter(ImportCandidateParameter::isSearchField)
+                    .sorted(ParameterKey::compareAscending)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
 
     private final ValueEncoding encoding;
     private final String keyPattern;
@@ -140,20 +145,27 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     }
 
     ImportCandidateParameter(
-        ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern, String valuePattern,
-        Float boost) {
+            ParameterKind kind,
+            FieldOperator operator,
+            String fieldsToSearch,
+            String keyPattern,
+            String valuePattern,
+            Float boost) {
 
         this.fieldOperator = nonNull(operator) ? operator : NA;
         this.boost = nonNull(boost) ? boost : 1F;
-        this.fieldsToSearch = nonNull(fieldsToSearch)
-            ? fieldsToSearch.split(PATTERN_IS_PIPE)
-            : new String[]{name()};
+        this.fieldsToSearch =
+                nonNull(fieldsToSearch)
+                        ? fieldsToSearch.split(PATTERN_IS_PIPE)
+                        : new String[] {name()};
         this.validValuePattern = ParameterKey.getValuePattern(kind, valuePattern);
         this.errorMsg = ParameterKey.getErrorMessage(kind);
         this.encoding = ParameterKey.getEncoding(kind);
-        this.keyPattern = nonNull(keyPattern)
-            ? keyPattern
-            : PATTERN_IS_IGNORE_CASE + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
+        this.keyPattern =
+                nonNull(keyPattern)
+                        ? keyPattern
+                        : PATTERN_IS_IGNORE_CASE
+                                + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
     }
 
@@ -194,8 +206,7 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
 
     @Override
     public Stream<String> searchFields(boolean... isKeyWord) {
-        return Arrays.stream(fieldsToSearch)
-            .map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
+        return Arrays.stream(fieldsToSearch).map(ParameterKey.trimKeyword(fieldType(), isKeyWord));
     }
 
     @Override
@@ -217,21 +228,19 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     @Override
     @JacocoGenerated
     public String toString() {
-        return
-            new StringJoiner(COLON, "Key[", "]")
+        return new StringJoiner(COLON, "Key[", "]")
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
     }
 
     public static ImportCandidateParameter keyFromString(String paramName) {
-        var result = Arrays.stream(ImportCandidateParameter.values())
-            .filter(ImportCandidateParameter::ignoreInvalidKey)
-            .filter(ParameterKey.equalTo(paramName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
+        var result =
+                Arrays.stream(ImportCandidateParameter.values())
+                        .filter(ImportCandidateParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     private static boolean ignoreInvalidKey(ImportCandidateParameter f) {

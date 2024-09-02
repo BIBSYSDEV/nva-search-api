@@ -1,9 +1,12 @@
 package no.unit.nva.indexingclient.constants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
+
 import no.unit.nva.commons.json.JsonUtils;
+
 import nva.commons.core.Environment;
+
+import java.util.List;
 
 public final class ApplicationConstants {
 
@@ -20,7 +23,12 @@ public final class ApplicationConstants {
     public static final String SHARD_ID = "0";
 
     public static final List<String> ALL_INDICES =
-        List.of(RESOURCES_INDEX, DOIREQUESTS_INDEX, MESSAGES_INDEX, TICKETS_INDEX, PUBLISHING_REQUESTS_INDEX);
+            List.of(
+                    RESOURCES_INDEX,
+                    DOIREQUESTS_INDEX,
+                    MESSAGES_INDEX,
+                    TICKETS_INDEX,
+                    PUBLISHING_REQUESTS_INDEX);
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
     public static final ObjectMapper objectMapperNoEmpty = JsonUtils.dynamoObjectMapper;
@@ -29,10 +37,7 @@ public final class ApplicationConstants {
     public static final String SEARCH_INFRASTRUCTURE_API_URI = readSearchInfrastructureApiUri();
     public static final String SEARCH_INFRASTRUCTURE_AUTH_URI = readSearchInfrastructureAuthUri();
 
-
-    private ApplicationConstants() {
-
-    }
+    private ApplicationConstants() {}
 
     private static String readSearchInfrastructureApiUri() {
         return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
@@ -41,5 +46,4 @@ public final class ApplicationConstants {
     private static String readSearchInfrastructureAuthUri() {
         return ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
     }
-
 }

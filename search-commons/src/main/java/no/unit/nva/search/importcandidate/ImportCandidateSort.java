@@ -2,16 +2,19 @@ package no.unit.nva.search.importcandidate;
 
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
 import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
+
 import static nva.commons.core.StringUtils.EMPTY_STRING;
+
+import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.search.common.enums.SortKey;
+
+import org.apache.commons.text.CaseUtils;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.constant.Words;
-import no.unit.nva.search.common.enums.SortKey;
-import org.apache.commons.text.CaseUtils;
 
 /**
  * @author Stig Norland
@@ -55,20 +58,18 @@ public enum ImportCandidateSort implements SortKey {
     }
 
     public static ImportCandidateSort fromSortKey(String keyName) {
-        var result = Arrays.stream(ImportCandidateSort.values())
-            .filter(SortKey.equalTo(keyName))
-            .collect(Collectors.toSet());
-        return result.size() == 1
-            ? result.stream().findFirst().get()
-            : INVALID;
+        var result =
+                Arrays.stream(ImportCandidateSort.values())
+                        .filter(SortKey.equalTo(keyName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     public static Collection<String> validSortKeys() {
-        return
-            Arrays.stream(ImportCandidateSort.values())
+        return Arrays.stream(ImportCandidateSort.values())
                 .sorted(SortKey::compareAscending)
-                .skip(1)    // skip INVALID
+                .skip(1) // skip INVALID
                 .map(SortKey::asCamelCase)
-            .toList();
+                .toList();
     }
 }

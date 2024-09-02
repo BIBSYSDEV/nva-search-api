@@ -8,8 +8,8 @@ import nva.commons.core.JacocoGenerated;
  */
 public final class Words {
 
-    public static final float PI = 3.14F;        // π -> used for boosting.
-    public static final float PHI = 1.618F;      // Golden Ratio (Φ) -> used for boosting.
+    public static final float PI = 3.14F; // π -> used for boosting.
+    public static final float PHI = 1.618F; // Golden Ratio (Φ) -> used for boosting.
 
     public static final int NAME_AND_SORT_LENGTH = 2;
 
@@ -95,7 +95,8 @@ public final class Words {
     public static final String SCOPUS_AS_TYPE = "Scopus";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
-    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS =
+            "SearchInfrastructureCredentials";
     public static final String SERIES = "series";
     public static final String SERIES_AS_TYPE = "Series";
     public static final String SLASH = "/";
@@ -124,8 +125,6 @@ public final class Words {
     public static final boolean KEYWORD_TRUE = true;
     public static final boolean KEYWORD_FALSE = false;
 
-
     @JacocoGenerated
-    public Words() {
-    }
+    public Words() {}
 }

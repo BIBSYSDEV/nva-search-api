@@ -7,7 +7,9 @@ import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+
 import static nva.commons.core.attempt.Try.attempt;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -16,8 +18,32 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.commons.json.JsonUtils;
+import no.unit.nva.events.models.AwsEventBridgeEvent;
+import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexing.testutils.FakeIndexingClient;
+import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
+import no.unit.nva.indexingclient.models.IndexDocument;
+import no.unit.nva.s3.S3Driver;
+import no.unit.nva.stubs.FakeS3Client;
+
+import nva.commons.core.attempt.Try;
+import nva.commons.core.ioutils.IoUtils;
+import nva.commons.core.paths.UnixPath;
+import nva.commons.core.paths.UriWrapper;
+import nva.commons.logutils.LogUtils;
+
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,24 +51,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.events.models.AwsEventBridgeEvent;
-import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexing.testutils.FakeIndexingClient;
-import no.unit.nva.s3.S3Driver;
-import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
-import no.unit.nva.indexingclient.models.IndexDocument;
-import no.unit.nva.stubs.FakeS3Client;
-import nva.commons.core.attempt.Try;
-import nva.commons.core.ioutils.IoUtils;
-import nva.commons.core.paths.UnixPath;
-import nva.commons.core.paths.UriWrapper;
-import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings({"PMD.VariableDeclarationUsageDistance"})
 public class EventBasedBatchIndexerTest extends BatchIndexTest {
@@ -67,35 +75,44 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         eventBridgeClient = new StubEventBridgeClient();
         s3Client = new FakeS3Client();
         s3Driver = new S3Driver(s3Client, "ingoredBucket");
-        indexer = new EventBasedBatchIndexer(s3Client,
-                                             openSearchClient,
-                                             eventBridgeClient,
-                                             NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
+        indexer =
+                new EventBasedBatchIndexer(
+                        s3Client,
+                        openSearchClient,
+                        eventBridgeClient,
+                        NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE);
     }
 
-    @ParameterizedTest(name = "should return all ids for published resources that failed to be indexed. "
-                              + "Input size:{0}")
+    @ParameterizedTest(
+            name =
+                    "should return all ids for published resources that failed to be indexed. "
+                            + "Input size:{0}")
     @ValueSource(ints = {1, 2, 5, 10, 100})
-    public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(int numberOfFilesPerEvent)
-        throws JsonProcessingException {
-
-        indexer = new EventBasedBatchIndexer(s3Client, failingOpenSearchClient(), eventBridgeClient,
-                                             numberOfFilesPerEvent);
+    public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(
+            int numberOfFilesPerEvent) throws JsonProcessingException {
+        final var logger = LogUtils.getTestingAppenderForRootLogger();
+        indexer =
+                new EventBasedBatchIndexer(
+                        s3Client,
+                        failingOpenSearchClient(),
+                        eventBridgeClient,
+                        numberOfFilesPerEvent);
         var filesFailingToBeIndexed = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
         var importLocation = filesFailingToBeIndexed.get(0).getHost().toString();
         var request = new ImportDataRequestEvent(importLocation);
         indexer.handleRequest(eventStream(request), outputStream, CONTEXT);
 
         var actualIdentifiersOfNonIndexedEntries =
-            Arrays.stream(objectMapper.readValue(outputStream.toString(), String[].class)).toList();
+                Arrays.stream(objectMapper.readValue(outputStream.toString(), String[].class))
+                        .toList();
         var expectedIdentifiesOfNonIndexedEntries =
-            Arrays.stream(extractIdentifiersFromFailingFiles(filesFailingToBeIndexed)).toList();
+                Arrays.stream(extractIdentifiersFromFailingFiles(filesFailingToBeIndexed)).toList();
 
         assertEquals(actualIdentifiersOfNonIndexedEntries, expectedIdentifiesOfNonIndexedEntries);
 
-        expectedIdentifiesOfNonIndexedEntries
-            .forEach(expectedIdentifier -> assertThat(logToString(appender), containsString(expectedIdentifier)));
-
+        expectedIdentifiesOfNonIndexedEntries.forEach(
+                expectedIdentifier ->
+                        assertThat(logToString(appender), containsString(expectedIdentifier)));
     }
 
     @Test
@@ -107,23 +124,27 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     @ParameterizedTest(name = "batch indexer processes n files per request:{0}")
     @ValueSource(ints = {1, 2, 5, 10, 50, 100})
     void shouldIndexNFilesPerEvent(int numberOfFilesPerEvent) throws IOException {
-        indexer = new EventBasedBatchIndexer(s3Client, openSearchClient, eventBridgeClient, numberOfFilesPerEvent);
+        indexer =
+                new EventBasedBatchIndexer(
+                        s3Client, openSearchClient, eventBridgeClient, numberOfFilesPerEvent);
         var expectedFiles = randomFilesInSingleEvent(s3Driver, numberOfFilesPerEvent);
         var unexpectedFile = randomEntryInS3(s3Driver);
 
-        var importLocation = unexpectedFile.getHost().getUri(); //all files are in the same bucket
+        var importLocation = unexpectedFile.getHost().getUri(); // all files are in the same bucket
         InputStream event = eventStream(new ImportDataRequestEvent(importLocation.toString()));
         indexer.handleRequest(event, outputStream, CONTEXT);
 
         for (var expectedFile : expectedFiles) {
             IndexDocument indexDocument = fetchIndexDocumentFromS3(expectedFile);
-            assertThat(openSearchClient.getIndex(indexDocument.getIndexName()),
-                hasItem(indexDocument.resource()));
+            assertThat(
+                    openSearchClient.getIndex(indexDocument.getIndexName()),
+                    hasItem(indexDocument.resource()));
         }
 
         IndexDocument notYetIndexedDocument = fetchIndexDocumentFromS3(unexpectedFile);
-        assertThat(openSearchClient.getIndex(notYetIndexedDocument.getIndexName()),
-            not(hasItem(notYetIndexedDocument.resource())));
+        assertThat(
+                openSearchClient.getIndex(notYetIndexedDocument.getIndexName()),
+                not(hasItem(notYetIndexedDocument.resource())));
     }
 
     @Test
@@ -136,7 +157,9 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         var event = eventStream(firstEvent);
 
         indexer.handleRequest(event, outputStream, CONTEXT);
-        assertThat(eventBridgeClient.getLatestEvent().getStartMarker(), is(equalTo(firstFile.getLastPathElement())));
+        assertThat(
+                eventBridgeClient.getLatestEvent().getStartMarker(),
+                is(equalTo(firstFile.getLastPathElement())));
     }
 
     @Test
@@ -168,20 +191,24 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         assertThatIndexHasBothDocuments(firstDocumentToIndex, secondDocumentIndex);
     }
 
-    private void assertThatIndexHasBothDocuments(IndexDocument firstDocumentToIndex,
-                                                 IndexDocument secondDocumentIndex) {
-        assertThat(openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
-            hasItem(firstDocumentToIndex.resource()));
-        assertThat(openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
-            hasItem(secondDocumentIndex.resource()));
+    private void assertThatIndexHasBothDocuments(
+            IndexDocument firstDocumentToIndex, IndexDocument secondDocumentIndex) {
+        assertThat(
+                openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
+                hasItem(firstDocumentToIndex.resource()));
+        assertThat(
+                openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
+                hasItem(secondDocumentIndex.resource()));
     }
 
-    private void assertThatIndexHasFirstButNotSecondDocument(IndexDocument firstDocumentToIndex,
-                                                             IndexDocument secondDocumentIndex) {
-        assertThat(openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
-            hasItem(firstDocumentToIndex.resource()));
-        assertThat(openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
-            not(hasItem(secondDocumentIndex.resource())));
+    private void assertThatIndexHasFirstButNotSecondDocument(
+            IndexDocument firstDocumentToIndex, IndexDocument secondDocumentIndex) {
+        assertThat(
+                openSearchClient.getIndex(firstDocumentToIndex.getIndexName()),
+                hasItem(firstDocumentToIndex.resource()));
+        assertThat(
+                openSearchClient.getIndex(secondDocumentIndex.getIndexName()),
+                not(hasItem(secondDocumentIndex.resource())));
     }
 
     private IndexDocument fetchIndexDocumentFromS3(UriWrapper expectedFile) {
@@ -190,25 +217,26 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     }
 
     private String[] extractIdentifiersFromFailingFiles(List<UriWrapper> filesFailingToBeIndexed) {
-        return filesFailingToBeIndexed
-            .stream()
-            .map(UriWrapper::getLastPathElement)
-            .toList()
-            .toArray(String[]::new);
+        return filesFailingToBeIndexed.stream()
+                .map(UriWrapper::getLastPathElement)
+                .toList()
+                .toArray(String[]::new);
     }
 
-    private List<UriWrapper> randomFilesInSingleEvent(S3Driver s3Driver, int numberOfFilesPerEvent) {
+    private List<UriWrapper> randomFilesInSingleEvent(
+            S3Driver s3Driver, int numberOfFilesPerEvent) {
         return IntStream.range(0, numberOfFilesPerEvent)
-            .boxed()
-            .map(attempt(ignored -> randomEntryInS3(s3Driver)))
-            .map(Try::orElseThrow)
-            .collect(Collectors.toList());
+                .boxed()
+                .map(attempt(ignored -> randomEntryInS3(s3Driver)))
+                .map(Try::orElseThrow)
+                .collect(Collectors.toList());
     }
 
     private UriWrapper randomEntryInS3(S3Driver s3Driver) throws IOException {
         var randomIndexDocument = randomIndexDocument();
         var filePath = UnixPath.of(randomIndexDocument.getDocumentIdentifier());
-        return UriWrapper.fromUri(s3Driver.insertFile(filePath, randomIndexDocument.toJsonString()));
+        return UriWrapper.fromUri(
+                s3Driver.insertFile(filePath, randomIndexDocument.toJsonString()));
     }
 
     private IndexDocument randomIndexDocument() {
@@ -228,7 +256,8 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         return new FakeIndexingClient();
     }
 
-    private InputStream eventStream(ImportDataRequestEvent eventDetail) throws JsonProcessingException {
+    private InputStream eventStream(ImportDataRequestEvent eventDetail)
+            throws JsonProcessingException {
         AwsEventBridgeEvent<ImportDataRequestEvent> event = new AwsEventBridgeEvent<>();
         event.setDetail(eventDetail);
         String jsonString = objectMapperWithEmpty.writeValueAsString(event);

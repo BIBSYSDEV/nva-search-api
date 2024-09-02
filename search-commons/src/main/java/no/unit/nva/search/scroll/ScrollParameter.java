@@ -7,24 +7,27 @@ import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.common.constant.Words.COLON;
 import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.NA;
-import static nva.commons.core.StringUtils.EMPTY_STRING;
 
-import java.util.Locale;
-import java.util.StringJoiner;
-import java.util.stream.Stream;
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
 import no.unit.nva.search.common.enums.ValueEncoding;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.text.CaseUtils;
 
+import java.util.Locale;
+import java.util.StringJoiner;
+import java.util.stream.Stream;
+
 /**
- * Enum for all the parameters that can be used to query the search index.
- * This enum needs to implement these parameters
- * <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin API</a>
+ * Enum for all the parameters that can be used to query the search index. This enum needs to
+ * implement these parameters <a href="https://api.cristin.no/v2/doc/index.html#GETresults">cristin
+ * API</a>
  *
  * @author Sondre Vestad
  */
@@ -93,15 +96,12 @@ public enum ScrollParameter implements ParameterKey<ScrollParameter> {
         throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
 
-
     @Override
     @JacocoGenerated
     public String toString() {
-        return
-            new StringJoiner(COLON, "Key[", "]")
+        return new StringJoiner(COLON, "Key[", "]")
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
     }
-
 }

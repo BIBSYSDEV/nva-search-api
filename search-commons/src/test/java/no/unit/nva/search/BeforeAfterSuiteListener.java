@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
-
 import no.unit.nva.search.common.Containers;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -37,6 +37,4 @@ public class BeforeAfterSuiteListener implements TestExecutionListener {
             logger.error(e.getMessage());
         }
     }
-
-
 }

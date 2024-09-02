@@ -1,6 +1,5 @@
 package no.unit.nva.search.common.constant;
 
-import static java.util.Objects.nonNull;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_OR_DESC_GROUP;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SELECTED_GROUP;
@@ -15,6 +14,22 @@ import static no.unit.nva.search.common.constant.Words.NYNORSK_CODE;
 import static no.unit.nva.search.common.constant.Words.PIPE;
 import static no.unit.nva.search.common.constant.Words.SAMI_CODE;
 
+import static nva.commons.core.StringUtils.SPACE;
+
+import static java.util.Objects.nonNull;
+
+import no.unit.nva.search.common.enums.ParameterKey;
+
+import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
+
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
+import org.opensearch.search.aggregations.AggregationBuilders;
+import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -23,18 +38,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import no.unit.nva.search.common.enums.ParameterKey;
-import nva.commons.core.Environment;
-import nva.commons.core.JacocoGenerated;
-import static nva.commons.core.StringUtils.SPACE;
-
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
-import org.opensearch.search.aggregations.AggregationBuilders;
-import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 /**
  * @author Stig Norland
@@ -47,8 +50,7 @@ public final class Functions {
     private static final String API_HOST = "API_HOST";
 
     @JacocoGenerated
-    public Functions() {
-    }
+    public Functions() {}
 
     public static String jsonPath(String... args) {
         return String.join(DOT, args);
@@ -72,28 +74,28 @@ public final class Functions {
     }
 
     public static NestedAggregationBuilder labels(String jsonPath) {
-        var nestedAggregation =
-            nestedBranchBuilder(LABELS, jsonPath, LABELS);
+        var nestedAggregation = nestedBranchBuilder(LABELS, jsonPath, LABELS);
 
         languageCodes()
-            .map(code -> branchBuilder(code, jsonPath, LABELS, code, KEYWORD))
-            .forEach(nestedAggregation::subAggregation);
+                .map(code -> branchBuilder(code, jsonPath, LABELS, code, KEYWORD))
+                .forEach(nestedAggregation::subAggregation);
 
         return nestedAggregation;
     }
 
     public static TermsAggregationBuilder branchBuilder(String name, String... pathElements) {
-        return AggregationBuilders
-            .terms(name)
-            .field(jsonPath(pathElements))
-            .size(Defaults.DEFAULT_AGGREGATION_SIZE);
+        return AggregationBuilders.terms(name)
+                .field(jsonPath(pathElements))
+                .size(Defaults.DEFAULT_AGGREGATION_SIZE);
     }
 
-    public static NestedAggregationBuilder nestedBranchBuilder(String name, String... pathElements) {
+    public static NestedAggregationBuilder nestedBranchBuilder(
+            String name, String... pathElements) {
         return new NestedAggregationBuilder(name, jsonPath(pathElements));
     }
 
-    public static FilterAggregationBuilder filterBranchBuilder(String name, String filter, String... paths) {
+    public static FilterAggregationBuilder filterBranchBuilder(
+            String name, String filter, String... paths) {
         return AggregationBuilders.filter(name, QueryBuilders.termQuery(jsonPath(paths), filter));
     }
 
@@ -111,8 +113,7 @@ public final class Functions {
     }
 
     public static String toEnumStrings(Function<String, Enum<?>> fromString, String decodedValue) {
-        return
-            Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
+        return Arrays.stream(decodedValue.split(COMMA + PIPE + SPACE))
                 .map(fromString)
                 .map(Enum::toString)
                 .collect(Collectors.joining(COMMA));
@@ -136,25 +137,26 @@ public final class Functions {
         return URLDecoder.decode(encoded, StandardCharsets.UTF_8);
     }
 
-    public static <K extends Enum<K> & ParameterKey<K>> Stream<Map.Entry<K, QueryBuilder>> queryToEntry(
-        K key, QueryBuilder qb) {
-        final var entry = new Map.Entry<K, QueryBuilder>() {
-            @Override
-            public K getKey() {
-                return key;
-            }
+    public static <K extends Enum<K> & ParameterKey<K>>
+            Stream<Map.Entry<K, QueryBuilder>> queryToEntry(K key, QueryBuilder qb) {
+        final var entry =
+                new Map.Entry<K, QueryBuilder>() {
+                    @Override
+                    public K getKey() {
+                        return key;
+                    }
 
-            @Override
-            public QueryBuilder getValue() {
-                return qb;
-            }
+                    @Override
+                    public QueryBuilder getValue() {
+                        return qb;
+                    }
 
-            @Override
-            @JacocoGenerated
-            public QueryBuilder setValue(QueryBuilder value) {
-                return null;
-            }
-        };
+                    @Override
+                    @JacocoGenerated
+                    public QueryBuilder setValue(QueryBuilder value) {
+                        return null;
+                    }
+                };
         return Stream.of(entry);
     }
 }

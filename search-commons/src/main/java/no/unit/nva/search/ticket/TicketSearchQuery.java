@@ -38,15 +38,8 @@ import static no.unit.nva.search.ticket.TicketParameter.STATUS_NOT;
 import static no.unit.nva.search.ticket.TicketParameter.TICKET_PARAMETER_SET;
 import static no.unit.nva.search.ticket.TicketStatus.NEW;
 import static no.unit.nva.search.ticket.TicketStatus.PENDING;
-import static nva.commons.core.paths.UriWrapper.fromUri;
 
-import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.stream.Stream;
+import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
@@ -56,12 +49,22 @@ import no.unit.nva.search.common.builder.KeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
+
 import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.BoolQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.sort.SortOrder;
+
+import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * @author Stig Norland
@@ -136,7 +139,6 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return fromUri(infrastructureApiUri).addChild(TICKETS, SEARCH).getUri();
     }
 
-
     @Override
     protected Map<String, String> facetPaths() {
         return facetTicketsPaths;
@@ -147,9 +149,10 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return getTicketsAggregations(filterBuilder.getCurrentUser());
     }
 
-    @JacocoGenerated    // default value shouldn't happen, (developer have forgotten to handle a key)
+    @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
-    protected Stream<Entry<TicketParameter, QueryBuilder>> builderCustomQueryStream(TicketParameter key) {
+    protected Stream<Entry<TicketParameter, QueryBuilder>> builderCustomQueryStream(
+            TicketParameter key) {
         return switch (key) {
             case ASSIGNEE -> builderStreamByAssignee();
             case ORGANIZATION_ID, ORGANIZATION_ID_NOT -> builderStreamByOrganization(key);
@@ -158,26 +161,30 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         };
     }
 
-    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(TicketParameter key) {
+    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByStatus(
+            TicketParameter key) {
         return hasAssigneeAndOnlyStatusNew()
-            ? Stream.empty()    // we cannot query status New here, it is done together with assignee.
-            : new KeywordQuery<TicketParameter>().buildQuery(key, parameters().get(key).toString());
+                ? Stream.empty() // we cannot query status New here, it is done together with
+                // assignee.
+                : new KeywordQuery<TicketParameter>()
+                        .buildQuery(key, parameters().get(key).toString());
     }
-
 
     public TicketFilter withFilter() {
         return filterBuilder;
     }
 
     private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByAssignee() {
-        var searchByUserName = parameters().isPresent(BY_USER_PENDING) //override assignee if <user pending> is used
-            ? filterBuilder.getCurrentUser()
-            : parameters().get(ASSIGNEE).toString();
+        var searchByUserName =
+                parameters().isPresent(BY_USER_PENDING) // override assignee if <user pending> is
+                        // used
+                        ? filterBuilder.getCurrentUser()
+                        : parameters().get(ASSIGNEE).toString();
 
-        var builtQuery = new AcrossFieldsQuery<TicketParameter>()
-            .buildQuery(ASSIGNEE, searchByUserName);
+        var builtQuery =
+                new AcrossFieldsQuery<TicketParameter>().buildQuery(ASSIGNEE, searchByUserName);
 
-        if (hasStatusNew()) {       // we'll query assignee and status New here....
+        if (hasStatusNew()) { // we'll query assignee and status New here....
             var queryBuilder = (BoolQueryBuilder) builtQuery.findFirst().orElseThrow().getValue();
             queryBuilder.should(new TermQueryBuilder("status.keyword", NEW.toString()));
             return Functions.queryToEntry(ASSIGNEE, queryBuilder);
@@ -185,15 +192,13 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         return builtQuery;
     }
 
-    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(TicketParameter key) {
-        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean()
-            ? EXCLUDE_SUBUNITS
-            : key;
+    private Stream<Entry<TicketParameter, QueryBuilder>> builderStreamByOrganization(
+            TicketParameter key) {
+        var searchKey = parameters().get(EXCLUDE_SUBUNITS).asBoolean() ? EXCLUDE_SUBUNITS : key;
 
-        return
-            new KeywordQuery<TicketParameter>().buildQuery(searchKey, parameters().get(key).toString())
+        return new KeywordQuery<TicketParameter>()
+                .buildQuery(searchKey, parameters().get(key).toString())
                 .map(query -> Map.entry(key, query.getValue()));
-
     }
 
     private boolean hasStatusNew() {
@@ -201,29 +206,28 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
     }
 
     private boolean hasAssigneeAndOnlyStatusNew() {
-        return (
-            parameters().get(STATUS).equalsIgnoreCase(NEW) || parameters().get(STATUS_NOT).equalsIgnoreCase(NEW)
-        ) && (
-            parameters().isPresent(ASSIGNEE) || parameters().isPresent(ASSIGNEE_NOT)
-        );
+        return (parameters().get(STATUS).equalsIgnoreCase(NEW)
+                        || parameters().get(STATUS_NOT).equalsIgnoreCase(NEW))
+                && (parameters().isPresent(ASSIGNEE) || parameters().isPresent(ASSIGNEE_NOT));
     }
-
 
     /**
      * Add a (default) filter to the query that will never match any document.
      *
-     * <p>This whitelist the Query from any forgetful developer (me)</p>
-     * <p>i.e.In order to return any results, withFilter* must be set </p>
+     * <p>This whitelist the Query from any forgetful developer (me)
+     *
+     * <p>i.e.In order to return any results, withFilter* must be set
      */
     private void applyImpossibleWhiteListFilters() {
         var randomUri = URI.create("https://www.example.com/" + UUID.randomUUID());
         final var filterId =
-            new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
-                .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
+                new TermQueryBuilder(ORGANIZATION_ID_KEYWORD, randomUri)
+                        .queryName(ORGANIZATION_ID.asCamelCase() + POST_FILTER);
         filters.set(filterId);
     }
 
-    public static class TicketParameterValidator extends ParameterValidator<TicketParameter, TicketSearchQuery> {
+    public static class TicketParameterValidator
+            extends ParameterValidator<TicketParameter, TicketSearchQuery> {
 
         TicketParameterValidator() {
             super(new TicketSearchQuery());
@@ -231,15 +235,19 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
 
         @Override
         protected void assignDefaultValues() {
-            requiredMissing().forEach(key -> {
-                switch (key) {
-                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
-                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
-                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
-                    case AGGREGATION -> setValue(key.name(), NONE);
-                    default -> { /* ignore and continue */ }
-                }
-            });
+            requiredMissing()
+                    .forEach(
+                            key -> {
+                                switch (key) {
+                                    case FROM -> setValue(key.name(), DEFAULT_OFFSET);
+                                    case SIZE -> setValue(key.name(), DEFAULT_VALUE_PER_PAGE);
+                                    case SORT -> setValue(key.name(), RELEVANCE_KEY_NAME);
+                                    case AGGREGATION -> setValue(key.name(), NONE);
+                                    default -> {
+                                        /* ignore and continue */
+                                    }
+                                }
+                            });
         }
 
         @Override
@@ -254,16 +262,18 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
                 searchQuery.parameters().remove(PAGE);
             }
             if (searchQuery.parameters().isPresent(BY_USER_PENDING)) {
-                searchQuery.parameters().set(TicketParameter.TYPE, searchQuery.parameters().get(BY_USER_PENDING).as());
+                searchQuery
+                        .parameters()
+                        .set(
+                                TicketParameter.TYPE,
+                                searchQuery.parameters().get(BY_USER_PENDING).as());
                 searchQuery.parameters().set(STATUS, PENDING.toString());
             }
         }
 
         @Override
         protected Collection<String> validKeys() {
-            return TICKET_PARAMETER_SET.stream()
-                .map(Enum::name)
-                .toList();
+            return TICKET_PARAMETER_SET.stream().map(Enum::name).toList();
         }
 
         @Override
@@ -276,25 +286,26 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
             }
             if (TicketSort.fromSortKey(nameSort[0]) == TicketSort.INVALID) {
                 throw new IllegalArgumentException(
-                    INVALID_VALUE_WITH_SORT.formatted(name, TicketSort.validSortKeys())
-                );
+                        INVALID_VALUE_WITH_SORT.formatted(name, TicketSort.validSortKeys()));
             }
         }
 
         @Override
         protected void setValue(String key, String value) {
             var qpKey = TicketParameter.keyFromString(key);
-            var decodedValue = qpKey.valueEncoding() != ValueEncoding.NONE
-                ? decodeUTF(value)
-                : value;
+            var decodedValue =
+                    qpKey.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
             switch (qpKey) {
                 case INVALID -> invalidKeys.add(key);
-                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION -> searchQuery.parameters().set(qpKey, decodedValue);
-                case NODES_SEARCHED -> searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
+                case SEARCH_AFTER, FROM, SIZE, PAGE, AGGREGATION ->
+                        searchQuery.parameters().set(qpKey, decodedValue);
+                case NODES_SEARCHED ->
+                        searchQuery.parameters().set(qpKey, ignoreInvalidFields(decodedValue));
                 case SORT -> mergeToKey(SORT, trimSpace(decodedValue));
                 case SORT_ORDER -> mergeToKey(SORT, decodedValue);
                 case TYPE -> mergeToKey(qpKey, toEnumStrings(TicketType::fromString, decodedValue));
-                case STATUS -> mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
+                case STATUS ->
+                        mergeToKey(qpKey, toEnumStrings(TicketStatus::fromString, decodedValue));
                 default -> mergeToKey(qpKey, decodedValue);
             }
         }
@@ -303,6 +314,5 @@ public final class TicketSearchQuery extends SearchQuery<TicketParameter> {
         protected boolean isKeyValid(String keyName) {
             return TicketParameter.keyFromString(keyName) != TicketParameter.INVALID;
         }
-
     }
 }

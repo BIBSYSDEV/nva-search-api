@@ -1,20 +1,25 @@
 package no.unit.nva.search.common;
 
+import static nva.commons.core.attempt.Try.attempt;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static nva.commons.core.attempt.Try.attempt;
+
+import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.enums.ParameterKind;
+
+import org.joda.time.DateTime;
+
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import no.unit.nva.search.common.enums.ParameterKey;
-import no.unit.nva.search.common.enums.ParameterKind;
-import org.joda.time.DateTime;
-
 /**
  * AutoConvert value to Date, Number (or String).
- * <p>Also holds key and can return value as <samp>optional stream</samp></p>
+ *
+ * <p>Also holds key and can return value as <samp>optional stream</samp>
+ *
  * @author Stig Norland
  */
 @SuppressWarnings({"PMD.ShortMethodName"})
@@ -33,14 +38,16 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
             return null;
         }
         if (getKey().fieldType().equals(ParameterKind.CUSTOM)) {
-            SearchQuery.logger.debug("CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
+            SearchQuery.logger.debug(
+                    "CUSTOM lacks TypeInfo, use explicit casting if 'String' doesn't cut it.");
         }
 
-        return (T) switch (getKey().fieldType()) {
-            case DATE -> castDateTime();
-            case NUMBER -> castNumber();
-            default -> value;
-        };
+        return (T)
+                switch (getKey().fieldType()) {
+                    case DATE -> castDateTime();
+                    case NUMBER -> castNumber();
+                    default -> value;
+                };
     }
 
     public K getKey() {
@@ -71,7 +78,6 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
         return nonNull(value) && value.contains(o.toString());
     }
 
-
     /**
      * @param o Object with toString()
      * @return equalsIgnoreCase of objects toString()
@@ -82,27 +88,27 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
     /**
      * Split
+     *
      * @param delimiter regex to split on
      * @return The value split, or null.
      */
     public String[] split(String delimiter) {
-        return nonNull(value)
-            ? value.split(delimiter)
-            : null;
+        return nonNull(value) ? value.split(delimiter) : null;
     }
 
     /**
      * asSplitStream
+     *
      * @param delimiter regex to split on
      * @return The value as an optional Stream, split by delimiter.
      */
     public Stream<String> asSplitStream(String delimiter) {
-        return asStream()
-            .flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
+        return asStream().flatMap(value -> Arrays.stream(value.split(delimiter)).sequential());
     }
 
     /**
      * asStream
+     *
      * @return The value as an optional Stream.
      */
     public Stream<String> asStream() {
@@ -111,6 +117,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
 
     /**
      * asBoolean
+     *
      * @return False if value is null or FALSE, otherwise True
      */
     public Boolean asBoolean() {

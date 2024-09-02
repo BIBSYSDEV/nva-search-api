@@ -2,17 +2,18 @@ package no.unit.nva.search.common.builder;
 
 import static no.unit.nva.search.common.constant.Words.KEYWORD_TRUE;
 
-import java.util.Arrays;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
+
 import org.opensearch.index.query.DisMaxQueryBuilder;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
+
+import java.util.Arrays;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 /**
  * @author Stig Norland
@@ -25,26 +26,37 @@ public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractB
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
         return buildMatchAnyKeywordStream(key, values)
-            .flatMap(builder -> Functions.queryToEntry(key, builder));
+                .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
         return buildMatchAllKeywordStream(key, values)
-            .flatMap(builder -> Functions.queryToEntry(key, builder));
+                .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 
     private Stream<QueryBuilder> buildMatchAllKeywordStream(K key, String... values) {
         return Arrays.stream(values)
-            .flatMap(value -> key.searchFields(KEYWORD_TRUE)
-                .map(searchField -> new TermQueryBuilder(searchField, value).queryName(
-                    KEYWORD_ALL + key.asCamelCase())));
+                .flatMap(
+                        value ->
+                                key.searchFields(KEYWORD_TRUE)
+                                        .map(
+                                                searchField ->
+                                                        new TermQueryBuilder(searchField, value)
+                                                                .queryName(
+                                                                        KEYWORD_ALL
+                                                                                + key
+                                                                                        .asCamelCase())));
     }
 
     private Stream<DisMaxQueryBuilder> buildMatchAnyKeywordStream(K key, String... values) {
         var disMax = QueryBuilders.disMaxQuery().queryName(KEYWORD_ANY + key.asCamelCase());
         key.searchFields(KEYWORD_TRUE)
-            .forEach(field -> disMax.add(new TermsQueryBuilder(field, values).boost(key.fieldBoost())));
+                .forEach(
+                        field ->
+                                disMax.add(
+                                        new TermsQueryBuilder(field, values)
+                                                .boost(key.fieldBoost())));
         return Stream.of(disMax);
     }
 }

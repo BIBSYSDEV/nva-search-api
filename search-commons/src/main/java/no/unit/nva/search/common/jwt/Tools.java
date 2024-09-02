@@ -1,31 +1,34 @@
 package no.unit.nva.search.common.jwt;
 
+import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureAuthUri;
+import static no.unit.nva.search.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+
 import no.unit.nva.auth.CognitoCredentials;
 import no.unit.nva.search.common.records.UsernamePasswordWrapper;
+
 import nva.commons.core.JacocoGenerated;
 import nva.commons.secrets.SecretsReader;
 
 import java.net.URI;
 import java.util.stream.Stream;
 
-import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureAuthUri;
-import static no.unit.nva.search.common.constant.Words.SEARCH_INFRASTRUCTURE_CREDENTIALS;
-
 public final class Tools {
     @JacocoGenerated
     public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
-        return
-            getUsernamePasswordStream(reader)
+        return getUsernamePasswordStream(reader)
                 .map(Tools::getCognitoCredentials)
                 .map(CognitoAuthenticator::prepareWithCognitoCredentials)
                 .map(CachedJwtProvider::prepareWithAuthenticator)
-                .findFirst().orElseThrow();
+                .findFirst()
+                .orElseThrow();
     }
 
     @JacocoGenerated
-    public static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(SecretsReader secretsReader) {
+    public static Stream<UsernamePasswordWrapper> getUsernamePasswordStream(
+            SecretsReader secretsReader) {
         return Stream.of(
-            secretsReader.fetchClassSecret(SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
+                secretsReader.fetchClassSecret(
+                        SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class));
     }
 
     @JacocoGenerated
@@ -34,8 +37,6 @@ public final class Tools {
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
 
-
     @JacocoGenerated
-    public Tools() {
-    }
+    public Tools() {}
 }

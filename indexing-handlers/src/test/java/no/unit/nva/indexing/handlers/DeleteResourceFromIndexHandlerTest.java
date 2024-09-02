@@ -5,20 +5,19 @@ import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
+
 import static nva.commons.core.attempt.Try.attempt;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
+
 import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
@@ -26,11 +25,20 @@ import no.unit.nva.indexing.model.DeleteImportCandidateEvent;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
+
+import nva.commons.logutils.LogUtils;
+
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Set;
 
 public class DeleteResourceFromIndexHandlerTest {
 
@@ -59,12 +67,14 @@ public class DeleteResourceFromIndexHandlerTest {
     }
 
     @Test
-    void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException() throws IOException {
+    void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException()
+            throws IOException {
         indexingClient = new FakeIndexingClientThrowingException();
         handler = new DeleteResourceFromIndexHandler(indexingClient);
         try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
-            assertThrows(RuntimeException.class,
-                () -> handler.handleRequest(eventReference, output, CONTEXT));
+            assertThrows(
+                    RuntimeException.class,
+                    () -> handler.handleRequest(eventReference, output, CONTEXT));
         }
         assertThat(logToString(appender), containsString(SOMETHING_BAD_HAPPENED));
     }
@@ -82,8 +92,10 @@ public class DeleteResourceFromIndexHandlerTest {
 
     private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
         String randomJson = randomJson();
-        ObjectNode objectNode = attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        EventConsumptionAttributes metadata = new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
+        ObjectNode objectNode =
+                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
         return new IndexDocument(metadata, objectNode);
     }
 
@@ -91,14 +103,16 @@ public class DeleteResourceFromIndexHandlerTest {
         return createSampleResource(resourceIdentifier);
     }
 
-    private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier) throws IOException {
-        DeleteResourceEvent deleteResourceEvent = new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC,
-                                                                                 resourceIdentifier);
+    private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)
+            throws IOException {
+        DeleteResourceEvent deleteResourceEvent =
+                new DeleteResourceEvent(DeleteImportCandidateEvent.EVENT_TOPIC, resourceIdentifier);
 
         AwsEventBridgeDetail<DeleteResourceEvent> detail = new AwsEventBridgeDetail<>();
         detail.setResponsePayload(deleteResourceEvent);
 
-        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event = new AwsEventBridgeEvent<>();
+        AwsEventBridgeEvent<AwsEventBridgeDetail<DeleteResourceEvent>> event =
+                new AwsEventBridgeEvent<>();
         event.setDetail(detail);
 
         return new ByteArrayInputStream(objectMapperWithEmpty.writeValueAsBytes(event));
