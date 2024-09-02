@@ -1,5 +1,9 @@
 package no.unit.nva;
 
+import static no.unit.nva.search.common.constant.Words.SPACE;
+
+import static java.util.Objects.nonNull;
+
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -7,9 +11,6 @@ import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-
-import static java.util.Objects.nonNull;
-import static no.unit.nva.search.common.constant.Words.SPACE;
 
 public class LogAppender {
 
@@ -28,9 +29,9 @@ public class LogAppender {
             loggerContext.getConfiguration().addLoggerAppender(logger, appender);
             return appender;
         } else {
-            return (ListAppender) loggerContext.getConfiguration().getAppenders().get(clazz.getSimpleName());
+            return (ListAppender)
+                    loggerContext.getConfiguration().getAppenders().get(clazz.getSimpleName());
         }
-
     }
 
     private static void logHasStarted(Class<?> clazz) {
@@ -39,8 +40,7 @@ public class LogAppender {
     }
 
     private static List<String> eventsToStrings(ListAppender appender) {
-        return appender.getEvents().stream()
-            .map(LogAppender::eventToString).toList();
+        return appender.getEvents().stream().map(LogAppender::eventToString).toList();
     }
 
     private static String eventToString(LogEvent event) {

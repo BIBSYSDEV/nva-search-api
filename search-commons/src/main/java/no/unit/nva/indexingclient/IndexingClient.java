@@ -147,11 +147,11 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
     public JsonNode getMapping(String indexName) {
         return attempt(() -> getMappingMetadata(indexName))
-                   .map(MappingMetadata::source)
-                   .map(CompressedXContent::uncompressed)
-                   .map(BytesReference::utf8ToString)
-                   .map(JsonUtils.dtoObjectMapper::readTree)
-                   .orElseThrow();
+                .map(MappingMetadata::source)
+                .map(CompressedXContent::uncompressed)
+                .map(BytesReference::utf8ToString)
+                .map(JsonUtils.dtoObjectMapper::readTree)
+                .orElseThrow();
     }
 
     private Stream<List<IndexDocument>> splitStreamToBatches(Stream<IndexDocument> indexDocuments) {

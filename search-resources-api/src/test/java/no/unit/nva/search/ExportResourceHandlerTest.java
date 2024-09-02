@@ -41,6 +41,26 @@ class ExportResourceHandlerTest {
     private ScrollClient mockedScrollClient;
     private ExportResourceHandler handler;
 
+    private static SwsResponse csvToSwsResponse(ExportCsv csv, String scrollId)
+            throws JsonProcessingException {
+        var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
+        return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
+    }
+
+    private static ExportCsv csvWithFullDate(String title) {
+        var id = randomUri().toString();
+        var type = "AcademicArticle";
+        var contributors = List.of(randomString(), randomString(), randomString());
+        var date = "2022-01-22";
+
+        return new ExportCsv()
+                .withId(id)
+                .withMainTitle(title)
+                .withPublicationInstance(type)
+                .withPublicationDate(date)
+                .withContributors(String.join(COMMA, contributors));
+    }
+
     @BeforeEach
     void setUp() {
         mockedResourceClient = mock(ResourceClient.class);
@@ -79,26 +99,6 @@ class ExportResourceHandlerTest {
         when(mockedScrollClient.doSearch(any()))
                 .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
                 .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
-    }
-
-    private static SwsResponse csvToSwsResponse(ExportCsv csv, String scrollId)
-            throws JsonProcessingException {
-        var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
-        return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
-    }
-
-    private static ExportCsv csvWithFullDate(String title) {
-        var id = randomUri().toString();
-        var type = "AcademicArticle";
-        var contributors = List.of(randomString(), randomString(), randomString());
-        var date = "2022-01-22";
-
-        return new ExportCsv()
-                .withId(id)
-                .withMainTitle(title)
-                .withPublicationInstance(type)
-                .withPublicationDate(date)
-                .withContributors(String.join(COMMA, contributors));
     }
 
     private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {

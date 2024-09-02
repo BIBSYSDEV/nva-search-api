@@ -39,6 +39,9 @@ public final class ErrorMessages {
                 + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
                 + "search_after]";
 
+    @JacocoGenerated
+    public ErrorMessages() {}
+
     /**
      * Formats and emits a message with valid parameter names.
      *
@@ -62,7 +65,4 @@ public final class ErrorMessages {
                         .collect(Collectors.joining(", ", PREFIX, SUFFIX))
                 : queryParameters.stream().collect(Collectors.joining(EMPTY_STRING, QUOTE, QUOTE));
     }
-
-    @JacocoGenerated
-    public ErrorMessages() {}
 }

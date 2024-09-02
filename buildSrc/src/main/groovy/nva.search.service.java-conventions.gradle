@@ -19,12 +19,12 @@ sourceSets {
     test {
         resources {
             srcDir file('src/test/java')
-            exclude '**/*.java' , '*/*.xml'
+            exclude '**/*.java', '*/*.xml'
         }
     }
     check {
         resources {
-            exclude '**/*.java' , '*/*.xml'
+            exclude '**/*.java', '*/*.xml'
         }
     }
 }
@@ -110,7 +110,7 @@ checkstyle {
     showViolations = true
 }
 
-tasks.withType(Checkstyle).configureEach{
+tasks.withType(Checkstyle).configureEach {
     reports {
         xml.required
         html.required

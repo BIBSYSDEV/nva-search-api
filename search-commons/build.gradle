@@ -1,4 +1,4 @@
-plugins{
+plugins {
     id 'nva.search.service.java-conventions'
     id 'nva.search.service2.dynamodblocal'
 }

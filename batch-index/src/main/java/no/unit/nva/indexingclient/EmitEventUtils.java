@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
-import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 
 import java.time.Instant;
 
@@ -28,8 +27,7 @@ public final class EmitEventUtils {
         var putEventRequestEntry = eventEntry(importDataRequest, context);
         logger.debug("BusName:" + BATCH_INDEX_EVENT_BUS_NAME);
         logger.debug("Event:" + putEventRequestEntry.toString());
-        var putEventRequest =
-                PutEventsRequest.builder().entries(putEventRequestEntry).build();
+        var putEventRequest = PutEventsRequest.builder().entries(putEventRequestEntry).build();
         var response = eventBridgeClient.putEvents(putEventRequest);
         logger.debug(response.toString());
     }

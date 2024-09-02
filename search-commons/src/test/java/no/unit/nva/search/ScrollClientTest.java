@@ -23,9 +23,9 @@ import java.nio.file.Path;
 
 class ScrollClientTest {
 
-    private ScrollClient scrollClient;
-    private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
     public static final String SAMPLE_PUBLICATION_SEARCH = "publication_response.json";
+    private static final Logger logger = LoggerFactory.getLogger(ScrollClientTest.class);
+    private ScrollClient scrollClient;
 
     @BeforeEach
     public void setUp() {

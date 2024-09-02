@@ -26,8 +26,6 @@ import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 
-import nva.commons.logutils.LogUtils;
-
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,17 +44,23 @@ public class DeleteResourceFromIndexHandlerTest {
 
     public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
     private static final Context CONTEXT = Mockito.mock(Context.class);
-    private FakeIndexingClient indexingClient;
-
-    private ByteArrayOutputStream output;
-
-    private DeleteResourceFromIndexHandler handler;
-
     private static ListAppender appender;
+    private FakeIndexingClient indexingClient;
+    private ByteArrayOutputStream output;
+    private DeleteResourceFromIndexHandler handler;
 
     @BeforeAll
     public static void initClass() {
         appender = getAppender(DeleteResourceFromIndexHandler.class);
+    }
+
+    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
+        String randomJson = randomJson();
+        ObjectNode objectNode =
+                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
+        return new IndexDocument(metadata, objectNode);
     }
 
     @BeforeEach
@@ -88,15 +92,6 @@ public class DeleteResourceFromIndexHandlerTest {
         handler.handleRequest(eventReference, output, CONTEXT);
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
         assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
-    }
-
-    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
-        String randomJson = randomJson();
-        ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        EventConsumptionAttributes metadata =
-                new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
     }
 
     private IndexDocument createSampleResorce(SortableIdentifier resourceIdentifier) {

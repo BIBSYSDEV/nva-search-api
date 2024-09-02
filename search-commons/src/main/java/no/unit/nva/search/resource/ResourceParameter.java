@@ -372,6 +372,15 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
         this.subQueryReference = subquery;
     }
 
+    public static ResourceParameter keyFromString(String paramName) {
+        var result =
+                Arrays.stream(ResourceParameter.values())
+                        .filter(ResourceParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -434,15 +443,6 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static ResourceParameter keyFromString(String paramName) {
-        var result =
-                Arrays.stream(ResourceParameter.values())
-                        .filter(ResourceParameter::ignoreInvalidKey)
-                        .filter(ParameterKey.equalTo(paramName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {

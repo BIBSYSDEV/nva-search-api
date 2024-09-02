@@ -113,13 +113,10 @@ import java.util.stream.Stream;
 @Testcontainers
 class ResourceClientTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
-
     public static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
     public static final String USER_SETTINGS_EMPTY_JSON = "user_settings_empty.json";
     public static final String USER_SETTINGS_JSON = "user_settings.json";
-
     public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
     public static final String PROPERTIES = "properties";
     public static final String NESTED = "nested";
@@ -127,6 +124,7 @@ class ResourceClientTest {
     public static final String NUMBER_FIVE = "5";
     public static final String ONE_MINUTE = "1m";
     public static final String IDENTIFIER = "identifier";
+    private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
 
@@ -146,14 +144,107 @@ class ResourceClientTest {
         scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
+    static Stream<Arguments> uriPagingProvider() {
+        return Stream.of(
+                createArgument("page=0&aggregation=all", 22),
+                createArgument("page=1&size=10&aggregation=all&sort=modifiedDate:asc", 10),
+                createArgument("page=3&aggregation=all&sort=modifiedDate:asc", 0),
+                createArgument("page=1&aggregation=all&size=1", 1),
+                createArgument("page=2&aggregation=all&size=1", 1),
+                createArgument("page=3&aggregation=all&size=1", 1),
+                createArgument("page=0&aggregation=all&size=0", 0),
+                createArgument("offset=15&aggregation=all&size=2", 2),
+                createArgument("offset=15&aggregation=all&limit=2", 2),
+                createArgument("offset=15&aggregation=all&results=2", 2),
+                createArgument("offset=15&aggregation=all&per_page=2", 2),
+                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
+                createArgument("offset=15&aggregation=all&perPage=2", 2));
+    }
+
+    static Stream<URI> uriSortingProvider() {
+
+        return Stream.of(
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
+                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
+                URI.create(
+                        REQUEST_BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
+                URI.create(REQUEST_BASE_URL + "query=infrastructure&sort=instanceType"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=createdDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publishedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publicationDate"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=title"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=user"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
+                                + "&searchAfter=3.4478912,1241234,23412"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project&sort=published_date+asc&sort=category+desc"));
+    }
+
+    static Stream<URI> uriInvalidProvider() {
+        return Stream.of(
+                URI.create(REQUEST_BASE_URL + "sort=epler"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:desc:asc"),
+                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
+                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
+                URI.create(
+                        REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
+                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
+                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
+                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+    }
+
+    /**
+     * Provides a stream of valid page ranges for parameterized tests. Each argument consists of a
+     * minimum and maximum page count, and the expected number of results.
+     *
+     * @return a stream of arguments where each argument is a tuple of (min, max,
+     *     expectedResultCount)
+     */
+    private static Stream<Arguments> provideValidPageRanges() {
+        return Stream.of(
+                Arguments.of(1, 100, 8),
+                Arguments.of(37, 39, 1),
+                Arguments.of(38, 38, 1),
+                Arguments.of(17, 20, 3));
+    }
+
+    static Stream<Arguments> uriProvider() {
+        return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
+                .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
+    }
+
+    private static Arguments createArgument(String searchUri, int expectedCount) {
+        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+    }
+
     @Test
     void shouldCheckMapping() {
 
         var mapping = indexingClient.getMapping(RESOURCES);
         assertThat(mapping, is(notNullValue()));
-        var topLevelOrgType = mapping.path(PROPERTIES)
-            .path(TOP_LEVEL_ORGANIZATIONS)
-            .path(TYPE).textValue();
+        var topLevelOrgType =
+                mapping.path(PROPERTIES).path(TOP_LEVEL_ORGANIZATIONS).path(TYPE).textValue();
         assertThat(topLevelOrgType, is(equalTo(NESTED)));
         logger.info(mapping.toString());
     }
@@ -221,7 +312,7 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
-        var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 200);
+        var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200);
         when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
         var searchClient =
                 new ResourceClient(
@@ -314,7 +405,7 @@ class ResourceClientTest {
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
         when(mochedHttpClient.send(any(), any()))
-            .thenReturn(mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200));
+                .thenReturn(mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200));
         var searchClient =
                 new ResourceClient(
                         HttpClient.newHttpClient(),
@@ -437,28 +528,29 @@ class ResourceClientTest {
     @Test
     void scrollClientExceuteOK() throws BadRequestException {
         var includedNodes = String.join(COMMA, ResourceCsvTransformer.getJsonFields());
-        var firstResponse = ResourceSearchQuery.builder()
-            .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-            .withParameter(FROM, ZERO)
-            .withParameter(SIZE, NUMBER_FIVE)
-            .withParameter(AGGREGATION, NONE)
-            .withParameter(NODES_INCLUDED, includedNodes)
-            .build()
-            .withFilter()
-            .requiredStatus(PUBLISHED_METADATA, PUBLISHED).apply()
-            .withScrollTime(ONE_MINUTE)
-            .doSearch(searchClient)
-            .swsResponse();
+        var firstResponse =
+                ResourceSearchQuery.builder()
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withParameter(FROM, ZERO)
+                        .withParameter(SIZE, NUMBER_FIVE)
+                        .withParameter(AGGREGATION, NONE)
+                        .withParameter(NODES_INCLUDED, includedNodes)
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                        .apply()
+                        .withScrollTime(ONE_MINUTE)
+                        .doSearch(searchClient)
+                        .swsResponse();
 
         var response =
-
-            ScrollQuery.builder()
-                .withDockerHostUri(URI.create(container.getHttpHostAddress()))
-                .withInitialResponse(firstResponse)
-                .withScrollTime(ONE_MINUTE)
-                .build()
-                .doSearch(scrollClient)
-                .toCsvText();
+                ScrollQuery.builder()
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withInitialResponse(firstResponse)
+                        .withScrollTime(ONE_MINUTE)
+                        .build()
+                        .doSearch(scrollClient)
+                        .toCsvText();
         assertNotNull(response);
     }
 
@@ -614,12 +706,11 @@ class ResourceClientTest {
 
         for (var document : documents) {
             var actualParentId =
-                document
-                    .get(ENTITY_DESCRIPTION)
-                    .get(REFERENCE)
-                    .get(PUBLICATION_CONTEXT)
-                    .get(ID)
-                    .asText();
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_CONTEXT)
+                            .get(ID)
+                            .asText();
 
             assertThat(actualParentId, containsString(expectedParentIdSuffix));
         }
@@ -658,20 +749,18 @@ class ResourceClientTest {
 
         for (var document : documents) {
             var actualParentId =
-                document
-                    .get(ENTITY_DESCRIPTION)
-                    .get(REFERENCE)
-                    .get(PUBLICATION_CONTEXT)
-                    .get(ID)
-                    .asText();
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_CONTEXT)
+                            .get(ID)
+                            .asText();
 
             var actualInstanceType =
-                document
-                    .get(ENTITY_DESCRIPTION)
-                    .get(REFERENCE)
-                    .get(PUBLICATION_INSTANCE)
-                    .get(TYPE)
-                    .asText();
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_INSTANCE)
+                            .get(TYPE)
+                            .asText();
 
             assertThat(actualParentId, containsString(expectedParentIdSuffix));
             assertThat(actualInstanceType, is(equalTo("AcademicChapter")));
@@ -881,112 +970,22 @@ class ResourceClientTest {
                         .doSearch(searchClient);
 
         var pagedSearchResourceDto = response.toPagedResponse();
-        var pageCounts = pagedSearchResourceDto.hits().stream()
-            .map(hit -> hit
-                .get(ENTITY_DESCRIPTION)
-                .get(REFERENCE)
-                .get(PUBLICATION_INSTANCE)
-                .get(PAGES)
-                .get(PAGES).asInt())
-            .collect(Collectors.toList());
+        var pageCounts =
+                pagedSearchResourceDto.hits().stream()
+                        .map(
+                                hit ->
+                                        hit.get(ENTITY_DESCRIPTION)
+                                                .get(REFERENCE)
+                                                .get(PUBLICATION_INSTANCE)
+                                                .get(PAGES)
+                                                .get(PAGES)
+                                                .asInt())
+                        .collect(Collectors.toList());
 
         assertThat("Number of hits", pagedSearchResourceDto.hits(), hasSize(expectedResultCount));
         assertThat(
                 "All page counts are within the specified range",
                 pageCounts,
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
-    }
-
-    static Stream<Arguments> uriPagingProvider() {
-        return Stream.of(
-                createArgument("page=0&aggregation=all", 22),
-                createArgument("page=1&size=10&aggregation=all&sort=modifiedDate:asc", 10),
-                createArgument("page=3&aggregation=all&sort=modifiedDate:asc", 0),
-                createArgument("page=1&aggregation=all&size=1", 1),
-                createArgument("page=2&aggregation=all&size=1", 1),
-                createArgument("page=3&aggregation=all&size=1", 1),
-                createArgument("page=0&aggregation=all&size=0", 0),
-                createArgument("offset=15&aggregation=all&size=2", 2),
-                createArgument("offset=15&aggregation=all&limit=2", 2),
-                createArgument("offset=15&aggregation=all&results=2", 2),
-                createArgument("offset=15&aggregation=all&per_page=2", 2),
-                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
-                createArgument("offset=15&aggregation=all&perPage=2", 2));
-    }
-
-    static Stream<URI> uriSortingProvider() {
-
-        return Stream.of(
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
-                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
-                URI.create(
-                        REQUEST_BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
-                URI.create(REQUEST_BASE_URL + "query=infrastructure&sort=instanceType"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=createdDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publishedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publicationDate"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=title"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=user"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&sort=published_date+asc&sort=category+desc"));
-    }
-
-    static Stream<URI> uriInvalidProvider() {
-        return Stream.of(
-                URI.create(REQUEST_BASE_URL + "sort=epler"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:desc:asc"),
-                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
-                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
-                URI.create(
-                        REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
-                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
-                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
-                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
-    }
-
-    /**
-     * Provides a stream of valid page ranges for parameterized tests. Each argument consists of a
-     * minimum and maximum page count, and the expected number of results.
-     *
-     * @return a stream of arguments where each argument is a tuple of (min, max,
-     *     expectedResultCount)
-     */
-    private static Stream<Arguments> provideValidPageRanges() {
-        return Stream.of(
-                Arguments.of(1, 100, 8),
-                Arguments.of(37, 39, 1),
-                Arguments.of(38, 38, 1),
-                Arguments.of(17, 20, 3));
-    }
-
-    static Stream<Arguments> uriProvider() {
-        return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
-                .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
-    }
-
-    private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
     }
 }

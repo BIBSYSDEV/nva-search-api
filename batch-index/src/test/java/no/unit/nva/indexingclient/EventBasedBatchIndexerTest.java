@@ -35,7 +35,6 @@ import nva.commons.core.attempt.Try;
 import nva.commons.core.ioutils.IoUtils;
 import nva.commons.core.paths.UnixPath;
 import nva.commons.core.paths.UriWrapper;
-import nva.commons.logutils.LogUtils;
 
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
@@ -90,7 +89,7 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
     @ValueSource(ints = {1, 2, 5, 10, 100})
     public void shouldReturnsAllIdsForPublishedResourcesThatFailedToBeIndexed(
             int numberOfFilesPerEvent) throws JsonProcessingException {
-        final var logger = LogUtils.getTestingAppenderForRootLogger();
+
         indexer =
                 new EventBasedBatchIndexer(
                         s3Client,

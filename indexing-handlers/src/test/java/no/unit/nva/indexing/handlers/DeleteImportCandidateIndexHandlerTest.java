@@ -4,17 +4,16 @@ import static no.unit.nva.LogAppender.getAppender;
 import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.StringContains.containsString;
 
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.stubs.FakeContext;
+
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
-
-import nva.commons.logutils.LogUtils;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

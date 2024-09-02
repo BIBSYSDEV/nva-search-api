@@ -4,7 +4,7 @@ import static com.google.common.net.MediaType.CSV_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 
 import static no.unit.nva.search.common.constant.Defaults.DEFAULT_SORT_ORDER;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_ZERO_RESULTS_AGGREGATION_ONLY;
+import static no.unit.nva.search.common.constant.Defaults.ZERO_RESULTS_AGGREGATION_ONLY;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search.common.constant.Words.ALL;
@@ -71,6 +71,7 @@ import java.util.stream.Stream;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
+    public final transient QueryFilter filters;
     private transient MediaType mediaType;
 
     /**
@@ -80,7 +81,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     private transient URI gatewayUri =
             URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
-    public final transient QueryFilter filters;
+    protected SearchQuery() {
+        super();
+        filters = new QueryFilter();
+        queryKeys = new QueryKeys<>(keyFields());
+        setMediaType(JSON_UTF_8.toString());
+    }
 
     protected abstract AsType<K> from();
 
@@ -112,13 +118,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected abstract List<AggregationBuilder> builderAggregations();
 
     protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
-
-    protected SearchQuery() {
-        super();
-        filters = new QueryFilter();
-        queryKeys = new QueryKeys<>(keyFields());
-        setMediaType(JSON_UTF_8.toString());
-    }
 
     @Override
     public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(
@@ -297,7 +296,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
             SearchSourceBuilder builder, List<QueryContentWrapper> contentWrappers) {
         if (hasAggregation()) {
             var aggregationBuilder = builder.shallowCopy();
-            aggregationBuilder.size(DEFAULT_ZERO_RESULTS_AGGREGATION_ONLY);
+            aggregationBuilder.size(ZERO_RESULTS_AGGREGATION_ONLY);
             aggregationBuilder.aggregation(builderAggregationsWithFilter());
             contentWrappers.add(
                     new QueryContentWrapper(aggregationBuilder.toString(), this.openSearchUri()));

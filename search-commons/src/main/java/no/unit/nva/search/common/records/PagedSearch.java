@@ -29,7 +29,7 @@ public record PagedSearch(
 
     @JsonProperty("@context")
     public URI context() {
-        return DEFAULT_PAGINATED_SEARCH_RESULT_CONTEXT;
+        return PAGINATED_SEARCH_RESULT_CONTEXT;
     }
 
     @Override

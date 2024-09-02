@@ -18,8 +18,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 
 import no.unit.nva.indexingclient.IndexingClient;
 
-import nva.commons.logutils.LogUtils;
-
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,12 +28,10 @@ import java.io.IOException;
 
 class InitHandlerTest {
 
+    private static ListAppender appender;
     private InitHandler initHandler;
     private IndexingClient indexingClient;
     private Context context;
-
-
-    private static ListAppender appender;
 
     @BeforeAll
     public static void initClass() {
@@ -58,6 +54,7 @@ class InitHandlerTest {
 
     @Test
     void shouldLogWarningAndReturnFailedWhenIndexingClientFailedToCreateIndex() throws IOException {
+        //        var logger = LogUtils.getTestingAppenderForRootLogger();
         String expectedMessage = randomString();
         when(indexingClient.createIndex(Mockito.anyString(), Mockito.anyMap(), Mockito.anyMap()))
                 .thenThrow(new IOException(expectedMessage));

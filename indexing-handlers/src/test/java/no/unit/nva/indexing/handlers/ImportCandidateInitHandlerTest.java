@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexing.handlers.InitHandler.FAILED;
 import static no.unit.nva.indexing.handlers.InitHandler.SUCCESS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
@@ -16,8 +18,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 
 import no.unit.nva.indexingclient.IndexingClient;
 
-import nva.commons.logutils.LogUtils;
-
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,12 +28,10 @@ import java.io.IOException;
 
 public class ImportCandidateInitHandlerTest {
 
+    private static ListAppender appender;
     private ImportCandidateInitHandler initHandler;
     private IndexingClient indexingClient;
     private Context context;
-
-
-    private static ListAppender appender;
 
     @BeforeAll
     public static void initClass() {

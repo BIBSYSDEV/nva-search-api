@@ -6,6 +6,7 @@ import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
 
 import nva.commons.core.JacocoGenerated;
+
 import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.join.query.HasChildQueryBuilder;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 public class HasPartsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
     @Override
-    @JacocoGenerated        // never in use...
+    @JacocoGenerated // never in use...
     protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(
             K key, String... values) {
         return buildHasChildQuery(key, values)

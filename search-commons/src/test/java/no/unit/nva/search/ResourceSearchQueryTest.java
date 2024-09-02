@@ -52,6 +52,43 @@ class ResourceSearchQueryTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceSearchQueryTest.class);
 
+    static Stream<URI> uriProvider() {
+        return Stream.of(
+                URI.create("https://example.com/"),
+                URI.create("https://example.com/?fields=category,title,created_date"),
+                URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
+                URI.create(
+                        "https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
+                URI.create(
+                        "https://example.com/?CONTRIBUTOR_NOT="
+                                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
+                                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
+                URI.create("https://example.com/?fields=all"),
+                URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
+                URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),
+                URI.create("https://example.com/?category=hello+world&sort=created_date:ASC"),
+                URI.create("https://example.com/?category=hello+world&sort=created_date"),
+                URI.create("https://example.com/?category=hello+world&user=12%203&page=2"),
+                URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
+                URI.create(
+                        "https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
+                URI.create(
+                        "https://example.com/?PARENT_PUBLICATION=https://api.dev.nva.aws.unit"
+                                + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
+                URI.create("https://example.com/?published_before=2020-01-01&user=1%2023"),
+                URI.create(
+                        "https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
+                                + "%20Eplekjekk"));
+    }
+
+    static Stream<URI> uriSortingProvider() {
+        return Stream.of(
+                URI.create(
+                        "https://example.com/?sort=category&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create("https://example.com/?orderBy=category:asc,created_date:desc"),
+                URI.create("https://example.com/?sort=category+asc&sort=created_date+desc"));
+    }
+
     @Test
     void emptyPagesearch() {
         var page = new PagedSearch(null, 0, null, null, null, null, null);
@@ -144,7 +181,7 @@ class ResourceSearchQueryTest {
                 .getSearchKeys()
                 .forEach(
                         key ->
-                                logger.info(
+                                logger.debug(
                                         "{} : {}",
                                         key.asCamelCase(),
                                         query.parameters().get(key).as()));
@@ -159,6 +196,7 @@ class ResourceSearchQueryTest {
         if (nonNull(published)) {
             logger.debug("Published-1: {}", published.<DateTime>as());
         }
+        assertNotNull(query.parameters());
     }
 
     @ParameterizedTest
@@ -199,43 +237,6 @@ class ResourceSearchQueryTest {
                                 .withRequiredParameters(FROM, SIZE)
                                 .build()
                                 .openSearchUri());
-    }
-
-    static Stream<URI> uriProvider() {
-        return Stream.of(
-                URI.create("https://example.com/"),
-                URI.create("https://example.com/?fields=category,title,created_date"),
-                URI.create("https://example.com/?query=Muhammad+Yahya&fields=CONTRIBUTOR"),
-                URI.create(
-                        "https://example.com/?CONTRIBUTOR=https://api.dev.nva.aws.unit.no/cristin/person/1136254"),
-                URI.create(
-                        "https://example.com/?CONTRIBUTOR_NOT="
-                                + "https://api.dev.nva.aws.unit.no/cristin/person/1136254,"
-                                + "https://api.dev.nva.aws.unit.no/cristin/person/1135555"),
-                URI.create("https://example.com/?fields=all"),
-                URI.create("https://example.com/?category=hello+world&page=1&user=12%203"),
-                URI.create("https://example.com/?category=hello+world&sort=created_date&order=asc"),
-                URI.create("https://example.com/?category=hello+world&sort=created_date:ASC"),
-                URI.create("https://example.com/?category=hello+world&sort=created_date"),
-                URI.create("https://example.com/?category=hello+world&user=12%203&page=2"),
-                URI.create("https://example.com/?category=hello+world&user=12%203&offset=30"),
-                URI.create(
-                        "https://example.com/?category=hello+world&user=12%203&from=30&results=10"),
-                URI.create(
-                        "https://example.com/?PARENT_PUBLICATION=https://api.dev.nva.aws.unit"
-                            + ".no/publication/018b80c90f4a-75942f6d-544e-4d5b-8129-7b81b957678c"),
-                URI.create("https://example.com/?published_before=2020-01-01&user=1%2023"),
-                URI.create(
-                        "https://example.com/?published_since=2019-01-01&institution=uib&funding_source=NFR&user=Per"
-                            + "%20Eplekjekk"));
-    }
-
-    static Stream<URI> uriSortingProvider() {
-        return Stream.of(
-                URI.create(
-                        "https://example.com/?sort=category&sortOrder=asc&sort=created_date&order=desc"),
-                URI.create("https://example.com/?orderBy=category:asc,created_date:desc"),
-                URI.create("https://example.com/?sort=category+asc&sort=created_date+desc"));
     }
 
     static Stream<URI> uriDatesProvider() {

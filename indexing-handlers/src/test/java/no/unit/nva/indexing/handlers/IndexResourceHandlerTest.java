@@ -61,12 +61,6 @@ public class IndexResourceHandlerTest {
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String IGNORED_TOPIC = "ignoredValue";
 
-    public static final IndexDocument SAMPLE_RESOURCE =
-        createSampleResource(SortableIdentifier.next(), ApplicationConstants.RESOURCES_INDEX);
-
-    public static final IndexDocument SAMPLE_TICKET =
-        createSampleResource(SortableIdentifier.next(), TICKETS_INDEX);
-
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
             createSampleResource(null, ApplicationConstants.RESOURCES_INDEX);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
@@ -95,7 +89,8 @@ public class IndexResourceHandlerTest {
         URI resourceLocation = prepareEventStorageResourceFile();
         InputStream input = createEventBridgeEvent(resourceLocation);
         indexResourceHandler.handleRequest(input, output, context);
-        Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());
+        Set<JsonNode> allIndexedDocuments =
+                indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());
         assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.resource()));
     }
 
