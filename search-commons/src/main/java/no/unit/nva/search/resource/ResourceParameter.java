@@ -128,13 +128,13 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(TEXT, ANY_OF, ENTITY_ABSTRACT),
     CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
+    CONTEXT_TYPE_HAS_NO_PARTS(HAS_PARTS, NOT_ANY_OF, null, null, null, null, CONTEXT_TYPE),
     CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, ENTITY_CONTRIBUTORS_DOT + IDENTITY + ASTERISK),
-    CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, null),
-    CONTRIBUTOR_NOT(
-            KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, null),
-    CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI, null, null),
+    CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
+    CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
+    CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_NAME(FUZZY_KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_NOT(FUZZY_KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
     CONTRIBUTOR_NAME_SHOULD(TEXT, ANY_OF, CONTRIBUTORS_IDENTITY_NAME_KEYWORD),
@@ -154,33 +154,15 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
             ALL_OF,
             FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER,
             null,
-            PATTERN_IS_FUNDING,
-            null,
-            null),
-    FUNDING_IDENTIFIER(
-            KEYWORD,
-            ALL_OF,
-            FUNDING_IDENTIFIER_KEYWORD,
-            PATTERN_IS_FUNDING_IDENTIFIER,
-            null,
-            null,
-            null),
+            PATTERN_IS_FUNDING),
+    FUNDING_IDENTIFIER(KEYWORD, ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER),
     FUNDING_IDENTIFIER_NOT(
-            KEYWORD,
-            NOT_ALL_OF,
-            FUNDING_IDENTIFIER_KEYWORD,
-            PATTERN_IS_FUNDING_IDENTIFIER_NOT,
-            null,
-            null,
-            null),
+            KEYWORD, NOT_ALL_OF, FUNDING_IDENTIFIER_KEYWORD, PATTERN_IS_FUNDING_IDENTIFIER_NOT),
     FUNDING_IDENTIFIER_SHOULD(
             FUZZY_KEYWORD,
             ANY_OF,
             FUNDING_IDENTIFIER_KEYWORD,
-            PATTERN_IS_FUNDING_IDENTIFIER_SHOULD,
-            null,
-            null,
-            null),
+            PATTERN_IS_FUNDING_IDENTIFIER_SHOULD),
     FUNDING_SOURCE(TEXT, ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
@@ -190,18 +172,10 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
     ID_NOT(KEYWORD, NOT_ANY_OF, IDENTIFIER_KEYWORD),
     ID_SHOULD(TEXT, ANY_OF, IDENTIFIER_KEYWORD),
-    INSTANCE_TYPE(
-            KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS, null, null, null),
-    INSTANCE_TYPE_NOT(
-            KEYWORD,
-            NOT_ANY_OF,
-            PUBLICATION_INSTANCE_TYPE,
-            PATTERN_IS_CATEGORY_NOT_KEYS,
-            null,
-            null,
-            null),
-    INSTANCE_TYPE_PART_OF(PART_OF, INSTANCE_TYPE),
-    INSTANCE_TYPE_HAS_PARTS(HAS_PARTS, INSTANCE_TYPE),
+    INSTANCE_TYPE(KEYWORD, ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_KEYS),
+    INSTANCE_TYPE_NOT(KEYWORD, NOT_ANY_OF, PUBLICATION_INSTANCE_TYPE, PATTERN_IS_CATEGORY_NOT_KEYS),
+    INSTANCE_TYPE_PART_OF(PART_OF, ALL_OF, INSTANCE_TYPE),
+    INSTANCE_TYPE_HAS_PARTS(HAS_PARTS, ALL_OF, INSTANCE_TYPE),
     INSTITUTION(TEXT, ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
     INSTITUTION_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION),
@@ -266,7 +240,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     TAGS_NOT(TEXT, NOT_ALL_OF, ENTITY_TAGS),
     TAGS_SHOULD(TEXT, ANY_OF, ENTITY_TAGS),
     TAGS_EXISTS(EXISTS, ANY_OF, ENTITY_TAGS),
-    TITLE(TEXT, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
+    TITLE(TEXT, ALL_OF, ENTITY_DESCRIPTION_MAIN_TITLE, PI),
     TITLE_NOT(TEXT, NOT_ALL_OF, ENTITY_DESCRIPTION_MAIN_TITLE),
     TITLE_SHOULD(TEXT, ANY_OF, ENTITY_DESCRIPTION_MAIN_TITLE),
     TOP_LEVEL_ORGANIZATION(CUSTOM, ANY_OF, TOP_LEVEL_ORG_ID),
@@ -281,29 +255,24 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     USER_AFFILIATION_SHOULD(TEXT, ANY_OF, RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD),
     VOCABULARY(FUZZY_KEYWORD, ALL_OF, SUBJECTS),
     VOCABULARY_EXISTS(EXISTS, ANY_OF, SUBJECTS),
-    SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null, null),
+    SEARCH_ALL(CUSTOM, ANY_OF, Q, PATTERN_IS_SEARCH_ALL_KEY),
     GET_ALL(FREE_TEXT),
-    HAS_CHILDREN(HAS_PARTS, GET_ALL),
-    HAS_PARENT(PART_OF, GET_ALL),
+    HAS_CHILDREN(HAS_PARTS, ALL_OF, GET_ALL),
+    HAS_NO_CHILDREN(HAS_PARTS, NOT_ALL_OF, GET_ALL),
+    HAS_PARENT(PART_OF, ALL_OF, GET_ALL),
+    HAS_NO_PARENT(PART_OF, NOT_ALL_OF, GET_ALL),
     // Query parameters passed to SWS/Opensearch
     AGGREGATION(IGNORED),
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null, null),
+    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED),
     NODES_INCLUDED(IGNORED),
     NODES_EXCLUDED(IGNORED),
     // Pagination parameters
     PAGE(NUMBER),
-    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null, null),
-    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null, null),
+    FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY),
+    SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY),
     SEARCH_AFTER(IGNORED),
-    SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null, null),
-    SORT_ORDER(
-            IGNORED,
-            ALL_OF,
-            null,
-            PATTERN_IS_SORT_ORDER_KEY,
-            PATTERN_IS_ASC_DESC_VALUE,
-            null,
-            null);
+    SORT(ParameterKind.SORT_KEY, null, null, PATTERN_IS_SORT_KEY),
+    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE);
 
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
@@ -324,27 +293,6 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
 
     ResourceParameter(ParameterKind kind) {
         this(kind, ALL_OF, null, null, null, null, null);
-    }
-
-    ResourceParameter(ParameterKind kind, String fieldsToSearch) {
-        this(kind, ALL_OF, fieldsToSearch, null, null, null, null);
-    }
-
-    ResourceParameter(ParameterKind kind, String fieldsToSearch, Float boost) {
-        this(kind, ALL_OF, fieldsToSearch, null, null, boost, null);
-    }
-
-    ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
-        this(kind, operator, fieldsToSearch, null, null, null, null);
-    }
-
-    ResourceParameter(ParameterKind kind, ResourceParameter keys) {
-        this(kind, null, null, null, null, null, keys);
-    }
-
-    ResourceParameter(
-            ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
-        this(kind, operator, fieldsToSearch, null, null, boost, null);
     }
 
     ResourceParameter(
@@ -370,6 +318,64 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
                                 + name().replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         this.paramkind = kind;
         this.subQueryReference = subquery;
+    }
+
+    ResourceParameter(ParameterKind kind, String fieldsToSearch) {
+        this(kind, ALL_OF, fieldsToSearch, null, null, null, null);
+    }
+
+    ResourceParameter(ParameterKind kind, FieldOperator operator, String fieldsToSearch) {
+        this(kind, operator, fieldsToSearch, null, null, null, null);
+    }
+
+    ResourceParameter(ParameterKind kind, FieldOperator operator, ResourceParameter keys) {
+        this(kind, operator, null, null, null, null, keys);
+    }
+
+    ResourceParameter(
+            ParameterKind kind, FieldOperator operator, String fieldsToSearch, Float boost) {
+        this(kind, operator, fieldsToSearch, null, null, boost, null);
+    }
+
+    ResourceParameter(
+            ParameterKind kind, FieldOperator operator, String fieldsToSearch, String keyPattern) {
+        this(kind, operator, fieldsToSearch, keyPattern, null, null, null);
+    }
+
+    ResourceParameter(
+            ParameterKind kind,
+            FieldOperator operator,
+            String fieldsToSearch,
+            String keyPattern,
+            String validValuePattern) {
+        this(kind, operator, fieldsToSearch, keyPattern, validValuePattern, null, null);
+    }
+
+    public static ResourceParameter keyFromString(String paramName) {
+        var result =
+                Arrays.stream(ResourceParameter.values())
+                        .filter(ResourceParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(ResourceParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
+                && enumParameter.ordinal() < AGGREGATION.ordinal();
+    }
+
+    @Override
+    @JacocoGenerated
+    public String toString() {
+        return new StringJoiner(COLON, "Key[", "]")
+                .add(String.valueOf(ordinal()))
+                .add(asCamelCase())
+                .toString();
     }
 
     @Override
@@ -425,32 +431,5 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     @Override
     public ResourceParameter subQuery() {
         return subQueryReference;
-    }
-
-    @Override
-    @JacocoGenerated
-    public String toString() {
-        return new StringJoiner(COLON, "Key[", "]")
-                .add(String.valueOf(ordinal()))
-                .add(asCamelCase())
-                .toString();
-    }
-
-    public static ResourceParameter keyFromString(String paramName) {
-        var result =
-                Arrays.stream(ResourceParameter.values())
-                        .filter(ResourceParameter::ignoreInvalidKey)
-                        .filter(ParameterKey.equalTo(paramName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(ResourceParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(ResourceParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
-                && enumParameter.ordinal() < AGGREGATION.ordinal();
     }
 }
