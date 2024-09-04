@@ -236,6 +236,7 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     }
 
     @Override
+    @JacocoGenerated
     public TicketParameter subQuery() {
         throw new NotImplementedException(NOT_IMPLEMENTED_FOR + this.getClass().getName());
     }
