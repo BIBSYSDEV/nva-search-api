@@ -1,6 +1,7 @@
 package no.unit.nva.search.endpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class ParametersTest {
         int count = 0;
         for (Object object : yaml.loadAll(inputStream)) {
             count++;
-            assertTrue(object instanceof ParameterCollection);
+            assertInstanceOf(ParameterCollection.class, object);
         }
         assertEquals(2, count);
     }
