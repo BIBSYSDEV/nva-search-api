@@ -1,6 +1,8 @@
 {
   "HAS_CHILDREN=true": 1,
   "HAS_PARENT=true": 2,
+  "HAS_NO_CHILDREN=true": 21,
+  "HAS_NO_PARENT=true": 20,
   "page=0": 22,
   "ABSTRACT=NAKSIN&ABSTRACT=synthetic+weather+situations&page=0": 1,
   "ABSTRACT=NAKSIN&page=0": 3,
