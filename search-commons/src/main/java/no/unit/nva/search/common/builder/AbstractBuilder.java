@@ -7,6 +7,8 @@ import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
 import no.unit.nva.search.common.enums.ParameterKey;
 
+import nva.commons.core.JacocoGenerated;
+
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 
@@ -29,6 +31,7 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
+    @JacocoGenerated
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(
             K key, String... values);
 

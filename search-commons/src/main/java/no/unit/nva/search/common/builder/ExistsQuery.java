@@ -53,6 +53,7 @@ public class ExistsQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBu
         return () -> boolQuery().queryName(EXISTS_ANY);
     }
 
+    @JacocoGenerated // not currently in use...
     private BiConsumer<BoolQueryBuilder, BoolQueryBuilder> mergeQuery(Boolean exists) {
         return (boolQueryBuilder, queryBuilder) ->
                 mustOrNot(exists, boolQueryBuilder, queryBuilder);

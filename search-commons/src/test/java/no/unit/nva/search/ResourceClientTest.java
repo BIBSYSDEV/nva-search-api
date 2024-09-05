@@ -49,6 +49,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PE
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 
@@ -81,6 +82,7 @@ import no.unit.nva.search.resource.UserSettingsClient;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -111,11 +113,11 @@ import java.util.stream.Stream;
 @Testcontainers
 class ResourceClientTest {
 
+    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
+    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
     private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
     private static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
 
@@ -133,6 +135,61 @@ class ResourceClientTest {
                 new ResourceClient(
                         HttpClient.newHttpClient(), cachedJwtProvider, userSettingsClient);
         scrollClient = new ScrollClient(HttpClient.newHttpClient(), cachedJwtProvider);
+    }
+
+    static Stream<Arguments> uriPagingProvider() {
+        return Stream.of(
+                createArgument("page=0&aggregation=all", 22),
+                createArgument("page=1&size=10&aggregation=all&sort=modifiedDate:asc", 10),
+                createArgument("page=3&aggregation=all&sort=modifiedDate:asc", 0),
+                createArgument("page=1&aggregation=all&size=1", 1),
+                createArgument("page=2&aggregation=all&size=1", 1),
+                createArgument("page=3&aggregation=all&size=1", 1),
+                createArgument("page=0&aggregation=all&size=0", 0),
+                createArgument("offset=15&aggregation=all&size=2", 2),
+                createArgument("offset=15&aggregation=all&limit=2", 2),
+                createArgument("offset=15&aggregation=all&results=2", 2),
+                createArgument("offset=15&aggregation=all&per_page=2", 2),
+                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
+                createArgument("offset=15&aggregation=all&perPage=2", 2));
+    }
+
+    private static Arguments createArgument(String searchUri, int expectedCount) {
+        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+    }
+
+    static Stream<URI> uriInvalidProvider() {
+        return Stream.of(
+                URI.create(REQUEST_BASE_URL + "sort=epler"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:desc:asc"),
+                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
+                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
+                URI.create(
+                        REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
+                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
+                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
+                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+    }
+
+    /**
+     * Provides a stream of valid page ranges for parameterized tests. Each argument consists of a
+     * minimum and maximum page count, and the expected number of results.
+     *
+     * @return a stream of arguments where each argument is a tuple of (min, max,
+     *     expectedResultCount)
+     */
+    private static Stream<Arguments> provideValidPageRanges() {
+        return Stream.of(
+                Arguments.of(1, 100, 8),
+                Arguments.of(37, 39, 1),
+                Arguments.of(38, 38, 1),
+                Arguments.of(17, 20, 3));
+    }
+
+    static Stream<Arguments> uriProvider() {
+        return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
+                .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
     }
 
     @Test
@@ -162,6 +219,44 @@ class ResourceClientTest {
                         .fromRequestInfo(mockedRequestInfoLocal)
                         .doSearch(searchClient);
         assertThat(result.toPagedResponse().hits().size(), is(0));
+    }
+
+    static Stream<URI> uriSortingProvider() {
+
+        return Stream.of(
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
+                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
+                URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
+                URI.create(
+                        REQUEST_BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
+                URI.create(REQUEST_BASE_URL + "query=infrastructure&sort=instanceType"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=createdDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publishedDate"),
+                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publicationDate"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=title"),
+                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=user"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=year+project&sort=published_date+asc&sort=category+desc"));
     }
 
     @Test
@@ -393,6 +488,35 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         assertEquals(expectedHits, pagedSearchResourceDto.totalHits());
+    }
+
+    @Test
+    void isSearchingForAllPublicationsDoWork() throws UnauthorizedException, BadRequestException {
+        var uri = URI.create("https://x.org/");
+        var requestInfo = mock(RequestInfo.class);
+        when(requestInfo.getCurrentCustomer())
+                .thenReturn(
+                        URI.create(
+                                "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        var response =
+                ResourceSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withParameter(NODES_EXCLUDED, "metaInfo")
+                        .withParameter(STATISTICS, "true")
+                        .withRequiredParameters(FROM, SIZE)
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                        .organization(requestInfo)
+                        .apply()
+                        .doSearch(searchClient);
+
+        assertNotNull(response);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        assertEquals(22, pagedSearchResourceDto.totalHits());
     }
 
     @Test
@@ -885,98 +1009,5 @@ class ResourceClientTest {
                 "All page counts are within the specified range",
                 pageCounts,
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
-    }
-
-    static Stream<Arguments> uriPagingProvider() {
-        return Stream.of(
-                createArgument("page=0&aggregation=all", 22),
-                createArgument("page=1&size=10&aggregation=all&sort=modifiedDate:asc", 10),
-                createArgument("page=3&aggregation=all&sort=modifiedDate:asc", 0),
-                createArgument("page=1&aggregation=all&size=1", 1),
-                createArgument("page=2&aggregation=all&size=1", 1),
-                createArgument("page=3&aggregation=all&size=1", 1),
-                createArgument("page=0&aggregation=all&size=0", 0),
-                createArgument("offset=15&aggregation=all&size=2", 2),
-                createArgument("offset=15&aggregation=all&limit=2", 2),
-                createArgument("offset=15&aggregation=all&results=2", 2),
-                createArgument("offset=15&aggregation=all&per_page=2", 2),
-                createArgument("OFFSET=15&aggregation=all&PER_PAGE=2", 2),
-                createArgument("offset=15&aggregation=all&perPage=2", 2));
-    }
-
-    static Stream<URI> uriSortingProvider() {
-
-        return Stream.of(
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
-                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
-                URI.create(
-                        REQUEST_BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
-                URI.create(REQUEST_BASE_URL + "query=infrastructure&sort=instanceType"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=createdDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publishedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publicationDate"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=title"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=user"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&sort=published_date+asc&sort=category+desc"));
-    }
-
-    static Stream<URI> uriInvalidProvider() {
-        return Stream.of(
-                URI.create(REQUEST_BASE_URL + "sort=epler"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:desc:asc"),
-                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
-                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
-                URI.create(
-                        REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
-                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
-                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
-                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
-    }
-
-    /**
-     * Provides a stream of valid page ranges for parameterized tests. Each argument consists of a
-     * minimum and maximum page count, and the expected number of results.
-     *
-     * @return a stream of arguments where each argument is a tuple of (min, max,
-     *     expectedResultCount)
-     */
-    private static Stream<Arguments> provideValidPageRanges() {
-        return Stream.of(
-                Arguments.of(1, 100, 8),
-                Arguments.of(37, 39, 1),
-                Arguments.of(38, 38, 1),
-                Arguments.of(17, 20, 3));
-    }
-
-    static Stream<Arguments> uriProvider() {
-        return loadMapFromResource(RESOURCE_VALID_DEV_URLS_JSON).entrySet().stream()
-                .map(entry -> createArgument(entry.getKey(), (Integer) entry.getValue()));
-    }
-
-    private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
     }
 }
