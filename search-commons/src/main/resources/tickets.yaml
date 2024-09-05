@@ -1,0 +1,135 @@
+# Description: This file contains the configuration for the search endpoint for the tickets.
+# !!no.unit.nva.search.endpoint.Parameters
+parameters:
+  - name: "ID"
+    type: "FUZZY_KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "id.keyword"
+
+  - name: "ASSIGNEE"
+    type: "CUSTOM"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "assignee.firstName.keyword"
+      - "assignee.lastName.keyword"
+      - "assignee.username.keyword"
+
+  - name: "BY_USER_PENDING"
+    type: "IGNORED"
+
+  - name: "CREATED_DATE"
+    type: "DATE"
+    fieldOperator: "BETWEEN"
+    fieldsToSearch:
+      - "createdDate"
+
+  - name: "CUSTOMER_ID"
+    type: "FUZZY_KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "customerId.keyword"
+
+  - name: "EXCLUDE_SUBUNITS"
+    type: "IGNORED"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "organization.id.keyword"
+      - "organization.identifier.keyword"
+
+  - name: "FINALIZED_BY"
+    type: "ACROSS_FIELDS"
+    modality: "ALL_OF"
+    fieldsToSearch:
+      - "finalizedBy.firstName.keyword"
+      - "finalizedBy.lastName.keyword"
+      - "finalizedBy.username.keyword"
+
+  - name: "MESSAGES"
+    type: "TEXT"
+    modality: "ALL_OF"
+    fieldsToSearch:
+      - "messages"
+
+  - name: "MODIFIED_DATE"
+    type: "DATE"
+    fieldOperator: "BETWEEN"
+    fieldsToSearch:
+      - "modifiedDate"
+
+  - name: "ORGANIZATION_ID"
+    type: "CUSTOM"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "organization.id.keyword"
+      - "organization.identifier.keyword"
+    pattern: "isOrganization"
+
+  - name: "OWNER"
+    type: "ACROSS_FIELDS"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "owner.firstName.keyword"
+      - "owner.lastName.keyword"
+      - "owner.username.keyword"
+
+  - name: "PUBLICATION_ID"
+    type: "FUZZY_KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "publicationId.keyword"
+      - "publicationIdentifier.keyword"
+
+  - name: "PUBLICATION_TYPE"
+    type: "FUZZY_KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "publicationType.keyword"
+
+  - name: "PUBLICATION_MODIFIED_DATE"
+    type: "DATE"
+    modality: ""
+    fieldOperator: "BETWEEN"
+    fieldsToSearch:
+      - "publicationModifiedDate"
+
+  - name: "PUBLICATION_OWNER"
+    type: "FUZZY_KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "publicationOwner.keyword"
+
+  - name: "PUBLICATION_STATUS"
+    type: "KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "publicationStatus.keyword"
+      -
+  - name: "PUBLICATION_TITLE"
+    type: "TEXT"
+    modality: "ALL_OF"
+    fieldsToSearch:
+      - "publicationMainTitle.keyword"
+
+  - name: "STATISTICS"
+    type: "IGNORED"
+
+  - name: "STATUS"
+    type: "CUSTOM"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "status.keyword"
+
+  - name: "TYPE"
+    type: "KEYWORD"
+    modality: "ANY_OF"
+    fieldsToSearch:
+      - "type.keyword"
+
+  - name: "VIEWED_BY"
+    type: "ACROSS_FIELDS"
+    modality: "ALL_OF"
+    fieldsToSearch:
+      - "viewedBy.firstName.keyword"
+      - "viewedBy.lastName.keyword"
+      - "viewedBy.username.keyword"
