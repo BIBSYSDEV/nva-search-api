@@ -4,6 +4,8 @@ import static no.unit.nva.search.common.constant.Words.SPACE;
 
 import static java.util.Objects.nonNull;
 
+import nva.commons.core.JacocoGenerated;
+
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -49,4 +51,7 @@ public class LogAppender {
         }
         return event.getMessage().getFormattedMessage();
     }
+
+    @JacocoGenerated
+    private LogAppender() {}
 }

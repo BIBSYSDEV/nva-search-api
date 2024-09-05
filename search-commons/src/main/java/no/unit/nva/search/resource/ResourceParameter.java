@@ -17,12 +17,10 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
 import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.common.constant.Words.COLON;
 import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
 import static no.unit.nva.search.common.constant.Words.CREATED_DATE;
-import static no.unit.nva.search.common.constant.Words.IDENTITY;
 import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
 import static no.unit.nva.search.common.constant.Words.PHI;
 import static no.unit.nva.search.common.constant.Words.PI;
@@ -50,46 +48,7 @@ import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.PART_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
-import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
-import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
-import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
-import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
-import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
-import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
-import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
-import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS_DOT;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_PAGES;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_JOURNAL;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
-import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_SERIES;
-import static no.unit.nva.search.resource.Constants.ENTITY_TAGS;
-import static no.unit.nva.search.resource.Constants.FILES_STATUS_KEYWORD;
-import static no.unit.nva.search.resource.Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
-import static no.unit.nva.search.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
-import static no.unit.nva.search.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
-import static no.unit.nva.search.resource.Constants.HANDLE_KEYWORD;
-import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
-import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_ID;
-import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
-import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
-import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
-import static no.unit.nva.search.resource.Constants.PUBLICATION_INSTANCE_TYPE;
-import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
-import static no.unit.nva.search.resource.Constants.REFERENCE_DOI_KEYWORD;
-import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
-import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
-import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
-import static no.unit.nva.search.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
-import static no.unit.nva.search.resource.Constants.SCIENTIFIC_INDEX_YEAR;
-import static no.unit.nva.search.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
-import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
-import static no.unit.nva.search.resource.Constants.SUBJECTS;
-import static no.unit.nva.search.resource.Constants.TOP_LEVEL_ORG_ID;
+import static no.unit.nva.search.resource.Constants.*;
 
 import static java.util.Objects.nonNull;
 
@@ -131,7 +90,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     CONTEXT_TYPE_HAS_NO_PARTS(HAS_PARTS, NOT_ANY_OF, null, null, null, null, CONTEXT_TYPE),
     CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, ENTITY_CONTRIBUTORS_DOT + IDENTITY + ASTERISK),
+    CONTRIBUTORS(ACROSS_FIELDS, ALL_OF, CONTRIBUTORS_FIELDS),
     CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
