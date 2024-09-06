@@ -37,6 +37,22 @@ public enum TicketSort implements SortKey {
         this.path = jsonPath;
     }
 
+    public static TicketSort fromSortKey(String keyName) {
+        var result =
+                Arrays.stream(TicketSort.values())
+                        .filter(SortKey.equalTo(keyName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    public static Collection<String> validSortKeys() {
+        return Arrays.stream(TicketSort.values())
+                .sorted(SortKey::compareAscending)
+                .skip(1) // skip INVALID
+                .map(TicketSort::asLowerCase)
+                .toList();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -55,21 +71,5 @@ public enum TicketSort implements SortKey {
     @Override
     public Stream<String> jsonPaths() {
         return Arrays.stream(path.split(PATTERN_IS_PIPE));
-    }
-
-    public static TicketSort fromSortKey(String keyName) {
-        var result =
-                Arrays.stream(TicketSort.values())
-                        .filter(SortKey.equalTo(keyName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    public static Collection<String> validSortKeys() {
-        return Arrays.stream(TicketSort.values())
-                .sorted(SortKey::compareAscending)
-                .skip(1) // skip INVALID
-                .map(TicketSort::asLowerCase)
-                .toList();
     }
 }

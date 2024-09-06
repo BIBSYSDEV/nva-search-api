@@ -81,7 +81,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        logger.info(
+        logger.debug(
                 INITIAL_LOG_MESSAGE,
                 indexDocument.getDocumentIdentifier(),
                 indexDocument.getIndexName());

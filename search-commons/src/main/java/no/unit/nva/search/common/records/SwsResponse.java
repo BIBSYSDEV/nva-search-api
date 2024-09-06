@@ -26,22 +26,6 @@ public record SwsResponse(
         JsonNode aggregations,
         String _scroll_id) {
 
-    public record ShardsInfo(Long total, Long successful, Long skipped, Long failed) {}
-
-    public record HitsInfo(TotalInfo total, double max_score, List<Hit> hits) {
-        public record TotalInfo(Integer value, String relation) {}
-
-        @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        public record Hit(
-                String _index,
-                String _type,
-                String _id,
-                double _score,
-                JsonNode _source,
-                JsonNode inner_hits,
-                List<String> sort) {}
-    }
-
     @Transient
     public Integer getTotalSize() {
         return hits.total.value;
@@ -58,6 +42,22 @@ public record SwsResponse(
         return nonNull(hits) && nonNull(hits.hits) && !hits.hits.isEmpty()
                 ? Optional.ofNullable(hits.hits.get(hits.hits.size() - 1).sort()).orElse(List.of())
                 : List.of();
+    }
+
+    public record ShardsInfo(Long total, Long successful, Long skipped, Long failed) {}
+
+    public record HitsInfo(TotalInfo total, double max_score, List<Hit> hits) {
+        public record TotalInfo(Integer value, String relation) {}
+
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        public record Hit(
+                String _index,
+                String _type,
+                String _id,
+                double _score,
+                JsonNode _source,
+                JsonNode inner_hits,
+                List<String> sort) {}
     }
 
     public static final class SwsResponseBuilder {

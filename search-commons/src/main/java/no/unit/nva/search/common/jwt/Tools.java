@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 
 public final class Tools {
     @JacocoGenerated
+    public Tools() {}
+
+    @JacocoGenerated
     public static CachedJwtProvider getCachedJwtProvider(SecretsReader reader) {
         return getUsernamePasswordStream(reader)
                 .map(Tools::getCognitoCredentials)
@@ -36,7 +39,4 @@ public final class Tools {
         var uri = URI.create(readSearchInfrastructureAuthUri());
         return new CognitoCredentials(wrapper::getUsername, wrapper::getPassword, uri);
     }
-
-    @JacocoGenerated
-    public Tools() {}
 }

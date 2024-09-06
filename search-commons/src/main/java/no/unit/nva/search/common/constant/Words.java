@@ -88,8 +88,8 @@ public final class Words {
     public static final String REFERENCE = "reference";
     public static final String RELEVANCE_KEY_NAME = "relevance";
     public static final String RESOURCES = "resources";
-    public static final String RESOURCES_PC = "parent_child_resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
+    public static final String ROLE = "role";
     public static final String SAMI_CODE = "sme";
     public static final String SCIENTIFIC_INDEX = "scientificIndex";
     public static final String SCORE = "_score";

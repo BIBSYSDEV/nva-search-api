@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
 import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
@@ -10,13 +12,20 @@ import static org.hamcrest.core.StringContains.containsString;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.stubs.FakeContext;
 
-import nva.commons.logutils.LogUtils;
-
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 public class DeleteImportCandidateIndexHandlerTest {
+
+    private static ListAppender appender;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(DeleteIndicesHandler.class);
+    }
 
     @Test
     void shouldDeleteIndicesWhenFunctionIsInvoked() {
@@ -36,7 +45,6 @@ public class DeleteImportCandidateIndexHandlerTest {
 
     @Test
     void shouldLogWarningWhenIndexDeletionFails() {
-        var logger = LogUtils.getTestingAppenderForRootLogger();
         var expectedMessage = randomString();
         var indexingClient =
                 new IndexingClient(null, null) {
@@ -47,6 +55,6 @@ public class DeleteImportCandidateIndexHandlerTest {
                 };
         var handler = new DeleteImportCandidateIndexHandler(indexingClient);
         handler.handleRequest(null, new FakeContext());
-        assertThat(logger.getMessages(), containsString(expectedMessage));
+        assertThat(logToString(appender), containsString(expectedMessage));
     }
 }

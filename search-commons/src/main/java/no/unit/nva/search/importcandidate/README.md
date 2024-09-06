@@ -3,6 +3,7 @@
 [back to NVA search api README](/README.md#nva-search-api)
 
 ## Data Model
+
 <details>
 <summary>JSON</summary>
 
@@ -150,7 +151,6 @@
 <details>
 <summary>Search examples</summary>
 
-
 ### By a specific contributor
 
 ```http request
@@ -192,6 +192,7 @@ Accept: application/json
 ## Available Keys (filters)
 
 ### QueryKind descriptions
+
 * number
   * Integer
 * date
@@ -244,7 +245,7 @@ Accept: application/json
 | type_not                   | typeNot                  | keyword      | not_all_of               | publicationInstance.type.keyword                                                                                                                                                                                                                                                 |
 | search_all                 | searchAll                | freeText     | all_of                   | q                                                                                                                                                                                                                                                                                |
 
- [!NOTE]
+[!NOTE]
 > <p>Valid SortKeys </p>
 >
 > ```

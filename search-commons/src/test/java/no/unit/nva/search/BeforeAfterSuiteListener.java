@@ -2,6 +2,8 @@ package no.unit.nva.search;
 
 import no.unit.nva.search.common.Containers;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ public class BeforeAfterSuiteListener implements TestExecutionListener {
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {
         TestExecutionListener.super.testPlanExecutionStarted(testPlan);
+        Configurator.setAllLevels("", Level.WARN);
         try {
             logger.info("Setting up Opensearch server");
             Containers.setup();

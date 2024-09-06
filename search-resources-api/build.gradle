@@ -1,4 +1,4 @@
-plugins{
+plugins {
     id 'nva.search.service.java-conventions'
 }
 dependencies {
@@ -30,7 +30,7 @@ dependencies {
     testImplementation project(':search-commons')
 }
 
-test{
+test {
     useJUnitPlatform()
     environment "AWS_REGION", "eu-west-1"
     environment "LARGE_API_RESPONSES_BUCKET", "some-bucket"

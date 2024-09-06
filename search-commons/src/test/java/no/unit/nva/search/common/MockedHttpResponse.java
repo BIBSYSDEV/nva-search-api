@@ -31,7 +31,7 @@ public class MockedHttpResponse {
     }
 
     public static CompletableFuture<HttpResponse<Object>> mockedFutureFailed() {
-        return CompletableFuture.failedFuture(new Throwable("fututre failed"));
+        return CompletableFuture.failedFuture(new Throwable("future failed"));
     }
 
     public static HttpResponse<Object> mockedHttpResponse(Path path) {

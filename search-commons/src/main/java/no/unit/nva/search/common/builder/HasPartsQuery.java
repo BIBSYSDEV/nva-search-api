@@ -20,15 +20,17 @@ public class HasPartsQuery<K extends Enum<K> & ParameterKey<K>> extends Abstract
     @JacocoGenerated // not currently in use...
     protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(
             K key, String... values) {
-        return buildHitQuery(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
+        return buildHasChildQuery(key, values)
+                .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 
     @Override
     protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAllValuesQuery(K key, String... values) {
-        return buildHitQuery(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
+        return buildHasChildQuery(key, values)
+                .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 
-    private Stream<QueryBuilder> buildHitQuery(K key, String... values) {
+    private Stream<QueryBuilder> buildHasChildQuery(K key, String... values) {
         var builder =
                 new HasChildQueryBuilder(
                         PART_OF, getSubQuery(key.subQuery(), values), ScoreMode.None);

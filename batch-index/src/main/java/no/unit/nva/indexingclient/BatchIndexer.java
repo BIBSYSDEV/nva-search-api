@@ -26,8 +26,8 @@ public class BatchIndexer implements IndexingResult<SortableIdentifier> {
     private final ImportDataRequestEvent importDataRequest;
     private final S3Driver s3Driver;
     private final IndexingClient openSearchRestClient;
-    private IndexingResultRecord<SortableIdentifier> processingResult;
     private final int numberOfFilesPerEvent;
+    private IndexingResultRecord<SortableIdentifier> processingResult;
 
     public BatchIndexer(
             ImportDataRequestEvent importDataRequestEvent,

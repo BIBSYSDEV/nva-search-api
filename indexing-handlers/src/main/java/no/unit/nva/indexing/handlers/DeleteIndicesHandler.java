@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 public class DeleteIndicesHandler implements RequestHandler<Object, String> {
 
     public static final String FINISHED = "FINISHED";
-    private final IndexingClient indexingClient;
     private static final Logger logger = LoggerFactory.getLogger(DeleteIndicesHandler.class);
+    private final IndexingClient indexingClient;
 
     @JacocoGenerated
     public DeleteIndicesHandler() {

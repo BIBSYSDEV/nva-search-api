@@ -15,7 +15,6 @@ import org.opensearch.action.bulk.BulkResponse;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BatchIndexTest {
@@ -36,7 +35,7 @@ public class BatchIndexTest {
                                         fail ->
                                                 new BulkItemResponse(
                                                         randomNumber(), OpType.UPDATE, fail))
-                                .collect(Collectors.toList());
+                                .toList();
                 BulkResponse response =
                         new BulkResponse(
                                 itemResponses.toArray(BulkItemResponse[]::new),

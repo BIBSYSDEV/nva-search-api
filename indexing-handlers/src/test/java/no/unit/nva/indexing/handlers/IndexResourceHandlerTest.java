@@ -60,6 +60,7 @@ public class IndexResourceHandlerTest {
             createSampleResource(SortableIdentifier.next(), TICKETS_INDEX);
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String IGNORED_TOPIC = "ignoredValue";
+
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
             createSampleResource(null, ApplicationConstants.RESOURCES_INDEX);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
@@ -86,7 +87,6 @@ public class IndexResourceHandlerTest {
     @Test
     void shouldAddDocumentToIndexWhenResourceExistsInResourcesStorage() throws Exception {
         URI resourceLocation = prepareEventStorageResourceFile();
-
         InputStream input = createEventBridgeEvent(resourceLocation);
         indexResourceHandler.handleRequest(input, output, context);
         Set<JsonNode> allIndexedDocuments =
