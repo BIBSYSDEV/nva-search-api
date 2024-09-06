@@ -34,6 +34,11 @@ public record IndexDocument(
     static final String TICKET = "Ticket";
     static final String RESOURCE = "Resource";
 
+    public static IndexDocument fromJsonString(String json) {
+        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class))
+                .orElseThrow();
+    }
+
     public IndexDocument validate() {
         Objects.requireNonNull(getIndexName());
         Objects.requireNonNull(getDocumentIdentifier());
@@ -54,11 +59,6 @@ public record IndexDocument(
         } else {
             throw new IllegalArgumentException("Unknown type!");
         }
-    }
-
-    public static IndexDocument fromJsonString(String json) {
-        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class))
-                .orElseThrow();
     }
 
     @JsonIgnore

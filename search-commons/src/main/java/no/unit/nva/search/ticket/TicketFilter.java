@@ -77,8 +77,8 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private boolean isSearchingForAllTickets(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-                && !ticketSearchQuery.parameters().get(STATISTICS).isEmpty();
+        return ticketSearchQuery.parameters().isPresent(STATISTICS)
+                && requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS);
     }
 
     /**

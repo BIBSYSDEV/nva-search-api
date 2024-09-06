@@ -16,6 +16,9 @@ import java.util.List;
 
 public class LogAppender {
 
+    @JacocoGenerated
+    private LogAppender() {}
+
     public static String logToString(ListAppender appender) {
         return String.join(SPACE, eventsToStrings(appender));
     }
@@ -51,7 +54,4 @@ public class LogAppender {
         }
         return event.getMessage().getFormattedMessage();
     }
-
-    @JacocoGenerated
-    private LogAppender() {}
 }

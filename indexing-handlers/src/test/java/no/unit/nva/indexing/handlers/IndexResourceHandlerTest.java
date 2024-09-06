@@ -72,6 +72,16 @@ public class IndexResourceHandlerTest {
     private FakeIndexingClient indexingClient;
     private FakeSqsClient sqsClient;
 
+    private static IndexDocument createSampleResource(
+            SortableIdentifier identifierProvider, String indexName) {
+        String randomJson = randomJson();
+        ObjectNode objectNode =
+                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(indexName, identifierProvider);
+        return new IndexDocument(metadata, objectNode);
+    }
+
     @BeforeEach
     void init() {
         FakeS3Client fakeS3Client = new FakeS3Client();
@@ -176,16 +186,6 @@ public class IndexResourceHandlerTest {
         }
 
         assertThat(exception.getMessage(), stringContainsInOrder(MISSING_INDEX_NAME_IN_RESOURCE));
-    }
-
-    private static IndexDocument createSampleResource(
-            SortableIdentifier identifierProvider, String indexName) {
-        String randomJson = randomJson();
-        ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        EventConsumptionAttributes metadata =
-                new EventConsumptionAttributes(indexName, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
     }
 
     private FakeIndexingClient indexingClientThrowingException(String expectedErrorMessage) {

@@ -36,6 +36,7 @@ public class InitHandler implements RequestHandler<Object, String> {
             IoUtils.stringFromResources(Path.of("resource_mappings.json"));
     private static final String RESOURCE_SETTINGS =
             IoUtils.stringFromResources(Path.of("resource_settings.json"));
+
     private static final List<IndexRequest> INDEXES =
             List.of(
                     new IndexRequest(RESOURCES_INDEX, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),

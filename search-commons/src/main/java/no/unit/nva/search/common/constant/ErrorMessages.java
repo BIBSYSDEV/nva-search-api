@@ -36,8 +36,8 @@ public final class ErrorMessages {
 
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
             "Invalid query parameter supplied %s.  Valid parameters: %s Also pass through to"
-                + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
-                + "search_after]";
+                    + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
+                    + "search_after]";
 
     @JacocoGenerated
     public ErrorMessages() {}

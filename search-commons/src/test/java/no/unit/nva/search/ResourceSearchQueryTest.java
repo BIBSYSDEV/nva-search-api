@@ -89,6 +89,27 @@ class ResourceSearchQueryTest {
                 URI.create("https://example.com/?sort=category+asc&sort=created_date+desc"));
     }
 
+    static Stream<URI> uriDatesProvider() {
+        return Stream.of(
+                URI.create(
+                        "https://example.com/?category=hello&modified_before=2020-01-01&modified_since=2019-01-01"),
+                URI.create(
+                        "https://example.com/?published_before=2020-01-02&published_since=2019-01-02"),
+                URI.create("https://example.com/?published_before=2020&published_since=2019"),
+                URI.create(
+                        "https://example.com/?created_before=2020-01-01T23:59:59&created_since=2019-01-01"));
+    }
+
+    static Stream<URI> invalidUriProvider() {
+        return Stream.of(
+                URI.create("https://example.com/?dcategory=hello+world&page=0"),
+                URI.create("https://example.com/?publishedbefore=202t0&lang=en&user="),
+                URI.create("https://example.com/?publishedbefore=202t0&lang=en&"),
+                URI.create("https://example.com/?publishedbefore=2020&sort=category:BESC"),
+                URI.create("https://example.com/?publishedbefore=2020&sort=category:BESC:AS"),
+                URI.create("https://example.com/?institutions=uib&funding=NFR&lang=en"));
+    }
+
     @Test
     void emptyPagesearch() {
         var page = new PagedSearch(null, 0, null, null, null, null, null);
@@ -237,26 +258,5 @@ class ResourceSearchQueryTest {
                                 .withRequiredParameters(FROM, SIZE)
                                 .build()
                                 .openSearchUri());
-    }
-
-    static Stream<URI> uriDatesProvider() {
-        return Stream.of(
-                URI.create(
-                        "https://example.com/?category=hello&modified_before=2020-01-01&modified_since=2019-01-01"),
-                URI.create(
-                        "https://example.com/?published_before=2020-01-02&published_since=2019-01-02"),
-                URI.create("https://example.com/?published_before=2020&published_since=2019"),
-                URI.create(
-                        "https://example.com/?created_before=2020-01-01T23:59:59&created_since=2019-01-01"));
-    }
-
-    static Stream<URI> invalidUriProvider() {
-        return Stream.of(
-                URI.create("https://example.com/?dcategory=hello+world&page=0"),
-                URI.create("https://example.com/?publishedbefore=202t0&lang=en&user="),
-                URI.create("https://example.com/?publishedbefore=202t0&lang=en&"),
-                URI.create("https://example.com/?publishedbefore=2020&sort=category:BESC"),
-                URI.create("https://example.com/?publishedbefore=2020&sort=category:BESC:AS"),
-                URI.create("https://example.com/?institutions=uib&funding=NFR&lang=en"));
     }
 }
