@@ -36,8 +36,11 @@ public final class ErrorMessages {
 
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
             "Invalid query parameter supplied %s.  Valid parameters: %s Also pass through to"
-                + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
-                + "search_after]";
+                    + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
+                    + "search_after]";
+
+    @JacocoGenerated
+    public ErrorMessages() {}
 
     /**
      * Formats and emits a message with valid parameter names.
@@ -62,7 +65,4 @@ public final class ErrorMessages {
                         .collect(Collectors.joining(", ", PREFIX, SUFFIX))
                 : queryParameters.stream().collect(Collectors.joining(EMPTY_STRING, QUOTE, QUOTE));
     }
-
-    @JacocoGenerated
-    public ErrorMessages() {}
 }

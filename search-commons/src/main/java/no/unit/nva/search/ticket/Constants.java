@@ -42,7 +42,6 @@ public final class Constants {
     public static final String STATUS_KEYWORD = STATUS + DOT + KEYWORD;
     public static final String TYPE_KEYWORD = TYPE + DOT + KEYWORD;
     public static final String CUSTOMER_ID_KEYWORD = CUSTOMER_ID + DOT + KEYWORD;
-    public static final String DEFAULT_TICKET_SORT = TicketSort.CREATED_DATE.asCamelCase();
     public static final String ID_KEYWORD = ID + DOT + KEYWORD;
     public static final String ORGANIZATION_ID_KEYWORD = ORGANIZATION + DOT + ID_KEYWORD;
     public static final String ORGANIZATION_IDENTIFIER_KEYWORD =
@@ -89,9 +88,6 @@ public final class Constants {
     public static final String PUBLICATION_OWNER_KEYWORD = PUBLICATION + DOT + OWNER_KEYWORD;
     public static final String PUBLICATION_STATUS_KEYWORD = PUBLICATION + DOT + STATUS_KEYWORD;
     public static final String OWNER_USERNAME = OWNER + DOT + USERNAME + DOT + KEYWORD;
-    public static final String MESSAGE_FIELDS =
-            MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE + MESSAGES + DOT + STATUS + DOT
-                    + KEYWORD;
     public static final String OWNER_FIELDS =
             OWNER
                     + DOT
@@ -106,6 +102,9 @@ public final class Constants {
                     + KEYWORD
                     + PIPE
                     + OWNER_USERNAME;
+    public static final String MESSAGE_FIELDS =
+            MESSAGES + DOT + "text" + DOT + KEYWORD + PIPE + MESSAGES + DOT + STATUS + DOT
+                    + KEYWORD;
     public static final String VIEWED_BY_FIELDS =
             VIEWED_BY
                     + DOT
@@ -143,6 +142,13 @@ public final class Constants {
                     + USERNAME
                     + DOT
                     + KEYWORD;
+    public static final String BY_USER_PENDING = "byUserPending";
+    public static final Map<String, String> facetTicketsPaths =
+            Map.of(
+                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
+                    STATUS, "/withAppliedFilter/status",
+                    TYPE, "/withAppliedFilter/type",
+                    PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
     private static final String FINALIZED_BY = "finalizedBy";
     public static final String FINALIZED_BY_FIELDS =
             FINALIZED_BY
@@ -162,14 +168,6 @@ public final class Constants {
                     + USERNAME
                     + DOT
                     + KEYWORD;
-
-    public static final String BY_USER_PENDING = "byUserPending";
-    public static final Map<String, String> facetTicketsPaths =
-            Map.of(
-                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
-                    STATUS, "/withAppliedFilter/status",
-                    TYPE, "/withAppliedFilter/type",
-                    PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
 
     @JacocoGenerated
     public Constants() {}

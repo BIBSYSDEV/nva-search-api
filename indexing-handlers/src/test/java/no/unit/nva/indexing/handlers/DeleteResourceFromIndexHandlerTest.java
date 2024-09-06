@@ -48,6 +48,15 @@ public class DeleteResourceFromIndexHandlerTest {
 
     private DeleteResourceFromIndexHandler handler;
 
+    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
+        String randomJson = randomJson();
+        ObjectNode objectNode =
+                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
+        return new IndexDocument(metadata, objectNode);
+    }
+
     @BeforeEach
     void init() {
         indexingClient = new FakeIndexingClient();
@@ -78,15 +87,6 @@ public class DeleteResourceFromIndexHandlerTest {
         handler.handleRequest(eventReference, output, CONTEXT);
         Set<JsonNode> allIndexedDocuments = indexingClient.listAllDocuments(RESOURCES_INDEX);
         assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
-    }
-
-    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
-        String randomJson = randomJson();
-        ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        EventConsumptionAttributes metadata =
-                new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
     }
 
     private IndexDocument createSampleResorce(SortableIdentifier resourceIdentifier) {

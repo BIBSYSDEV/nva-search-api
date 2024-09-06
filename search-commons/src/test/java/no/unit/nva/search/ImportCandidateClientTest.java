@@ -61,6 +61,94 @@ class ImportCandidateClientTest {
                 new ImportCandidateClient(HttpClient.newHttpClient(), cachedJwtProvider);
     }
 
+    static Stream<URI> uriSortingProvider() {
+        return Stream.of(
+                URI.create(
+                        REQUEST_BASE_URL + "sort=title&sortOrder=asc&sort=created_date&order=desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "category=AcademicArticle&size=10&from=0&sort=created_date"),
+                URI.create(REQUEST_BASE_URL + "orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
+                URI.create(REQUEST_BASE_URL + "orderBy=relevance,title:asc,CREATED_DATE:desc"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "category=AcademicArticle&sort=relevance,TYPE+asc&sort=INSTANCE_TYPE+desc"));
+    }
+
+    static Stream<URI> uriProvider() {
+        return Stream.of(
+                URI.create(REQUEST_BASE_URL + "size=8"),
+                URI.create(REQUEST_BASE_URL + "aggregation=ALL&size=8"),
+                URI.create(REQUEST_BASE_URL + "aggregation=importStatus&size=8"),
+                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=5"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR=Andrew+Morrison&size=1"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR=Andrew+Morrison,Nina+Bjørnstad&size=1"),
+                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NOT=George+Rigos&size=7"),
+                URI.create(REQUEST_BASE_URL + "files=hasPublicFiles&size=7"),
+                URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=IMPORTED&size=4"),
+                URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=1136326@20754.0.0.0&size=2"),
+                URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=20754.0.0.0&size=4"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "id=018bed744c78-f53e06f7-74da-4c91-969f-ec307a7e7816&size=1"),
+                URI.create(REQUEST_BASE_URL + "license=CC-BY&size=7"),
+                URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023&size=8"),
+                URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-10&size=2"),
+                URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-05,&size=7"),
+                URI.create(REQUEST_BASE_URL + "PUBLICATION_YEAR_BEFORE=2023&size=5"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "PublicationYearBefore=2024&publication_year_since=2023&size=3"),
+                URI.create(REQUEST_BASE_URL + "publicationYear=2022,2022&size=1"),
+                URI.create(REQUEST_BASE_URL + "publicationYear=2022&size=1"),
+                URI.create(REQUEST_BASE_URL + "publicationYear=,2022&size=5"),
+                URI.create(REQUEST_BASE_URL + "publicationYear=2022,&size=4"),
+                URI.create(REQUEST_BASE_URL + "publicationYear=2023&size=3"),
+                URI.create(REQUEST_BASE_URL + "publicationYear=2022,2023&size=4"),
+                URI.create(REQUEST_BASE_URL + "title=In+reply:+Why+big+data&size=1"),
+                URI.create(REQUEST_BASE_URL + "title=chronic+diseases&size=1"),
+                URI.create(REQUEST_BASE_URL + "title=antibacterial,Fishing&size=2"),
+                URI.create(REQUEST_BASE_URL + "query=antibacterial&fields=category,title&size=1"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
+                URI.create(REQUEST_BASE_URL + "query=European&fields=all&size=3"),
+                URI.create(REQUEST_BASE_URL + "CRISTIN_IDENTIFIER=3212342&size=1"),
+                URI.create(REQUEST_BASE_URL + "SCOPUS_IDENTIFIER=3212342&size=1"));
+    }
+
+    static Stream<URI> uriInvalidProvider() {
+        return Stream.of(
+                URI.create(REQUEST_BASE_URL + "size=7&sort="),
+                URI.create(REQUEST_BASE_URL + "query=European&fields"),
+                URI.create(REQUEST_BASE_URL + "feilName=epler"),
+                URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
+                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
+                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
+                URI.create(REQUEST_BASE_URL + "size=8&sort=epler"),
+                URI.create(REQUEST_BASE_URL + "size=8&sort=type:DEdd"),
+                URI.create(REQUEST_BASE_URL + "categories=hello+world"),
+                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01"),
+                URI.create(
+                        REQUEST_BASE_URL
+                                + "conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),
+                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
+                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
+                URI.create(REQUEST_BASE_URL + "useers=hello+world"));
+    }
+
     @Test
     void shouldCheckFacets() throws BadRequestException {
         var hostAddress = URI.create(container.getHttpHostAddress());
@@ -191,93 +279,5 @@ class ImportCandidateClientTest {
                                 .withRequiredParameters(FROM, SIZE, CREATED_DATE)
                                 .build()
                                 .doSearch(importCandidateClient));
-    }
-
-    static Stream<URI> uriSortingProvider() {
-        return Stream.of(
-                URI.create(
-                        REQUEST_BASE_URL + "sort=title&sortOrder=asc&sort=created_date&order=desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "category=AcademicArticle&sort=title&sortOrder=asc&sort=created_date"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "category=AcademicArticle&size=10&from=0&sort=created_date"),
-                URI.create(REQUEST_BASE_URL + "orderBy=INSTANCE_TYPE:asc,PUBLICATION_YEAR:desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "orderBy=title:asc,CREATED_DATE:desc&searchAfter=1241234,23412"),
-                URI.create(REQUEST_BASE_URL + "orderBy=relevance,title:asc,CREATED_DATE:desc"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "category=AcademicArticle&sort=relevance,TYPE+asc&sort=INSTANCE_TYPE+desc"));
-    }
-
-    static Stream<URI> uriProvider() {
-        return Stream.of(
-                URI.create(REQUEST_BASE_URL + "size=8"),
-                URI.create(REQUEST_BASE_URL + "aggregation=ALL&size=8"),
-                URI.create(REQUEST_BASE_URL + "aggregation=importStatus&size=8"),
-                URI.create(REQUEST_BASE_URL + "category=AcademicArticle&size=5"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR=Andrew+Morrison&size=1"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR=Andrew+Morrison,Nina+Bjørnstad&size=1"),
-                URI.create(REQUEST_BASE_URL + "CONTRIBUTOR_NOT=George+Rigos&size=7"),
-                URI.create(REQUEST_BASE_URL + "files=hasPublicFiles&size=7"),
-                URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=IMPORTED&size=4"),
-                URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=1136326@20754.0.0.0&size=2"),
-                URI.create(REQUEST_BASE_URL + "IMPORT_STATUS=20754.0.0.0&size=4"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "id=018bed744c78-f53e06f7-74da-4c91-969f-ec307a7e7816&size=1"),
-                URI.create(REQUEST_BASE_URL + "license=CC-BY&size=7"),
-                URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023&size=8"),
-                URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-10&size=2"),
-                URI.create(REQUEST_BASE_URL + "MODIFIED_DATE=2023-05,&size=7"),
-                URI.create(REQUEST_BASE_URL + "PUBLICATION_YEAR_BEFORE=2023&size=5"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "PublicationYearBefore=2024&publication_year_since=2023&size=3"),
-                URI.create(REQUEST_BASE_URL + "publicationYear=2022,2022&size=1"),
-                URI.create(REQUEST_BASE_URL + "publicationYear=2022&size=1"),
-                URI.create(REQUEST_BASE_URL + "publicationYear=,2022&size=5"),
-                URI.create(REQUEST_BASE_URL + "publicationYear=2022,&size=4"),
-                URI.create(REQUEST_BASE_URL + "publicationYear=2023&size=3"),
-                URI.create(REQUEST_BASE_URL + "publicationYear=2022,2023&size=4"),
-                URI.create(REQUEST_BASE_URL + "title=In+reply:+Why+big+data&size=1"),
-                URI.create(REQUEST_BASE_URL + "title=chronic+diseases&size=1"),
-                URI.create(REQUEST_BASE_URL + "title=antibacterial,Fishing&size=2"),
-                URI.create(REQUEST_BASE_URL + "query=antibacterial&fields=category,title&size=1"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "query=antibacterial&fields=category,title,werstfg&ID_NOT=123&size=1"),
-                URI.create(REQUEST_BASE_URL + "query=European&fields=all&size=3"),
-                URI.create(REQUEST_BASE_URL + "CRISTIN_IDENTIFIER=3212342&size=1"),
-                URI.create(REQUEST_BASE_URL + "SCOPUS_IDENTIFIER=3212342&size=1"));
-    }
-
-    static Stream<URI> uriInvalidProvider() {
-        return Stream.of(
-                URI.create(REQUEST_BASE_URL + "size=7&sort="),
-                URI.create(REQUEST_BASE_URL + "query=European&fields"),
-                URI.create(REQUEST_BASE_URL + "feilName=epler"),
-                URI.create(REQUEST_BASE_URL + "query=epler&fields=feilName"),
-                URI.create(REQUEST_BASE_URL + "CREATED_DATE=epler"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORdfgY:desc"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:asc:DEdd"),
-                URI.create(REQUEST_BASE_URL + "size=8&sort=epler"),
-                URI.create(REQUEST_BASE_URL + "size=8&sort=type:DEdd"),
-                URI.create(REQUEST_BASE_URL + "categories=hello+world"),
-                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01"),
-                URI.create(
-                        REQUEST_BASE_URL
-                                + "conttributors=hello+world&PUBLICATION_YEAR_BEFORE=2020-01-01"),
-                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
-                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
-                URI.create(REQUEST_BASE_URL + "useers=hello+world"));
     }
 }

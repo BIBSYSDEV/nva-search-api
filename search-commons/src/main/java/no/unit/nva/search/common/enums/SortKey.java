@@ -13,16 +13,6 @@ import java.util.stream.Stream;
  */
 public interface SortKey {
 
-    String name();
-
-    String keyPattern();
-
-    Stream<String> jsonPaths();
-
-    String asCamelCase();
-
-    String asLowerCase();
-
     static Predicate<SortKey> equalTo(String name) {
         return key -> name.matches(key.keyPattern());
     }
@@ -37,4 +27,14 @@ public interface SortKey {
                         .replace(UNDERSCORE, PATTERN_IS_NONE_OR_ONE);
         return "%s%s".formatted(PATTERN_IS_IGNORE_CASE, keyNameIgnoreUnderscoreExpression);
     }
+
+    String name();
+
+    String keyPattern();
+
+    Stream<String> jsonPaths();
+
+    String asCamelCase();
+
+    String asLowerCase();
 }

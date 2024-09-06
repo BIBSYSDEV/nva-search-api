@@ -71,8 +71,8 @@ import java.util.stream.Stream;
 public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Query<K> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
+    public final transient QueryFilter filters;
     private transient MediaType mediaType;
-
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
      * value only used in debug and tests.
@@ -80,7 +80,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     private transient URI gatewayUri =
             URI.create("https://api.dev.nva.aws.unit.no/resource/search");
 
-    public final transient QueryFilter filters;
+    protected SearchQuery() {
+        super();
+        filters = new QueryFilter();
+        queryKeys = new QueryKeys<>(keyFields());
+        setMediaType(JSON_UTF_8.toString());
+    }
 
     protected abstract AsType<K> from();
 
@@ -112,13 +117,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected abstract List<AggregationBuilder> builderAggregations();
 
     protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
-
-    protected SearchQuery() {
-        super();
-        filters = new QueryFilter();
-        queryKeys = new QueryKeys<>(keyFields());
-        setMediaType(JSON_UTF_8.toString());
-    }
 
     @Override
     public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(

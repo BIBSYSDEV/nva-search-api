@@ -25,12 +25,12 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
     public static final String LESS_THAN = "LessThan-";
     public static final String BETWEEN = "Between-";
     public static final String DASH = " - ";
-    private static final Logger logger = LoggerFactory.getLogger(RangeQuery.class);
     public static final int WORD_LENGTH_YEAR = 4;
     public static final int WORD_LENGTH_YEAR_MONTH = 7;
     public static final String STR_01 = "-01";
     public static final String STR_12 = "-12";
     public static final String STR_31 = "-31";
+    private static final Logger logger = LoggerFactory.getLogger(RangeQuery.class);
 
     @JacocoGenerated // never used
     @Override

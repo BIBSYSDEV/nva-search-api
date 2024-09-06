@@ -57,14 +57,6 @@ public final class Constants {
     public static final String PUBLICATION_INSTANCE_TYPE = "publicationInstance.type.keyword";
     public static final String PUBLICATION_YEAR = "publicationYear";
     public static final String PUBLICATION_YEAR_KEYWORD = PUBLICATION_YEAR + DOT + KEYWORD;
-    public static final String PUBLISHER_ID_KEYWORD = "publisher.id.keyword";
-    public static final String IMPORT_STATUS_PATH =
-            multipleFields(
-                    jsonPath(IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
-                    jsonPath(IMPORT_STATUS, "setBy", KEYWORD));
-    public static final String TYPE_KEYWORD = "type.keyword";
-    public static final String FILES_STATUS_PATH = FILES_STATUS + DOT + KEYWORD;
-
     public static final List<AggregationBuilder> IMPORT_CANDIDATES_AGGREGATIONS =
             List.of(
                     branchBuilder(COLLABORATION_TYPE, COLLABORATION_TYPE_KEYWORD),
@@ -74,7 +66,13 @@ public final class Constants {
                     branchBuilder(FILES, FILES_STATUS, KEYWORD),
                     contributor(),
                     topLevelOrganisationsHierarchy());
-
+    public static final String PUBLISHER_ID_KEYWORD = "publisher.id.keyword";
+    public static final String IMPORT_STATUS_PATH =
+            multipleFields(
+                    jsonPath(IMPORT_STATUS, CANDIDATE_STATUS, KEYWORD),
+                    jsonPath(IMPORT_STATUS, "setBy", KEYWORD));
+    public static final String TYPE_KEYWORD = "type.keyword";
+    public static final String FILES_STATUS_PATH = FILES_STATUS + DOT + KEYWORD;
     public static final Map<String, String> FACET_IMPORT_CANDIDATE_PATHS =
             Map.of(
                     CONTRIBUTOR, "/withAppliedFilter/contributor/id",
@@ -86,6 +84,9 @@ public final class Constants {
                     TOP_LEVEL_ORGANIZATION, "/withAppliedFilter/organizations/id"
                     //        LICENSE, "/withAppliedFilter/associatedArtifacts/license"
                     );
+
+    @JacocoGenerated
+    public Constants() {}
 
     private static NestedAggregationBuilder contributor() {
         return nestedBranchBuilder(CONTRIBUTOR, CONTRIBUTORS)
@@ -102,9 +103,6 @@ public final class Constants {
                         branchBuilder(ID, ORGANIZATIONS, ID, KEYWORD)
                                 .subAggregation(labels(ORGANIZATIONS)));
     }
-
-    @JacocoGenerated
-    public Constants() {}
 
     public static Script selectByLicense(String license) {
         var script =

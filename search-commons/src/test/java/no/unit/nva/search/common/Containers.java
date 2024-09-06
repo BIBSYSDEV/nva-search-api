@@ -37,9 +37,9 @@ import java.util.Map;
 @Testcontainers
 public class Containers {
 
-    public static IndexingClient indexingClient;
     public static final OpensearchContainer container = new OpensearchContainer(OPEN_SEARCH_IMAGE);
-
+    public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON =
+            "import_candidate_mappings_dev.json";
     private static final Logger logger = LoggerFactory.getLogger(Containers.class);
 
     private static final String RESOURCE_DATASOURCE_JSON = "resource_datasource.json";
@@ -51,8 +51,7 @@ public class Containers {
 
     private static final String IMPORT_CANDIDATE_DATASOURCE_JSON =
             "import_candidate_datasource.json";
-    public static final String IMPORT_CANDIDATE_MAPPING_DEV_JSON =
-            "import_candidate_mappings_dev.json";
+    public static IndexingClient indexingClient;
 
     public static void setup() throws IOException, InterruptedException {
         container.start();

@@ -63,17 +63,28 @@ class KeyBasedBatchIndexHandlerTest {
 
     public static final String LINE_BREAK = "\n";
     public static final String IDENTIFIER = "__IDENTIFIER__";
+    public static final String DEFAULT_LOCATION = "resources";
     private static final String VALID_PUBLICATION =
             IoUtils.stringFromResources(Path.of("publication.json"));
     private static final String INVALID_PUBLICATION =
             IoUtils.stringFromResources(Path.of("invalid_publication.json"));
-    public static final String DEFAULT_LOCATION = "resources";
     private ByteArrayOutputStream outputStream;
     private S3Driver s3ResourcesDriver;
     private S3Driver s3BatchesDriver;
     private FakeOpenSearchClient openSearchClient;
     private EventBridgeClient eventBridgeClient;
     private KeyBasedBatchIndexHandler handler;
+
+    private static ArrayList<IndexDocument> getDocuments(
+            List<IndexDocument> expectedDocuments, IndexDocument notExpectedDocument) {
+        var documents = new ArrayList<>(expectedDocuments);
+        documents.add(notExpectedDocument);
+        return documents;
+    }
+
+    private static EventConsumptionAttributes randomConsumptionAttribute() {
+        return new EventConsumptionAttributes(DEFAULT_INDEX, SortableIdentifier.next());
+    }
 
     @BeforeEach
     public void init() {
@@ -236,17 +247,6 @@ class KeyBasedBatchIndexHandlerTest {
         assertThat(appender.getMessages(), containsString(field));
         assertThat(documentsFromIndex, containsInAnyOrder(expectedDocuments.toArray()));
         assertThat(documentsFromIndex, not(hasItem(notExpectedDocument)));
-    }
-
-    private static ArrayList<IndexDocument> getDocuments(
-            List<IndexDocument> expectedDocuments, IndexDocument notExpectedDocument) {
-        var documents = new ArrayList<>(expectedDocuments);
-        documents.add(notExpectedDocument);
-        return documents;
-    }
-
-    private static EventConsumptionAttributes randomConsumptionAttribute() {
-        return new EventConsumptionAttributes(DEFAULT_INDEX, SortableIdentifier.next());
     }
 
     private InputStream eventStream(String startMarker) throws JsonProcessingException {

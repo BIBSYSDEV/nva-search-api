@@ -28,10 +28,9 @@ import java.io.IOException;
 public class RestHighLevelClientWrapper {
 
     public static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
-    private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS =
             "SearchInfrastructureCredentials";
-
+    private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
     private final RestHighLevelClient client;
 
     public RestHighLevelClientWrapper(RestHighLevelClient client) {
@@ -41,6 +40,16 @@ public class RestHighLevelClientWrapper {
     public RestHighLevelClientWrapper(RestClientBuilder clientBuilder) {
         this(new RestHighLevelClient(clientBuilder));
         logger.debug(INITIAL_LOG_MESSAGE, clientBuilder);
+    }
+
+    public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
+        return prepareRestHighLevelClientWrapperForUri(
+                ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
+    }
+
+    public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(
+            String address) {
+        return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
     }
 
     /**
@@ -86,15 +95,5 @@ public class RestHighLevelClientWrapper {
     @JacocoGenerated
     public BulkResponse bulk(BulkRequest request, RequestOptions requestOption) throws IOException {
         return client.bulk(request, requestOption);
-    }
-
-    public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
-        return prepareRestHighLevelClientWrapperForUri(
-                ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
-    }
-
-    public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(
-            String address) {
-        return new RestHighLevelClientWrapper(RestClient.builder(HttpHost.create(address)));
     }
 }

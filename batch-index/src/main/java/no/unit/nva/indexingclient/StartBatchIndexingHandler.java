@@ -20,9 +20,9 @@ import java.io.OutputStreamWriter;
 
 public class StartBatchIndexingHandler implements RequestStreamHandler {
 
-    private final EventBridgeClient eventBridgeClient;
     public static final String PERSISTED_RESOURCES_PATH =
             config.getString("batch.persistedResourcesPath");
+    private final EventBridgeClient eventBridgeClient;
 
     @JacocoGenerated
     public StartBatchIndexingHandler() {

@@ -44,6 +44,18 @@ class IndexDocumentTest {
                                 new IndexDocument(consumptionAttributes, randomJsonObject()));
     }
 
+    private static ObjectNode randomJsonObject() {
+        String json = randomJson();
+        return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
+    }
+
+    static Stream<Arguments> nameProvider() {
+        return Stream.of(
+                Arguments.of(IMPORT_CANDIDATE, ApplicationConstants.IMPORT_CANDIDATES_INDEX),
+                Arguments.of(TICKET, ApplicationConstants.TICKETS_INDEX),
+                Arguments.of(RESOURCE, ApplicationConstants.RESOURCES_INDEX));
+    }
+
     @Test
     void shouldReturnOpenSearchIndexRequestWithIndexNameSpecifiedByConsumptionAttributes() {
         var consumptionAttributes = randomConsumptionAttributes();
@@ -114,19 +126,7 @@ class IndexDocumentTest {
         assertThrows(Exception.class, invalidIndexDocument::validate);
     }
 
-    private static ObjectNode randomJsonObject() {
-        String json = randomJson();
-        return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
-    }
-
     private EventConsumptionAttributes randomConsumptionAttributes() {
         return new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
-    }
-
-    static Stream<Arguments> nameProvider() {
-        return Stream.of(
-                Arguments.of(IMPORT_CANDIDATE, ApplicationConstants.IMPORT_CANDIDATES_INDEX),
-                Arguments.of(TICKET, ApplicationConstants.TICKETS_INDEX),
-                Arguments.of(RESOURCE, ApplicationConstants.RESOURCES_INDEX));
     }
 }
