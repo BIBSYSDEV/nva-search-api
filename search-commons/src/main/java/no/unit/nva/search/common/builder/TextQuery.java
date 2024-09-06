@@ -24,8 +24,8 @@ import java.util.stream.Stream;
  */
 public class TextQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBuilder<K> {
 
-    public final String TEXT_ALL = "TextAll-";
-    public final String TEXT_ANY = "TextAny-";
+    private static final String TEXT_ALL = "TextAll-";
+    private static final String TEXT_ANY = "TextAny-";
 
     @Override
     protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
