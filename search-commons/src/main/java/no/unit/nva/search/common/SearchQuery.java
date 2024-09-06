@@ -73,6 +73,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected static final Logger logger = LoggerFactory.getLogger(SearchQuery.class);
     public final transient QueryFilter filters;
     private transient MediaType mediaType;
+
     /**
      * Always set at runtime by ParameterValidator.fromRequestInfo(RequestInfo requestInfo); This
      * value only used in debug and tests.
