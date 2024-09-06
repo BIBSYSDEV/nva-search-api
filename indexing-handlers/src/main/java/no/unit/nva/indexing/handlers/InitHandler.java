@@ -30,15 +30,12 @@ public class InitHandler implements RequestHandler<Object, String> {
 
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED. See logs";
-
+    public static final String TICKET_MAPPINGS =
+            IoUtils.stringFromResources(Path.of("ticket_mappings.json"));
     private static final String RESOURCE_MAPPINGS =
             IoUtils.stringFromResources(Path.of("resource_mappings.json"));
     private static final String RESOURCE_SETTINGS =
             IoUtils.stringFromResources(Path.of("resource_settings.json"));
-
-    public static final String TICKET_MAPPINGS =
-            IoUtils.stringFromResources(Path.of("ticket_mappings.json"));
-
     private static final List<IndexRequest> INDEXES =
             List.of(
                     new IndexRequest(RESOURCES_INDEX, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),
@@ -64,15 +61,14 @@ public class InitHandler implements RequestHandler<Object, String> {
         var failState = new AtomicBoolean(false);
 
         INDEXES.forEach(
-                request -> {
-                    attempt(
-                                    () ->
-                                            indexingClient.createIndex(
-                                                    request.getName(),
-                                                    request.getMappings(),
-                                                    request.getSettings()))
-                            .orElse(fail -> handleFailure(failState, fail));
-                });
+                request ->
+                        attempt(
+                                        () ->
+                                                indexingClient.createIndex(
+                                                        request.getName(),
+                                                        request.getMappings(),
+                                                        request.getSettings()))
+                                .orElse(fail -> handleFailure(failState, fail)));
 
         return failState.get() ? FAILED : SUCCESS;
     }

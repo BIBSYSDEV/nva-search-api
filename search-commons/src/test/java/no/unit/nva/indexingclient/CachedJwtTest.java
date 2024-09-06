@@ -20,13 +20,11 @@ import java.util.Date;
 
 class CachedJwtTest {
 
-    CachedJwtProvider cachedJwtProvider;
-
     public static final Instant TOKEN_EXPIRE_AT = Instant.parse("2006-12-03T10:15:30.00Z");
-    private Clock mockedClock;
-
     private final DecodedJWT jwt1 = mock(DecodedJWT.class);
     private final DecodedJWT jwt2 = mock(DecodedJWT.class);
+    CachedJwtProvider cachedJwtProvider;
+    private Clock mockedClock;
 
     @BeforeEach
     void setup() {

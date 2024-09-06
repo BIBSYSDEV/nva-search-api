@@ -67,27 +67,6 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         this.eventBridgeClient = eventBridgeClient;
     }
 
-    @Override
-    protected Void processInput(
-            KeyBatchRequestEvent input,
-            AwsEventBridgeEvent<KeyBatchRequestEvent> event,
-            Context context) {
-        var startMarker = getStartMarker(input);
-        var location = getLocation(input);
-        logger.debug(START_MARKER_MESSAGE, startMarker);
-        var response = inputClient.listObjectsV2(createRequest(startMarker, location));
-        var keys = getKeys(response);
-        writeObject(toKeyString(keys));
-        var lastEvaluatedKey = getLastEvaluatedKey(keys);
-        var eventsResponse = sendEvent(constructRequestEntry(lastEvaluatedKey, context, location));
-        logger.debug(eventsResponse.toString());
-        return null;
-    }
-
-    private String getLocation(KeyBatchRequestEvent event) {
-        return isNotEmptyEvent(event) ? event.location() : DEFAULT_LOCATION;
-    }
-
     private static boolean isNotEmptyEvent(KeyBatchRequestEvent event) {
         return nonNull(event) && nonNull(event.location());
     }
@@ -139,6 +118,27 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
         return EventBridgeClient.builder()
                 .httpClientBuilder(UrlConnectionHttpClient.builder())
                 .build();
+    }
+
+    @Override
+    protected Void processInput(
+            KeyBatchRequestEvent input,
+            AwsEventBridgeEvent<KeyBatchRequestEvent> event,
+            Context context) {
+        var startMarker = getStartMarker(input);
+        var location = getLocation(input);
+        logger.debug(START_MARKER_MESSAGE, startMarker);
+        var response = inputClient.listObjectsV2(createRequest(startMarker, location));
+        var keys = getKeys(response);
+        writeObject(toKeyString(keys));
+        var lastEvaluatedKey = getLastEvaluatedKey(keys);
+        var eventsResponse = sendEvent(constructRequestEntry(lastEvaluatedKey, context, location));
+        logger.debug(eventsResponse.toString());
+        return null;
+    }
+
+    private String getLocation(KeyBatchRequestEvent event) {
+        return isNotEmptyEvent(event) ? event.location() : DEFAULT_LOCATION;
     }
 
     private PutEventsResponse sendEvent(PutEventsRequestEntry event) {

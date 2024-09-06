@@ -19,6 +19,11 @@ public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
         this.clock = clock;
     }
 
+    public static CachedJwtProvider prepareWithAuthenticator(
+            CognitoAuthenticator cognitoAuthenticator) {
+        return new CachedJwtProvider(cognitoAuthenticator, Clock.systemDefaultZone());
+    }
+
     @Override
     protected boolean isExpired() {
         var in5sec = clock.instant().plusMillis(5000);
@@ -32,10 +37,5 @@ public class CachedJwtProvider extends CachedValueProvider<DecodedJWT> {
     @Override
     protected DecodedJWT getNewValue() {
         return cognitoAuthenticator.fetchBearerToken();
-    }
-
-    public static CachedJwtProvider prepareWithAuthenticator(
-            CognitoAuthenticator cognitoAuthenticator) {
-        return new CachedJwtProvider(cognitoAuthenticator, Clock.systemDefaultZone());
     }
 }

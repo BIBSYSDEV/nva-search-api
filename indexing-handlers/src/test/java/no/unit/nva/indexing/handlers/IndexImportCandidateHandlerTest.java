@@ -60,6 +60,15 @@ public class IndexImportCandidateHandlerTest {
     private ByteArrayOutputStream output;
     private FakeIndexingClient indexingClient;
 
+    private static IndexDocument createSampleResource(
+            SortableIdentifier identifierProvider, String indexName) {
+        var randomJson = randomJson();
+        var objectNode =
+                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+        var metadata = new EventConsumptionAttributes(indexName, identifierProvider);
+        return new IndexDocument(metadata, objectNode);
+    }
+
     @BeforeEach
     void init() {
         FakeS3Client fakeS3Client = new FakeS3Client();
@@ -127,15 +136,6 @@ public class IndexImportCandidateHandlerTest {
                         () -> handler.handleRequest(input, output, context));
 
         assertThat(exception.getMessage(), stringContainsInOrder(MISSING_INDEX_NAME_IN_RESOURCE));
-    }
-
-    private static IndexDocument createSampleResource(
-            SortableIdentifier identifierProvider, String indexName) {
-        var randomJson = randomJson();
-        var objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        var metadata = new EventConsumptionAttributes(indexName, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
     }
 
     private FakeIndexingClient indexingClientThrowingException(String expectedErrorMessage) {

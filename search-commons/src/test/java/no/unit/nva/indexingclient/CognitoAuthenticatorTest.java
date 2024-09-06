@@ -42,13 +42,11 @@ import java.util.NoSuchElementException;
 @SuppressWarnings({"unchecked"})
 class CognitoAuthenticatorTest {
 
-    private CognitoAuthenticator cognitoAuthenticator;
-
     final HttpClient httpClient = mock(HttpClient.class);
-
     final HttpResponse<String> okResponse = mock(HttpResponse.class);
     final HttpResponse<String> invalidResponse = mock(HttpResponse.class);
     final HttpResponse<String> errorResponse = mock(HttpResponse.class);
+    private CognitoAuthenticator cognitoAuthenticator;
     private CognitoCredentials credentials;
 
     @BeforeEach

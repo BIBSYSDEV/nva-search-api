@@ -44,6 +44,15 @@ public class DeleteImportCandidateFromIndexHandlerTest {
 
     private DeleteImportCandidateFromIndexHandler handler;
 
+    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
+        String randomJson = randomJson();
+        ObjectNode objectNode =
+                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, identifierProvider);
+        return new IndexDocument(metadata, objectNode);
+    }
+
     @BeforeEach
     void init() {
         indexingClient = new FakeIndexingClient();
@@ -74,15 +83,6 @@ public class DeleteImportCandidateFromIndexHandlerTest {
         Set<JsonNode> allIndexedDocuments =
                 indexingClient.listAllDocuments(IMPORT_CANDIDATES_INDEX);
         assertThat(allIndexedDocuments, not(contains(sampleDocument.resource())));
-    }
-
-    private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
-        String randomJson = randomJson();
-        ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
-        EventConsumptionAttributes metadata =
-                new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, identifierProvider);
-        return new IndexDocument(metadata, objectNode);
     }
 
     private InputStream createEventBridgeEvent(SortableIdentifier resourceIdentifier)

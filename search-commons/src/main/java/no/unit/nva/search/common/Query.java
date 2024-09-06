@@ -14,9 +14,13 @@ import java.util.stream.Stream;
  * @author Stig Norland
  */
 public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
+    private final transient Instant startTime;
     protected transient URI infrastructureApiUri = URI.create(readSearchInfrastructureApiUri());
     protected transient QueryKeys<K> queryKeys;
-    private final transient Instant startTime;
+
+    protected Query() {
+        startTime = Instant.now();
+    }
 
     public abstract Stream<QueryContentWrapper> assemble();
 
@@ -30,10 +34,6 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
             OpenSearchClient<R, Q> queryClient);
 
     protected abstract URI openSearchUri();
-
-    protected Query() {
-        startTime = Instant.now();
-    }
 
     public QueryKeys<K> parameters() {
         return queryKeys;

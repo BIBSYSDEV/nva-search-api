@@ -28,31 +28,6 @@ import java.util.stream.Stream;
  * @author Stig Norland
  */
 public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
-    String asCamelCase();
-
-    String asLowerCase();
-
-    Float fieldBoost();
-
-    /**
-     * @return {@link ParameterKind}
-     */
-    ParameterKind fieldType();
-
-    String fieldPattern();
-
-    String valuePattern();
-
-    ValueEncoding valueEncoding();
-
-    Stream<String> searchFields(boolean... isKeyWord);
-
-    FieldOperator searchOperator();
-
-    String errorMessage();
-
-    K subQuery();
-
     static Predicate<ParameterKey<?>> equalTo(String name) {
         return key -> name.matches(key.fieldPattern());
     }
@@ -102,4 +77,29 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
         var result = !(parameterKind.equals(KEYWORD) || parameterKind.equals(CUSTOM));
         return isKeyWord.length == 1 ? !isKeyWord[0] : result;
     }
+
+    String asCamelCase();
+
+    String asLowerCase();
+
+    Float fieldBoost();
+
+    /**
+     * @return {@link ParameterKind}
+     */
+    ParameterKind fieldType();
+
+    String fieldPattern();
+
+    String valuePattern();
+
+    ValueEncoding valueEncoding();
+
+    Stream<String> searchFields(boolean... isKeyWord);
+
+    FieldOperator searchOperator();
+
+    String errorMessage();
+
+    K subQuery();
 }

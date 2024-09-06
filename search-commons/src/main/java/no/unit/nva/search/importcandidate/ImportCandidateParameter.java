@@ -169,6 +169,23 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
         this.paramkind = kind;
     }
 
+    public static ImportCandidateParameter keyFromString(String paramName) {
+        var result =
+                Arrays.stream(ImportCandidateParameter.values())
+                        .filter(ImportCandidateParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(ImportCandidateParameter f) {
+        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -232,22 +249,5 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static ImportCandidateParameter keyFromString(String paramName) {
-        var result =
-                Arrays.stream(ImportCandidateParameter.values())
-                        .filter(ImportCandidateParameter::ignoreInvalidKey)
-                        .filter(ParameterKey.equalTo(paramName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(ImportCandidateParameter f) {
-        return f.ordinal() > IGNORE_PARAMETER_INDEX && f.ordinal() < SEARCH_ALL.ordinal();
     }
 }

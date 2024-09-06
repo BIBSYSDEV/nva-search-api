@@ -31,11 +31,6 @@ public class AuthenticatedOpenSearchClientWrapper {
         this.cachedJwtProvider = cachedJwtProvider;
     }
 
-    protected RequestOptions getRequestOptions() {
-        var token = "Bearer " + cachedJwtProvider.getValue().getToken();
-        return RequestOptions.DEFAULT.toBuilder().addHeader(AUTHORIZATION, token).build();
-    }
-
     protected static CognitoCredentials createCognitoCredentials(SecretsReader secretsReader) {
         var credentials =
                 secretsReader.fetchClassSecret(
@@ -43,5 +38,10 @@ public class AuthenticatedOpenSearchClientWrapper {
         var uri = URI.create(ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI);
 
         return new CognitoCredentials(credentials::getUsername, credentials::getPassword, uri);
+    }
+
+    protected RequestOptions getRequestOptions() {
+        var token = "Bearer " + cachedJwtProvider.getValue().getToken();
+        return RequestOptions.DEFAULT.toBuilder().addHeader(AUTHORIZATION, token).build();
     }
 }

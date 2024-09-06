@@ -34,9 +34,9 @@ import java.util.stream.Stream;
 
 class UserSettingsClientTest {
 
-    private static UserSettingsClient userSettingsClient;
-    private static final Logger logger = LoggerFactory.getLogger(UserSettingsClientTest.class);
     public static final String SAMPLE_USER_SETTINGS_RESPONSE = "user_settings.json";
+    private static final Logger logger = LoggerFactory.getLogger(UserSettingsClientTest.class);
+    private static UserSettingsClient userSettingsClient;
 
     @BeforeAll
     public static void setUp() {
@@ -50,6 +50,19 @@ class UserSettingsClientTest {
                 .thenReturn(mockedFutureFailed())
                 .thenReturn(mockedFutureHttpResponse(path))
                 .thenReturn(mockedFutureHttpResponse(path));
+    }
+
+    static Stream<URI> uriProvider() {
+        return Stream.of(
+                URI.create(
+                        "https://example.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
+                URI.create(
+                        "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
+                URI.create(
+                        "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
+                                + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(
+                        "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
     }
 
     @ParameterizedTest
@@ -71,18 +84,5 @@ class UserSettingsClientTest {
                                     return List.<String>of();
                                 });
         assertNotNull(promotedPublications);
-    }
-
-    static Stream<URI> uriProvider() {
-        return Stream.of(
-                URI.create(
-                        "https://example.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
-                URI.create(
-                        "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
-                URI.create(
-                        "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
-                            + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
-                URI.create(
-                        "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
     }
 }

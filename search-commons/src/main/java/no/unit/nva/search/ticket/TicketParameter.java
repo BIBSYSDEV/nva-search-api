@@ -185,6 +185,24 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
         this.paramkind = kind;
     }
 
+    public static TicketParameter keyFromString(String paramName) {
+        var result =
+                Arrays.stream(TicketParameter.values())
+                        .filter(TicketParameter::ignoreInvalidKey)
+                        .filter(ParameterKey.equalTo(paramName))
+                        .collect(Collectors.toSet());
+        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
+    }
+
+    private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
+    }
+
+    private static boolean isSearchField(TicketParameter enumParameter) {
+        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
+                && enumParameter.ordinal() < SEARCH_ALL.ordinal();
+    }
+
     @Override
     public String asCamelCase() {
         return CaseUtils.toCamelCase(this.name(), false, CHAR_UNDERSCORE);
@@ -248,23 +266,5 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
                 .add(String.valueOf(ordinal()))
                 .add(asCamelCase())
                 .toString();
-    }
-
-    public static TicketParameter keyFromString(String paramName) {
-        var result =
-                Arrays.stream(TicketParameter.values())
-                        .filter(TicketParameter::ignoreInvalidKey)
-                        .filter(ParameterKey.equalTo(paramName))
-                        .collect(Collectors.toSet());
-        return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
-    }
-
-    private static boolean ignoreInvalidKey(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX;
-    }
-
-    private static boolean isSearchField(TicketParameter enumParameter) {
-        return enumParameter.ordinal() > IGNORE_PARAMETER_INDEX
-                && enumParameter.ordinal() < SEARCH_ALL.ordinal();
     }
 }

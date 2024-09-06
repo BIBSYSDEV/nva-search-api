@@ -24,6 +24,10 @@ public class AggregationsValidator {
         this.report = new ArrayList<>();
     }
 
+    private static boolean isNotValidNode(JsonNode node) {
+        return !node.isObject();
+    }
+
     public String getReport() {
         return String.format(
                 REPORT_TEMPLATE,
@@ -39,10 +43,6 @@ public class AggregationsValidator {
                         PUBLICATION_INSTANCE_POINTER)
                 .forEach(this::validateNode);
         return report.isEmpty();
-    }
-
-    private static boolean isNotValidNode(JsonNode node) {
-        return !node.isObject();
     }
 
     private void validateNode(String value) {

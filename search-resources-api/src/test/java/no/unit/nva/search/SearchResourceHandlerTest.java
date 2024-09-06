@@ -64,6 +64,29 @@ class SearchResourceHandlerTest {
     private ByteArrayOutputStream outputStream;
     private ResourceClient mockedSearchClient;
 
+    private static ExportCsv csvWithFullDate() {
+        var id = randomUri().toString();
+        var title = randomString();
+        var type = "AcademicArticle";
+        var contributors = List.of(randomString(), randomString(), randomString());
+        var date = "2022-01-22";
+
+        return new ExportCsv()
+                .withId(id)
+                .withMainTitle(title)
+                .withPublicationInstance(type)
+                .withPublicationDate(date)
+                .withContributors(String.join(COMMA, contributors));
+    }
+
+    public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
+        return Stream.of("text/*", Words.TEXT_CSV);
+    }
+
+    public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {
+        return Stream.of(null, "application/json", "application/json; charset=utf-8");
+    }
+
     @BeforeEach
     void setUp() {
 
@@ -87,21 +110,6 @@ class SearchResourceHandlerTest {
         assertThat(
                 gatewayResponse.getHeaders().get("Content-Type"),
                 is(equalTo("text/csv; charset=utf-8")));
-    }
-
-    private static ExportCsv csvWithFullDate() {
-        var id = randomUri().toString();
-        var title = randomString();
-        var type = "AcademicArticle";
-        var contributors = List.of(randomString(), randomString(), randomString());
-        var date = "2022-01-22";
-
-        return new ExportCsv()
-                .withId(id)
-                .withMainTitle(title)
-                .withPublicationInstance(type)
-                .withPublicationDate(date)
-                .withContributors(String.join(COMMA, contributors));
     }
 
     private ExportCsv csvWithYearOnly() {
@@ -271,13 +279,5 @@ class SearchResourceHandlerTest {
         var body = objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
 
         when(mockedSearchClient.doSearch(any())).thenReturn(body);
-    }
-
-    public static Stream<String> acceptHeaderValuesProducingTextCsvProvider() {
-        return Stream.of("text/*", Words.TEXT_CSV);
-    }
-
-    public static Stream<String> acceptHeaderValuesProducingApplicationJsonProvider() {
-        return Stream.of(null, "application/json", "application/json; charset=utf-8");
     }
 }
