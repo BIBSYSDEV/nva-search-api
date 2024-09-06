@@ -48,9 +48,48 @@ import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.PART_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
+import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_FIELDS;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
+import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_DATE_YEAR;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_PUBLICATION_PAGES;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_CONTEXT_REFERENCE;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_JOURNAL;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_PUBLICATION_CONTEXT_ISSN;
+import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_REFERENCE_SERIES;
+import static no.unit.nva.search.resource.Constants.ENTITY_TAGS;
+import static no.unit.nva.search.resource.Constants.FILES_STATUS_KEYWORD;
+import static no.unit.nva.search.resource.Constants.FUNDINGS_IDENTIFIER_FUNDINGS_SOURCE_IDENTIFIER;
+import static no.unit.nva.search.resource.Constants.FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS;
+import static no.unit.nva.search.resource.Constants.FUNDING_IDENTIFIER_KEYWORD;
+import static no.unit.nva.search.resource.Constants.HANDLE_KEYWORD;
+import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
+import static no.unit.nva.search.resource.Constants.PARENT_PUBLICATION_ID;
+import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_ISBN_LIST;
+import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_PUBLISHER;
+import static no.unit.nva.search.resource.Constants.PUBLICATION_CONTEXT_TYPE_KEYWORD;
+import static no.unit.nva.search.resource.Constants.PUBLICATION_INSTANCE_TYPE;
+import static no.unit.nva.search.resource.Constants.PUBLISHER_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.REFERENCE_DOI_KEYWORD;
+import static no.unit.nva.search.resource.Constants.REFERENCE_PUBLICATION_CONTEXT_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_AFFILIATION_KEYWORD;
+import static no.unit.nva.search.resource.Constants.RESOURCE_OWNER_OWNER_KEYWORD;
+import static no.unit.nva.search.resource.Constants.SCIENTIFIC_INDEX_STATUS_KEYWORD;
+import static no.unit.nva.search.resource.Constants.SCIENTIFIC_INDEX_YEAR;
+import static no.unit.nva.search.resource.Constants.SCIENTIFIC_LEVEL_SEARCH_FIELD;
+import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
+import static no.unit.nva.search.resource.Constants.SUBJECTS;
+import static no.unit.nva.search.resource.Constants.TOP_LEVEL_ORG_ID;
 
 import static java.util.Objects.nonNull;
-import static no.unit.nva.search.resource.Constants.*;
 
 import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
@@ -81,7 +120,6 @@ import java.util.stream.Stream;
  */
 public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
-    STATISTICS(IGNORED),
     // Parameters used for filtering
     ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
     ABSTRACT_HAS_CHILDREN(HAS_PARTS, ALL_OF, ABSTRACT),
@@ -128,6 +166,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
+    HANDLE_HAS_PARENT(PART_OF, ALL_OF, HANDLE),
     HANDLE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, HANDLE_KEYWORD, PHI),
     FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
@@ -195,6 +234,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     SERIES(FUZZY_KEYWORD, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    STATISTICS(IGNORED),
     STATUS(KEYWORD, ANY_OF, STATUS_KEYWORD),
     STATUS_NOT(KEYWORD, NOT_ANY_OF, STATUS_KEYWORD),
     TAGS(TEXT, ALL_OF, ENTITY_TAGS),

@@ -13,8 +13,10 @@ public final class Words {
 
     public static final int NAME_AND_SORT_LENGTH = 2;
 
-    public static final String POST_FILTER = "withAppliedFilter";
-    public static final String ROOT = "root";
+    public static final boolean KEYWORD_TRUE = true;
+    public static final boolean KEYWORD_FALSE = false;
+
+    public static final char CHAR_UNDERSCORE = '_';
 
     public static final String ABSTRACT = "abstract";
     public static final String ADDITIONAL_IDENTIFIERS = "additionalIdentifiers";
@@ -25,14 +27,13 @@ public final class Words {
     public static final String ASTERISK = "*";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
-    public static final char CHAR_UNDERSCORE = '_';
-
     public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
+    public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
     public static final String CRISTIN_AS_TYPE = "Cristin";
@@ -41,13 +42,13 @@ public final class Words {
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
     public static final String EQUAL = "=";
+    public static final String FILES = "files";
+    public static final String FILES_STATUS = "filesStatus";
     public static final String FROM = "from";
-    public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
     public static final String FUNDINGS = "fundings";
     public static final String FUNDING_SOURCE = "fundingSource";
     public static final String HANDLE = "handle";
-    public static final String FILES = "files";
-    public static final String FILES_STATUS = "filesStatus";
+    public static final String HAS_PARTS = "hasParts";
     public static final String HTTPS = "https://";
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
@@ -62,6 +63,7 @@ public final class Words {
     public static final String LANGUAGE = "language";
     public static final String LICENSE = "license";
     public static final String MAIN_TITLE = "mainTitle";
+    public static final String MESSAGES = "messages";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
     public static final String NONE = "none";
@@ -72,8 +74,10 @@ public final class Words {
     public static final String OWNER_AFFILIATION = "ownerAffiliation";
     public static final String PAGE = "page";
     public static final String PAGES = "pages";
+    public static final String PART_OF = "partOf";
     public static final String PIPE = "|";
     public static final String PLUS = "+";
+    public static final String POST_FILTER = "withAppliedFilter";
     public static final String PREFIX = "(";
     public static final String PRINT_ISSN = "printIssn";
     public static final String PROJECTS_ID = "projects.id.keyword";
@@ -81,7 +85,6 @@ public final class Words {
     public static final String PUBLICATION_DATE = "publicationDate";
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String PUBLISHED_DATE = "publishedDate";
-    public static final String SCIENTIFIC_VALUE = "scientificValue";
     public static final String PUBLISHER = "publisher";
     public static final String Q = "q";
     public static final String QUOTE = "'";
@@ -90,10 +93,12 @@ public final class Words {
     public static final String RESOURCES = "resources";
     public static final String RESOURCE_OWNER = "resourceOwner";
     public static final String ROLE = "role";
+    public static final String ROOT = "root";
     public static final String SAMI_CODE = "sme";
     public static final String SCIENTIFIC_INDEX = "scientificIndex";
-    public static final String SCORE = "_score";
+    public static final String SCIENTIFIC_VALUE = "scientificValue";
     public static final String SCOPUS_AS_TYPE = "Scopus";
+    public static final String SCORE = "_score";
     public static final String SEARCH = "_search";
     public static final String SEARCH_AFTER = "SEARCH_AFTER";
     public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS =
@@ -116,15 +121,9 @@ public final class Words {
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
+    public static final String VIEWED_BY = "viewedBy";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
-    public static final String MESSAGES = "messages";
-    public static final String VIEWED_BY = "viewedBy";
-    public static final String HAS_PARTS = "hasParts";
-    public static final String PART_OF = "partOf";
-
-    public static final boolean KEYWORD_TRUE = true;
-    public static final boolean KEYWORD_FALSE = false;
 
     @JacocoGenerated
     public Words() {}

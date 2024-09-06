@@ -127,10 +127,6 @@ class ResourceClientTest {
     public static final String ONE_MINUTE = "1m";
     public static final String IDENTIFIER = "identifier";
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
-    private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
-    public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
 
