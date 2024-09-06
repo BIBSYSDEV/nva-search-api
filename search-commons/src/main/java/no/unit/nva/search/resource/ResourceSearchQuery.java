@@ -77,10 +77,10 @@ import java.util.stream.Stream;
 @SuppressWarnings("PMD.GodClass")
 public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
+    private final ResourceStreamBuilders streamBuilders;
     private final ResourceFilter filterBuilder;
     private final Map<String, String> additionalQueryParameters = new HashMap<>();
     private UserSettingsClient userSettingsClient;
-    private final ResourceStreamBuilders streamBuilders;
 
     private ResourceSearchQuery() {
         super();

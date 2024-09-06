@@ -62,15 +62,14 @@ public class InitHandler implements RequestHandler<Object, String> {
         var failState = new AtomicBoolean(false);
 
         INDEXES.forEach(
-                request -> {
-                    attempt(
-                                    () ->
-                                            indexingClient.createIndex(
-                                                    request.getName(),
-                                                    request.getMappings(),
-                                                    request.getSettings()))
-                            .orElse(fail -> handleFailure(failState, fail));
-                });
+                request ->
+                        attempt(
+                                        () ->
+                                                indexingClient.createIndex(
+                                                        request.getName(),
+                                                        request.getMappings(),
+                                                        request.getSettings()))
+                                .orElse(fail -> handleFailure(failState, fail)));
 
         return failState.get() ? FAILED : SUCCESS;
     }
