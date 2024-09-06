@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class LogAppender {
+public final class LogAppender {
 
     @JacocoGenerated
     private LogAppender() {}
