@@ -1,6 +1,14 @@
 package no.unit.nva.indexingclient.models;
 
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.SHARD_ID;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
+import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.constants.Words.BODY;
+import static no.unit.nva.constants.Words.CONSUMPTION_ATTRIBUTES;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.TICKETS;
+import static no.unit.nva.indexingclient.models.Constants.SHARD_ID;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -10,8 +18,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.commons.json.JsonSerializable;
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.constants.ApplicationConstants;
 
 import nva.commons.core.StringUtils;
 
@@ -26,16 +32,12 @@ public record IndexDocument(
         @JsonProperty(BODY) JsonNode resource)
         implements JsonSerializable {
 
-    public static final String BODY = "body";
-    public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
-    public static final String MISSING_IDENTIFIER_IN_RESOURCE = "Missing identifier in resource";
-    public static final String MISSING_INDEX_NAME_IN_RESOURCE = "Missing index name in resource";
     static final String IMPORT_CANDIDATE = "ImportCandidate";
     static final String TICKET = "Ticket";
     static final String RESOURCE = "Resource";
 
     public static IndexDocument fromJsonString(String json) {
-        return attempt(() -> IndexingClient.objectMapper.readValue(json, IndexDocument.class))
+        return attempt(() -> objectMapperWithEmpty.readValue(json, IndexDocument.class))
                 .orElseThrow();
     }
 
@@ -48,13 +50,13 @@ public record IndexDocument(
     @JsonIgnore
     public String getType() {
         var indexName = consumptionAttributes.index();
-        if (ApplicationConstants.RESOURCES_INDEX.equals(indexName)) {
+        if (RESOURCES.equals(indexName)) {
             return RESOURCE;
         }
-        if (ApplicationConstants.TICKETS_INDEX.equals(indexName)) {
+        if (TICKETS.equals(indexName)) {
             return TICKET;
         }
-        if (ApplicationConstants.IMPORT_CANDIDATES_INDEX.equals(indexName)) {
+        if (IMPORT_CANDIDATES_INDEX.equals(indexName)) {
             return IMPORT_CANDIDATE;
         } else {
             throw new IllegalArgumentException("Unknown type!");
@@ -83,7 +85,6 @@ public record IndexDocument(
     }
 
     private String serializeResource() {
-        return attempt(() -> IndexingClient.objectMapper.writeValueAsString(resource))
-                .orElseThrow();
+        return attempt(() -> objectMapperWithEmpty.writeValueAsString(resource)).orElseThrow();
     }
 }

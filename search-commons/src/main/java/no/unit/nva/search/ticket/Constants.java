@@ -1,20 +1,20 @@
 package no.unit.nva.search.ticket;
 
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.MAIN_TITLE;
+import static no.unit.nva.constants.Words.MESSAGES;
+import static no.unit.nva.constants.Words.MODIFIED_DATE;
+import static no.unit.nva.constants.Words.OWNER;
+import static no.unit.nva.constants.Words.PART_OF;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.constants.Words.TYPE;
+import static no.unit.nva.constants.Words.VIEWED_BY;
 import static no.unit.nva.search.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search.common.constant.Functions.filterBranchBuilder;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.ID;
-import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.MAIN_TITLE;
-import static no.unit.nva.search.common.constant.Words.MESSAGES;
-import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
-import static no.unit.nva.search.common.constant.Words.OWNER;
-import static no.unit.nva.search.common.constant.Words.PART_OF;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.STATUS;
-import static no.unit.nva.search.common.constant.Words.TYPE;
-import static no.unit.nva.search.common.constant.Words.VIEWED_BY;
 
 import nva.commons.core.JacocoGenerated;
 

@@ -1,4 +1,4 @@
-package no.unit.nva.search.common.constant;
+package no.unit.nva.constants;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -53,6 +53,13 @@ public final class Words {
     public static final String ID = "id";
     public static final String IDENTIFIER = "identifier";
     public static final String IDENTITY = "identity";
+    public static final String IMPORT_CANDIDATES_INDEX = "import-candidates";
+    public static final String DOIREQUESTS_INDEX = "doirequests";
+    public static final String MESSAGES_INDEX = "messages";
+    public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
+    public static final String BODY = "body";
+    public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
+
     public static final String ISBN_LIST = "isbnList";
     public static final String ISBN_PREFIX = "isbnPrefix";
     public static final String JOURNAL = "journal";

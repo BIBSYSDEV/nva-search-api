@@ -1,10 +1,10 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.TICKETS_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.indexingclient.models.IndexDocument.MISSING_IDENTIFIER_IN_RESOURCE;
-import static no.unit.nva.indexingclient.models.IndexDocument.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
+import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
@@ -29,7 +29,6 @@ import no.unit.nva.events.models.EventReference;
 import no.unit.nva.identifiers.SortableIdentifier;
 import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexing.testutils.FakeSqsClient;
-import no.unit.nva.indexingclient.constants.ApplicationConstants;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.S3Driver;
@@ -55,14 +54,14 @@ import java.util.Set;
 public class IndexResourceHandlerTest {
 
     public static final IndexDocument SAMPLE_RESOURCE =
-            createSampleResource(SortableIdentifier.next(), ApplicationConstants.RESOURCES_INDEX);
+            createSampleResource(SortableIdentifier.next(), RESOURCES);
     public static final IndexDocument SAMPLE_TICKET =
-            createSampleResource(SortableIdentifier.next(), TICKETS_INDEX);
+            createSampleResource(SortableIdentifier.next(), TICKETS);
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String IGNORED_TOPIC = "ignoredValue";
 
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_IDENTIFIER =
-            createSampleResource(null, ApplicationConstants.RESOURCES_INDEX);
+            createSampleResource(null, RESOURCES);
     private static final IndexDocument SAMPLE_RESOURCE_MISSING_INDEX_NAME =
             createSampleResource(SortableIdentifier.next(), null);
     private S3Driver resourcesS3Driver;
@@ -76,7 +75,8 @@ public class IndexResourceHandlerTest {
             SortableIdentifier identifierProvider, String indexName) {
         String randomJson = randomJson();
         ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+                attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(randomJson))
+                        .orElseThrow();
         EventConsumptionAttributes metadata =
                 new EventConsumptionAttributes(indexName, identifierProvider);
         return new IndexDocument(metadata, objectNode);

@@ -1,8 +1,8 @@
 package no.unit.nva.search.common;
 
+import static no.unit.nva.constants.Words.PLUS;
+import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
-import static no.unit.nva.search.common.constant.Words.PLUS;
-import static no.unit.nva.search.common.constant.Words.SPACE;
 
 import static java.util.Objects.nonNull;
 

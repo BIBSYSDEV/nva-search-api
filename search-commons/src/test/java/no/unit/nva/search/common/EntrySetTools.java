@@ -1,7 +1,7 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.search.common.constant.Words.AMPERSAND;
-import static no.unit.nva.search.common.constant.Words.EQUAL;
+import static no.unit.nva.constants.Words.AMPERSAND;
+import static no.unit.nva.constants.Words.EQUAL;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;

@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.KEYWORD_TRUE;
+import static no.unit.nva.constants.Words.KEYWORD_TRUE;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -23,8 +23,13 @@ public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractB
     public static final String KEYWORD_ALL = "KeywordAll-";
     public static final String KEYWORD_ANY = "KeywordAny-";
 
+    private static <K extends Enum<K> & ParameterKey<K>> TermQueryBuilder getTermQueryBuilder(
+            K key, String value, String searchField) {
+        return new TermQueryBuilder(searchField, value).queryName(KEYWORD_ALL + key.asCamelCase());
+    }
+
     @Override
-    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return buildMatchAnyKeywordStream(key, values)
                 .flatMap(builder -> Functions.queryToEntry(key, builder));
     }
@@ -42,11 +47,8 @@ public class KeywordQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractB
                                 key.searchFields(KEYWORD_TRUE)
                                         .map(
                                                 searchField ->
-                                                        new TermQueryBuilder(searchField, value)
-                                                                .queryName(
-                                                                        KEYWORD_ALL
-                                                                                + key
-                                                                                        .asCamelCase())));
+                                                        getTermQueryBuilder(
+                                                                key, value, searchField)));
     }
 
     private Stream<DisMaxQueryBuilder> buildMatchAnyKeywordStream(K key, String... values) {

@@ -1,4 +1,4 @@
-package no.unit.nva.search.common.constant;
+package no.unit.nva.constants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
@@ -6,6 +6,7 @@ import com.google.common.net.MediaType;
 import no.unit.nva.commons.json.JsonUtils;
 
 import nva.commons.apigateway.MediaTypes;
+import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.URI;
@@ -17,6 +18,9 @@ import java.util.List;
 public final class Defaults {
 
     public static final ObjectMapper objectMapperWithEmpty = JsonUtils.dtoObjectMapper;
+    public static final ObjectMapper objectMapperNoEmpty = JsonUtils.dynamoObjectMapper;
+    public static final Environment ENVIRONMENT = new Environment();
+
     public static final String DEFAULT_OFFSET = "0";
     public static final String DEFAULT_VALUE_PER_PAGE = "15";
 

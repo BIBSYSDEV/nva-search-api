@@ -1,6 +1,11 @@
 package no.unit.nva.indexingclient.models;
 
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.ErrorMessages.MISSING_IDENTIFIER_IN_RESOURCE;
+import static no.unit.nva.constants.ErrorMessages.MISSING_INDEX_NAME_IN_RESOURCE;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexingclient.models.IndexDocument.IMPORT_CANDIDATE;
 import static no.unit.nva.indexingclient.models.IndexDocument.RESOURCE;
 import static no.unit.nva.indexingclient.models.IndexDocument.TICKET;
@@ -20,7 +25,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import no.unit.nva.identifiers.SortableIdentifier;
-import no.unit.nva.indexingclient.constants.ApplicationConstants;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,14 +50,14 @@ class IndexDocumentTest {
 
     private static ObjectNode randomJsonObject() {
         String json = randomJson();
-        return attempt(() -> (ObjectNode) objectMapper.readTree(json)).orElseThrow();
+        return attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(json)).orElseThrow();
     }
 
     static Stream<Arguments> nameProvider() {
         return Stream.of(
-                Arguments.of(IMPORT_CANDIDATE, ApplicationConstants.IMPORT_CANDIDATES_INDEX),
-                Arguments.of(TICKET, ApplicationConstants.TICKETS_INDEX),
-                Arguments.of(RESOURCE, ApplicationConstants.RESOURCES_INDEX));
+                Arguments.of(IMPORT_CANDIDATE, IMPORT_CANDIDATES_INDEX),
+                Arguments.of(TICKET, TICKETS),
+                Arguments.of(RESOURCE, RESOURCES));
     }
 
     @Test
@@ -67,7 +71,7 @@ class IndexDocumentTest {
     @Test
     void shouldReturnObjectWhenInputIsValidJsonString() throws JsonProcessingException {
         var indexDocument = new IndexDocument(randomConsumptionAttributes(), randomJsonObject());
-        var json = objectMapper.writeValueAsString(indexDocument);
+        var json = objectMapperWithEmpty.writeValueAsString(indexDocument);
         var deserialized = IndexDocument.fromJsonString(json);
         assertThat(deserialized, is(equalTo(indexDocument)));
     }
@@ -86,8 +90,7 @@ class IndexDocumentTest {
         var consumptionAttributes = new EventConsumptionAttributes(null, SortableIdentifier.next());
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         var error = assertThrows(RuntimeException.class, indexDocument::getIndexName);
-        assertThat(
-                error.getMessage(), containsString(IndexDocument.MISSING_INDEX_NAME_IN_RESOURCE));
+        assertThat(error.getMessage(), containsString(MISSING_INDEX_NAME_IN_RESOURCE));
     }
 
     @Test
@@ -95,8 +98,7 @@ class IndexDocumentTest {
         var consumptionAttributes = new EventConsumptionAttributes(randomString(), null);
         var indexDocument = new IndexDocument(consumptionAttributes, randomJsonObject());
         var error = assertThrows(RuntimeException.class, indexDocument::getDocumentIdentifier);
-        assertThat(
-                error.getMessage(), containsString(IndexDocument.MISSING_IDENTIFIER_IN_RESOURCE));
+        assertThat(error.getMessage(), containsString(MISSING_IDENTIFIER_IN_RESOURCE));
     }
 
     @Test

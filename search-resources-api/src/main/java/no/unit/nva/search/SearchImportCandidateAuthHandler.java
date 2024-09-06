@@ -1,6 +1,6 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
+import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.importcandidate.ImportCandidateClient.defaultClient;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.FROM;

@@ -2,9 +2,8 @@ package no.unit.nva.indexingclient;
 
 import static no.unit.nva.LogAppender.getAppender;
 import static no.unit.nva.LogAppender.logToString;
-import static no.unit.nva.indexingclient.BatchIndexingConstants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.indexingclient.Constants.NUMBER_OF_FILES_PER_EVENT_ENVIRONMENT_VARIABLE;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
@@ -102,7 +101,9 @@ public class EventBasedBatchIndexerTest extends BatchIndexTest {
         indexer.handleRequest(eventStream(request), outputStream, CONTEXT);
 
         var actualIdentifiersOfNonIndexedEntries =
-                Arrays.stream(objectMapper.readValue(outputStream.toString(), String[].class))
+                Arrays.stream(
+                                objectMapperWithEmpty.readValue(
+                                        outputStream.toString(), String[].class))
                         .toList();
         var expectedIdentifiesOfNonIndexedEntries =
                 Arrays.stream(extractIdentifiersFromFailingFiles(filesFailingToBeIndexed)).toList();

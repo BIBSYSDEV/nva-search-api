@@ -1,8 +1,8 @@
 package no.unit.nva.search.common.constant;
 
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.SPACE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.SPACE;
 
 import nva.commons.core.JacocoGenerated;
 

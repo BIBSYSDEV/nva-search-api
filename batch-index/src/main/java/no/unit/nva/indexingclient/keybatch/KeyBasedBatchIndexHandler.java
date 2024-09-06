@@ -1,7 +1,11 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultS3Client;
-import static no.unit.nva.indexingclient.EmitEventUtils.MANDATORY_UNUSED_SUBTOPIC;
+import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
+import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
+import static no.unit.nva.indexingclient.Constants.TOPIC;
+import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -16,7 +20,6 @@ import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.s3.S3Driver;
 
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.attempt.Failure;
 import nva.commons.core.paths.UnixPath;
@@ -43,21 +46,19 @@ import java.util.stream.Stream;
 
 public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent, Void> {
 
-    public static final String LINE_BREAK = "\n";
-    public static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
-    public static final Environment ENVIRONMENT = new Environment();
-    public static final String DEFAULT_PAYLOAD = "3291456";
-    public static final int MAX_PAYLOAD =
-            Integer.parseInt(new Environment().readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
-    public static final String EVENT_BUS = ENVIRONMENT.readEnv("EVENT_BUS");
-    public static final String TOPIC = ENVIRONMENT.readEnv("TOPIC");
-    public static final String DEFAULT_INDEX = "resources";
-    public static final String PROCESSING_BATCH_MESSAGE = "Processing batch: {}";
-    public static final String BULK_HAS_FAILED_MESSAGE = "Bulk has failed: ";
     private static final Logger logger = LoggerFactory.getLogger(KeyBasedBatchIndexHandler.class);
+
+    private static final String LINE_BREAK = "\n";
+    private static final String LAST_CONSUMED_BATCH = "Last consumed batch: {}";
+    private static final String DEFAULT_PAYLOAD = "3291456";
+    private static final int MAX_PAYLOAD =
+            Integer.parseInt(ENVIRONMENT.readEnvOpt("MAX_PAYLOAD").orElse(DEFAULT_PAYLOAD));
+    private static final String PROCESSING_BATCH_MESSAGE = "Processing batch: {}";
+    private static final String BULK_HAS_FAILED_MESSAGE = "Bulk has failed: ";
     private static final String RESOURCES_BUCKET =
             ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
     private static final String KEY_BATCHES_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
+
     private final IndexingClient indexingClient;
     private final S3Client s3ResourcesClient;
     private final S3Client s3BatchesClient;
@@ -107,7 +108,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private static boolean isResource(IndexDocument document) {
-        return DEFAULT_INDEX.equals(document.getIndexName());
+        return RESOURCES.equals(document.getIndexName());
     }
 
     @Override
@@ -167,6 +168,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
                 .toList();
     }
 
+    @JacocoGenerated
     private void sendDocumentsToIndexInBatches(List<IndexDocument> indexDocuments) {
         var documents = new ArrayList<IndexDocument>();
         var totalSize = 0;
@@ -197,6 +199,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
         return List.of();
     }
 
+    @JacocoGenerated
     private List<BulkResponse> indexBatch(List<IndexDocument> indexDocuments) {
         return indexingClient.batchInsert(indexDocuments.stream()).toList();
     }

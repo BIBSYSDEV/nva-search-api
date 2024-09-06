@@ -1,6 +1,6 @@
 package no.unit.nva;
 
-import static no.unit.nva.search.common.constant.Words.SPACE;
+import static no.unit.nva.constants.Words.SPACE;
 
 import static java.util.Objects.nonNull;
 

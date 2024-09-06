@@ -1,16 +1,16 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.EQUAL;
+import static no.unit.nva.constants.Words.STATUS;
+import static no.unit.nva.constants.Words.TICKETS;
+import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
 import static no.unit.nva.search.common.Containers.indexingClient;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.EQUAL;
-import static no.unit.nva.search.common.constant.Words.STATUS;
-import static no.unit.nva.search.common.constant.Words.TICKETS;
-import static no.unit.nva.search.common.constant.Words.TYPE;
 import static no.unit.nva.search.ticket.Constants.PUBLICATION_STATUS;
 import static no.unit.nva.search.ticket.TicketParameter.AGGREGATION;
 import static no.unit.nva.search.ticket.TicketParameter.BY_USER_PENDING;
@@ -44,7 +44,7 @@ import static java.util.Objects.nonNull;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import no.unit.nva.commons.json.JsonUtils;
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.ticket.TicketClient;
 import no.unit.nva.search.ticket.TicketSearchQuery;
 import no.unit.nva.search.ticket.TicketStatus;

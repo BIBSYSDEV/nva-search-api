@@ -16,6 +16,7 @@ import no.unit.nva.search.importcandidate.ImportCandidateSort;
 import no.unit.nva.search.resource.ResourceParameter;
 import no.unit.nva.search.resource.ResourceSort;
 import no.unit.nva.search.ticket.TicketParameter;
+import no.unit.nva.search.ticket.TicketSort;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -53,6 +54,11 @@ class UntouchedHeroesTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test"));
+    }
+
+    @Test
+    void checkTicketSort() {
+        assertNotNull(TicketSort.STATUS.asCamelCase());
     }
 
     @Test

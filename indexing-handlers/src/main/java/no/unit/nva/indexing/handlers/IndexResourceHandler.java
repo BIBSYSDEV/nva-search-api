@@ -1,5 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -11,7 +13,6 @@ import no.unit.nva.events.models.EventReference;
 import no.unit.nva.indexing.utils.RecoveryEntry;
 import no.unit.nva.indexingclient.IndexQueueClient;
 import no.unit.nva.indexingclient.IndexingClient;
-import no.unit.nva.indexingclient.IndexingConfig;
 import no.unit.nva.indexingclient.models.IndexDocument;
 import no.unit.nva.indexingclient.models.QueueClient;
 import no.unit.nva.s3.S3Driver;
@@ -29,9 +30,10 @@ public class IndexResourceHandler
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexResourceHandler.class);
     private static final String EXPANDED_RESOURCES_BUCKET =
-            IndexingConfig.ENVIRONMENT.readEnv("EXPANDED_RESOURCES_BUCKET");
+            ENVIRONMENT.readEnv("EXPANDED_RESOURCES_BUCKET");
     private static final String SENT_TO_RECOVERY_QUEUE_MESSAGE =
             "IndexDocument for index {} has been sent to recovery queue: {}";
+
     private final S3Driver resourcesS3Driver;
     private final IndexingClient indexingClient;
     private final QueueClient queueClient;

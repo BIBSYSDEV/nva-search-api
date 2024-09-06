@@ -1,9 +1,9 @@
 package no.unit.nva.indexingclient;
 
 import static no.unit.nva.commons.json.JsonUtils.dtoObjectMapper;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.indexingclient.IndexingClient.BULK_SIZE;
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
@@ -220,12 +220,12 @@ class IndexingClientTest {
     private IndexDocument toIndexDocument(String jsonString) {
         var consumptionAttributes =
                 new EventConsumptionAttributes(randomString(), SortableIdentifier.next());
-        var json = attempt(() -> objectMapper.readTree(jsonString)).orElseThrow();
+        var json = attempt(() -> objectMapperWithEmpty.readTree(jsonString)).orElseThrow();
         return new IndexDocument(consumptionAttributes, json);
     }
 
     private JsonNode extractDocumentFromSubmittedIndexRequest() throws JsonProcessingException {
-        return objectMapper.readTree(
+        return objectMapperWithEmpty.readTree(
                 submittedIndexRequest.get().source().toBytesRef().utf8ToString());
     }
 }

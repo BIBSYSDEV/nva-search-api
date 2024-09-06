@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.enums;
 
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 
 import org.apache.commons.text.CaseUtils;
 

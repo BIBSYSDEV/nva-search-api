@@ -1,9 +1,11 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static no.unit.nva.indexingclient.BatchIndexingConstants.defaultS3Client;
-import static no.unit.nva.indexingclient.EmitEventUtils.MANDATORY_UNUSED_SUBTOPIC;
-import static no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandler.EVENT_BUS;
-import static no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandler.TOPIC;
+import static no.unit.nva.constants.Defaults.ENVIRONMENT;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.indexingclient.Constants.EVENT_BUS;
+import static no.unit.nva.indexingclient.Constants.MANDATORY_UNUSED_SUBTOPIC;
+import static no.unit.nva.indexingclient.Constants.TOPIC;
+import static no.unit.nva.indexingclient.Constants.defaultS3Client;
 
 import static java.util.Objects.nonNull;
 import static java.util.UUID.randomUUID;
@@ -14,7 +16,6 @@ import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.indexingclient.EventBasedBatchIndexer;
 
-import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import org.slf4j.Logger;
@@ -44,12 +45,10 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     public static final String DEFAULT_START_MARKER = null;
     public static final String START_MARKER_MESSAGE = "Start marker: {}";
     private static final Logger logger = LoggerFactory.getLogger(GenerateKeyBatchesHandler.class);
-    private static final Environment ENVIRONMENT = new Environment();
     public static final String INPUT_BUCKET = ENVIRONMENT.readEnv("PERSISTED_RESOURCES_BUCKET");
     public static final String OUTPUT_BUCKET = ENVIRONMENT.readEnv("KEY_BATCHES_BUCKET");
     public static final int MAX_KEYS =
             Integer.parseInt(ENVIRONMENT.readEnvOpt("BATCH_SIZE").orElse(DEFAULT_BATCH_SIZE));
-    private static final String DEFAULT_LOCATION = "resources";
     private final S3Client inputClient;
     private final S3Client outputClient;
     private final EventBridgeClient eventBridgeClient;
@@ -138,7 +137,7 @@ public class GenerateKeyBatchesHandler extends EventHandler<KeyBatchRequestEvent
     }
 
     private String getLocation(KeyBatchRequestEvent event) {
-        return isNotEmptyEvent(event) ? event.location() : DEFAULT_LOCATION;
+        return isNotEmptyEvent(event) ? event.location() : RESOURCES;
     }
 
     private PutEventsResponse sendEvent(PutEventsRequestEntry event) {

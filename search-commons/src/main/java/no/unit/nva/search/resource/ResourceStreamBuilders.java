@@ -1,16 +1,16 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.constants.Words.ASTERISK;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.FUNDINGS;
+import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.SOURCE;
+import static no.unit.nva.constants.Words.SOURCE_NAME;
+import static no.unit.nva.constants.Words.SPACE;
+import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
-import static no.unit.nva.search.common.constant.Words.ADDITIONAL_IDENTIFIERS;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.FUNDINGS;
-import static no.unit.nva.search.common.constant.Words.IDENTIFIER;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.SOURCE;
-import static no.unit.nva.search.common.constant.Words.SOURCE_NAME;
-import static no.unit.nva.search.common.constant.Words.SPACE;
-import static no.unit.nva.search.common.constant.Words.VALUE;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
 import static no.unit.nva.search.resource.ResourceParameter.ABSTRACT;

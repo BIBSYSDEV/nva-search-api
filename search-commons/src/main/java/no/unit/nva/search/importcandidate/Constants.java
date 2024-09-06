@@ -1,24 +1,24 @@
 package no.unit.nva.search.importcandidate;
 
+import static no.unit.nva.constants.Words.CONTRIBUTOR;
+import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.DOI;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.FILES;
+import static no.unit.nva.constants.Words.FILES_STATUS;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTITY;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.MODIFIED_DATE;
+import static no.unit.nva.constants.Words.NAME;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.search.common.constant.Functions.branchBuilder;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Functions.labels;
 import static no.unit.nva.search.common.constant.Functions.multipleFields;
 import static no.unit.nva.search.common.constant.Functions.nestedBranchBuilder;
-import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search.common.constant.Words.CONTRIBUTORS;
-import static no.unit.nva.search.common.constant.Words.DOI;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.FILES;
-import static no.unit.nva.search.common.constant.Words.FILES_STATUS;
-import static no.unit.nva.search.common.constant.Words.ID;
-import static no.unit.nva.search.common.constant.Words.IDENTITY;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
-import static no.unit.nva.search.common.constant.Words.NAME;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search.common.constant.Words.TYPE;
 
 import nva.commons.core.JacocoGenerated;
 

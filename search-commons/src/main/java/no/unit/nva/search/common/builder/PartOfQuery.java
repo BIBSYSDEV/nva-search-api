@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.HAS_PARTS;
+import static no.unit.nva.constants.Words.HAS_PARTS;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -17,8 +17,7 @@ public class PartOfQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBu
 
     @Override
     @JacocoGenerated // not currently in use...
-    protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(
-            K key, String... values) {
+    protected Stream<Map.Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return buildHasParent(key, values).flatMap(builder -> Functions.queryToEntry(key, builder));
     }
 

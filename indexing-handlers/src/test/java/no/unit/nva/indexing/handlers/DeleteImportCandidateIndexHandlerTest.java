@@ -2,7 +2,7 @@ package no.unit.nva.indexing.handlers;
 
 import static no.unit.nva.LogAppender.getAppender;
 import static no.unit.nva.LogAppender.logToString;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static org.hamcrest.MatcherAssert.assertThat;

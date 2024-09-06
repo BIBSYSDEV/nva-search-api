@@ -1,6 +1,6 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.StartBatchIndexingHandler.PERSISTED_RESOURCES_PATH;
+import static no.unit.nva.indexingclient.Constants.PERSISTED_RESOURCES_PATH;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

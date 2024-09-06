@@ -1,6 +1,6 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.search.common.constant.Words.CONTENT_TYPE;
+import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
 
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;

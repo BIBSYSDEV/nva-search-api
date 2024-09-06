@@ -1,11 +1,11 @@
 package no.unit.nva.search.scroll;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.NOT_IMPLEMENTED_FOR;
+import static no.unit.nva.constants.ErrorMessages.NOT_IMPLEMENTED_FOR;
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.NA;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;

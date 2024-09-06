@@ -1,21 +1,21 @@
 package no.unit.nva.search.resource;
 
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_OFFSET;
-import static no.unit.nva.search.common.constant.Defaults.DEFAULT_VALUE_PER_PAGE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
-import static no.unit.nva.search.common.constant.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Defaults.DEFAULT_OFFSET;
+import static no.unit.nva.constants.Defaults.DEFAULT_VALUE_PER_PAGE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.TOO_MANY_ARGUMENTS;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CRISTIN_AS_TYPE;
+import static no.unit.nva.constants.Words.HTTPS;
+import static no.unit.nva.constants.Words.NAME_AND_SORT_LENGTH;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.PI;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
+import static no.unit.nva.constants.Words.SCOPUS_AS_TYPE;
+import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.constant.Functions.decodeUTF;
 import static no.unit.nva.search.common.constant.Functions.trimSpace;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.CRISTIN_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.HTTPS;
-import static no.unit.nva.search.common.constant.Words.NAME_AND_SORT_LENGTH;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.PI;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
-import static no.unit.nva.search.common.constant.Words.SCOPUS_AS_TYPE;
-import static no.unit.nva.search.common.constant.Words.STATUS;
 import static no.unit.nva.search.resource.Constants.CRISTIN_ORGANIZATION_PATH;
 import static no.unit.nva.search.resource.Constants.CRISTIN_PERSON_PATH;
 import static no.unit.nva.search.resource.Constants.EXCLUDED_FIELDS;
@@ -43,10 +43,10 @@ import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import static java.lang.String.format;
 
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AsType;
 import no.unit.nva.search.common.ParameterValidator;
 import no.unit.nva.search.common.SearchQuery;
-import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
 

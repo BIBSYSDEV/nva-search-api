@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.common.constant.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search.common.constant.Words.COMMA;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 class ExportResourceHandlerTest {
-    public static final String SAMPLE_PATH = "search";
-    public static final String SAMPLE_DOMAIN_NAME = "localhost";
+    private final String SAMPLE_PATH = "search";
+    private final String SAMPLE_DOMAIN_NAME = "localhost";
     private ResourceClient mockedResourceClient;
     private ScrollClient mockedScrollClient;
     private ExportResourceHandler handler;

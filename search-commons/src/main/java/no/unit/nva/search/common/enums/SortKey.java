@@ -1,8 +1,8 @@
 package no.unit.nva.search.common.enums;
 
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_IGNORE_CASE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 
 import java.util.Locale;
 import java.util.function.Predicate;

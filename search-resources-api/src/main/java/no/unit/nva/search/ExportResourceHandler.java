@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.ZERO;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
