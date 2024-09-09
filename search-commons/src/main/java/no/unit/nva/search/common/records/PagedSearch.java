@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.records;
 
-import static no.unit.nva.search.common.constant.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
+import static no.unit.nva.constants.Defaults.PAGINATED_SEARCH_RESULT_CONTEXT;
 
 import static java.util.Objects.nonNull;
 

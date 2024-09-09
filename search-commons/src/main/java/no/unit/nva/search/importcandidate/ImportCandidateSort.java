@@ -1,11 +1,11 @@
 package no.unit.nva.search.importcandidate;
 
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.SortKey;
 
 import org.apache.commons.text.CaseUtils;

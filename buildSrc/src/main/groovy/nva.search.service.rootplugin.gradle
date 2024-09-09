@@ -1,4 +1,4 @@
-plugins{
+plugins {
     id 'java-library'
     id 'jacoco-report-aggregation'
 }
@@ -26,7 +26,6 @@ reporting {
         }
     }
 }
-
 
 
 check {

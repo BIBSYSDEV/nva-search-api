@@ -1,11 +1,11 @@
 package no.unit.nva.indexing.handlers;
 
+import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
+import static no.unit.nva.constants.Words.MESSAGES_INDEX;
+import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.TICKETS;
 import static no.unit.nva.indexingclient.IndexingClient.defaultIndexingClient;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.DOIREQUESTS_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.MESSAGES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.PUBLISHING_REQUESTS_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.TICKETS_INDEX;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -36,12 +36,13 @@ public class InitHandler implements RequestHandler<Object, String> {
             IoUtils.stringFromResources(Path.of("resource_mappings.json"));
     private static final String RESOURCE_SETTINGS =
             IoUtils.stringFromResources(Path.of("resource_settings.json"));
+
     private static final List<IndexRequest> INDEXES =
             List.of(
-                    new IndexRequest(RESOURCES_INDEX, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),
+                    new IndexRequest(RESOURCES, RESOURCE_MAPPINGS, RESOURCE_SETTINGS),
                     new IndexRequest(DOIREQUESTS_INDEX),
                     new IndexRequest(MESSAGES_INDEX),
-                    new IndexRequest(TICKETS_INDEX, TICKET_MAPPINGS),
+                    new IndexRequest(TICKETS, TICKET_MAPPINGS),
                     new IndexRequest(PUBLISHING_REQUESTS_INDEX));
     private static final Logger logger = LoggerFactory.getLogger(InitHandler.class);
     private final IndexingClient indexingClient;

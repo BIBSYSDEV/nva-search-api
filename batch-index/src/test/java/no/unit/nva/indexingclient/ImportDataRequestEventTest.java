@@ -1,7 +1,9 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperNoEmpty;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.constants.Defaults.objectMapperNoEmpty;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.SLASH;
+import static no.unit.nva.indexingclient.Constants.S3_LOCATION_FIELD;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -36,17 +38,13 @@ public class ImportDataRequestEventTest {
                 () -> objectMapperWithEmpty.readValue(jsonString, ImportDataRequestEvent.class);
         ValueInstantiationException exception =
                 assertThrows(ValueInstantiationException.class, action);
-        assertThat(
-                exception.getMessage(), containsString(ImportDataRequestEvent.S3_LOCATION_FIELD));
+        assertThat(exception.getMessage(), containsString(S3_LOCATION_FIELD));
     }
 
     @Test
     public void serializationWithJsonReturnsValidObject() throws JsonProcessingException {
         ObjectNode objectNode = objectMapperNoEmpty.createObjectNode();
-        String jsonString =
-                objectNode
-                        .put(ImportDataRequestEvent.S3_LOCATION_FIELD, SOME_S3_LOCATION)
-                        .toPrettyString();
+        String jsonString = objectNode.put(S3_LOCATION_FIELD, SOME_S3_LOCATION).toPrettyString();
         ImportDataRequestEvent deserialized =
                 objectMapperWithEmpty.readValue(jsonString, ImportDataRequestEvent.class);
         assertThat(deserialized.getS3Location(), is(equalTo(SOME_S3_LOCATION)));
@@ -55,6 +53,6 @@ public class ImportDataRequestEventTest {
     @Test
     public void getPathReturnsPathWithoutRoot() {
         ImportDataRequestEvent request = new ImportDataRequestEvent(SOME_S3_LOCATION);
-        assertThat(request.getS3Path(), not(startsWith(ImportDataRequestEvent.PATH_DELIMITER)));
+        assertThat(request.getS3Path(), not(startsWith(SLASH)));
     }
 }

@@ -3,7 +3,7 @@ package no.unit.nva.search.common;
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search.common.constant.Words.AMPERSAND;
+import static no.unit.nva.constants.Words.AMPERSAND;
 
 import static nva.commons.core.attempt.Try.attempt;
 

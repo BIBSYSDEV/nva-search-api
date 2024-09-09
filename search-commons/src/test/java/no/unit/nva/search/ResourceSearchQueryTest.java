@@ -181,11 +181,11 @@ class ResourceSearchQueryTest {
                         .addQueryParameters(resource.parameters().asMap())
                         .getUri();
 
-        logger.info(
+        logger.debug(
                 resource.parameters().asMap().entrySet().stream()
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
                         .collect(Collectors.joining("&")));
-        logger.info(uri2.toString());
+        logger.debug(uri2.toString());
         assertNotEquals(uri, resource.getNvaSearchApiUri());
     }
 
@@ -202,7 +202,7 @@ class ResourceSearchQueryTest {
                 .getSearchKeys()
                 .forEach(
                         key ->
-                                logger.info(
+                                logger.debug(
                                         "{} : {}",
                                         key.asCamelCase(),
                                         query.parameters().get(key).as()));
@@ -211,12 +211,13 @@ class ResourceSearchQueryTest {
 
         var modified = query.parameters().get(MODIFIED_BEFORE);
         if (!modified.isEmpty()) {
-            logger.info("Modified-1: {}", modified.asDateTime());
+            logger.debug("Modified-1: {}", modified.asDateTime());
         }
         var published = query.parameters().ifPresent(PUBLISHED_BEFORE);
         if (nonNull(published)) {
-            logger.info("Published-1: {}", published.<DateTime>as());
+            logger.debug("Published-1: {}", published.<DateTime>as());
         }
+        assertNotNull(query.parameters());
     }
 
     @ParameterizedTest

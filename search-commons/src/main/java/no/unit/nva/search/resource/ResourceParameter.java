@@ -1,5 +1,16 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.CONTRIBUTOR_ORGANIZATIONS;
+import static no.unit.nva.constants.Words.CREATED_DATE;
+import static no.unit.nva.constants.Words.MODIFIED_DATE;
+import static no.unit.nva.constants.Words.PHI;
+import static no.unit.nva.constants.Words.PI;
+import static no.unit.nva.constants.Words.PROJECTS_ID;
+import static no.unit.nva.constants.Words.PUBLISHED_DATE;
+import static no.unit.nva.constants.Words.Q;
+import static no.unit.nva.constants.Words.UNDERSCORE;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_ASC_DESC_VALUE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_CATEGORY_KEYS;
@@ -17,19 +28,6 @@ import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SIZE_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_SORT_ORDER_KEY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URI;
-import static no.unit.nva.search.common.constant.Words.ASTERISK;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR_ORGANIZATIONS;
-import static no.unit.nva.search.common.constant.Words.CREATED_DATE;
-import static no.unit.nva.search.common.constant.Words.IDENTITY;
-import static no.unit.nva.search.common.constant.Words.MODIFIED_DATE;
-import static no.unit.nva.search.common.constant.Words.PHI;
-import static no.unit.nva.search.common.constant.Words.PI;
-import static no.unit.nva.search.common.constant.Words.PROJECTS_ID;
-import static no.unit.nva.search.common.constant.Words.PUBLISHED_DATE;
-import static no.unit.nva.search.common.constant.Words.Q;
-import static no.unit.nva.search.common.constant.Words.UNDERSCORE;
 import static no.unit.nva.search.common.enums.FieldOperator.ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
@@ -52,12 +50,12 @@ import static no.unit.nva.search.common.enums.ParameterKind.PART_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.TEXT;
 import static no.unit.nva.search.resource.Constants.ASSOCIATED_ARTIFACTS_LICENSE;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_AFFILIATION_ID_KEYWORD;
+import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_FIELDS;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ID;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_NAME_KEYWORD;
 import static no.unit.nva.search.resource.Constants.CONTRIBUTORS_IDENTITY_ORC_ID_KEYWORD;
 import static no.unit.nva.search.resource.Constants.COURSE_CODE_KEYWORD;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
-import static no.unit.nva.search.resource.Constants.ENTITY_CONTRIBUTORS_DOT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_CONTRIBUTORS_AFFILIATION;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_LANGUAGE;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -93,7 +91,7 @@ import static no.unit.nva.search.resource.Constants.TOP_LEVEL_ORG_ID;
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.FieldOperator;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.ParameterKind;
@@ -122,16 +120,17 @@ import java.util.stream.Stream;
  */
 public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     INVALID(ParameterKind.INVALID),
-    STATISTICS(IGNORED),
     // Parameters used for filtering
     ABSTRACT(TEXT, ALL_OF, ENTITY_ABSTRACT),
+    ABSTRACT_HAS_CHILDREN(HAS_PARTS, ALL_OF, ABSTRACT),
     ABSTRACT_NOT(TEXT, NOT_ALL_OF, ENTITY_ABSTRACT),
     ABSTRACT_SHOULD(TEXT, ANY_OF, ENTITY_ABSTRACT),
     CONTEXT_TYPE(KEYWORD, ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_HAS_NO_PARTS(HAS_PARTS, NOT_ANY_OF, null, null, null, null, CONTEXT_TYPE),
     CONTEXT_TYPE_NOT(KEYWORD, NOT_ALL_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
     CONTEXT_TYPE_SHOULD(KEYWORD, ANY_OF, PUBLICATION_CONTEXT_TYPE_KEYWORD),
-    CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, ENTITY_CONTRIBUTORS_DOT + IDENTITY + ASTERISK),
+    CONTRIBUTORS(ACROSS_FIELDS, ANY_OF, CONTRIBUTORS_FIELDS),
+    CONTRIBUTORS_HAS_CHILDREN(HAS_PARTS, ALL_OF, CONTRIBUTORS),
     CONTRIBUTOR(KEYWORD, ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_NOT(KEYWORD, NOT_ALL_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
     CONTRIBUTOR_SHOULD(KEYWORD, ANY_OF, CONTRIBUTORS_IDENTITY_ID, null, PATTERN_IS_URI),
@@ -167,6 +166,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     FUNDING_SOURCE_NOT(TEXT, NOT_ALL_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     FUNDING_SOURCE_SHOULD(TEXT, ANY_OF, FUNDINGS_SOURCE_IDENTIFIER_FUNDINGS_SOURCE_LABELS),
     HANDLE(FUZZY_KEYWORD, ANY_OF, HANDLE_KEYWORD, PHI),
+    HANDLE_HAS_PARENT(PART_OF, ALL_OF, HANDLE),
     HANDLE_NOT(FUZZY_KEYWORD, NOT_ANY_OF, HANDLE_KEYWORD, PHI),
     FILES(KEYWORD, ALL_OF, FILES_STATUS_KEYWORD),
     ID(KEYWORD, ANY_OF, IDENTIFIER_KEYWORD),
@@ -234,6 +234,7 @@ public enum ResourceParameter implements ParameterKey<ResourceParameter> {
     SERIES(FUZZY_KEYWORD, ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_NOT(FUZZY_KEYWORD, NOT_ALL_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
     SERIES_SHOULD(FUZZY_KEYWORD, ANY_OF, ENTITY_DESCRIPTION_REFERENCE_SERIES),
+    STATISTICS(IGNORED),
     STATUS(KEYWORD, ANY_OF, STATUS_KEYWORD),
     STATUS_NOT(KEYWORD, NOT_ANY_OF, STATUS_KEYWORD),
     TAGS(TEXT, ALL_OF, ENTITY_TAGS),

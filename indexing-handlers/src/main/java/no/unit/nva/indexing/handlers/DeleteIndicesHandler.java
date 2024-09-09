@@ -1,10 +1,10 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.DOIREQUESTS_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.MESSAGES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.PUBLISHING_REQUESTS_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.TICKETS_INDEX;
+import static no.unit.nva.constants.Words.DOIREQUESTS_INDEX;
+import static no.unit.nva.constants.Words.MESSAGES_INDEX;
+import static no.unit.nva.constants.Words.PUBLISHING_REQUESTS_INDEX;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.TICKETS;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 public class DeleteIndicesHandler implements RequestHandler<Object, String> {
 
-    public static final String FINISHED = "FINISHED";
     private static final Logger logger = LoggerFactory.getLogger(DeleteIndicesHandler.class);
+    private static final String FINISHED = "FINISHED";
     private final IndexingClient indexingClient;
 
     @JacocoGenerated
@@ -36,7 +36,7 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
     @Override
     public String handleRequest(Object input, Context context) {
 
-        attempt(() -> indexingClient.deleteIndex(RESOURCES_INDEX))
+        attempt(() -> indexingClient.deleteIndex(RESOURCES))
                 .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(DOIREQUESTS_INDEX))
                 .orElse(fail -> logError(fail.getException()));
@@ -44,7 +44,7 @@ public class DeleteIndicesHandler implements RequestHandler<Object, String> {
                 .orElse(fail -> logError(fail.getException()));
         attempt(() -> indexingClient.deleteIndex(PUBLISHING_REQUESTS_INDEX))
                 .orElse(fail -> logError(fail.getException()));
-        attempt(() -> indexingClient.deleteIndex(TICKETS_INDEX))
+        attempt(() -> indexingClient.deleteIndex(TICKETS))
                 .orElse(fail -> logError(fail.getException()));
 
         return FINISHED;

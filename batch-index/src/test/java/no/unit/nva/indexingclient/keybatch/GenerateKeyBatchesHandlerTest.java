@@ -1,7 +1,7 @@
 package no.unit.nva.indexingclient.keybatch;
 
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
-import static no.unit.nva.indexingclient.keybatch.KeyBasedBatchIndexHandlerTest.DEFAULT_LOCATION;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.indexingclient.TestConstants.RESOURCE_INDEX_NAME;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsRequest;
-import software.amazon.awssdk.services.eventbridge.model.PutEventsRequestEntry;
 import software.amazon.awssdk.services.eventbridge.model.PutEventsResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 
@@ -42,9 +41,10 @@ import java.util.stream.IntStream;
 
 class GenerateKeyBatchesHandlerTest {
 
-    public static final String OUTPUT_BUCKET = "outputBucket";
-    public static final int SINGLE_BATCH_FILE_SIZE = 10;
+    private static final String OUTPUT_BUCKET = "outputBucket";
+    private static final int SINGLE_BATCH_FILE_SIZE = 10;
     private static final int MULTIPLE_BATCH_FILE_SIZE = 1001;
+
     private ByteArrayOutputStream outputStream;
     private FakeS3Client outputClient;
     private StubEventBridgeClient eventBridgeClient;
@@ -65,9 +65,9 @@ class GenerateKeyBatchesHandlerTest {
 
     @Test
     void shouldPersistS3KeysToBatchBucket() throws JsonProcessingException {
-        final var allFiles = putObjectsInInputBucket(SINGLE_BATCH_FILE_SIZE, DEFAULT_LOCATION);
+        final var allFiles = putObjectsInInputBucket(SINGLE_BATCH_FILE_SIZE, RESOURCE_INDEX_NAME);
 
-        handler.handleRequest(eventStream(DEFAULT_LOCATION), outputStream, mock(Context.class));
+        handler.handleRequest(eventStream(RESOURCE_INDEX_NAME), outputStream, mock(Context.class));
 
         var actual = getPersistedFileFromOutputBucket();
         var expected = allFiles.stream().collect(Collectors.joining(System.lineSeparator()));
@@ -95,9 +95,9 @@ class GenerateKeyBatchesHandlerTest {
 
     @Test
     void shouldEmitNewEventWhenS3BucketHasNotBeenTruncated() throws JsonProcessingException {
-        var s3Objects = putObjectsInInputBucket(MULTIPLE_BATCH_FILE_SIZE, DEFAULT_LOCATION);
+        var s3Objects = putObjectsInInputBucket(MULTIPLE_BATCH_FILE_SIZE, RESOURCE_INDEX_NAME);
 
-        handler.handleRequest(eventStream(DEFAULT_LOCATION), outputStream, mock(Context.class));
+        handler.handleRequest(eventStream(RESOURCE_INDEX_NAME), outputStream, mock(Context.class));
 
         var startMarker = eventBridgeClient.getLatestEvent().startMarker();
 
@@ -162,13 +162,10 @@ class GenerateKeyBatchesHandlerTest {
         public void close() {}
 
         private KeyBatchRequestEvent saveContainedEvent(PutEventsRequest putEventsRequest) {
-            PutEventsRequestEntry eventEntry =
+            var eventEntry =
                     putEventsRequest.entries().stream().collect(SingletonCollector.collect());
             return attempt(eventEntry::detail)
-                    .map(
-                            jsonString ->
-                                    objectMapperWithEmpty.readValue(
-                                            jsonString, KeyBatchRequestEvent.class))
+                    .map(json -> objectMapperWithEmpty.readValue(json, KeyBatchRequestEvent.class))
                     .orElseThrow();
         }
     }

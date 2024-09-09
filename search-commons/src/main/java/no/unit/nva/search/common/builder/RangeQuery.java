@@ -1,6 +1,6 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.OPERATOR_NOT_SUPPORTED;
+import static no.unit.nva.constants.ErrorMessages.OPERATOR_NOT_SUPPORTED;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -34,7 +34,7 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
 
     @JacocoGenerated // never used
     @Override
-    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         return queryAsEntryStream(key, values);
     }
 
@@ -48,7 +48,7 @@ public class RangeQuery<K extends Enum<K> & ParameterKey<K>> extends AbstractBui
         var firstParam = getFirstParam(values, key);
         var secondParam = getSecondParam(values, key);
 
-        logger.info(firstParam + DASH + secondParam);
+        logger.debug(firstParam + DASH + secondParam);
         return Functions.queryToEntry(
                 key,
                 switch (key.searchOperator()) {

@@ -2,8 +2,8 @@ package no.unit.nva.search.common.records;
 
 import static com.google.common.net.MediaType.CSV_UTF_8;
 
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.constant.Functions.hasContent;
-import static no.unit.nva.search.common.constant.Words.COMMA;
 
 import static nva.commons.core.paths.UriWrapper.fromUri;
 
@@ -11,9 +11,9 @@ import static java.util.Objects.nonNull;
 
 import com.google.common.net.MediaType;
 
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AggregationFormat;
 import no.unit.nva.search.common.QueryKeys;
-import no.unit.nva.search.common.constant.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
 

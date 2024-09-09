@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search.common.constant.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 

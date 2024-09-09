@@ -1,6 +1,6 @@
 package no.unit.nva.search.common;
 
-import static no.unit.nva.search.common.constant.Words.CONTENT_TYPE;
+import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.testutils.TestHeaders.APPLICATION_JSON;
 
 import static nva.commons.core.ioutils.IoUtils.stringFromResources;
@@ -31,7 +31,7 @@ public class MockedHttpResponse {
     }
 
     public static CompletableFuture<HttpResponse<Object>> mockedFutureFailed() {
-        return CompletableFuture.failedFuture(new Throwable("fututre failed"));
+        return CompletableFuture.failedFuture(new Throwable("future failed"));
     }
 
     public static HttpResponse<Object> mockedHttpResponse(Path path) {

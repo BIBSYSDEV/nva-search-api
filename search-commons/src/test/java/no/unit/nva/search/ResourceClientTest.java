@@ -1,5 +1,31 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CONTRIBUTOR;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.EQUAL;
+import static no.unit.nva.constants.Words.FILES;
+import static no.unit.nva.constants.Words.FUNDING_SOURCE;
+import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.LICENSE;
+import static no.unit.nva.constants.Words.NONE;
+import static no.unit.nva.constants.Words.PAGES;
+import static no.unit.nva.constants.Words.PIPE;
+import static no.unit.nva.constants.Words.PUBLICATION_CONTEXT;
+import static no.unit.nva.constants.Words.PUBLICATION_INSTANCE;
+import static no.unit.nva.constants.Words.PUBLISHER;
+import static no.unit.nva.constants.Words.REFERENCE;
+import static no.unit.nva.constants.Words.RESOURCES;
+import static no.unit.nva.constants.Words.SLASH;
+import static no.unit.nva.constants.Words.SPACE;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATION;
+import static no.unit.nva.constants.Words.TOP_LEVEL_ORGANIZATIONS;
+import static no.unit.nva.constants.Words.TYPE;
+import static no.unit.nva.constants.Words.ZERO;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
 import static no.unit.nva.search.common.Containers.indexingClient;
@@ -8,30 +34,6 @@ import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureFailed;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedHttpResponse;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.COLON;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.CONTRIBUTOR;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search.common.constant.Words.EQUAL;
-import static no.unit.nva.search.common.constant.Words.FILES;
-import static no.unit.nva.search.common.constant.Words.FUNDING_SOURCE;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.LICENSE;
-import static no.unit.nva.search.common.constant.Words.NONE;
-import static no.unit.nva.search.common.constant.Words.PAGES;
-import static no.unit.nva.search.common.constant.Words.PIPE;
-import static no.unit.nva.search.common.constant.Words.PUBLICATION_INSTANCE;
-import static no.unit.nva.search.common.constant.Words.PUBLISHER;
-import static no.unit.nva.search.common.constant.Words.REFERENCE;
-import static no.unit.nva.search.common.constant.Words.RESOURCES;
-import static no.unit.nva.search.common.constant.Words.SLASH;
-import static no.unit.nva.search.common.constant.Words.SPACE;
-import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATION;
-import static no.unit.nva.search.common.constant.Words.TOP_LEVEL_ORGANIZATIONS;
-import static no.unit.nva.search.common.constant.Words.TYPE;
-import static no.unit.nva.search.common.constant.Words.ZERO;
 import static no.unit.nva.search.common.enums.PublicationStatus.DELETED;
 import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT;
 import static no.unit.nva.search.common.enums.PublicationStatus.DRAFT_FOR_DELETION;
@@ -49,6 +51,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PE
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static no.unit.nva.search.resource.ResourceParameter.STATISTICS;
 import static no.unit.nva.search.resource.ResourceParameter.UNIT;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
 
@@ -72,7 +75,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import no.unit.nva.search.common.constant.Words;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.resource.ResourceClient;
 import no.unit.nva.search.resource.ResourceSearchQuery;
@@ -81,12 +86,14 @@ import no.unit.nva.search.resource.UserSettingsClient;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
+import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -111,11 +118,18 @@ import java.util.stream.Stream;
 @Testcontainers
 class ResourceClientTest {
 
-    public static final String REQUEST_BASE_URL = "https://x.org/?size=22&";
     public static final int EXPECTED_NUMBER_OF_AGGREGATIONS = 10;
+    public static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
+    public static final String USER_SETTINGS_EMPTY_JSON = "user_settings_empty.json";
+    public static final String USER_SETTINGS_JSON = "user_settings.json";
+    public static final String BASE_URL = "https://x.org/?size=22&";
+    public static final String PROPERTIES = "properties";
+    public static final String NESTED = "nested";
+    public static final String NOT_FOUND = "Not found";
+    public static final String NUMBER_FIVE = "5";
+    public static final String ONE_MINUTE = "1m";
+    public static final String IDENTIFIER = "identifier";
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
-    private static final String EMPTY_USER_RESPONSE_JSON = "user_settings_empty.json";
-    private static final String RESOURCE_VALID_DEV_URLS_JSON = "resource_urls.json";
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
 
@@ -124,7 +138,7 @@ class ResourceClientTest {
         var cachedJwtProvider = setupMockedCachedJwtProvider();
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient = new UserSettingsClient(mochedHttpClient, cachedJwtProvider);
-        var response = mockedFutureHttpResponse(Path.of("user_settings.json"));
+        var response = mockedFutureHttpResponse(Path.of(USER_SETTINGS_JSON));
         when(mochedHttpClient.sendAsync(any(), any()))
                 .thenReturn(response)
                 .thenReturn(mockedFutureHttpResponse(""))
@@ -155,53 +169,51 @@ class ResourceClientTest {
     static Stream<URI> uriSortingProvider() {
 
         return Stream.of(
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
-                URI.create(REQUEST_BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=unitId"),
-                URI.create(REQUEST_BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=relevance,createdDate"),
+                URI.create(BASE_URL + "query=year+project&sort=RELEVANCE,modifiedDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=unitId"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=unitId"),
+                URI.create(BASE_URL + "query=research&orderBy=UNIT_ID:asc,title:desc"),
                 URI.create(
-                        REQUEST_BASE_URL
+                        BASE_URL
                                 + "query=year+project,PublishedFile&sort=created_date&sortOrder=asc&sort=category&order=desc"),
                 URI.create(
-                        REQUEST_BASE_URL
+                        BASE_URL
                                 + "query=project,PublishedFile&sort=modified_date&sortOrder=asc&sort=category"),
                 URI.create(
-                        REQUEST_BASE_URL
+                        BASE_URL
                                 + "query=PublishedFile&sort=published_date&sortOrder=asc&sort=category"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=published_date:desc"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=published_date:desc"),
+                URI.create(BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
+                URI.create(BASE_URL + "query=infrastructure&sort=instanceType"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=createdDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=publishedDate"),
+                URI.create(BASE_URL + "status=PUBLISHED&sort=publicationDate"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=title"),
+                URI.create(BASE_URL + "query=PublishedFile&sort=user"),
                 URI.create(
-                        REQUEST_BASE_URL + "query=PublishedFile&size=10&from=0&sort=modified_date"),
-                URI.create(REQUEST_BASE_URL + "query=infrastructure&sort=instanceType"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=createdDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=modifiedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publishedDate"),
-                URI.create(REQUEST_BASE_URL + "status=PUBLISHED&sort=publicationDate"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=title"),
-                URI.create(REQUEST_BASE_URL + "query=PublishedFile&sort=user"),
+                        BASE_URL + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
                 URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&orderBy=created_date:asc,modifiedDate:desc"),
+                        BASE_URL
+                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc"
+                                + "&searchAfter=3.4478912,1241234,23412"),
                 URI.create(
-                        REQUEST_BASE_URL
-                                + "query=year+project&orderBy=RELEVANCE,created_date:asc,modifiedDate:desc&searchAfter=3.4478912,1241234,23412"),
-                URI.create(
-                        REQUEST_BASE_URL
+                        BASE_URL
                                 + "query=year+project&sort=published_date+asc&sort=category+desc"));
     }
 
     static Stream<URI> uriInvalidProvider() {
         return Stream.of(
-                URI.create(REQUEST_BASE_URL + "sort=epler"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:DEdd"),
-                URI.create(REQUEST_BASE_URL + "sort=CATEGORY:desc:asc"),
-                URI.create(REQUEST_BASE_URL + "categories=hello+world&lang=en"),
-                URI.create(REQUEST_BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
-                URI.create(
-                        REQUEST_BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
-                URI.create(REQUEST_BASE_URL + "category=PhdThesis&sort=beunited+asc"),
-                URI.create(REQUEST_BASE_URL + "funding=NFR,296896"),
-                URI.create(REQUEST_BASE_URL + "useers=hello+world&lang=en"));
+                URI.create(BASE_URL + "sort=epler"),
+                URI.create(BASE_URL + "sort=CATEGORY:DEdd"),
+                URI.create(BASE_URL + "sort=CATEGORY:desc:asc"),
+                URI.create(BASE_URL + "categories=hello+world&lang=en"),
+                URI.create(BASE_URL + "tittles=hello+world&modified_before=2019-01-01"),
+                URI.create(BASE_URL + "conttributors=hello+world&published_before=2020-01-01"),
+                URI.create(BASE_URL + "category=PhdThesis&sort=beunited+asc"),
+                URI.create(BASE_URL + "funding=NFR,296896"),
+                URI.create(BASE_URL + "useers=hello+world&lang=en"));
     }
 
     /**
@@ -225,7 +237,11 @@ class ResourceClientTest {
     }
 
     private static Arguments createArgument(String searchUri, int expectedCount) {
-        return Arguments.of(URI.create(REQUEST_BASE_URL + searchUri), expectedCount);
+        return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
+    }
+
+    private static @NotNull String trimKeyword(String path) {
+        return path.substring(0, path.indexOf(KEYWORD) - 1);
     }
 
     @Test
@@ -234,8 +250,8 @@ class ResourceClientTest {
         var mapping = indexingClient.getMapping(RESOURCES);
         assertThat(mapping, is(notNullValue()));
         var topLevelOrgType =
-                mapping.path("properties").path(TOP_LEVEL_ORGANIZATIONS).path(TYPE).textValue();
-        assertThat(topLevelOrgType, is(equalTo("nested")));
+                mapping.path(PROPERTIES).path(TOP_LEVEL_ORGANIZATIONS).path(TYPE).textValue();
+        assertThat(topLevelOrgType, is(equalTo(NESTED)));
         logger.info(mapping.toString());
     }
 
@@ -262,7 +278,7 @@ class ResourceClientTest {
         var hostAddress = URI.create(container.getHttpHostAddress());
         var uri1 =
                 URI.create(
-                        REQUEST_BASE_URL
+                        BASE_URL
                                 + AGGREGATION.asCamelCase()
                                 + EQUAL
                                 + ALL
@@ -302,7 +318,7 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
-        var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 200);
+        var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200);
         when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
         var searchClient =
                 new ResourceClient(
@@ -333,7 +349,7 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
-        var mockedResponse = mockedHttpResponse(EMPTY_USER_RESPONSE_JSON, 404);
+        var mockedResponse = mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 404);
         when(mochedHttpClient.send(any(), any())).thenReturn(mockedResponse);
         var searchClient =
                 new ResourceClient(
@@ -364,7 +380,7 @@ class ResourceClientTest {
         var mochedHttpClient = mock(HttpClient.class);
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
-        when(mochedHttpClient.send(any(), any())).thenThrow(new IOException("Not found"));
+        when(mochedHttpClient.send(any(), any())).thenThrow(new IOException(NOT_FOUND));
         var searchClient =
                 new ResourceClient(
                         HttpClient.newHttpClient(),
@@ -395,7 +411,7 @@ class ResourceClientTest {
         var userSettingsClient =
                 new UserSettingsClient(mochedHttpClient, setupMockedCachedJwtProvider());
         when(mochedHttpClient.send(any(), any()))
-                .thenReturn(mockedHttpResponse("user_settings_empty.json", 200));
+                .thenReturn(mockedHttpResponse(USER_SETTINGS_EMPTY_JSON, 200));
         var searchClient =
                 new ResourceClient(
                         HttpClient.newHttpClient(),
@@ -489,6 +505,35 @@ class ResourceClientTest {
     }
 
     @Test
+    void isSearchingForAllPublicationsDoWork() throws UnauthorizedException, BadRequestException {
+        var uri = URI.create("https://x.org/");
+        var requestInfo = mock(RequestInfo.class);
+        when(requestInfo.getCurrentCustomer())
+                .thenReturn(
+                        URI.create(
+                                "https://api.dev.nva.aws.unit.no/customer/bb3d0c0c-5065-4623-9b98-5810983c2478"));
+        when(requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)).thenReturn(true);
+        var response =
+                ResourceSearchQuery.builder()
+                        .fromQueryParameters(queryToMapEntries(uri))
+                        .withDockerHostUri(URI.create(container.getHttpHostAddress()))
+                        .withParameter(NODES_EXCLUDED, "metaInfo")
+                        .withParameter(STATISTICS, "true")
+                        .withRequiredParameters(FROM, SIZE)
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
+                        .organization(requestInfo)
+                        .apply()
+                        .doSearch(searchClient);
+
+        assertNotNull(response);
+
+        var pagedSearchResourceDto = response.toPagedResponse();
+        assertEquals(22, pagedSearchResourceDto.totalHits());
+    }
+
+    @Test
     void withOrganizationDoWork() throws BadRequestException, UnauthorizedException {
         var uri = URI.create("https://x.org/");
         var requestInfo = mock(RequestInfo.class);
@@ -522,14 +567,14 @@ class ResourceClientTest {
                 ResourceSearchQuery.builder()
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withParameter(FROM, ZERO)
-                        .withParameter(SIZE, "5")
+                        .withParameter(SIZE, NUMBER_FIVE)
                         .withParameter(AGGREGATION, NONE)
                         .withParameter(NODES_INCLUDED, includedNodes)
                         .build()
                         .withFilter()
                         .requiredStatus(PUBLISHED_METADATA, PUBLISHED)
                         .apply()
-                        .withScrollTime("1m")
+                        .withScrollTime(ONE_MINUTE)
                         .doSearch(searchClient)
                         .swsResponse();
 
@@ -537,12 +582,11 @@ class ResourceClientTest {
                 ScrollQuery.builder()
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withInitialResponse(firstResponse)
-                        .withScrollTime("1m")
+                        .withScrollTime(ONE_MINUTE)
                         .build()
                         .doSearch(scrollClient)
                         .toCsvText();
         assertNotNull(response);
-        logger.info(response);
     }
 
     @ParameterizedTest
@@ -592,7 +636,7 @@ class ResourceClientTest {
 
         assertNotNull(pagedSearchResourceDto);
         if (expectedCount == 0) {
-            logger.info(pagedSearchResourceDto.toJsonString());
+            logger.debug(pagedSearchResourceDto.toJsonString());
         } else {
             logger.debug(pagedSearchResourceDto.toString());
         }
@@ -630,7 +674,7 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         var document = pagedSearchResourceDto.hits().get(0);
-        var actualId = document.get("identifier").asText();
+        var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
@@ -662,7 +706,7 @@ class ResourceClientTest {
 
         var pagedSearchResourceDto = response.toPagedResponse();
         var document = pagedSearchResourceDto.hits().get(0);
-        var actualId = document.get("identifier").asText();
+        var actualId = document.get(IDENTIFIER).asText();
 
         assertThat(pagedSearchResourceDto.hits().size(), is(equalTo(expectedHits)));
         assertThat(pagedSearchResourceDto.totalHits(), is(equalTo(expectedHits)));
@@ -697,10 +741,10 @@ class ResourceClientTest {
 
         for (var document : documents) {
             var actualParentId =
-                    document.get("entityDescription")
-                            .get("reference")
-                            .get("publicationContext")
-                            .get("id")
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_CONTEXT)
+                            .get(ID)
                             .asText();
 
             assertThat(actualParentId, containsString(expectedParentIdSuffix));
@@ -740,17 +784,17 @@ class ResourceClientTest {
 
         for (var document : documents) {
             var actualParentId =
-                    document.get("entityDescription")
-                            .get("reference")
-                            .get("publicationContext")
-                            .get("id")
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_CONTEXT)
+                            .get(ID)
                             .asText();
 
             var actualInstanceType =
-                    document.get("entityDescription")
-                            .get("reference")
-                            .get("publicationInstance")
-                            .get("type")
+                    document.get(ENTITY_DESCRIPTION)
+                            .get(REFERENCE)
+                            .get(PUBLICATION_INSTANCE)
+                            .get(TYPE)
                             .asText();
 
             assertThat(actualParentId, containsString(expectedParentIdSuffix));
@@ -800,11 +844,7 @@ class ResourceClientTest {
                 ResourceSort.fromSortKey(searchName)
                         .jsonPaths()
                         .findFirst()
-                        .map(
-                                path ->
-                                        path.contains(KEYWORD)
-                                                ? path.substring(0, path.indexOf(KEYWORD) - 1)
-                                                : path)
+                        .map(path -> path.contains(KEYWORD) ? trimKeyword(path) : path)
                         .map(path -> SLASH + path.replace(DOT, SLASH))
                         .orElseThrow();
 
@@ -812,7 +852,7 @@ class ResourceClientTest {
                 response.swsResponse().hits().hits().stream()
                         .map(item -> item._score() + " + " + searchFieldName)
                         .collect(Collectors.joining(SPACE + PIPE + SPACE));
-        logger.info(logInfo);
+        logger.debug(logInfo);
         assertNotNull(pagedSearchResourceDto.context());
         assertTrue(pagedSearchResourceDto.totalHits() >= 0);
     }
@@ -963,20 +1003,25 @@ class ResourceClientTest {
         var pagedSearchResourceDto = response.toPagedResponse();
         var pageCounts =
                 pagedSearchResourceDto.hits().stream()
-                        .map(
-                                hit ->
-                                        hit.get(ENTITY_DESCRIPTION)
-                                                .get(REFERENCE)
-                                                .get(PUBLICATION_INSTANCE)
-                                                .get(PAGES)
-                                                .get(PAGES)
-                                                .asInt())
-                        .collect(Collectors.toList());
+                        .map(ResourceClientTest::pageNodeToInt)
+                        .toList();
 
         assertThat("Number of hits", pagedSearchResourceDto.hits(), hasSize(expectedResultCount));
         assertThat(
                 "All page counts are within the specified range",
                 pageCounts,
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
+    }
+
+    private static int pageNodeToInt(JsonNode hit) {
+        return hit.at(
+                        String.join(
+                                SLASH,
+                                SLASH + ENTITY_DESCRIPTION,
+                                REFERENCE,
+                                PUBLICATION_INSTANCE,
+                                PAGES,
+                                PAGES))
+                .asInt();
     }
 }

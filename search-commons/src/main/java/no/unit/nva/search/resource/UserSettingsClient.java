@@ -4,8 +4,8 @@ import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.search.common.constant.Functions.readApiHost;
-import static no.unit.nva.search.common.constant.Words.HTTPS;
 import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 

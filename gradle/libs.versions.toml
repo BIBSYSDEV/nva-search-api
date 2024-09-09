@@ -64,6 +64,7 @@ jackson-jr-annotations = { group = 'com.fasterxml.jackson.jr', name = 'jackson-j
 slf4j = { group = 'org.slf4j', name = 'slf4j-api', version.ref = 'slf4j' }
 log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
 log4j-api = { group = 'org.apache.logging.log4j', name = 'log4j-api', version.ref = 'log4j' }
+log4j-test = { group = 'org.apache.logging.log4j', name = 'log4j-core-test', version.ref = 'log4j' }
 
 opensearch = { group = 'org.opensearch', name = 'opensearch', version.ref = 'opensearch' }
 opensearch-x-content = { group = 'org.opensearch', name = 'opensearch-x-content', version.ref = 'opensearch' }
@@ -102,7 +103,7 @@ jacksonjr = ['jackson-jr-objects', 'jackson-jr-annotations']
 testcontainers = ['testcontainers-core', 'testcontainers-junit', 'testcontainer-opensearch']
 logging = ['slf4j', 'log4j-core', 'log4j-api']
 testing = ['junit-jupiter-engine', 'junit-jupiter-launcher', 'junit-jupiter-api', 'junit-jupiter-params', 'hamcrest', 'mockitocore', 'javers',
-    'nva-testutils', 'nva-logutils']
+    'log4j-test', 'nva-testutils', 'nva-logutils']
 opensearch = ['opensearch', 'opensearch-core', 'opensearch-rest-client', 'opensearch-x-content' ]
 aws-xray = ['aws-xray-recorder-sdk-core', 'aws-xray-recorder-sdk-aws-sdk', 'aws-xray-recorder-sdk-aws-sdk-instrumentor']
 jena = ['jena-core', 'jena-arq']

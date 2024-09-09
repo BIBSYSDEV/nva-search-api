@@ -2,10 +2,9 @@ package no.unit.nva.indexingclient.models;
 
 import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
 
-import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.SEARCH_INFRASTRUCTURE_CREDENTIALS;
+import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 
 import no.unit.nva.auth.CognitoCredentials;
-import no.unit.nva.indexingclient.constants.ApplicationConstants;
 import no.unit.nva.search.common.jwt.CachedJwtProvider;
 import no.unit.nva.search.common.records.UsernamePasswordWrapper;
 
@@ -16,6 +15,10 @@ import org.opensearch.client.RequestOptions;
 import java.net.URI;
 
 public class AuthenticatedOpenSearchClientWrapper {
+
+    static final String SEARCH_INFRASTRUCTURE_CREDENTIALS = "SearchInfrastructureCredentials";
+    static final String SEARCH_INFRASTRUCTURE_AUTH_URI =
+            ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_AUTH_URI");
 
     protected final RestHighLevelClientWrapper openSearchClient;
     protected final CachedJwtProvider cachedJwtProvider;
@@ -35,7 +38,7 @@ public class AuthenticatedOpenSearchClientWrapper {
         var credentials =
                 secretsReader.fetchClassSecret(
                         SEARCH_INFRASTRUCTURE_CREDENTIALS, UsernamePasswordWrapper.class);
-        var uri = URI.create(ApplicationConstants.SEARCH_INFRASTRUCTURE_AUTH_URI);
+        var uri = URI.create(SEARCH_INFRASTRUCTURE_AUTH_URI);
 
         return new CognitoCredentials(credentials::getUsername, credentials::getPassword, uri);
     }

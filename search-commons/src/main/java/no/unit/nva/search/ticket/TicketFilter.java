@@ -1,6 +1,6 @@
 package no.unit.nva.search.ticket;
 
-import static no.unit.nva.search.common.constant.Words.POST_FILTER;
+import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.search.ticket.Constants.OWNER_USERNAME;
 import static no.unit.nva.search.ticket.Constants.TYPE_KEYWORD;
 import static no.unit.nva.search.ticket.TicketParameter.ORGANIZATION_ID;
@@ -77,8 +77,8 @@ public class TicketFilter implements FilterBuilder<TicketSearchQuery> {
     }
 
     private boolean isSearchingForAllTickets(RequestInfo requestInfo) {
-        return requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS)
-                && !ticketSearchQuery.parameters().get(STATISTICS).isEmpty();
+        return ticketSearchQuery.parameters().isPresent(STATISTICS)
+                && requestInfo.userIsAuthorized(AccessRight.MANAGE_CUSTOMERS);
     }
 
     /**

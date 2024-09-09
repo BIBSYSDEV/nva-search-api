@@ -66,10 +66,6 @@ public final class RecoveryEntry {
         return this.copy().withException(getStackTrace(exception)).build();
     }
 
-    public RecoveryEntry withIndex(String type) {
-        return this.copy().withType(type).build();
-    }
-
     private String getStackTrace(Exception exception) {
         var stringWriter = new StringWriter();
         exception.printStackTrace(new PrintWriter(stringWriter));

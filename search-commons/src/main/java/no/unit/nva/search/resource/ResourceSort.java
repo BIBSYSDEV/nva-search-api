@@ -1,15 +1,15 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.CHAR_UNDERSCORE;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.YEAR;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_PIPE;
-import static no.unit.nva.search.common.constant.Words.CHAR_UNDERSCORE;
-import static no.unit.nva.search.common.constant.Words.DOT;
-import static no.unit.nva.search.common.constant.Words.ENTITY_DESCRIPTION;
-import static no.unit.nva.search.common.constant.Words.KEYWORD;
-import static no.unit.nva.search.common.constant.Words.YEAR;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.enums.SortKey;
 
 import org.apache.commons.text.CaseUtils;

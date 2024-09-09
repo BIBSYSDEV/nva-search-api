@@ -1,11 +1,13 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.COMMA;
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.common.enums.FieldOperator.ANY_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
 import no.unit.nva.search.common.enums.ParameterKey;
+
+import nva.commons.core.JacocoGenerated;
 
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
@@ -29,9 +31,11 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
-    protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(
+    @JacocoGenerated
+    protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(
             K key, String... values);
 
+    @JacocoGenerated
     protected abstract Stream<Entry<K, QueryBuilder>> buildMatchAllValuesQuery(
             K key, String... values);
 
@@ -42,7 +46,7 @@ public abstract class AbstractBuilder<K extends Enum<K> & ParameterKey<K>> {
 
     public Stream<Map.Entry<K, QueryBuilder>> buildQuery(K key, String... values) {
         return isSearchAny(key)
-                ? buildMatchAnyKeyValuesQuery(key, values)
+                ? buildMatchAnyValueQuery(key, values)
                 : buildMatchAllValuesQuery(key, values);
     }
 

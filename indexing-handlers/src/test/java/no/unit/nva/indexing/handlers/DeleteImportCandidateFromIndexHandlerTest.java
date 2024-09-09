@@ -1,8 +1,7 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -47,7 +46,8 @@ public class DeleteImportCandidateFromIndexHandlerTest {
     private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
         String randomJson = randomJson();
         ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+                attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(randomJson))
+                        .orElseThrow();
         EventConsumptionAttributes metadata =
                 new EventConsumptionAttributes(IMPORT_CANDIDATES_INDEX, identifierProvider);
         return new IndexDocument(metadata, objectNode);

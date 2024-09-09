@@ -6,21 +6,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import no.unit.nva.search.common.records.PagedSearch;
-import no.unit.nva.search.common.records.SwsResponse;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
 @SuppressWarnings("PMD.ShortMethodName")
 public record FakeGatewayResponse<T>(T body, int statusCode, Map<String, String> headers) {
-
-    public static FakeGatewayResponse<SwsResponse> ofSwsGatewayResponse(InputStream inputStream)
-            throws IOException {
-        var typeReference = new TypeReference<FakeGatewayResponse<SwsResponse>>() {};
-        return dtoObjectMapper.readValue(inputStream, typeReference);
-    }
 
     public static FakeGatewayResponse<PagedSearch> of(OutputStream outputStream)
             throws IOException {

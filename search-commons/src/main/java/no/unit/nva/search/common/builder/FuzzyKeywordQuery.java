@@ -1,7 +1,7 @@
 package no.unit.nva.search.common.builder;
 
-import static no.unit.nva.search.common.constant.Words.KEYWORD_FALSE;
-import static no.unit.nva.search.common.constant.Words.KEYWORD_TRUE;
+import static no.unit.nva.constants.Words.KEYWORD_FALSE;
+import static no.unit.nva.constants.Words.KEYWORD_TRUE;
 
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
@@ -27,7 +27,7 @@ public class FuzzyKeywordQuery<K extends Enum<K> & ParameterKey<K>> extends Abst
     public static final String KEYWORD_ALL = "FuzzyKeywordAll-";
 
     @Override
-    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyKeyValuesQuery(K key, String... values) {
+    protected Stream<Entry<K, QueryBuilder>> buildMatchAnyValueQuery(K key, String... values) {
         var boolQuery =
                 QueryBuilders.boolQuery()
                         .should(buildMatchAnyKeyword(key, values))

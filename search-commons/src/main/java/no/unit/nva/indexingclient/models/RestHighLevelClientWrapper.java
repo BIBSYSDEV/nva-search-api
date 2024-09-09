@@ -1,6 +1,6 @@
 package no.unit.nva.indexingclient.models;
 
-import no.unit.nva.indexingclient.constants.ApplicationConstants;
+import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -27,10 +27,12 @@ import java.io.IOException;
 /** Class for avoiding mocking/spying the ES final classes. */
 public class RestHighLevelClientWrapper {
 
-    public static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
-    public static final String SEARCH_INFRASTRUCTURE_CREDENTIALS =
-            "SearchInfrastructureCredentials";
     private static final Logger logger = LoggerFactory.getLogger(RestHighLevelClientWrapper.class);
+
+    private static final String SEARCH_INFRASTRUCTURE_API_URI =
+            ENVIRONMENT.readEnv("SEARCH_INFRASTRUCTURE_API_URI");
+    private static final String INITIAL_LOG_MESSAGE = "Connecting to search infrastructure at {}";
+
     private final RestHighLevelClient client;
 
     public RestHighLevelClientWrapper(RestHighLevelClient client) {
@@ -43,8 +45,7 @@ public class RestHighLevelClientWrapper {
     }
 
     public static RestHighLevelClientWrapper defaultRestHighLevelClientWrapper() {
-        return prepareRestHighLevelClientWrapperForUri(
-                ApplicationConstants.SEARCH_INFRASTRUCTURE_API_URI);
+        return prepareRestHighLevelClientWrapperForUri(SEARCH_INFRASTRUCTURE_API_URI);
     }
 
     public static RestHighLevelClientWrapper prepareRestHighLevelClientWrapperForUri(

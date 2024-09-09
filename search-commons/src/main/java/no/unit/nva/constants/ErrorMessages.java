@@ -1,8 +1,8 @@
-package no.unit.nva.search.common.constant;
+package no.unit.nva.constants;
 
-import static no.unit.nva.search.common.constant.Words.PREFIX;
-import static no.unit.nva.search.common.constant.Words.QUOTE;
-import static no.unit.nva.search.common.constant.Words.SUFFIX;
+import static no.unit.nva.constants.Words.PREFIX;
+import static no.unit.nva.constants.Words.QUOTE;
+import static no.unit.nva.constants.Words.SUFFIX;
 
 import static nva.commons.core.StringUtils.EMPTY_STRING;
 
@@ -38,6 +38,9 @@ public final class ErrorMessages {
             "Invalid query parameter supplied %s.  Valid parameters: %s Also pass through to"
                     + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
                     + "search_after]";
+
+    public static final String MISSING_IDENTIFIER_IN_RESOURCE = "Missing identifier in resource";
+    public static final String MISSING_INDEX_NAME_IN_RESOURCE = "Missing index name in resource";
 
     @JacocoGenerated
     public ErrorMessages() {}

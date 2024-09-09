@@ -1,10 +1,10 @@
 package no.unit.nva.search;
 
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.EQUAL;
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.EQUAL;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.AGGREGATION;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.COLLABORATION_TYPE;
 import static no.unit.nva.search.importcandidate.ImportCandidateParameter.CONTRIBUTOR;
@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.importcandidate.ImportCandidateClient;
 import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
 

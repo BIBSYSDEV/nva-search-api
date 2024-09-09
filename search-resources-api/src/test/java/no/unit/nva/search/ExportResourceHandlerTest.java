@@ -1,7 +1,7 @@
 package no.unit.nva.search;
 
-import static no.unit.nva.search.common.constant.Defaults.objectMapperWithEmpty;
-import static no.unit.nva.search.common.constant.Words.COMMA;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
+import static no.unit.nva.constants.Words.COMMA;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -35,13 +35,13 @@ import java.util.List;
 import java.util.Map;
 
 class ExportResourceHandlerTest {
-    public static final String SAMPLE_PATH = "search";
-    public static final String SAMPLE_DOMAIN_NAME = "localhost";
+    private final String SAMPLE_PATH = "search";
+    private final String SAMPLE_DOMAIN_NAME = "localhost";
     private ResourceClient mockedResourceClient;
     private ScrollClient mockedScrollClient;
     private ExportResourceHandler handler;
 
-    private static SwsResponse CsvToSwsResponse(ExportCsv csv, String scrollId)
+    private static SwsResponse csvToSwsResponse(ExportCsv csv, String scrollId)
             throws JsonProcessingException {
         var jsonResponse = FakeSearchResponse.generateSearchResponseString(List.of(csv), scrollId);
         return objectMapperWithEmpty.readValue(jsonResponse, SwsResponse.class);
@@ -94,11 +94,11 @@ class ExportResourceHandlerTest {
             throws IOException {
 
         when(mockedResourceClient.doSearch(any()))
-                .thenReturn(CsvToSwsResponse(initialSearchResult, "scrollId1"));
+                .thenReturn(csvToSwsResponse(initialSearchResult, "scrollId1"));
 
         when(mockedScrollClient.doSearch(any()))
-                .thenReturn(CsvToSwsResponse(scroll1SearchResult, "scrollId2"))
-                .thenReturn(CsvToSwsResponse(scroll2SearchResult, null));
+                .thenReturn(csvToSwsResponse(scroll1SearchResult, "scrollId2"))
+                .thenReturn(csvToSwsResponse(scroll2SearchResult, null));
     }
 
     private InputStream getRequestInputStreamAccepting() throws JsonProcessingException {

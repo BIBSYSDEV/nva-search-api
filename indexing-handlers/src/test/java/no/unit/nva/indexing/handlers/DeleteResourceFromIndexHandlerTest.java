@@ -1,7 +1,8 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexingclient.IndexingClient.objectMapper;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.objectMapperWithEmpty;
+import static no.unit.nva.LogAppender.getAppender;
+import static no.unit.nva.LogAppender.logToString;
+import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.testutils.RandomDataGenerator.randomJson;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -24,8 +25,8 @@ import no.unit.nva.indexing.testutils.FakeIndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
 
-import nva.commons.logutils.LogUtils;
-
+import org.apache.logging.log4j.core.test.appender.ListAppender;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -42,16 +43,21 @@ public class DeleteResourceFromIndexHandlerTest {
 
     public static final String SOMETHING_BAD_HAPPENED = "Something bad happened";
     private static final Context CONTEXT = Mockito.mock(Context.class);
+    private static ListAppender appender;
     private FakeIndexingClient indexingClient;
-
     private ByteArrayOutputStream output;
-
     private DeleteResourceFromIndexHandler handler;
+
+    @BeforeAll
+    public static void initClass() {
+        appender = getAppender(DeleteResourceFromIndexHandler.class);
+    }
 
     private static IndexDocument createSampleResource(SortableIdentifier identifierProvider) {
         String randomJson = randomJson();
         ObjectNode objectNode =
-                attempt(() -> (ObjectNode) objectMapper.readTree(randomJson)).orElseThrow();
+                attempt(() -> (ObjectNode) objectMapperWithEmpty.readTree(randomJson))
+                        .orElseThrow();
         EventConsumptionAttributes metadata =
                 new EventConsumptionAttributes(RESOURCES_INDEX, identifierProvider);
         return new IndexDocument(metadata, objectNode);
@@ -67,7 +73,6 @@ public class DeleteResourceFromIndexHandlerTest {
     @Test
     void shouldThrowRuntimeExceptionAndLogErrorWhenIndexingClientIsThrowingException()
             throws IOException {
-        final var appender = LogUtils.getTestingAppenderForRootLogger();
         indexingClient = new FakeIndexingClientThrowingException();
         handler = new DeleteResourceFromIndexHandler(indexingClient);
         try (var eventReference = createEventBridgeEvent(SortableIdentifier.next())) {
@@ -75,7 +80,7 @@ public class DeleteResourceFromIndexHandlerTest {
                     RuntimeException.class,
                     () -> handler.handleRequest(eventReference, output, CONTEXT));
         }
-        assertThat(appender.getMessages(), containsString(SOMETHING_BAD_HAPPENED));
+        assertThat(logToString(appender), containsString(SOMETHING_BAD_HAPPENED));
     }
 
     @Test

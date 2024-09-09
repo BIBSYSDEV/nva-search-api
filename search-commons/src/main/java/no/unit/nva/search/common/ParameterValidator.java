@@ -1,16 +1,16 @@
 package no.unit.nva.search.common;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
-import static no.unit.nva.search.common.constant.ErrorMessages.requiredMissingMessage;
-import static no.unit.nva.search.common.constant.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
+import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
+import static no.unit.nva.constants.Words.ALL;
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
-import static no.unit.nva.search.common.constant.Words.ALL;
-import static no.unit.nva.search.common.constant.Words.COMMA;
-import static no.unit.nva.search.common.constant.Words.RELEVANCE_KEY_NAME;
 
 import static java.util.Objects.isNull;
 
-import no.unit.nva.search.common.constant.ErrorMessages;
+import no.unit.nva.constants.ErrorMessages;
 import no.unit.nva.search.common.enums.ParameterKey;
 
 import nva.commons.apigateway.RequestInfo;

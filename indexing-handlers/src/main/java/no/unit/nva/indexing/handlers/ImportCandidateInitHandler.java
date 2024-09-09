@@ -1,6 +1,6 @@
 package no.unit.nva.indexing.handlers;
 
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
 
 import static nva.commons.core.attempt.Try.attempt;
 
@@ -51,7 +51,7 @@ public class ImportCandidateInitHandler implements RequestHandler<Object, String
         return failState.get() ? FAILED : SUCCESS;
     }
 
-    private Void handleFailure(AtomicBoolean failState, Failure failure) {
+    private Void handleFailure(AtomicBoolean failState, Failure<?> failure) {
         failState.set(true);
         logger.warn("Index creation failed", failure.getException());
         return null;

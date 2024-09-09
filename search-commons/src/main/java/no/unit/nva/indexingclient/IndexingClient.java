@@ -1,13 +1,12 @@
 package no.unit.nva.indexingclient;
 
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.IMPORT_CANDIDATES_INDEX;
-import static no.unit.nva.indexingclient.constants.ApplicationConstants.RESOURCES_INDEX;
+import static no.unit.nva.constants.Words.IMPORT_CANDIDATES_INDEX;
+import static no.unit.nva.constants.Words.RESOURCES;
 import static no.unit.nva.indexingclient.models.RestHighLevelClientWrapper.defaultRestHighLevelClientWrapper;
 
 import static nva.commons.core.attempt.Try.attempt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -49,13 +48,14 @@ import java.util.stream.StreamSupport;
 
 public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
 
-    public static final ObjectMapper objectMapper = JsonUtils.dtoObjectMapper;
-    public static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
-    public static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
-            "Document with id={} was not found in search infrastructure";
     public static final int BULK_SIZE = 100;
-    public static final boolean SEQUENTIAL = false;
     private static final Logger logger = LoggerFactory.getLogger(IndexingClient.class);
+    //    public static final objectMapperWithEmpty objectMapperWithEmpty =
+    // JsonUtils.dtoObjectMapper;
+    private static final String INITIAL_LOG_MESSAGE = "Adding document [{}] to -> {}";
+    private static final String DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE =
+            "Document with id={} was not found in search infrastructure";
+    private static final boolean SEQUENTIAL = false;
 
     /**
      * Creates a new OpenSearchRestClient.
@@ -81,7 +81,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     }
 
     public Void addDocumentToIndex(IndexDocument indexDocument) throws IOException {
-        logger.info(
+        logger.debug(
                 INITIAL_LOG_MESSAGE,
                 indexDocument.getDocumentIdentifier(),
                 indexDocument.getIndexName());
@@ -97,7 +97,7 @@ public class IndexingClient extends AuthenticatedOpenSearchClientWrapper {
     public void removeDocumentFromResourcesIndex(String identifier) throws IOException {
         DeleteResponse deleteResponse =
                 openSearchClient.delete(
-                        new DeleteRequest(RESOURCES_INDEX, identifier), getRequestOptions());
+                        new DeleteRequest(RESOURCES, identifier), getRequestOptions());
         if (deleteResponse.getResult() == DocWriteResponse.Result.NOT_FOUND) {
             logger.warn(DOCUMENT_WITH_ID_WAS_NOT_FOUND_IN_SEARCH_INFRASTRUCTURE, identifier);
         }

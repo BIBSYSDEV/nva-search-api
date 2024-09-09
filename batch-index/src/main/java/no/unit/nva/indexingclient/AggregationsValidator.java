@@ -7,15 +7,15 @@ import java.util.List;
 
 public class AggregationsValidator {
 
-    public static final String ENTITY_DESCRIPTION_POINTER = "/entityDescription";
-    public static final String REFERENCE_POINTER = "/entityDescription/reference";
-    public static final String PUBLICATION_CONTEXT_POINTER =
+    private static final String ENTITY_DESCRIPTION_POINTER = "/entityDescription";
+    private static final String REFERENCE_POINTER = "/entityDescription/reference";
+    private static final String PUBLICATION_CONTEXT_POINTER =
             "/entityDescription/reference/publicationContext";
-    public static final String PUBLICATION_INSTANCE_POINTER =
+    private static final String PUBLICATION_INSTANCE_POINTER =
             "/entityDescription/reference/publicationInstance";
-    public static final String DELIMITER = ", ";
-    public static final String IDENTIFIER_POINTER = "/identifier";
-    public static final String REPORT_TEMPLATE = "Document %s has missing fields %s";
+    private static final String IDENTIFIER_POINTER = "/identifier";
+    private static final String DELIMITER = ", ";
+    private static final String REPORT_TEMPLATE = "Document %s has missing fields %s";
     private final List<String> report;
     private final JsonNode document;
 

@@ -1,16 +1,16 @@
 package no.unit.nva.search.common.enums;
 
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_BOOLEAN;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_DATE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_NUMBER;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE;
-import static no.unit.nva.search.common.constant.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.ErrorMessages.INVALID_BOOLEAN;
+import static no.unit.nva.constants.ErrorMessages.INVALID_DATE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_NUMBER;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE;
+import static no.unit.nva.constants.ErrorMessages.INVALID_VALUE_WITH_SORT;
+import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_BOOLEAN;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_DATE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NONE_OR_ONE;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NON_EMPTY;
 import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_NUMBER;
-import static no.unit.nva.search.common.constant.Words.DOT;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 
@@ -18,7 +18,7 @@ import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import static java.util.Objects.nonNull;
 
-import no.unit.nva.search.common.constant.Words;
+import no.unit.nva.constants.Words;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
