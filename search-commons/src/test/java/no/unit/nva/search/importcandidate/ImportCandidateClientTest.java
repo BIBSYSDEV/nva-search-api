@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.importcandidate;
 
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.EQUAL;
@@ -30,8 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import no.unit.nva.constants.Words;
-import no.unit.nva.search.importcandidate.ImportCandidateClient;
-import no.unit.nva.search.importcandidate.ImportCandidateSearchQuery;
 
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;

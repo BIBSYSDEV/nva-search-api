@@ -36,8 +36,8 @@ import no.unit.nva.search.common.builder.TextQuery;
 import no.unit.nva.search.common.constant.Functions;
 import no.unit.nva.search.common.enums.ParameterKey;
 import no.unit.nva.search.common.enums.SortKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.QueryContentWrapper;
-import no.unit.nva.search.common.records.ResponseFormatter;
 import no.unit.nva.search.common.records.SwsResponse;
 
 import nva.commons.core.JacocoGenerated;
@@ -120,12 +120,12 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     protected abstract Stream<Entry<K, QueryBuilder>> builderCustomQueryStream(K key);
 
     @Override
-    public <R, Q extends Query<K>> ResponseFormatter<K> doSearch(
+    public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
             OpenSearchClient<R, Q> queryClient) {
         final var source =
                 URI.create(
                         getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
-        return new ResponseFormatter<>(
+        return new HttpResponseFormatter<>(
                 (SwsResponse) queryClient.doSearch((Q) this),
                 getMediaType(),
                 source,

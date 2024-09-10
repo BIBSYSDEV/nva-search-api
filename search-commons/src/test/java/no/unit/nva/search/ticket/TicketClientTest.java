@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.ticket;
 
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Words.ALL;
@@ -45,10 +45,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import no.unit.nva.commons.json.JsonUtils;
 import no.unit.nva.constants.Words;
-import no.unit.nva.search.ticket.TicketClient;
-import no.unit.nva.search.ticket.TicketSearchQuery;
-import no.unit.nva.search.ticket.TicketStatus;
-import no.unit.nva.search.ticket.TicketType;
 
 import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;

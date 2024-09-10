@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COLON;
@@ -10,6 +10,7 @@ import static no.unit.nva.constants.Words.EQUAL;
 import static no.unit.nva.constants.Words.FILES;
 import static no.unit.nva.constants.Words.FUNDING_SOURCE;
 import static no.unit.nva.constants.Words.ID;
+import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.LICENSE;
 import static no.unit.nva.constants.Words.NONE;
@@ -79,10 +80,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.csv.ResourceCsvTransformer;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.resource.ResourceSort;
-import no.unit.nva.search.resource.UserSettingsClient;
 import no.unit.nva.search.scroll.ScrollClient;
 import no.unit.nva.search.scroll.ScrollQuery;
 
@@ -93,7 +90,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 import nva.commons.core.paths.UriWrapper;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -128,8 +124,8 @@ class ResourceClientTest {
     public static final String NOT_FOUND = "Not found";
     public static final String NUMBER_FIVE = "5";
     public static final String ONE_MINUTE = "1m";
-    public static final String IDENTIFIER = "identifier";
     private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
+
     private static ScrollClient scrollClient;
     private static ResourceClient searchClient;
 
@@ -223,7 +219,7 @@ class ResourceClientTest {
      * @return a stream of arguments where each argument is a tuple of (min, max,
      *     expectedResultCount)
      */
-    private static Stream<Arguments> provideValidPageRanges() {
+    static Stream<Arguments> provideValidPageRanges() {
         return Stream.of(
                 Arguments.of(1, 100, 8),
                 Arguments.of(37, 39, 1),
@@ -240,7 +236,19 @@ class ResourceClientTest {
         return Arguments.of(URI.create(BASE_URL + searchUri), expectedCount);
     }
 
-    private static @NotNull String trimKeyword(String path) {
+    private static int pageNodeToInt(JsonNode hit) {
+        return hit.at(
+                        String.join(
+                                SLASH,
+                                SLASH + ENTITY_DESCRIPTION,
+                                REFERENCE,
+                                PUBLICATION_INSTANCE,
+                                PAGES,
+                                PAGES))
+                .asInt();
+    }
+
+    private String trimKeyword(String path) {
         return path.substring(0, path.indexOf(KEYWORD) - 1);
     }
 
@@ -1011,17 +1019,5 @@ class ResourceClientTest {
                 "All page counts are within the specified range",
                 pageCounts,
                 everyItem(allOf(greaterThanOrEqualTo(min), lessThanOrEqualTo(max))));
-    }
-
-    private static int pageNodeToInt(JsonNode hit) {
-        return hit.at(
-                        String.join(
-                                SLASH,
-                                SLASH + ENTITY_DESCRIPTION,
-                                REFERENCE,
-                                PUBLICATION_INSTANCE,
-                                PAGES,
-                                PAGES))
-                .asInt();
     }
 }

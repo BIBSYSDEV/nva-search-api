@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.scroll;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpResponse;
@@ -8,10 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import no.unit.nva.search.scroll.ScrollClient;
-import no.unit.nva.search.scroll.ScrollParameter;
-import no.unit.nva.search.scroll.ScrollQuery;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
