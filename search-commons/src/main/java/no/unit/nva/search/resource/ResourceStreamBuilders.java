@@ -25,8 +25,11 @@ import static no.unit.nva.search.resource.ResourceParameter.TITLE;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
+import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
+import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
@@ -35,7 +38,6 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,7 +70,7 @@ public class ResourceStreamBuilders {
                 boolQuery()
                         .queryName(SEARCH_ALL.asCamelCase())
                         .must(
-                                QueryBuilders.multiMatchQuery(sevenValues)
+                                multiMatchQuery(sevenValues)
                                         .fields(fields)
                                         .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                                         .operator(Operator.AND));
@@ -88,7 +90,7 @@ public class ResourceStreamBuilders {
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
             ResourceParameter key, String source) {
         var query =
-                QueryBuilders.nestedQuery(
+                nestedQuery(
                         ADDITIONAL_IDENTIFIERS,
                         boolQuery()
                                 .must(
@@ -110,36 +112,40 @@ public class ResourceStreamBuilders {
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
             ResourceParameter key) {
         var query =
-                QueryBuilders.boolQuery()
+                boolQuery()
                         .must(
-                                QueryBuilders.termQuery(
+                                termQuery(
                                         jsonPath(
                                                 ENTITY_DESCRIPTION,
                                                 CONTRIBUTORS,
                                                 AFFILIATIONS,
-                                                "countryCode",
+                                                Words.COUNTRY_CODE,
                                                 KEYWORD),
                                         "NO"))
                         .must(
-                                QueryBuilders.termQuery(
-                                        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, "role", KEYWORD),
-                                        "Creator"))
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                Words.ROLE,
+                                                KEYWORD),
+                                        Words.CREATOR))
                         .must(
-                                QueryBuilders.termQuery(
+                                termQuery(
                                         jsonPath(
                                                 ENTITY_DESCRIPTION,
                                                 CONTRIBUTORS,
                                                 IDENTITY,
-                                                "verificationStatus",
+                                                Words.VERIFICATION_STATUS,
                                                 KEYWORD),
-                                        "NotVerified"));
+                                        Words.NOT_VERIFIED));
         return Functions.queryToEntry(key, query);
     }
 
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
         var values = parameters.get(key).split(COLON);
         var query =
-                QueryBuilders.nestedQuery(
+                nestedQuery(
                         FUNDINGS,
                         boolQuery()
                                 .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))

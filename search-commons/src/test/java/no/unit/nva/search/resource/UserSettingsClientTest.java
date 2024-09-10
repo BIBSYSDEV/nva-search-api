@@ -7,6 +7,7 @@ import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpRespo
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,6 +18,8 @@ import static org.mockito.Mockito.when;
 import no.unit.nva.search.common.records.UserSettings;
 
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.attempt.Failure;
+import nva.commons.core.attempt.FunctionWithException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +47,7 @@ class UserSettingsClientTest {
         final var path = Path.of(SAMPLE_USER_SETTINGS_RESPONSE);
 
         when(mochedHttpClient.sendAsync(any(), any()))
-                .thenReturn(mockedFutureHttpResponse(""))
+                .thenReturn(mockedFutureHttpResponse(EMPTY_STRING))
                 .thenReturn(mockedFutureFailed())
                 .thenReturn(mockedFutureHttpResponse(path))
                 .thenReturn(mockedFutureHttpResponse(path));
@@ -53,15 +56,17 @@ class UserSettingsClientTest {
     static Stream<URI> uriProvider() {
         return Stream.of(
                 URI.create(
-                        "https://ex.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
+                        "https://example.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
                 URI.create(
-                        "https://ex.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
+                        "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
                 URI.create(
-                        "https://ex.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
-                            + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
+                        "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
+                                + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
                 URI.create(
                         "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
     }
+
+
 
     @ParameterizedTest
     @MethodSource("uriProvider")
@@ -74,13 +79,17 @@ class UserSettingsClientTest {
         var promotedPublications =
                 attempt(() -> userSettingsClient.doSearch(resourceAwsQuery))
                         .map(UserSettings::promotedPublications)
-                        .orElse(
-                                (e) -> {
-                                    if (e.isFailure()) {
-                                        logger.error(e.getException().getMessage());
-                                    }
-                                    return List.<String>of();
-                                });
+                        .orElse(getFailureFunctionWithException());
         assertNotNull(promotedPublications);
+    }
+
+    private FunctionWithException<Failure<List<String>>, List<String>, RuntimeException>
+            getFailureFunctionWithException() {
+        return (e) -> {
+            if (e.isFailure()) {
+                logger.error(e.getException().getMessage());
+            }
+            return List.of();
+        };
     }
 }

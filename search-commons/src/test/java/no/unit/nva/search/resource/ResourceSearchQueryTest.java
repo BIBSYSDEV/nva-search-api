@@ -108,6 +108,10 @@ class ResourceSearchQueryTest {
                 URI.create("https://example.com/?institutions=uib&funding=NFR&lang=en"));
     }
 
+    private static void debugLogging(ResourceParameter key, ResourceSearchQuery query) {
+        logger.debug("{} : {}", key.asCamelCase(), query.parameters().get(key).as());
+    }
+
     @Test
     void emptyPageSearch() {
         var page = new PagedSearch(null, 0, null, null, null, null, null);
@@ -196,14 +200,7 @@ class ResourceSearchQueryTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build();
 
-        query.parameters()
-                .getSearchKeys()
-                .forEach(
-                        key ->
-                                logger.debug(
-                                        "{} : {}",
-                                        key.asCamelCase(),
-                                        query.parameters().get(key).as()));
+        query.parameters().getSearchKeys().forEach(key -> debugLogging(key, query));
 
         // two ways to access keys
 
