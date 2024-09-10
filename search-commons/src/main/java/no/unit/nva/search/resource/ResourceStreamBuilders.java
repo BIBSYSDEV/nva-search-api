@@ -1,10 +1,14 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.KEYWORD;
 import static no.unit.nva.constants.Words.SOURCE;
 import static no.unit.nva.constants.Words.SOURCE_NAME;
@@ -100,6 +104,35 @@ public class ResourceStreamBuilders {
                                                 source)),
                         ScoreMode.None);
 
+        return Functions.queryToEntry(key, query);
+    }
+
+    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
+            ResourceParameter key) {
+        var query =
+                QueryBuilders.boolQuery()
+                        .must(
+                                QueryBuilders.termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                AFFILIATIONS,
+                                                "countryCode",
+                                                KEYWORD),
+                                        "NO"))
+                        .must(
+                                QueryBuilders.termQuery(
+                                        jsonPath(ENTITY_DESCRIPTION, CONTRIBUTORS, "role", KEYWORD),
+                                        "Creator"))
+                        .must(
+                                QueryBuilders.termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                IDENTITY,
+                                                "verificationStatus",
+                                                KEYWORD),
+                                        "NotVerified"));
         return Functions.queryToEntry(key, query);
     }
 

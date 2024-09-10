@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * @author Stig Norland
  */
-public final class ResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
+public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     private final SwsResponse response;
     private final MediaType mediaType;
     private final URI source;
@@ -34,7 +34,7 @@ public final class ResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     private final Map<String, String> facetPaths;
     private final QueryKeys<K> queryKeys;
 
-    public ResponseFormatter(
+    public HttpResponseFormatter(
             SwsResponse response,
             MediaType mediaType,
             URI source,
@@ -51,7 +51,7 @@ public final class ResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         this.queryKeys = requestParameter;
     }
 
-    public ResponseFormatter(SwsResponse response, MediaType mediaType) {
+    public HttpResponseFormatter(SwsResponse response, MediaType mediaType) {
         this(response, mediaType, null, 0, 0, Map.of(), null);
     }
 
@@ -73,6 +73,16 @@ public final class ResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
                 .withIds(source, getRequestParameter(), offset, size)
                 .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
                 .withAggregations(aggregationFormatted)
+                .build();
+    }
+
+    public PagedSearch toPagedCustomResponse(Midas midas) {
+        final var hits = response.getSearchHits().stream().map(midas::transform).toList();
+        return new PagedSearchBuilder()
+                .withTotalHits(response.getTotalSize())
+                .withHits(hits)
+                .withIds(source, getRequestParameter(), offset, size)
+                .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
                 .build();
     }
 

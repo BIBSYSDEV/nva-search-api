@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
@@ -15,8 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import no.unit.nva.search.common.records.UserSettings;
-import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.resource.UserSettingsClient;
 
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 
@@ -55,11 +53,11 @@ class UserSettingsClientTest {
     static Stream<URI> uriProvider() {
         return Stream.of(
                 URI.create(
-                        "https://example.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
+                        "https://ex.com/?contributor=http://hello.worl.test.orgd&modified_before=2019-01-01"),
                 URI.create(
-                        "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
+                        "https://ex.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
                 URI.create(
-                        "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
+                        "https://ex.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
                             + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
                 URI.create(
                         "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));

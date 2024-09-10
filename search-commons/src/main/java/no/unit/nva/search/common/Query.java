@@ -3,8 +3,8 @@ package no.unit.nva.search.common;
 import static no.unit.nva.search.common.constant.Functions.readSearchInfrastructureApiUri;
 
 import no.unit.nva.search.common.enums.ParameterKey;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.QueryContentWrapper;
-import no.unit.nva.search.common.records.ResponseFormatter;
 
 import java.net.URI;
 import java.time.Instant;
@@ -30,7 +30,7 @@ public abstract class Query<K extends Enum<K> & ParameterKey<K>> {
      * @param queryClient simple service to do i/o (http)
      * @return ResponseFormatter<ParameterKey>
      */
-    public abstract <R, Q extends Query<K>> ResponseFormatter<K> doSearch(
+    public abstract <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
             OpenSearchClient<R, Q> queryClient);
 
     protected abstract URI openSearchUri();

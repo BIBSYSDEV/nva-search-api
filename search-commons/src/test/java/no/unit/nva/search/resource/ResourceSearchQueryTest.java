@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
@@ -29,8 +29,6 @@ import static org.mockito.Mockito.when;
 import static java.util.Objects.nonNull;
 
 import no.unit.nva.search.common.records.PagedSearch;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.ResourceSearchQuery;
 
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
@@ -111,7 +109,7 @@ class ResourceSearchQueryTest {
     }
 
     @Test
-    void emptyPagesearch() {
+    void emptyPageSearch() {
         var page = new PagedSearch(null, 0, null, null, null, null, null);
         assertEquals(page.aggregations(), Map.of());
     }
