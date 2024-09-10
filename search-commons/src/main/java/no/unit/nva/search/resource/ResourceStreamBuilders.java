@@ -5,15 +5,22 @@ import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.COUNTRY_CODE;
+import static no.unit.nva.constants.Words.CREATOR;
 import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
 import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.NO;
+import static no.unit.nva.constants.Words.NOT_VERIFIED;
+import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SOURCE;
 import static no.unit.nva.constants.Words.SOURCE_NAME;
 import static no.unit.nva.constants.Words.SPACE;
+import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
+import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -23,13 +30,13 @@ import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.TITLE;
 
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
 import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
-import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.QueryKeys;
 import no.unit.nva.search.common.builder.FuzzyKeywordQuery;
 import no.unit.nva.search.common.constant.Functions;
@@ -119,26 +126,37 @@ public class ResourceStreamBuilders {
                                                 ENTITY_DESCRIPTION,
                                                 CONTRIBUTORS,
                                                 AFFILIATIONS,
-                                                Words.COUNTRY_CODE,
+                                                COUNTRY_CODE,
                                                 KEYWORD),
-                                        "NO"))
+                                        NO))
                         .must(
                                 termQuery(
                                         jsonPath(
                                                 ENTITY_DESCRIPTION,
                                                 CONTRIBUTORS,
-                                                Words.ROLE,
+                                                ROLE,
+                                                TYPE,
                                                 KEYWORD),
-                                        Words.CREATOR))
-                        .must(
+                                        CREATOR))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                existsQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                IDENTITY,
+                                                                VERIFICATION_STATUS))))
+                        .should(
                                 termQuery(
                                         jsonPath(
                                                 ENTITY_DESCRIPTION,
                                                 CONTRIBUTORS,
                                                 IDENTITY,
-                                                Words.VERIFICATION_STATUS,
+                                                VERIFICATION_STATUS,
                                                 KEYWORD),
-                                        Words.NOT_VERIFIED));
+                                        NOT_VERIFIED))
+                        .minimumShouldMatch(1);
         return Functions.queryToEntry(key, query);
     }
 

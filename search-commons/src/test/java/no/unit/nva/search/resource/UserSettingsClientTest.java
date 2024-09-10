@@ -66,8 +66,6 @@ class UserSettingsClientTest {
                         "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
     }
 
-
-
     @ParameterizedTest
     @MethodSource("uriProvider")
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
@@ -79,12 +77,12 @@ class UserSettingsClientTest {
         var promotedPublications =
                 attempt(() -> userSettingsClient.doSearch(resourceAwsQuery))
                         .map(UserSettings::promotedPublications)
-                        .orElse(getFailureFunctionWithException());
+                        .orElse(logExceptionAndContinue());
         assertNotNull(promotedPublications);
     }
 
     private FunctionWithException<Failure<List<String>>, List<String>, RuntimeException>
-            getFailureFunctionWithException() {
+            logExceptionAndContinue() {
         return (e) -> {
             if (e.isFailure()) {
                 logger.error(e.getException().getMessage());
