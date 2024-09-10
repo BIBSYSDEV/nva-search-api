@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.Containers.container;
@@ -29,8 +29,6 @@ import static org.mockito.Mockito.when;
 import static java.util.Objects.nonNull;
 
 import no.unit.nva.search.common.records.PagedSearch;
-import no.unit.nva.search.resource.ResourceClient;
-import no.unit.nva.search.resource.ResourceSearchQuery;
 
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.paths.UriWrapper;
@@ -110,8 +108,12 @@ class ResourceSearchQueryTest {
                 URI.create("https://example.com/?institutions=uib&funding=NFR&lang=en"));
     }
 
+    private static void debugLogging(ResourceParameter key, ResourceSearchQuery query) {
+        logger.debug("{} : {}", key.asCamelCase(), query.parameters().get(key).as());
+    }
+
     @Test
-    void emptyPagesearch() {
+    void emptyPageSearch() {
         var page = new PagedSearch(null, 0, null, null, null, null, null);
         assertEquals(page.aggregations(), Map.of());
     }
@@ -198,14 +200,7 @@ class ResourceSearchQueryTest {
                         .withRequiredParameters(FROM, SIZE)
                         .build();
 
-        query.parameters()
-                .getSearchKeys()
-                .forEach(
-                        key ->
-                                logger.debug(
-                                        "{} : {}",
-                                        key.asCamelCase(),
-                                        query.parameters().get(key).as()));
+        query.parameters().getSearchKeys().forEach(key -> debugLogging(key, query));
 
         // two ways to access keys
 

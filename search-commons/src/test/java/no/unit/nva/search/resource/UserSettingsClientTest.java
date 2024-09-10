@@ -1,4 +1,4 @@
-package no.unit.nva.search;
+package no.unit.nva.search.resource;
 
 import static no.unit.nva.indexing.testutils.MockedJwtProvider.setupMockedCachedJwtProvider;
 import static no.unit.nva.search.common.EntrySetTools.queryToMapEntries;
@@ -7,6 +7,7 @@ import static no.unit.nva.search.common.MockedHttpResponse.mockedFutureHttpRespo
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 import static nva.commons.core.attempt.Try.attempt;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,10 +16,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import no.unit.nva.search.common.records.UserSettings;
-import no.unit.nva.search.resource.ResourceSearchQuery;
-import no.unit.nva.search.resource.UserSettingsClient;
 
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.attempt.Failure;
+import nva.commons.core.attempt.FunctionWithException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +47,7 @@ class UserSettingsClientTest {
         final var path = Path.of(SAMPLE_USER_SETTINGS_RESPONSE);
 
         when(mochedHttpClient.sendAsync(any(), any()))
-                .thenReturn(mockedFutureHttpResponse(""))
+                .thenReturn(mockedFutureHttpResponse(EMPTY_STRING))
                 .thenReturn(mockedFutureFailed())
                 .thenReturn(mockedFutureHttpResponse(path))
                 .thenReturn(mockedFutureHttpResponse(path));
@@ -76,13 +77,17 @@ class UserSettingsClientTest {
         var promotedPublications =
                 attempt(() -> userSettingsClient.doSearch(resourceAwsQuery))
                         .map(UserSettings::promotedPublications)
-                        .orElse(
-                                (e) -> {
-                                    if (e.isFailure()) {
-                                        logger.error(e.getException().getMessage());
-                                    }
-                                    return List.<String>of();
-                                });
+                        .orElse(logExceptionAndContinue());
         assertNotNull(promotedPublications);
+    }
+
+    private FunctionWithException<Failure<List<String>>, List<String>, RuntimeException>
+            logExceptionAndContinue() {
+        return (e) -> {
+            if (e.isFailure()) {
+                logger.error(e.getException().getMessage());
+            }
+            return List.of();
+        };
     }
 }

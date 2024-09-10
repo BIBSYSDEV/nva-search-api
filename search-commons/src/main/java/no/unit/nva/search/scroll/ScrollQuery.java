@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.Query;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 import no.unit.nva.search.common.records.QueryContentWrapper;
-import no.unit.nva.search.common.records.ResponseFormatter;
 import no.unit.nva.search.common.records.SwsResponse;
 
 import org.opensearch.action.search.SearchScrollRequest;
@@ -72,10 +72,10 @@ public final class ScrollQuery extends Query<ScrollParameter> {
     }
 
     @Override
-    public <R, Q extends Query<ScrollParameter>> ResponseFormatter<ScrollParameter> doSearch(
+    public <R, Q extends Query<ScrollParameter>> HttpResponseFormatter<ScrollParameter> doSearch(
             OpenSearchClient<R, Q> queryClient) {
         var response = buildSwsResponse(scrollFetch(firstResponse, 0, (ScrollClient) queryClient));
-        return new ResponseFormatter<>(response, CSV_UTF_8);
+        return new HttpResponseFormatter<>(response, CSV_UTF_8);
     }
 
     private Stream<JsonNode> scrollFetch(

@@ -1,6 +1,4 @@
-package no.unit.nva.search;
-
-import no.unit.nva.search.common.Containers;
+package no.unit.nva.search.common;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -13,7 +11,7 @@ import java.io.IOException;
 
 public class BeforeAfterSuiteListener implements TestExecutionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceClientTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(BeforeAfterSuiteListener.class);
 
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {
