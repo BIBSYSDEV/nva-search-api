@@ -664,7 +664,7 @@ class ResourceClientTest {
 
         var uri =
                 UriWrapper.fromUri(
-                                "https://x.org/?instanceTypeHasParts=AcademicChapter&from=0&size=20")
+                                "https://x.org/?instanceTypeofChild=AcademicChapter&from=0&size=20")
                         .getUri();
         var expectedHits = 1;
         var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
@@ -771,7 +771,8 @@ class ResourceClientTest {
         // and the parent ID should be found in each child document.
 
         var uri =
-                UriWrapper.fromUri("https://x.org/?instanceTypePartOf=BookAnthology&from=0&size=20")
+                UriWrapper.fromUri(
+                                "https://x.org/?instanceTypeOfParent=BookAnthology&from=0&size=20")
                         .getUri();
         var expectedHits = 2;
         var expectedParentIdSuffix = "01905518408c-dba987f7-0d84-4519-a625-89605672afc8";
