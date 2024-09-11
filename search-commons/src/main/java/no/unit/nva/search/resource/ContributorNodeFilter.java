@@ -13,9 +13,9 @@ import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import no.unit.nva.search.common.records.Midas;
+import no.unit.nva.search.common.records.JsonNodeMutator;
 
-public final class ContributorNodeFilter implements Midas {
+public final class ContributorNodeFilter implements JsonNodeMutator {
 
     static final int FIRST_FIVE_CONTRIBUTORS = 5;
     static final JsonPointer CONTRIBUTORS_PATH_POINTER =

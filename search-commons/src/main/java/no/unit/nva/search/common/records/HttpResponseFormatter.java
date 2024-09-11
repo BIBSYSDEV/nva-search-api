@@ -76,8 +76,8 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
                 .build();
     }
 
-    public PagedSearch toPagedCustomResponse(Midas midas) {
-        final var hits = response.getSearchHits().stream().map(midas::transform).toList();
+    public PagedSearch toPagedCustomResponse(JsonNodeMutator jsonNodeMutator) {
+        final var hits = response.getSearchHits().stream().map(jsonNodeMutator::transform).toList();
         return new PagedSearchBuilder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(hits)
