@@ -29,11 +29,9 @@ public final class ContributorNodeFilter implements JsonNodeMutator {
 
     @Override
     public JsonNode transform(JsonNode source) {
-        var target = source.at(CONTRIBUTORS_PATH_POINTER);
-        var elements = target.elements();
+        var elements = source.at(CONTRIBUTORS_PATH_POINTER).elements();
         while (elements.hasNext()) {
-            var element = elements.next();
-            if (shouldRemoveContributor(element)) {
+            if (shouldRemoveContributor(elements.next())) {
                 elements.remove();
             }
         }
@@ -41,20 +39,20 @@ public final class ContributorNodeFilter implements JsonNodeMutator {
     }
 
     private boolean shouldRemoveContributor(JsonNode element) {
-        return deleteAfterMinimumSequenceNo(element)
-            && isNotVerified(element)
-            && hasNoNorwegianBasedContributor(element);
+        return canRemoveAfterMinimumSequenceNo(element)
+                && canRemoveWhenNotVerified(element)
+                && canRemoveWhenHasNoNorwegianBasedContributor(element);
     }
 
-    private boolean isNotVerified(JsonNode element) {
+    private boolean canRemoveWhenNotVerified(JsonNode element) {
         return !VERIFIED.equals(element.path(IDENTITY + DOT + VERIFICATION_STATUS).asText());
     }
 
-    private boolean hasNoNorwegianBasedContributor(JsonNode element) {
+    private boolean canRemoveWhenHasNoNorwegianBasedContributor(JsonNode element) {
         return !element.path(AFFILIATIONS).findValues(COUNTRY_CODE).contains(TextNode.valueOf(NO));
     }
 
-    private boolean deleteAfterMinimumSequenceNo(JsonNode element) {
+    private boolean canRemoveAfterMinimumSequenceNo(JsonNode element) {
         var sequence = element.path(Constants.SEQUENCE);
         return sequence.isMissingNode() || MINIMUM_INCLUDED_CONTRIBUTORS < sequence.asInt();
     }
