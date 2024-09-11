@@ -120,7 +120,7 @@ class ContributorNodeFilterTest {
           "type": "Creator"
         },
         "identity": {
-          "verificationStatus": "NotVerified",
+          "verificationStatus": null,
           "name": "J Lissowska",
           "type": "Identity"
         },
@@ -133,7 +133,6 @@ class ContributorNodeFilterTest {
           "type": "Creator"
         },
         "identity": {
-          "verificationStatus": "NotVerified",
           "name": "D Mates",
           "type": "Identity"
         },
@@ -141,7 +140,6 @@ class ContributorNodeFilterTest {
         "type": "Contributor"
       },
       {
-        "sequence": 8,
         "role": {
           "type": "Creator"
         },
