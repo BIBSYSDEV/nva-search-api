@@ -17,7 +17,7 @@ import no.unit.nva.search.common.records.JsonNodeMutator;
 
 public final class ContributorNodeFilter implements JsonNodeMutator {
 
-    static final int FIRST_FIVE_CONTRIBUTORS = 5;
+    static final int MINIMUM_INCLUDED_CONTRIBUTORS = 5;
     static final JsonPointer CONTRIBUTORS_PATH_POINTER =
             JsonPointer.compile(ENTITY_DESCRIPTION_CONTRIBUTORS_PATH);
 
@@ -33,25 +33,29 @@ public final class ContributorNodeFilter implements JsonNodeMutator {
         var elements = target.elements();
         while (elements.hasNext()) {
             var element = elements.next();
-            if (deleteAfter(element, FIRST_FIVE_CONTRIBUTORS)
-                    && isNotVerified(element)
-                    && hasNoNorwegianBasedContributor(element)) {
+            if (shouldRemoveContributor(element)) {
                 elements.remove();
             }
         }
         return source;
     }
 
-    private Boolean isNotVerified(JsonNode element) {
+    private boolean shouldRemoveContributor(JsonNode element) {
+        return deleteAfterMinimumSequenceNo(element)
+            && isNotVerified(element)
+            && hasNoNorwegianBasedContributor(element);
+    }
+
+    private boolean isNotVerified(JsonNode element) {
         return !VERIFIED.equals(element.path(IDENTITY + DOT + VERIFICATION_STATUS).asText());
     }
 
-    private Boolean hasNoNorwegianBasedContributor(JsonNode element) {
+    private boolean hasNoNorwegianBasedContributor(JsonNode element) {
         return !element.path(AFFILIATIONS).findValues(COUNTRY_CODE).contains(TextNode.valueOf(NO));
     }
 
-    private Boolean deleteAfter(JsonNode element, int count) {
+    private boolean deleteAfterMinimumSequenceNo(JsonNode element) {
         var sequence = element.path(Constants.SEQUENCE);
-        return sequence.isMissingNode() || count < sequence.asInt();
+        return sequence.isMissingNode() || MINIMUM_INCLUDED_CONTRIBUTORS < sequence.asInt();
     }
 }
