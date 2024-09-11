@@ -15,16 +15,16 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import no.unit.nva.search.common.records.JsonNodeMutator;
 
-public final class ContributorNodeFilter implements JsonNodeMutator {
+public final class ContributorNodeReducer implements JsonNodeMutator {
 
     static final int MINIMUM_INCLUDED_CONTRIBUTORS = 5;
     static final JsonPointer CONTRIBUTORS_PATH_POINTER =
             JsonPointer.compile(ENTITY_DESCRIPTION_CONTRIBUTORS_PATH);
 
-    private ContributorNodeFilter() {}
+    private ContributorNodeReducer() {}
 
-    public static ContributorNodeFilter verifiedOrNorwegian() {
-        return new ContributorNodeFilter();
+    public static ContributorNodeReducer firstFewContributorsOrVerifiedOrNorwegian() {
+        return new ContributorNodeReducer();
     }
 
     @Override
