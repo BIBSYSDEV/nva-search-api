@@ -172,12 +172,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return RESOURCES_AGGREGATIONS;
     }
 
-    @Override
-    public <R, Q extends Query<ResourceParameter>>
-            HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
-        return super.doSearch(queryClient);
-    }
-
     @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
     @Override
     protected Stream<Entry<ResourceParameter, QueryBuilder>> builderCustomQueryStream(
