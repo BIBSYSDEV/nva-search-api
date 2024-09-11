@@ -1,15 +1,26 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.constants.Words.ADDITIONAL_IDENTIFIERS;
+import static no.unit.nva.constants.Words.AFFILIATIONS;
 import static no.unit.nva.constants.Words.ASTERISK;
 import static no.unit.nva.constants.Words.COLON;
+import static no.unit.nva.constants.Words.CONTRIBUTORS;
+import static no.unit.nva.constants.Words.COUNTRY_CODE;
+import static no.unit.nva.constants.Words.CREATOR;
+import static no.unit.nva.constants.Words.ENTITY_DESCRIPTION;
 import static no.unit.nva.constants.Words.FUNDINGS;
 import static no.unit.nva.constants.Words.IDENTIFIER;
+import static no.unit.nva.constants.Words.IDENTITY;
 import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.NO;
+import static no.unit.nva.constants.Words.NOT_VERIFIED;
+import static no.unit.nva.constants.Words.ROLE;
 import static no.unit.nva.constants.Words.SOURCE;
 import static no.unit.nva.constants.Words.SOURCE_NAME;
 import static no.unit.nva.constants.Words.SPACE;
+import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
+import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -19,6 +30,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.search.resource.ResourceParameter.TITLE;
 
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
+import static org.opensearch.index.query.QueryBuilders.existsQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
@@ -101,6 +113,50 @@ public class ResourceStreamBuilders {
                                                 source)),
                         ScoreMode.None);
 
+        return Functions.queryToEntry(key, query);
+    }
+
+    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedNorwegians(
+            ResourceParameter key) {
+        var query =
+                boolQuery()
+                        .must(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                AFFILIATIONS,
+                                                COUNTRY_CODE,
+                                                KEYWORD),
+                                        NO))
+                        .must(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                ROLE,
+                                                TYPE,
+                                                KEYWORD),
+                                        CREATOR))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                existsQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                IDENTITY,
+                                                                VERIFICATION_STATUS))))
+                        .should(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                IDENTITY,
+                                                VERIFICATION_STATUS,
+                                                KEYWORD),
+                                        NOT_VERIFIED))
+                        .minimumShouldMatch(1);
         return Functions.queryToEntry(key, query);
     }
 

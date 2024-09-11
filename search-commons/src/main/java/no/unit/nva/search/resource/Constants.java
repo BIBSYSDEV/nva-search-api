@@ -257,6 +257,7 @@ public final class Constants {
                     fundingSourceHierarchy(),
                     scientificIndexHierarchy(),
                     topLevelOrganisationsHierarchy());
+    public static final String SEQUENCE = "sequence";
     private static final Map<String, String> facetResourcePaths1 =
             Map.of(
                     TYPE, "/withAppliedFilter/entityDescription/reference/publicationInstance/type",

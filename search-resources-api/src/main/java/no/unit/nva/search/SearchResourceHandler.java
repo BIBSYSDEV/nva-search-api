@@ -3,6 +3,7 @@ package no.unit.nva.search;
 import static no.unit.nva.constants.Defaults.DEFAULT_RESPONSE_MEDIA_TYPES;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED_METADATA;
+import static no.unit.nva.search.resource.ContributorNodeReducer.firstFewContributorsOrVerifiedOrNorwegian;
 import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -50,7 +51,8 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
                 .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
                 .apply()
                 .doSearch(opensearchClient)
-                .toString();
+                .toPagedCustomResponse(firstFewContributorsOrVerifiedOrNorwegian())
+                .toJsonString();
     }
 
     @Override

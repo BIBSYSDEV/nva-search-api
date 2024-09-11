@@ -76,6 +76,16 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
                 .build();
     }
 
+    public PagedSearch toPagedCustomResponse(JsonNodeMutator jsonNodeMutator) {
+        final var hits = response.getSearchHits().stream().map(jsonNodeMutator::transform).toList();
+        return new PagedSearchBuilder()
+                .withTotalHits(response.getTotalSize())
+                .withHits(hits)
+                .withIds(source, getRequestParameter(), offset, size)
+                .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
+                .build();
+    }
+
     public String toCsvText() {
         return ResourceCsvTransformer.transform(response.getSearchHits());
     }

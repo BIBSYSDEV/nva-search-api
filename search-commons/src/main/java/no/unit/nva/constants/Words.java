@@ -36,8 +36,10 @@ public final class Words {
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
     public static final String CONTRIBUTOR_ORGANIZATIONS = "contributorOrganizations";
+    public static final String COUNTRY_CODE = "countryCode";
     public static final String COURSE = "course";
     public static final String CREATED_DATE = "createdDate";
+    public static final String CREATOR = "Creator";
     public static final String CRISTIN_AS_TYPE = "Cristin";
     public static final String DOI = "doi";
     public static final String DOIREQUESTS_INDEX = "doirequests";
@@ -71,7 +73,9 @@ public final class Words {
     public static final String MESSAGES_INDEX = "messages";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
+    public static final String NO = "NO";
     public static final String NONE = "none";
+    public static final String NOT_VERIFIED = "NotVerified";
     public static final String NYNORSK_CODE = "nn";
     public static final String ONLINE_ISSN = "onlineIssn";
     public static final String ORC_ID = "orcId";
@@ -127,9 +131,13 @@ public final class Words {
     public static final String TYPE = "type";
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
+    public static final String VERIFICATION_STATUS = "verificationStatus";
+    public static final String VERIFIED = "Verified";
     public static final String VIEWED_BY = "viewedBy";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
+    public static final String ENTITY_DESCRIPTION_CONTRIBUTORS_PATH =
+            "/entityDescription/contributors";
 
     @JacocoGenerated
     public Words() {}
