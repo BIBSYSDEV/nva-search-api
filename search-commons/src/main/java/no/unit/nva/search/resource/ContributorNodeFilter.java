@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import no.unit.nva.search.common.records.Midas;
 
-public class ContributorNodeFilter implements Midas {
+public final class ContributorNodeFilter implements Midas {
 
     static final int FIRST_FIVE_CONTRIBUTORS = 5;
     static final JsonPointer CONTRIBUTORS_PATH_POINTER =
