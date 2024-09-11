@@ -61,7 +61,7 @@ class UserSettingsClientTest {
                         "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269057"),
                 URI.create(
                         "https://example.com/?contributor=https%3A%2F%2Fapi.dev.nva.aws.unit"
-                                + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
+                            + ".no%2Fcristin%2Fperson%2F1269057&orderBy=UNIT_ID:asc,title:desc"),
                 URI.create(
                         "https://example.com/?contributor=https://api.dev.nva.aws.unit.no/cristin/person/1269051"));
     }

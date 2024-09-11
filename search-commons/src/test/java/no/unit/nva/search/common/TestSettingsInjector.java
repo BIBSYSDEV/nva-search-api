@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class BeforeAfterSuiteListener implements TestExecutionListener {
+public class TestSettingsInjector implements TestExecutionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeforeAfterSuiteListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestSettingsInjector.class);
 
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {
         TestExecutionListener.super.testPlanExecutionStarted(testPlan);
-        Configurator.setAllLevels("", Level.WARN);
+        Configurator.setAllLevels("", Level.INFO);
         try {
             logger.info("Setting up Opensearch server");
             Containers.setup();

@@ -22,9 +22,9 @@ import static no.unit.nva.search.common.enums.FieldOperator.NA;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.ParameterKind.CUSTOM;
 import static no.unit.nva.search.common.enums.ParameterKind.DATE;
+import static no.unit.nva.search.common.enums.ParameterKind.FLAG;
 import static no.unit.nva.search.common.enums.ParameterKind.FREE_TEXT;
 import static no.unit.nva.search.common.enums.ParameterKind.FUZZY_KEYWORD;
-import static no.unit.nva.search.common.enums.ParameterKind.IGNORED;
 import static no.unit.nva.search.common.enums.ParameterKind.KEYWORD;
 import static no.unit.nva.search.common.enums.ParameterKind.NUMBER;
 import static no.unit.nva.search.common.enums.ParameterKind.SORT_KEY;
@@ -107,16 +107,16 @@ public enum ImportCandidateParameter implements ParameterKey<ImportCandidatePara
     // Query parameters passed to SWS/Opensearch
     SEARCH_ALL(FREE_TEXT, ALL_OF, Q, PATTERN_IS_SEARCH_ALL_KEY, null, null),
     // Pagination parameters
-    NODES_SEARCHED(IGNORED, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
-    NODES_INCLUDED(IGNORED),
-    NODES_EXCLUDED(IGNORED),
-    AGGREGATION(IGNORED),
+    NODES_SEARCHED(FLAG, null, null, PATTERN_IS_FIELDS_SEARCHED, null, null),
+    NODES_INCLUDED(FLAG),
+    NODES_EXCLUDED(FLAG),
+    AGGREGATION(FLAG),
     PAGE(NUMBER),
     FROM(NUMBER, null, null, PATTERN_IS_FROM_KEY, null, null),
     SIZE(NUMBER, null, null, PATTERN_IS_SIZE_KEY, null, null),
-    SEARCH_AFTER(IGNORED),
+    SEARCH_AFTER(FLAG),
     SORT(SORT_KEY, null, null, PATTERN_IS_SORT_KEY, null, null),
-    SORT_ORDER(IGNORED, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
+    SORT_ORDER(FLAG, ALL_OF, null, PATTERN_IS_SORT_ORDER_KEY, PATTERN_IS_ASC_DESC_VALUE, null),
     ;
 
     public static final int IGNORE_PARAMETER_INDEX = 0;

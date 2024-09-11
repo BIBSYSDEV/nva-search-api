@@ -166,17 +166,17 @@ Accept: application/json
 
 | key_name                  | keyName                 | queryKind    | scope      | paths                                                                                                            |
 |---------------------------|-------------------------|--------------|------------|------------------------------------------------------------------------------------------------------------------|
-| assignee                  | assignee                | custom       | all_of     | assignee.firstName.keyword, assignee.lastName.keyword, assignee.username.keyword                                 |
-| assignee_not              | assigneeNot             | acrossFields | not_all_of | assignee.firstName, assignee.lastName, assignee.username                                                         |
-| by_user_pending           | byUserPending           | ignored      | all_of     | BY_USER_PENDING                                                                                                  |
+| assignee                  | assignee                | custom       | any_of     | assignee.firstName.keyword, assignee.lastName.keyword, assignee.username.keyword                                 |
+| assignee_not              | assigneeNot             | acrossFields | not_any_of | assignee.firstName, assignee.lastName, assignee.username                                                         |
+| by_user_pending           | byUserPending           | flag         | all_of     | BY_USER_PENDING                                                                                                  |
 | created_date              | createdDate             | date         | between    | createdDate                                                                                                      |
 | customer_id               | customerId              | fuzzyKeyword | any_of     | customerId                                                                                                       |
 | customer_id_not           | customerIdNot           | fuzzyKeyword | not_any_of | customerId                                                                                                       |
-| id                        | id                      | fuzzyKeyword | any_of     | id                                                                                                               |
-| id_not                    | idNot                   | fuzzyKeyword | not_any_of | id                                                                                                               |
-| exclude_subunits          | excludeSubunits         | ignored      | any_of     | organization.id, organization.identifier                                                                         |
+| exclude_subunits          | excludeSubunits         | flag         | any_of     | organization.id, organization.identifier                                                                         |
 | finalized_by              | finalizedBy             | acrossFields | all_of     | finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                                                |
 | finalized_by_not          | finalizedByNot          | acrossFields | not_all_of | finalizedBy.firstName, finalizedBy.lastName, finalizedBy.username                                                |
+| id                        | id                      | fuzzyKeyword | any_of     | id                                                                                                               |
+| id_not                    | idNot                   | fuzzyKeyword | not_any_of | id                                                                                                               |
 | messages                  | messages                | text         | all_of     | messages.text, messages.status                                                                                   |
 | messages_not              | messagesNot             | text         | not_all_of | messages.text, messages.status                                                                                   |
 | modified_date             | modifiedDate            | date         | between    | modifiedDate                                                                                                     |
@@ -186,21 +186,28 @@ Accept: application/json
 | owner_not                 | ownerNot                | acrossFields | not_any_of | owner.firstName, owner.lastName, owner.username                                                                  |
 | publication_id            | publicationId           | fuzzyKeyword | any_of     | publication.id, publication.identifier                                                                           |
 | publication_id_not        | publicationIdNot        | fuzzyKeyword | not_any_of | publication.id, publication.identifier                                                                           |
-| publication_type          | publicationType         | fuzzyKeyword | any_of     | publication.publicationInstance.type                                                                             |
-| publication_type_not      | publicationTypeNot      | fuzzyKeyword | not_any_of | publication.publicationInstance.type                                                                             |
 | publication_modified_date | publicationModifiedDate | date         | between    | publication.modifiedDate                                                                                         |
 | publication_owner         | publicationOwner        | fuzzyKeyword | any_of     | publication.owner                                                                                                |
 | publication_owner_not     | publicationOwnerNot     | fuzzyKeyword | not_any_of | publication.owner                                                                                                |
 | publication_status        | publicationStatus       | keyword      | any_of     | publication.status.keyword                                                                                       |
 | publication_status_not    | publicationStatusNot    | keyword      | not_any_of | publication.status.keyword                                                                                       |
 | publication_title         | publicationTitle        | text         | all_of     | publication.mainTitle                                                                                            |
-| status                    | status                  | keyword      | any_of     | status.keyword                                                                                                   |
-| status_not                | statusNot               | keyword      | not_any_of | status.keyword                                                                                                   |
+| publication_type          | publicationType         | fuzzyKeyword | any_of     | publication.publicationInstance.type                                                                             |
+| publication_type_not      | publicationTypeNot      | fuzzyKeyword | not_any_of | publication.publicationInstance.type                                                                             |
+| statistics                | statistics              | flag         | all_of     | STATISTICS                                                                                                       |
+| status                    | status                  | custom       | any_of     | status.keyword                                                                                                   |
+| status_not                | statusNot               | custom       | not_any_of | status.keyword                                                                                                   |
 | type                      | type                    | keyword      | any_of     | type.keyword                                                                                                     |
 | type_not                  | typeNot                 | keyword      | not_any_of | type.keyword                                                                                                     |
 | viewed_by                 | viewedBy                | acrossFields | all_of     | viewedBy.firstName, viewedBy.lastName, viewedBy.username                                                         |
 | viewed_by_not             | viewedByNot             | acrossFields | not_all_of | viewedBy.firstName, viewedBy.lastName, viewedBy.username                                                         |
 | search_all                | searchAll               | freeText     | all_of     | q                                                                                                                |
+| nodes_searched            | nodesSearched           | flag         | na         | NODES_SEARCHED                                                                                                   |
+| nodes_included            | nodesIncluded           | flag         | all_of     | NODES_INCLUDED                                                                                                   |
+| nodes_excluded            | nodesExcluded           | flag         | all_of     | NODES_EXCLUDED                                                                                                   |
+| aggregation               | aggregation             | flag         | all_of     | AGGREGATION                                                                                                      |
+
+
 
 > [!NOTE]
 > <p>Valid SortKeys </p>

@@ -201,7 +201,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
             case HAS_PARTS -> new HasPartsQuery<K>().buildQuery(key, value);
             case PART_OF -> new PartOfQuery<K>().buildQuery(key, value);
             case CUSTOM -> builderCustomQueryStream(key);
-            case IGNORED -> Stream.empty();
+            case FLAG -> Stream.empty();
             default -> throw new RuntimeException(ErrorMessages.HANDLER_NOT_DEFINED + key.name());
         };
     }

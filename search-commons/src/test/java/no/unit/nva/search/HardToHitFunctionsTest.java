@@ -1,4 +1,4 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search;
 
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 
@@ -26,8 +26,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class UntouchedHeroesTest {
-    private static final Logger logger = LoggerFactory.getLogger(UntouchedHeroesTest.class);
+class HardToHitFunctionsTest {
+    private static final Logger logger = LoggerFactory.getLogger(HardToHitFunctionsTest.class);
 
     @Test
     void invalidRangeQueryMust() {
