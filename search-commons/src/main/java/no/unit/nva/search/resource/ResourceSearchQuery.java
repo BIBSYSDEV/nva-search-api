@@ -45,10 +45,13 @@ import static java.lang.String.format;
 
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -89,33 +92,21 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         filterBuilder = new ResourceFilter(this);
     }
 
+    /**
+     * Add a (default) filter to the query that will never match any document.
+     *
+     * <p>This whitelist the ResourceQuery from any forgetful developer (me)
+     *
+     * <p>i.e.In order to return any results, withRequiredStatus must be set
+     */
+    private void assignStatusImpossibleWhiteList() {
+        filters.set(
+                new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
+                        .queryName(STATUS));
+    }
+
     public static ResourceParameterValidator builder() {
         return new ResourceParameterValidator();
-    }
-
-    @Override
-    protected ResourceParameter keyAggregation() {
-        return AGGREGATION;
-    }
-
-    @Override
-    protected ResourceParameter keyFields() {
-        return NODES_SEARCHED;
-    }
-
-    @Override
-    protected ResourceParameter keySearchAfter() {
-        return SEARCH_AFTER;
-    }
-
-    @Override
-    protected ResourceParameter toKey(String keyName) {
-        return ResourceParameter.keyFromString(keyName);
-    }
-
-    @Override
-    protected SortKey toSortKey(String sortName) {
-        return ResourceSort.fromSortKey(sortName);
     }
 
     @Override
@@ -147,15 +138,28 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    public URI openSearchUri() {
-        return fromUri(infrastructureApiUri)
-                .addChild(Words.RESOURCES, Words.SEARCH)
-                .addQueryParameters(queryParameters())
-                .getUri();
+    protected ResourceParameter keyAggregation() {
+        return AGGREGATION;
     }
 
-    private Map<String, String> queryParameters() {
-        return additionalQueryParameters;
+    @Override
+    protected ResourceParameter keyFields() {
+        return NODES_SEARCHED;
+    }
+
+    @Override
+    protected ResourceParameter keySearchAfter() {
+        return SEARCH_AFTER;
+    }
+
+    @Override
+    protected ResourceParameter toKey(String keyName) {
+        return ResourceParameter.keyFromString(keyName);
+    }
+
+    @Override
+    protected SortKey toSortKey(String sortName) {
+        return ResourceSort.fromSortKey(sortName);
     }
 
     @Override
@@ -169,12 +173,9 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
     }
 
     @Override
-    protected BoolQueryBuilder builderMainQuery() {
-        var queryBuilder = super.builderMainQuery();
-        if (isLookingForOneContributor()) {
-            addPromotedPublications(this.userSettingsClient, queryBuilder);
-        }
-        return queryBuilder;
+    public <R, Q extends Query<ResourceParameter>>
+            HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
+        return super.doSearch(queryClient);
     }
 
     @JacocoGenerated // default value shouldn't happen, (developer have forgotten to handle a key)
@@ -188,6 +189,8 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             case SCOPUS_IDENTIFIER -> streamBuilders.additionalIdentifierQuery(key, SCOPUS_AS_TYPE);
             case TOP_LEVEL_ORGANIZATION, UNIT, UNIT_NOT -> streamBuilders.subUnitIncludedQuery(key);
             case UNIDENTIFIED_NORWEGIAN -> streamBuilders.unIdentifiedNorwegians(key);
+            case UNIDENTIFIED_CONTRIBUTOR_INSTITUTION ->
+                    streamBuilders.unIdentifiedContributorOrInstitution(key);
             case SEARCH_ALL ->
                     streamBuilders.searchAllWithBoostsQuery(
                             fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
@@ -195,18 +198,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         };
     }
 
-    public ResourceFilter withFilter() {
-        return filterBuilder;
-    }
-
-    public ResourceSearchQuery withScrollTime(String time) {
-        this.additionalQueryParameters.put("scroll", time);
-        return this;
-    }
-
-    public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
-        this.userSettingsClient = userSettingsClient;
-        return this;
+    @Override
+    protected BoolQueryBuilder builderMainQuery() {
+        var queryBuilder = super.builderMainQuery();
+        if (isLookingForOneContributor()) {
+            addPromotedPublications(this.userSettingsClient, queryBuilder);
+        }
+        return queryBuilder;
     }
 
     private void addPromotedPublications(
@@ -233,17 +231,30 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
-    /**
-     * Add a (default) filter to the query that will never match any document.
-     *
-     * <p>This whitelist the ResourceQuery from any forgetful developer (me)
-     *
-     * <p>i.e.In order to return any results, withRequiredStatus must be set
-     */
-    private void assignStatusImpossibleWhiteList() {
-        filters.set(
-                new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
-                        .queryName(STATUS));
+    @Override
+    public URI openSearchUri() {
+        return fromUri(infrastructureApiUri)
+                .addChild(Words.RESOURCES, Words.SEARCH)
+                .addQueryParameters(queryParameters())
+                .getUri();
+    }
+
+    private Map<String, String> queryParameters() {
+        return additionalQueryParameters;
+    }
+
+    public ResourceFilter withFilter() {
+        return filterBuilder;
+    }
+
+    public ResourceSearchQuery withScrollTime(String time) {
+        this.additionalQueryParameters.put("scroll", time);
+        return this;
+    }
+
+    public ResourceSearchQuery withUserSettings(UserSettingsClient userSettingsClient) {
+        this.userSettingsClient = userSettingsClient;
+        return this;
     }
 
     public static class ResourceParameterValidator
@@ -289,6 +300,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         @Override
         protected Collection<String> validKeys() {
             return RESOURCE_PARAMETER_SET.stream().map(ResourceParameter::asLowerCase).toList();
+        }
+
+        @Override
+        protected boolean isKeyValid(String keyName) {
+            return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
         }
 
         @Override
@@ -352,11 +368,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
 
         private boolean isUriId(String decodedValue) {
             return decodedValue.startsWith(HTTPS);
-        }
-
-        @Override
-        protected boolean isKeyValid(String keyName) {
-            return ResourceParameter.keyFromString(keyName) != ResourceParameter.INVALID;
         }
     }
 }

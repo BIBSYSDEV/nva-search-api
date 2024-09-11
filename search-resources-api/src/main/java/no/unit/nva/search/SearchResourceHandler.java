@@ -8,6 +8,7 @@ import static no.unit.nva.search.resource.ResourceClient.defaultClient;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
+import static no.unit.nva.search.resource.ResourceParameter.UNIDENTIFIED_NORWEGIAN;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.common.net.MediaType;
@@ -40,27 +41,6 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     }
 
     @Override
-    protected String processInput(Void input, RequestInfo requestInfo, Context context)
-            throws BadRequestException {
-        return ResourceSearchQuery.builder()
-                .fromRequestInfo(requestInfo)
-                .withRequiredParameters(FROM, SIZE, AGGREGATION)
-                .validate()
-                .build()
-                .withFilter()
-                .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
-                .apply()
-                .doSearch(opensearchClient)
-                .toPagedCustomResponse(firstFewContributorsOrVerifiedOrNorwegian())
-                .toJsonString();
-    }
-
-    @Override
-    protected Integer getSuccessStatusCode(Void input, String output) {
-        return HttpURLConnection.HTTP_OK;
-    }
-
-    @Override
     protected List<MediaType> listSupportedMediaTypes() {
         return DEFAULT_RESPONSE_MEDIA_TYPES;
     }
@@ -69,5 +49,30 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
         // Do nothing
+    }
+
+    @Override
+    protected String processInput(Void input, RequestInfo requestInfo, Context context)
+            throws BadRequestException {
+        var response =
+                ResourceSearchQuery.builder()
+                        .fromRequestInfo(requestInfo)
+                        .withRequiredParameters(FROM, SIZE, AGGREGATION)
+                        .validate()
+                        .build()
+                        .withFilter()
+                        .requiredStatus(PUBLISHED, PUBLISHED_METADATA)
+                        .apply()
+                        .doSearch(opensearchClient);
+        if (response.parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
+            return response.toPagedCustomResponse(firstFewContributorsOrVerifiedOrNorwegian())
+                    .toJsonString();
+        }
+        return response.toString();
+    }
+
+    @Override
+    protected Integer getSuccessStatusCode(Void input, String output) {
+        return HttpURLConnection.HTTP_OK;
     }
 }

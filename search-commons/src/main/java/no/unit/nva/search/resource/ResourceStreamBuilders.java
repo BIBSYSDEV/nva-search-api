@@ -21,6 +21,7 @@ import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.constants.Words.TYPE;
 import static no.unit.nva.constants.Words.VALUE;
 import static no.unit.nva.constants.Words.VERIFICATION_STATUS;
+import static no.unit.nva.constants.Words.VERIFIED;
 import static no.unit.nva.search.common.constant.Functions.jsonPath;
 import static no.unit.nva.search.resource.Constants.ENTITY_ABSTRACT;
 import static no.unit.nva.search.resource.Constants.ENTITY_DESCRIPTION_MAIN_TITLE;
@@ -156,6 +157,42 @@ public class ResourceStreamBuilders {
                                                 VERIFICATION_STATUS,
                                                 KEYWORD),
                                         NOT_VERIFIED))
+                        .minimumShouldMatch(1);
+        return Functions.queryToEntry(key, query);
+    }
+
+    public Stream<Map.Entry<ResourceParameter, QueryBuilder>> unIdentifiedContributorOrInstitution(
+            ResourceParameter key) {
+        var query =
+                boolQuery()
+                        .must(
+                                termQuery(
+                                        jsonPath(
+                                                ENTITY_DESCRIPTION,
+                                                CONTRIBUTORS,
+                                                ROLE,
+                                                TYPE,
+                                                KEYWORD),
+                                        CREATOR))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                termQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                IDENTITY,
+                                                                VERIFICATION_STATUS,
+                                                                KEYWORD),
+                                                        VERIFIED)))
+                        .should(
+                                boolQuery()
+                                        .mustNot(
+                                                existsQuery(
+                                                        jsonPath(
+                                                                ENTITY_DESCRIPTION,
+                                                                CONTRIBUTORS,
+                                                                AFFILIATIONS))))
                         .minimumShouldMatch(1);
         return Functions.queryToEntry(key, query);
     }
