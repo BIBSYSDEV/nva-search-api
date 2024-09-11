@@ -1,5 +1,7 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search;
 
+import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.SPACE;
 import static no.unit.nva.search.common.enums.FieldOperator.BETWEEN;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,15 +28,16 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class UntouchedHeroesTest {
-    private static final Logger logger = LoggerFactory.getLogger(UntouchedHeroesTest.class);
+class HardToHitFunctionsTest {
+    private static final Logger logger = LoggerFactory.getLogger(HardToHitFunctionsTest.class);
+    private static final String TEST = "test";
 
     @Test
     void invalidRangeQueryMust() {
         var queryRange = new RangeQuery<ResourceParameter>();
         assertThrows(
                 IllegalArgumentException.class,
-                () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, "test"));
+                () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE, TEST));
     }
 
     @Test
@@ -53,7 +56,7 @@ class UntouchedHeroesTest {
         var queryRange = new RangeQuery<ResourceParameter>();
         assertThrows(
                 IllegalArgumentException.class,
-                () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, "test"));
+                () -> queryRange.buildQuery(ResourceParameter.CONTEXT_TYPE_NOT, TEST));
     }
 
     @Test
@@ -71,18 +74,6 @@ class UntouchedHeroesTest {
         printEnum(Arrays.stream(ResourceParameter.values()));
     }
 
-    private void printEnum(Stream<ParameterKey<?>> parameterKeyStream) {
-        parameterKeyStream.forEach(
-                key ->
-                        logger.info(
-                                "|{}|{}|{}|{}|{}|",
-                                key.asLowerCase(),
-                                key.asCamelCase(),
-                                key.fieldType().asCamelCase(),
-                                key.searchOperator().asLowerCase(),
-                                key.searchFields().collect(Collectors.joining(", "))));
-    }
-
     @Test
     void printTicketParameter() {
         printEnum(Arrays.stream(TicketParameter.values()));
@@ -98,6 +89,18 @@ class UntouchedHeroesTest {
         printEnumSort(Arrays.stream(ResourceSort.values()));
     }
 
+    private void printEnum(Stream<ParameterKey<?>> parameterKeyStream) {
+        parameterKeyStream.forEach(
+                key ->
+                        logger.info(
+                                "|{}|{}|{}|{}|{}|",
+                                key.asLowerCase(),
+                                key.asCamelCase(),
+                                key.fieldType().asCamelCase(),
+                                key.searchOperator().asLowerCase(),
+                                key.searchFields().collect(Collectors.joining(COMMA + SPACE))));
+    }
+
     private void printEnumSort(Stream<SortKey> parameterSortKeyStream) {
         parameterSortKeyStream.forEach(
                 key ->
@@ -106,6 +109,6 @@ class UntouchedHeroesTest {
                                 key.asLowerCase(),
                                 key.asCamelCase(),
                                 key.keyPattern(),
-                                key.jsonPaths().collect(Collectors.joining(", "))));
+                                key.jsonPaths().collect(Collectors.joining(COMMA + SPACE))));
     }
 }

@@ -36,8 +36,8 @@ public final class ErrorMessages {
 
     public static final String TEMPLATE_INVALID_QUERY_PARAMETERS =
             "Invalid query parameter supplied %s.  Valid parameters: %s Also pass through to"
-                    + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
-                    + "search_after]";
+                + " OpenSearch:[page & per_page | offset & results, sort (& sortOrder), fields, "
+                + "search_after]";
 
     public static final String MISSING_IDENTIFIER_IN_RESOURCE = "Missing identifier in resource";
     public static final String MISSING_INDEX_NAME_IN_RESOURCE = "Missing index name in resource";

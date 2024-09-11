@@ -13,7 +13,7 @@ public enum ParameterKind {
      * Ignored parameters are not processed by standard or custom handling. Normally used together
      * with other parameters in custom handlers or paging.
      */
-    IGNORED,
+    FLAG,
     BOOLEAN,
     NUMBER,
     DATE,
