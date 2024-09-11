@@ -1,6 +1,7 @@
 package no.unit.nva.search;
 
 import no.unit.nva.search.common.Containers;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -17,8 +18,8 @@ public class TestSettingsInjector implements TestExecutionListener {
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {
         TestExecutionListener.super.testPlanExecutionStarted(testPlan);
-        Configurator.setAllLevels("", Level.WARN);
         try {
+            Configurator.setAllLevels("", Level.WARN);
             logger.info("Setting up Opensearch server");
             Containers.setup();
         } catch (InterruptedException | IOException e) {
