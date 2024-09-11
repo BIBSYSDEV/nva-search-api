@@ -27,29 +27,35 @@ public class ContributorNodeFilter implements Midas {
         var elements = target.elements();
         while (elements.hasNext()) {
             var element = elements.next();
-            if (hasVerificationStatus(element) && !hasCountryCode(element)) {
+            if (deleteAfter(element, 5)
+                    && isNotVerified(element)
+                    && hasNoNorwegianBasedContributor(element)) {
                 elements.remove();
             }
         }
         return source;
     }
 
-    private Boolean hasVerificationStatus(JsonNode element) {
+    private Boolean isNotVerified(JsonNode element) {
         return attempt(
                         () ->
-                                Words.NOT_VERIFIED.equals(
+                                !Words.VERIFIED.equals(
                                         element.get(Words.IDENTITY)
                                                 .get(Words.VERIFICATION_STATUS)
                                                 .asText()))
-                .orElse((e) -> Boolean.FALSE);
+                .orElse((e) -> Boolean.TRUE);
     }
 
-    private Boolean hasCountryCode(JsonNode element) {
+    private Boolean hasNoNorwegianBasedContributor(JsonNode element) {
         return attempt(
                         () ->
-                                element.path(Words.AFFILIATIONS)
+                                !element.path(Words.AFFILIATIONS)
                                         .findValues(Words.COUNTRY_CODE)
                                         .contains(TextNode.valueOf(Words.NO)))
-                .orElse((e) -> Boolean.FALSE);
+                .orElse((e) -> Boolean.TRUE);
+    }
+
+    private Boolean deleteAfter(JsonNode element, int count) {
+        return attempt(() -> count < element.get("sequence").asInt()).orElse((e) -> Boolean.TRUE);
     }
 }

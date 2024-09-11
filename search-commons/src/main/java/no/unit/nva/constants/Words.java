@@ -132,6 +132,7 @@ public final class Words {
     public static final String UNDERSCORE = "_";
     public static final String VALUE = "value";
     public static final String VERIFICATION_STATUS = "verificationStatus";
+    public static final String VERIFIED = "Verified";
     public static final String VIEWED_BY = "viewedBy";
     public static final String YEAR = "year";
     public static final String ZERO = "0";
