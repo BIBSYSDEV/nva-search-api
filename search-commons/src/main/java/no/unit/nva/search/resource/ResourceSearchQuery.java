@@ -45,13 +45,10 @@ import static java.lang.String.format;
 
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AsType;
-import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.ParameterValidator;
-import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
-import no.unit.nva.search.common.records.HttpResponseFormatter;
 
 import nva.commons.core.JacocoGenerated;
 
