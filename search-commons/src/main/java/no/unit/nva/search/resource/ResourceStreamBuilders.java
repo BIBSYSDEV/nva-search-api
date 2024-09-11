@@ -21,6 +21,8 @@ import static no.unit.nva.search.resource.ResourceParameter.TITLE;
 import static org.opensearch.index.query.QueryBuilders.boolQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhrasePrefixQuery;
 import static org.opensearch.index.query.QueryBuilders.matchPhraseQuery;
+import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
+import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 import static org.opensearch.index.query.QueryBuilders.termQuery;
 
 import no.unit.nva.search.common.QueryKeys;
@@ -31,7 +33,6 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.opensearch.index.query.MultiMatchQueryBuilder;
 import org.opensearch.index.query.Operator;
 import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.index.query.QueryBuilders;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class ResourceStreamBuilders {
                 boolQuery()
                         .queryName(SEARCH_ALL.asCamelCase())
                         .must(
-                                QueryBuilders.multiMatchQuery(sevenValues)
+                                multiMatchQuery(sevenValues)
                                         .fields(fields)
                                         .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
                                         .operator(Operator.AND));
@@ -84,7 +85,7 @@ public class ResourceStreamBuilders {
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> additionalIdentifierQuery(
             ResourceParameter key, String source) {
         var query =
-                QueryBuilders.nestedQuery(
+                nestedQuery(
                         ADDITIONAL_IDENTIFIERS,
                         boolQuery()
                                 .must(
@@ -106,7 +107,7 @@ public class ResourceStreamBuilders {
     public Stream<Map.Entry<ResourceParameter, QueryBuilder>> fundingQuery(ResourceParameter key) {
         var values = parameters.get(key).split(COLON);
         var query =
-                QueryBuilders.nestedQuery(
+                nestedQuery(
                         FUNDINGS,
                         boolQuery()
                                 .must(termQuery(jsonPath(FUNDINGS, IDENTIFIER, KEYWORD), values[1]))

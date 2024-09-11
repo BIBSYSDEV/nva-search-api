@@ -1,4 +1,6 @@
-package no.unit.nva.search.common;
+package no.unit.nva.search;
+
+import no.unit.nva.search.common.Containers;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -9,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class BeforeAfterSuiteListener implements TestExecutionListener {
+public class InjectedTestSettings implements TestExecutionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(BeforeAfterSuiteListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(InjectedTestSettings.class);
 
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {
         TestExecutionListener.super.testPlanExecutionStarted(testPlan);
-        Configurator.setAllLevels("", Level.WARN);
         try {
+            Configurator.setAllLevels("", Level.WARN);
             logger.info("Setting up Opensearch server");
             Containers.setup();
         } catch (InterruptedException | IOException e) {

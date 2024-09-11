@@ -25,11 +25,13 @@ public final class Words {
     public static final String AMPERSAND = "&";
     public static final String ASSOCIATED_ARTIFACTS = "associatedArtifacts";
     public static final String ASTERISK = "*";
+    public static final String BODY = "body";
     public static final String BOKMAAL_CODE = "nb";
     public static final String BUCKETS = "buckets";
     public static final String CODE = "code";
     public static final String COLON = ":";
     public static final String COMMA = ",";
+    public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTRIBUTOR = "contributor";
     public static final String CONTRIBUTORS = "contributors";
@@ -38,6 +40,7 @@ public final class Words {
     public static final String CREATED_DATE = "createdDate";
     public static final String CRISTIN_AS_TYPE = "Cristin";
     public static final String DOI = "doi";
+    public static final String DOIREQUESTS_INDEX = "doirequests";
     public static final String DOT = ".";
     public static final String ENGLISH_CODE = "en";
     public static final String ENTITY_DESCRIPTION = "entityDescription";
@@ -54,12 +57,6 @@ public final class Words {
     public static final String IDENTIFIER = "identifier";
     public static final String IDENTITY = "identity";
     public static final String IMPORT_CANDIDATES_INDEX = "import-candidates";
-    public static final String DOIREQUESTS_INDEX = "doirequests";
-    public static final String MESSAGES_INDEX = "messages";
-    public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
-    public static final String BODY = "body";
-    public static final String CONSUMPTION_ATTRIBUTES = "consumptionAttributes";
-
     public static final String ISBN_LIST = "isbnList";
     public static final String ISBN_PREFIX = "isbnPrefix";
     public static final String JOURNAL = "journal";
@@ -71,6 +68,7 @@ public final class Words {
     public static final String LICENSE = "license";
     public static final String MAIN_TITLE = "mainTitle";
     public static final String MESSAGES = "messages";
+    public static final String MESSAGES_INDEX = "messages";
     public static final String MODIFIED_DATE = "modifiedDate";
     public static final String NAME = "name";
     public static final String NONE = "none";
@@ -93,6 +91,7 @@ public final class Words {
     public static final String PUBLICATION_INSTANCE = "publicationInstance";
     public static final String PUBLISHED_DATE = "publishedDate";
     public static final String PUBLISHER = "publisher";
+    public static final String PUBLISHING_REQUESTS_INDEX = "publishingrequests";
     public static final String Q = "q";
     public static final String QUOTE = "'";
     public static final String REFERENCE = "reference";

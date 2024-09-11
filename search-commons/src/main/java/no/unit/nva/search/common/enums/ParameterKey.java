@@ -38,7 +38,7 @@ public interface ParameterKey<K extends Enum<K> & ParameterKey<K>> {
 
     static ValueEncoding getEncoding(ParameterKind kind) {
         return switch (kind) {
-            case INVALID, IGNORED, BOOLEAN, NUMBER -> ValueEncoding.NONE;
+            case INVALID, FLAG, BOOLEAN, NUMBER -> ValueEncoding.NONE;
             default -> ValueEncoding.DECODE;
         };
     }
