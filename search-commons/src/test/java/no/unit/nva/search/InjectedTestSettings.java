@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class TestSettingsInjector implements TestExecutionListener {
+public class InjectedTestSettings implements TestExecutionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestSettingsInjector.class);
+    private static final Logger logger = LoggerFactory.getLogger(InjectedTestSettings.class);
 
     @Override
     public void testPlanExecutionStarted(TestPlan testPlan) {

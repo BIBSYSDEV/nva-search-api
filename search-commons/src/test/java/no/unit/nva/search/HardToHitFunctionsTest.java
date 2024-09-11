@@ -98,7 +98,7 @@ class HardToHitFunctionsTest {
                                 key.asCamelCase(),
                                 key.fieldType().asCamelCase(),
                                 key.searchOperator().asLowerCase(),
-                                key.searchFields().collect(Collectors.joining(COMMA+SPACE))));
+                                key.searchFields().collect(Collectors.joining(COMMA + SPACE))));
     }
 
     private void printEnumSort(Stream<SortKey> parameterSortKeyStream) {
@@ -109,6 +109,6 @@ class HardToHitFunctionsTest {
                                 key.asLowerCase(),
                                 key.asCamelCase(),
                                 key.keyPattern(),
-                                key.jsonPaths().collect(Collectors.joining(COMMA+SPACE))));
+                                key.jsonPaths().collect(Collectors.joining(COMMA + SPACE))));
     }
 }
