@@ -18,7 +18,6 @@ import no.unit.nva.search.resource.ResourceSearchQuery;
 
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
@@ -38,17 +37,6 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     public SearchResourceHandler(Environment environment, ResourceClient resourceClient) {
         super(Void.class, environment);
         this.opensearchClient = resourceClient;
-    }
-
-    @Override
-    protected List<MediaType> listSupportedMediaTypes() {
-        return DEFAULT_RESPONSE_MEDIA_TYPES;
-    }
-
-    @Override
-    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
-        // Do nothing
     }
 
     @Override
@@ -74,5 +62,15 @@ public class SearchResourceHandler extends ApiGatewayHandler<Void, String> {
     @Override
     protected Integer getSuccessStatusCode(Void input, String output) {
         return HttpURLConnection.HTTP_OK;
+    }
+
+    @Override
+    protected List<MediaType> listSupportedMediaTypes() {
+        return DEFAULT_RESPONSE_MEDIA_TYPES;
+    }
+
+    @Override
+    protected void validateRequest(Void unused, RequestInfo requestInfo, Context context) {
+        // Do nothing
     }
 }
