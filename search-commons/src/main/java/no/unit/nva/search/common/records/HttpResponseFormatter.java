@@ -77,12 +77,16 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     }
 
     public PagedSearch toPagedCustomResponse(JsonNodeMutator jsonNodeMutator) {
+        final var aggregationFormatted =
+                AggregationFormat.apply(response.aggregations(), facetPaths).toString();
         final var hits = response.getSearchHits().stream().map(jsonNodeMutator::transform).toList();
+
         return new PagedSearchBuilder()
                 .withTotalHits(response.getTotalSize())
                 .withHits(hits)
                 .withIds(source, getRequestParameter(), offset, size)
                 .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
+                .withAggregations(aggregationFormatted)
                 .build();
     }
 
