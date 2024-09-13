@@ -157,7 +157,7 @@ class ContributorNodeReducerTest {
           "type": "Creator"
         },
         "identity": {
-          "verificationStatus": "Verified",
+          "verificationStatus": "NotVerified",
           "name": "Frank Skorpen",
           "id": "https://api.dev.nva.aws.unit.no/cristin/person/42149",
           "type": "Identity"

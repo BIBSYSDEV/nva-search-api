@@ -21,6 +21,7 @@ import static no.unit.nva.search.ticket.TicketType.DOI_REQUEST;
 import static no.unit.nva.search.ticket.TicketType.GENERAL_SUPPORT_CASE;
 import static no.unit.nva.search.ticket.TicketType.PUBLISHING_REQUEST;
 
+import static nva.commons.apigateway.AccessRight.MANAGE_CUSTOMERS;
 import static nva.commons.apigateway.AccessRight.MANAGE_DOI;
 import static nva.commons.apigateway.AccessRight.MANAGE_PUBLISHING_REQUESTS;
 import static nva.commons.core.attempt.Try.attempt;
@@ -116,6 +117,8 @@ class TicketClientTest {
         return Stream.of(
                 createAccessRightArgument("", 16, "1412322@20754.0.0.0"),
                 createAccessRightArgument("", 2, "1492596@20754.0.0.0"),
+                createAccessRightArgument(
+                        "STATISTICS=true", 21, "1492596@20754.0.0.0", MANAGE_CUSTOMERS),
                 createAccessRightArgument("", 3, "1492596@20754.0.0.0", MANAGE_DOI),
                 createAccessRightArgument("", 7, "1492596@20754.0.0.0", AccessRight.SUPPORT),
                 createAccessRightArgument(
@@ -435,6 +438,7 @@ class TicketClientTest {
         when(mockedRequestInfoLocal.getUserName()).thenReturn(userName);
         when(mockedRequestInfoLocal.getTopLevelOrgCristinId())
                 .thenReturn(Optional.of(testOrganizationId));
+        when(mockedRequestInfoLocal.userIsAuthorized(MANAGE_CUSTOMERS)).thenReturn(true);
 
         when(mockedRequestInfoLocal.getAccessRights()).thenReturn(accessRightList);
 

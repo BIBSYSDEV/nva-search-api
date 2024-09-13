@@ -23,6 +23,7 @@ import static no.unit.nva.search.resource.Constants.IDENTIFIER_KEYWORD;
 import static no.unit.nva.search.resource.Constants.RESOURCES_AGGREGATIONS;
 import static no.unit.nva.search.resource.Constants.STATUS_KEYWORD;
 import static no.unit.nva.search.resource.Constants.facetResourcePaths;
+import static no.unit.nva.search.resource.ContributorNodeReducer.firstFewContributorsOrVerifiedOrNorwegian;
 import static no.unit.nva.search.resource.ResourceParameter.AGGREGATION;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
@@ -34,6 +35,7 @@ import static no.unit.nva.search.resource.ResourceParameter.RESOURCE_PARAMETER_S
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_AFTER;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
+import static no.unit.nva.search.resource.ResourceParameter.UNIDENTIFIED_NORWEGIAN;
 import static no.unit.nva.search.resource.ResourceSort.INVALID;
 
 import static nva.commons.core.attempt.Try.attempt;
@@ -45,10 +47,13 @@ import static java.lang.String.format;
 
 import no.unit.nva.constants.Words;
 import no.unit.nva.search.common.AsType;
+import no.unit.nva.search.common.OpenSearchClient;
 import no.unit.nva.search.common.ParameterValidator;
+import no.unit.nva.search.common.Query;
 import no.unit.nva.search.common.SearchQuery;
 import no.unit.nva.search.common.enums.SortKey;
 import no.unit.nva.search.common.enums.ValueEncoding;
+import no.unit.nva.search.common.records.HttpResponseFormatter;
 
 import nva.commons.core.JacocoGenerated;
 
@@ -89,6 +94,10 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         filterBuilder = new ResourceFilter(this);
     }
 
+    public static ResourceParameterValidator builder() {
+        return new ResourceParameterValidator();
+    }
+
     /**
      * Add a (default) filter to the query that will never match any document.
      *
@@ -100,10 +109,6 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
         filters.set(
                 new TermsQueryBuilder(STATUS_KEYWORD, UUID.randomUUID().toString())
                         .queryName(STATUS));
-    }
-
-    public static ResourceParameterValidator builder() {
-        return new ResourceParameterValidator();
     }
 
     @Override
@@ -184,9 +189,13 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                     streamBuilders.unIdentifiedContributorOrInstitution(key);
             case SEARCH_ALL ->
                     streamBuilders.searchAllWithBoostsQuery(
-                            fieldsToKeyNames(parameters().get(NODES_SEARCHED)));
+                            mapOfPathAndBoost(parameters().get(NODES_SEARCHED)));
             default -> throw new IllegalArgumentException("unhandled key -> " + key.name());
         };
+    }
+
+    private boolean isLookingForOneContributor() {
+        return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
     @Override
@@ -207,19 +216,11 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
             for (int i = 0; i < promotedPublications.size(); i++) {
                 var qb =
                         matchQuery(IDENTIFIER_KEYWORD, promotedPublications.get(i))
-                                .boost(
-                                        PI
-                                                + 1F
-                                                - ((float) i
-                                                        / promotedPublications
-                                                                .size())); // 4.14 down to 3.14 (PI)
+                                // 4.14 down to 3.14 (PI)
+                                .boost(PI + 1F - ((float) i / promotedPublications.size()));
                 bq.should(qb);
             }
         }
-    }
-
-    private boolean isLookingForOneContributor() {
-        return parameters().get(CONTRIBUTOR).asSplitStream(COMMA).count() == 1;
     }
 
     @Override
@@ -228,6 +229,16 @@ public final class ResourceSearchQuery extends SearchQuery<ResourceParameter> {
                 .addChild(Words.RESOURCES, Words.SEARCH)
                 .addQueryParameters(queryParameters())
                 .getUri();
+    }
+
+    @Override
+    public <R, Q extends Query<ResourceParameter>>
+            HttpResponseFormatter<ResourceParameter> doSearch(OpenSearchClient<R, Q> queryClient) {
+        if (parameters().isPresent(UNIDENTIFIED_NORWEGIAN)) {
+            return super.doSearch(queryClient)
+                    .withMutators(firstFewContributorsOrVerifiedOrNorwegian());
+        }
+        return super.doSearch(queryClient);
     }
 
     private Map<String, String> queryParameters() {

@@ -51,7 +51,6 @@ public final class Patterns {
     public static final String PATTERN_IS_SORT_ORDER_KEY = "(?i)sort_?order|order";
     public static final String PATTERN_IS_URI =
             "https?://[^\\s/$.?#].[^\\s]*"; // Pattern for matching a URI
-    public static final String PATTERN_IS_URL_PARAM_INDICATOR = "\\?";
     public static final String PATTERN_IS_PIPE = "\\|";
 
     /**

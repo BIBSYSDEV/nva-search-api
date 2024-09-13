@@ -176,7 +176,8 @@ public abstract class ParameterValidator<
     @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
-        searchQuery.setNvaSearchApiUri(requestInfo.getRequestUri());
+        var uri = URI.create(requestInfo.getDomainName() + requestInfo.getPath());
+        searchQuery.setNvaSearchApiUri(uri);
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
 
