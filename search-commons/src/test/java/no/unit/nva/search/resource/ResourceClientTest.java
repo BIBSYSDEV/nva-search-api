@@ -47,7 +47,7 @@ import static no.unit.nva.search.resource.ResourceParameter.EXCLUDE_SUBUNITS;
 import static no.unit.nva.search.resource.ResourceParameter.FROM;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_EXCLUDED;
 import static no.unit.nva.search.resource.ResourceParameter.NODES_INCLUDED;
-import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_BOOK_PAGES;
+import static no.unit.nva.search.resource.ResourceParameter.PUBLICATION_PAGES;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_BEFORE;
 import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PERIOD_SINCE;
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
@@ -999,8 +999,7 @@ class ResourceClientTest {
         var pageRange = String.format("%d,%d", min, max);
         var response =
                 ResourceSearchQuery.builder()
-                        .fromQueryParameters(
-                                Map.of(PUBLICATION_BOOK_PAGES.asCamelCase(), pageRange))
+                        .fromQueryParameters(Map.of(PUBLICATION_PAGES.asCamelCase(), pageRange))
                         .withRequiredParameters(FROM, SIZE)
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .build()
