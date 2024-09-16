@@ -9,7 +9,6 @@ import static nva.commons.core.paths.UriWrapper.fromUri;
 
 import static java.util.Objects.nonNull;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 
 import no.unit.nva.constants.Words;
@@ -19,6 +18,7 @@ import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +35,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     private final Integer size;
     private final Map<String, String> facetPaths;
     private final QueryKeys<K> queryKeys;
-    private JsonNodeMutator[] mutators;
+    private List<JsonNodeMutator> mutators;
 
     public HttpResponseFormatter(
             SwsResponse response,
@@ -59,7 +59,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     }
 
     public HttpResponseFormatter<K> withMutators(JsonNodeMutator... mutators) {
-        this.mutators = mutators;
+        this.mutators = List.of(mutators);
         return this;
     }
 
@@ -92,16 +92,11 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         if (this.mutators == null) {
             return Stream.of(defaultMutator());
         }
-        return Stream.of(this.mutators);
+        return this.mutators.stream();
     }
 
     private JsonNodeMutator defaultMutator() {
-        return new JsonNodeMutator() {
-            @Override
-            public JsonNode transform(JsonNode source) {
-                return source;
-            }
-        };
+        return source -> source;
     }
 
     public String toCsvText() {
