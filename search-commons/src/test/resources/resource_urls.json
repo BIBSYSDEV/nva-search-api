@@ -212,6 +212,7 @@
   "TOP_LEVEL_ORGANIZATION=194.99.9.9": 0,
   "TYPE_should=ReportResearch,AcademicArticle": 17,
   "UNIDENTIFIED_NORWEGIAN=true": 3,
+  "UNIDENTIFIED_CONTRIBUTOR_INSTITUTION=true": 11,
   "UNIT=https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0": 1,
   "UNIT=20754.2.0.0": 1,
   "UNIT=20754.0.0.0": 5,

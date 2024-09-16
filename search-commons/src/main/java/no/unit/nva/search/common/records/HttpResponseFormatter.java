@@ -18,9 +18,11 @@ import no.unit.nva.search.common.csv.ResourceCsvTransformer;
 import no.unit.nva.search.common.enums.ParameterKey;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Stig Norland
@@ -33,6 +35,7 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     private final Integer size;
     private final Map<String, String> facetPaths;
     private final QueryKeys<K> queryKeys;
+    private List<JsonNodeMutator> mutators;
 
     public HttpResponseFormatter(
             SwsResponse response,
@@ -55,6 +58,11 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
         this(response, mediaType, null, 0, 0, Map.of(), null);
     }
 
+    public HttpResponseFormatter<K> withMutators(JsonNodeMutator... mutators) {
+        this.mutators = List.of(mutators);
+        return this;
+    }
+
     public QueryKeys<K> parameters() {
         return queryKeys;
     }
@@ -66,20 +74,10 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
     public PagedSearch toPagedResponse() {
         final var aggregationFormatted =
                 AggregationFormat.apply(response.aggregations(), facetPaths).toString();
-
-        return new PagedSearchBuilder()
-                .withTotalHits(response.getTotalSize())
-                .withHits(response.getSearchHits())
-                .withIds(source, getRequestParameter(), offset, size)
-                .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
-                .withAggregations(aggregationFormatted)
-                .build();
-    }
-
-    public PagedSearch toPagedCustomResponse(JsonNodeMutator jsonNodeMutator) {
-        final var aggregationFormatted =
-                AggregationFormat.apply(response.aggregations(), facetPaths).toString();
-        final var hits = response.getSearchHits().stream().map(jsonNodeMutator::transform).toList();
+        final var hits =
+                response.getSearchHits().stream()
+                        .flatMap(hit -> getMutators().map(mutator -> mutator.transform(hit)))
+                        .toList();
 
         return new PagedSearchBuilder()
                 .withTotalHits(response.getTotalSize())
@@ -88,6 +86,17 @@ public final class HttpResponseFormatter<K extends Enum<K> & ParameterKey<K>> {
                 .withNextResultsBySortKey(nextResultsBySortKey(getRequestParameter(), source))
                 .withAggregations(aggregationFormatted)
                 .build();
+    }
+
+    private Stream<JsonNodeMutator> getMutators() {
+        if (this.mutators == null) {
+            return Stream.of(defaultMutator());
+        }
+        return this.mutators.stream();
+    }
+
+    private JsonNodeMutator defaultMutator() {
+        return source -> source;
     }
 
     public String toCsvText() {

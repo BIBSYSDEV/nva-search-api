@@ -13,7 +13,6 @@ import static no.unit.nva.constants.Words.POST_FILTER;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.constants.Words.SORT_LAST;
 import static no.unit.nva.search.common.constant.Patterns.COLON_OR_SPACE;
-import static no.unit.nva.search.common.constant.Patterns.PATTERN_IS_URL_PARAM_INDICATOR;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ALL_OF;
 import static no.unit.nva.search.common.enums.FieldOperator.NOT_ANY_OF;
 
@@ -122,13 +121,10 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     @Override
     public <R, Q extends Query<K>> HttpResponseFormatter<K> doSearch(
             OpenSearchClient<R, Q> queryClient) {
-        final var source =
-                URI.create(
-                        getNvaSearchApiUri().toString().split(PATTERN_IS_URL_PARAM_INDICATOR)[0]);
         return new HttpResponseFormatter<>(
                 (SwsResponse) queryClient.doSearch((Q) this),
                 getMediaType(),
-                source,
+                getNvaSearchApiUri(),
                 from().as(),
                 size().as(),
                 facetPaths(),
@@ -147,11 +143,6 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
         }
     }
 
-    /**
-     * Builds URI to query SWS based on post body.
-     *
-     * @return an URI to Sws search without parameters.
-     */
     public URI getNvaSearchApiUri() {
         return gatewayUri;
     }
@@ -170,20 +161,13 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
      *
      * @return a MultiMatchQueryBuilder
      */
-    protected Map<String, Float> fieldsToKeyNames(AsType<K> fieldValue) {
+    protected Map<String, Float> mapOfPathAndBoost(AsType<K> fieldValue) {
         return fieldValue.isEmpty() || fieldValue.asLowerCase().contains(ALL)
                 ? Map.of(ASTERISK, 1F) // NONE or ALL -> <'*',1.0>
                 : fieldValue
                         .asSplitStream(COMMA)
                         .map(this::toKey)
-                        .flatMap(
-                                key ->
-                                        key.searchFields(KEYWORD_FALSE)
-                                                .map(
-                                                        jsonPath ->
-                                                                Map.entry(
-                                                                        jsonPath,
-                                                                        key.fieldBoost())))
+                        .flatMap(this::entryStreamOfPathAndBoost)
                         .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
@@ -284,7 +268,7 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
     }
 
     protected QueryBuilder builderSearchAllQuery(K searchAllKey) {
-        var fields = fieldsToKeyNames(parameters().get(keyFields()));
+        var fields = mapOfPathAndBoost(parameters().get(keyFields()));
         var value = parameters().get(searchAllKey).toString();
         return QueryBuilders.multiMatchQuery(value)
                 .fields(fields)
@@ -325,6 +309,14 @@ public abstract class SearchQuery<K extends Enum<K> & ParameterKey<K>> extends Q
             // fields.
         }
         builderStreamFieldSort().forEach(builder::sort);
+    }
+
+    private Stream<Entry<String, Float>> entryStreamOfPathAndBoost(K key) {
+        return key.searchFields(KEYWORD_FALSE).map(jsonPath -> entryOfPathAndBoost(key, jsonPath));
+    }
+
+    private Entry<String, Float> entryOfPathAndBoost(K key, String jsonPath) {
+        return Map.entry(jsonPath, key.fieldBoost());
     }
 
     private int numberOfRequests() {
