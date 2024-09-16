@@ -1,5 +1,9 @@
 package no.unit.nva.search.resource;
 
+import static no.unit.nva.constants.Words.CURATING_INSTITUTIONS;
+import static no.unit.nva.constants.Words.DOT;
+import static no.unit.nva.constants.Words.KEYWORD;
+import static no.unit.nva.constants.Words.ORGANIZATION;
 import static no.unit.nva.constants.Words.PUBLISHER;
 import static no.unit.nva.constants.Words.STATUS;
 import static no.unit.nva.search.common.enums.PublicationStatus.PUBLISHED;
@@ -15,6 +19,7 @@ import nva.commons.apigateway.AccessRight;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.UnauthorizedException;
 
+import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.index.query.TermQueryBuilder;
 import org.opensearch.index.query.TermsQueryBuilder;
 
@@ -27,6 +32,7 @@ import java.util.Arrays;
  */
 public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
 
+    public static final String CURATING_INST_KEYWORD = CURATING_INSTITUTIONS + DOT + KEYWORD;
     private final ResourceSearchQuery resourceSearchQuery;
 
     public ResourceFilter(ResourceSearchQuery query) {
@@ -82,20 +88,21 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         if (isSearchingForAllPublications(requestInfo)) {
             return this;
         } else {
-            final var filter =
-                    new TermQueryBuilder(
-                                    PUBLISHER_ID_KEYWORD,
-                                    requestInfo.getCurrentCustomer().toString())
-                            .queryName(PUBLISHER);
-            this.resourceSearchQuery.filters.add(filter);
-            return this;
+            return organization(requestInfo.getCurrentCustomer());
         }
     }
 
     public ResourceFilter organization(URI organization) throws UnauthorizedException {
         final var filter =
-                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
-                        .queryName(PUBLISHER);
+                QueryBuilders.boolQuery()
+                        .should(
+                                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
+                                        .queryName(PUBLISHER))
+                        .should(
+                                new TermQueryBuilder(CURATING_INST_KEYWORD, organization.toString())
+                                        .queryName(CURATING_INSTITUTIONS))
+                        .minimumShouldMatch(1)
+                        .queryName(ORGANIZATION);
         this.resourceSearchQuery.filters.add(filter);
         return this;
     }
