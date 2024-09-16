@@ -57,7 +57,6 @@ public final class Constants {
                     + PART_OF
                     + DOT
                     + IDENTIFIER;
-
     public static final String ORGANIZATION_PATHS =
             ORGANIZATION_ID_KEYWORD
                     + PIPE
@@ -142,17 +141,15 @@ public final class Constants {
                     + DOT
                     + KEYWORD;
     public static final String BY_USER_PENDING = "byUserPending";
+
     public static final Map<String, String> facetTicketsPaths =
             Map.of(
-                    BY_USER_PENDING,
-                    "/withAppliedFilter/byUserPending/status/type",
-                    STATUS,
-                    "/withAppliedFilter/status",
-                    TYPE,
-                    "/withAppliedFilter/type",
-                    PUBLICATION_STATUS,
-                    "/withAppliedFilter/publicationStatus");
+                    BY_USER_PENDING, "/withAppliedFilter/byUserPending/status/type",
+                    STATUS, "/withAppliedFilter/status",
+                    TYPE, "/withAppliedFilter/type",
+                    PUBLICATION_STATUS, "/withAppliedFilter/publicationStatus");
     private static final String FINALIZED_BY = "finalizedBy";
+
     public static final String FINALIZED_BY_FIELDS =
             FINALIZED_BY
                     + DOT
