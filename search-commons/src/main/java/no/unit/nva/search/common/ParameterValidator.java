@@ -5,6 +5,7 @@ import static no.unit.nva.constants.ErrorMessages.requiredMissingMessage;
 import static no.unit.nva.constants.ErrorMessages.validQueryParameterNamesMessage;
 import static no.unit.nva.constants.Words.ALL;
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.constants.Words.RELEVANCE_KEY_NAME;
 import static no.unit.nva.search.common.constant.Functions.mergeWithColonOrComma;
 
@@ -15,7 +16,6 @@ import no.unit.nva.search.common.enums.ParameterKey;
 
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.JacocoGenerated;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,10 +173,9 @@ public abstract class ParameterValidator<
     }
 
     /** Adds query and path parameters from requestInfo. */
-    @JacocoGenerated
     public ParameterValidator<K, Q> fromRequestInfo(RequestInfo requestInfo) {
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
-        var uri = URI.create(requestInfo.getDomainName() + requestInfo.getPath());
+        var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
         searchQuery.setNvaSearchApiUri(uri);
         return fromQueryParameters(requestInfo.getQueryParameters());
     }
@@ -256,7 +255,6 @@ public abstract class ParameterValidator<
                 .set(key, mergeWithColonOrComma(searchQuery.parameters().get(key).as(), value));
     }
 
-    @JacocoGenerated
     protected String ignoreInvalidFields(String value) {
         return ALL.equalsIgnoreCase(value) || isNull(value)
                 ? ALL
@@ -265,7 +263,6 @@ public abstract class ParameterValidator<
                         .collect(Collectors.joining(COMMA));
     }
 
-    @JacocoGenerated
     protected boolean invalidQueryParameter(K key, String value) {
         return isNull(value)
                 || Arrays.stream(value.split(COMMA))
