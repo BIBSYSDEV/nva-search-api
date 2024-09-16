@@ -17,6 +17,7 @@ import static no.unit.nva.search.resource.ResourceParameter.SCIENTIFIC_REPORT_PE
 import static no.unit.nva.search.resource.ResourceParameter.SIZE;
 import static no.unit.nva.search.resource.ResourceParameter.SORT;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +41,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -170,7 +173,8 @@ class ResourceSearchQueryTest {
 
     @ParameterizedTest
     @MethodSource("uriProvider")
-    void buildOpenSearchSwsUriFromGatewayUri(URI uri) throws BadRequestException {
+    void buildOpenSearchSwsUriFromGatewayUri(URI uri)
+            throws BadRequestException, MalformedURLException, URISyntaxException {
         var resource =
                 ResourceSearchQuery.builder()
                         .fromQueryParameters(queryToMapEntries(uri))
@@ -182,7 +186,9 @@ class ResourceSearchQueryTest {
                 UriWrapper.fromUri(resource.getNvaSearchApiUri())
                         .addQueryParameters(resource.parameters().asMap())
                         .getUri();
-
+        assertDoesNotThrow(uri2::toURL, "MalformedURLException");
+        var url2 = uri2.toURL();
+        assertDoesNotThrow(url2::toURI, "URISyntaxException");
         logger.debug(
                 resource.parameters().asMap().entrySet().stream()
                         .map(entry -> entry.getKey() + "=" + entry.getValue())
