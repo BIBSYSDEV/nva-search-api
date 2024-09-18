@@ -51,7 +51,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
                 .map(super::fetch)
                 .map(super::handleResponse)
                 .findFirst()
-                .orElse(UserSettings.empty())
+                .orElseThrow()
                 .join();
     }
 
@@ -64,7 +64,8 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     @Override
     @JacocoGenerated
     protected BinaryOperator<UserSettings> responseAccumulator() {
-        return (a, b) -> a;
+        // not in use
+        return null;
     }
 
     @Override
