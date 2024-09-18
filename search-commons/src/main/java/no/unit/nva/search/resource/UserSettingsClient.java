@@ -62,7 +62,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     }
 
     @Override
-    @JacocoGenerated
+    @JacocoGenerated    // implemented, but not in use.
     protected BinaryOperator<UserSettings> responseAccumulator() {
         // not in use
         return null;
