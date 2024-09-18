@@ -3772,12 +3772,89 @@
             "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
             "type": "Identity",
             "name": "Kurt Jörnsten",
-            "verificationStatus": "Verified"
+            "verificationStatus": "UnVerified"
           },
           "role": {
             "type": "Creator"
           },
           "sequence": 2
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten3",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 3
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten4",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 4
+        },
+        {
+          "type": "Contributor",
+          "correspondingAuthor": false,
+          "identity": {
+            "id": "https://api.dev.nva.aws.unit.no/cristin/person/26698",
+            "type": "Identity",
+            "name": "Kurt Jörnsten5",
+            "verificationStatus": "Verified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 5
+        },
+        {
+          "type": "Contributor",
+          "affiliations": [
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20754.2.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Divisjon for forskings- og kunnskapsressursar",
+                "nb": "Divisjon forsknings- og kunnskapsressurser",
+                "en": "The Research and Education Resources Division"
+              }
+            },
+            {
+              "id": "https://api.dev.nva.aws.unit.no/cristin/organization/20202.0.0.0",
+              "type": "Organization",
+              "countryCode": "NO",
+              "labels": {
+                "nn": "Unit – Direktoratet for IKT og fellestenester i høgare utdanning og forsking",
+                "nb": "Unit – Direktoratet for IKT og fellestjenester i høyere utdanning og forskning",
+                "en": "Unit – The Norwegian Directorate for ICT and Joint Services in Higher Education and Research"
+              }
+            }
+          ],
+          "correspondingAuthor": false,
+          "identity": {
+            "type": "Identity",
+            "name": "Mette Unknown",
+            "verificationStatus": "NotVerified"
+          },
+          "role": {
+            "type": "Creator"
+          },
+          "sequence": 6
         }
       ],
       "language": "http://lexvo.org/id/iso639-3/nob",

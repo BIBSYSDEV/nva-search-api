@@ -92,7 +92,49 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         }
     }
 
+    /**
+     * Filter on organization and curationInstitutions.
+     *
+     * <p>Only documents belonging to organization specified are searchable (for the user)
+     *
+     * @param requestInfo fetches getCurrentCustomer
+     * @return ResourceQuery (builder pattern)
+     */
+    public ResourceFilter organizationCurationInstitutions(RequestInfo requestInfo)
+            throws UnauthorizedException {
+        if (isSearchingForAllPublications(requestInfo)) {
+            return this;
+        } else {
+            return organizationCurationInstitutions(requestInfo.getCurrentCustomer());
+        }
+    }
+
+    /**
+     * Filter on organization.
+     *
+     * <p>Only documents belonging to organization specified are searchable (for the user)
+     *
+     * @param organization the organization
+     * @return ResourceQuery (builder pattern)
+     */
     public ResourceFilter organization(URI organization) throws UnauthorizedException {
+        final var filter =
+                new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
+                        .queryName(PUBLISHER);
+        this.resourceSearchQuery.filters.add(filter);
+        return this;
+    }
+
+    /**
+     * Filter on organization and curationInstitutions.
+     *
+     * <p>Only documents belonging to organization specified are searchable (for the user)
+     *
+     * @param organization the organization
+     * @return ResourceQuery (builder pattern)
+     */
+    public ResourceFilter organizationCurationInstitutions(URI organization)
+            throws UnauthorizedException {
         final var filter =
                 QueryBuilders.boolQuery()
                         .should(
