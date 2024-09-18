@@ -4,9 +4,11 @@ import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
 import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Words.AMPERSAND;
+import static no.unit.nva.search.common.constant.Functions.httpErrorResponse;
 
 import static nva.commons.core.attempt.Try.attempt;
 
+import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.stream.Collectors.joining;
 
@@ -20,6 +22,7 @@ import no.unit.nva.search.common.records.ResponseLogInfo;
 import no.unit.nva.search.common.records.SwsResponse;
 
 import nva.commons.core.attempt.FunctionWithException;
+import nva.commons.core.paths.UriWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +44,8 @@ import java.util.function.BinaryOperator;
  */
 public abstract class OpenSearchClient<R, Q extends Query<?>> {
 
+    public static final String THIS_QUERY_FAILED = "This query failed:{}";
     protected static final Logger logger = LoggerFactory.getLogger(OpenSearchClient.class);
-
     protected final HttpClient httpClient;
     protected final BodyHandler<String> bodyHandler;
     protected final CachedJwtProvider jwtProvider;
@@ -78,6 +81,7 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         return completableFuture.thenApplyAsync(
                 response -> {
                     if (response.statusCode() != HTTP_OK) {
+                        logger.error(response.body());
                         throw new RuntimeException(response.body());
                     }
                     return attempt(() -> jsonToResponse(response))
@@ -106,21 +110,17 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         var fetchStart = Instant.now();
         return httpClient
                 .sendAsync(request, bodyHandler)
+                .exceptionallyAsync(
+                        responseFailure -> {
+                            fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
+                            var error = new ErrorEntry(request.uri(), responseFailure.getMessage());
+                            return httpErrorResponse(
+                                    error.exception(), HTTP_INTERNAL_ERROR, error.requestUri());
+                        })
                 .thenApplyAsync(
                         response -> {
                             fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
                             return response;
-                        })
-                .exceptionallyAsync(
-                        responseFailure -> {
-                            fetchDuration = Duration.between(fetchStart, Instant.now()).toMillis();
-                            var error =
-                                    new ErrorEntry(
-                                                    request.uri(),
-                                                    responseFailure.getCause().getMessage())
-                                            .toJsonString();
-                            logger.error(error);
-                            return null;
                         });
     }
 
@@ -148,5 +148,9 @@ public abstract class OpenSearchClient<R, Q extends Query<?>> {
         return Duration.between(queryBuilderStart, Instant.now()).toMillis();
     }
 
-    protected record ErrorEntry(URI requestUri, String exception) implements JsonSerializable {}
+    protected record ErrorEntry(URI requestUri, String exception) implements JsonSerializable {
+        private ErrorEntry(String requestParameter, Throwable exception) {
+            this(UriWrapper.fromUri(requestParameter).getUri(), exception.getMessage());
+        }
+    }
 }

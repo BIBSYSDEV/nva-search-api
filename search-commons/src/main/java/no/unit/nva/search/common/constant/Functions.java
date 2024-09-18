@@ -4,6 +4,7 @@ import static no.unit.nva.constants.Defaults.ENVIRONMENT;
 import static no.unit.nva.constants.Words.BOKMAAL_CODE;
 import static no.unit.nva.constants.Words.COLON;
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.constants.Words.DOT;
 import static no.unit.nva.constants.Words.ENGLISH_CODE;
 import static no.unit.nva.constants.Words.KEYWORD;
@@ -31,14 +32,23 @@ import org.opensearch.search.aggregations.bucket.filter.FilterAggregationBuilder
 import org.opensearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
+import java.net.URI;
 import java.net.URLDecoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.net.ssl.SSLSession;
 
 /**
  * @author Stig Norland
@@ -158,5 +168,56 @@ public final class Functions {
                     }
                 };
         return Stream.of(entry);
+    }
+
+    public static HttpResponse<String> httpErrorResponse(
+            String errorMessage, int errorCode, URI request) {
+        return new HttpResponse<>() {
+            @Override
+            public int statusCode() {
+                return errorCode;
+            }
+
+            @Override
+            public HttpRequest request() {
+                return null;
+            }
+
+            @Override
+            public Optional<HttpResponse<String>> previousResponse() {
+                return Optional.empty();
+            }
+
+            @Override
+            public HttpHeaders headers() {
+                return HttpHeaders.of(
+                        Map.of(
+                                CONTENT_TYPE,
+                                Collections.singletonList("application/problem+json"),
+                                "Access-Control-Allow-Origin",
+                                Collections.singletonList("*")),
+                        (s, s2) -> true);
+            }
+
+            @Override
+            public String body() {
+                return errorMessage;
+            }
+
+            @Override
+            public Optional<SSLSession> sslSession() {
+                return Optional.empty();
+            }
+
+            @Override
+            public URI uri() {
+                return request;
+            }
+
+            @Override
+            public HttpClient.Version version() {
+                return null;
+            }
+        };
     }
 }

@@ -39,10 +39,15 @@ public class MockedHttpResponse {
     }
 
     public static HttpResponse<Object> mockedHttpResponse(String body) {
-        return mockedHttpResponse(body, nonNull(body) ? 200 : 400);
+        return mockedHttpResponse(body, nonNull(body) ? 200 : 400, null);
     }
 
     public static HttpResponse<Object> mockedHttpResponse(String body, int statusCode) {
+        return mockedHttpResponse(body, statusCode, null);
+    }
+
+    public static HttpResponse<Object> mockedHttpResponse(
+            String body, int statusCode, URI request) {
         return new HttpResponse<>() {
             @Override
             public int statusCode() {
@@ -78,7 +83,7 @@ public class MockedHttpResponse {
 
             @Override
             public URI uri() {
-                return null;
+                return request;
             }
 
             @Override
