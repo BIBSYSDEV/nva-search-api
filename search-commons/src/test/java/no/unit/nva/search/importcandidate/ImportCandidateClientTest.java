@@ -154,7 +154,7 @@ class ImportCandidateClientTest {
 
         var response1 =
                 ImportCandidateSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri1))
+                        .fromTestQueryParameters(queryToMapEntries(uri1))
                         .withDockerHostUri(hostAddress)
                         .withRequiredParameters(FROM, SIZE, AGGREGATION)
                         .build()
@@ -193,7 +193,7 @@ class ImportCandidateClientTest {
                 () ->
                         ImportCandidateSearchQuery.builder()
                                 .withRequiredParameters(SIZE, FROM)
-                            .fromTestQueryParameters(toMapEntries)
+                                .fromTestQueryParameters(toMapEntries)
                                 .build()
                                 .doSearch(importCandidateClient));
     }
@@ -203,7 +203,7 @@ class ImportCandidateClientTest {
     void searchWithUriReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var response =
                 ImportCandidateSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .build()
@@ -225,7 +225,7 @@ class ImportCandidateClientTest {
     void searchWithUriReturnsCsvResponse(URI uri) throws ApiGatewayException {
         var csvResult =
                 ImportCandidateSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE, SORT)
                         .withMediaType(Words.TEXT_CSV)
@@ -239,7 +239,7 @@ class ImportCandidateClientTest {
     void searchUriWithSortingReturnsOpenSearchAwsResponse(URI uri) throws ApiGatewayException {
         var response =
                 ImportCandidateSearchQuery.builder()
-                    .fromTestQueryParameters(queryToMapEntries(uri))
+                        .fromTestQueryParameters(queryToMapEntries(uri))
                         .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                         .withRequiredParameters(FROM, SIZE)
                         .build()
@@ -258,7 +258,7 @@ class ImportCandidateClientTest {
                 BadRequestException.class,
                 () ->
                         ImportCandidateSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .withRequiredParameters(FROM, SIZE, AGGREGATION)
                                 .build()
@@ -272,7 +272,7 @@ class ImportCandidateClientTest {
                 BadRequestException.class,
                 () ->
                         ImportCandidateSearchQuery.builder()
-                            .fromTestQueryParameters(queryToMapEntries(uri))
+                                .fromTestQueryParameters(queryToMapEntries(uri))
                                 .withDockerHostUri(URI.create(container.getHttpHostAddress()))
                                 .withRequiredParameters(FROM, SIZE, CREATED_DATE)
                                 .build()

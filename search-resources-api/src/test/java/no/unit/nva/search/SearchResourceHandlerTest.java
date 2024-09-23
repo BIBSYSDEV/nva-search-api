@@ -224,7 +224,7 @@ class SearchResourceHandlerTest {
 
     private InputStream getInputStreamWithMultipleContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-            .withMultiValueQueryParameters(Map.of(CONTRIBUTOR, List.of("12345", "54321")))
+                .withMultiValueQueryParameters(Map.of(CONTRIBUTOR, List.of("12345", "54321")))
                 .withRequestContext(getRequestContext())
                 .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withUserName(randomString())

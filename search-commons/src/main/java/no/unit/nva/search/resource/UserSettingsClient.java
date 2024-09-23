@@ -1,9 +1,9 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.search.common.constant.Functions.readApiHost;
 import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
