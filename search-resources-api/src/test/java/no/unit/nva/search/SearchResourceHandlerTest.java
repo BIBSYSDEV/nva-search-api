@@ -3,6 +3,7 @@ package no.unit.nva.search;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.constants.Defaults.objectMapperWithEmpty;
 import static no.unit.nva.constants.Words.COMMA;
+import static no.unit.nva.constants.Words.CONTRIBUTOR;
 import static no.unit.nva.search.resource.ResourceParameter.SEARCH_ALL;
 import static no.unit.nva.testutils.RandomDataGenerator.randomString;
 import static no.unit.nva.testutils.RandomDataGenerator.randomUri;
@@ -223,12 +224,7 @@ class SearchResourceHandlerTest {
 
     private InputStream getInputStreamWithMultipleContributorId() throws JsonProcessingException {
         return new HandlerRequestBuilder<Void>(objectMapperWithEmpty)
-                .withQueryParameters(
-                        Map.of(
-                                SEARCH_ALL.asCamelCase(),
-                                "((entityDescription.contributors.identity.id:12345)"
-                                        + "+OR+"
-                                        + "(entityDescription.contributors.identity.id:54321))"))
+            .withMultiValueQueryParameters(Map.of(CONTRIBUTOR, List.of("12345", "54321")))
                 .withRequestContext(getRequestContext())
                 .withHeaders(Map.of(ACCEPT, "application/json"))
                 .withUserName(randomString())
