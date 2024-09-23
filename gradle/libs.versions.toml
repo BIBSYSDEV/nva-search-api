@@ -1,27 +1,27 @@
 [versions]
 awsApacheInterceptor = { strictly = 'f39dfaf107' }
 awsIon = { strictly = '1.5.1' }
-awsLambdaEvents = { strictly = '3.11.4' }
+awsLambdaEvents = { strictly = '3.13.0' }
 awsLambdaJavaCore = { strictly = '1.2.3' }
-awsSdk2 = { strictly = '2.24.12' }
+awsSdk2 = { strictly = '2.27.24' }
 com-auth0-jwt = { strictly = '4.4.0' }
-guava = { strictly = '33.0.0-jre' }
-hamcrest = { strictly = '2.2' }
-jackson = { strictly = '2.16.1' }
+guava = { strictly = '33.3.0-jre' }
+hamcrest = { strictly = '3.0' }
+jackson = { strictly = '2.17.2' }
 javers = { strictly = '6.5.1' }
-jupiter = { strictly = '5.10.2' }
+jupiter = { strictly = '5.11.0' }
 junit = { strictly = '1.10.2' }
-log4j = { strictly = '2.23.0' }
-mockito = { strictly = '5.12.0' }
-nvaCommons = { prefer = '1.40.8' }
+log4j = { strictly = '2.24.0' }
+mockito = { strictly = '5.13.0' }
+nvaCommons = { prefer = '1.40.20' }
 open-csv = { strictly = '5.9' }
 opensearch = { strictly = '2.12.0' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
-slf4j = { strictly = '2.0.12' }
+slf4j = { strictly = '2.0.16' }
 testContainers = { strictly = '1.19.7' }
 typesafe = { strictly = '1.4.1' }
 xraySdk = { strictly = '2.10.0' }
-jena = { strictly = '4.7.0' }
+jena = { strictly = '4.10.0' }
 zalandoProblem = { strictly = '0.27.1' }
 
 
