@@ -1,6 +1,6 @@
 [versions]
 awsApacheInterceptor = { strictly = 'f39dfaf107' }
-awsIon = { strictly = '1.5.1' }
+awsIon = { strictly = '1.11.9' }
 awsLambdaEvents = { strictly = '3.13.0' }
 awsLambdaJavaCore = { strictly = '1.2.3' }
 awsSdk2 = { strictly = '2.27.24' }
@@ -74,7 +74,7 @@ opensearch-rest-client = { group = 'org.opensearch.client', name = 'opensearch-r
 opensearch-rest-highlevel-client = { group = 'org.opensearch.client', name = 'opensearch-rest-high-level-client', version.ref = 'opensearch' }
 
 guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
-aws-ion = { group = 'software.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
+aws-ion = { group = 'com.amazon.ion', name = 'ion-java', version.ref = 'awsIon' }
 typesafe = { group = 'com.typesafe', name = 'config', version.ref = 'typesafe' }
 problem = { group = 'org.zalando', name = 'problem', version.ref = 'zalandoProblem' }
 
