@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -177,7 +178,17 @@ public abstract class ParameterValidator<
         searchQuery.setMediaType(requestInfo.getHeaders().get(ACCEPT));
         var uri = URI.create(HTTPS + requestInfo.getDomainName() + requestInfo.getPath());
         searchQuery.setNvaSearchApiUri(uri);
-        return fromQueryParameters(requestInfo.getQueryParameters());
+        return fromMultiValueParameters(requestInfo.getMultiValueQueryStringParameters());
+    }
+
+    /**
+     * Adds testParameters from query.
+     *
+     * @apiNote This is intended to be used in runtime
+     */
+    public ParameterValidator<K, Q> fromMultiValueParameters(Map<String, List<String>> parameters) {
+        parameters.forEach((k, v) -> v.forEach(value -> setValue(k, value)));
+        return this;
     }
 
     /**
@@ -185,7 +196,7 @@ public abstract class ParameterValidator<
      *
      * @apiNote This is intended to be used when setting up tests, or from {@link #fromRequestInfo}
      */
-    public ParameterValidator<K, Q> fromQueryParameters(Map<String, String> parameters) {
+    public ParameterValidator<K, Q> fromTestParameterMap(Map<String, String> parameters) {
         parameters.forEach(this::setValue);
         return this;
     }
@@ -195,7 +206,7 @@ public abstract class ParameterValidator<
      *
      * @apiNote This is intended to be used when setting up tests.
      */
-    public ParameterValidator<K, Q> fromQueryParameters(
+    public ParameterValidator<K, Q> fromTestQueryParameters(
             Collection<Map.Entry<String, String>> testParameters) {
         testParameters.forEach(this::setEntryValue);
         return this;
