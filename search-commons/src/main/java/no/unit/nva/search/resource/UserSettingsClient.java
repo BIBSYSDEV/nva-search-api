@@ -1,13 +1,15 @@
 package no.unit.nva.search.resource;
 
 import static no.unit.nva.auth.AuthorizedBackendClient.AUTHORIZATION_HEADER;
-import static no.unit.nva.auth.AuthorizedBackendClient.CONTENT_TYPE;
 import static no.unit.nva.auth.uriretriever.UriRetriever.ACCEPT;
 import static no.unit.nva.commons.json.JsonUtils.singleLineObjectMapper;
+import static no.unit.nva.constants.Words.CONTENT_TYPE;
 import static no.unit.nva.constants.Words.HTTPS;
 import static no.unit.nva.search.common.constant.Functions.readApiHost;
 import static no.unit.nva.search.resource.Constants.PERSON_PREFERENCES;
 import static no.unit.nva.search.resource.ResourceParameter.CONTRIBUTOR;
+
+import static nva.commons.core.StringUtils.EMPTY_STRING;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
@@ -45,7 +47,7 @@ public class UserSettingsClient extends OpenSearchClient<UserSettings, ResourceS
     @Override
     public UserSettings doSearch(ResourceSearchQuery query) {
         queryBuilderStart = Instant.now();
-        queryParameters = "";
+        queryParameters = EMPTY_STRING;
         return createQueryBuilderStream(query)
                 .map(this::createRequest)
                 .map(super::fetch)
