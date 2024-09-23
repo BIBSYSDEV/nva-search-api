@@ -105,7 +105,12 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         if (isSearchingForAllPublications(requestInfo)) {
             return this;
         } else {
-            return organizationCurationInstitutions(requestInfo.getCurrentCustomer());
+            var organization = requestInfo.getCurrentCustomer();
+            var curationInstitutions =
+                    requestInfo
+                            .getTopLevelOrgCristinId()
+                            .orElse(requestInfo.getPersonAffiliation());
+            return organizationCurationInstitutions(organization, curationInstitutions);
         }
     }
 
@@ -133,15 +138,17 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
      * @param organization the organization
      * @return ResourceQuery (builder pattern)
      */
-    public ResourceFilter organizationCurationInstitutions(URI organization)
-            throws UnauthorizedException {
+    public ResourceFilter organizationCurationInstitutions(
+            URI organization, URI curationInstitutions) {
         final var filter =
                 QueryBuilders.boolQuery()
                         .should(
                                 new TermQueryBuilder(PUBLISHER_ID_KEYWORD, organization.toString())
                                         .queryName(PUBLISHER))
                         .should(
-                                new TermQueryBuilder(CURATING_INST_KEYWORD, organization.toString())
+                                new TermQueryBuilder(
+                                                CURATING_INST_KEYWORD,
+                                                curationInstitutions.toString())
                                         .queryName(CURATING_INSTITUTIONS))
                         .minimumShouldMatch(1)
                         .queryName(ORGANIZATION);
