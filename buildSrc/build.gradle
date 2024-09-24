@@ -16,9 +16,9 @@ dependencies {
 }
 
 group = 'com.github.bibsysdev'
-version '1.0-JDK17'
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
+version '1.0-JDK_21_8.6'
+java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL

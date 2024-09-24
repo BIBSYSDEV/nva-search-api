@@ -79,6 +79,8 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     }
 
     /**
+     * EqualsIgnoreCase.
+     *
      * @param o Object with toString()
      * @return equalsIgnoreCase of objects toString()
      */
@@ -87,7 +89,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     }
 
     /**
-     * Split
+     * Split.
      *
      * @param delimiter regex to split on
      * @return The value split, or null.
@@ -97,7 +99,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     }
 
     /**
-     * asSplitStream
+     * AsSplitStream.
      *
      * @param delimiter regex to split on
      * @return The value as an optional Stream, split by delimiter.
@@ -107,7 +109,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     }
 
     /**
-     * asStream
+     * AsStream.
      *
      * @return The value as an optional Stream.
      */
@@ -116,7 +118,7 @@ public class AsType<K extends Enum<K> & ParameterKey<K>> {
     }
 
     /**
-     * asBoolean
+     * AsBoolean.
      *
      * @return False if value is null or FALSE, otherwise True
      */
