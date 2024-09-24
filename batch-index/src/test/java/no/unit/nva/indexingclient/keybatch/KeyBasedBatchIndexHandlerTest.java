@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.identifiers.SortableIdentifier;
+import no.unit.nva.indexing.utils.ResourceExpansion;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.EventConsumptionAttributes;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -274,6 +275,7 @@ class KeyBasedBatchIndexHandlerTest {
     private List<IndexDocument> createExpectedDocuments(int numberOfDocuments) {
         return IntStream.range(0, numberOfDocuments)
                 .mapToObj(i -> new IndexDocument(randomConsumptionAttribute(), randomValidNode()))
+                .map(this::expandResource)
                 .map(this::insertResourceInPersistedResourcesBucket)
                 .toList();
     }
@@ -353,5 +355,10 @@ class KeyBasedBatchIndexHandlerTest {
                                             jsonString, KeyBatchRequestEvent.class))
                     .orElseThrow();
         }
+    }
+
+    private IndexDocument expandResource(IndexDocument indexDocument) {
+        ResourceExpansion.expand(indexDocument.resource());
+        return indexDocument;
     }
 }

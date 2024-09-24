@@ -11,6 +11,7 @@ import no.unit.nva.events.models.AwsEventBridgeDetail;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
 import no.unit.nva.events.models.EventReference;
 import no.unit.nva.indexing.utils.RecoveryEntry;
+import no.unit.nva.indexing.utils.ResourceExpansion;
 import no.unit.nva.indexingclient.IndexQueueClient;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -67,6 +68,7 @@ public class IndexResourceHandler
 
         var resourceRelativePath = UriWrapper.fromUri(input.getUri()).toS3bucketPath();
         var indexDocument = fetchFileFromS3Bucket(resourceRelativePath).validate();
+        expandResource(indexDocument);
         attempt(() -> indexingClient.addDocumentToIndex(indexDocument))
                 .orElse(failure -> persistRecoveryMessage(failure, indexDocument));
         return null;
@@ -86,5 +88,10 @@ public class IndexResourceHandler
     private IndexDocument fetchFileFromS3Bucket(UnixPath resourceRelativePath) {
         var resource = resourcesS3Driver.getFile(resourceRelativePath);
         return IndexDocument.fromJsonString(resource);
+    }
+
+    private IndexDocument expandResource(IndexDocument indexDocument) {
+        ResourceExpansion.expand(indexDocument.resource());
+        return indexDocument;
     }
 }

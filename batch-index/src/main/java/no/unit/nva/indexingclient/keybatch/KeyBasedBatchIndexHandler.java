@@ -15,6 +15,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 
 import no.unit.nva.events.handlers.EventHandler;
 import no.unit.nva.events.models.AwsEventBridgeEvent;
+import no.unit.nva.indexing.utils.ResourceExpansion;
 import no.unit.nva.indexingclient.AggregationsValidator;
 import no.unit.nva.indexingclient.IndexingClient;
 import no.unit.nva.indexingclient.models.IndexDocument;
@@ -164,6 +165,7 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
                 .filter(Objects::nonNull)
                 .map(this::fetchS3Content)
                 .map(IndexDocument::fromJsonString)
+                .map(this::expandIfResource)
                 .filter(this::isValid)
                 .toList();
     }
@@ -229,5 +231,12 @@ public class KeyBasedBatchIndexHandler extends EventHandler<KeyBatchRequestEvent
     private String fetchS3Content(String key) {
         var s3Driver = new S3Driver(s3ResourcesClient, RESOURCES_BUCKET);
         return attempt(() -> s3Driver.getFile(UnixPath.of(key))).orElseThrow();
+    }
+
+    private IndexDocument expandIfResource(IndexDocument indexDocument) {
+        if (isResource(indexDocument)) {
+            ResourceExpansion.expand(indexDocument.resource());
+        }
+        return indexDocument;
     }
 }

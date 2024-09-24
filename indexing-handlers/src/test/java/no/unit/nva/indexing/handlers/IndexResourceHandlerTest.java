@@ -13,6 +13,7 @@ import static nva.commons.core.attempt.Try.attempt;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -21,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import no.unit.nva.events.models.AwsEventBridgeDetail;
@@ -82,6 +86,14 @@ public class IndexResourceHandlerTest {
         return new IndexDocument(metadata, objectNode);
     }
 
+    private static IndexDocument createSampleResourceFromJson(
+            SortableIdentifier identifierProvider, String indexName, JsonNode json) {
+
+        EventConsumptionAttributes metadata =
+                new EventConsumptionAttributes(indexName, identifierProvider);
+        return new IndexDocument(metadata, json);
+    }
+
     @BeforeEach
     void init() {
         FakeS3Client fakeS3Client = new FakeS3Client();
@@ -102,6 +114,66 @@ public class IndexResourceHandlerTest {
         Set<JsonNode> allIndexedDocuments =
                 indexingClient.listAllDocuments(SAMPLE_RESOURCE.getIndexName());
         assertThat(allIndexedDocuments, contains(SAMPLE_RESOURCE.resource()));
+    }
+
+    @Test
+    void shouldExpandDocumentIfItContainsContributors() throws IOException {
+
+        var json = createResourceJsonWithContributors();
+        var sampleResource =
+                createSampleResourceFromJson(SortableIdentifier.next(), RESOURCES, json);
+        URI resourceLocation = prepareEventStorageResourceFile(sampleResource);
+        InputStream input = createEventBridgeEvent(resourceLocation);
+        indexResourceHandler.handleRequest(input, output, context);
+        var indexedDocument =
+                indexingClient.getIndex(sampleResource.getIndexName()).stream().findFirst().get();
+        var contributorsCount = indexedDocument.path("entityDescription").path("contributorsCount");
+        var promoted = indexedDocument.path("entityDescription").path("contributorsPromoted");
+        assertThat(contributorsCount.isMissingNode(), is(equalTo(false)));
+        assertThat(contributorsCount.numberValue(), is(equalTo(4)));
+        assertThat(promoted.isMissingNode(), is(equalTo(false)));
+
+        assertThat(
+                promoted.get(0).path("identity").path("verificationStatus").textValue(),
+                is(equalTo("Verified")));
+        assertThat(
+                promoted.get(1).path("identity").path("verificationStatus").textValue(),
+                is(equalTo("Verified")));
+        assertThat(
+                promoted.get(2).path("identity").path("verificationStatus").textValue(),
+                is(not(equalTo("Verified"))));
+        assertThat(
+                promoted.get(3).path("identity").path("verificationStatus").textValue(),
+                is(not(equalTo("Verified"))));
+
+        assertThat(promoted.get(0).path("sequence").intValue(), is(equalTo(2)));
+        assertThat(promoted.get(1).path("sequence").intValue(), is(equalTo(4)));
+        assertThat(promoted.get(2).path("sequence").intValue(), is(equalTo(1)));
+        assertThat(promoted.get(3).path("sequence").intValue(), is(equalTo(3)));
+    }
+
+    private static ObjectNode createResourceJsonWithContributors() {
+        var root = new ObjectNode(JsonNodeFactory.instance);
+        var entityDescription = new ObjectNode(JsonNodeFactory.instance);
+        var contributorsList = new ArrayNode(JsonNodeFactory.instance);
+        contributorsList.add(createContributorJson(4, true));
+        contributorsList.add(createContributorJson(3, false));
+        contributorsList.add(createContributorJson(2, true));
+        contributorsList.add(createContributorJson(1, false));
+        entityDescription.put("contributors", contributorsList);
+        root.put("entityDescription", entityDescription);
+        return root;
+    }
+
+    private static ObjectNode createContributorJson(int seq, boolean verified) {
+        var root = new ObjectNode(JsonNodeFactory.instance);
+        root.set("sequence", IntNode.valueOf(seq));
+        if (verified) {
+            root.set(
+                    "identity",
+                    new ObjectNode(JsonNodeFactory.instance).put("verificationStatus", "Verified"));
+        }
+        return root;
     }
 
     @Test

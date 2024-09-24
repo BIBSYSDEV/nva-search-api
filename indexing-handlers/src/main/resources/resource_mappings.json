@@ -30,6 +30,16 @@
             }
           }
         },
+        "contributorsPromoted": {
+          "type": "nested",
+          "include_in_parent": true,
+          "properties": {
+            "identity": {
+              "type": "nested",
+              "include_in_parent": true
+            }
+          }
+        },
         "reference": {
           "type": "nested",
           "include_in_parent": true,
