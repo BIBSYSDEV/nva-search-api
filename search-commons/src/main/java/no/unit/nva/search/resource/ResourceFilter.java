@@ -105,12 +105,12 @@ public class ResourceFilter implements FilterBuilder<ResourceSearchQuery> {
         if (isSearchingForAllPublications(requestInfo)) {
             return this;
         } else {
-            var organization = requestInfo.getCurrentCustomer();
-            var curationInstitutions =
-                    requestInfo
-                            .getTopLevelOrgCristinId()
-                            .orElse(requestInfo.getPersonAffiliation());
-            return organizationCurationInstitutions(organization, curationInstitutions);
+            var customer = requestInfo.getCurrentCustomer();
+            var curationInstitution =
+                    requestInfo.getTopLevelOrgCristinId().isPresent()
+                            ? requestInfo.getTopLevelOrgCristinId().get()
+                            : requestInfo.getPersonAffiliation();
+            return organizationCurationInstitutions(customer, curationInstitution);
         }
     }
 

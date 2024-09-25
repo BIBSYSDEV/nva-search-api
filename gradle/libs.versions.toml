@@ -15,7 +15,7 @@ log4j = { strictly = '2.24.0' }
 mockito = { strictly = '5.13.0' }
 nvaCommons = { prefer = '1.40.20' }
 open-csv = { strictly = '5.9' }
-opensearch = { strictly = '2.12.0' }
+opensearch = { strictly = '2.14.0' }
 opensearch-testcontainer  = { strictly = '2.0.0' }
 slf4j = { strictly = '2.0.16' }
 testContainers = { strictly = '1.19.7' }
