@@ -78,6 +78,7 @@ import java.util.stream.Stream;
  *
  * @author Stig Norland
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public enum TicketParameter implements ParameterKey<TicketParameter> {
     INVALID(ParameterKind.INVALID),
     // Parameters used for filtering
@@ -136,7 +137,7 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
     public static final int IGNORE_PARAMETER_INDEX = 0;
 
     public static final Set<TicketParameter> TICKET_PARAMETER_SET =
-            Arrays.stream(TicketParameter.values())
+            Arrays.stream(values())
                     .filter(TicketParameter::isSearchField)
                     .sorted(ParameterKey::compareAscending)
                     .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -187,7 +188,7 @@ public enum TicketParameter implements ParameterKey<TicketParameter> {
 
     public static TicketParameter keyFromString(String paramName) {
         var result =
-                Arrays.stream(TicketParameter.values())
+                Arrays.stream(values())
                         .filter(TicketParameter::ignoreInvalidKey)
                         .filter(ParameterKey.equalTo(paramName))
                         .collect(Collectors.toSet());

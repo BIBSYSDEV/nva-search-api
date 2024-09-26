@@ -39,14 +39,14 @@ public enum ImportCandidateSort implements SortKey {
 
     public static ImportCandidateSort fromSortKey(String keyName) {
         var result =
-                Arrays.stream(ImportCandidateSort.values())
+                Arrays.stream(values())
                         .filter(SortKey.equalTo(keyName))
                         .collect(Collectors.toSet());
         return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     public static Collection<String> validSortKeys() {
-        return Arrays.stream(ImportCandidateSort.values())
+        return Arrays.stream(values())
                 .sorted(SortKey::compareAscending)
                 .skip(1) // skip INVALID
                 .map(SortKey::asCamelCase)
