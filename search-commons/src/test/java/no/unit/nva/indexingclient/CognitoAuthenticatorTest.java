@@ -1,8 +1,7 @@
 package no.unit.nva.indexingclient;
 
-import static com.amazonaws.auth.internal.SignerConstants.AUTHORIZATION;
-
 import static no.unit.nva.auth.AuthorizedBackendClient.APPLICATION_X_WWW_FORM_URLENCODED;
+import static no.unit.nva.constants.Words.AUTHORIZATION;
 import static no.unit.nva.indexing.testutils.Constants.TEST_SCOPE;
 import static no.unit.nva.indexing.testutils.Constants.TEST_TOKEN;
 import static no.unit.nva.search.common.jwt.CognitoAuthenticator.AUTHORIZATION_ERROR_MESSAGE;
