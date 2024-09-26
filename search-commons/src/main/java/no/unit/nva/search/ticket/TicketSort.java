@@ -39,14 +39,14 @@ public enum TicketSort implements SortKey {
 
     public static TicketSort fromSortKey(String keyName) {
         var result =
-                Arrays.stream(TicketSort.values())
+                Arrays.stream(values())
                         .filter(SortKey.equalTo(keyName))
                         .collect(Collectors.toSet());
         return result.size() == 1 ? result.stream().findFirst().get() : INVALID;
     }
 
     public static Collection<String> validSortKeys() {
-        return Arrays.stream(TicketSort.values())
+        return Arrays.stream(values())
                 .sorted(SortKey::compareAscending)
                 .skip(1) // skip INVALID
                 .map(TicketSort::asLowerCase)

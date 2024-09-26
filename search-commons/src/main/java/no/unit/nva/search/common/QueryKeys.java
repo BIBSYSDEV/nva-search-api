@@ -88,7 +88,7 @@ public class QueryKeys<K extends Enum<K> & ParameterKey<K>> {
      */
     public void set(K key, String value) {
         if (nonNull(value)) {
-            var decodedValue = key.valueEncoding() != ValueEncoding.NONE ? decodeUTF(value) : value;
+            var decodedValue = key.valueEncoding() == ValueEncoding.NONE ? value : decodeUTF(value);
             if (isPagingValue(key)) {
                 page.put(key, decodedValue);
             } else {
